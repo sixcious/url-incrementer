@@ -1,19 +1,15 @@
 {
 	"manifest_version": 2,
 	"name": "__MSG_name__",
-	"version": "3",
+	"version": "2.2",
+	
+	"default_locale": "en",
 	"description": "__MSG_description__",
 	"icons": { "16": "images/icon16.png", "48": "images/icon48.png", "128": "images/icon128.png" },
-	"default_locale": "en",
-	"background": { "scripts": ["js/background.js"], "persistent": false },
-	"options_page": "html/options.html",
-	"permissions": ["tabs"],
+	
+	"background": { "scripts": ["js/background.js"], "persistent": true },
 	"browser_action": { "default_title": "__MSG_title__", "default_icon": "images/icon19.png", "default_popup": "html/popup.html"},
 	"content_scripts": [{"matches": ["http://*/*", "https://*/*"], "run_at": "document_start", "js": ["js/content_script.js"]}],
-	"web_accessible_resources": ["fonts/Yanone-Kaffeesatz/YanoneKaffeesatz-Thin.otf",
-				     "fonts/League-Gothic/League_Gothic.otf",
-				     "fonts/Lane/LANENAR_.ttf",
-				     "fonts/megalopolis-extra_OT/MEgalopolisExtra.otf",
-				     "fonts/Cicle/Cicle_Fina.ttf",
-				     "fonts/ChunkFive/Chunkfive.otf"]
+	"options_page": "html/options.html",
+	"permissions": ["tabs"]
 }

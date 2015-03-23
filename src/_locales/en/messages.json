@@ -5,7 +5,7 @@
 	},
 
 	"description": {
-		"message":		"Lets you increment or decrement URLs using your own customizable shortcut keys or mouse buttons.",
+		"message":		"Lets you increment or decrement digits in a URL",
 		"description":	"Extension description."
 	},
 
@@ -300,7 +300,7 @@
 	},
 
 	"optionsSecret": {
-		"message":		"It's a secret... urli 3",
+		"message":		"urli v2.2",
 		"description":	"It's a secret..."
 	}
 

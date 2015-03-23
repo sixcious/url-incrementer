@@ -1,32 +1,16 @@
 urli
 ____
 
-urli ("yur-lee") is a URL Incrementer that allows you to increment or decrement
+urli ("yur-lee") is a URL Incrementer that lets you increment or decrement
 digits in a URL. You can use it on gallery or thumbnail websites, forums, or
-basically anyt website that keeps its URLS organized sequentially by numbers.
+basically any website that keeps its URLS organized sequentially by numbers.
 It's similar to the FireFox "URL Picker" extension.
 
-Features:
-- Tries to guess what part of the URL you want to increment without you having
-  to select it.
-- Supports the following operations: Increment, Decrement, Clear, Fast
-  Increment, and Fast Decrement.  (Fast allows you to increment or decrement
-  instantly without having to enter Setup.)
-- Customize and save your own shortcut keys and mouse buttons.
-- Increment or decrement by any amount you want.
-- Keep or remove leading zero (0) digits.
-- A full-blown options page that allows you to enable/disable features, change
-  default settings, and even specify your preferred selection algorithm.  More
-  options coming in future updates.
-- Developed with performance in mind -- if keyboard or mouse button shortcuts
-  are enabled, urli only polls your system on the tab you have it enabled it
-  on, and stops polling after you clear it.
-- Robust algorithm that utilizes the DOM element's selectionStart property, so
-  urli will always increment the *exact* part your mouse selected even if the
-  selection appears multiple times in the URL.
+You may enable shortcut keys and mouse buttons to increment a page, and there is
+a fast functionality available to increment without having to manually select
+the digits.
 
-urli is an open source project and you can view its code or submit issues at the
-following URL:
+urli is an open source project and you can view the source code on GitHub:
 https://github.com/roysix/urli
 
 Thanks to the following individuals:
@@ -38,9 +22,9 @@ Thanks to the following individuals:
   For providing useful information about a potential initialization bug.
 
 Version History:
-- Version 3
+- Version 2.2
   2015-03-23
-  Fixed issue with urli not retaining memory.
+  Fixed issue with urli not keeping enabled state.
 - Version 2.1
   2013-09-25
   Updated to manifest 2 in order to work with latest Chrome release. This release
