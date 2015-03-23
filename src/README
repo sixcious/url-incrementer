@@ -4,14 +4,8 @@ ____
 urli ("yur-lee") is a URL Incrementer that lets you increment or decrement
 digits in a URL. You can use it on gallery or thumbnail websites, forums, or
 basically any website that keeps its URLS organized sequentially by numbers.
-It's similar to the FireFox "URL Picker" extension.
-
-You may enable shortcut keys and mouse buttons to increment a page, and there is
-a fast functionality available to increment without having to manually select
-the digits.
-
-urli is an open source project and you can view the source code on GitHub:
-https://github.com/roysix/urli
+It's similar to the FireFox URL Picker extension, and you can use shortcut
+keys and mouse buttons to increment automatically.
 
 Thanks to the following individuals:
 - Coolio Wolfus
