@@ -1,0 +1,307 @@
+{
+	"name": {
+		"message":		"urli, A URL Incrementer",
+		"description":	"Extension name."
+	},
+
+	"description": {
+		"message":		"Lets you increment or decrement URLs using your own customizable shortcut keys or mouse buttons.",
+		"description":	"Extension description."
+	},
+
+	"title": {
+		"message":		"urli, A URL Incrementer",
+		"description":	"Extension title (tool tip)."
+	},
+
+	"popupIncrementImage": {
+		"message":		"Increment",
+		"description":	"Title (tool tip) for the increment button image when hovered."
+	},
+
+	"popupDecrementImage": {
+		"message":		"Decrement",
+		"description":	"Title (tool tip) for the decrement button image when hovered."
+	},
+
+	"popupClearImage": {
+		"message":		"Clear",
+		"description":	"Title (tool tip) for the clear button image when hovered."
+	},
+
+	"popupSetupImage": {
+		"message":		"Setup",
+		"description":	"Title (tool tip) for the setup button image when hovered."
+	},
+
+	"popupURLLegend": {
+		"message":		"Select the part of the URL to increment",
+		"description":	"Form legend for URL fieldset."
+	},
+
+	"popupURLLabel": {
+		"message":		"URL",
+		"description":	"Form label for URL textarea."
+	},
+
+	"popupSelectionLabel": {
+		"message":		"Selection",
+		"description":	"Form label for Selection input text."
+	},
+
+	"popupOptionsLegend": {
+		"message":		"Options",
+		"description":	"Form legend for Options fieldset."
+	},
+
+	"popupIncrementLabel": {
+		"message":		"Increment By",
+		"description":	"Form label for Increment input number."
+	},
+
+	"popupZerosLabel": {
+		"message":		"Keep Leading Zero Digits",
+		"description":	"Form label for Zeros input checkbox."
+	},
+
+	"popupAcceptInput": {
+		"message":		"Accept",
+		"description":	"Form accept button."
+	},
+
+	"popupCancelInput": {
+		"message":		"Cancel",
+		"description":	"Form cancel button."
+	},
+
+	"popupSelectionNaNError": {
+		"message":		"Selection can only contain numbers.",
+		"description":	"Form error message if user selects a part of the URL that is not a number."
+	},
+
+	"popupSelectionBlankError": {
+		"message":		"Selection cannot be blank.",
+		"description":	"Form error message if user does not select a part of the URL."
+	},
+
+	"popupSelectionNotInURLError": {
+		"message":		"Selection must be a part of the URL.",
+		"description":	"Form error message if user is somehow able to select something that isn't part of the URL."
+	},
+
+	"popupIncrementNaNError": {
+		"message":		"Increment can only contain numbers.",
+		"description":	"Form error message if user tries to enter non-digits for Increment."
+	},
+
+	"popupIncrementBlankError": {
+		"message":		"Increment cannot be blank.",
+		"description":	"Form error message if user does not enter a number for Increment."
+	},
+
+	"popupIncrementZeroError": {
+		"message":		"Increment cannot be zero.",
+		"description":	"Form error message if user tries to enter zero for Increment."
+	},
+
+	"optionsSidebarTitle": {
+		"message":		"Options",
+		"description":	"Options title in the left sidebar."
+	},
+
+	"optionsKeyHeader": {
+		"message":		"Shortcut Keys",
+		"description":	"Shortcut Keys header in the form."
+	},
+
+	"optionsKeyLabel": {
+		"message":		"Enable Keys",
+		"description":	"Label for Shortcut Keys checkbox to enable or disable them."
+	},
+
+	"optionsKeyFastLabel": {
+		"message":		"Enable Fast",
+		"description":	"Fast Shortcut Keys checkbox label."
+	},
+
+	"optionsKeyP": {
+		"message":		"Click on the text boxes and then press the key you want to assign as a shortcut.  If you would like, you can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a key combination shortcut.  \"Fast\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"description":	"Shortcut Keys paragraph."
+	},
+
+	"optionsKeyIncrementLabel": {
+		"message":		"Increment",
+		"description":	"Shortcut Key Increment label."
+	},
+
+	"optionsKeyDecrementLabel": {
+		"message":		"Decrement",
+		"description":	"Shortcut Key Decrement label."
+	},
+
+	"optionsKeyClearLabel": {
+		"message":		"Clear",
+		"description":	"Shortcut Key Clear label."
+	},
+
+	"optionsKeyFastIncrementLabel": {
+		"message":		"Fast Increment",
+		"description":	"Shortcut Key Fast Increment label."
+	},
+
+	"optionsKeyFastDecrementLabel": {
+		"message":		"Fast Decrement",
+		"description":	"Shortcut Key Fast Decrement label."
+	},
+
+	"optionsMouseHeader": {
+		"message":		"Shortcut Mouse Buttons",
+		"description":	"Shortcut Mouse Buttons header in the form."
+	},
+
+	"optionsMouseLabel": {
+		"message":		"Enable Mouse",
+		"description":	"Label for Shortcut Mouse Buttons checkbox to enable or disable them."
+	},
+
+	"optionsMouseFastLabel": {
+		"message":		"Enable Fast",
+		"description":	"Fast Shortcut Mouse Buttons checkbox label."
+	},
+
+	"optionsMouseP": {
+		"message":		"Select a mouse button to associate it with a shortcut.  If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if urli is active on the page.  \"Fast\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"description":	"Shortcut Mouse Buttons paragraph."
+	},
+
+	"optionsMouseIncrementLabel": {
+		"message":		"Increment",
+		"description":	"Shortcut Mouse Increment label."
+	},
+
+	"optionsMouseDecrementLabel": {
+		"message":		"Decrement",
+		"description":	"Shortcut Mouse Decrement label."
+	},
+
+	"optionsMouseClearLabel": {
+		"message":		"Clear",
+		"description":	"Shortcut Mouse Clear label."
+	},
+
+	"optionsMouseFastIncrementLabel": {
+		"message":		"Fast Increment",
+		"description":	"Shortcut Mouse Fast Increment label."
+	},
+
+	"optionsMouseFastDecrementLabel": {
+		"message":		"Fast Decrement",
+		"description":	"Shortcut Mouse Fast Decrement label."
+	},
+
+	"optionsMouseLeftLabel": {
+		"message":		"Left",
+		"description":	"Mouse Left Button label."
+	},
+
+	"optionsMouseMiddleLabel": {
+		"message":		"Middle",
+		"description":	"Mouse Middle Button label."
+	},
+
+	"optionsMouseRightLabel": {
+		"message":		"Right",
+		"description":	"Mouse Right Button label."
+	},
+
+	"optionsMouseNoneLabel": {
+		"message":		"(None)",
+		"description":	"Mouse (None) Button label (no mouse button to be selected)."
+	},
+
+	"optionsAdvancedHeader": {
+		"message":		"Advanced Options",
+		"description":	"Advanced Options header in the form."
+	},
+
+	"optionsAdvancedLabel": {
+		"message":		"Show Advanced Options",
+		"description":	"Label for Advanced Options checkbox to show or hide the options for it."
+	},
+
+	"optionsDefaultSubHeader": {
+		"message":		"Default Options",
+		"description":	"Default Options sub header."
+	},
+
+	"optionsDefaultP": {
+		"message":		"You can have urli choose these values by default each time you enter Setup or when you use \"Fast\" functionality.",
+		"description":	"Default paragraph."
+	},
+
+	"optionsSelectionAlgorithmSubHeader": {
+		"message":		"Selection Algorithm Options",
+		"description":	"Selection Algorithm Options sub header."
+	},
+
+	"optionsSelectionAlgorithmP": {
+		"message":		"Help urli correctly guess what part of the URL you want to increment.  You can do this by specifying the best selection algorithm for urli to use.",
+		"description":	"Selection Algorithm paragraph."
+	},
+
+	"optionsSelectionAlgorithmCommonPrefixesLabel": {
+		"message":		"Common Prefixes",
+		"description":	"Common Prefixes Selection Algorithm label."
+	},
+
+	"optionsSelectionAlgorithmCommonPrefixesP": {
+		"message":		"First prioritize finding common prefixes in the URL that usually come before digits.\nCurrently supported prefixes:\"page=\", \"=\", and \"/\"\n(Recommended.)",
+		"description":	"Common Prefixes Selection Algorithm paragraph."
+	},
+
+	"optionsSelectionAlgorithmLastNumberLabel": {
+		"message":		"Last Number",
+		"description":	"Last Number Selection Algorithm label."
+	},
+
+	"optionsSelectionAlgorithmLastNumberP": {
+		"message":		"Ignores common prefixes.\nAlways tries to select the last number in the URL, no matter what it is.\n(Use this if Common Prefixes usually guesses the wrong number.)",
+		"description":	"Last Number Selection Algorithm paragraph."
+	},
+
+	"optionsSaveInput": {
+		"message":		"Save",
+		"description":	"Form save button."
+	},
+
+	"optionsResetInput": {
+		"message":		"Reset",
+		"description":	"Form reset button."
+	},
+
+	"optionsSaveSuccess": {
+		"message":		"Options saved.",
+		"description":	"Overlay message that appears after pressing Save successfully."
+	},
+
+	"optionsResetSuccess": {
+		"message":		"Options reset.",
+		"description":	"Overlay message that appears after pressing Reset successfully."
+	},
+
+	"optionsKeyError": {
+		"message":		"Cannot assign multiple shortcuts to the same key.",
+		"description":	"Overlay error message that appears after pressing Save with multiple shortcuts assigned to the same key."
+	},
+
+	"optionsMouseError": {
+		"message":		"Cannot assign multiple shortcuts to the same mouse button.",
+		"description":	"Overlay error message that appears after pressing Save with multiple shortcuts assigned to the same mouse button."
+	},
+
+	"optionsSecret": {
+		"message":		"It's a secret... urli 3",
+		"description":	"It's a secret..."
+	}
+
+}

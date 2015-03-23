@@ -1,0 +1,224 @@
+/*
+
+Derived from:
+Copyright (c) 2011 Frank Kohlhepp
+https://github.com/frankkohlhepp/fancy-settings
+License: LGPL v2.1
+
+Derived from:
+Copyright (c) 2009, Google Inc.
+Proxy Settings, a sample Google extension, by Mike West
+http://code.google.com/chrome/extensions/samples.html
+License: BSD
+
+Copyright (c) 2012 Roy Six
+http://code.google.com/p/urli/
+License: LGPL v3.0
+
+*/
+
+@import url("shared.css");
+
+
+/* Sidebar properties (derived from fancy-settings). */
+
+div#sidebar {
+	position: absolute;
+	background-color: #EDECEB;
+	width: 216px;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	border-right: 1px solid #C2C2C2;
+	/*box-shadow: inset -8px 0 30px -30px black;*/
+/*  -webkit-border-end: 1px solid #c6c9ce;
+background: -webkit-linear-gradient(rgba(234, 238, 243, 0.2), #eaeef3),
+-webkit-linear-gradient(left, #eaeef3, #eaeef3 97%, #d3d7db);
+*/
+}
+
+/* urli Image properties (located down below, has an onClick). */
+
+
+input[type="image"] {
+	position: absolute;
+	bottom: 24px;
+	left: 24px;
+}
+
+/* Title for the "Options" in the side bar. */
+
+h1#sidebarTitle {
+	padding: 18px 0px 0px 24px;
+	/*text-align: end;*/
+}
+
+div#sidebar > ul {
+	list-style-type: none;
+}
+
+/* Content. */
+
+div#content {
+	position: absolute;
+	top: 0;
+	left: 217px;
+	right: 0;
+	bottom: 0;
+	overflow: auto;
+	padding-left: 24px;
+	padding-right:24px;
+	padding-top: 13px;
+	box-sizing: border-box;
+	max-width: 888px;
+	min-width: 600px;
+}
+
+/* Header styling for our content. */
+
+.header {
+	padding-bottom: 4px;
+	border-bottom: 1px dotted #DDDDDD;
+	border-style: none none dotted;
+overflow: hidden;
+}
+
+h1.title {
+	webkit-margin-before: inherit;
+	-webkit-margin-after: inherit;
+	-webkit-margin-start: inherit;
+	-webkit-margin-end: inherit;
+padding: 0;
+margin: 0;
+
+	color: #53637d;
+	font-size: 190%;
+	font-weight: inherit;
+	text-shadow: white 0 1px 2px;
+
+}
+
+.subHeader {
+	-webkit-margin-before: inherit;
+	-webkit-margin-after: inherit;
+	-webkit-margin-start: inherit;
+	-webkit-margin-end: inherit;
+	color: #53637d;
+	font-size: inherit;
+	font-weight: bold;
+	text-shadow: white 0 1px 2px;
+}
+
+hr {
+	color: #FFFFFF;
+	background-color: #FFFFFF;
+	border: 1px dotted #DDDDDD;
+	border-style: none none dotted;
+}
+
+/* Tables. */
+
+div.table {
+	display: table;
+}
+
+div.row  {
+	display: table-row;
+}
+
+div.column {
+	display: table-cell;
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+/* Label properties. */
+
+label {
+	line-height:normal;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+/* Keys text box size. */
+
+input[type="text"] {
+	width: 256px;
+}
+
+/* Number text box size. */
+
+input[type="number"] {
+	width: 52px;
+}
+
+/* Form buttons. */
+
+div#formButtons {
+	font-size: 200%;
+	text-align: center;
+	position: relative;
+	margin-top: 24px;
+	margin-bottom: 24px;
+}
+
+/* Content that needs to float left and have content right of it. */
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+/* For the checkboxes floating in the header so they line up a little lower. */
+
+.header-checkbox {
+	padding-top: 12px;
+}
+
+
+/* Prevents the user from being able to select DOM elements (used in body). */
+
+.no-select {
+	cursor: default;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+}
+
+ul {
+	margin: 0;
+	padding: 16px 0px 0px 0px;
+}
+
+li {
+	cursor: pointer;
+}
+
+li:hover {
+	color: #000000 /*rgb(37, 64, 113)*/;
+}
+
+.subOptions {
+	padding-left: 70px;
+}
+
+.subOptions:not(:last-child) {
+	padding-bottom: 24px;
+}
+
+.column > p {
+	-webkit-margin-before: 0px;
+	-webkit-margin-after: 0px;
+}
+
+.options > * {
+	margin-top: 24px;
+}
+
+input[type="number"] {
+margin-right:24px;
+}

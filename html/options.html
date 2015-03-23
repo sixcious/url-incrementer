@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<!--
+
+Derived from:
+Copyright (c) 2011 Frank Kohlhepp
+https://github.com/frankkohlhepp/fancy-settings
+License: LGPL v2.1
+
+Derived from:
+Copyright (c) 2009, Google Inc.
+Proxy Settings, a sample Google extension, by Mike West
+http://code.google.com/chrome/extensions/samples.html
+License: BSD
+
+Copyright (c) 2012 Roy Six
+http://code.google.com/p/urli/
+License: LGPL v3.0
+
+-->
+
+<html>
+
+	<head>
+
+		<meta charset="UTF-8">
+		<link type="text/css" rel="stylesheet" href="../css/options.css" />
+		<title>urli Options</title>
+
+	</head>
+
+	<body class="no-select">
+
+		<div id="sidebar">
+
+			<h1 id="sidebarTitle" class="title"></h1>
+
+			<ul id="sidebarNavigation">
+				<li id="sidebarKey" class="navbar-item navbar-item-selected"></li>
+				<li id="sidebarMouse" class="navbar-item"></li>
+				<li id="sidebarAdvanced" class="navbar-item"></li>
+			</ul>
+
+			<input id="sidebarImage" type="image" src="../images/options.png" alt=" " /> 
+
+		</div>
+
+		<div id="content">
+
+			<div id="key">
+
+				<div class="header">
+
+					<div class="left">
+						<h1 id="keyHeader" class="title"></h1>
+					</div>
+
+					<div class="right header-checkbox">
+						<input id="keyInput" type="checkbox" />
+						<label id="keyLabel" for="keyInput"></label>
+						<input id="keyFastInput" type="checkbox" />
+						<label id="keyFastLabel" for="keyFastInput"></label>
+					</div>
+
+				</div>
+
+				<div class="options">
+
+					<p id="keyP"></p>
+
+					<div class="table">
+
+						<div class="row">
+							<div class="column">
+								<label id="keyIncrementLabel" for="keyIncrementInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="keyIncrementInput" type="text" readonly="readonly" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="keyDecrementLabel" for="keyDecrementInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="keyDecrementInput" type="text" readonly="readonly" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="keyClearLabel" for="keyClearInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="keyClearInput" type="text" readonly="readonly" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="keyFastIncrementLabel" for="keyFastIncrementInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="keyFastIncrementInput" type="text" readonly="readonly" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="keyFastDecrementLabel" for="keyFastDecrementInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="keyFastDecrementInput" type="text" readonly="readonly" />
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="mouse" class="hidden">
+
+				<div class="header">
+
+					<div class="left">
+						<h1 id="mouseHeader" class="title"></h1>
+					</div>
+
+					<div class="right header-checkbox">
+						<input id="mouseInput" type="checkbox" />
+						<label id="mouseLabel" for="mouseInput"></label>
+						<input id="mouseFastInput" type="checkbox" />
+						<label id="mouseFastLabel" for="mouseFastInput"></label>
+					</div>
+
+				</div>
+
+				<div class="options">
+
+					<p id="mouseP"></p>
+
+					<div class="table">
+
+						<div class="row">
+							<div class="column">
+								<label id="mouseIncrementLabel" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="mouseLeftIncrementInput" type="radio" name="mouseIncrement" value="1" />
+								<label id="mouseLeftIncrementLabel" for="mouseLeftIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseMiddleIncrementInput" type="radio" name="mouseIncrement" value="2" />
+								<label id="mouseMiddleIncrementLabel" for="mouseMiddleIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseRightIncrementInput" type="radio" name="mouseIncrement" value="3" />
+								<label id="mouseRightIncrementLabel" for="mouseRightIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseNoneIncrementInput" type="radio" name="mouseIncrement" value="0" />
+								<label id="mouseNoneIncrementLabel" for="mouseNoneIncrementInput"></label>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="mouseDecrementLabel" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="mouseLeftDecrementInput" type="radio" name="mouseDecrement" value="1" />
+								<label id="mouseLeftDecrementLabel" for="mouseLeftDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseMiddleDecrementInput" type="radio" name="mouseDecrement" value="2" />
+								<label id="mouseMiddleDecrementLabel" for="mouseMiddleDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseRightDecrementInput" type="radio" name="mouseDecrement" value="3" />
+								<label id="mouseRightDecrementLabel" for="mouseRightDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseNoneDecrementInput" type="radio" name="mouseDecrement" value="0" />
+								<label id="mouseNoneDecrementLabel" for="mouseNoneDecrementInput"></label>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="mouseClearLabel" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="mouseLeftClearInput" type="radio" name="mouseClear" value="1" />
+								<label id="mouseLeftClearLabel" for="mouseLeftClearInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseMiddleClearInput" type="radio" name="mouseClear" value="2" />
+								<label id="mouseMiddleClearLabel" for="mouseMiddleClearInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseRightClearInput" type="radio" name="mouseClear" value="3" />
+								<label id="mouseRightClearLabel" for="mouseRightClearInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseNoneClearInput" type="radio" name="mouseClear" value="0" />
+								<label id="mouseNoneClearLabel" for="mouseNoneClearInput"></label>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="mouseFastIncrementLabel" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="mouseLeftFastIncrementInput" type="radio" name="mouseFastIncrement" value="1" />
+								<label id="mouseLeftFastIncrementLabel" for="mouseLeftFastIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseMiddleFastIncrementInput" type="radio" name="mouseFastIncrement" value="2" />
+								<label id="mouseMiddleFastIncrementLabel" for="mouseMiddleFastIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseRightFastIncrementInput" type="radio" name="mouseFastIncrement" value="3" />
+								<label id="mouseRightFastIncrementLabel" for="mouseRightFastIncrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseNoneFastIncrementInput" type="radio" name="mouseFastIncrement" value="0" />
+								<label id="mouseNoneFastIncrementLabel" for="mouseNoneFastIncrementInput"></label>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="column">
+								<label id="mouseFastDecrementLabel" class="shadow"></label>
+							</div>
+							<div class="column">
+								<input id="mouseLeftFastDecrementInput" type="radio" name="mouseFastDecrement" value="1" />
+								<label id="mouseLeftFastDecrementLabel" for="mouseLeftFastDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseMiddleFastDecrementInput" type="radio" name="mouseFastDecrement" value="2" />
+								<label id="mouseMiddleFastDecrementLabel" for="mouseMiddleFastDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseRightFastDecrementInput" type="radio" name="mouseFastDecrement" value="3" />
+								<label id="mouseRightFastDecrementLabel" for="mouseRightFastDecrementInput"></label>
+							</div>
+							<div class="column">
+								<input id="mouseNoneFastDecrementInput" type="radio" name="mouseFastDecrement" value="0" />
+								<label id="mouseNoneFastDecrementLabel" for="mouseNoneFastDecrementInput"></label>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="advanced" class="hidden">
+
+				<div class="header">
+
+					<h1 id="advancedHeader" class="title"></h1>
+
+				</div>
+
+				<div class="options">
+
+					<h1 id="defaultSubHeader" class="subHeader"></h1>
+
+					<p id="defaultP"></p>
+
+					<label id="defaultIncrementLabel" for="defaultIncrementInput" class="shadow"></label>
+					<input id="defaultIncrementInput" type="number" min="1" />
+					<input id="defaultZerosInput" type="checkbox" />
+					<label id="defaultZerosLabel" for="defaultZerosInput" class="shadow"></label>
+
+					<h1 id="selectionAlgorithmSubHeader" class="subHeader"></h1>
+
+					<p id="selectionAlgorithmP"></p>
+
+					<div class="table">
+						<div class="row">
+							<div class="column">
+								<input id="selectionAlgorithmCommonPrefixesInput" type="radio" name="selectionAlgorithm" value="1" />
+								<label id="selectionAlgorithmCommonPrefixesLabel" for="selectionAlgorithmCommonPrefixesInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<p id="selectionAlgorithmCommonPrefixesP"></p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="column">
+								<input id="selectionAlgorithmLastNumberInput" type="radio" name="selectionAlgorithm" value="2" />
+								<label id="selectionAlgorithmLastNumberLabel" for="selectionAlgorithmLastNumberInput" class="shadow"></label>
+							</div>
+							<div class="column">
+								<p id="selectionAlgorithmLastNumberP"></p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div id="formButtons">
+				<input id="saveInput" type="button" value=" " />
+				<input id="resetInput" type="button" value=" " />
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="../js/options.js"></script>
+
+	</body>
+
+</html>

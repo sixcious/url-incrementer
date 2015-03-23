@@ -1,0 +1,68 @@
+urli
+____
+
+urli ("yur-lee") is a URL Incrementer that allows you to manipulate URLs.
+
+Q:  What does it do?
+
+A:  It lets you increment or decrement any part of a URL.  You can use it on
+    gallery or thumbnail websites, forums, or any website that keeps its URLs
+    organized sequentially by numbers.  It's similar to the FireFox "URL Picker"
+    extension.
+
+Features:
+- Tries to guess what part of the URL you want to increment without you having
+  to select it.
+- Supports the following operations: Increment, Decrement, Clear, Fast
+  Increment, and Fast Decrement.  (Fast allows you to increment or decrement
+  instantly without having to enter Setup.)
+- Customize and save your own shortcut keys and mouse buttons.
+- Increment or decrement by any amount you want.
+- Keep or remove leading zero (0) digits.
+- A full-blown options page that allows you to enable/disable features, change
+  default settings, and even specify your preferred selection algorithm.  More
+  options coming in future updates.
+- Developed with performance in mind -- if keyboard or mouse button shortcuts
+  are enabled, urli only polls your system on the tab you have it enabled it
+  on, and stops polling after you clear it.
+- Robust algorithm that utilizes the DOM element's selectionStart property, so
+  urli will always increment the *exact* part your mouse selected even if the
+  selection appears multiple times in the URL.
+
+Please contact me if ...
+... You want a feature or option that is not currently in urli, or you have an
+    idea that could improve urli.
+... You want to contribute to urli -- translating it into other languages,
+    adding to or improving the existing code, or anything else.
+... You found a bug in urli.
+
+E-mail:
+roysix [at] fedoraREMOVETHECAPITALLETTERSproject [dot] org
+
+urli is open source and you can view its code at the following URL:
+http://code.google.com/p/urli/
+
+Thanks so much for using this extension.
+
+And also deep thanks to the following individuals:
+- Coolio Wolfus
+  2011-10-27
+  For providing so many useful suggestions and assisting with a bug fix.
+- Adam C
+  2012-01-05	
+  For providing useful information about a potential initialization bug.
+
+Version History:
+- Version 2.1
+  2013-09-25-13
+  Updated to manifest 2 in order to work with latest Chrome release. This release
+  will not work with older versions of Chrome browser! After reading reviews, the
+  "Fast" functionality is not set by default and added more event keys to be pressed
+  (by default).
+- Version 2
+  2012-03-11
+  Added Shortcut Mouse Buttons, Fast Functionality, and Advanced Options.
+- Version 1
+  2011-10-22
+  First Release.
+EOF
