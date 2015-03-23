@@ -20,56 +20,37 @@ License: LGPL v3.0
 -->
 
 <html>
-
 	<head>
-
 		<meta charset="UTF-8">
 		<link type="text/css" rel="stylesheet" href="../css/options.css" />
 		<title>urli Options</title>
-
 	</head>
-
 	<body class="no-select">
-
 		<div id="sidebar">
-
 			<h1 id="sidebarTitle" class="title"></h1>
-
 			<ul id="sidebarNavigation">
 				<li id="sidebarKey" class="navbar-item navbar-item-selected"></li>
 				<li id="sidebarMouse" class="navbar-item"></li>
 				<li id="sidebarAdvanced" class="navbar-item"></li>
 			</ul>
-
-			<input id="sidebarImage" type="image" src="../images/options.png" alt=" " /> 
-
+			<input id="sidebarImage" type="image" src="../images/options.png" alt=" " />
 		</div>
-
 		<div id="content">
-
 			<div id="key">
-
 				<div class="header">
-
 					<div class="left">
 						<h1 id="keyHeader" class="title"></h1>
 					</div>
-
 					<div class="right header-checkbox">
 						<input id="keyInput" type="checkbox" />
 						<label id="keyLabel" for="keyInput"></label>
 						<input id="keyFastInput" type="checkbox" />
 						<label id="keyFastLabel" for="keyFastInput"></label>
 					</div>
-
 				</div>
-
 				<div class="options">
-
 					<p id="keyP"></p>
-
 					<div class="table">
-
 						<div class="row">
 							<div class="column">
 								<label id="keyIncrementLabel" for="keyIncrementInput" class="shadow"></label>
@@ -78,7 +59,6 @@ License: LGPL v3.0
 								<input id="keyIncrementInput" type="text" readonly="readonly" />
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="keyDecrementLabel" for="keyDecrementInput" class="shadow"></label>
@@ -87,7 +67,6 @@ License: LGPL v3.0
 								<input id="keyDecrementInput" type="text" readonly="readonly" />
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="keyClearLabel" for="keyClearInput" class="shadow"></label>
@@ -96,7 +75,6 @@ License: LGPL v3.0
 								<input id="keyClearInput" type="text" readonly="readonly" />
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="keyFastIncrementLabel" for="keyFastIncrementInput" class="shadow"></label>
@@ -105,7 +83,6 @@ License: LGPL v3.0
 								<input id="keyFastIncrementInput" type="text" readonly="readonly" />
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="keyFastDecrementLabel" for="keyFastDecrementInput" class="shadow"></label>
@@ -114,36 +91,24 @@ License: LGPL v3.0
 								<input id="keyFastDecrementInput" type="text" readonly="readonly" />
 							</div>
 						</div>
-
 					</div>
-
 				</div>
-
 			</div>
-
 			<div id="mouse" class="hidden">
-
 				<div class="header">
-
 					<div class="left">
 						<h1 id="mouseHeader" class="title"></h1>
 					</div>
-
 					<div class="right header-checkbox">
 						<input id="mouseInput" type="checkbox" />
 						<label id="mouseLabel" for="mouseInput"></label>
 						<input id="mouseFastInput" type="checkbox" />
 						<label id="mouseFastLabel" for="mouseFastInput"></label>
 					</div>
-
 				</div>
-
 				<div class="options">
-
 					<p id="mouseP"></p>
-
 					<div class="table">
-
 						<div class="row">
 							<div class="column">
 								<label id="mouseIncrementLabel" class="shadow"></label>
@@ -165,7 +130,6 @@ License: LGPL v3.0
 								<label id="mouseNoneIncrementLabel" for="mouseNoneIncrementInput"></label>
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="mouseDecrementLabel" class="shadow"></label>
@@ -187,7 +151,6 @@ License: LGPL v3.0
 								<label id="mouseNoneDecrementLabel" for="mouseNoneDecrementInput"></label>
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="mouseClearLabel" class="shadow"></label>
@@ -209,7 +172,6 @@ License: LGPL v3.0
 								<label id="mouseNoneClearLabel" for="mouseNoneClearInput"></label>
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="mouseFastIncrementLabel" class="shadow"></label>
@@ -231,7 +193,6 @@ License: LGPL v3.0
 								<label id="mouseNoneFastIncrementLabel" for="mouseNoneFastIncrementInput"></label>
 							</div>
 						</div>
-
 						<div class="row">
 							<div class="column">
 								<label id="mouseFastDecrementLabel" class="shadow"></label>
@@ -253,36 +214,22 @@ License: LGPL v3.0
 								<label id="mouseNoneFastDecrementLabel" for="mouseNoneFastDecrementInput"></label>
 							</div>
 						</div>
-
 					</div>
-
 				</div>
-
 			</div>
-
 			<div id="advanced" class="hidden">
-
 				<div class="header">
-
 					<h1 id="advancedHeader" class="title"></h1>
-
 				</div>
-
 				<div class="options">
-
 					<h1 id="defaultSubHeader" class="subHeader"></h1>
-
 					<p id="defaultP"></p>
-
 					<label id="defaultIncrementLabel" for="defaultIncrementInput" class="shadow"></label>
 					<input id="defaultIncrementInput" type="number" min="1" />
 					<input id="defaultZerosInput" type="checkbox" />
 					<label id="defaultZerosLabel" for="defaultZerosInput" class="shadow"></label>
-
 					<h1 id="selectionAlgorithmSubHeader" class="subHeader"></h1>
-
 					<p id="selectionAlgorithmP"></p>
-
 					<div class="table">
 						<div class="row">
 							<div class="column">
@@ -303,20 +250,13 @@ License: LGPL v3.0
 							</div>
 						</div>
 					</div>
-
 				</div>
-
 			</div>
-
 			<div id="formButtons">
 				<input id="saveInput" type="button" value=" " />
 				<input id="resetInput" type="button" value=" " />
 			</div>
-
 		</div>
-
 		<script type="text/javascript" src="../js/options.js"></script>
-
 	</body>
-
 </html>

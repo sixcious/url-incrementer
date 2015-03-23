@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012 Roy Six
+Copyright (c) 2011-2015 Roy Six
 http://code.google.com/p/urli/
 License: LGPL v3.0
 
@@ -10,76 +10,74 @@ console.log("urli background starting");
 
 var URLI = URLI || {};
 
-// Prototype Constructor.
+// Prototype Constructor
 
 URLI.URLIncrementer = URLI.URLIncrementer || function () {};
 
-// Prototype Variables And Functions.
+// Prototype Variables And Functions
 
 URLI.URLIncrementer.prototype = {
 
-	// Variables (default values).
+	// Variables (default values)
 
-	enabled:		false,	// State of urli (urli is disabled when the user clicks clear).
-	tab:			null,	// Tab structure (tab id and tab url).
-	selection:		"",		// The selected part of the URL that will be incremented.
-	selectionStart:	-1,		// Start position of the selection relative to the URL.
-	increment:		1,		// Amount to increment (or decrement).
-	zeros:			false,	// State of "zeros" (whether to keep leading 0s).
+	enabled:        false,	// State of urli (urli is disabled when the user clicks clear).
+	tab:            null,   // Tab structure (tab id and tab url).
+	selection:      "",		  // The selected part of the URL that will be incremented.
+	selectionStart: -1,	    // Start position of the selection relative to the URL.
+	increment:      1,		  // Amount to increment (or decrement).
+	zeros:          false,	// State of "zeros" (whether to keep leading 0s).
 
-	// Getters.
+	// Methods
 
 	getEnabled: function () {
 		return this.enabled;
+	},
+
+	setEnabled: function (enabled) {
+		this.enabled = enabled;
 	},
 
 	getTab: function () {
 		return this.tab;
 	},
 
-	getSelection: function () {
-		return this.selection;
-	},
-
-	getSelectionStart: function () {
-		return this.selectionStart;
-	},
-
-	getIncrement: function () {
-		return this.increment;
-	},
-
-	getZeros: function () {
-		return this.zeros;
-	},
-
-	// Setters.
-
-	setEnabled: function (enabled) {
-		this.enabled = enabled;
-	},
-
 	setTab: function (tab) {
 		this.tab = tab;
+	},
+
+	getSelection: function () {
+		return this.selection;
 	},
 
 	setSelection: function (selection) {
 		this.selection = selection;
 	},
 
+	getSelectionStart: function () {
+		return this.selectionStart;
+	},
+
 	setSelectionStart: function (selectionStart) {
 		this.selectionStart = selectionStart;
+	},
+
+	getIncrement: function () {
+		return this.increment;
 	},
 
 	setIncrement: function (increment) {
 		this.increment = increment;
 	},
 
+	getZeros: function () {
+		return this.zeros;
+	},
+
 	setZeros: function (zeros) {
 		this.zeros = zeros;
 	},
 
-	// Clear (resets values back to default).
+	// Clear (resets values back to default)
 
 	clear: function () {
 		this.enabled = false;
@@ -106,7 +104,7 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 			console.log("\tfunction initLocalStorage");
 			localStorage.firstRunFlag = "1";
 			localStorage.keyEnabled = "1";
-			localStorage.keyFastEnabled = "0";
+			localStorage.keyFastEnabled = "1";
 			localStorage.keyEventIncrement = "0";
 			localStorage.keyCodeIncrement = "39";
 			localStorage.keyEventDecrement = "0";
@@ -161,10 +159,10 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				// Count how many leading zeros there are.
 
 				for (i = 0; i < selectionStringLength; i++) {
-	
+
 					// If we encounter the first non-zero digit, stop counting
 					// leading zeros.
-	
+
 					if (selectionString.charAt(i) === '0') {
 						 countZeros++;
 					} else {
@@ -173,12 +171,12 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				}
 
 				if (action === "Increment") {
-		
+
 					// selectionInteger already strips the zeros, we only care about the value here.
 
 					selectionString = (selectionInteger + increment).toString();
 				}
-		
+
 				else if (action === "Decrement") {
 
 					// selectionInteger already strips the zeros, we only care about the value here.
@@ -202,9 +200,9 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				// selectionStrings.  E.g., original = "9" and new = "10"
 				// would mean a difference of one digit.  Note there is no
 				// no need to cast the absolute value in case of decrement.
-	
+
 				differenceInAmountOfDigits = newSelectionStringLength - selectionStringLength;
-	
+
 				// To find out how many zeros to pad, just count how many
 				// zeros there were to begin with.  Then subtract the
 				// difference in amount of digits between the original and
@@ -214,22 +212,22 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				// E.g. original = "009" and new = "010" means we need to
 				// remove one of the leading zeros and only pad one zero
 				// instead of two.
-	
+
 				length = countZeros - differenceInAmountOfDigits;
 				for (i = 0; i < length; i++) {
 					paddedZeros += "0";
 				}
-	
+
 				// Pad with zeros.
-	
+
 				selectionString = paddedZeros + selectionString;
 			}
-	
+
 			// Either there are no leading zeros or the user wants them removed.
 			// Therefore, just use selectionInteger instead of the string.
 			// A check on the subtraction of pageValue needs to be done to ensure
 			// that the user cannot decrement below 0 (design decision).
-	
+
 			else {
 				if (action === "Increment") {
 					selectionString = (selectionInteger + increment).toString();
@@ -237,19 +235,19 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
 				}
 			}
-		
+
 			// Update the tab object with the updated url and save it in urli.
 			// Also save the "new" selectionString (which was just incremented
 			// or decremented in this function).
-	
+
 			console.log("\t\treturn url:" + firstPartURL + selectionString + secondPartURL);
 			console.log("\t\treturn selectionString:" + selectionString);
 			return {url: firstPartURL + selectionString + secondPartURL, selectionString: selectionString};
 		},
-		
+
 		// After the url is modified in modifyurl, go ahead and update
 		// the tab to the new url using the chrome API's chrome.tabs.update.
-		
+
 		updateTab = function () {
 			console.log("\tfunction updateTab");
 			chrome.tabs.getSelected(null, function(tab) {
@@ -259,13 +257,13 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				}
 			});
 		},
-		
+
 		// Necessary for the keys/mouse.  When the tab changes the URL due to
 		// increment or decrement, we must send another request to add
 		// a keyListener to the new URL page.  This function is called by the
 		// tab listener chrome.tabs.onUpdated.addListener(updateListeners),
 		// in modifyUrliAndUpdateTab.
-		
+
 		updateListeners = function (tabId, changeInfo, tab) {
 			console.log("\tfunction updateListeners");
 			if (!urli.getEnabled()) { // Forces the listener to be removed on this tab.
@@ -288,11 +286,11 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				chrome.tabs.sendMessage(tabId, {greeting: "addMouseListener"}, function (response){});
 			}
 		},
-	
+
 		// This function guesses the part of the URL the user wants to increment.
 		// Look for common characters that are associated with digits we want
 		// to increment or decrement.
-	
+
 		commonPrefixesSelection = function (url) {
 			console.log("\tfunction commonPrefixesSelection");
 			// Currently implemented prefixes are = and /
@@ -301,70 +299,70 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 			// Choose a d+ that doesn't have a d+ that follows it (in other words, choose the last one).
 			// Note JavaScript does not support lookahead RegExp which means we have
 			// to also get the part of the match that comes before the digits.
-		
+
 			var regExp, // RegExp in JavaScript.
 				found;
 
 			// page= example:  page=1
 			regExp = /page=\d+(?!.*page=\d+)/;
 			found = regExp.exec(url);
-		
+
 			if (found !== null) {
 				console.log("\t\tused regExp page=");
 				console.log("\t\treturn selection:" + found[0].slice(5));
 				console.log("\t\treturn selectionStart:" + (found.index + 5));
 				return {selection:found[0].slice(5), selectionStart:(found.index + 5)}; // page= is 5 characters.
 			}
-		
+
 			// = example:  *=1
 			regExp = /=\d+(?!.*=\d+)/;
 			found = regExp.exec(url);
-		
+
 			if (found !== null) {
 				console.log("\t\tused regExp =");
 				console.log("\t\treturn selection:" + found[0].slice(1));
 				console.log("\t\treturn selectionStart:" + (found.index + 1));
 				return {selection:found[0].slice(1), selectionStart:(found.index + 1)}; // = is 1 character.
 			}
-		
+
 			// / example: */1
 
 			regExp = /\/\d+(?!.*\/\d+)/;
 			found = regExp.exec(url);
-		
+
 			if (found !== null) {
 				console.log("\t\tused regExp /");
 				console.log("\t\treturn selection:" + found[0].slice(1));
 				console.log("\t\treturn selectionStart:" + (found.index + 1));
 				return {selection:found[0].slice(1), selectionStart:(found.index + 1)}; // / is 1 character.
 			}
-		
+
 			// Could not find a match for the above regExp, so find the digits
 			// using the last resort, lastNumberSelection(url) method.
 			console.log("\t\tgoing to lastNumberSelection");
 			return lastNumberSelection(url);
-		
+
 		},
-		
+
 		// This function guesses the part of the URL the user wants to increment.
 		// The algorithm just looks for the last digit(s) in the URL.
-	
+
 		lastNumberSelection = function (url) {
 		console.log("\tfunction lastNumberSelection");
 			var regExp, // RegExp in JavaScript.
 				found;
-	
+
 			// # (last number in the URL).
 			regExp = /\d+(?!.*\d+)/;
 			found = regExp.exec(url);
-	
+
 			if (found !== null) {
 				console.log("\t\tused regExp # (last number in the URL)");
 				console.log("\t\treturn selection:" + found[0]);
 				console.log("\t\treturn selectionStart:" + found.index);
 				return {selection:found[0], selectionStart:found.index};
 			}
-	
+
 			// Could not find any digits, so we will return a -1 (won't change the URL).
 
 			console.log("\t\tcould not find a selection");
