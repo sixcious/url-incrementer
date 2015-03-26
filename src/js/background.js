@@ -131,7 +131,9 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 		// Modifies the selection to either increment or decrement (depending
 		// on what the action is), and then updates the url in urli's tab
 		// object.  Called by modifyUrliAndUpdateTab.
-
+		/**
+		 * 
+		 */
 		modifyURL = function (url, selectionString, selectionStart, increment, zeros, action) {
 			console.log("\tfunction modifyURL");
 			var	firstPartURL = url.substring(0, selectionStart),
@@ -144,65 +146,56 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				paddedZeros = "",
 				length,
 				i;
-
 			// The user somehow was able to submit the form without properly
 			// selecting the selection from the URL textArea.
-
 			if (selectionStart < 0) {
 				return; // URL won't change.
 			}
-
+			// TODO: Add letter increment here
+			if (letters) {
+			  var lastChar = 0;
+		    for (i = 0; i < selectionStringLength; i++) {
+			      
+			  }
+				if (action === "Increment") {
+					selectionString = (selectionInteger + increment).toString();
+				} else if (action === "Decrement") {
+					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
+				}
+			}
 			// If there are leading zeros and the user wants to keep them.
-
-			if (zeros) {
-
+			else if (selectionString.charAt(0) === '0' && zeros) {
 				// Count how many leading zeros there are.
-
 				for (i = 0; i < selectionStringLength; i++) {
-
 					// If we encounter the first non-zero digit, stop counting
 					// leading zeros.
-
 					if (selectionString.charAt(i) === '0') {
 						 countZeros++;
 					} else {
 						break;
 					}
 				}
-
 				if (action === "Increment") {
-
 					// selectionInteger already strips the zeros, we only care about the value here.
-
 					selectionString = (selectionInteger + increment).toString();
 				}
-
 				else if (action === "Decrement") {
-
 					// selectionInteger already strips the zeros, we only care about the value here.
-
 					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
 				}
-
 				// Just gets the length (without the zeros) before doing the increment/decrement.
 				// VERSION 2 FIX:  Added "selectionInteger == 0 ? 0" in case of 0, we should just
 				// make the length always zero (even though a digit of 0 is really a length of 1)
 				// because in cases of "000" it would go to "0000" in decrement or "0001" in increment.
-
 				selectionStringLength = selectionInteger === 0 ? 0 : (selectionInteger.toString()).length;
-
 				// Now count how many digits there are after the increment.
-
 				newSelectionStringLength = selectionString.length;
-
 				// The difference in amount of digits is found by simply
 				// subtracting the lengths of the new and original
 				// selectionStrings.  E.g., original = "9" and new = "10"
 				// would mean a difference of one digit.  Note there is no
 				// no need to cast the absolute value in case of decrement.
-
 				differenceInAmountOfDigits = newSelectionStringLength - selectionStringLength;
-
 				// To find out how many zeros to pad, just count how many
 				// zeros there were to begin with.  Then subtract the
 				// difference in amount of digits between the original and
