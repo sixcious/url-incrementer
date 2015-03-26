@@ -124,7 +124,7 @@ URLI.Options = URLI.Options || function () {
 			document.getElementById("selectionAlgorithmLastNumberP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberP");
 	
 			document.getElementById("saveInput").value = chrome.i18n.getMessage("optionsSaveInput");
-			document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput")
+			document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput");
 		},
 	
 		populateForm = function () {
@@ -132,16 +132,16 @@ URLI.Options = URLI.Options || function () {
 
 			// Key.
 
-			keyCodeIncrement = parseInt(localStorage.keyCodeIncrement),
-			keyEventIncrement = parseInt(localStorage.keyEventIncrement),
-			keyCodeDecrement = parseInt(localStorage.keyCodeDecrement),
-			keyEventDecrement = parseInt(localStorage.keyEventDecrement),
-			keyCodeClear = parseInt(localStorage.keyCodeClear),
-			keyEventClear = parseInt(localStorage.keyEventClear),
-			keyCodeFastIncrement = parseInt(localStorage.keyCodeFastIncrement),
-			keyEventFastIncrement = parseInt(localStorage.keyEventFastIncrement),
-			keyCodeFastDecrement = parseInt(localStorage.keyCodeFastDecrement),
-			keyEventFastDecrement = parseInt(localStorage.keyEventFastDecrement),
+			keyCodeIncrement = parseInt(localStorage.keyCodeIncrement);
+			keyEventIncrement = parseInt(localStorage.keyEventIncrement);
+			keyCodeDecrement = parseInt(localStorage.keyCodeDecrement);
+			keyEventDecrement = parseInt(localStorage.keyEventDecrement);
+			keyCodeClear = parseInt(localStorage.keyCodeClear);
+			keyEventClear = parseInt(localStorage.keyEventClear);
+			keyCodeFastIncrement = parseInt(localStorage.keyCodeFastIncrement);
+			keyEventFastIncrement = parseInt(localStorage.keyEventFastIncrement);
+			keyCodeFastDecrement = parseInt(localStorage.keyCodeFastDecrement);
+			keyEventFastDecrement = parseInt(localStorage.keyEventFastDecrement);
 			document.getElementById("keyInput").checked = localStorage.keyEnabled === "1";
 			document.getElementById("keyFastInput").checked = localStorage.keyFastEnabled === "1";
 			writeToText(document.getElementById("keyIncrementInput"), keyEventIncrement, keyCodeIncrement);

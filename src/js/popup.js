@@ -225,7 +225,7 @@ URLI.Popup = URLI.Popup || function () {
 
 			// If there was an error, show the error message
 		
-			if (errorCount != 0) {
+			if (errorCount !== 0) {
 				console.log("\t\terrorMessage:" + errorMessage);
 				generateAlert_(errorMessage, false);
 			}
