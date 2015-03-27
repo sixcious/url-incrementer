@@ -145,17 +145,28 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				differenceInAmountOfDigits,
 				paddedZeros = "",
 				length,
-				i;
+				i,
+				letters = false;
 			// The user somehow was able to submit the form without properly
 			// selecting the selection from the URL textArea.
 			if (selectionStart < 0) {
 				return; // URL won't change.
 			}
+			
 			// TODO: Add letter increment here
+			for (i = 0; i < selectionStringLength; i++) {
+				if (selectionString.charCodeAt(i) < 48 || selectionString.charCodeAt(i) > 57) {
+				  letters = true;
+					break;
+				}
+			}
+			// If there are letters in the selection
 			if (letters) {
 			  var lastChar = 0;
-		    for (i = 0; i < selectionStringLength; i++) {
-			      
+		    for (i = selectionStringLength - 1; i >= 0; i--) {
+			      if () {
+			        
+			      }
 			  }
 				if (action === "Increment") {
 					selectionString = (selectionInteger + increment).toString();

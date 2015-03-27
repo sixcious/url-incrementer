@@ -183,12 +183,12 @@ URLI.Popup = URLI.Popup || function () {
 		
 			// ERROR If the selected text from the URL are not digits (0-9).
 		
-			for (i = 0, length = selection.length; i < length; i++) {
-				if (selection.charCodeAt(i) < 48 || selection.charCodeAt(i) > 57) {
-					errorMessage[errorCount++] = chrome.i18n.getMessage("popupSelectionNaNError");
-					break;
-				}
-			}
+		// 	for (i = 0, length = selection.length; i < length; i++) {
+		// 		if (selection.charCodeAt(i) < 48 || selection.charCodeAt(i) > 57) {
+		// 			errorMessage[errorCount++] = chrome.i18n.getMessage("popupSelectionNaNError");
+		// 			break;
+		// 		}
+		// 	}
 		
 			// ERROR If the selection is blank.
 		
