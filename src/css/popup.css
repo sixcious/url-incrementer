@@ -204,7 +204,7 @@ textarea {
 
 /* Form buttons. */
 
-div#formButtons {
+div#form-buttons {
 	display: block;
 	text-align: center;
 	position: relative;

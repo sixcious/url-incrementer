@@ -1,10 +1,13 @@
-/*
+/* Copyright (c) 2012 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
 
-Copyright (c) 2011-2015 Roy Six
-http://code.google.com/p/urli/
-License: LGPL v3.0
-
-*/
+/* This file holds CSS that should be shared, in theory, by all user-visible
+ * chrome:// pages. */
+ 
+/* Copyright (c) 2011 Roy Six
+ * Use of this source code is governed by a 
+ * found in the LICENSE file. */
 
 console.log("urli background starting");
 
@@ -146,7 +149,7 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				paddedZeros = "",
 				length,
 				i,
-				letters = false;
+				alphanumeric = false;
 			// The user somehow was able to submit the form without properly
 			// selecting the selection from the URL textArea.
 			if (selectionStart < 0) {
@@ -161,12 +164,28 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				}
 			}
 			// If there are letters in the selection
-			if (letters) {
+			if (alphanumeric) {
 			  var lastChar = 0;
 		    for (i = selectionStringLength - 1; i >= 0; i--) {
-			      if () {
+		      switch (selectionString.charCodeAt(i)) {
+		        case 90:
+		          continue;
+	          case 122:
+	            continue;
+            default:
+            var temp = selectionString.charCodeAt(i);
+              if (temp >= 65 && temp <= 90) {
+                selectionString.charC
+              }
+              
+            break;
+		      }
+		      // A - Z is 65 - 90
+  		    // a - z is 97 - 122
+			     // if () {
 			        
-			      }
+			     // }
+			     
 			  }
 				if (action === "Increment") {
 					selectionString = (selectionInteger + increment).toString();

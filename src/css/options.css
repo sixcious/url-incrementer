@@ -19,7 +19,6 @@ License: LGPL v3.0
 
 @import url("shared.css");
 
-
 /* Sidebar properties (derived from fancy-settings). */
 
 div#sidebar {
@@ -48,7 +47,7 @@ input[type="image"] {
 
 /* Title for the "Options" in the side bar. */
 
-h1#sidebarTitle {
+h1#sidebar-title {
 	padding: 18px 0px 0px 24px;
 	/*text-align: end;*/
 }
@@ -149,12 +148,12 @@ input[type="text"] {
 /* Number text box size. */
 
 input[type="number"] {
-	width: 52px;
+	width: 40px;
 }
 
 /* Form buttons. */
 
-div#formButtons {
+div#form-buttons {
 	font-size: 200%;
 	text-align: center;
 	position: relative;

@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 
-<!--
-
-Derived from:
-Copyright (c) 2011 Frank Kohlhepp
-https://github.com/frankkohlhepp/fancy-settings
-License: LGPL v2.1
-
-Derived from:
-Copyright (c) 2009, Google Inc.
-Proxy Settings, a sample Google extension, by Mike West
-http://code.google.com/chrome/extensions/samples.html
-License: BSD
-
-Copyright (c) 2012 Roy Six
-http://code.google.com/p/urli/
-License: LGPL v3.0
-
--->
-
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link type="text/css" rel="stylesheet" href="../css/options.css" />
-		<title>urli Options</title>
+		<link type="text/css" rel="stylesheet" href="../css/shared.css" />
+		<title>URL Next Plus Options</title>
 	</head>
 	<body class="no-select">
+<!--	  <h1>Options</h1>
+	  <ul>
+	    <li>Shortcuts</button></li>
+	    <li>Advanced</button></li>
+	  </ul>-->
+	  
+	  
 		<div id="sidebar">
-			<h1 id="sidebarTitle" class="title"></h1>
+			<h1 id="options" class="title"></h1>
 			<ul id="sidebarNavigation">
-				<li id="sidebarKey" class="navbar-item navbar-item-selected"></li>
-				<li id="sidebarMouse" class="navbar-item"></li>
-				<li id="sidebarAdvanced" class="navbar-item"></li>
+				<li id="shortcuts" class="navbar-item navbar-item-selected"></li>
+				<li id="advanced" class="navbar-item"></li>
 			</ul>
-			<input id="sidebarImage" type="image" src="../images/options.png" alt=" " />
+			<input id="sidebarImage" type="image" src="../images/icon128.png" alt="" />
 		</div>
-		<div id="content">
+		<div id="content page">
 			<div id="key">
 				<div class="header">
 					<div class="left">
@@ -93,9 +80,9 @@ License: LGPL v3.0
 						</div>
 					</div>
 				</div>
-			</div>
-			<div id="mouse" class="hidden">
-				<div class="header">
+				
+				
+								<div class="header">
 					<div class="left">
 						<h1 id="mouseHeader" class="title"></h1>
 					</div>
@@ -216,6 +203,9 @@ License: LGPL v3.0
 						</div>
 					</div>
 				</div>
+				
+				
+				
 			</div>
 			<div id="advanced" class="hidden">
 				<div class="header">

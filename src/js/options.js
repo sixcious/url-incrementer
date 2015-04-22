@@ -1,19 +1,13 @@
 /*
 
-Derived from:
-Copyright (c) 2011 Frank Kohlhepp
-https://github.com/frankkohlhepp/fancy-settings
-License: LGPL v2.1
-
-Derived from:
-Copyright (c) 2009, Google Inc.
-Proxy Settings, a sample Google extension, by Mike West
-http://code.google.com/chrome/extensions/samples.html
-License: BSD
-
-Copyright (c) 2012 Roy Six
-http://code.google.com/p/urli/
+URL+N for Google Chrome
+Copyright (c) 2011-2015 Roy Six
 License: LGPL v3.0
+
+Derived from:
+Proxy Settings, a sample Google Chrome extension
+Copyright (c) 2009, Google Inc.
+License: BSD
 
 */
 
@@ -66,10 +60,9 @@ URLI.Options = URLI.Options || function () {
 	
 		i18n = function () {
 			console.log("\tfunction i18n");
-			document.getElementById("sidebarTitle").innerText = chrome.i18n.getMessage("optionsSidebarTitle");
-			document.getElementById("sidebarKey").innerText = chrome.i18n.getMessage("optionsKeyHeader");
-			document.getElementById("sidebarMouse").innerText = chrome.i18n.getMessage("optionsMouseHeader");
-			document.getElementById("sidebarAdvanced").innerText = chrome.i18n.getMessage("optionsAdvancedHeader");
+			document.getElementById("options").innerText = chrome.i18n.getMessage("options");
+			document.getElementById("optionsShortcuts").innerText = chrome.i18n.getMessage("optionsShortcuts");
+			document.getElementById("optionsAdvanced").innerText = chrome.i18n.getMessage("optionsAdvanced");
 
 			document.getElementById("keyHeader").innerText = chrome.i18n.getMessage("optionsKeyHeader");
 			document.getElementById("keyLabel").innerText = chrome.i18n.getMessage("optionsKeyLabel");

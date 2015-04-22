@@ -1,14 +1,13 @@
 /*
 
-Derived from:
-Copyright (c) 2009, Google Inc.
-Proxy Settings, a sample Google extension, by Mike West
-http://code.google.com/chrome/extensions/samples.html
-License: BSD
-
-Copyright (c) 2012 Roy Six
-http://code.google.com/p/urli/
+URL+N for Google Chrome
+Copyright (c) 2011-2015 Roy Six
 License: LGPL v3.0
+
+Derived from:
+Proxy Settings, a sample Google Chrome extension
+Copyright (c) 2009, Google Inc.
+License: BSD
 
 */
 
@@ -16,57 +15,50 @@ console.log("urli popup starting");
 
 // JavaScript Revealing Module Pattern
 
-var URLI = URLI || {};
-URLI.Popup = URLI.Popup || function () {
-
-	//"use strict";
-
-	console.log("function URLI.Popup");
+var URLNP = URLNP || {};
+URLNP.Popup = URLNP.Popup || function () {
+  
+	console.log("function URLNP.Popup");
 
 	var urli,
 		currentTab,
 		selectionStart = -1,
 		fieldsetGroups = document.querySelectorAll('#' + 'setupForm' + ' > fieldset'), // Nodelist containing cached reference to the fieldset groups.
-
-		// ? can also do document.getElementById("decrementImage").onclick = clickDecrement;
-		// Gets the current state of urli (enabled status)
-		// and the appropriate images are loaded accordingly.  Then adds event listeners for the DOM elemetns and loads the
-		// localization from messages.json for the form.
-
+		
+    /**
+     * Loads the DOM content needed to display the popup.
+     */
 		DOMContentLoaded = function () {
 			console.log("\tfunction DOMContentLoaded");
-
-			// Add Event Listeners to the DOM elements.
-
+			// Add Event Listeners to the DOM elements (inputs)
+			// Note: You can also do (for example):
+			// document.getElementById("decrementImage").onclick = clickDecrement;
 			console.log("\t\tadding event listeners");
-			document.getElementById("incrementImage").addEventListener("click", clickIncrement, false);
-			document.getElementById("decrementImage").addEventListener("click", clickDecrement, false);
-			document.getElementById("clearImage").addEventListener("click", clickClear, false);
-			document.getElementById("setupImage").addEventListener("click", toggleForm, false);
-			document.getElementById("URLTextarea").addEventListener("mouseup", handleURL, false);
-			document.getElementById("URLTextarea").addEventListener("keyup", handleURL, false);
-			document.getElementById("acceptInput").addEventListener("click", submitForm, false);
-			document.getElementById("cancelInput").addEventListener("click", toggleForm, false);
-			document.getElementById("setupForm").addEventListener("click", dispatchFormClick_.bind(this));
-		
-			// i18n for messages.json.
-
+			document.getElementById("next-plus-input").addEventListener("click", clickIncrement, false);
+			document.getElementById("prev-minus-input").addEventListener("click", clickDecrement, false);
+			document.getElementById("clear-input").addEventListener("click", clickClear, false);
+			document.getElementById("setup-input").addEventListener("click", toggleForm, false);
+			document.getElementById("url-textarea").addEventListener("mouseup", handleURL, false);
+			document.getElementById("url-textarea").addEventListener("keyup", handleURL, false);
+			document.getElementById("accept-input").addEventListener("click", submitForm, false);
+			document.getElementById("cancel-input").addEventListener("click", toggleForm, false);
+			document.getElementById("popup-form").addEventListener("click", dispatchFormClick_.bind(this));
+			// Set localization text (i18n) from messages.json
 			console.log("\t\tadding i18n text");
-			document.getElementById("incrementImage").title = chrome.i18n.getMessage("popupIncrementImage");
-			document.getElementById("decrementImage").title = chrome.i18n.getMessage("popupDecrementImage");
-			document.getElementById("clearImage").title = chrome.i18n.getMessage("popupClearImage");
-			document.getElementById("setupImage").title = chrome.i18n.getMessage("popupSetupImage");
-			document.getElementById("URLLegend").innerText = chrome.i18n.getMessage("popupURLLegend");
-			document.getElementById("URLLabel").innerText = chrome.i18n.getMessage("popupURLLabel"); 
-			document.getElementById("selectionLabel").innerText = chrome.i18n.getMessage("popupSelectionLabel"); 
-			document.getElementById("optionsLegend").innerText = chrome.i18n.getMessage("popupOptionsLegend");
-			document.getElementById("incrementLabel").innerText = chrome.i18n.getMessage("popupIncrementLabel");
-			document.getElementById("zerosLabel").innerText = chrome.i18n.getMessage("popupZerosLabel");
-			document.getElementById("acceptInput").value = chrome.i18n.getMessage("popupAcceptInput");
-			document.getElementById("cancelInput").value = chrome.i18n.getMessage("popupCancelInput");
-
-			// Get urli and update the images depending on urli's enabled state.
-
+			document.getElementById("next-plus-input").title = chrome.i18n.getMessage("popup_next_plus_input_title");
+			document.getElementById("prev-minus-input").title = chrome.i18n.getMessage("popup_prev_minus_input_title");
+			document.getElementById("clear-butto").title = chrome.i18n.getMessage("popup_clear_input_title");
+			document.getElementById("setup-button").title = chrome.i18n.getMessage("popup_setup_input_title");
+			document.getElementById("url-legened").innerText = chrome.i18n.getMessage("popup_url_legend");
+			document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
+			document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
+			document.getElementById("settings-legend").innerText = chrome.i18n.getMessage("popup_settings_legend");
+			document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
+			document.getElementById("zeros-label").innerText = chrome.i18n.getMessage("popup_zeros_label");
+			document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
+			document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
+			// Check the currentstate (enabled or disabled) and update the input
+			// images accordingly
 			chrome.runtime.sendMessage({greeting: "getUrli"},
 				function (response) {
 					urli = response;
@@ -74,18 +66,16 @@ URLI.Popup = URLI.Popup || function () {
 					updateImages();
 				}
 			);
-
-			// Get currentTab.
-
+			// Set the current tab
 			chrome.tabs.getSelected(null,
 				function (tab) {
 					currentTab = tab;
 					console.log("\t\tgetting currentTab (currentTab.id=" + currentTab.id +")");
 				}
 			);
-
 		},
-
+		
+		
 		// Sets default values for elements in the form everytime the tab is
 		// updated or when the user clicks on the Setup image to get to the
 		// form.
@@ -322,114 +312,7 @@ URLI.Popup = URLI.Popup || function () {
 			}
 		},
 		
-		// Generate alert overlay (popup message).
-		// From the sample Google extension, Proxy Settings by Mike West.
-		
-		generateAlert_ = function (msg, close) {
-			console.log("\tfunction generateAlert_");
-			var	success = document.createElement('div'),
-				ul = document.createElement('ul'),
-				li,
-				i,
-				length;
 
-			success.classList.add('overlay');
-			success.setAttribute('role', 'alert');
-			ul.classList.add('overlay_list');
-
-			for (i = 0, length = msg.length; i < length; i++) {
-				li = document.createElement('li');
-				li.appendChild(document.createTextNode(msg[i]));
-				ul.appendChild(li);
-			}
-			success.appendChild(ul);
-			//success.textContent = msg;
-			document.body.appendChild(success);
-
-			setTimeout(function() { success.classList.add('visible'); }, 10);
-			setTimeout(function() {
-				if (close === false) {
-					// success.classList.remove('visible');
-					document.body.removeChild(success);
-				} else {
-					window.close();
-				}
-			}, 3000);
-		},
-		
-		// Click event handler on the form.
-		// From the sample Google extension, Proxy Settings by Mike West.
-		
-		dispatchFormClick_ = function (e) {
-			console.log("\tfunction dispatchFormClick_");
-			var t = e.target;
-		
-			// Walk up the tree until we hit `form > fieldset` or fall off the top
-		
-			while (t && (t.nodeName !== 'FIELDSET' || t.parentNode.nodeName !== 'FORM')) {
-				t = t.parentNode;
-			}
-		
-			if (t) {
-				changeActive_(t);
-				return false;
-			}
-		
-			return true;
-		},
-		
-		// Sets the form's active config group.
-		// From the sample Google extension, Proxy Settings by Mike West.
-		
-		changeActive_ = function (fieldset) {
-			console.log("\tfunction changeActive_");
-			var	el,
-				i,
-				length;
-			for (i = 0, length = fieldsetGroups.length; i < length; i++) {
-				el = fieldsetGroups[i];
-		
-				if (el === fieldset) {
-					el.classList.add('active');
-				} else {
-					el.classList.remove('active');
-				}
-			}
-		
-			recalcDisabledInputs_();
-		},
-		
-		// Recalculates the disabled state of the form's input elements, based
-		// on the currently active group.
-		// From the sample Google extension, Proxy Settings by Mike West.
-		
-		recalcDisabledInputs_ = function () {
-			console.log("\tfunction recalcDisabledInputs_");
-			var	el,
-				inputs,
-				i,
-				j,
-				length,
-				lengthJ;
-		
-			for (i = 0, length = fieldsetGroups.length; i < length; i++) {
-				el = fieldsetGroups[i];
-				inputs = el.querySelectorAll("input:not([type='radio']), select, textarea");
-		
-				if (el.classList.contains('active')) {
-					for (j = 0, lengthJ = inputs.length; j < lengthJ; j++) {
-						inputs[j].removeAttribute('disabled');
-					}
-		
-				} else {
-		
-					for (j = 0, lengthJ = inputs.length; j < lengthJ; j++) {
-						inputs[j].setAttribute('disabled', 'disabled');
-					}
-		
-				}
-			}
-		};
 
 		// Public methods list.
 		return {
@@ -440,4 +323,4 @@ URLI.Popup = URLI.Popup || function () {
 // DOMContentLoaded will fire when the DOM is loaded but unlike "load" it does not wait for images, etc.
 // It is being standardized in HTML5
 
-document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded, false);
+document.addEventListener("DOMContentLoaded", URLNP.Popup.DOMContentLoaded, false);

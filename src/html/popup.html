@@ -1,66 +1,55 @@
 <!DOCTYPE html>
 
-<!--
-
-Derived from:
-Copyright (c) 2009, Google Inc.
-Proxy Settings, a sample Google extension, by Mike West
-http://code.google.com/chrome/extensions/samples.html
-License: BSD
-
-Copyright (c) 2012 Roy Six
-http://code.google.com/p/urli/
-License: LGPL v3.0
-
--->
 
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link type="text/css" rel="stylesheet" href="../css/popup.css" />
-		<title>urli Popup</title>
+		<link type="text/css" rel="stylesheet" href="../css/popup.css"/>
+		<title>URL Next Plus Popup</title>
 	</head>
 	<body>
-		<div id="images">
-			<input type="image" id="incrementImage" class="disabled"  src="../images/increment.png" alt=" " />
-			<input type="image" id="decrementImage" class="disabled" src="../images/decrement.png" alt=" "/>
-			<input type="image" id="clearImage" class="disabled" src="../images/clear.png" alt=" " />
-			<input type="image" id="setupImage" src="../images/setup.png" alt=" " />
-		</div>
-		<div id="form" class="hidden">
-			<form id="setupForm">
-				<fieldset id="URL">
-						<legend id="URLLegend"></legend>
-					<section>
-						<fieldset>
-							<label id="URLLabel" class="block" for="URLTextarea"></label>
-							<textarea id="URLTextarea" readonly="readonly"></textarea>
-						</fieldset>
-					</section>
-					<section>
-						<fieldset>
-							<label id="selectionLabel" class="block" for="selectionInput"></label>
-							<input id="selectionInput" type="text" readonly="readonly" />
-						</fieldset>
-					</section>
-				</fieldset>
-				<fieldset id="Options">
-					<legend id="optionsLegend"></legend>
-					<section>
-						<fieldset>
-							<label id="incrementLabel" class="inline" for="incrementInput"></label>
-							<input id="incrementInput" type="number" min="1" />
-							<input id="zerosInput" type="checkbox" />
-							<label id="zerosLabel" class="inline" for="zerosInput"></label>
-						</fieldset>
-					</section>
-				</fieldset>
-				<div id="formButtons">
-					<input id="acceptInput" type="button" value=" " />
-					<input id="cancelInput" type="button" value=" " />
-				</div>
-			</form>
-		</div>
+	  <div id="popup">
+		  <div id="popup-controls">
+			  <input id="next-plus-input" class="disabled" type="image" src="../images/increment.png" alt=""/>
+			  <input id="prev-minus-input" class="disabled" type="image" src="../images/decrement.png" alt=""/>
+			  <input id="clear-input" class="disabled" type="image" src="../images/clear.png" alt=""/>
+			  <input id="setup-input" type="image" src="../images/setup.png" alt=""/>
+		  </div>
+		  <div id="popup-expanded" class="hidden">
+  			<form id="popup-form">
+  				<fieldset id="url-fieldset">
+						<legend id="url-legend"></legend>
+  					<section>
+  						<fieldset>
+  							<label id="url-label" class="block" for="url-textarea"></label>
+  							<textarea id="url-textarea" readonly="readonly"></textarea>
+  						</fieldset>
+  					</section>
+  					<section>
+  						<fieldset>
+  							<label id="selection-label" class="block" for="selection-input"></label>
+  							<input id="selection-input" type="text" readonly="readonly"/>
+  						</fieldset>
+  					</section>
+  				</fieldset>
+  				<fieldset id="options-fieldset">
+  					<legend id="options-legend"></legend>
+  					<section>
+  						<fieldset>
+  							<label id="interval-label" class="inline" for="interval-input"></label>
+  							<input id="interval-input" type="number" min="1"/>
+  							<input id="zeros-input" type="checkbox"/>
+  							<label id="zeros-label" class="inline" for="zeros-input"></label>
+  						</fieldset>
+  					</section>
+  				</fieldset>
+  				<fieldset id="inputs-fieldset">
+  					<input id="accept-input" type="button" value=""/>
+  					<input id="cancel-input" type="button" value=""/>
+  				</fieldset>
+  			</form>
+		  </div>
+	  </div>
 		<script type="text/javascript" src="../js/popup.js"></script>
 	</body>
 </html>

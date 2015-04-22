@@ -1,8 +1,8 @@
 /*
 
-    Copyright (c) 2012 Roy Six
-    http://code.google.com/p/urli/
-    License: LGPL v3.0
+URL+N for Google Chrome
+Copyright (c) 2011-2015 Roy Six
+License: LGPL v3.0
 
 */
 
