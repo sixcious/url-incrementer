@@ -9,9 +9,7 @@ License: BSD
 
 @import url("google-chrome/chrome_shared.css");
 @import url("google-chrome/index.css");
-@import url("google-chrome/text_defaults.css");
-@import url("google-chrome/widgets.css");
-@import url("google-sample/generate-alert.css");
+@import url("google-sample/ui-helper.css");
 
 * {
 	margin: 0;

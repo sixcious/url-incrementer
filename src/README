@@ -1,21 +1,22 @@
 URL Next Plus
 _____________
 
-urli ("yur-lee") is a URL Incrementer that lets you increment or decrement
-digits in a URL. You can use it on gallery or thumbnail websites, forums, or
-basically any website that keeps its URLS organized sequentially by numbers.
-It's similar to the FireFox URL Flipper extension, and you can use shortcut
-keys and mouse buttons to increment automatically.
+URL Next Plus finds the next page link and lets you increment numbers in a
+URL. You can use it on gallery or thumbnail websites, forums, or basically any
+website that keeps its URLs organized sequentially. It's similar to the FireFox
+URL Flipper extension, and you can use shortcut keys and mouse buttons.
 
 Thanks to the following individuals:
-- Coolio Wolfus
-  2011-10-27
-  For providing so many useful suggestions and assisting with a bug fix.
 - Adam C
   2012-01-05
   For providing useful information about a potential initialization bug.
+- Coolio Wolfus
+  2011-10-27
+  For providing so many useful suggestions and assisting with a bug fix.
 
 Version History:
+- Version 3.0
+  
 - Version 2.2
   2015-03-23
   Fixed issue with urli not keeping enabled state.

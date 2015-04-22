@@ -11,7 +11,7 @@ License: BSD
 
 */
 
-console.log("urli popup starting");
+console.log("popup starting");
 
 // JavaScript Revealing Module Pattern
 
@@ -24,9 +24,12 @@ URLNP.Popup = URLNP.Popup || function () {
 		currentTab,
 		selectionStart = -1,
 		fieldsetGroups = document.querySelectorAll('#' + 'setupForm' + ' > fieldset'), // Nodelist containing cached reference to the fieldset groups.
+		uiHelper = new URLNP.UIHelper(),
 		
     /**
      * Loads the DOM content needed to display the popup.
+     * 
+     * @public
      */
 		DOMContentLoaded = function () {
 			console.log("\tfunction DOMContentLoaded");
@@ -34,27 +37,26 @@ URLNP.Popup = URLNP.Popup || function () {
 			// Note: You can also do (for example):
 			// document.getElementById("decrementImage").onclick = clickDecrement;
 			console.log("\t\tadding event listeners");
-			document.getElementById("next-plus-input").addEventListener("click", clickIncrement, false);
-			document.getElementById("prev-minus-input").addEventListener("click", clickDecrement, false);
+			document.getElementById("next-input").addEventListener("click", clickIncrement, false);
+			document.getElementById("prev-input").addEventListener("click", clickDecrement, false);
 			document.getElementById("clear-input").addEventListener("click", clickClear, false);
 			document.getElementById("setup-input").addEventListener("click", toggleForm, false);
 			document.getElementById("url-textarea").addEventListener("mouseup", handleURL, false);
 			document.getElementById("url-textarea").addEventListener("keyup", handleURL, false);
 			document.getElementById("accept-input").addEventListener("click", submitForm, false);
 			document.getElementById("cancel-input").addEventListener("click", toggleForm, false);
-			document.getElementById("popup-form").addEventListener("click", dispatchFormClick_.bind(this));
+			document.getElementById("popup-form").addEventListener("click", uiHelper.dispatchFormClick_.bind(this));
 			// Set localization text (i18n) from messages.json
 			console.log("\t\tadding i18n text");
-			document.getElementById("next-plus-input").title = chrome.i18n.getMessage("popup_next_plus_input_title");
-			document.getElementById("prev-minus-input").title = chrome.i18n.getMessage("popup_prev_minus_input_title");
-			document.getElementById("clear-butto").title = chrome.i18n.getMessage("popup_clear_input_title");
-			document.getElementById("setup-button").title = chrome.i18n.getMessage("popup_setup_input_title");
+			document.getElementById("next-input").title = chrome.i18n.getMessage("popup_next_input");
+			document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
+			document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
+			document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
 			document.getElementById("url-legened").innerText = chrome.i18n.getMessage("popup_url_legend");
 			document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
 			document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
 			document.getElementById("settings-legend").innerText = chrome.i18n.getMessage("popup_settings_legend");
 			document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
-			document.getElementById("zeros-label").innerText = chrome.i18n.getMessage("popup_zeros_label");
 			document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
 			document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
 			// Check the currentstate (enabled or disabled) and update the input
@@ -76,27 +78,24 @@ URLNP.Popup = URLNP.Popup || function () {
 		},
 		
 		
-		// Sets default values for elements in the form everytime the tab is
-		// updated or when the user clicks on the Setup image to get to the
-		// form.
-
+    /**
+     * Initializes the popup form each time the tab is updated or when the
+     * user clicks on the setup input to show the form.
+     * 
+     * @private
+     */ 
 		initForm = function (response) {
 			console.log("\tfunction initForm");
-
-			// Fill out the form elements' contents.
-			// Loads the default values.
-
+			// Fill out the form elements' contents and load the default values
 			selectionStart = response.selectionStart;
-			document.getElementById("URLTextarea").value = currentTab.url;
-			document.getElementById("URLTextarea").setSelectionRange(selectionStart, selectionStart + response.selection.length);
-			document.getElementById("selectionInput").value = response.selection;
-			document.getElementById("incrementInput").value = response.defaultIncrement;
-			document.getElementById("zerosInput").checked = response.defaultZeros === "1" ? true : false;
+			document.getElementById("url-textarea").value = currentTab.url;
+			document.getElementById("url-textarea").setSelectionRange(selectionStart, selectionStart + response.selection.length);
+			document.getElementById("selection-input").value = response.selection;
+			document.getElementById("interval-input").value = response.defaultIncrement;
 		},
 		
 		// Changes the class of the images to either disabled or enabled
 		// depending on the response (state of response.enabled).
-		
 		updateImages = function () {
 			console.log("\tfunction updateImages");
 			var imageNodeList,
@@ -135,30 +134,24 @@ URLNP.Popup = URLNP.Popup || function () {
 		},
 		
 		// Handle URL event on mouseup and onkeyup for selection.
-		
 		handleURL = function () {
 			console.log("\tfunction handleURL");
-
 			// Stores the selectionStart for later (to be returned to background.html).
-		
-			selectionStart = document.getElementById("URLTextarea").selectionStart;
-		
+			selectionStart = document.getElementById("url-textarea").selectionStart;
 			// Update the "selectionInput" element to show the selected text.
-			document.getElementById("selectionInput").value = window.getSelection().toString();
-			console.log("\t\tselectionInput.value=" + document.getElementById("selectionInput").value);
+			document.getElementById("selection-input").value = window.getSelection().toString();
+			console.log("\t\tselection-input.value=" + document.getElementById("selection-input").value);
 		},
 		
 		// Called when the user clicks on the Accept button on the form.  Checks
 		// to make sure there are no errors with any of the fields, and if not,
 		// passes the data back to the urli object in background.html.
-		
 		submitForm = function () {
 			console.log("\tfunction submitForm");
 			var errorMessage = [],
 				errorCount = 0,
-				selection = document.getElementById("selectionInput").value,
-				increment = document.getElementById("incrementInput").value,
-				zeros = document.getElementById("zerosInput").checked,
+				selection = document.getElementById("selection-input").value,
+				interval = document.getElementById("interval-input").value,
 				i,
 				length;
 		
@@ -183,33 +176,33 @@ URLNP.Popup = URLNP.Popup || function () {
 			// ERROR If the selection is blank.
 		
 			if (selection === "") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popupSelectionBlankError");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup-selection-blank-error");
 			}
 		
 			// ERROR If the selection is not a part of the URL.
 		
 			if (currentTab.url.indexOf(selection) === -1) {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popupSelectionNotInURLError");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup-selectionNotInURLError");
 			}
 		
-			// ERROR If the increment is not a number.
+			// ERROR If the interval is not a number.
 		
-			for (i = 0, length = increment.length; i < length; i++) {
-				if (increment.charCodeAt(i) < 48 || increment.charCodeAt(i) > 57) {
-					errorMessage[errorCount++] = chrome.i18n.getMessage("popupIncrementNaNError");
+			for (i = 0, length = interval.length; i < length; i++) {
+				if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
+					errorMessage[errorCount++] = chrome.i18n.getMessage("popup-increment-nan-error");
 					break;
 				}
 			}
 		
-			// ERROR If the increment is blank.
+			// ERROR If the interval is blank.
 		
-			if (increment === "") {
+			if (interval === "") {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popupIncrementBlankError");
 			}
 		
-			// ERROR If the increment is 0.
+			// ERROR If the interval is 0.
 		
-			if (increment === "0") {
+			if (interval === "0") {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popupIncrementZeroError");
 			}
 
@@ -217,7 +210,7 @@ URLNP.Popup = URLNP.Popup || function () {
 		
 			if (errorCount !== 0) {
 				console.log("\t\terrorMessage:" + errorMessage);
-				generateAlert_(errorMessage, false);
+				URLNP.GenerateAlert.generateAlert_(errorMessage, false);
 			}
 		
 			// Else there was not an error (successful)...
@@ -228,7 +221,7 @@ URLNP.Popup = URLNP.Popup || function () {
 				// (enabled) and hide the form by toggling it.
 				urli.enabled = true;
 				urli.tab = currentTab;
-				chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urli.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, increment: increment, zeros: zeros}, function (response) {});
+				chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urli.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, increment: increment}, function (response) {});
 				updateImages();
 				toggleForm();
 			}
@@ -273,33 +266,27 @@ URLNP.Popup = URLNP.Popup || function () {
 			}
 		},
 		
-		// Shows or hides the form.  For example, this is called each time the
-		// user presses the "Cancel" button to hide it and go back to the 
-		// initial images popup.  Or when the "Setup" Image is pressed to do the
-		// opposite.
-		
+		/**
+		 * Toggles the popup form. When the user clicks the setup input, the form
+		 * will expand and be visible. When the user clicks the Cancel input, the
+		 * form will be hidden and the popup controls view will return.
+		 */ 
 		toggleForm = function () {
 			console.log("\tfunction toggleForm");
-			var form = document.getElementById("form"),
-				images = document.getElementById("images");
-		
+			var form = document.getElementById("popup-form"),
+			    controls = document.getElementById("popup-controls");
 			console.log("\t\tform.style.display=" + form.style.display);
-
-			// Hide form, show images, reduce body (popup window) size.
-
 			if (form.style.display === "block") {
+  			// Hide form, show controls, reduce body (popup window) size
 				form.style.display = "none";
-				images.style.display = "inline";
+				controls.style.display = "inline";
 				document.body.style.width = "82px";
 				document.body.style.height = "16px";
 				document.body.style.background = "#EDECEB";
-			}
-		
-			// Show form, hide images, increase body (popup window) size, update tab
-		
-			else {
+			} else {
+  			// Show form, hide controls, increase body (popup window) size, update tab
 				form.style.display = "block";
-				images.style.display = "none";
+				controls.style.display = "none";
 				document.body.style.width = "auto" /*'583px' */;
 				document.body.style.height = "auto"/*'287px'*/;
 				document.body.style.background = "#FFFFFF";
@@ -310,14 +297,13 @@ URLNP.Popup = URLNP.Popup || function () {
 					}
 				);
 			}
-		},
-		
-
+		};
 
 		// Public methods list.
 		return {
 			DOMContentLoaded: DOMContentLoaded
 		};
+		
 }();
 
 // DOMContentLoaded will fire when the DOM is loaded but unlike "load" it does not wait for images, etc.

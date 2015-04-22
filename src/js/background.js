@@ -21,75 +21,113 @@ URLI.URLIncrementer = URLI.URLIncrementer || function () {};
 
 URLI.URLIncrementer.prototype = {
 
-	// Variables (default values)
+  enabled: false, // State of urli (urli is disabled when the user clicks clear)
+	tab: null, // The tab object (tab id and tab url)
+	selection: "", // The selected part of the URL that will be incremented
+	selectionStart: -1, // Start position of the selection relative to the URL
+	interval: 1, // The interval to increment (or decrement)
 
-	enabled:        false,	// State of urli (urli is disabled when the user clicks clear).
-	tab:            null,   // Tab structure (tab id and tab url).
-	selection:      "",		  // The selected part of the URL that will be incremented.
-	selectionStart: -1,	    // Start position of the selection relative to the URL.
-	increment:      1,		  // Amount to increment (or decrement).
-	zeros:          false,	// State of "zeros" (whether to keep leading 0s).
-
-	// Methods
-
+  /**
+   * Gets enabled.
+   * 
+   * @return enabled
+   */
 	getEnabled: function () {
 		return this.enabled;
 	},
 
+  /**
+   * Sets enabled.
+   * 
+   * @param enabled
+   */
 	setEnabled: function (enabled) {
 		this.enabled = enabled;
 	},
 
+  /**
+   * Gets tab.
+   * 
+   * @return tab
+   */
 	getTab: function () {
 		return this.tab;
 	},
 
+  /**
+   * Sets tab.
+   * 
+   * @param tab
+   */
 	setTab: function (tab) {
 		this.tab = tab;
 	},
 
+  /**
+   * Gets selection.
+   * 
+   * @return selection
+   */
 	getSelection: function () {
 		return this.selection;
 	},
 
+  /**
+   * Sets selection.
+   * 
+   * @param selection
+   */
 	setSelection: function (selection) {
 		this.selection = selection;
 	},
 
+  /**
+   * Gets selectionStart.
+   * 
+   * @return selectionStart
+   */
 	getSelectionStart: function () {
 		return this.selectionStart;
 	},
 
+  /**
+   * Sets selectionStart.
+   * 
+   * @param selectionStart
+   */
 	setSelectionStart: function (selectionStart) {
 		this.selectionStart = selectionStart;
 	},
 
-	getIncrement: function () {
-		return this.increment;
+  /**
+   * Gets interval.
+   * 
+   * @return interval
+   */
+	getInterval: function () {
+		return this.interval;
 	},
 
-	setIncrement: function (increment) {
-		this.increment = increment;
+  /**
+   * Sets interval.
+   * 
+   * @param interval
+   */
+	setInterval: function (interval) {
+		this.interval = interval;
 	},
 
-	getZeros: function () {
-		return this.zeros;
-	},
-
-	setZeros: function (zeros) {
-		this.zeros = zeros;
-	},
-
-	// Clear (resets values back to default)
-
+  /**
+   * Clears and resets the properties.
+   */ 
 	clear: function () {
 		this.enabled = false;
 		this.tab = null;
 		this.selection = "";
 		this.selectionStart = -1;
-		this.increment = 1;
-		this.zeros = false;
+		this.interval = 1;
 	}
+	
 };
 
 
@@ -127,7 +165,6 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 			localStorage.mouseFastDecrement = "0";
 			localStorage.advancedVisible = "1";
 			localStorage.defaultIncrement = "1";
-			localStorage.defaultZeros = "0";
 			localStorage.selectionAlgorithm = "1";
 		},
 
@@ -137,7 +174,7 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 		/**
 		 * 
 		 */
-		modifyURL = function (url, selectionString, selectionStart, increment, zeros, action) {
+		modifyURL = function (url, selectionString, selectionStart, interval, action) {
 			console.log("\tfunction modifyURL");
 			var	firstPartURL = url.substring(0, selectionStart),
 				secondPartURL = url.substring(selectionStart + selectionString.length),
@@ -188,9 +225,9 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 			     
 			  }
 				if (action === "Increment") {
-					selectionString = (selectionInteger + increment).toString();
+					selectionString = (selectionInteger + interval).toString();
 				} else if (action === "Decrement") {
-					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
+					selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 				}
 			}
 			// If there are leading zeros and the user wants to keep them.
@@ -207,11 +244,11 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 				}
 				if (action === "Increment") {
 					// selectionInteger already strips the zeros, we only care about the value here.
-					selectionString = (selectionInteger + increment).toString();
+					selectionString = (selectionInteger + interval).toString();
 				}
 				else if (action === "Decrement") {
 					// selectionInteger already strips the zeros, we only care about the value here.
-					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
+					selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 				}
 				// Just gets the length (without the zeros) before doing the increment/decrement.
 				// VERSION 2 FIX:  Added "selectionInteger == 0 ? 0" in case of 0, we should just
@@ -253,9 +290,9 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 
 			else {
 				if (action === "Increment") {
-					selectionString = (selectionInteger + increment).toString();
+					selectionString = (selectionInteger + interval).toString();
 				} else if (action === "Decrement") {
-					selectionString = (selectionInteger - increment >= 0 ? selectionInteger - increment : 0).toString();
+					selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 				}
 			}
 

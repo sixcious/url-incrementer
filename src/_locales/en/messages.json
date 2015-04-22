@@ -14,22 +14,22 @@
 		"description": "Extension title (tool tip)."
 	},
 
-	"popup_next_plus_button_title": {
+	"popup_next_input": {
 		"message": "Next +",
 		"description": "Title (tool tip) for the increment button image when hovered."
 	},
 
-	"popup_prev_minus_button_title": {
+	"popup_prev_input": {
 		"message": "Prev -",
 		"description": "Title (tool tip) for the decrement button image when hovered."
 	},
 
-	"popup_clear_button_title": {
+	"popup_clear_input_title": {
 		"message": "Clear",
 		"description": "Title (tool tip) for the clear button image when hovered."
 	},
 
-	"popup_setup_button_title": {
+	"popup_setup_input_title": {
 		"message": "Setup",
 		"description": "Title (tool tip) for the setup button image when hovered."
 	},
@@ -57,11 +57,6 @@
 	"popup_interval_label": {
 		"message": "Interval",
 		"description": "Form label for Increment input number."
-	},
-
-	"popup_zeros_label": {
-		"message": "Keep Leading Zero Digits",
-		"description": "Form label for Zeros input checkbox."
 	},
 
 	"popup_accept_input": {
@@ -125,7 +120,7 @@
 	},
 
 	"options_shortcuts_keys_description": {
-		"message": "Click on the text boxes and then press the key you want to assign as a shortcut.  If you would like, you can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a key combination shortcut.  \"Fast\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. If you would like, you can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a key combination shortcut. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
 		"description": "Shortcut Keys paragraph."
 	},
 
@@ -145,7 +140,7 @@
 	},
 
 	"options_shortcuts_mouse_buttons_description": {
-		"message": "Select a mouse button to associate it with a shortcut.  If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if urli is active on the page.  \"Fast\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"message": "Select a mouse button to associate it with a shortcut. If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if urli is active on the page. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
 		"description": "Shortcut Mouse Buttons paragraph."
 	},
 
@@ -205,7 +200,7 @@
 	},
 
 	"options_advanced_default_settings_description": {
-		"message": "You can have urli choose these values by default each time you enter Setup or when you use \"Fast\" functionality.",
+		"message": "You can have urli choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
 		"description": "Default paragraph."
 	},
 

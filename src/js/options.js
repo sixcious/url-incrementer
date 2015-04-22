@@ -108,7 +108,6 @@ URLI.Options = URLI.Options || function () {
 			document.getElementById("defaultSubHeader").innerText = chrome.i18n.getMessage("optionsDefaultSubHeader");
 			document.getElementById("defaultP").innerText = chrome.i18n.getMessage("optionsDefaultP");
 			document.getElementById("defaultIncrementLabel").innerText = chrome.i18n.getMessage("popupIncrementLabel");
-			document.getElementById("defaultZerosLabel").innerText = chrome.i18n.getMessage("popupZerosLabel");	
 			document.getElementById("selectionAlgorithmSubHeader").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmSubHeader");
 			document.getElementById("selectionAlgorithmP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmP");
 			document.getElementById("selectionAlgorithmCommonPrefixesLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesLabel");

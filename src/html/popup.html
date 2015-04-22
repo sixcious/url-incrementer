@@ -10,46 +10,40 @@
 	<body>
 	  <div id="popup">
 		  <div id="popup-controls">
-			  <input id="next-plus-input" class="disabled" type="image" src="../images/increment.png" alt=""/>
-			  <input id="prev-minus-input" class="disabled" type="image" src="../images/decrement.png" alt=""/>
+			  <input id="prev-input" class="disabled" type="image" src="../images/prev.png" alt=""/>
+			  <input id="next-input" class="disabled" type="image" src="../images/next.png" alt=""/>
 			  <input id="clear-input" class="disabled" type="image" src="../images/clear.png" alt=""/>
 			  <input id="setup-input" type="image" src="../images/setup.png" alt=""/>
 		  </div>
-		  <div id="popup-expanded" class="hidden">
-  			<form id="popup-form">
-  				<fieldset id="url-fieldset">
-						<legend id="url-legend"></legend>
-  					<section>
-  						<fieldset>
-  							<label id="url-label" class="block" for="url-textarea"></label>
-  							<textarea id="url-textarea" readonly="readonly"></textarea>
-  						</fieldset>
-  					</section>
-  					<section>
-  						<fieldset>
-  							<label id="selection-label" class="block" for="selection-input"></label>
-  							<input id="selection-input" type="text" readonly="readonly"/>
-  						</fieldset>
-  					</section>
-  				</fieldset>
-  				<fieldset id="options-fieldset">
-  					<legend id="options-legend"></legend>
-  					<section>
-  						<fieldset>
-  							<label id="interval-label" class="inline" for="interval-input"></label>
-  							<input id="interval-input" type="number" min="1"/>
-  							<input id="zeros-input" type="checkbox"/>
-  							<label id="zeros-label" class="inline" for="zeros-input"></label>
-  						</fieldset>
-  					</section>
-  				</fieldset>
-  				<fieldset id="inputs-fieldset">
-  					<input id="accept-input" type="button" value=""/>
-  					<input id="cancel-input" type="button" value=""/>
-  				</fieldset>
+			<form id="popup-form" class="hidden">
+				<fieldset id="url-fieldset">
+					<legend id="url-legend"></legend>
+					<section>
+						<fieldset>
+							<label id="url-label" class="block" for="url-textarea"></label>
+							<textarea id="url-textarea" readonly="readonly"></textarea>
+						</fieldset>
+					</section>
+					<section>
+						<fieldset>
+							<label id="selection-label" class="inline" for="selection-input"></label>
+							<input id="selection-input" type="text" readonly="readonly"/>
+						</fieldset>
+					</section>
+					<section>
+						<fieldset>
+							<label id="interval-label" class="inline" for="interval-input"></label>
+							<input id="interval-input" type="number" min="1"/>
+						</fieldset>
+					</section>
+				</fieldset>
+				<fieldset id="inputs-fieldset">
+					<input id="accept-input" type="button" value=""/>
+					<input id="cancel-input" type="button" value=""/>
+				</fieldset>
   			</form>
-		  </div>
 	  </div>
+		<script type="text/javascript" src="../js/google-sample/ui-helper.js"></script>
 		<script type="text/javascript" src="../js/popup.js"></script>
 	</body>
 </html>
