@@ -1,35 +1,8 @@
 URL Next Plus
 _____________
 
-URL Next Plus finds the next page link and lets you increment numbers in a
-URL. You can use it on gallery or thumbnail websites, forums, or basically any
-website that keeps its URLs organized sequentially. It's similar to the FireFox
-URL Flipper extension, and you can use shortcut keys and mouse buttons.
-
-Thanks to the following individuals:
-- Adam C
-  2012-01-05
-  For providing useful information about a potential initialization bug.
-- Coolio Wolfus
-  2011-10-27
-  For providing so many useful suggestions and assisting with a bug fix.
-
-Version History:
-- Version 3.0
-  
-- Version 2.2
-  2015-03-23
-  Fixed issue with urli not keeping enabled state.
-- Version 2.1
-  2013-09-25
-  Updated to manifest 2 in order to work with latest Chrome release. This release
-  will not work with older versions of Chrome browser! After reading reviews, the
-  "Fast" functionality is not set by default and added more event keys to be pressed
-  (by default).
-- Version 2
-  2012-03-11
-  Added Shortcut Mouse Buttons, Fast Functionality, and Advanced Options.
-- Version 1
-  2011-10-22
-  First Release.
-EOF
+URL Next Plus finds the next page or link and lets you "+" (increment) part of
+the URL. You can use it on gallery or thumbnail websites, forums, or basically
+any website that keeps its URLs organized sequentially by numbers or letters.
+You can use shortcut keys and mouse buttons and it comes with a lot of options.
+It's similar to the FireFox URL Flipper extension.

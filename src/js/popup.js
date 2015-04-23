@@ -20,7 +20,7 @@ URLNP.Popup = URLNP.Popup || function () {
   
 	console.log("function URLNP.Popup");
 
-	var urli,
+	var urlnp,
 		currentTab,
 		selectionStart = -1,
 		uiHelper = URLNP.UIHelper,
@@ -61,8 +61,8 @@ URLNP.Popup = URLNP.Popup || function () {
 			// images accordingly
 			chrome.runtime.sendMessage({greeting: "getUrli"},
 				function (response) {
-					urli = response;
-					console.log("\t\tgetting urli (urli.enabled=" + urli.enabled+")");
+					urlnp = response;
+					console.log("\t\tgetting urlnp (urlnp.enabled=" + urlnp.enabled+")");
 					updateImages();
 				}
 			);
@@ -112,19 +112,19 @@ URLNP.Popup = URLNP.Popup || function () {
 				imageNodeList = document.querySelectorAll(".enabled");
 			}
 		
-			// If urli is enabled, images should be enabled.
+			// If urlnp is enabled, images should be enabled.
 		
-			if (urli.enabled) {
-				console.log("\t\turli enabled so images enabled");
+			if (urlnp.enabled) {
+				console.log("\t\turlnp enabled so images enabled");
 				for (i = 0, length = imageNodeList.length; i < length; i++) {
 					imageNodeList[i].className = "enabled";
 				}
 			}
 		
-			// Else urli is not enabled, images should be disabled.
+			// Else urlnp is not enabled, images should be disabled.
 		
 			else {
-				console.log("\t\turli disabled so images disabled");
+				console.log("\t\turlnp disabled so images disabled");
 				for (i = 0, length = imageNodeList.length; i < length; i++) {
 					imageNodeList[i].className = "disabled";
 				}
@@ -143,7 +143,7 @@ URLNP.Popup = URLNP.Popup || function () {
 		
 		// Called when the user clicks on the Accept button on the form.  Checks
 		// to make sure there are no errors with any of the fields, and if not,
-		// passes the data back to the urli object in background.html.
+		// passes the data back to the urlnp object in background.html.
 		submitForm = function () {
 			console.log("\tfunction submitForm");
 			var errorMessage = [],
@@ -213,51 +213,51 @@ URLNP.Popup = URLNP.Popup || function () {
 			// Else there was not an error (successful)...
 		
 			else {
-				console.log("\t\tsuccess -- now enabling urli");
-				// Stores the form's information into urli, update the images
+				console.log("\t\tsuccess -- now enabling urlnp");
+				// Stores the form's information into urlnp, update the images
 				// (enabled) and hide the form by toggling it.
-				urli.enabled = true;
-				urli.tab = currentTab;
-				chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urli.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, increment: increment}, function (response) {});
+				urlnp.enabled = true;
+				urlnp.tab = currentTab;
+				chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, increment: increment}, function (response) {});
 				updateImages();
 				toggleForm();
 			}
 		},
 		
-		// User clicked on Increment image; need to find out if urli is enabled
-		// and if the current tab is urli's tab before sending a request to
+		// User clicked on Increment image; need to find out if urlnp is enabled
+		// and if the current tab is urlnp's tab before sending a request to
 		// increment via modifyUrliAndUpdateTab.
 		
 		clickIncrement = function () {
 			console.log("\tfunction clickIncrement");
-			if (urli.enabled && urli.tab.id === currentTab.id) {
-				console.log("\t\tincrementing urli");
+			if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
+				console.log("\t\tincrementing urlnp");
 				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Increment"}, function (response) {});
 			}
 		},
 		
-		// User clicked on Decrement image; need to find out if urli is enabled
-		// and if the current tab is urli's tab before sending a request to
+		// User clicked on Decrement image; need to find out if urlnp is enabled
+		// and if the current tab is urlnp's tab before sending a request to
 		// decrement via modifyU?rliAndUpdateTab.
 		
 		clickDecrement = function () {
 			console.log("\tfunction clickDecrement");
-			if (urli.enabled && urli.tab.id === currentTab.id) {
-				console.log("\t\tdecrementing urli");
+			if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
+				console.log("\t\tdecrementing urlnp");
 				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Decrement"}, function (response) {});
 			}
 		},
 		
-		// Send request to clear urli's info and then go to
+		// Send request to clear urlnp's info and then go to
 		// updateImages to set images to "off."  Enabled should always
-		// return false so a request to fetch urli seems redundant, but
+		// return false so a request to fetch urlnp seems redundant, but
 		// unavoidable without adding a new function...
 		
 		clickClear = function () {
 			console.log("\tfunction clickClear");
-			if (urli.enabled) {
-				console.log("\t\tclearing urli");
-				urli.enabled = false;
+			if (urlnp.enabled) {
+				console.log("\t\tclearing urlnp");
+				urlnp.enabled = false;
 				chrome.runtime.sendMessage({greeting: "clearUrli"}, function (response) {});
 				updateImages();
 			}

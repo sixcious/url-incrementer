@@ -170,7 +170,7 @@ URLNP.Background = URLNP.Background || function () {
 		},
 
 		// Modifies the selection to either increment or decrement (depending
-		// on what the action is), and then updates the url in urli's tab
+		// on what the action is), and then updates the url in urlnp's tab
 		// object.  Called by modifyUrliAndUpdateTab.
 		/**
 		 * 
@@ -297,7 +297,7 @@ URLNP.Background = URLNP.Background || function () {
 				}
 			}
 
-			// Update the tab object with the updated url and save it in urli.
+			// Update the tab object with the updated url and save it in urlnp.
 			// Also save the "new" selectionString (which was just incremented
 			// or decremented in this function).
 
@@ -312,9 +312,9 @@ URLNP.Background = URLNP.Background || function () {
 		updateTab = function () {
 			console.log("\tfunction updateTab");
 			chrome.tabs.getSelected(null, function(tab) {
-				if (tab.id === urli.getTab().id) {
-					console.log("\t\tupdating tab id:" + urli.getTab().id);
-					chrome.tabs.update(tab.id, {url:urli.getTab().url});
+				if (tab.id === urlnp.getTab().id) {
+					console.log("\t\tupdating tab id:" + urlnp.getTab().id);
+					chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
 				}
 			});
 		},
@@ -327,13 +327,13 @@ URLNP.Background = URLNP.Background || function () {
 
 		updateListeners = function (tabId, changeInfo, tab) {
 			console.log("\tfunction updateListeners");
-			if (!urli.getEnabled()) { // Forces the listener to be removed on this tab.
+			if (!urlnp.getEnabled()) { // Forces the listener to be removed on this tab.
 				console.log("\t\treturn: nothing because removing listener");
 				chrome.tabs.onUpdated.removeListener(arguments.callee);
 				return;
 			}
-			if (tabId !== urli.getTab().id) {
-				console.log("\t\treturn: nothing because tabId !== urli.getTab().id");
+			if (tabId !== urlnp.getTab().id) {
+				console.log("\t\treturn: nothing because tabId !== urlnp.getTab().id");
 				return;
 			}
 			if (localStorage.keyEnabled === "1") {
@@ -434,41 +434,41 @@ URLNP.Background = URLNP.Background || function () {
 
 		onPopupFormAccept = function (request) {
 			console.log("\tfunction onPopupFormAccept");
-			urli.setEnabled(request.enabled);
-			urli.setTab(request.tab);
-			urli.setSelection(request.selection);
-			urli.setSelectionStart(request.selectionStart);
-			urli.setIncrement(request.increment);
-			urli.setZeros(request.zeros);
+			urlnp.setEnabled(request.enabled);
+			urlnp.setTab(request.tab);
+			urlnp.setSelection(request.selection);
+			urlnp.setSelectionStart(request.selectionStart);
+			urlnp.setIncrement(request.increment);
+			urlnp.setZeros(request.zeros);
 			if (localStorage.keyEnabled === "1") {
 				console.log("\t\tadding keyListener");
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function(response) {});
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "addKeyListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function(response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addKeyListener"}, function (response) {});
 			}
 			if (localStorage.mouseEnabled === "1") {
 				console.log("\t\tadding mouseListener");
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function(response) {});
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "addMouseListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function(response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addMouseListener"}, function (response) {});
 			}
 		},
 
 		onOptionsFormSave = function () {
 			console.log("\tfunction onOptionsFormSave");
-			if (urli.getEnabled()) {
+			if (urlnp.getEnabled()) {
 				console.log("\t\tremoving keyListener");
 				console.log("\t\tremoving mouseListener");
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "removeMouseListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeMouseListener"}, function (response) {});
 			}
-			if (urli.getEnabled() && localStorage.keyEnabled === "1") {
+			if (urlnp.getEnabled() && localStorage.keyEnabled === "1") {
 				console.log("\t\tadding keyListener");
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function (response) {});
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "addKeyListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addKeyListener"}, function (response) {});
 			}
-			if (urli.getEnabled() && localStorage.mouseEnabled === "1") {
+			if (urlnp.getEnabled() && localStorage.mouseEnabled === "1") {
 				console.log("\t\tadding mouseListener");
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function (response) {});
-				chrome.tabs.sendMessage(urli.getTab().id, {greeting: "addMouseListener"}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function (response) {});
+				chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addMouseListener"}, function (response) {});
 			}
 		},
 
@@ -479,17 +479,17 @@ URLNP.Background = URLNP.Background || function () {
 
 		getUrli = function (sendResponse) {
 			console.log("\tfunction getUrli");
-			sendResponse({enabled: urli.getEnabled(), tab: urli.getTab(), selection: urli.getSelection(), selectionStart: urli.getSelectionStart(), increment: urli.getIncrement(), zeros: urli.getZeros()});
+			sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), increment: urlnp.getIncrement(), zeros: urlnp.getZeros()});
 		},
 
 		clearUrli = function () {
 			console.log("\tfunction clearUrli");
 			console.log("\t\tremoving keyListener");
 			console.log("\t\tremoving mouseListener");
-			chrome.tabs.sendMessage(urli.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
-			chrome.tabs.sendMessage(urli.getTab().id, {greeting: "removeMouseListener"}, function (response) {});
+			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
+			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeMouseListener"}, function (response) {});
 			chrome.tabs.onUpdated.removeListener(updateListeners);
-			urli.clear();
+			urlnp.clear();
 		},
 
 		processSelection = function (request, sendResponse) {
@@ -505,11 +505,11 @@ URLNP.Background = URLNP.Background || function () {
 
 		modifyUrliAndUpdateTab = function (request) {
 			console.log("\tfunction modifyUrliAndUpdateTab");
-			var	urlAndSelection = modifyURL(urli.getTab().url, urli.getSelection(), urli.getSelectionStart(), parseInt(urli.getIncrement(), 10), urli.getZeros(), request.action),
-				tab = urli.getTab();
+			var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getIncrement(), 10), urlnp.getZeros(), request.action),
+				tab = urlnp.getTab();
 			tab.url = urlAndSelection.url;
-			urli.setTab(tab);					// Update urli's tab.
-			urli.setSelection(urlAndSelection.selectionString);	// Update urli's selection.
+			urlnp.setTab(tab);					// Update urlnp's tab.
+			urlnp.setSelection(urlAndSelection.selectionString);	// Update urlnp's selection.
 			updateTab();
 
 			if (localStorage.keyEnabled === "1" || localStorage.mouseEnabled === "1") {
@@ -567,8 +567,8 @@ URLNP.Background = URLNP.Background || function () {
 // If first run, initialize localStorage and go to options.html.
 
 if (localStorage.firstRunFlag === undefined) {
-	console.log("urli first run");
-	URLI.Background.initLocalStorage();
+	console.log("urlnp first run");
+	URLNP.Background.initLocalStorage();
 	chrome.tabs.create({url: chrome.extension.getURL("../html/options.html")});
 }
 
@@ -578,13 +578,13 @@ chrome.runtime.onMessage.addListener(
 
 	function (request, sender, sendResponse) {
 
-		var U = URLI.Background;
+		var U = URLNP.Background;
 
 		switch (request.greeting) {
 
 			// From:      popup
 			// Request:   User clicks the Accept button on popup's form.
-			// Action:    Set the form data into urli and request content_script to add listeners (if applicable).
+			// Action:    Set the form data into urlnp and request content_script to add listeners (if applicable).
 			// Callback:  None.
 
 			case "onPopupFormAccept":
@@ -616,9 +616,9 @@ chrome.runtime.onMessage.addListener(
 				break;
 
 			// From:      popup
-			// Request:   Increment/Decrement/Clear buttons are pressed and we need to know if urli is enabled.
-			// Action:    None (this is only a request to get urli).
-			// Callback:  Respond with all of urli's properties.
+			// Request:   Increment/Decrement/Clear buttons are pressed and we need to know if urlnp is enabled.
+			// Action:    None (this is only a request to get urlnp).
+			// Callback:  Respond with all of urlnp's properties.
 
 			case "getUrli":
 				console.log("\t!request:getUrli");
@@ -627,8 +627,8 @@ chrome.runtime.onMessage.addListener(
 				break;
 
 			// From:      popup and user
-			// Request:   Clear button is pressed or shortcut is activated and we need to clear urli's contents.
-			// Action:    Disable everything by calling clear() on urli and removing all listeners.
+			// Request:   Clear button is pressed or shortcut is activated and we need to clear urlnp's contents.
+			// Action:    Disable everything by calling clear() on urlnp and removing all listeners.
 			// Callback:  None.
 
 			case "clearUrli":

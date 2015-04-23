@@ -135,7 +135,7 @@
 	},
 
 	"options_shortcuts_mouse_buttons_description": {
-		"message": "Select a mouse button to associate it with a shortcut. If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if urli is active on the page. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"message": "Select a mouse button to associate it with a shortcut. If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if URL Next Plus is active on the page. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
 		"description": "Shortcut Mouse Buttons paragraph."
 	},
 
@@ -195,7 +195,7 @@
 	},
 
 	"options_advanced_default_settings_description": {
-		"message": "You can have urli choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
+		"message": "You can have URL Next Plus choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
 		"description": "Default paragraph."
 	},
 
@@ -205,7 +205,7 @@
 	},
 
 	"options_advanced_selection_algorithm_settings_description": {
-		"message": "Help urli correctly guess what part of the URL you want to increment.  You can do this by specifying the best selection algorithm for urli to use.",
+		"message": "Help URL Next Plus correctly guess what part of the URL you want to increment.  You can do this by specifying the best selection algorithm for URL Next Plus to use.",
 		"description": "Selection Algorithm paragraph."
 	},
 

@@ -6,14 +6,14 @@ License: LGPL v3.0
 
 */
 
-console.log("urli content_script starting");
+console.log("urlnp content_script starting");
 
-var URLI = URLI || {};
-URLI.ContentScript = URLI.ContentScript || function() {
+var URLNP = URLNP || {};
+URLNP.ContentScript = URLNP.ContentScript || function() {
 
 	//"use strict";
 
-	console.log("function URLI.ContentScript");
+	console.log("function URLNP.ContentScript");
 
 		// Flags.
 
@@ -306,7 +306,7 @@ chrome.runtime.onMessage.addListener(
 
 	function (request, sender, sendResponse) {
 
-		var U = URLI.ContentScript;
+		var U = URLNP.ContentScript;
 
 		switch (request.greeting) {
 
@@ -333,7 +333,7 @@ chrome.runtime.onMessage.addListener(
 				break;
 
 			// From:      background
-			// Request:   Just enabled urli or the user saved options.
+			// Request:   Just enabled urlnp or the user saved options.
 			// Action:    Set the keys to the user-defined keyCodes/keyEvents from localStorage.
 			// Callback:  None.
 
@@ -371,7 +371,7 @@ chrome.runtime.onMessage.addListener(
 				break;
 
 			// From:      background
-			// Request:   Just enabled urli or the user saved options.
+			// Request:   Just enabled urlnp or the user saved options.
 			// Action:    Set the mouse buttons to the user-defined mouse codes from localStorage.
 			// Callback:  None.
 

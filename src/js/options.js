@@ -11,14 +11,14 @@ License: BSD
 
 */
 
-console.log("urli options starting");
+console.log("urlnp options starting");
 
-var URLI = URLI || {};
-URLI.Options = URLI.Options || function () {
+var URLNP = URLNP || {};
+URLNP.Options = URLNP.Options || function () {
 
 	//"use strict";
 
-	console.log("function URLI.Options");
+	console.log("function URLNP.Options");
 
 		// Flags.
 
@@ -500,7 +500,7 @@ URLI.Options = URLI.Options || function () {
 			}
 		},
 		
-		// Shows some information about urli (called when urli image is clicked).
+		// Shows some information about urlnp (called when urlnp image is clicked).
 		
 		secret = function () {
 			console.log("\tfunction secret");
@@ -547,13 +547,13 @@ URLI.Options = URLI.Options || function () {
 		};
 
 		// Public methods list.
-		console.log("\treturn (URLI.Options)");
+		console.log("\treturn (URLNP.Options)");
 
 		return {
 			DOMContentLoaded: DOMContentLoaded
 		};
 }();
 
-document.addEventListener("DOMContentLoaded", URLI.Options.DOMContentLoaded, false);
+document.addEventListener("DOMContentLoaded", URLNP.Options.DOMContentLoaded, false);
 
 // refactor keys to key and mousebuttons to mouse?
