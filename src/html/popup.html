@@ -15,7 +15,7 @@
 			  <input id="clear-input" class="disabled" type="image" src="../images/clear.png" alt=""/>
 			  <input id="setup-input" type="image" src="../images/setup.png" alt=""/>
 		  </div>
-			<form id="popup-form" class="hidden">
+	    <form id="popup-form" class="hidden">
 				<fieldset id="url-fieldset">
 					<legend id="url-legend"></legend>
 					<section>
@@ -25,25 +25,23 @@
 						</fieldset>
 					</section>
 					<section>
-						<fieldset>
-							<label id="selection-label" class="inline" for="selection-input"></label>
+						<fieldset class="inline">
+							<label id="selection-label" class="block" for="selection-input"></label>
 							<input id="selection-input" type="text" readonly="readonly"/>
 						</fieldset>
-					</section>
-					<section>
-						<fieldset>
-							<label id="interval-label" class="inline" for="interval-input"></label>
+						<fieldset class="inline">
+							<label id="interval-label" class="block" for="interval-input"></label>
 							<input id="interval-input" type="number" min="1"/>
 						</fieldset>
 					</section>
 				</fieldset>
-				<fieldset id="inputs-fieldset">
+				<div id="inputs-fieldset">
 					<input id="accept-input" type="button" value=""/>
 					<input id="cancel-input" type="button" value=""/>
-				</fieldset>
-  			</form>
+				</div>
+			</form>
 	  </div>
-		<script type="text/javascript" src="../js/google-sample/ui-helper.js"></script>
+		<script type="text/javascript" src="../js/sample/ui-helper.js"></script>
 		<script type="text/javascript" src="../js/popup.js"></script>
 	</body>
 </html>

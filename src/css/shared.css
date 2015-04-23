@@ -7,9 +7,9 @@ License: BSD
 
 */
 
-@import url("google-chrome/chrome_shared.css");
-@import url("google-chrome/index.css");
-@import url("google-sample/ui-helper.css");
+@import url("chromium/chrome_shared.css");
+@import url("chromium/index.css");
+@import url("sample/ui-helper.css");
 
 * {
 	margin: 0;
@@ -22,11 +22,19 @@ License: BSD
 	font-size: 14px;
 	font-weight: normal;
 }
-
+*/
 .hidden {
 	display: none;
 }
 
-.shadow {
+.inline {
+  display: inline;
+}
+
+.block {
+  display: block;
+}
+
+/*.shadow {
 	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }*/

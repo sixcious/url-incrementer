@@ -9,19 +9,19 @@
  * Use of this source code is governed by a 
  * found in the LICENSE file. */
 
-console.log("urli background starting");
+console.log("URLNP BACKGROUND STARTING");
 
-var URLI = URLI || {};
+var URLNP = URLNP || {};
 
 // Prototype Constructor
 
-URLI.URLIncrementer = URLI.URLIncrementer || function () {};
+URLNP.URLNextPlus = URLNP.URLNextPlus || function () {};
 
 // Prototype Variables And Functions
 
-URLI.URLIncrementer.prototype = {
+URLNP.URLNextPlus.prototype = {
 
-  enabled: false, // State of urli (urli is disabled when the user clicks clear)
+  enabled: false, // State of object (object is disabled when the user clicks clear)
 	tab: null, // The tab object (tab id and tab url)
 	selection: "", // The selected part of the URL that will be incremented
 	selectionStart: -1, // Start position of the selection relative to the URL
@@ -131,11 +131,12 @@ URLI.URLIncrementer.prototype = {
 };
 
 
-URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
+// Revealing Module Pattern.
+URLNP.Background = URLNP.Background || function () {
 
-	console.log("function URLI.Background");
+	console.log("function URLNP.Background");
 
-	var	urli = new URLI.URLIncrementer(),
+	var	urlnp = new URLNP.URLNextPlus(),
 
 		// Initializes the localStorage with the default values.  Called when
 		// the extension is first started and whenever the user presses the
@@ -212,7 +213,7 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
             default:
             var temp = selectionString.charCodeAt(i);
               if (temp >= 65 && temp <= 90) {
-                selectionString.charC
+               // selectionString.charC
               }
               
             break;
@@ -230,8 +231,8 @@ URLI.Background = URLI.Background || function () { // Revealing Module Pattern.
 					selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 				}
 			}
-			// If there are leading zeros and the user wants to keep them.
-			else if (selectionString.charAt(0) === '0' && zeros) {
+			// Leading 0s
+			else if (selectionString.charAt(0) === '0') {
 				// Count how many leading zeros there are.
 				for (i = 0; i < selectionStringLength; i++) {
 					// If we encounter the first non-zero digit, stop counting

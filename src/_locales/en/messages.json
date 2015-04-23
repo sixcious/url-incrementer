@@ -69,28 +69,23 @@
 		"description": "Form cancel button."
 	},
 
-	"popup_selection_blank_error": {
-		"message": "Selection cannot be blank.",
+	"popup_selection_empty_error": {
+		"message": "Selection can't be empty",
 		"description": "Form error message if user does not select a part of the URL."
 	},
 
 	"popup_selection_notinurl_error": {
-		"message": "Selection must be a part of the URL.",
+		"message": "Selection must be a part of the URL",
 		"description": "Form error message if user is somehow able to select something that isn't part of the URL."
 	},
 
-	"popup_increment_nan_error": {
-		"message": "Increment can only contain numbers.",
-		"description": "Form error message if user tries to enter non-digits for Increment."
-	},
-
-	"popup_increment_blank_error": {
-		"message": "Increment cannot be blank.",
+	"popup_interval_empty_error": {
+		"message": "Interval can't be empty",
 		"description": "Form error message if user does not enter a number for Increment."
 	},
 
-	"popup_increment_zero_error": {
-		"message": "Increment cannot be zero.",
+	"popup_interval_0_error": {
+		"message": "Interval can't be 0",
 		"description": "Form error message if user tries to enter zero for Increment."
 	},
 

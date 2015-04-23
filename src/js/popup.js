@@ -23,8 +23,7 @@ URLNP.Popup = URLNP.Popup || function () {
 	var urli,
 		currentTab,
 		selectionStart = -1,
-		fieldsetGroups = document.querySelectorAll('#' + 'setupForm' + ' > fieldset'), // Nodelist containing cached reference to the fieldset groups.
-		uiHelper = new URLNP.UIHelper(),
+		uiHelper = URLNP.UIHelper,
 		
     /**
      * Loads the DOM content needed to display the popup.
@@ -52,10 +51,9 @@ URLNP.Popup = URLNP.Popup || function () {
 			document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
 			document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
 			document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-			document.getElementById("url-legened").innerText = chrome.i18n.getMessage("popup_url_legend");
+			document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
 			document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
 			document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
-			document.getElementById("settings-legend").innerText = chrome.i18n.getMessage("popup_settings_legend");
 			document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
 			document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
 			document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
@@ -176,41 +174,40 @@ URLNP.Popup = URLNP.Popup || function () {
 			// ERROR If the selection is blank.
 		
 			if (selection === "") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popup-selection-blank-error");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_empty_error");
 			}
 		
 			// ERROR If the selection is not a part of the URL.
 		
 			if (currentTab.url.indexOf(selection) === -1) {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popup-selectionNotInURLError");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_notinurl_error");
 			}
 		
 			// ERROR If the interval is not a number.
-		
-			for (i = 0, length = interval.length; i < length; i++) {
-				if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
-					errorMessage[errorCount++] = chrome.i18n.getMessage("popup-increment-nan-error");
-					break;
-				}
-			}
+		// 	for (i = 0, length = interval.length; i < length; i++) {
+		// 		if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
+		// 			errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_nan_error");
+		// 			break;
+		// 		}
+		// 	}
 		
 			// ERROR If the interval is blank.
 		
 			if (interval === "") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popupIncrementBlankError");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_empty_error");
 			}
 		
 			// ERROR If the interval is 0.
 		
 			if (interval === "0") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popupIncrementZeroError");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_0_error");
 			}
 
 			// If there was an error, show the error message
 		
 			if (errorCount !== 0) {
 				console.log("\t\terrorMessage:" + errorMessage);
-				URLNP.GenerateAlert.generateAlert_(errorMessage, false);
+				uiHelper.generateAlert_(errorMessage, false);
 			}
 		
 			// Else there was not an error (successful)...
