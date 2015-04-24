@@ -1,21 +1,13 @@
-/*
+/**
+ * TODO
+ */ 
 
-URL+N for Google Chrome
-Copyright (c) 2011-2015 Roy Six
-License: LGPL v3.0
+console.log("popup.js start");
+var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
-Derived from:
-Proxy Settings, a sample Google Chrome extension
-Copyright (c) 2009, Google Inc.
-License: BSD
-
-*/
-
-console.log("popup starting");
-
-// JavaScript Revealing Module Pattern
-
-var URLNP = URLNP || {};
+/**
+ * TODO
+ */ 
 URLNP.Popup = URLNP.Popup || function () {
   
 	console.log("function URLNP.Popup");
@@ -174,7 +166,7 @@ URLNP.Popup = URLNP.Popup || function () {
 			// ERROR If the selection is blank.
 		
 			if (selection === "") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_empty_error");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_blank_error");
 			}
 		
 			// ERROR If the selection is not a part of the URL.
@@ -183,18 +175,18 @@ URLNP.Popup = URLNP.Popup || function () {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_notinurl_error");
 			}
 		
-			// ERROR If the interval is not a number.
-		// 	for (i = 0, length = interval.length; i < length; i++) {
-		// 		if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
-		// 			errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_nan_error");
-		// 			break;
-		// 		}
-		// 	}
+			// ERROR If the interval is negative (-) or not a number.
+			for (i = 0, length = interval.length; i < length; i++) {
+				if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
+					errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_negative_error");
+					break;
+				}
+			}
 		
 			// ERROR If the interval is blank.
 		
 			if (interval === "") {
-				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_empty_error");
+				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_blank_error");
 			}
 		
 			// ERROR If the interval is 0.

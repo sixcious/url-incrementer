@@ -1,14 +1,13 @@
-/*
+/**
+ * TODO
+ */ 
 
-URL+N for Google Chrome
-Copyright (c) 2011-2015 Roy Six
-License: LGPL v3.0
+console.log("content_script.js start");
+var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
-*/
-
-console.log("urlnp content_script starting");
-
-var URLNP = URLNP || {};
+/**
+ * TODO
+ */ 
 URLNP.ContentScript = URLNP.ContentScript || function() {
 
 	//"use strict";

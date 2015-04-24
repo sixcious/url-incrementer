@@ -5,7 +5,7 @@
 	},
 
 	"description": {
-		"message": "Finds the next URL and lets you increment numbers in a URL",
+		"message": "Finds the next URL and lets you + (increment) numbers in a URL",
 		"description": "Extension description."
 	},
 
@@ -24,18 +24,23 @@
 		"description": "Title (tool tip) for the decrement button image when hovered."
 	},
 
-	"popup_clear_input_title": {
+	"popup_clear_input": {
 		"message": "Clear",
 		"description": "Title (tool tip) for the clear button image when hovered."
 	},
 
-	"popup_setup_input_title": {
+	"popup_setup_input": {
 		"message": "Setup",
 		"description": "Title (tool tip) for the setup button image when hovered."
 	},
+	
+	"popup_link_legend": {
+		"message": "Use link=\"rel\"?",
+		"description": "TODO"
+	},
 
 	"popup_url_legend": {
-		"message": "Select the part of the URL to increment",
+		"message": "Select the part of the URL to modify",
 		"description": "Form legend for URL fieldset."
 	},
 
@@ -69,8 +74,8 @@
 		"description": "Form cancel button."
 	},
 
-	"popup_selection_empty_error": {
-		"message": "Selection can't be empty",
+	"popup_selection_blank_error": {
+		"message": "Selection can't be blank",
 		"description": "Form error message if user does not select a part of the URL."
 	},
 
@@ -79,9 +84,14 @@
 		"description": "Form error message if user is somehow able to select something that isn't part of the URL."
 	},
 
-	"popup_interval_empty_error": {
-		"message": "Interval can't be empty",
+	"popup_interval_blank_error": {
+		"message": "Interval can't be blank",
 		"description": "Form error message if user does not enter a number for Increment."
+	},
+	
+	"popup_interval_negative_error": {
+		"message": "Interval can't be a negative number",
+		"description": "TODO"
 	},
 
 	"popup_interval_0_error": {
@@ -198,9 +208,30 @@
 		"message": "You can have URL Next Plus choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
 		"description": "Default paragraph."
 	},
+	
+	"options_advanced_scan_link_priortization_settings": {
+		"message": "Page Link Prioritization Settings",
+		"description": "Selection Algorithm Options sub header."
+	},
+	
+	"options_advanced_priortization_settings_description": {
+		"message": "You can set the priority order of which links URL Next Plus uses after it looks at the page for the next and previous links",
+		"description": "TODO"
+	},
+	
+	"options_advanced_prioritization_settings__common_prefixes_label": {
+		"message": "Common Prefixes",
+		"description": "Common Prefixes Selection Algorithm label."
+	},
+
+	"options_advanced_selection_algorithm_common_prefixes_description": {
+		"message": "First prioritize finding common prefixes in the URL that usually come before digits.\nCurrently supported prefixes:\"page=\", \"=\", and \"/\"\n(Recommended.)",
+		"description": "Common Prefixes Selection Algorithm paragraph."
+	},
+	
 
 	"options_advanced_selection_algorithm_settings": {
-		"message": "Selection Algorithm Options",
+		"message": "Selection Algorithm Settings",
 		"description": "Selection Algorithm Options sub header."
 	},
 

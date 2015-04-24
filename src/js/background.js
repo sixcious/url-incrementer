@@ -1,182 +1,61 @@
-/* Copyright (c) 2012 The Chromium Authors. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be
- * found in the LICENSE file. */
+/**
+ * TODO
+ */ 
 
-/* This file holds CSS that should be shared, in theory, by all user-visible
- * chrome:// pages. */
- 
-/* Copyright (c) 2011 Roy Six
- * Use of this source code is governed by a 
- * found in the LICENSE file. */
+console.log("background.js start");
+var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
-console.log("URLNP BACKGROUND STARTING");
-
-var URLNP = URLNP || {};
-
-// Prototype Constructor
-
-URLNP.URLNextPlus = URLNP.URLNextPlus || function () {};
-
-// Prototype Variables And Functions
-
-URLNP.URLNextPlus.prototype = {
-
-  enabled: false, // State of object (object is disabled when the user clicks clear)
-	tab: null, // The tab object (tab id and tab url)
-	selection: "", // The selected part of the URL that will be incremented
-	selectionStart: -1, // Start position of the selection relative to the URL
-	interval: 1, // The interval to increment (or decrement)
-
-  /**
-   * Gets enabled.
-   * 
-   * @return enabled
-   */
-	getEnabled: function () {
-		return this.enabled;
-	},
-
-  /**
-   * Sets enabled.
-   * 
-   * @param enabled
-   */
-	setEnabled: function (enabled) {
-		this.enabled = enabled;
-	},
-
-  /**
-   * Gets tab.
-   * 
-   * @return tab
-   */
-	getTab: function () {
-		return this.tab;
-	},
-
-  /**
-   * Sets tab.
-   * 
-   * @param tab
-   */
-	setTab: function (tab) {
-		this.tab = tab;
-	},
-
-  /**
-   * Gets selection.
-   * 
-   * @return selection
-   */
-	getSelection: function () {
-		return this.selection;
-	},
-
-  /**
-   * Sets selection.
-   * 
-   * @param selection
-   */
-	setSelection: function (selection) {
-		this.selection = selection;
-	},
-
-  /**
-   * Gets selectionStart.
-   * 
-   * @return selectionStart
-   */
-	getSelectionStart: function () {
-		return this.selectionStart;
-	},
-
-  /**
-   * Sets selectionStart.
-   * 
-   * @param selectionStart
-   */
-	setSelectionStart: function (selectionStart) {
-		this.selectionStart = selectionStart;
-	},
-
-  /**
-   * Gets interval.
-   * 
-   * @return interval
-   */
-	getInterval: function () {
-		return this.interval;
-	},
-
-  /**
-   * Sets interval.
-   * 
-   * @param interval
-   */
-	setInterval: function (interval) {
-		this.interval = interval;
-	},
-
-  /**
-   * Clears and resets the properties.
-   */ 
-	clear: function () {
-		this.enabled = false;
-		this.tab = null;
-		this.selection = "";
-		this.selectionStart = -1;
-		this.interval = 1;
-	}
-	
-};
-
-
-// Revealing Module Pattern.
+/**
+ * TODO
+ */ 
 URLNP.Background = URLNP.Background || function () {
+  
+	console.log("\tURLNP.Background()");
+	
+	var	urlnp = new URLNP.URLNextPlus(), // URL Next Plus object
 
-	console.log("function URLNP.Background");
-
-	var	urlnp = new URLNP.URLNextPlus(),
-
-		// Initializes the localStorage with the default values.  Called when
-		// the extension is first started and whenever the user presses the
-		// Reset button in the Options.
-
+    /**
+     * Initializes the localStorage with the default values. This function runs
+     * when the extension is first loaded and whenever the user presses the
+     * Reset button on the Options page.
+     * 
+     * @public
+     */ 
 		initLocalStorage = function () {
-			console.log("\tfunction initLocalStorage");
+			console.log("\t\tinitLocalStorage()");
 			localStorage.firstRunFlag = "1";
 			localStorage.keyEnabled = "1";
-			localStorage.keyFastEnabled = "1";
-			localStorage.keyEventIncrement = "0";
-			localStorage.keyCodeIncrement = "39";
-			localStorage.keyEventDecrement = "0";
-			localStorage.keyCodeDecrement = "37";
+			localStorage.keyQuickEnabled = "1";
+			localStorage.keyEventNext = "0";
+			localStorage.keyCodeNext = "39";
+			localStorage.keyEventPrev = "0";
+			localStorage.keyCodePrev = "37";
 			localStorage.keyEventClear = "0";
 			localStorage.keyCodeClear = "13";
-			localStorage.keyEventFastIncrement = "7";
-			localStorage.keyCodeFastIncrement = "39";
-			localStorage.keyEventFastDecrement = "7";
-			localStorage.keyCodeFastDecrement = "37";
+			localStorage.keyEventQuickNext = "7";
+			localStorage.keyCodeQuickNext = "39";
+			localStorage.keyEventQuickPrev = "7";
+			localStorage.keyCodeQuickPrev = "37";
 			localStorage.mouseEnabled = "0";
-			localStorage.mouseFastEnabled = "0";
-			localStorage.mouseIncrement = "0";
-			localStorage.mouseDecrement = "0";
+			localStorage.mouseQuickEnabled = "0";
+			localStorage.mouseNext = "0";
+			localStorage.mousePrev = "0";
 			localStorage.mouseClear = "0";
-			localStorage.mouseFastIncrement = "0";
-			localStorage.mouseFastDecrement = "0";
+			localStorage.mouseQuickNext = "0";
+			localStorage.mouseQuickPrev = "0";
 			localStorage.advancedVisible = "1";
 			localStorage.defaultIncrement = "1";
 			localStorage.selectionAlgorithm = "1";
 		},
 
-		// Modifies the selection to either increment or decrement (depending
-		// on what the action is), and then updates the url in urlnp's tab
-		// object.  Called by modifyUrliAndUpdateTab.
 		/**
+		 * Modifies the URL by the user's selection by either incrementing or
+		 * decrementing the selection. The URL is then updated in the tab object.
 		 * 
+		 * @public
 		 */
 		modifyURL = function (url, selectionString, selectionStart, interval, action) {
-			console.log("\tfunction modifyURL");
+			console.log("\t\tmodifyURL()");
 			var	firstPartURL = url.substring(0, selectionStart),
 				secondPartURL = url.substring(selectionStart + selectionString.length),
 				selectionInteger = parseInt(selectionString, 10), // Base 10 needed due to bug with parseInt for leading zeros
@@ -187,21 +66,27 @@ URLNP.Background = URLNP.Background || function () {
 				paddedZeros = "",
 				length,
 				i,
+				leading0s = false,
 				alphanumeric = false;
+				
 			// The user somehow was able to submit the form without properly
 			// selecting the selection from the URL textArea.
 			if (selectionStart < 0) {
 				return; // URL won't change.
 			}
 			
-			// TODO: Add letter increment here
+			// Check the contents of the selection
+			if (selectionString.charAt(0) === '0') {
+			  leading0s = true;
+			}
 			for (i = 0; i < selectionStringLength; i++) {
 				if (selectionString.charCodeAt(i) < 48 || selectionString.charCodeAt(i) > 57) {
-				  letters = true;
+				  alphanumeric = true;
 					break;
 				}
 			}
-			// If there are letters in the selection
+			
+			// Alphanumeric Modification
 			if (alphanumeric) {
 			  var lastChar = 0;
 		    for (i = selectionStringLength - 1; i >= 0; i--) {
@@ -232,7 +117,7 @@ URLNP.Background = URLNP.Background || function () {
 				}
 			}
 			// Leading 0s
-			else if (selectionString.charAt(0) === '0') {
+			else if (leading0s) {
 				// Count how many leading zeros there are.
 				for (i = 0; i < selectionStringLength; i++) {
 					// If we encounter the first non-zero digit, stop counting
@@ -479,7 +364,7 @@ URLNP.Background = URLNP.Background || function () {
 
 		getUrli = function (sendResponse) {
 			console.log("\tfunction getUrli");
-			sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), increment: urlnp.getIncrement(), zeros: urlnp.getZeros()});
+			sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
 		},
 
 		clearUrli = function () {
@@ -505,7 +390,7 @@ URLNP.Background = URLNP.Background || function () {
 
 		modifyUrliAndUpdateTab = function (request) {
 			console.log("\tfunction modifyUrliAndUpdateTab");
-			var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getIncrement(), 10), urlnp.getZeros(), request.action),
+			var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
 				tab = urlnp.getTab();
 			tab.url = urlAndSelection.url;
 			urlnp.setTab(tab);					// Update urlnp's tab.

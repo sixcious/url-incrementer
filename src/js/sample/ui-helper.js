@@ -1,9 +1,13 @@
+/**
+ * TODO
+*/ 
 
-console.log("generate alert starting");
+console.log("ui-helper.js start");
+var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
-// JavaScript Revealing Module Pattern
-
-var URLNP = URLNP || {};
+/**
+ * TODO
+ */ 
 URLNP.UIHelper = URLNP.UIHelper || function () {
   
   		var fieldsetGroups = document.querySelectorAll('form > fieldset'); // Nodelist containing cached reference to the fieldset groups.

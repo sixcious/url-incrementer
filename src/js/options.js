@@ -1,19 +1,13 @@
-/*
+/**
+ * TODO
+ */ 
 
-URL+N for Google Chrome
-Copyright (c) 2011-2015 Roy Six
-License: LGPL v3.0
+console.log("options.js start");
+var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
-Derived from:
-Proxy Settings, a sample Google Chrome extension
-Copyright (c) 2009, Google Inc.
-License: BSD
-
-*/
-
-console.log("urlnp options starting");
-
-var URLNP = URLNP || {};
+/**
+ * TODO
+ */ 
 URLNP.Options = URLNP.Options || function () {
 
 	//"use strict";
