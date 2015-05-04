@@ -99,7 +99,7 @@
 		"description": "Form error message if user tries to enter zero for Increment."
 	},
 
-	"options": {
+	"options_title": {
 		"message": "Options",
 		"description": "The options page's title."
 	},
@@ -120,8 +120,8 @@
 	},
 
 	"options_shortcuts_enable_quick_keys_label": {
-		"message": "Enable Fast",
-		"description": "Fast Shortcut Keys checkbox label."
+		"message": "Enable Quick Keys",
+		"description": "Quick Shortcut Keys checkbox label."
 	},
 
 	"options_shortcuts_keys_description": {
@@ -207,6 +207,11 @@
 	"options_advanced_default_settings_description": {
 		"message": "You can have URL Next Plus choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
 		"description": "Default paragraph."
+	},
+	
+	"options_interval_label": {
+		"message": "Interval",
+		"description": "Form label for Increment input number."
 	},
 	
 	"options_advanced_scan_link_priortization_settings": {

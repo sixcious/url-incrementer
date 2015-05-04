@@ -7,7 +7,7 @@
 	"icons": { "16": "images/icon16.png", "48": "images/icon48.png", "128": "images/icon128.png" },
 	"background": { "scripts": ["js/urlnextplus.js", "js/background.js"], "persistent": true },
 	"browser_action": { "default_title": "__MSG_title__", "default_icon": "images/icon19.png", "default_popup": "html/popup.html"},
-	"content_scripts": [{"matches": ["http://*/*", "https://*/*"], "run_at": "document_start", "js": ["js/content_script.js"]}],
+	"content_scripts": [{"matches": ["http://*/*", "https://*/*"], "run_at": "document_start", "js": ["js/content-scripts/shortcuts.js" ,"js/content-scripts/scan-links.js"]}],
 	"options_page": "html/options.html",
-	"permissions": ["tabs"]
+	"permissions": ["storage", "tabs"]
 }

@@ -9,150 +9,163 @@ var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
  * TODO
  */ 
 URLNP.Options = URLNP.Options || function () {
-
-	//"use strict";
-
+	
 	console.log("function URLNP.Options");
-
-		// Flags.
-
-	var	FLAG_KEY_NONE     = 0x0, // 0000
-		FLAG_KEY_ALT      = 0x1, // 0001
-		FLAG_KEY_CTRL     = 0x2, // 0010
-		FLAG_KEY_SHIFT    = 0x4, // 0100
-		FLAG_KEY_META     = 0x8, // 1000
-		FLAG_MOUSE_NONE   = 0X0, // 00
-
-		// Keys.
-
-		keyCodeIncrement,
-		keyEventIncrement,
-		keyCodeDecrement,
-		keyEventDecrement,
-		keyCodeClear,
-		keyEventClear,
-		keyCodeFastIncrement,
-		keyEventFastIncrement,
-		keyCodeFastDecrement,
-		keyEventFastDecrement,
-
-		// Called from body onload.
-
-		initOptions = function () {
-			console.log("\tfunction initOptions");
-
-			// i18n for messages.json.
-
-			i18n();
 	
-			// Populate the form.
+	var	FLAG_KEY_NONE = 0x0, // 0000
+  	  FLAG_KEY_ALT = 0x1, // 0001
+  		FLAG_KEY_CTRL = 0x2, // 0010
+  		FLAG_KEY_SHIFT = 0x4, // 0100
+  		FLAG_KEY_META = 0x8, // 1000
+  		FLAG_MOUSE_NONE = 0X0, // 00
+  		KEY_CODE_STRING_MAP = { // Map for key codes that don't have a String value
+  		  "8": "Backspace",
+  		  "9": "Tab",
+  		  "13": "Enter",	
+  		  // "16": "Shift",
+  		  // "17": "Ctrl",	
+  		  // "18": "Alt",
+  		  "19": "Pause",	
+  		  "20": "Caps Lock",
+  		  "27": "Escape",	
+  		  "32": "Space",
+  		  "33": "Page Up",	
+  		  "34": "Page Down",
+  		  "35": "End",	
+  		  "36": "Home",
+  		  "37": "Left",	
+  		  "38": "Up",
+  		  "39": "Right",	
+  		  "40": "Down",
+  		  "45": "Insert",	
+  		  "46": "Delete",
+  		  "186": ";",	
+  		  "187": "=",
+  		  "188": ",",	
+  		  "189": "-",
+  		  "190": ".",	
+  		  "191": "/",
+  		  "192": "`",	
+  		  "219": "[",
+  		  "220": "\\",	
+  		  "221": "]",
+  		  "222": "'"
+  		},
+  		// keyCodeIncrement,
+  		// keyEventIncrement,
+  		// keyCodeDecrement,
+  		// keyEventDecrement,
+  		// keyCodeClear,
+  		// keyEventClear,
+  		// keyCodeFastIncrement,
+  		// keyEventFastIncrement,
+  		// keyCodeFastDecrement,
+  		// keyEventFastDecrement,
 
-			populateForm();
-		},
-
-		// i18n (Internationalization) from messages.json.
+  /**
+   * Initializes the options page. This method is called from the body onload.
+   * It initializes the i18n (internationalization) from messages.json and
+   * populates the options form.
+   */
+  initOptions = function () {
+  	console.log("\tfunction initOptions");
+  	i18n();
+  	populateForm();
+  },
 	
-		i18n = function () {
-			console.log("\tfunction i18n");
-			document.getElementById("options").innerText = chrome.i18n.getMessage("options");
-			document.getElementById("optionsShortcuts").innerText = chrome.i18n.getMessage("optionsShortcuts");
-			document.getElementById("optionsAdvanced").innerText = chrome.i18n.getMessage("optionsAdvanced");
-
-			document.getElementById("keyHeader").innerText = chrome.i18n.getMessage("optionsKeyHeader");
-			document.getElementById("keyLabel").innerText = chrome.i18n.getMessage("optionsKeyLabel");
-			document.getElementById("keyFastLabel").innerText = chrome.i18n.getMessage("optionsKeyFastLabel");
-			document.getElementById("keyP").innerText = chrome.i18n.getMessage("optionsKeyP");
-			document.getElementById("keyIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyIncrementLabel");
-			document.getElementById("keyDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyDecrementLabel");
-			document.getElementById("keyClearLabel").innerText = chrome.i18n.getMessage("optionsKeyClearLabel");
-			document.getElementById("keyFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastIncrementLabel");
-			document.getElementById("keyFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastDecrementLabel");
+	/**
+	 * TODO
+	 * i18n (Internationalization) from messages.json.
+	 */
+  i18n = function () {
+  	console.log("\tfunction i18n");
+  	document.getElementById("title").innerText = chrome.i18n.getMessage("options_title");
+  	document.getElementById("shortcuts").innerText = chrome.i18n.getMessage("options_shortcuts");
+  	document.getElementById("advanced").innerText = chrome.i18n.getMessage("options_advanced");
+  	document.getElementById("keyHeader").innerText = chrome.i18n.getMessage("options_shortcuts_keys");
+  	document.getElementById("keyLabel").innerText = chrome.i18n.getMessage("options_shortcuts_enable_keys_label");
+  	document.getElementById("keyFastLabel").innerText = chrome.i18n.getMessage("options_shortcuts_enable_quick_keys_label");
+  	document.getElementById("keyP").innerText = chrome.i18n.getMessage("optionsKeyP");
+  	document.getElementById("keyIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyIncrementLabel");
+  	document.getElementById("keyDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyDecrementLabel");
+  	document.getElementById("keyClearLabel").innerText = chrome.i18n.getMessage("optionsKeyClearLabel");
+  	document.getElementById("keyFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastIncrementLabel");
+  	document.getElementById("keyFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastDecrementLabel");
+  	document.getElementById("mouseHeader").innerText = chrome.i18n.getMessage("optionsMouseHeader");
+  	document.getElementById("mouseLabel").innerText = chrome.i18n.getMessage("optionsMouseLabel");
+  	document.getElementById("mouseFastLabel").innerText = chrome.i18n.getMessage("optionsMouseFastLabel");
+  	document.getElementById("mouseP").innerText = chrome.i18n.getMessage("optionsMouseP");
+  	document.getElementById("mouseIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseIncrementLabel");
+  	document.getElementById("mouseDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseDecrementLabel");
+  	document.getElementById("mouseClearLabel").innerText = chrome.i18n.getMessage("optionsMouseClearLabel");
+  	document.getElementById("mouseFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastIncrementLabel");
+  	document.getElementById("mouseFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastDecrementLabel");
+  	document.getElementById("mouseLeftIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  	document.getElementById("mouseMiddleIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  	document.getElementById("mouseRightIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  	document.getElementById("mouseNoneIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  	document.getElementById("mouseLeftDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  	document.getElementById("mouseMiddleDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  	document.getElementById("mouseRightDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  	document.getElementById("mouseNoneDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  	document.getElementById("mouseLeftClearLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  	document.getElementById("mouseMiddleClearLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  	document.getElementById("mouseRightClearLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  	document.getElementById("mouseNoneClearLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  	document.getElementById("mouseLeftFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  	document.getElementById("mouseMiddleFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  	document.getElementById("mouseRightFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  	document.getElementById("mouseNoneFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  	document.getElementById("mouseLeftFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  	document.getElementById("mouseMiddleFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  	document.getElementById("mouseRightFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  	document.getElementById("mouseNoneFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  	document.getElementById("advancedHeader").innerText = chrome.i18n.getMessage("optionsAdvancedHeader");
+  	document.getElementById("defaultSubHeader").innerText = chrome.i18n.getMessage("optionsDefaultSubHeader");
+  	document.getElementById("defaultP").innerText = chrome.i18n.getMessage("optionsDefaultP");
+  	document.getElementById("defaultIntervalLabel").innerText = chrome.i18n.getMessage("options_interval_label");
+  	document.getElementById("selectionAlgorithmSubHeader").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmSubHeader");
+  	document.getElementById("selectionAlgorithmP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmP");
+  	document.getElementById("selectionAlgorithmCommonPrefixesLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesLabel");
+  	document.getElementById("selectionAlgorithmCommonPrefixesP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesP");
+  	document.getElementById("selectionAlgorithmLastNumberLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberLabel");
+  	document.getElementById("selectionAlgorithmLastNumberP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberP");
+  	document.getElementById("saveInput").value = chrome.i18n.getMessage("optionsSaveInput");
+  	document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput");
+  },
 	
-			document.getElementById("mouseHeader").innerText = chrome.i18n.getMessage("optionsMouseHeader");
-			document.getElementById("mouseLabel").innerText = chrome.i18n.getMessage("optionsMouseLabel");
-			document.getElementById("mouseFastLabel").innerText = chrome.i18n.getMessage("optionsMouseFastLabel");
-			document.getElementById("mouseP").innerText = chrome.i18n.getMessage("optionsMouseP");
-			document.getElementById("mouseIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseIncrementLabel");
-			document.getElementById("mouseDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseDecrementLabel");
-			document.getElementById("mouseClearLabel").innerText = chrome.i18n.getMessage("optionsMouseClearLabel");
-			document.getElementById("mouseFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastIncrementLabel");
-			document.getElementById("mouseFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastDecrementLabel");
-			document.getElementById("mouseLeftIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-			document.getElementById("mouseMiddleIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-			document.getElementById("mouseRightIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-			document.getElementById("mouseNoneIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-			document.getElementById("mouseLeftDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-			document.getElementById("mouseMiddleDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-			document.getElementById("mouseRightDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-			document.getElementById("mouseNoneDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-			document.getElementById("mouseLeftClearLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-			document.getElementById("mouseMiddleClearLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-			document.getElementById("mouseRightClearLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-			document.getElementById("mouseNoneClearLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-			document.getElementById("mouseLeftFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-			document.getElementById("mouseMiddleFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-			document.getElementById("mouseRightFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-			document.getElementById("mouseNoneFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-			document.getElementById("mouseLeftFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-			document.getElementById("mouseMiddleFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-			document.getElementById("mouseRightFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-			document.getElementById("mouseNoneFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-
-			document.getElementById("advancedHeader").innerText = chrome.i18n.getMessage("optionsAdvancedHeader");
-			document.getElementById("defaultSubHeader").innerText = chrome.i18n.getMessage("optionsDefaultSubHeader");
-			document.getElementById("defaultP").innerText = chrome.i18n.getMessage("optionsDefaultP");
-			document.getElementById("defaultIncrementLabel").innerText = chrome.i18n.getMessage("popupIncrementLabel");
-			document.getElementById("selectionAlgorithmSubHeader").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmSubHeader");
-			document.getElementById("selectionAlgorithmP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmP");
-			document.getElementById("selectionAlgorithmCommonPrefixesLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesLabel");
-			document.getElementById("selectionAlgorithmCommonPrefixesP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesP");
-			document.getElementById("selectionAlgorithmLastNumberLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberLabel");
-			document.getElementById("selectionAlgorithmLastNumberP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberP");
-	
-			document.getElementById("saveInput").value = chrome.i18n.getMessage("optionsSaveInput");
-			document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput");
-		},
-	
-		populateForm = function () {
-			console.log("\tfunction populateForm");
-
-			// Key.
-
-			keyCodeIncrement = parseInt(localStorage.keyCodeIncrement);
-			keyEventIncrement = parseInt(localStorage.keyEventIncrement);
-			keyCodeDecrement = parseInt(localStorage.keyCodeDecrement);
-			keyEventDecrement = parseInt(localStorage.keyEventDecrement);
-			keyCodeClear = parseInt(localStorage.keyCodeClear);
-			keyEventClear = parseInt(localStorage.keyEventClear);
-			keyCodeFastIncrement = parseInt(localStorage.keyCodeFastIncrement);
-			keyEventFastIncrement = parseInt(localStorage.keyEventFastIncrement);
-			keyCodeFastDecrement = parseInt(localStorage.keyCodeFastDecrement);
-			keyEventFastDecrement = parseInt(localStorage.keyEventFastDecrement);
-			document.getElementById("keyInput").checked = localStorage.keyEnabled === "1";
-			document.getElementById("keyFastInput").checked = localStorage.keyFastEnabled === "1";
-			writeToText(document.getElementById("keyIncrementInput"), keyEventIncrement, keyCodeIncrement);
-			writeToText(document.getElementById("keyDecrementInput"), keyEventDecrement, keyCodeDecrement);
-			writeToText(document.getElementById("keyClearInput"), keyEventClear, keyCodeClear);
-			writeToText(document.getElementById("keyFastIncrementInput"), keyEventFastIncrement, keyCodeFastIncrement);
-			writeToText(document.getElementById("keyFastDecrementInput"), keyEventFastDecrement, keyCodeFastDecrement);
-
-			// Mouse.
-
-			document.getElementById("mouseInput").checked = localStorage.mouseEnabled === "1";
-			document.getElementById("mouseFastInput").checked = localStorage.mouseFastEnabled === "1";
-			setRadio(document.getElementsByName("mouseIncrement"), localStorage.mouseIncrement);
-			setRadio(document.getElementsByName("mouseDecrement"), localStorage.mouseDecrement);
-			setRadio(document.getElementsByName("mouseClear"), localStorage.mouseClear);
-			setRadio(document.getElementsByName("mouseFastIncrement"), localStorage.mouseFastIncrement);
-			setRadio(document.getElementsByName("mouseFastDecrement"), localStorage.mouseFastDecrement);
-
-			// Advanced.
-
-			document.getElementById("defaultIncrementInput").value = localStorage.defaultIncrement;
-			document.getElementById("defaultZerosInput").checked = localStorage.defaultZeros === "1";
-			setRadio(document.getElementsByName("selectionAlgorithm"), localStorage.selectionAlgorithm);
-
-		},
+	populateForm = function () {
+		console.log("\tfunction populateForm");
+    chrome.storage.sync.get(null, function (o) {
+  		// Key.
+  		// keyCodeIncrement = parseInt(o.keyCodeIncrement);
+  		// keyEventIncrement = parseInt(o.keyEventIncrement);
+  		// keyCodeDecrement = parseInt(o.keyCodeDecrement);
+  		// keyEventDecrement = parseInt(localStorage.keyEventDecrement);
+  		// keyCodeClear = parseInt(localStorage.keyCodeClear);
+  		// keyEventClear = parseInt(localStorage.keyEventClear);
+  		// keyCodeFastIncrement = parseInt(localStorage.keyCodeFastIncrement);
+  		// keyEventFastIncrement = parseInt(localStorage.keyEventFastIncrement);
+  		// keyCodeFastDecrement = parseInt(localStorage.keyCodeFastDecrement);
+  		// keyEventFastDecrement = parseInt(localStorage.keyEventFastDecrement);
+  		document.getElementById("keyInput").checked = o.keyEnabled;
+  		document.getElementById("keyFastInput").checked = o.keyQuickEnabled;
+  		writeToText(document.getElementById("keyIncrementInput"), o.keyNext[0], o.keyNext[1]);
+  		writeToText(document.getElementById("keyDecrementInput"), o.keyPrev[0], o.keyPrev[1]);
+  		writeToText(document.getElementById("keyClearInput"), o.keyClear[0], o.keyClear[1]);
+  		writeToText(document.getElementById("keyFastIncrementInput"), o.keyQuickNext[0], o.keyQuickNext[1]);
+  		writeToText(document.getElementById("keyFastDecrementInput"), o.keyQuickPrev[0], o.keyQuickPrev[1]);
+  		document.getElementById("mouseInput").checked = o.mouseEnabled;
+  		document.getElementById("mouseFastInput").checked = o.mouseQuickEnabled;
+  		setRadio(document.getElementsByName("mouseIncrement"), o.mouseNext);
+  		setRadio(document.getElementsByName("mouseDecrement"), o.mousePrev);
+  		setRadio(document.getElementsByName("mouseClear"), o.mouseClear);
+  		setRadio(document.getElementsByName("mouseFastIncrement"), o.mouseQuickNext);
+  		setRadio(document.getElementsByName("mouseFastDecrement"), o.mouseQuickPrev);
+  		document.getElementById("defaultIntervalInput").value = o.defaultInterval;
+  		setRadio(document.getElementsByName("selectionAlgorithm"), o.selectionAlgorithm);
+    });
+	},
 	
 		// Wrapper function to save options (called when Save button is clicked).
 	
@@ -175,7 +188,6 @@ URLNP.Options = URLNP.Options || function () {
 		
 		saveOptions = function () {
 			console.log("\tfunction saveOptions");
-
 			var mouseIncrement = parseInt(getRadio(document.getElementsByName("mouseIncrement"))),
 				mouseDecrement = parseInt(getRadio(document.getElementsByName("mouseDecrement"))),
 				mouseClear = parseInt(getRadio(document.getElementsByName("mouseClear"))),
@@ -348,115 +360,20 @@ URLNP.Options = URLNP.Options || function () {
 			console.log("\t\tkeyEvent=" + keyEvent);
 			console.log("\t\tkeyCode=" + keyCode);
 
-			var message = "";
+			var message = "",
+			    keyString = KEY_CODE_STRING_MAP[keyCode];
 	
 			// keyEvent.
 	
-			message = (keyEvent & FLAG_KEY_ALT)        ? message + "Alt + "   : message;
-			message = (keyEvent & FLAG_KEY_CTRL)  >> 1 ? message + "Ctrl + "  : message;
-			message = (keyEvent & FLAG_KEY_SHIFT) >> 2 ? message + "Shift + " : message;
-			message = (keyEvent & FLAG_KEY_META)  >> 3 ? message + "Meta + "  : message;
+			message = (keyEvent & FLAG_KEY_ALT)        ? message + "Alt "   : message;
+			message = (keyEvent & FLAG_KEY_CTRL)  >> 1 ? message + "Ctrl "  : message;
+			message = (keyEvent & FLAG_KEY_SHIFT) >> 2 ? message + "Shift " : message;
+			message = (keyEvent & FLAG_KEY_META)  >> 3 ? message + "Meta "  : message;
+
 	
 			// keyCode.
-	
-			switch (keyCode) {
-				case 8:
-					message += "Backspace";
-					break;
-				case 9:
-					message += "Tab";
-					break;
-				case 13:
-					message += "Enter";
-					break;
-				case 16:
-					message += "Shift";
-					break;
-				case 17:
-					message += "Ctrl";
-					break;
-				case 18:
-					message += "Alt";
-					break;
-				case 19:
-					message += "Pause";
-					break;
-				case 20:
-					message += "Caps Lock";
-					break;
-				case 27:
-					message += "Escape";
-					break;
-				case 32:
-					message += "Space";
-					break;
-				case 33:
-					message += "Page Up";
-					break;
-				case 34:
-					message += "Page Down";
-					break;
-				case 35:
-					message += "End";
-					break;
-				case 36:
-					message += "Home";
-					break;
-				case 37:
-					message += "Left";
-					break;
-				case 38:
-					message += "Up";
-					break;
-				case 39:
-					message += "Right";
-					break;
-				case 40:
-					message += "Down";
-					break;
-				case 45:
-					message += "Insert";
-					break;
-				case 46:
-					message += "Delete";
-					break;
-				case 186:
-					message += ";";
-					break;
-				case 187:
-					message += "=";
-					break;
-				case 188:
-					message += ",";
-					break;
-				case 189:
-					message += "-";
-					break;
-				case 190:
-					message += ".";
-					break;
-				case 191:
-					message += "/";
-					break;
-				case 192:
-					message += "`";
-					break;
-				case 219:
-					message += "[";
-					break;
-				case 220:
-					message += "\\";
-					break;
-				case 221:
-					message += "]";
-					break;
-				case 222:
-					message += "'";
-					break;
-				default:
-					message += String.fromCharCode(keyCode);
-					break;
-			}
+			console.log("keyString is " + keyString);
+			message += keyString === undefined ? String.fromCharCode(keyCode) : keyString;
 
 			console.log("\t\tmessage=" + message);
 
@@ -467,27 +384,15 @@ URLNP.Options = URLNP.Options || function () {
 
 		switchPane = function (option) {
 
-			if (option === "key") {
-				document.getElementById("key").classList.remove("hidden");
-				document.getElementById("mouse").classList.add("hidden");
+			if (option === "shortcuts") {
+				document.getElementById("shortcuts").classList.remove("hidden");
 				document.getElementById("advanced").classList.add("hidden");
 				document.getElementById("sidebarKey").classList.add("navbar-item-selected");
 				document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
 				document.getElementById("sidebarAdvanced").classList.remove("navbar-item-selected");
-
-			}
-			else if (option === "mouse") {
-				document.getElementById("key").classList.add("hidden");
-				document.getElementById("mouse").classList.remove("hidden");
-				document.getElementById("advanced").classList.add("hidden");
-				document.getElementById("sidebarKey").classList.remove("navbar-item-selected");
-				document.getElementById("sidebarMouse").classList.add("navbar-item-selected");
-				document.getElementById("sidebarAdvanced").classList.remove("navbar-item-selected");
-			}
-			else if (option === "advanced") {
-				document.getElementById("key").classList.add("hidden");
-				document.getElementById("mouse").classList.add("hidden");
+			}	else if (option === "advanced") {
 				document.getElementById("advanced").classList.remove("hidden");
+				document.getElementById("shortcuts").classList.add("hidden");
 				document.getElementById("sidebarKey").classList.remove("navbar-item-selected");
 				document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
 				document.getElementById("sidebarAdvanced").classList.add("navbar-item-selected");
@@ -495,7 +400,6 @@ URLNP.Options = URLNP.Options || function () {
 		},
 		
 		// Shows some information about urlnp (called when urlnp image is clicked).
-		
 		secret = function () {
 			console.log("\tfunction secret");
 			// var randomNumber = Math.floor(Math.random() * 10) + 1;
@@ -528,9 +432,9 @@ URLNP.Options = URLNP.Options || function () {
 			console.log("\tfunction DOMContentLoaded");
 			initOptions();
 			document.getElementById("sidebarImage").addEventListener("click", secret, false);
-			document.getElementById("sidebarKey").addEventListener("click", function () {switchPane("key");}, false);
-			document.getElementById("sidebarMouse").addEventListener("click", function () {switchPane("mouse");}, false);
-			document.getElementById("sidebarAdvanced").addEventListener("click", function () {switchPane("advanced");}, false);
+		// 	document.getElementById("sidebarKey").addEventListener("click", function () {switchPane("key");}, false);
+		// 	document.getElementById("sidebarMouse").addEventListener("click", function () {switchPane("mouse");}, false);
+		// 	document.getElementById("sidebarAdvanced").addEventListener("click", function () {switchPane("advanced");}, false);
 			document.getElementById("keyIncrementInput").addEventListener("keydown", function () {setKey(event, 1);}, false);
 			document.getElementById("keyDecrementInput").addEventListener("keydown", function () {setKey(event, 2);}, false);
 			document.getElementById("keyClearInput").addEventListener("keydown", function () {setKey(event, 3);}, false);
