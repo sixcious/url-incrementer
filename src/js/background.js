@@ -65,7 +65,7 @@ URLNP.Background = URLNP.Background || function () {
 			paddedZeros = "",
 			length,
 			i,
-			leading0s = false,
+			leadingzeros = false,
 			alphanumeric = false;
 			
 		// The user somehow was able to submit the form without properly
@@ -116,7 +116,7 @@ URLNP.Background = URLNP.Background || function () {
 			}
 		}
 		// Leading 0s
-		else if (leading0s) {
+		else if (leadingzeros) {
 			// Count how many leading zeros there are.
 			for (i = 0; i < selectionStringLength; i++) {
 				// If we encounter the first non-zero digit, stop counting
@@ -570,20 +570,16 @@ chrome.runtime.onMessage.addListener(
 				U.checkIfScanIsEnabled();
 				sendResponse({});
 				break;
-
 			// From:      content_script
 			// Request:   Increment or decrement request from a fast shortcut key or fast shortcut mouse button.
 			// Action:    Modify the current tab's URL by incrementing it or decrementing it and update the tab with the new URL.
 			// Callback:  None.
-
 			case "fastUpdateTab":
 				console.log("\t!request:fastUpdateTab");
 				U.fastUpdateTab(request);
 				sendResponse({});
 				break;
-
 			// Unspecified request -- should not be needed!
-
 			default:
 				console.warn("!request:unspecified");
 				sendResponse({});

@@ -18,7 +18,7 @@ URLNP.Options = URLNP.Options || function () {
   		FLAG_KEY_SHIFT = 0x4, // 0100
   		FLAG_KEY_META = 0x8, // 1000
   		FLAG_MOUSE_NONE = 0X0, // 00
-  		KEY_CODE_STRING_MAP = { // Map for key codes that don't have a String value
+  		KEY_CODE_STRING_MAP = { // Map for key codes that don't have String values
   		  "8": "Backspace",
   		  "9": "Tab",
   		  "13": "Enter",	
@@ -27,18 +27,47 @@ URLNP.Options = URLNP.Options || function () {
   		  // "18": "Alt",
   		  "19": "Pause",	
   		  "20": "Caps Lock",
-  		  "27": "Escape",	
+  		  "27": "Esc",	
   		  "32": "Space",
   		  "33": "Page Up",	
   		  "34": "Page Down",
   		  "35": "End",	
   		  "36": "Home",
-  		  "37": "Left",	
-  		  "38": "Up",
-  		  "39": "Right",	
-  		  "40": "Down",
+  		  "37": "Left Arrow",	
+  		  "38": "Up Arrow",
+  		  "39": "Right Arrow",	
+  		  "40": "Down Arrow",
   		  "45": "Insert",	
   		  "46": "Delete",
+  		  "96": "0 (Numpad)",
+  		  "97": "1 (Numpad)",
+  		  "98": "2 (Numpad)",
+  		  "99": "3 (Numpad)",
+  		  "100": "4 (Numpad)",
+  		  "101": "5 (Numpad)",
+  		  "102": "6 (Numpad)",
+  		  "103": "7 (Numpad)",
+  		  "104": "8 (Numpad)",
+  		  "105": "9 (Numpad)",
+  		  "106": "* (Numpad)",
+  		  "107": "+ (Numpad)",
+  		  "109": "- (Numpad)",
+  		  "110": ". (Numpad)",
+  		  "111": "/ (Numpad)",
+  		  "112": "F1",
+  		  "113": "F2",
+  		  "114": "F3",
+  		  "115": "F4",
+  		  "116": "F5",
+  		  "117": "F6",
+  		  "118": "F7",
+  		  "119": "F8",
+  		  "120": "F9",
+  		  "121": "F10",
+  		  "122": "F11",
+  		  "123": "F12",
+  		  "144": "Num Lock",
+  		  "145": "Scroll Lock",
   		  "186": ";",	
   		  "187": "=",
   		  "188": ",",	
@@ -51,6 +80,7 @@ URLNP.Options = URLNP.Options || function () {
   		  "221": "]",
   		  "222": "'"
   		},
+  		uiHelper = URLNP.UIHelper,
   		// keyCodeIncrement,
   		// keyEventIncrement,
   		// keyCodeDecrement,
@@ -172,7 +202,7 @@ URLNP.Options = URLNP.Options || function () {
 		wrapperSave = function () {
 			console.log("\tfunction wrapperSave");
 			if (saveOptions()) {
-				generateAlert_(chrome.i18n.getMessage("optionsSaveSuccess"), false);
+				uiHelper.generateAlert_(chrome.i18n.getMessage("optionsSaveSuccess"), false);
 			}
 		},
 		
@@ -181,7 +211,7 @@ URLNP.Options = URLNP.Options || function () {
 		wrapperReset = function () {
 			console.log("\tfunction wrapperReset");
 			resetOptions();
-			generateAlert_(chrome.i18n.getMessage("optionsResetSuccess"), false);
+			uiHelper.generateAlert_(chrome.i18n.getMessage("optionsResetSuccess"), false);
 		},
 		
 		// Saves options to localStorage.
@@ -201,7 +231,7 @@ URLNP.Options = URLNP.Options || function () {
 			// do not allow them to save.
 
 			if ((document.getElementById("keyInput").checked) && ((keyEventIncrement === keyEventDecrement && keyCodeIncrement === keyCodeDecrement) || (keyEventIncrement === keyEventClear && keyCodeIncrement === keyCodeClear) || (keyEventIncrement === keyEventFastIncrement && keyCodeIncrement === keyCodeFastIncrement) || (keyEventIncrement === keyEventFastDecrement && keyCodeIncrement === keyCodeFastDecrement) || (keyEventDecrement === keyEventClear && keyCodeDecrement === keyCodeClear) || (keyEventDecrement === keyEventFastIncrement && keyCodeDecrement === keyCodeFastIncrement) || (keyEventDecrement === keyEventFastDecrement && keyCodeDecrement === keyCodeFastDecrement) || (keyEventClear === keyEventFastIncrement && keyCodeClear === keyCodeFastIncrement) || (keyEventClear === keyEventFastDecrement && keyCodeClear === keyCodeFastDecrement) || (keyEventFastIncrement === keyEventFastDecrement && keyCodeFastIncrement === keyCodeFastDecrement))) {
-				generateAlert_(chrome.i18n.getMessage("optionsKeyError"), false);
+				uiHelper.generateAlert_(chrome.i18n.getMessage("optionsKeyError"), false);
 				return false;
 			}
 		
@@ -209,7 +239,7 @@ URLNP.Options = URLNP.Options || function () {
 			// button, do not allow them to save.
 	
 			if ((document.getElementById("mouseInput").checked) && ((mouseIncrement === mouseDecrement && mouseIncrement !== FLAG_MOUSE_NONE) || (mouseIncrement === mouseClear && mouseIncrement !== FLAG_MOUSE_NONE) || (mouseIncrement === mouseFastIncrement && mouseIncrement !== FLAG_MOUSE_NONE) || (mouseIncrement === mouseFastDecrement && mouseIncrement !== FLAG_MOUSE_NONE) || (mouseDecrement === mouseClear && mouseDecrement !== FLAG_MOUSE_NONE) || (mouseDecrement === mouseFastIncrement && mouseDecrement !== FLAG_MOUSE_NONE) || (mouseDecrement === mouseFastDecrement && mouseDecrement !== FLAG_MOUSE_NONE) || (mouseClear === mouseFastIncrement && mouseClear !== FLAG_MOUSE_NONE) || (mouseClear === mouseFastDecrement && mouseClear !== FLAG_MOUSE_NONE) || (mouseFastIncrement === mouseFastDecrement && mouseFastIncrement !== FLAG_MOUSE_NONE))) {
-				generateAlert_(chrome.i18n.getMessage("optionsMouseError"), false);
+				uiHelper.generateAlert_(chrome.i18n.getMessage("optionsMouseError"), false);
 				return false;
 			}
 		
@@ -218,7 +248,7 @@ URLNP.Options = URLNP.Options || function () {
 		
 			for (i = 0, length = defaultIncrement.length; i < length; i++) {
 				if (defaultIncrement.charCodeAt(i) < 48 || defaultIncrement.charCodeAt(i) > 57) {
-					generateAlert_(chrome.i18n.getMessage("popupIncrementNaNError"), false);
+					uiHelper.generateAlert_(chrome.i18n.getMessage("popupIncrementNaNError"), false);
 					return false;
 				}
 			}
@@ -359,26 +389,18 @@ URLNP.Options = URLNP.Options || function () {
 			console.log("\tfunction writeToText");
 			console.log("\t\tkeyEvent=" + keyEvent);
 			console.log("\t\tkeyCode=" + keyCode);
-
 			var message = "",
 			    keyString = KEY_CODE_STRING_MAP[keyCode];
-	
 			// keyEvent.
-	
 			message = (keyEvent & FLAG_KEY_ALT)        ? message + "Alt "   : message;
 			message = (keyEvent & FLAG_KEY_CTRL)  >> 1 ? message + "Ctrl "  : message;
 			message = (keyEvent & FLAG_KEY_SHIFT) >> 2 ? message + "Shift " : message;
 			message = (keyEvent & FLAG_KEY_META)  >> 3 ? message + "Meta "  : message;
-
-	
 			// keyCode.
 			console.log("keyString is " + keyString);
 			message += keyString === undefined ? String.fromCharCode(keyCode) : keyString;
-
 			console.log("\t\tmessage=" + message);
-
 			// Write to text.
-
 			text.value = message;
 		},
 
@@ -403,30 +425,30 @@ URLNP.Options = URLNP.Options || function () {
 		secret = function () {
 			console.log("\tfunction secret");
 			// var randomNumber = Math.floor(Math.random() * 10) + 1;
-			generateAlert_(chrome.i18n.getMessage("optionsSecret"), false);
+			uiHelper.generateAlert_(chrome.i18n.getMessage("options_secret"), false);
 		},
 		
-		// Generate alert overlay (popup message).
-		// From the sample Google extension, Proxy Settings by Mike West.
+		// // Generate alert overlay (popup message).
+		// // From the sample Google extension, Proxy Settings by Mike West.
 		
-		generateAlert_ = function (msg, close) {
-			console.log("\tfunction generateAlert_");
-			var success = document.createElement('div');
-			success.classList.add('overlay');
-			success.setAttribute('role', 'alert');
-			success.textContent = msg;
-			document.body.appendChild(success);
+		// generateAlert_ = function (msg, close) {
+		// 	console.log("\tfunction generateAlert_");
+		// 	var success = document.createElement('div');
+		// 	success.classList.add('overlay');
+		// 	success.setAttribute('role', 'alert');
+		// 	success.textContent = msg;
+		// 	document.body.appendChild(success);
 		
-			setTimeout(function() { success.classList.add('visible'); }, 10);
-			setTimeout(function() {
-				if (close === false) {
-					// success.classList.remove('visible');
-					document.body.removeChild(success);
-				} else {
-					window.close();
-				}
-			}, 3000);
-		},
+		// 	setTimeout(function() { success.classList.add('visible'); }, 10);
+		// 	setTimeout(function() {
+		// 		if (close === false) {
+		// 			// success.classList.remove('visible');
+		// 			document.body.removeChild(success);
+		// 		} else {
+		// 			window.close();
+		// 		}
+		// 	}, 3000);
+		// },
 	
 		DOMContentLoaded = function () {
 			console.log("\tfunction DOMContentLoaded");
