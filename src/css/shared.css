@@ -8,7 +8,7 @@ License: BSD
 */
 
 @import url("chromium/chrome_shared.css");
-@import url("chromium/index.css");
+/*@import url("chromium/index.css");*/
 @import url("sample/ui-helper.css");
 
 * {
@@ -16,13 +16,6 @@ License: BSD
 	padding: 0;
 }
 
-/*body {
-	color: #777777;
-	font-family: Arial, sans-serif;
-	font-size: 14px;
-	font-weight: normal;
-}
-*/
 .hidden {
 	display: none;
 }
@@ -35,6 +28,6 @@ License: BSD
   display: block;
 }
 
-/*.shadow {
+.shadow {
 	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-}*/
+}

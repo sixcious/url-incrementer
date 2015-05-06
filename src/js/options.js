@@ -12,7 +12,7 @@ URLNP.Options = URLNP.Options || function () {
 	
 	console.log("function URLNP.Options");
 	
-	var	FLAG_KEY_NONE = 0x0, // 0000
+  var	FLAG_KEY_NONE = 0x0, // 0000
   	  FLAG_KEY_ALT = 0x1, // 0001
   		FLAG_KEY_CTRL = 0x2, // 0010
   		FLAG_KEY_SHIFT = 0x4, // 0100
@@ -33,10 +33,10 @@ URLNP.Options = URLNP.Options || function () {
   		  "34": "Page Down",
   		  "35": "End",	
   		  "36": "Home",
-  		  "37": "Left Arrow",	
-  		  "38": "Up Arrow",
-  		  "39": "Right Arrow",	
-  		  "40": "Down Arrow",
+  		  "37": "Left",	
+  		  "38": "Up",
+  		  "39": "Right",	
+  		  "40": "Down",
   		  "45": "Insert",	
   		  "46": "Delete",
   		  "96": "0 (Numpad)",
@@ -80,17 +80,12 @@ URLNP.Options = URLNP.Options || function () {
   		  "221": "]",
   		  "222": "'"
   		},
+		  keyNext,
+  		keyPrev,
+  		keyClear,
+  		keyQuickNext,
+  		keyQuickPrev,
   		uiHelper = URLNP.UIHelper,
-  		// keyCodeIncrement,
-  		// keyEventIncrement,
-  		// keyCodeDecrement,
-  		// keyEventDecrement,
-  		// keyCodeClear,
-  		// keyEventClear,
-  		// keyCodeFastIncrement,
-  		// keyEventFastIncrement,
-  		// keyCodeFastDecrement,
-  		// keyEventFastDecrement,
 
   /**
    * Initializes the options page. This method is called from the body onload.
@@ -112,88 +107,78 @@ URLNP.Options = URLNP.Options || function () {
   	document.getElementById("title").innerText = chrome.i18n.getMessage("options_title");
   	document.getElementById("shortcuts").innerText = chrome.i18n.getMessage("options_shortcuts");
   	document.getElementById("advanced").innerText = chrome.i18n.getMessage("options_advanced");
-  	document.getElementById("keyHeader").innerText = chrome.i18n.getMessage("options_shortcuts_keys");
-  	document.getElementById("keyLabel").innerText = chrome.i18n.getMessage("options_shortcuts_enable_keys_label");
-  	document.getElementById("keyFastLabel").innerText = chrome.i18n.getMessage("options_shortcuts_enable_quick_keys_label");
-  	document.getElementById("keyP").innerText = chrome.i18n.getMessage("optionsKeyP");
-  	document.getElementById("keyIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyIncrementLabel");
-  	document.getElementById("keyDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyDecrementLabel");
-  	document.getElementById("keyClearLabel").innerText = chrome.i18n.getMessage("optionsKeyClearLabel");
-  	document.getElementById("keyFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastIncrementLabel");
-  	document.getElementById("keyFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsKeyFastDecrementLabel");
-  	document.getElementById("mouseHeader").innerText = chrome.i18n.getMessage("optionsMouseHeader");
-  	document.getElementById("mouseLabel").innerText = chrome.i18n.getMessage("optionsMouseLabel");
-  	document.getElementById("mouseFastLabel").innerText = chrome.i18n.getMessage("optionsMouseFastLabel");
-  	document.getElementById("mouseP").innerText = chrome.i18n.getMessage("optionsMouseP");
-  	document.getElementById("mouseIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseIncrementLabel");
-  	document.getElementById("mouseDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseDecrementLabel");
-  	document.getElementById("mouseClearLabel").innerText = chrome.i18n.getMessage("optionsMouseClearLabel");
-  	document.getElementById("mouseFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastIncrementLabel");
-  	document.getElementById("mouseFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastDecrementLabel");
-  	document.getElementById("mouseLeftIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-  	document.getElementById("mouseMiddleIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-  	document.getElementById("mouseRightIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-  	document.getElementById("mouseNoneIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-  	document.getElementById("mouseLeftDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-  	document.getElementById("mouseMiddleDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-  	document.getElementById("mouseRightDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-  	document.getElementById("mouseNoneDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-  	document.getElementById("mouseLeftClearLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-  	document.getElementById("mouseMiddleClearLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-  	document.getElementById("mouseRightClearLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-  	document.getElementById("mouseNoneClearLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-  	document.getElementById("mouseLeftFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-  	document.getElementById("mouseMiddleFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-  	document.getElementById("mouseRightFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-  	document.getElementById("mouseNoneFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-  	document.getElementById("mouseLeftFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
-  	document.getElementById("mouseMiddleFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
-  	document.getElementById("mouseRightFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
-  	document.getElementById("mouseNoneFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
-  	document.getElementById("advancedHeader").innerText = chrome.i18n.getMessage("optionsAdvancedHeader");
-  	document.getElementById("defaultSubHeader").innerText = chrome.i18n.getMessage("optionsDefaultSubHeader");
-  	document.getElementById("defaultP").innerText = chrome.i18n.getMessage("optionsDefaultP");
-  	document.getElementById("defaultIntervalLabel").innerText = chrome.i18n.getMessage("options_interval_label");
-  	document.getElementById("selectionAlgorithmSubHeader").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmSubHeader");
-  	document.getElementById("selectionAlgorithmP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmP");
-  	document.getElementById("selectionAlgorithmCommonPrefixesLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesLabel");
-  	document.getElementById("selectionAlgorithmCommonPrefixesP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesP");
-  	document.getElementById("selectionAlgorithmLastNumberLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberLabel");
-  	document.getElementById("selectionAlgorithmLastNumberP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberP");
-  	document.getElementById("saveInput").value = chrome.i18n.getMessage("optionsSaveInput");
-  	document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput");
+  	document.getElementById("shortcuts-keys").innerText = chrome.i18n.getMessage("options_shortcuts_keys");
+  	document.getElementById("key-enable-label").innerText = chrome.i18n.getMessage("options_shortcuts_key_enable_label");
+  	document.getElementById("key-quick-enable-label").innerText = chrome.i18n.getMessage("options_shortcuts_key_quick_enable_label");
+  	document.getElementById("key-p").innerText = chrome.i18n.getMessage("options_shortcuts_keys_description");
+  	document.getElementById("key-next-label").innerText = chrome.i18n.getMessage("options_shortcuts_next_label");
+  	document.getElementById("key-prev-label").innerText = chrome.i18n.getMessage("options_shortcuts_prev_label");
+  	document.getElementById("key-clear-label").innerText = chrome.i18n.getMessage("options_shortcuts_clear_label");
+  	document.getElementById("key-quick-next-label").innerText = chrome.i18n.getMessage("options_shortcuts_quick_next_label");
+  	document.getElementById("key-quick-prev-label").innerText = chrome.i18n.getMessage("options_shortcuts_quick_prev_label");
+  // 	document.getElementById("shortcut-mouse-buttons").innerText = chrome.i18n.getMessage("optionsMouseHeader");
+  // 	document.getElementById("mouse-enable-label").innerText = chrome.i18n.getMessage("optionsMouseLabel");
+  // 	document.getElementById("mouse-quick-enable-label").innerText = chrome.i18n.getMessage("optionsMouseFastLabel");
+  // 	document.getElementById("mouse-p").innerText = chrome.i18n.getMessage("optionsMouseP");
+  // 	document.getElementById("mouseIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseIncrementLabel");
+  // 	document.getElementById("mouseDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseDecrementLabel");
+  // 	document.getElementById("mouseClearLabel").innerText = chrome.i18n.getMessage("optionsMouseClearLabel");
+  // 	document.getElementById("mouseFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastIncrementLabel");
+  // 	document.getElementById("mouseFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseFastDecrementLabel");
+  // 	document.getElementById("mouseLeftIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  // 	document.getElementById("mouseMiddleIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  // 	document.getElementById("mouseRightIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  // 	document.getElementById("mouseNoneIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  // 	document.getElementById("mouseLeftDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  // 	document.getElementById("mouseMiddleDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  // 	document.getElementById("mouseRightDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  // 	document.getElementById("mouseNoneDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  // 	document.getElementById("mouseLeftClearLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  // 	document.getElementById("mouseMiddleClearLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  // 	document.getElementById("mouseRightClearLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  // 	document.getElementById("mouseNoneClearLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  // 	document.getElementById("mouseLeftFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  // 	document.getElementById("mouseMiddleFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  // 	document.getElementById("mouseRightFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  // 	document.getElementById("mouseNoneFastIncrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  // 	document.getElementById("mouseLeftFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseLeftLabel");
+  // 	document.getElementById("mouseMiddleFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseMiddleLabel");
+  // 	document.getElementById("mouseRightFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseRightLabel");
+  // 	document.getElementById("mouseNoneFastDecrementLabel").innerText = chrome.i18n.getMessage("optionsMouseNoneLabel");
+  // 	document.getElementById("advancedHeader").innerText = chrome.i18n.getMessage("optionsAdvancedHeader");
+  // 	document.getElementById("defaultSubHeader").innerText = chrome.i18n.getMessage("optionsDefaultSubHeader");
+  // 	document.getElementById("defaultP").innerText = chrome.i18n.getMessage("optionsDefaultP");
+  // 	document.getElementById("defaultIntervalLabel").innerText = chrome.i18n.getMessage("options_interval_label");
+  // 	document.getElementById("selectionAlgorithmSubHeader").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmSubHeader");
+  // 	document.getElementById("selectionAlgorithmP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmP");
+  // 	document.getElementById("selectionAlgorithmCommonPrefixesLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesLabel");
+  // 	document.getElementById("selectionAlgorithmCommonPrefixesP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmCommonPrefixesP");
+  // 	document.getElementById("selectionAlgorithmLastNumberLabel").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberLabel");
+  // 	document.getElementById("selectionAlgorithmLastNumberP").innerText = chrome.i18n.getMessage("optionsSelectionAlgorithmLastNumberP");
+  // 	document.getElementById("saveInput").value = chrome.i18n.getMessage("optionsSaveInput");
+  // 	document.getElementById("resetInput").value = chrome.i18n.getMessage("optionsResetInput");
+  	document.getElementById("save-disclaimer").innerText = chrome.i18n.getMessage("options_save_disclaimer");
   },
 	
 	populateForm = function () {
 		console.log("\tfunction populateForm");
     chrome.storage.sync.get(null, function (o) {
-  		// Key.
-  		// keyCodeIncrement = parseInt(o.keyCodeIncrement);
-  		// keyEventIncrement = parseInt(o.keyEventIncrement);
-  		// keyCodeDecrement = parseInt(o.keyCodeDecrement);
-  		// keyEventDecrement = parseInt(localStorage.keyEventDecrement);
-  		// keyCodeClear = parseInt(localStorage.keyCodeClear);
-  		// keyEventClear = parseInt(localStorage.keyEventClear);
-  		// keyCodeFastIncrement = parseInt(localStorage.keyCodeFastIncrement);
-  		// keyEventFastIncrement = parseInt(localStorage.keyEventFastIncrement);
-  		// keyCodeFastDecrement = parseInt(localStorage.keyCodeFastDecrement);
-  		// keyEventFastDecrement = parseInt(localStorage.keyEventFastDecrement);
-  		document.getElementById("keyInput").checked = o.keyEnabled;
-  		document.getElementById("keyFastInput").checked = o.keyQuickEnabled;
-  		writeToText(document.getElementById("keyIncrementInput"), o.keyNext[0], o.keyNext[1]);
-  		writeToText(document.getElementById("keyDecrementInput"), o.keyPrev[0], o.keyPrev[1]);
-  		writeToText(document.getElementById("keyClearInput"), o.keyClear[0], o.keyClear[1]);
-  		writeToText(document.getElementById("keyFastIncrementInput"), o.keyQuickNext[0], o.keyQuickNext[1]);
-  		writeToText(document.getElementById("keyFastDecrementInput"), o.keyQuickPrev[0], o.keyQuickPrev[1]);
-  		document.getElementById("mouseInput").checked = o.mouseEnabled;
-  		document.getElementById("mouseFastInput").checked = o.mouseQuickEnabled;
-  		setRadio(document.getElementsByName("mouseIncrement"), o.mouseNext);
-  		setRadio(document.getElementsByName("mouseDecrement"), o.mousePrev);
-  		setRadio(document.getElementsByName("mouseClear"), o.mouseClear);
-  		setRadio(document.getElementsByName("mouseFastIncrement"), o.mouseQuickNext);
-  		setRadio(document.getElementsByName("mouseFastDecrement"), o.mouseQuickPrev);
-  		document.getElementById("defaultIntervalInput").value = o.defaultInterval;
-  		setRadio(document.getElementsByName("selectionAlgorithm"), o.selectionAlgorithm);
+  		document.getElementById("key-enable-input").checked = o.keyEnabled;
+  		document.getElementById("key-quick-enable-input").checked = o.keyQuickEnabled;
+  		writeToText(document.getElementById("key-next-input"), o.keyNext[0], o.keyNext[1]);
+  		writeToText(document.getElementById("key-prev-input"), o.keyPrev[0], o.keyPrev[1]);
+  		writeToText(document.getElementById("key-clear-input"), o.keyClear[0], o.keyClear[1]);
+  		writeToText(document.getElementById("key-quick-next-input"), o.keyQuickNext[0], o.keyQuickNext[1]);
+  		writeToText(document.getElementById("key-quick-prev-input"), o.keyQuickPrev[0], o.keyQuickPrev[1]);
+  		// document.getElementById("mouseInput").checked = o.mouseEnabled;
+  		// document.getElementById("mouseFastInput").checked = o.mouseQuickEnabled;
+  		// setRadio(document.getElementsByName("mouseIncrement"), o.mouseNext);
+  		// setRadio(document.getElementsByName("mouseDecrement"), o.mousePrev);
+  		// setRadio(document.getElementsByName("mouseClear"), o.mouseClear);
+  		// setRadio(document.getElementsByName("mouseFastIncrement"), o.mouseQuickNext);
+  		// setRadio(document.getElementsByName("mouseFastDecrement"), o.mouseQuickPrev);
+  		// document.getElementById("defaultIntervalInput").value = o.defaultInterval;
+  		// setRadio(document.getElementsByName("selectionAlgorithm"), o.selectionAlgorithm);
     });
 	},
 	
@@ -277,7 +262,6 @@ URLNP.Options = URLNP.Options || function () {
 			localStorage.mouseFastDecrement = mouseFastDecrement;
 		
 			localStorage.defaultIncrement = defaultIncrement;
-			localStorage.defaultZeros = document.getElementById("defaultZerosInput").checked === true ? 1 : 0;
 			localStorage.selectionAlgorithm = getRadio(document.getElementsByName("selectionAlgorithm"));
 		
 			// Let the background page know the options were saved/updated.
@@ -298,55 +282,36 @@ URLNP.Options = URLNP.Options || function () {
 	
 		setKey = function (event, key) {
 			console.log("\tfunction setKey");
-			var keyCode,
-				keyEvent,
-				keyEventBits;
-		
-			// Detect the keyCode and keyEvent (multi-browser).
-		
-			if (event) {
-				keyCode = event.which;
-				keyEvent = event;
-			} else if (window.event) {
-				keyCode = window.event.keyCode;
-				keyEvent = window.event;
-			}
-		
+			var keyCode = event.which,
+				  keyEvent = event,
+				  keyEventBits;
 			// Find the keyEvents (Alt, Ctrl, Shift, Meta) fired.
-		
 			keyEventBits = FLAG_KEY_NONE;
 			keyEventBits = keyEvent.altKey 	 ? keyEventBits | FLAG_KEY_ALT   : keyEventBits;
 			keyEventBits = keyEvent.ctrlKey  ? keyEventBits | FLAG_KEY_CTRL  : keyEventBits;
 			keyEventBits = keyEvent.shiftKey ? keyEventBits | FLAG_KEY_SHIFT : keyEventBits;
 			keyEventBits = keyEvent.metaKey  ? keyEventBits | FLAG_KEY_META  : keyEventBits;
-		
 			// Stores the keyCode and keyEvent, and then writes to the text box.
-		
 			switch (key) {
-				case 1: // Increment.
-					keyCodeIncrement = keyCode;
-					keyEventIncrement = keyEventBits;
-					writeToText(document.getElementById("keyIncrementInput"), keyEventIncrement, keyCodeIncrement);
+				case 1: // Next
+				  keyNext = [keyEventBits, keyCode];
+					writeToText(document.getElementById("key-next-input"), keyNext[0], keyNext[1]);
 					break;
-				case 2: // Decrement.
-					keyCodeDecrement = keyCode;
-					keyEventDecrement = keyEventBits;
-					writeToText(document.getElementById("keyDecrementInput"), keyEventDecrement, keyCodeDecrement);
+				case 2: // Prev
+				  keyPrev = [keyEventBits, keyCode];
+					writeToText(document.getElementById("key-prev-input"), keyPrev[0], keyPrev[1]);
 					break;
-				case 3: // Clear.
-					keyCodeClear = keyCode;
-					keyEventClear = keyEventBits;
-					writeToText(document.getElementById("keyClearInput"), keyEventClear, keyCodeClear);
+				case 3: // Clear
+				  keyClear = [keyEventBits, keyCode];
+					writeToText(document.getElementById("key-clear-input"), keyClear[0], keyClear[1]);
 					break;
-				case 4: // FastIncrement.
-					keyCodeFastIncrement = keyCode;
-					keyEventFastIncrement = keyEventBits;
-					writeToText(document.getElementById("keyFastIncrementInput"), keyEventFastIncrement, keyCodeFastIncrement);
+				case 4: // QuickNext
+				  keyQuickNext = [keyEventBits, keyCode];
+					writeToText(document.getElementById("key-quick-next-input"), keyQuickNext[0], keyQuickNext[1]);
 					break;
-				case 5: // FastDecrement.
-					keyCodeFastDecrement = keyCode;
-					keyEventFastDecrement = keyEventBits;
-					writeToText(document.getElementById("keyFastDecrementInput"), keyEventFastDecrement, keyCodeFastDecrement);
+				case 5: // QuickPrev
+				  keyQuickPrev = [keyEventBits, keyCode];
+					writeToText(document.getElementById("key-quick-prev-input"), keyQuickPrev[0], keyQuickPrev[1]);
 					break;
 				default:
 					break;
@@ -354,7 +319,6 @@ URLNP.Options = URLNP.Options || function () {
 		},
 	
 		// Gets the value of the checked radio button from the named radio group.
-		
 		getRadio = function (radio) {
 			console.log("\tfunction getRadio");
 			var i,
@@ -367,7 +331,6 @@ URLNP.Options = URLNP.Options || function () {
 		},
 	
 		// Sets (checks) the radio button from the named radio group to the value.
-	
 		setRadio = function (radio, value) {
 			console.log("\tfunction setRadio");
 			var i,
@@ -405,19 +368,18 @@ URLNP.Options = URLNP.Options || function () {
 		},
 
 		switchPane = function (option) {
-
 			if (option === "shortcuts") {
-				document.getElementById("shortcuts").classList.remove("hidden");
-				document.getElementById("advanced").classList.add("hidden");
-				document.getElementById("sidebarKey").classList.add("navbar-item-selected");
-				document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
-				document.getElementById("sidebarAdvanced").classList.remove("navbar-item-selected");
+				document.getElementById("shortcuts-page").classList.remove("hidden");
+				document.getElementById("advanced-page").classList.add("hidden");
+				// document.getElementById("sidebarKey").classList.add("navbar-item-selected");
+				// document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
+				// document.getElementById("sidebarAdvanced").classList.remove("navbar-item-selected");
 			}	else if (option === "advanced") {
-				document.getElementById("advanced").classList.remove("hidden");
-				document.getElementById("shortcuts").classList.add("hidden");
-				document.getElementById("sidebarKey").classList.remove("navbar-item-selected");
-				document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
-				document.getElementById("sidebarAdvanced").classList.add("navbar-item-selected");
+				document.getElementById("advanced-page").classList.remove("hidden");
+				document.getElementById("shortcuts-page").classList.add("hidden");
+				// document.getElementById("sidebarKey").classList.remove("navbar-item-selected");
+				// document.getElementById("sidebarMouse").classList.remove("navbar-item-selected");
+				// document.getElementById("sidebarAdvanced").classList.add("navbar-item-selected");
 			}
 		},
 		
@@ -450,20 +412,31 @@ URLNP.Options = URLNP.Options || function () {
 		// 	}, 3000);
 		// },
 	
-		DOMContentLoaded = function () {
+	/**
+	 * TODO
+	 */ 
+    DOMContentLoaded = function () {
 			console.log("\tfunction DOMContentLoaded");
 			initOptions();
-			document.getElementById("sidebarImage").addEventListener("click", secret, false);
-		// 	document.getElementById("sidebarKey").addEventListener("click", function () {switchPane("key");}, false);
-		// 	document.getElementById("sidebarMouse").addEventListener("click", function () {switchPane("mouse");}, false);
-		// 	document.getElementById("sidebarAdvanced").addEventListener("click", function () {switchPane("advanced");}, false);
-			document.getElementById("keyIncrementInput").addEventListener("keydown", function () {setKey(event, 1);}, false);
-			document.getElementById("keyDecrementInput").addEventListener("keydown", function () {setKey(event, 2);}, false);
-			document.getElementById("keyClearInput").addEventListener("keydown", function () {setKey(event, 3);}, false);
-			document.getElementById("keyFastIncrementInput").addEventListener("keydown", function () {setKey(event, 4);}, false);
-			document.getElementById("keyFastDecrementInput").addEventListener("keydown", function () {setKey(event, 5);}, false);
-			document.getElementById("saveInput").addEventListener("click", wrapperSave, false);
-			document.getElementById("resetInput").addEventListener("click", wrapperReset, false);
+			document.getElementById("secret-input").addEventListener("click", secret, false);
+			document.getElementById("shortcuts").addEventListener("click", function () {switchPane("shortcuts");}, false);
+			document.getElementById("advanced").addEventListener("click", function () {switchPane("advanced");}, false);
+			document.getElementById("key-next-input").addEventListener("keydown", function () {setKey(event, 1);}, false);
+			document.getElementById("key-prev-input").addEventListener("keydown", function () {setKey(event, 2);}, false);
+			document.getElementById("key-clear-input").addEventListener("keydown", function () {setKey(event, 3);}, false);
+			document.getElementById("key-quick-next-input").addEventListener("keydown", function () {setKey(event, 4);}, false);
+			document.getElementById("key-quick-prev-input").addEventListener("keydown", function () {setKey(event, 5);}, false);
+		// 	document.getElementById("saveInput").addEventListener("click", wrapperSave, false);
+		// 	document.getElementById("resetInput").addEventListener("click", wrapperReset, false);
+			// Saves to storage
+			document.getElementById("key-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyEnabled': document.getElementById("key-enable-input").checked}, function() {} );}, false);
+			document.getElementById("key-quick-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyQuickEnabled': document.getElementById("key-quick-enable-input").checked}, function() {} );}, false);
+			document.getElementById("key-next-input").addEventListener("keyup", function() {	chrome.storage.sync.set({'keyNext': keyNext}, function() {} );}, false);
+			document.getElementById("key-prev-input").addEventListener("keyup", function() {	chrome.storage.sync.set({'keyPrev': keyPrev}, function() {} );}, false);
+			document.getElementById("key-clear-input").addEventListener("keyup", function() {	chrome.storage.sync.set({'keyClear': keyClear}, function() {} );}, false);
+  		document.getElementById("key-quick-next-input").addEventListener("keyup", function() {	chrome.storage.sync.set({'keyQuickNext': keyQuickNext}, function() {} );}, false);
+			document.getElementById("key-quick-prev-input").addEventListener("keyup", function() {	chrome.storage.sync.set({'keyQuickPrev': keyQuickPrev}, function() {} );}, false);
+			
 		};
 
 		// Public methods list.

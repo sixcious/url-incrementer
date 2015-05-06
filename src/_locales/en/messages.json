@@ -114,18 +114,18 @@
 		"description": "The options page's shortcuts keys title."
 	},
 
-	"options_shortcuts_enable_keys_label": {
-		"message": "Enable Keys",
+	"options_shortcuts_key_enable_label": {
+		"message": "Enable Shortcut Keys",
 		"description": "Label for Shortcut Keys checkbox to enable or disable them."
 	},
 
-	"options_shortcuts_enable_quick_keys_label": {
-		"message": "Enable Quick Keys",
+	"options_shortcuts_key_quick_enable_label": {
+		"message": "Enable Quick Shortcut Keys",
 		"description": "Quick Shortcut Keys checkbox label."
 	},
 
 	"options_shortcuts_keys_description": {
-		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. If you would like, you can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a key combination shortcut. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
+		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. You can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a combination key shortcut. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
 		"description": "Shortcut Keys paragraph."
 	},
 
@@ -169,13 +169,13 @@
 		"description": "Mouse (None) Button label (no mouse button to be selected)."
 	},
 	
-	"options_shortcuts_increment_label": {
-	  "message": "Next & Plus",
+	"options_shortcuts_next_label": {
+	  "message": "Next (+)",
   	"description": "Shortcut Key Increment label."
 	},
 
-	"options_shortcuts_decrement_label": {
-		"message": "Prev & Minus",
+	"options_shortcuts_prev_label": {
+		"message": "Prev (-)",
 		"description": "Shortcut Key Decrement label."
 	},
 
@@ -265,16 +265,6 @@
 		"description": "Last Number Selection Algorithm paragraph."
 	},
 
-	"options_save_input": {
-		"message": "Save",
-		"description": "Form save button."
-	},
-
-	"options_reset_input": {
-		"message": "Reset",
-		"description": "Form reset button."
-	},
-
 	"options_save_success": {
 		"message": "Options saved.",
 		"description": "Overlay message that appears after pressing Save successfully."
@@ -293,6 +283,11 @@
 	"options_save_mouse_error": {
 		"message": "Cannot assign multiple shortcuts to the same mouse button.",
 		"description": "Overlay error message that appears after pressing Save with multiple shortcuts assigned to the same mouse button."
+	},
+	
+	"options_save_disclaimer": {
+	  "message": "Note: Changes you make are automatically saved",
+	  "description": ""
 	},
 
 	"options_secret": {

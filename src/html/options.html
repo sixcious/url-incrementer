@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<link type="text/css" rel="stylesheet" href="../css/shared.css" />
+		<link type="text/css" rel="stylesheet" href="../css/options.css"/>
 		<title>URL Next Plus Options</title>
 	</head>
 	<body>
@@ -13,87 +13,95 @@
   				<li id="shortcuts" class="navbar-item navbar-item-selected"></li>
   				<li id="advanced" class="navbar-item"></li>
   			</ul>
-  			<input id="sidebarImage" type="image" src="../images/icon128.png" alt="" />
+  			<input id="secret-input" type="image" src="../images/icon128.png" alt=""/>
   		</div>
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  			<div id="content page">
-			<div id="key">
-				<div class="header">
-					<div class="left">
-						<h1 id="keyHeader" class="title"></h1>
+  		<div id="options-page">
+		  	<div id="shortcuts-page">
+		  	  <h3 id="shortcuts-keys"></h3>
+					<div class="checkbox">
+					  <label>
+						  <input id="key-enable-input" type="checkbox"/>
+						  <label id="key-enable-label" for="key-enable-input"></label>
+					  </label>
+					  <label>
+						  <input id="key-quick-enable-input" type="checkbox" />
+						  <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
+					  </label>
 					</div>
-					<div class="right header-checkbox">
-						<input id="keyInput" type="checkbox" />
-						<label id="keyLabel" for="keyInput"></label>
-						<input id="keyFastInput" type="checkbox" />
-						<label id="keyFastLabel" for="keyFastInput"></label>
-					</div>
-				</div>
-				<div class="options">
-					<p id="keyP"></p>
+					<p id="key-p"></p>
 					<div class="table">
 						<div class="row">
 							<div class="column">
-								<label id="keyIncrementLabel" for="keyIncrementInput" class="shadow"></label>
+								<label id="key-next-label" for="key-next-input" class="shadow"></label>
 							</div>
 							<div class="column">
-								<input id="keyIncrementInput" type="text" readonly="readonly" />
+								<input id="key-next-input" type="text" readonly="readonly"/>
 							</div>
 						</div>
 						<div class="row">
 							<div class="column">
-								<label id="keyDecrementLabel" for="keyDecrementInput" class="shadow"></label>
+								<label id="key-prev-label" for="key-prev-input" class="shadow"></label>
 							</div>
 							<div class="column">
-								<input id="keyDecrementInput" type="text" readonly="readonly" />
+								<input id="key-prev-input" type="text" readonly="readonly"/>
 							</div>
 						</div>
 						<div class="row">
 							<div class="column">
-								<label id="keyClearLabel" for="keyClearInput" class="shadow"></label>
+								<label id="key-clear-label" for="key-clear-input" class="shadow"></label>
 							</div>
 							<div class="column">
-								<input id="keyClearInput" type="text" readonly="readonly" />
+								<input id="key-clear-input" type="text" readonly="readonly"/>
 							</div>
 						</div>
 						<div class="row">
 							<div class="column">
-								<label id="keyFastIncrementLabel" for="keyFastIncrementInput" class="shadow"></label>
+								<label id="key-quick-next-label" for="key-quick-next-input" class="shadow"></label>
 							</div>
 							<div class="column">
-								<input id="keyFastIncrementInput" type="text" readonly="readonly" />
+								<input id="key-quick-next-input" type="text" readonly="readonly"/>
 							</div>
 						</div>
 						<div class="row">
 							<div class="column">
-								<label id="keyFastDecrementLabel" for="keyFastDecrementInput" class="shadow"></label>
+								<label id="key-quick-prev-label" for="key-quick-prev-input" class="shadow"></label>
 							</div>
 							<div class="column">
-								<input id="keyFastDecrementInput" type="text" readonly="readonly" />
+								<input id="key-quick-prev-input" type="text" readonly="readonly"/>
 							</div>
-						</div>
+						</div>						
 					</div>
 				</div>
-				
-				
+				<div id="advanced-page" class="hidden">
+				  Advanced Page
+				</div>
+				<p id="save-disclaimer"></p>  
+      </div>
+	  </div>
+		<script type="text/javascript" src="../js/sample/ui-helper.js"></script>
+		<script type="text/javascript" src="../js/options.js"></script>
+	</body>
+</html>
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		
+  		<!--
+  			<div id="content page">
 								<div class="header">
 					<div class="left">
 						<h1 id="mouseHeader" class="title"></h1>
@@ -252,23 +260,4 @@
 					</div>
 				</div>
 			</div>
-			<div id="formButtons">
-				<input id="saveInput" type="button" value=" " />
-				<input id="resetInput" type="button" value=" " />
-			</div>
-		</div>
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-	  </div>
-		<script type="text/javascript" src="../js/sample/ui-helper.js"></script>
-		<script type="text/javascript" src="../js/options.js"></script>
-	</body>
-</html>
+			-->

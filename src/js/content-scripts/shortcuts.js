@@ -19,121 +19,111 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 		FLAG_MOUSE_LEFT = 0x1, // 01
 		FLAG_MOUSE_MIDDLE = 0x2, // 10
 		FLAG_MOUSE_RIGHT = 0X3, // 11
-		EVENT_BUTTON_LEFT = 0, // Or EVENT_WHICH_LEFT   = 1 using event.which.
-		EVENT_BUTTON_MIDDLE = 1, // Or EVENT_WHICH_MIDDLE = 2 using event.which.
-		EVENT_BUTTON_RIGHT = 2, // Or EVENT_WHICH_RIGHT  = 3 using event.which.
-		keyCodeIncrement,
-		keyEventIncrement,
-		keyCodeDecrement,
-		keyEventDecrement,
-		keyCodeClear,
-		keyEventClear,
-		keyCodeFastIncrement,
-		keyEventFastIncrement,
-		keyCodeFastDecrement,
-		keyEventFastDecrement,
-		mouseIncrement,
-		mouseDecrement,
+		EVENT_BUTTON_LEFT = 0, // Or EVENT_WHICH_LEFT = 1 using event.which
+		EVENT_BUTTON_MIDDLE = 1, // Or EVENT_WHICH_MIDDLE = 2 using event.which
+		EVENT_BUTTON_RIGHT = 2, // Or EVENT_WHICH_RIGHT = 3 using event.which
+		// Cache the shortcut keys and mouse buttons
+		keyNext,
+		keyPrev,
+		keyClear,
+		keyQuickNext,
+		keyQuickPrev,
+		mouseNext,
+		mousePrev,
 		mouseClear,
-		mouseFastIncrement,
-		mouseFastDecrement,
+		mouseQuickNext,
+		mouseQuickPrev,
 
-		setKeyCodeIncrement = function (value) {
-			keyCodeIncrement = value;
-		},
-
-		setKeyEventIncrement = function (value) {
-			keyEventIncrement = value;
-		},
-
-		setKeyCodeDecrement = function (value) {
-			keyCodeDecrement = value;
-		},
-
-		setKeyEventDecrement = function (value) {
-			keyEventDecrement = value;
-		},
-
-		setKeyCodeClear = function (value) {
-			keyCodeClear = value;
-		},
-
-		setKeyEventClear = function (value) {
-			keyEventClear = value;
-		},
-
-		setKeyCodeFastIncrement = function (value) {
-			keyCodeFastIncrement = value;
-		},
-
-		setKeyEventFastIncrement = function (value) {
-			keyEventFastIncrement = value;
-		},
-
-		setKeyCodeFastDecrement = function (value) {
-			keyCodeFastDecrement = value;
-		},
-
-		setKeyEventFastDecrement = function (value) {
-			keyEventFastDecrement = value;
-		},
-
-		setMouseIncrement = function (value) {
-			mouseIncrement = value;
-		},
-
-		setMouseDecrement = function (value) {
-			mouseDecrement = value;
-		},
-
-		setMouseClear = function (value) {
-			mouseClear = value;
-		},
-
-		setMouseFastIncrement = function (value) {
-			mouseFastIncrement = value;
-		},
-
-		setMouseFastDecrement = function (value) {
-			mouseFastDecrement = value;
-		},
+		//setKeyCodeIncrement = function (value) {
+		//	keyCodeIncrement = value;
+		//},
+        //
+		//setKeyEventIncrement = function (value) {
+		//	keyEventIncrement = value;
+		//},
+        //
+		//setKeyCodeDecrement = function (value) {
+		//	keyCodeDecrement = value;
+		//},
+        //
+		//setKeyEventDecrement = function (value) {
+		//	keyEventDecrement = value;
+		//},
+        //
+		//setKeyCodeClear = function (value) {
+		//	keyCodeClear = value;
+		//},
+        //
+		//setKeyEventClear = function (value) {
+		//	keyEventClear = value;
+		//},
+        //
+		//setKeyCodeFastIncrement = function (value) {
+		//	keyCodeFastIncrement = value;
+		//},
+        //
+		//setKeyEventFastIncrement = function (value) {
+		//	keyEventFastIncrement = value;
+		//},
+        //
+		//setKeyCodeFastDecrement = function (value) {
+		//	keyCodeFastDecrement = value;
+		//},
+        //
+		//setKeyEventFastDecrement = function (value) {
+		//	keyEventFastDecrement = value;
+		//},
+        //
+		//setMouseIncrement = function (value) {
+		//	mouseIncrement = value;
+		//},
+        //
+		//setMouseDecrement = function (value) {
+		//	mouseDecrement = value;
+		//},
+        //
+		//setMouseClear = function (value) {
+		//	mouseClear = value;
+		//},
+        //
+		//setMouseFastIncrement = function (value) {
+		//	mouseFastIncrement = value;
+		//},
+        //
+		//setMouseFastDecrement = function (value) {
+		//	mouseFastDecrement = value;
+		//},
 
 		// When a listener is added, this function executes on each keydown event that is fired.
-
 		keyListener = function (event) {
 			console.log("\tfunction keyListener");
-			// Increment.
-
+			// Next
 			if (
-				/* Alt   */ !(event.altKey   ^ (keyEventIncrement & FLAG_KEY_ALT)       ) && 
-				/* Ctrl  */ !(event.ctrlKey  ^ (keyEventIncrement & FLAG_KEY_CTRL)  >> 1) && 
-				/* Shift */ !(event.shiftKey ^ (keyEventIncrement & FLAG_KEY_SHIFT) >> 2) &&
-				/* Meta  */ !(event.metaKey  ^ (keyEventIncrement & FLAG_KEY_META)  >> 3) &&
-				/* None  */  (event.keyCode === keyCodeIncrement)) {
-				console.log("\t\tpressed increment key");
-				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Increment"}, function() {});
+				!(event.altKey   ^ (keyNext[0] & FLAG_KEY_ALT)       ) &&
+				!(event.ctrlKey  ^ (keyNext[0] & FLAG_KEY_CTRL)  >> 1) &&
+				!(event.shiftKey ^ (keyNext[0] & FLAG_KEY_SHIFT) >> 2) &&
+				!(event.metaKey  ^ (keyNext[0] & FLAG_KEY_META)  >> 3) &&
+				 (event.keyCode === keyNext[1])) {
+				console.log("\t\tpressed next key");
+				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Next"}, function() {});
 			}
-	
-			// Decrement.
-	
+			// Prev
 			else if (
-				/* Alt   */ !(event.altKey   ^ (keyEventDecrement & FLAG_KEY_ALT)       ) && 
-				/* Ctrl  */ !(event.ctrlKey  ^ (keyEventDecrement & FLAG_KEY_CTRL)  >> 1) && 
-				/* Shift */ !(event.shiftKey ^ (keyEventDecrement & FLAG_KEY_SHIFT) >> 2) &&
-				/* Meta  */ !(event.metaKey  ^ (keyEventDecrement & FLAG_KEY_META)  >> 3) &&
-				/* None  */  (event.keyCode === keyCodeDecrement)) {
-				console.log("\t\tpressed decrement key");
-				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Decrement"}, function() {});
+				!(event.altKey   ^ (keyPrev[0] & FLAG_KEY_ALT)       ) &&
+				!(event.ctrlKey  ^ (keyPrev[0] & FLAG_KEY_CTRL)  >> 1) &&
+				!(event.shiftKey ^ (keyPrev[0] & FLAG_KEY_SHIFT) >> 2) &&
+				!(event.metaKey  ^ (keyPrev[0] & FLAG_KEY_META)  >> 3) &&
+				 (event.keyCode === keyPrev[1])) {
+				console.log("\t\tpressed prev key");
+				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Prev"}, function() {});
 			}
-
-			// Clear.
-
+			// Clear
 			else if (
-				/* Alt   */ !(event.altKey   ^ (keyEventClear & FLAG_KEY_ALT)       ) && 
-				/* Ctrl  */ !(event.ctrlKey  ^ (keyEventClear & FLAG_KEY_CTRL)  >> 1) && 
-				/* Shift */ !(event.shiftKey ^ (keyEventClear & FLAG_KEY_SHIFT) >> 2) &&
-				/* Meta  */ !(event.metaKey  ^ (keyEventClear & FLAG_KEY_META)  >> 3) &&
-				/* None  */  (event.keyCode === keyCodeClear)) {
+				!(event.altKey   ^ (keyClear[0] & FLAG_KEY_ALT)       ) &&
+				!(event.ctrlKey  ^ (keyClear[0] & FLAG_KEY_CTRL)  >> 1) &&
+				!(event.shiftKey ^ (keyClear[0] & FLAG_KEY_SHIFT) >> 2) &&
+				!(event.metaKey  ^ (keyClear[0] & FLAG_KEY_META)  >> 3) &&
+				 (event.keyCode === keyClear[1])) {
 				console.log("\t\tpressed clear key");
 				chrome.runtime.sendMessage({greeting: "clearUrli"}, function() {});
 			}
@@ -146,78 +136,69 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 
 		mouseListener = function (event) {
 			console.log("\tfunction mouseListener");
-
 			// Increment.
-
 			if (
 				(event.button === EVENT_BUTTON_LEFT   && mouseIncrement === FLAG_MOUSE_LEFT  ) ||
 				(event.button === EVENT_BUTTON_MIDDLE && mouseIncrement === FLAG_MOUSE_MIDDLE) ||
 				(event.button === EVENT_BUTTON_RIGHT  && mouseIncrement === FLAG_MOUSE_RIGHT )) {
-	
 				if (mouseIncrement === FLAG_MOUSE_RIGHT) {
 					document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
 				}
 				console.log("\t\tpressed increment mouse");	 
 				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Increment"}, function() {});
 			}
-	
 			// Decrement.
-	
 			else if (
 				(event.button === EVENT_BUTTON_LEFT   && mouseDecrement === FLAG_MOUSE_LEFT  ) ||
 				(event.button === EVENT_BUTTON_MIDDLE && mouseDecrement === FLAG_MOUSE_MIDDLE) ||
 				(event.button === EVENT_BUTTON_RIGHT  && mouseDecrement === FLAG_MOUSE_RIGHT )) {
-	
 				if (mouseDecrement === FLAG_MOUSE_RIGHT) {
 					document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
 				}
 				console.log("\t\tpressed decrement mouse");
 				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Decrement"}, function() {});
 			}
-	
 			// Clear.
-	
 			else if  (
 				(event.button === EVENT_BUTTON_LEFT   && mouseClear === FLAG_MOUSE_LEFT  ) ||
 				(event.button === EVENT_BUTTON_MIDDLE && mouseClear === FLAG_MOUSE_MIDDLE) ||
 				(event.button === EVENT_BUTTON_RIGHT  && mouseClear === FLAG_MOUSE_RIGHT )) {
-	
 				if (mouseClear === FLAG_MOUSE_RIGHT) {
 					document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
 					document.body.oncontextmenu = function() {return true;};  // Renable context menu again since user is still on the same page!
 				}
 				console.log("\t\tpressed clear mouse");	
 				chrome.runtime.sendMessage({greeting: "clearUrli"}, function() {});
-	
 			}
 		},
 	
 		// When a listener is added, this function executes on each keydown event that is fired.
 		// NOTE: Should this be refactored into one method with keyListener?
 
-		fastKeyListener = function (event) {
+		/**
+		 * @public
+		 * @param event
+		 */
+		quickKeyListener = function (event) {
 			console.log("\tfunction fastKeyListener");
-			// Increment.
-	
+			// Quick Next
 			if (
-				/* Alt   */ !(event.altKey   ^ (keyEventFastIncrement & FLAG_KEY_ALT)       ) && 
-				/* Ctrl  */ !(event.ctrlKey  ^ (keyEventFastIncrement & FLAG_KEY_CTRL)  >> 1) && 
-				/* Shift */ !(event.shiftKey ^ (keyEventFastIncrement & FLAG_KEY_SHIFT) >> 2) &&
-				/* Meta  */ !(event.metaKey  ^ (keyEventFastIncrement & FLAG_KEY_META)  >> 3) &&
-				/* None  */  (event.keyCode === keyCodeFastIncrement)) {
-				console.log("\t\tpressed fast increment key");
+				!(event.altKey   ^ (keyQuickNext[0] & FLAG_KEY_ALT)       ) &&
+				!(event.ctrlKey  ^ (keyQuickNext[0] & FLAG_KEY_CTRL)  >> 1) &&
+				!(event.shiftKey ^ (keyQuickNext[0] & FLAG_KEY_SHIFT) >> 2) &&
+				!(event.metaKey  ^ (keyQuickNext[0] & FLAG_KEY_META)  >> 3) &&
+				 (event.keyCode === keyQuickNext[1])) {
+				console.log("\t\tpressed quick next key");
 				chrome.runtime.sendMessage({greeting: "fastUpdateTab", action: "Increment"}, function() {});
 			}
-	
-			// Decrement.
-	
+			// Quick Prev
 			else if (
-				/* Alt   */ !(event.altKey   ^ (keyEventFastDecrement & FLAG_KEY_ALT)       ) && 
-				/* Ctrl  */ !(event.ctrlKey  ^ (keyEventFastDecrement & FLAG_KEY_CTRL)  >> 1) && 
-				/* Shift */ !(event.shiftKey ^ (keyEventFastDecrement & FLAG_KEY_SHIFT) >> 2) &&
-				/* Meta  */ !(event.metaKey  ^ (keyEventFastDecrement & FLAG_KEY_META)  >> 3) &&
-				/* None  */  (event.keyCode === keyCodeFastDecrement)) {
-				console.log("\t\tpressed fast decrement key");
+				!(event.altKey   ^ (keyQuickPrev[0] & FLAG_KEY_ALT)       ) &&
+				!(event.ctrlKey  ^ (keyQuickPrev[0] & FLAG_KEY_CTRL)  >> 1) &&
+				!(event.shiftKey ^ (keyQuickPrev[0] & FLAG_KEY_SHIFT) >> 2) &&
+				!(event.metaKey  ^ (keyQuickPrev[0] & FLAG_KEY_META)  >> 3) &&
+				 (event.keyCode === keyQuickPrev[1])) {
+				console.log("\t\tpressed quick prev key");
 				chrome.runtime.sendMessage({greeting: "fastUpdateTab", action: "Decrement"}, function() {});
 			}
 		},
@@ -227,7 +208,7 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 		// NOTE: This method was refactored from a switch to an if but should be
 		// refactored again to remove the inner if.
 
-		fastMouseListener = function (event) {
+		quickMouseListener = function (event) {
 			console.log("\tfunction fastMouseListener");	
 			// event.button and event.which are supported in Chrome (Webtoolkit).
 			// event.button:  0,1,2 = L,M,R.
@@ -264,43 +245,51 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 		};
 
 	return {
-		setKeyCodeIncrement: setKeyCodeIncrement,
-		setKeyEventIncrement: setKeyEventIncrement,
-		setKeyCodeDecrement: setKeyCodeDecrement,
-		setKeyEventDecrement: setKeyEventDecrement,
-		setKeyCodeClear: setKeyCodeClear,
-		setKeyEventClear: setKeyEventClear,
-		setKeyCodeFastIncrement: setKeyCodeFastIncrement,
-		setKeyEventFastIncrement: setKeyEventFastIncrement,
-		setKeyCodeFastDecrement: setKeyCodeFastDecrement,
-		setKeyEventFastDecrement: setKeyEventFastDecrement,
-		setMouseIncrement: setMouseIncrement,
-		setMouseDecrement: setMouseDecrement,
-		setMouseClear: setMouseClear,
-		setMouseFastIncrement: setMouseFastIncrement,
-		setMouseFastDecrement: setMouseFastDecrement,
+		//setKeyCodeIncrement: setKeyCodeIncrement,
+		//setKeyEventIncrement: setKeyEventIncrement,
+		//setKeyCodeDecrement: setKeyCodeDecrement,
+		//setKeyEventDecrement: setKeyEventDecrement,
+		//setKeyCodeClear: setKeyCodeClear,
+		//setKeyEventClear: setKeyEventClear,
+		//setKeyCodeFastIncrement: setKeyCodeFastIncrement,
+		//setKeyEventFastIncrement: setKeyEventFastIncrement,
+		//setKeyCodeFastDecrement: setKeyCodeFastDecrement,
+		//setKeyEventFastDecrement: setKeyEventFastDecrement,
+		//setMouseIncrement: setMouseIncrement,
+		//setMouseDecrement: setMouseDecrement,
+		//setMouseClear: setMouseClear,
+		//setMouseFastIncrement: setMouseFastIncrement,
+		//setMouseFastDecrement: setMouseFastDecrement,
 		keyListener: keyListener,
 		mouseListener: mouseListener,
-		fastKeyListener: fastKeyListener,
-		fastMouseListener: fastMouseListener,
+		quickKeyListener: quickKeyListener,
+		quickMouseListener: quickMouseListener
 	};
 }();
 
+// Cache shortcuts from storage
+chrome.storage.sync.get(null, function (o) {
+	var U = URLNP.ContentScript;
+	U.keyNext = o.keyNext;
+	U.keyPrev = o.keyPrev;
+	U.keyClear = o.keyClear;
+	U.keyQuickNext = o.keyQuickNext;
+	U.keyQuickPrev = o.keyQuickPrev;
+	U.mouseNext = o.mouseNext;
+	U.mousePrev = o.mousePrev;
+	U.mouseClear = o.mouseClear;
+	U.mouseQuickNext = o.mouseQuickNext;
+	U.mouseQuickPrev = o.mouseQuickPrev;
+});
 
 // Send a request to the background to check if fast shortcuts are enabled.
-
 chrome.runtime.sendMessage({greeting: "checkIfFastIsEnabled"}, function () {});
 
 // Listen for requests from chrome.runtime.sendMessage.
-
 chrome.runtime.onMessage.addListener(
-
 	function (request, sender, sendResponse) {
-
 		var U = URLNP.ContentScript;
-
 		switch (request.greeting) {
-
 			// From:      background
 			// Request:   Keys are enabled in options and user clicked accept button in popup form or enabled keys in options.
 			// Action:    Add a keyListener.
@@ -323,21 +312,21 @@ chrome.runtime.onMessage.addListener(
 				sendResponse({});
 				break;
 
-			// From:      background
-			// Request:   Just enabled urlnp or the user saved options.
-			// Action:    Set the keys to the user-defined keyCodes/keyEvents from localStorage.
-			// Callback:  None.
-
-			case "setKeys":
-				console.log("\t!request:setKeys");
-				U.setKeyCodeIncrement(parseInt(request.keyCodeIncrement));
-				U.setKeyEventIncrement(parseInt(request.keyEventIncrement));
-				U.setKeyCodeDecrement(parseInt(request.keyCodeDecrement));
-				U.setKeyEventDecrement(parseInt(request.keyEventDecrement));
-				U.setKeyCodeClear(parseInt(request.keyCodeClear));
-				U.setKeyEventClear(parseInt(request.keyEventClear));
-				sendResponse({});
-				break;
+			//// From:      background
+			//// Request:   Just enabled urlnp or the user saved options.
+			//// Action:    Set the keys to the user-defined keyCodes/keyEvents from localStorage.
+			//// Callback:  None.
+            //
+			//case "setKeys":
+			//	console.log("\t!request:setKeys");
+			//	U.setKeyCodeIncrement(parseInt(request.keyCodeIncrement));
+			//	U.setKeyEventIncrement(parseInt(request.keyEventIncrement));
+			//	U.setKeyCodeDecrement(parseInt(request.keyCodeDecrement));
+			//	U.setKeyEventDecrement(parseInt(request.keyEventDecrement));
+			//	U.setKeyCodeClear(parseInt(request.keyCodeClear));
+			//	U.setKeyEventClear(parseInt(request.keyEventClear));
+			//	sendResponse({});
+			//	break;
 
 			// From:      background
 			// Request:   Mouse is enabled in options and user clicked accept button in popup form or enabled mouse in options.
@@ -361,24 +350,25 @@ chrome.runtime.onMessage.addListener(
 				sendResponse({});
 				break;
 
-			// From:      background
-			// Request:   Just enabled urlnp or the user saved options.
-			// Action:    Set the mouse buttons to the user-defined mouse codes from localStorage.
-			// Callback:  None.
-
-			case "setMouse":
-				console.log("\t!request:setMouse");
-				U.setMouseIncrement(parseInt(request.mouseIncrement));
-				U.setMouseDecrement(parseInt(request.mouseDecrement));
-				U.setMouseClear(parseInt(request.mouseClear));
-				sendResponse({});
-				break;
+			//// From:      background
+			//// Request:   Just enabled urlnp or the user saved options.
+			//// Action:    Set the mouse buttons to the user-defined mouse codes from localStorage.
+			//// Callback:  None.
+            //
+			//case "setMouse":
+			//	console.log("\t!request:setMouse");
+			//	U.setMouseIncrement(parseInt(request.mouseIncrement));
+			//	U.setMouseDecrement(parseInt(request.mouseDecrement));
+			//	U.setMouseClear(parseInt(request.mouseClear));
+			//	sendResponse({});
+			//	break;
 
 			// ?
 
 			case "addFastKeyListener":
 				console.log("\t!request:addFastKeyListener");
 				document.addEventListener("keydown", U.fastKeyListener, false);
+				sendResponse({});
 				break;
 
 			// ?
@@ -386,17 +376,18 @@ chrome.runtime.onMessage.addListener(
 			case "removeFastKeyListener":
 				console.log("\t!request:removeFastKeyListener");
 				document.removeEventListener("keydown", U.fastKeyListener, false);
+				sendResponse({});
 				break;
 
-			// ?
-
-			case "setFastKeys":
-				console.log("\t!request:setFastKeys");
-				U.setKeyCodeFastIncrement(parseInt(request.keyCodeFastIncrement));
-				U.setKeyEventFastIncrement(parseInt(request.keyEventFastIncrement));
-				U.setKeyCodeFastDecrement(parseInt(request.keyCodeFastDecrement));
-				U.setKeyEventFastDecrement(parseInt(request.keyEventFastDecrement));
-				break;
+			//// ?
+            //
+			//case "setFastKeys":
+			//	console.log("\t!request:setFastKeys");
+			//	U.setKeyCodeFastIncrement(parseInt(request.keyCodeFastIncrement));
+			//	U.setKeyEventFastIncrement(parseInt(request.keyEventFastIncrement));
+			//	U.setKeyCodeFastDecrement(parseInt(request.keyCodeFastDecrement));
+			//	U.setKeyEventFastDecrement(parseInt(request.keyEventFastDecrement));
+			//	break;
 
 			// ?
 
@@ -414,14 +405,14 @@ chrome.runtime.onMessage.addListener(
 				sendResponse({});
 				break;
 
-			// ?
-
-			case "setFastMouse":
-				console.log("\t!request:setFastMouse");
-				U.setMouseFastIncrement(parseInt(request.mouseFastIncrement));
-				U.setMouseFastDecrement(parseInt(request.mouseFastDecrement));
-				sendResponse({});
-				break;
+			//// ?
+            //
+			//case "setFastMouse":
+			//	console.log("\t!request:setFastMouse");
+			//	U.setMouseFastIncrement(parseInt(request.mouseFastIncrement));
+			//	U.setMouseFastDecrement(parseInt(request.mouseFastDecrement));
+			//	sendResponse({});
+			//	break;
 
 			// Unspecified request -- should not be needed!
 
@@ -430,9 +421,6 @@ chrome.runtime.onMessage.addListener(
 				sendResponse({});
 				break;
 		}
-		
 		return true;
-
 	}
-
 );

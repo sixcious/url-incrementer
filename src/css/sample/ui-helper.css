@@ -132,10 +132,10 @@ legend {
 
 /* Label properties. */
 
-label {
+/*label {
 	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }
-
+*/
 /* All URL/Selection labels should have their content appear below them (block). */
 
 label.block {

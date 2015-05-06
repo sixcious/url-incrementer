@@ -15,11 +15,6 @@ div#sidebar {
 	left: 0;
 	bottom: 0;
 	border-right: 1px solid #C2C2C2;
-	/*box-shadow: inset -8px 0 30px -30px black;*/
-/*  -webkit-border-end: 1px solid #c6c9ce;
-background: -webkit-linear-gradient(rgba(234, 238, 243, 0.2), #eaeef3),
--webkit-linear-gradient(left, #eaeef3, #eaeef3 97%, #d3d7db);
-*/
 }
 
 /* Secret image properties (located down below, has an onClick). */
@@ -33,18 +28,17 @@ input[type="image"] {
 
 /* Title for the "Options" in the side bar. */
 
-h1#sidebar-title {
+/*h1#sidebar-title {
 	padding: 18px 0px 0px 24px;
-	/*text-align: end;*/
-}
+}*/
 
-div#sidebar > ul {
+/*div#sidebar > ul {
 	list-style-type: none;
-}
+}*/
 
 /* Content. */
 
-div#content {
+div#options-page {
 	position: absolute;
 	top: 0;
 	left: 217px;
@@ -68,7 +62,7 @@ div#content {
 overflow: hidden;
 }
 
-h1.title {
+/*h1.title {
 	webkit-margin-before: inherit;
 	-webkit-margin-after: inherit;
 	-webkit-margin-start: inherit;
@@ -81,9 +75,9 @@ margin: 0;
 	font-weight: inherit;
 	text-shadow: white 0 1px 2px;
 
-}
+}*/
 
-.subHeader {
+/*.subHeader {
 	-webkit-margin-before: inherit;
 	-webkit-margin-after: inherit;
 	-webkit-margin-start: inherit;
@@ -92,14 +86,14 @@ margin: 0;
 	font-size: inherit;
 	font-weight: bold;
 	text-shadow: white 0 1px 2px;
-}
+}*/
 
-hr {
+/*hr {
 	color: #FFFFFF;
 	background-color: #FFFFFF;
 	border: 1px dotted #DDDDDD;
 	border-style: none none dotted;
-}
+}*/
 
 /* Tables. */
 
@@ -119,17 +113,17 @@ div.column {
 
 /* Label properties. */
 
-label {
+/*label {
 	line-height:normal;
 	font-size: 14px;
 	font-weight: normal;
-}
+}*/
 
 /* Keys text box size. */
 
-input[type="text"] {
+/*input[type="text"] {
 	width: 256px;
-}
+}*/
 
 /* Number text box size. */
 
@@ -139,13 +133,13 @@ input[type="number"] {
 
 /* Form buttons. */
 
-div#form-buttons {
+/*div#form-buttons {
 	font-size: 200%;
 	text-align: center;
 	position: relative;
 	margin-top: 24px;
 	margin-bottom: 24px;
-}
+}*/
 
 /* Content that needs to float left and have content right of it. */
 
@@ -174,10 +168,10 @@ div#form-buttons {
 	-o-user-select: none;
 }
 
-ul {
+/*ul {
 	margin: 0;
 	padding: 16px 0px 0px 0px;
-}
+}*/
 
 li {
 	cursor: pointer;

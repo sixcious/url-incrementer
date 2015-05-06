@@ -14,7 +14,8 @@ URLNP.Popup = URLNP.Popup || function () {
 
 	var urlnp,
 		currentTab,
-		selectionStart = -1,
+		//selectionStart = -1,
+		selectionProperties = { selection: "", selectionStart: -1 },
 		uiHelper = URLNP.UIHelper,
 		
     /**
@@ -25,8 +26,6 @@ URLNP.Popup = URLNP.Popup || function () {
 		DOMContentLoaded = function () {
 			console.log("\tfunction DOMContentLoaded");
 			// Add Event Listeners to the DOM elements (inputs)
-			// Note: You can also do (for example):
-			// document.getElementById("decrementImage").onclick = clickDecrement;
 			console.log("\t\tadding event listeners");
 			document.getElementById("next-input").addEventListener("click", clickIncrement, false);
 			document.getElementById("prev-input").addEventListener("click", clickDecrement, false);
@@ -49,15 +48,18 @@ URLNP.Popup = URLNP.Popup || function () {
 			document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
 			document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
 			document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
-			// Check the currentstate (enabled or disabled) and update the input
-			// images accordingly
-			chrome.runtime.sendMessage({greeting: "getUrli"},
-				function (response) {
-					urlnp = response;
-					console.log("\t\tgetting urlnp (urlnp.enabled=" + urlnp.enabled+")");
-					updateImages();
-				}
-			);
+			// Set urlnp to get the enabled state and update the images
+			chrome.runtime.getBackgroundPage(function(backgroundPage) {
+			  urlnp = backgroundPage.URLNP.Background.getURLNP();  
+  			updateImages();
+			});
+		// 	chrome.runtime.sendMessage({greeting: "getUrli"},
+		// 		function (response) {
+		// 			urlnp = response;
+		// 			console.log("\t\tgetting urlnp (urlnp.enabled=" + urlnp.enabled+")");
+		// 			updateImages();
+		// 		}
+		// 	);
 			// Set the current tab
 			chrome.tabs.getSelected(null,
 				function (tab) {
@@ -74,14 +76,21 @@ URLNP.Popup = URLNP.Popup || function () {
      * 
      * @private
      */ 
-		initForm = function (response) {
+		initForm = function () {
 			console.log("\tfunction initForm");
 			// Fill out the form elements' contents and load the default values
-			selectionStart = response.selectionStart;
-			document.getElementById("url-textarea").value = currentTab.url;
-			document.getElementById("url-textarea").setSelectionRange(selectionStart, selectionStart + response.selection.length);
-			document.getElementById("selection-input").value = response.selection;
-			document.getElementById("interval-input").value = response.defaultIncrement;
+			chrome.runtime.getBackgroundPage(function(backgroundPage) {
+			  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
+			  // selectionStart = selectionProperties.selectionStart;
+  			document.getElementById("url-textarea").value = currentTab.url;
+  			document.getElementById("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  			document.getElementById("selection-input").value = selectionProperties.selection;
+			});
+      if (!document.getElementById("interval-input").value) {
+        chrome.storage.sync.get(null, function (o) {
+		      document.getElementById("interval-input").value = o.defaultInterval;
+        });
+      }
 		},
 		
 		// Changes the class of the images to either disabled or enabled
@@ -127,7 +136,7 @@ URLNP.Popup = URLNP.Popup || function () {
 		handleURL = function () {
 			console.log("\tfunction handleURL");
 			// Stores the selectionStart for later (to be returned to background.html).
-			selectionStart = document.getElementById("url-textarea").selectionStart;
+			selectionProperties.selectionStart = document.getElementById("url-textarea").selectionStart;
 			// Update the "selectionInput" element to show the selected text.
 			document.getElementById("selection-input").value = window.getSelection().toString();
 			console.log("\t\tselection-input.value=" + document.getElementById("selection-input").value);
@@ -210,9 +219,26 @@ URLNP.Popup = URLNP.Popup || function () {
 				// (enabled) and hide the form by toggling it.
 				urlnp.enabled = true;
 				urlnp.tab = currentTab;
-				chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, increment: increment}, function (response) {});
-				updateImages();
-				toggleForm();
+
+  			chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  			  backgroundPage.URLNP.Background.setURLNP(urlnp);  
+  				updateImages();
+  				toggleForm();
+          chrome.storage.sync.get(null, function (o) {
+  					if (o.keyEnabled) {
+        			console.log("\t\tadding keyListener");
+        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function(response) {});
+        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addKeyListener"}, function (response) {});
+        		}
+        		if (o.mouseEnabled) {
+        			console.log("\t\tadding mouseListener");
+        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function(response) {});
+        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addMouseListener"}, function (response) {});
+        		}
+          });
+  			});
+				//chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, interval: interval}, function (response) {});
+
 			}
 		},
 		
@@ -282,7 +308,8 @@ URLNP.Popup = URLNP.Popup || function () {
 				chrome.tabs.getSelected(null,
 					function(tab) {
 						currentTab = tab;
-						chrome.runtime.sendMessage({greeting: "processSelection", url: currentTab.url}, initForm);
+						//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
+						initForm();
 					}
 				);
 			}
