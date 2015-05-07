@@ -31,15 +31,8 @@ URLNP.Background = URLNP.Background || function () {
 		  'keyClear': [0, 13],
 		  'keyQuickNext': [7, 39],
 		  'keyQuickPrev': [7, 37],
-		  'mouseEnabled': false,
-		  'mouseQuickEnabled': false,
-		  'mouseNext': 0,
-		  'mousePrev': 0,
-		  'mouseClear': 0,
-		  'mouseQuickNext': 0,
-		  'mouseQuickPrev': 0,
 		  'defaultInterval': 1,
-		  'selectionAlgorithm': 1,
+		  'defaultPriority': 1,
 		  'secretClickCount': 0
 		  });
 	},
@@ -73,9 +66,7 @@ URLNP.Background = URLNP.Background || function () {
 	clearURLNP = function () {
 		console.log("\tfunction clearURLNP");
 		console.log("\t\tremoving keyListener");
-		console.log("\t\tremoving mouseListener");
 		chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
-		chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeMouseListener"}, function (response) {});
 		chrome.tabs.onUpdated.removeListener(updateListeners);
 		urlnp.clear();
 	},
@@ -260,11 +251,6 @@ URLNP.Background = URLNP.Background || function () {
 				chrome.tabs.sendMessage(tabId, {greeting: "setKeys", keyNext: o.keyNext, keyPrev: o.keyPrev, keyClear: o.keyClear}, function(response) {});
 				chrome.tabs.sendMessage(tabId, {greeting: "addKeyListener"}, function (response){});
 			}
-			if (o.mouseEnabled) {
-				console.log("\t\tadding mouseListener");
-				chrome.tabs.sendMessage(tabId, {greeting: "setMouse", mouseNext: o.mouseNext, mousePrev: o.mousePrev, mouseClear: o.mouseClear}, function(response) {});
-				chrome.tabs.sendMessage(tabId, {greeting: "addMouseListener"}, function (response){});
-			}
 		});
 	},
 
@@ -349,7 +335,7 @@ URLNP.Background = URLNP.Background || function () {
 		urlnp.setSelection(urlAndSelection.selectionString);	// Update urlnp's selection.
 		updateTab();
 
-		if (localStorage.keyEnabled === "1" || localStorage.mouseEnabled === "1") {
+		if (localStorage.keyEnabled === "1") {
 			chrome.tabs.onUpdated.addListener(updateListeners);
 		}
 	},
@@ -362,11 +348,6 @@ URLNP.Background = URLNP.Background || function () {
 					console.log("\t\tadding fastKeyListener");
 					chrome.tabs.sendMessage(tab.id, {greeting: "setFastKeys", keyCodeFastIncrement: localStorage.keyCodeFastIncrement, keyEventFastIncrement: localStorage.keyEventFastIncrement, keyCodeFastDecrement: localStorage.keyCodeFastDecrement, keyEventFastDecrement: localStorage.keyEventFastDecrement}, function (response) {});
 					chrome.tabs.sendMessage(tab.id, {greeting: "addFastKeyListener"}, function (response) {});
-				}
-				if (localStorage.mouseEnabled === "1" && localStorage.mouseFastEnabled === "1") {
-					console.log("\t\tadding fastMouseListener");
-					chrome.tabs.sendMessage(tab.id, {greeting: "setFastMouse", mouseFastIncrement: localStorage.mouseFastIncrement, mouseFastDecrement: localStorage.mouseFastDecrement}, function (response) {});
-					chrome.tabs.sendMessage(tab.id, {greeting: "addFastMouseListener"}, function (response) {});
 				}
 			}
 		);

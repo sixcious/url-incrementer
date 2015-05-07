@@ -108,18 +108,23 @@ URLNP.Options = URLNP.Options || function () {
 		document.getElementById("key-quick-prev-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickPrev': key}, function() {} );}, false);
   	// Set localization text (i18n) from messages.json
   	console.log("\t\tadding i18n text");
-  	document.getElementById("title").innerText = chrome.i18n.getMessage("options_title");
+  	document.getElementById("extension-name").innerText = chrome.i18n.getMessage("name");
+  	document.getElementById("options-title").innerText = chrome.i18n.getMessage("options_title");
   // 	document.getElementById("shortcuts").innerText = chrome.i18n.getMessage("options_shortcuts");
   // 	document.getElementById("advanced").innerText = chrome.i18n.getMessage("options_advanced");
-  	document.getElementById("shortcuts-keys").innerText = chrome.i18n.getMessage("options_shortcuts_keys");
-  	document.getElementById("key-enable-label").innerText = chrome.i18n.getMessage("options_shortcuts_key_enable_label");
-  	document.getElementById("key-quick-enable-label").innerText = chrome.i18n.getMessage("options_shortcuts_key_quick_enable_label");
-  	document.getElementById("key-p").innerText = chrome.i18n.getMessage("options_shortcuts_keys_description");
-  	document.getElementById("key-next-label").innerText = chrome.i18n.getMessage("options_shortcuts_next_label");
-  	document.getElementById("key-prev-label").innerText = chrome.i18n.getMessage("options_shortcuts_prev_label");
-  	document.getElementById("key-clear-label").innerText = chrome.i18n.getMessage("options_shortcuts_clear_label");
-  	document.getElementById("key-quick-next-label").innerText = chrome.i18n.getMessage("options_shortcuts_quick_next_label");
-  	document.getElementById("key-quick-prev-label").innerText = chrome.i18n.getMessage("options_shortcuts_quick_prev_label");
+  	document.getElementById("shortcut-keys").innerText = chrome.i18n.getMessage("options_shortcut_keys");
+  	document.getElementById("key-enable-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_enable_label");
+  	document.getElementById("key-quick-enable-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_enable_label");
+  	document.getElementById("key-p").innerText = chrome.i18n.getMessage("options_shortcut_keys_description");
+  	document.getElementById("key-next-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_next_label");
+  	document.getElementById("key-prev-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_prev_label");
+  	document.getElementById("key-clear-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_clear_label");
+  	document.getElementById("key-quick-next-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_next_label");
+  	document.getElementById("key-quick-prev-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_prev_label");
+  	document.getElementById("default-settings").innerText = chrome.i18n.getMessage("options_default_settings");
+  	document.getElementById("default-settings-p").innerText = chrome.i18n.getMessage("options_default_settings_description");
+  	
+  	
   // 	document.getElementById("shortcut-mouse-buttons").innerText = chrome.i18n.getMessage("optionsMouseHeader");
   // 	document.getElementById("mouse-enable-label").innerText = chrome.i18n.getMessage("optionsMouseLabel");
   // 	document.getElementById("mouse-quick-enable-label").innerText = chrome.i18n.getMessage("optionsMouseFastLabel");

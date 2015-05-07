@@ -103,186 +103,70 @@
 		"message": "Options",
 		"description": "The options page's title."
 	},
-
-	"options_shortcuts": {
-		"message": "Shortcuts",
-		"description": "The options page's shortcuts title."
-	},
 	
-	"options_shortcuts_keys": {
+	"options_shortcut_keys": {
 		"message": "Shortcut Keys",
 		"description": "The options page's shortcuts keys title."
 	},
 
-	"options_shortcuts_key_enable_label": {
+	"options_shortcut_keys_enable_label": {
 		"message": "Enable Shortcut Keys",
 		"description": "Label for Shortcut Keys checkbox to enable or disable them."
 	},
 
-	"options_shortcuts_key_quick_enable_label": {
+	"options_shortcut_keys_quick_enable_label": {
 		"message": "Enable Quick Shortcut Keys",
 		"description": "Quick Shortcut Keys checkbox label."
 	},
 
-	"options_shortcuts_keys_description": {
+	"options_shortcut_keys_description": {
 		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. You can also hold down the Alt, Ctrl, Shift, or Meta keys (any combination of the four) and press another key to make a combination key shortcut. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
 		"description": "Shortcut Keys paragraph."
 	},
-
-	"options_shortcuts_mouse_buttons": {
-		"message": "Shortcut Mouse Buttons",
-		"description": "Shortcut Mouse Buttons header in the form."
-	},
-
-	"options_shortcuts_enable_mouse_buttons_label": {
-		"message": "Enable Mouse",
-		"description": "Label for Shortcut Mouse Buttons checkbox to enable or disable them."
-	},
-
-	"options_shortcuts_enable_quick_mouse_buttons_label": {
-		"message": "Enable Fast",
-		"description": "Fast Shortcut Mouse Buttons checkbox label."
-	},
-
-	"options_shortcuts_mouse_buttons_description": {
-		"message": "Select a mouse button to associate it with a shortcut. If the \"Right\" mouse button is being mapped to any shortcut, your Chrome context menu will be momentarily disabled only if URL Next Plus is active on the page. \"Quick\" shortcuts allow you to increment or decrement instantly without having to enter Setup.",
-		"description": "Shortcut Mouse Buttons paragraph."
-	},
-
-	"options_shortcuts_left_mouse_button_label": {
-		"message": "Left",
-		"description": "Mouse Left Button label."
-	},
-
-	"options_shortcuts_middle_mouse_button_label": {
-		"message": "Middle",
-		"description": "Mouse Middle Button label."
-	},
-
-	"options_shortcuts_right_mouse_button_label": {
-		"message": "Right",
-		"description": "Mouse Right Button label."
-	},
-
-	"options_shortcuts_none_mouse_button_label": {
-		"message": "(None)",
-		"description": "Mouse (None) Button label (no mouse button to be selected)."
-	},
 	
-	"options_shortcuts_next_label": {
+	"options_shortcut_keys_next_label": {
 	  "message": "Next (+)",
   	"description": "Shortcut Key Increment label."
 	},
 
-	"options_shortcuts_prev_label": {
+	"options_shortcut_keys_prev_label": {
 		"message": "Prev (-)",
 		"description": "Shortcut Key Decrement label."
 	},
 
-	"options_shortcuts_clear_label": {
+	"options_shortcut_keys_clear_label": {
 		"message": "Clear",
 		"description": "Shortcut Key Clear label."
 	},
 
-	"options_shortcuts_quick_next_label": {
-		"message": "Quick Next +",
+	"options_shortcut_keys_quick_next_label": {
+		"message": "Quick Next (+)",
 		"description": "Shortcut Key Fast Increment label."
 	},
 
-	"options_shortcuts_quick_prev_label": {
-		"message": "Quick Prev -",
+	"options_shortcut_keys_quick_prev_label": {
+		"message": "Quick Prev (-)",
 		"description": "Shortcut Key Fast Decrement label."
 	},
 
-	"options_advanced": {
-		"message": "Advanced",
-		"description": "The options page's advanced title."
-	},
-
-	"options_advanced_default_settings": {
+	"options_default_settings": {
 		"message": "Default Settings",
 		"description": "Default Settings sub header."
 	},
 
-	"options_advanced_default_settings_description": {
+	"options_default_settings_description": {
 		"message": "You can have URL Next Plus choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
-		"description": "Default paragraph."
+		"description": ""
 	},
 	
-	"options_interval_label": {
-		"message": "Interval",
-		"description": "Form label for Increment input number."
+	"options_default_interval_label": {
+		"message": "Default Interval",
+		"description": ""
 	},
 	
-	"options_advanced_scan_link_priortization_settings": {
+	"options_scan_link_priortization_settings": {
 		"message": "Page Link Prioritization Settings",
-		"description": "Selection Algorithm Options sub header."
-	},
-	
-	"options_advanced_priortization_settings_description": {
-		"message": "You can set the priority order of which links URL Next Plus uses after it looks at the page for the next and previous links",
-		"description": "TODO"
-	},
-	
-	"options_advanced_prioritization_settings__common_prefixes_label": {
-		"message": "Common Prefixes",
-		"description": "Common Prefixes Selection Algorithm label."
-	},
-
-	"options_advanced_selection_algorithm_common_prefixes_description": {
-		"message": "First prioritize finding common prefixes in the URL that usually come before digits.\nCurrently supported prefixes:\"page=\", \"=\", and \"/\"\n(Recommended.)",
-		"description": "Common Prefixes Selection Algorithm paragraph."
-	},
-	
-
-	"options_advanced_selection_algorithm_settings": {
-		"message": "Selection Algorithm Settings",
-		"description": "Selection Algorithm Options sub header."
-	},
-
-	"options_advanced_selection_algorithm_settings_description": {
-		"message": "Help URL Next Plus correctly guess what part of the URL you want to increment.  You can do this by specifying the best selection algorithm for URL Next Plus to use.",
-		"description": "Selection Algorithm paragraph."
-	},
-
-	"options_advanced_selection_algorithm_common_prefixes_label": {
-		"message": "Common Prefixes",
-		"description": "Common Prefixes Selection Algorithm label."
-	},
-
-	"options_advanced_selection_algorithm_common_prefixes_description": {
-		"message": "First prioritize finding common prefixes in the URL that usually come before digits.\nCurrently supported prefixes:\"page=\", \"=\", and \"/\"\n(Recommended.)",
-		"description": "Common Prefixes Selection Algorithm paragraph."
-	},
-
-	"options_advanced_selection_algorithm_last_number_label": {
-		"message": "Last Number",
-		"description": "Last Number Selection Algorithm label."
-	},
-
-	"options_advanced_selection_algorithm_last_number_description": {
-		"message": "Ignores common prefixes.\nAlways tries to select the last number in the URL, no matter what it is.\n(Use this if Common Prefixes usually guesses the wrong number.)",
-		"description": "Last Number Selection Algorithm paragraph."
-	},
-
-	"options_save_success": {
-		"message": "Options saved.",
-		"description": "Overlay message that appears after pressing Save successfully."
-	},
-
-	"options_reset_success": {
-		"message": "Options reset.",
-		"description": "Overlay message that appears after pressing Reset successfully."
-	},
-
-	"options_save_keys_error": {
-		"message": "Cannot assign multiple shortcuts to the same key.",
-		"description": "Overlay error message that appears after pressing Save with multiple shortcuts assigned to the same key."
-	},
-
-	"options_save_mouse_error": {
-		"message": "Cannot assign multiple shortcuts to the same mouse button.",
-		"description": "Overlay error message that appears after pressing Save with multiple shortcuts assigned to the same mouse button."
+		"description": ""
 	},
 	
 	"options_save_disclaimer": {

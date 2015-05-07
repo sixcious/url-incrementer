@@ -16,7 +16,6 @@ URLNP.Popup = URLNP.Popup || function () {
 		  currentTab,
 		  //selectionStart = -1,
 		  selectionProperties = { selection: "", selectionStart: -1 },
-		  uiHelper = URLNP.UIHelper,
 		
   /**
    * Loads the DOM content needed to display the popup page.
@@ -71,30 +70,6 @@ URLNP.Popup = URLNP.Popup || function () {
   		}
   	);
   },
-		
-		
-    /**
-     * Initializes the popup form each time the tab is updated or when the
-     * user clicks on the setup input to show the form.
-     * 
-     * @private
-     */ 
-		initForm = function () {
-			console.log("\tfunction initForm");
-			// Fill out the form elements' contents and load the default values
-			chrome.runtime.getBackgroundPage(function(backgroundPage) {
-			  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
-			  // selectionStart = selectionProperties.selectionStart;
-  			document.getElementById("url-textarea").value = currentTab.url;
-  			document.getElementById("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
-  			document.getElementById("selection-input").value = selectionProperties.selection;
-			});
-      if (!document.getElementById("interval-input").value) {
-        chrome.storage.sync.get(null, function (o) {
-		      document.getElementById("interval-input").value = o.defaultInterval;
-        });
-      }
-		},
 		
 		// Changes the class of the images to either disabled or enabled
 		// depending on the response (state of response.enabled).
@@ -157,15 +132,6 @@ URLNP.Popup = URLNP.Popup || function () {
 				i,
 				length;
 		
-			// ERROR If the user selected text somewhere else and released the
-			// mouse in the textearea element.  Unfortunately, selectionStart
-			// will be 0 and we can't disallow legitimate selections from
-			// 0th position in the URL (as unlikely as they may be).
-		
-			// if (selectionStart === 0) {
-				// Do something.
-			// }
-		
 			// ERROR If the selected text from the URL are not digits (0-9).
 		
 		// 	for (i = 0, length = selection.length; i < length; i++) {
@@ -176,17 +142,13 @@ URLNP.Popup = URLNP.Popup || function () {
 		// 	}
 		
 			// ERROR If the selection is blank.
-		
 			if (selection === "") {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_blank_error");
 			}
-		
 			// ERROR If the selection is not a part of the URL.
-		
 			if (currentTab.url.indexOf(selection) === -1) {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_selection_notinurl_error");
 			}
-		
 			// ERROR If the interval is negative (-) or not a number.
 			for (i = 0, length = interval.length; i < length; i++) {
 				if (interval.charCodeAt(i) < 48 || interval.charCodeAt(i) > 57) {
@@ -194,28 +156,20 @@ URLNP.Popup = URLNP.Popup || function () {
 					break;
 				}
 			}
-		
 			// ERROR If the interval is blank.
-		
 			if (interval === "") {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_blank_error");
 			}
-		
 			// ERROR If the interval is 0.
-		
 			if (interval === "0") {
 				errorMessage[errorCount++] = chrome.i18n.getMessage("popup_interval_0_error");
 			}
-
 			// If there was an error, show the error message
-		
 			if (errorCount !== 0) {
 				console.log("\t\terrorMessage:" + errorMessage);
-				uiHelper.generateAlert_(errorMessage, false);
+				URLNP.UIHelper.generateAlert_(errorMessage, false);
 			}
-		
 			// Else there was not an error (successful)...
-		
 			else {
 				console.log("\t\tsuccess -- now enabling urlnp");
 				// Stores the form's information into urlnp, update the images
@@ -233,11 +187,11 @@ URLNP.Popup = URLNP.Popup || function () {
         			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function(response) {});
         			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addKeyListener"}, function (response) {});
         		}
-        		if (o.mouseEnabled) {
-        			console.log("\t\tadding mouseListener");
-        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function(response) {});
-        			chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addMouseListener"}, function (response) {});
-        		}
+        		// if (o.mouseEnabled) {
+        		// 	console.log("\t\tadding mouseListener");
+        		// 	chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "setMouse", mouseIncrement: localStorage.mouseIncrement, mouseDecrement: localStorage.mouseDecrement, mouseClear: localStorage.mouseClear}, function(response) {});
+        		// 	chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "addMouseListener"}, function (response) {});
+        		// }
           });
   			});
 				//chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, interval: interval}, function (response) {});
@@ -321,7 +275,21 @@ URLNP.Popup = URLNP.Popup || function () {
 					function(tab) {
 						currentTab = tab;
 						//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
-						initForm();
+						// initForm();
+			console.log("\tfunction initForm");
+			// Fill out the form elements' contents and load the default values
+			chrome.runtime.getBackgroundPage(function(backgroundPage) {
+			  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
+			  // selectionStart = selectionProperties.selectionStart;
+  			document.getElementById("url-textarea").value = currentTab.url;
+  			document.getElementById("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  			document.getElementById("selection-input").value = selectionProperties.selection;
+			});
+      if (!document.getElementById("interval-input").value) {
+        chrome.storage.sync.get(null, function (o) {
+		      document.getElementById("interval-input").value = o.defaultInterval;
+        });
+      }
 					}
 				);
 			}

@@ -8,73 +8,73 @@
 	<body>
 	  <div id="options">
 		  <div id="options-sidebar">
-  			<h1 id="title" class="title"></h1>
-  			<ul id="sidebar-navigation">
+  			<h1 id="extension-name" class="title"></h1>
+<!--  			<ul id="sidebar-navigation">
   				<li id="shortcuts" class="navbar-item navbar-item-selected"></li>
   				<li id="advanced" class="navbar-item"></li>
-  			</ul>
+  			</ul>-->
   			<input id="secret-input" type="image" src="../images/icon128.png" alt=""/>
   		</div>
   		<div id="options-page">
-		  	<div id="shortcuts-page">
-		  	  <h3 id="shortcuts-keys"></h3>
-					<div class="checkbox">
-					  <label>
-						  <input id="key-enable-input" type="checkbox"/>
-						  <label id="key-enable-label" for="key-enable-input"></label>
-					  </label>
-					  <label>
-						  <input id="key-quick-enable-input" type="checkbox" />
-						  <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
-					  </label>
-					</div>
-					<p id="key-p"></p>
-					<div class="table">
-						<div class="row">
-							<div class="column">
-								<label id="key-next-label" for="key-next-input" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="key-next-input" type="text" readonly="readonly"/>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="key-prev-label" for="key-prev-input" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="key-prev-input" type="text" readonly="readonly"/>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="key-clear-label" for="key-clear-input" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="key-clear-input" type="text" readonly="readonly"/>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="key-quick-next-label" for="key-quick-next-input" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="key-quick-next-input" type="text" readonly="readonly"/>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="key-quick-prev-label" for="key-quick-prev-input" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="key-quick-prev-input" type="text" readonly="readonly"/>
-							</div>
-						</div>						
-					</div>
+  		  <h1 id="options-title"></h1>
+        <h3 id="shortcut-keys"></h3>
+				<div class="checkbox">
+				  <label>
+					  <input id="key-enable-input" type="checkbox"/>
+					  <label id="key-enable-label" for="key-enable-input"></label>
+				  </label>
+				  <label>
+					  <input id="key-quick-enable-input" type="checkbox" />
+					  <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
+				  </label>
 				</div>
-				<div id="advanced-page" class="hidden">
-				  Advanced Page
+				<p id="key-p"></p>
+				<div class="table">
+					<div class="row">
+						<div class="column">
+							<label id="key-next-label" for="key-next-input" class="shadow"></label>
+						</div>
+						<div class="column">
+							<input id="key-next-input" type="text" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="column">
+							<label id="key-prev-label" for="key-prev-input" class="shadow"></label>
+						</div>
+						<div class="column">
+							<input id="key-prev-input" type="text" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="column">
+							<label id="key-clear-label" for="key-clear-input" class="shadow"></label>
+						</div>
+						<div class="column">
+							<input id="key-clear-input" type="text" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="column">
+							<label id="key-quick-next-label" for="key-quick-next-input" class="shadow"></label>
+						</div>
+						<div class="column">
+							<input id="key-quick-next-input" type="text" readonly="readonly"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="column">
+							<label id="key-quick-prev-label" for="key-quick-prev-input" class="shadow"></label>
+						</div>
+						<div class="column">
+							<input id="key-quick-prev-input" type="text" readonly="readonly"/>
+						</div>
+					</div>						
 				</div>
+				<h3 id="default-settings"></h3>
+				<p id="default-settings-p"></p>
+				<label id="default-interval-label" for="default-interval-input" class="shadow"></label>
+				<input id="default-interval-input" type="number" min="1" />
 				<p id="save-disclaimer"></p>  
       </div>
 	  </div>
