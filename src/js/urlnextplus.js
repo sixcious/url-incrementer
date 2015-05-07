@@ -20,6 +20,7 @@ URLNP.URLNextPlus.prototype = {
 	selection: "", // The selected part of the URL that will be incremented
 	selectionStart: -1, // Start position of the selection relative to the URL
 	interval: 1, // The interval to increment (or decrement)
+	action: "", // The action to perform: next or prev
 
   /**
    * Gets enabled.
@@ -110,6 +111,24 @@ URLNP.URLNextPlus.prototype = {
 	setInterval: function (interval) {
 		this.interval = interval;
 	},
+	
+	  /**
+   * Gets action.
+   * 
+   * @return action
+   */
+	getAction: function () {
+		return this.action;
+	},
+
+  /**
+   * Sets action.
+   * 
+   * @param action
+   */
+	setAction: function (action) {
+		this.action = action;
+	},
 
   /**
    * Clears and resets the properties.
@@ -120,6 +139,7 @@ URLNP.URLNextPlus.prototype = {
 		this.selection = "";
 		this.selectionStart = -1;
 		this.interval = 1;
+		this.action = "";
 	}
 	
 };

@@ -13,61 +13,64 @@ URLNP.Popup = URLNP.Popup || function () {
 	console.log("function URLNP.Popup");
 
 	var urlnp,
-		currentTab,
-		//selectionStart = -1,
-		selectionProperties = { selection: "", selectionStart: -1 },
-		uiHelper = URLNP.UIHelper,
+		  currentTab,
+		  //selectionStart = -1,
+		  selectionProperties = { selection: "", selectionStart: -1 },
+		  uiHelper = URLNP.UIHelper,
 		
-    /**
-     * Loads the DOM content needed to display the popup.
-     * 
-     * @public
-     */
-		DOMContentLoaded = function () {
-			console.log("\tfunction DOMContentLoaded");
-			// Add Event Listeners to the DOM elements (inputs)
-			console.log("\t\tadding event listeners");
-			document.getElementById("next-input").addEventListener("click", clickIncrement, false);
-			document.getElementById("prev-input").addEventListener("click", clickDecrement, false);
-			document.getElementById("clear-input").addEventListener("click", clickClear, false);
-			document.getElementById("setup-input").addEventListener("click", toggleForm, false);
-			document.getElementById("url-textarea").addEventListener("mouseup", handleURL, false);
-			document.getElementById("url-textarea").addEventListener("keyup", handleURL, false);
-			document.getElementById("accept-input").addEventListener("click", submitForm, false);
-			document.getElementById("cancel-input").addEventListener("click", toggleForm, false);
-			document.getElementById("popup-form").addEventListener("click", uiHelper.dispatchFormClick_.bind(this));
-			// Set localization text (i18n) from messages.json
-			console.log("\t\tadding i18n text");
-			document.getElementById("next-input").title = chrome.i18n.getMessage("popup_next_input");
-			document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
-			document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
-			document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-			document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-			document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
-			document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
-			document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
-			document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
-			document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
-			// Set urlnp to get the enabled state and update the images
-			chrome.runtime.getBackgroundPage(function(backgroundPage) {
-			  urlnp = backgroundPage.URLNP.Background.getURLNP();  
-  			updateImages();
-			});
-		// 	chrome.runtime.sendMessage({greeting: "getUrli"},
-		// 		function (response) {
-		// 			urlnp = response;
-		// 			console.log("\t\tgetting urlnp (urlnp.enabled=" + urlnp.enabled+")");
-		// 			updateImages();
-		// 		}
-		// 	);
-			// Set the current tab
-			chrome.tabs.getSelected(null,
-				function (tab) {
-					currentTab = tab;
-					console.log("\t\tgetting currentTab (currentTab.id=" + currentTab.id +")");
-				}
-			);
-		},
+  /**
+   * Loads the DOM content needed to display the popup page.
+   * 
+   * DOMContentLoaded will fire when the DOM is loaded. Unlike the conventional
+   * "load", it does not wait for images and media.
+   * 
+   * @public
+   */
+  DOMContentLoaded = function () {
+  	console.log("\tfunction DOMContentLoaded");
+  	// Add Event Listeners to the DOM elements (inputs)
+  	console.log("\t\tadding event listeners");
+  	document.getElementById("next-input").addEventListener("click", clickNext, false);
+  	document.getElementById("prev-input").addEventListener("click", clickPrev, false);
+  	document.getElementById("clear-input").addEventListener("click", clickClear, false);
+  	document.getElementById("setup-input").addEventListener("click", toggleForm, false);
+  	document.getElementById("url-textarea").addEventListener("mouseup", handleURL, false);
+  	document.getElementById("url-textarea").addEventListener("keyup", handleURL, false);
+  	document.getElementById("accept-input").addEventListener("click", submitForm, false);
+  	document.getElementById("cancel-input").addEventListener("click", toggleForm, false);
+  	document.getElementById("popup-form").addEventListener("click", uiHelper.dispatchFormClick_.bind(this));
+  	// Set localization text (i18n) from messages.json
+  	console.log("\t\tadding i18n text");
+  	document.getElementById("next-input").title = chrome.i18n.getMessage("popup_next_input");
+  	document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
+  	document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
+  	document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
+  	document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+  	document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
+  	document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
+  	document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
+  	document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
+  	document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
+  	// Set urlnp to get the enabled state and update the images
+  	chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  	  urlnp = backgroundPage.URLNP.Background.getURLNP();  
+  		updateImages();
+  	});
+  // 	chrome.runtime.sendMessage({greeting: "getUrli"},
+  // 		function (response) {
+  // 			urlnp = response;
+  // 			console.log("\t\tgetting urlnp (urlnp.enabled=" + urlnp.enabled+")");
+  // 			updateImages();
+  // 		}
+  // 	);
+  	// Set the current tab
+  	chrome.tabs.getSelected(null,
+  		function (tab) {
+  			currentTab = tab;
+  			console.log("\t\tgetting currentTab (currentTab.id=" + currentTab.id +")");
+  		}
+  	);
+  },
 		
 		
     /**
@@ -246,11 +249,11 @@ URLNP.Popup = URLNP.Popup || function () {
 		// and if the current tab is urlnp's tab before sending a request to
 		// increment via modifyUrliAndUpdateTab.
 		
-		clickIncrement = function () {
-			console.log("\tfunction clickIncrement");
+		clickNext = function () {
+			console.log("\tfunction clickNext");
 			if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
-				console.log("\t\tincrementing urlnp");
-				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Increment"}, function (response) {});
+				console.log("\t\tgoing next");
+				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Next"}, function (response) {});
 			}
 		},
 		
@@ -258,11 +261,11 @@ URLNP.Popup = URLNP.Popup || function () {
 		// and if the current tab is urlnp's tab before sending a request to
 		// decrement via modifyU?rliAndUpdateTab.
 		
-		clickDecrement = function () {
-			console.log("\tfunction clickDecrement");
+		clickPrev = function () {
+			console.log("\tfunction clickPrev");
 			if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
-				console.log("\t\tdecrementing urlnp");
-				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Decrement"}, function (response) {});
+				console.log("\t\tgoing prev");
+				chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Prev"}, function (response) {});
 			}
 		},
 		
@@ -271,15 +274,24 @@ URLNP.Popup = URLNP.Popup || function () {
 		// return false so a request to fetch urlnp seems redundant, but
 		// unavoidable without adding a new function...
 		
-		clickClear = function () {
-			console.log("\tfunction clickClear");
-			if (urlnp.enabled) {
-				console.log("\t\tclearing urlnp");
-				urlnp.enabled = false;
-				chrome.runtime.sendMessage({greeting: "clearUrli"}, function (response) {});
-				updateImages();
-			}
-		},
+	/**
+	 * IF URLNP's state is currently enabled, clears its properties, disabling it,
+	 * and then calls updateImages() to set the images to a disabled/off state.
+	 * 
+	 * @private
+	 */ 
+	clickClear = function () {
+		console.log("\tfunction clickClear");
+		if (urlnp.enabled) {
+			console.log("\t\tclearing urlnp");
+			chrome.runtime.getBackgroundPage(function(backgroundPage) {
+			  backgroundPage.URLNP.Background.clearURLNP();
+				urlnp = backgroundPage.URLNP.Background.getURLNP();
+				//urlnp.enabled = false;
+			  updateImages();
+			});
+		}
+	},
 		
 		/**
 		 * Toggles the popup form. When the user clicks the setup input, the form
@@ -315,14 +327,10 @@ URLNP.Popup = URLNP.Popup || function () {
 			}
 		};
 
-		// Public methods list.
-		return {
-			DOMContentLoaded: DOMContentLoaded
-		};
-		
+	// Public methods
+	return {
+		DOMContentLoaded: DOMContentLoaded
+	};
 }();
-
-// DOMContentLoaded will fire when the DOM is loaded but unlike "load" it does not wait for images, etc.
-// It is being standardized in HTML5
 
 document.addEventListener("DOMContentLoaded", URLNP.Popup.DOMContentLoaded, false);

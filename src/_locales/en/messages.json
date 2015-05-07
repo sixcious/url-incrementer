@@ -125,7 +125,7 @@
 	},
 
 	"options_shortcuts_keys_description": {
-		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. You can also hold down Alt, Ctrl, Shift, or Meta (any combination of the four) and press another key to make a combination key shortcut. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
+		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. You can also hold down the Alt, Ctrl, Shift, or Meta keys (any combination of the four) and press another key to make a combination key shortcut. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
 		"description": "Shortcut Keys paragraph."
 	},
 

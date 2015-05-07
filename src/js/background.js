@@ -1,7 +1,5 @@
 /**
  * TODO
- * 
- * Copyright 2015 Roy 
  */ 
 
 console.log("background.js start");
@@ -42,7 +40,7 @@ URLNP.Background = URLNP.Background || function () {
 		  'mouseQuickPrev': 0,
 		  'defaultInterval': 1,
 		  'selectionAlgorithm': 1,
-		  'secret': 0
+		  'secretClickCount': 0
 		  });
 	},
 	
@@ -90,6 +88,7 @@ URLNP.Background = URLNP.Background || function () {
 	 */
 	modifyURL = function (url, selectionString, selectionStart, interval, action) {
 		console.log("\t\tmodifyURL()");
+		console.log("url=" + url + "\nselectionString=" + selectionString + "\nselectionStart=" + selectionStart + "\ninterval=" + interval + "\naction=" + action);
 		var	firstPartURL = url.substring(0, selectionStart),
 			secondPartURL = url.substring(selectionStart + selectionString.length),
 			selectionInteger = parseInt(selectionString, 10), // Base 10 needed due to bug with parseInt for leading zeros
@@ -144,9 +143,9 @@ URLNP.Background = URLNP.Background || function () {
 		     // }
 		     
 		  }
-			if (action === "Increment") {
+			if (action === "Next") {
 				selectionString = (selectionInteger + interval).toString();
-			} else if (action === "Decrement") {
+			} else if (action === "Prev") {
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
 		}
@@ -162,11 +161,11 @@ URLNP.Background = URLNP.Background || function () {
 					break;
 				}
 			}
-			if (action === "Increment") {
+			if (action === "Next") {
 				// selectionInteger already strips the zeros, we only care about the value here.
 				selectionString = (selectionInteger + interval).toString();
 			}
-			else if (action === "Decrement") {
+			else if (action === "Prev") {
 				// selectionInteger already strips the zeros, we only care about the value here.
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
@@ -209,9 +208,9 @@ URLNP.Background = URLNP.Background || function () {
 		// that the user cannot decrement below 0 (design decision).
 
 		else {
-			if (action === "Increment") {
+			if (action === "Next") {
 				selectionString = (selectionInteger + interval).toString();
-			} else if (action === "Decrement") {
+			} else if (action === "Prev") {
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
 		}
@@ -397,7 +396,7 @@ URLNP.Background = URLNP.Background || function () {
 		);
 	};
 
-	// Public mehtods
+	// Public methods
 	return {
 		initStorage: initStorage,
 		// onPopupFormAccept: onPopupFormAccept,
