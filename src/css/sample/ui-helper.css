@@ -18,13 +18,18 @@
 	background: rgba(0, 0, 0, 0.75);
 	border-radius: 5px;
 	color: #FFF;
-	font: 1.5em/1.2 Arial, sans-serif;
+	/*font: 1.5em/1.2; Arial, sans-serif; */
+	font-size: 1.3em;
 	-webkit-transition: all 1.0s ease;
 	-webkit-transform: scale(0);
 }
 
 .overlay a {
 	color:  #FFF;
+}
+
+.overlay ul {
+  list-style-type: none;
 }
 
 .overlay.visible {

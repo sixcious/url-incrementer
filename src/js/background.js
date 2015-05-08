@@ -6,23 +6,23 @@ console.log("background.js start");
 var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
 /**
- * TODO
+ * URL Next Plus Background function.
  */ 
 URLNP.Background = URLNP.Background || function () {
   
-	console.log("\tURLNP.Background()");
+	console.log("URLNP.Background()");
 	
 	var	urlnp = new URLNP.URLNextPlus(), // URL Next Plus object
 
   /**
-   * Initializes the storage with the default values. This function runs when
-   * the extension is first loaded and whenever the user presses the Reset
-   * button on the Options page.
+   * Initializes the storage with the default values. The storage is initialized
+   * when the extension is first installed.
    * 
    * @public
    */ 
 	initStorage = function () {
-		console.log("\t\tinitStorage()");
+		console.log("initStorage()");
+		chrome.storage.sync.clear();
 		chrome.storage.sync.set({
 		  'keyEnabled': true,
 		  'keyQuickEnabled': true,
@@ -31,9 +31,8 @@ URLNP.Background = URLNP.Background || function () {
 		  'keyClear': [0, 13],
 		  'keyQuickNext': [7, 39],
 		  'keyQuickPrev': [7, 37],
-		  'defaultInterval': 1,
-		  'defaultPriority': 1,
-		  'secretClickCount': 0
+		  'defaultAction': 1,
+		  'defaultInterval': 1
 		  });
 	},
 	
@@ -42,8 +41,8 @@ URLNP.Background = URLNP.Background || function () {
 	 * 
 	 * @public
 	 */
-	getURLNP = function (/*sendResponse*/) {
-		console.log("\tfunction getURLNP");
+	getURLNP = function () {
+		console.log("function getURLNP");
 		return urlnp;
 		//sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
 	},
@@ -54,7 +53,7 @@ URLNP.Background = URLNP.Background || function () {
 	 * @public
 	 */	
 	setURLNP = function(urlnp) {
-		console.log("\tfunction setURLNP");
+		console.log("function setURLNP");
 	  this.urlnp = urlnp;
 	},
 
@@ -64,8 +63,8 @@ URLNP.Background = URLNP.Background || function () {
 	 * @public
 	 */
 	clearURLNP = function () {
-		console.log("\tfunction clearURLNP");
-		console.log("\t\tremoving keyListener");
+		console.log("function clearURLNP");
+		console.log("\tremoving keyListener");
 		chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
 		chrome.tabs.onUpdated.removeListener(updateListeners);
 		urlnp.clear();
@@ -78,7 +77,7 @@ URLNP.Background = URLNP.Background || function () {
 	 * @public
 	 */
 	modifyURL = function (url, selectionString, selectionStart, interval, action) {
-		console.log("\t\tmodifyURL()");
+		console.log("\tmodifyURL()");
 		console.log("url=" + url + "\nselectionString=" + selectionString + "\nselectionStart=" + selectionStart + "\ninterval=" + interval + "\naction=" + action);
 		var	firstPartURL = url.substring(0, selectionStart),
 			secondPartURL = url.substring(selectionStart + selectionString.length),
@@ -380,13 +379,9 @@ URLNP.Background = URLNP.Background || function () {
 	// Public methods
 	return {
 		initStorage: initStorage,
-		// onPopupFormAccept: onPopupFormAccept,
-		// onOptionsFormSave: onOptionsFormSave,
-		// onOptionsFormReset: onOptionsFormReset,
 		getURLNP: getURLNP,
 		setURLNP: setURLNP,
 		clearURLNP: clearURLNP,
-		// processSelection: processSelection,
 		findSelection: findSelection,
 		modifyUrliAndUpdateTab: modifyUrliAndUpdateTab,
 		checkIfFastIsEnabled: checkIfFastIsEnabled,

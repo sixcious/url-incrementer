@@ -98,11 +98,6 @@
 		"message": "Interval can't be 0",
 		"description": "Form error message if user tries to enter zero for Increment."
 	},
-
-	"options_title": {
-		"message": "Options",
-		"description": "The options page's title."
-	},
 	
 	"options_shortcut_keys": {
 		"message": "Shortcut Keys",
@@ -119,8 +114,8 @@
 		"description": "Quick Shortcut Keys checkbox label."
 	},
 
-	"options_shortcut_keys_description": {
-		"message": "Click on the text boxes and then press the key you want to assign as a shortcut. You can also hold down the Alt, Ctrl, Shift, or Meta keys (any combination of the four) and press another key to make a combination key shortcut. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
+	"options_shortcut_keys_p": {
+		"message": "Click on the text boxes and then press the keys you want to assign as shortcuts. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to enter Setup.",
 		"description": "Shortcut Keys paragraph."
 	},
 	
@@ -154,28 +149,43 @@
 		"description": "Default Settings sub header."
 	},
 
-	"options_default_settings_description": {
-		"message": "You can have URL Next Plus choose these values by default each time you enter Setup or when you use \"Quick\" functionality.",
+	"options_default_settings_p": {
+		"message": "You can have URL Next Plus act with these defaults each time you use \"Quick\" shortcuts or enter Setup.",
+		"description": ""
+	},
+
+	"options_default_action_label": {
+		"message": "Action",
+		"description": ""
+	},
+
+	"options_default_action_scan_page_option": {
+		"message": "Look for the next and prev links on the page",
 		"description": ""
 	},
 	
+	"options_default_action_modify_url_option": {
+		"message": "Modify the URL and increment (+) or decrement (-)",
+		"description": ""
+	},
+
 	"options_default_interval_label": {
-		"message": "Default Interval",
-		"description": ""
-	},
-	
-	"options_scan_link_priortization_settings": {
-		"message": "Page Link Prioritization Settings",
+		"message": "Interval",
 		"description": ""
 	},
 	
 	"options_save_disclaimer": {
-	  "message": "Note: Changes you make are automatically saved",
+	  "message": "Note: Changes you make are saved upon closing this dialog.",
 	  "description": ""
 	},
 
-	"options_secret": {
+	"options_secret_1": {
 		"message": "URL Next Plus v3",
+		"description": "It's a secret."
+	},
+	
+	"options_secret_2": {
+		"message": "Thanks for using! :)",
 		"description": "It's a secret."
 	}
 

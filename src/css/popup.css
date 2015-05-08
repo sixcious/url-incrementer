@@ -60,9 +60,7 @@ input[type="number"] {
 	width: 52px;
 }
 
-input[type="checkbox"] {
-	margin: 5px 0px 0px 85px; 
-}
+
 
 textarea {
 	letter-spacing: -1px;
@@ -77,8 +75,4 @@ textarea {
 	display: block;
 	text-align: center;
 	position: relative;
-}
-
-.overlay > ul > li {
-	list-style-type: none;
 }

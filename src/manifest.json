@@ -8,6 +8,7 @@
 	"background": { "scripts": ["js/urlnextplus.js", "js/background.js"], "persistent": true },
 	"browser_action": { "default_title": "__MSG_title__", "default_icon": "images/icon19.png", "default_popup": "html/popup.html"},
 	"content_scripts": [{"matches": ["http://*/*", "https://*/*"], "run_at": "document_start", "js": ["js/content-scripts/shortcuts.js" ,"js/content-scripts/scan-links.js"]}],
+	"options_ui": { "page": "html/options.html", "chrome_style": true},
 	"options_page": "html/options.html",
 	"permissions": ["storage", "tabs"]
 }

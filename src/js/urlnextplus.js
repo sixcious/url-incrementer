@@ -6,7 +6,7 @@ console.log("urlnextplus.js start");
 var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
 /**
- * TODO
+ * URL Next Plus Object function.
  */ 
 URLNP.URLNextPlus = URLNP.URLNextPlus || function () {};
 

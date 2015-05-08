@@ -269,11 +269,6 @@ chrome.storage.sync.get(null, function (o) {
 	U.keyClear = o.keyClear;
 	U.keyQuickNext = o.keyQuickNext;
 	U.keyQuickPrev = o.keyQuickPrev;
-// 	U.mouseNext = o.mouseNext;
-// 	U.mousePrev = o.mousePrev;
-// 	U.mouseClear = o.mouseClear;
-// 	U.mouseQuickNext = o.mouseQuickNext;
-// 	U.mouseQuickPrev = o.mouseQuickPrev;
 });
 
 // Send a request to the background to check if fast shortcuts are enabled.

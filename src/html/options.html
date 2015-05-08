@@ -7,257 +7,87 @@
 	</head>
 	<body>
 	  <div id="options">
-		  <div id="options-sidebar">
-  			<h1 id="extension-name" class="title"></h1>
-<!--  			<ul id="sidebar-navigation">
-  				<li id="shortcuts" class="navbar-item navbar-item-selected"></li>
-  				<li id="advanced" class="navbar-item"></li>
-  			</ul>-->
-  			<input id="secret-input" type="image" src="../images/icon128.png" alt=""/>
+      <img src="../images/font-awesome/keyboard-o.png" alt="" width="16" height="16"/>
+      <h3 id="shortcut-keys"></h3>
+      <hr/>
+		  <label>
+			  <input id="key-enable-input" type="checkbox"/>
+			  <label id="key-enable-label" for="key-enable-input"></label>
+		  </label>
+		  <label>
+			  <input id="key-quick-enable-input" type="checkbox" />
+			  <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
+		  </label>
+  		<p id="key-p"></p>
+  		<div class="table">
+  			<div class="row">
+  				<div class="column">
+  					<label id="key-next-label" for="key-next-input" class="shadow"></label>
+  				</div>
+  				<div class="column">
+  					<input id="key-next-input" type="text" readonly="readonly"/>
+  				</div>
+  			</div>
+  			<div class="row">
+  				<div class="column">
+  					<label id="key-prev-label" for="key-prev-input" class="shadow"></label>
+  				</div>
+  				<div class="column">
+  					<input id="key-prev-input" type="text" readonly="readonly"/>
+  				</div>
+  			</div>
+  			<div class="row">
+  				<div class="column">
+  					<label id="key-clear-label" for="key-clear-input" class="shadow"></label>
+  				</div>
+  				<div class="column">
+  					<input id="key-clear-input" type="text" readonly="readonly"/>
+  				</div>
+  			</div>
+  			<div class="row">
+  				<div class="column">
+  					<label id="key-quick-next-label" for="key-quick-next-input" class="shadow"></label>
+  				</div>
+  				<div class="column">
+  					<input id="key-quick-next-input" type="text" readonly="readonly"/>
+  				</div>
+  			</div>
+  			<div class="row">
+  				<div class="column">
+  					<label id="key-quick-prev-label" for="key-quick-prev-input" class="shadow"></label>
+  				</div>
+  				<div class="column">
+  					<input id="key-quick-prev-input" type="text" readonly="readonly"/>
+  				</div>
+  			</div>						
   		</div>
-  		<div id="options-page">
-  		  <h1 id="options-title"></h1>
-        <h3 id="shortcut-keys"></h3>
-				<div class="checkbox">
-				  <label>
-					  <input id="key-enable-input" type="checkbox"/>
-					  <label id="key-enable-label" for="key-enable-input"></label>
-				  </label>
-				  <label>
-					  <input id="key-quick-enable-input" type="checkbox" />
-					  <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
-				  </label>
-				</div>
-				<p id="key-p"></p>
-				<div class="table">
-					<div class="row">
-						<div class="column">
-							<label id="key-next-label" for="key-next-input" class="shadow"></label>
-						</div>
-						<div class="column">
-							<input id="key-next-input" type="text" readonly="readonly"/>
-						</div>
-					</div>
-					<div class="row">
-						<div class="column">
-							<label id="key-prev-label" for="key-prev-input" class="shadow"></label>
-						</div>
-						<div class="column">
-							<input id="key-prev-input" type="text" readonly="readonly"/>
-						</div>
-					</div>
-					<div class="row">
-						<div class="column">
-							<label id="key-clear-label" for="key-clear-input" class="shadow"></label>
-						</div>
-						<div class="column">
-							<input id="key-clear-input" type="text" readonly="readonly"/>
-						</div>
-					</div>
-					<div class="row">
-						<div class="column">
-							<label id="key-quick-next-label" for="key-quick-next-input" class="shadow"></label>
-						</div>
-						<div class="column">
-							<input id="key-quick-next-input" type="text" readonly="readonly"/>
-						</div>
-					</div>
-					<div class="row">
-						<div class="column">
-							<label id="key-quick-prev-label" for="key-quick-prev-input" class="shadow"></label>
-						</div>
-						<div class="column">
-							<input id="key-quick-prev-input" type="text" readonly="readonly"/>
-						</div>
-					</div>						
-				</div>
-				<h3 id="default-settings"></h3>
-				<p id="default-settings-p"></p>
-				<label id="default-interval-label" for="default-interval-input" class="shadow"></label>
-				<input id="default-interval-input" type="number" min="1" />
-				<p id="save-disclaimer"></p>  
-      </div>
+      <img src="../images/font-awesome/check-square-o.png" alt="" width="16" height="16"/>
+  		<h3 id="default-settings"></h3>
+  		<hr/>
+  		<p id="default-settings-p"></p>
+  		<div class="table">
+  		  <div class="row">
+  		    <div class="column">
+    				<label id="default-action-label" for="default-action-select" class="shadow"></label>
+  		    </div>
+  		    <div class="column">
+    				<select id="default-action-select">
+    				  <option id="default-action-scan-page-option" value="1"></option>
+    				  <option id="default-action-modify-url-option" value="2"></option>
+    				</select>
+  		    </div>				    
+  		  </div>
+  		  <div class="row">
+  		    <div class="column">
+  				  <label id="default-interval-label" for="default-interval-input" class="shadow"></label>
+  		    </div>
+  		    <div class="column">
+  		      <input id="default-interval-input" type="number" min="1" />				      
+  		    </div>
+  		  </div>
+  		</div>
+  		<p id="save-disclaimer" class="italic"></p>
 	  </div>
-		<script type="text/javascript" src="../js/sample/ui-helper.js"></script>
 		<script type="text/javascript" src="../js/options.js"></script>
 	</body>
 </html>
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		
-  		<!--
-  			<div id="content page">
-								<div class="header">
-					<div class="left">
-						<h1 id="mouseHeader" class="title"></h1>
-					</div>
-					<div class="right header-checkbox">
-						<input id="mouseInput" type="checkbox" />
-						<label id="mouseLabel" for="mouseInput"></label>
-						<input id="mouseFastInput" type="checkbox" />
-						<label id="mouseFastLabel" for="mouseFastInput"></label>
-					</div>
-				</div>
-				<div class="options">
-					<p id="mouseP"></p>
-					<div class="table">
-						<div class="row">
-							<div class="column">
-								<label id="mouseIncrementLabel" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="mouseLeftIncrementInput" type="radio" name="mouseIncrement" value="1" />
-								<label id="mouseLeftIncrementLabel" for="mouseLeftIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseMiddleIncrementInput" type="radio" name="mouseIncrement" value="2" />
-								<label id="mouseMiddleIncrementLabel" for="mouseMiddleIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseRightIncrementInput" type="radio" name="mouseIncrement" value="3" />
-								<label id="mouseRightIncrementLabel" for="mouseRightIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseNoneIncrementInput" type="radio" name="mouseIncrement" value="0" />
-								<label id="mouseNoneIncrementLabel" for="mouseNoneIncrementInput"></label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="mouseDecrementLabel" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="mouseLeftDecrementInput" type="radio" name="mouseDecrement" value="1" />
-								<label id="mouseLeftDecrementLabel" for="mouseLeftDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseMiddleDecrementInput" type="radio" name="mouseDecrement" value="2" />
-								<label id="mouseMiddleDecrementLabel" for="mouseMiddleDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseRightDecrementInput" type="radio" name="mouseDecrement" value="3" />
-								<label id="mouseRightDecrementLabel" for="mouseRightDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseNoneDecrementInput" type="radio" name="mouseDecrement" value="0" />
-								<label id="mouseNoneDecrementLabel" for="mouseNoneDecrementInput"></label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="mouseClearLabel" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="mouseLeftClearInput" type="radio" name="mouseClear" value="1" />
-								<label id="mouseLeftClearLabel" for="mouseLeftClearInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseMiddleClearInput" type="radio" name="mouseClear" value="2" />
-								<label id="mouseMiddleClearLabel" for="mouseMiddleClearInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseRightClearInput" type="radio" name="mouseClear" value="3" />
-								<label id="mouseRightClearLabel" for="mouseRightClearInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseNoneClearInput" type="radio" name="mouseClear" value="0" />
-								<label id="mouseNoneClearLabel" for="mouseNoneClearInput"></label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="mouseFastIncrementLabel" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="mouseLeftFastIncrementInput" type="radio" name="mouseFastIncrement" value="1" />
-								<label id="mouseLeftFastIncrementLabel" for="mouseLeftFastIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseMiddleFastIncrementInput" type="radio" name="mouseFastIncrement" value="2" />
-								<label id="mouseMiddleFastIncrementLabel" for="mouseMiddleFastIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseRightFastIncrementInput" type="radio" name="mouseFastIncrement" value="3" />
-								<label id="mouseRightFastIncrementLabel" for="mouseRightFastIncrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseNoneFastIncrementInput" type="radio" name="mouseFastIncrement" value="0" />
-								<label id="mouseNoneFastIncrementLabel" for="mouseNoneFastIncrementInput"></label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<label id="mouseFastDecrementLabel" class="shadow"></label>
-							</div>
-							<div class="column">
-								<input id="mouseLeftFastDecrementInput" type="radio" name="mouseFastDecrement" value="1" />
-								<label id="mouseLeftFastDecrementLabel" for="mouseLeftFastDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseMiddleFastDecrementInput" type="radio" name="mouseFastDecrement" value="2" />
-								<label id="mouseMiddleFastDecrementLabel" for="mouseMiddleFastDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseRightFastDecrementInput" type="radio" name="mouseFastDecrement" value="3" />
-								<label id="mouseRightFastDecrementLabel" for="mouseRightFastDecrementInput"></label>
-							</div>
-							<div class="column">
-								<input id="mouseNoneFastDecrementInput" type="radio" name="mouseFastDecrement" value="0" />
-								<label id="mouseNoneFastDecrementLabel" for="mouseNoneFastDecrementInput"></label>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				
-				
-			</div>
-			<div id="advanced" class="hidden">
-				<div class="header">
-					<h1 id="advancedHeader" class="title"></h1>
-				</div>
-				<div class="options">
-					<h1 id="defaultSubHeader" class="subHeader"></h1>
-					<p id="defaultP"></p>
-					<label id="defaultIntervalLabel" for="defaultIntervalInput" class="shadow"></label>
-					<input id="defaultIntervalInput" type="number" min="1" />
-					<h1 id="selectionAlgorithmSubHeader" class="subHeader"></h1>
-					<p id="selectionAlgorithmP"></p>
-					<div class="table">
-						<div class="row">
-							<div class="column">
-								<input id="selectionAlgorithmCommonPrefixesInput" type="radio" name="selectionAlgorithm" value="1" />
-								<label id="selectionAlgorithmCommonPrefixesLabel" for="selectionAlgorithmCommonPrefixesInput" class="shadow"></label>
-							</div>
-							<div class="column">
-								<p id="selectionAlgorithmCommonPrefixesP"></p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="column">
-								<input id="selectionAlgorithmLastNumberInput" type="radio" name="selectionAlgorithm" value="2" />
-								<label id="selectionAlgorithmLastNumberLabel" for="selectionAlgorithmLastNumberInput" class="shadow"></label>
-							</div>
-							<div class="column">
-								<p id="selectionAlgorithmLastNumberP"></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			-->
