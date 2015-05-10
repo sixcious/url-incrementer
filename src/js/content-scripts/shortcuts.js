@@ -23,66 +23,6 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
   		keyQuickNext,
   		keyQuickPrev,
 
-		//setKeyCodeIncrement = function (value) {
-		//	keyCodeIncrement = value;
-		//},
-        //
-		//setKeyEventIncrement = function (value) {
-		//	keyEventIncrement = value;
-		//},
-        //
-		//setKeyCodeDecrement = function (value) {
-		//	keyCodeDecrement = value;
-		//},
-        //
-		//setKeyEventDecrement = function (value) {
-		//	keyEventDecrement = value;
-		//},
-        //
-		//setKeyCodeClear = function (value) {
-		//	keyCodeClear = value;
-		//},
-        //
-		//setKeyEventClear = function (value) {
-		//	keyEventClear = value;
-		//},
-        //
-		//setKeyCodeFastIncrement = function (value) {
-		//	keyCodeFastIncrement = value;
-		//},
-        //
-		//setKeyEventFastIncrement = function (value) {
-		//	keyEventFastIncrement = value;
-		//},
-        //
-		//setKeyCodeFastDecrement = function (value) {
-		//	keyCodeFastDecrement = value;
-		//},
-        //
-		//setKeyEventFastDecrement = function (value) {
-		//	keyEventFastDecrement = value;
-		//},
-        //
-		//setMouseIncrement = function (value) {
-		//	mouseIncrement = value;
-		//},
-        //
-		//setMouseDecrement = function (value) {
-		//	mouseDecrement = value;
-		//},
-        //
-		//setMouseClear = function (value) {
-		//	mouseClear = value;
-		//},
-        //
-		//setMouseFastIncrement = function (value) {
-		//	mouseFastIncrement = value;
-		//},
-        //
-		//setMouseFastDecrement = function (value) {
-		//	mouseFastDecrement = value;
-		//},
-
 		// When a listener is added, this function executes on each keydown event that is fired.
 		keyListener = function (event) {
 			console.log("\tfunction keyListener");
@@ -147,21 +87,6 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 		};
 
 	return {
-		//setKeyCodeIncrement: setKeyCodeIncrement,
-		//setKeyEventIncrement: setKeyEventIncrement,
-		//setKeyCodeDecrement: setKeyCodeDecrement,
-		//setKeyEventDecrement: setKeyEventDecrement,
-		//setKeyCodeClear: setKeyCodeClear,
-		//setKeyEventClear: setKeyEventClear,
-		//setKeyCodeFastIncrement: setKeyCodeFastIncrement,
-		//setKeyEventFastIncrement: setKeyEventFastIncrement,
-		//setKeyCodeFastDecrement: setKeyCodeFastDecrement,
-		//setKeyEventFastDecrement: setKeyEventFastDecrement,
-		//setMouseIncrement: setMouseIncrement,
-		//setMouseDecrement: setMouseDecrement,
-		//setMouseClear: setMouseClear,
-		//setMouseFastIncrement: setMouseFastIncrement,
-		//setMouseFastDecrement: setMouseFastDecrement,
 		keyListener: keyListener,
 		quickKeyListener: quickKeyListener
 	};

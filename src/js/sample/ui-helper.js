@@ -10,7 +10,7 @@ var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
  */ 
 URLNP.UIHelper = URLNP.UIHelper || function () {
   
-  		var fieldsetGroups = document.querySelectorAll('form > fieldset'); // Nodelist containing cached reference to the fieldset groups.
+    var fieldsetGroups = document.querySelectorAll('form > fieldset'); // Nodelist containing cached reference to the fieldset groups.
 
 		// Generate alert overlay (popup message).
 		// From the sample Google extension, Proxy Settings by Mike West.
