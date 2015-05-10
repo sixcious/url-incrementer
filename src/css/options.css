@@ -28,14 +28,14 @@ input[type="number"] {
 	width: 52px;
 }
 
-.float-right {
-  float: right;
-}
-
 .italic {
   font-style: italic;
 }
 
-.shadow {
-	/*text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;*/
-}
+/*.float-right {
+  float: right;
+}*/
+
+/*.shadow {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+}*/

@@ -24,6 +24,7 @@ URLNP.Background = URLNP.Background || function () {
 		console.log("initStorage()");
 		chrome.storage.sync.clear();
 		chrome.storage.sync.set({
+		  'instances': undefined,
 		  'keyEnabled': true,
 		  'keyQuickEnabled': true,
 		  'keyNext': [0, 39],
@@ -33,7 +34,7 @@ URLNP.Background = URLNP.Background || function () {
 		  'keyQuickPrev': [7, 37],
 		  'defaultAction': 1,
 		  'defaultInterval': 1
-		  });
+    });
 	},
 	
 	/**

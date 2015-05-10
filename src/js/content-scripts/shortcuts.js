@@ -2,7 +2,7 @@
  * TODO
  */ 
 
-console.log("content_script.js start");
+console.log("shortcuts.js start");
 var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
 /**
@@ -16,9 +16,6 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
   		FLAG_KEY_CTRL = 0x2, // 0010
   		FLAG_KEY_SHIFT = 0x4, // 0100
   		FLAG_KEY_META = 0x8, // 1000
-  		// EVENT_BUTTON_LEFT = 0, // Or EVENT_WHICH_LEFT = 1 using event.which
-  		// EVENT_BUTTON_MIDDLE = 1, // Or EVENT_WHICH_MIDDLE = 2 using event.which
-  		// EVENT_BUTTON_RIGHT = 2, // Or EVENT_WHICH_RIGHT = 3 using event.which
   		// Cache the shortcut keys
   		keyNext,
   		keyPrev,
@@ -149,95 +146,6 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 			}
 		};
 
-		// // When a listener is added, this function executes on each mousedown event that is fired.
-		// // NOTE: This method was refactored from a switch block to if/else structure
-		// // but needs to be refactored again to somehow remove second (inner) if check on
-		// // right mouse.
-
-		// mouseListener = function (event) {
-		// 	console.log("\tfunction mouseListener");
-		// 	// Increment.
-		// 	if (
-		// 		(event.button === EVENT_BUTTON_LEFT   && mouseIncrement === FLAG_MOUSE_LEFT  ) ||
-		// 		(event.button === EVENT_BUTTON_MIDDLE && mouseIncrement === FLAG_MOUSE_MIDDLE) ||
-		// 		(event.button === EVENT_BUTTON_RIGHT  && mouseIncrement === FLAG_MOUSE_RIGHT )) {
-		// 		if (mouseIncrement === FLAG_MOUSE_RIGHT) {
-		// 			document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
-		// 		}
-		// 		console.log("\t\tpressed increment mouse");	 
-		// 		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Increment"}, function() {});
-		// 	}
-		// 	// Decrement.
-		// 	else if (
-		// 		(event.button === EVENT_BUTTON_LEFT   && mouseDecrement === FLAG_MOUSE_LEFT  ) ||
-		// 		(event.button === EVENT_BUTTON_MIDDLE && mouseDecrement === FLAG_MOUSE_MIDDLE) ||
-		// 		(event.button === EVENT_BUTTON_RIGHT  && mouseDecrement === FLAG_MOUSE_RIGHT )) {
-		// 		if (mouseDecrement === FLAG_MOUSE_RIGHT) {
-		// 			document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
-		// 		}
-		// 		console.log("\t\tpressed decrement mouse");
-		// 		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Decrement"}, function() {});
-		// 	}
-		// 	// Clear.
-		// 	else if  (
-		// 		(event.button === EVENT_BUTTON_LEFT   && mouseClear === FLAG_MOUSE_LEFT  ) ||
-		// 		(event.button === EVENT_BUTTON_MIDDLE && mouseClear === FLAG_MOUSE_MIDDLE) ||
-		// 		(event.button === EVENT_BUTTON_RIGHT  && mouseClear === FLAG_MOUSE_RIGHT )) {
-		// 		if (mouseClear === FLAG_MOUSE_RIGHT) {
-		// 			document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
-		// 			document.body.oncontextmenu = function() {return true;};  // Renable context menu again since user is still on the same page!
-		// 		}
-		// 		console.log("\t\tpressed clear mouse");	
-		// 		chrome.runtime.sendMessage({greeting: "clearUrli"}, function() {});
-		// 	}
-		// },
-	
-		// When a listener is added, this function executes on each keydown event that is fired.
-		// NOTE: Should this be refactored into one method with keyListener?
-
-
-
-		// // When a listener is added, this function executes on each mousedown event that is fired.
-		// // NOTE: Should this be refactored into one method with mouseListener?
-		// // NOTE: This method was refactored from a switch to an if but should be
-		// // refactored again to remove the inner if.
-
-		// quickMouseListener = function (event) {
-		// 	console.log("\tfunction fastMouseListener");	
-		// 	// event.button and event.which are supported in Chrome (Webtoolkit).
-		// 	// event.button:  0,1,2 = L,M,R.
-		// 	// event.which:  1,2,3 = L,M,R.
-
-		// 	// Increment.
-
-		// 	if (
-		// 		(event.button === EVENT_BUTTON_LEFT   && mouseFastIncrement === FLAG_MOUSE_LEFT  ) ||
-		// 		(event.button === EVENT_BUTTON_MIDDLE && mouseFastIncrement === FLAG_MOUSE_MIDDLE) ||
-		// 		(event.button === EVENT_BUTTON_RIGHT  && mouseFastIncrement === FLAG_MOUSE_RIGHT )) {
-	
-		// 		if (mouseFastIncrement === FLAG_MOUSE_RIGHT) {
-		// 			document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
-		// 		}
-	 //			console.log("\t\tpressed fast increment mouse");
-		// 		chrome.runtime.sendMessage({greeting: "fastUpdateTab", action: "Increment"}, function() {});
-		// 	}
-	
-		// 	// Decrement.
-	
-		// 	else if (
-		// 		(event.button === EVENT_BUTTON_LEFT   && mouseFastDecrement === FLAG_MOUSE_LEFT  ) ||
-		// 		(event.button === EVENT_BUTTON_MIDDLE && mouseFastDecrement === FLAG_MOUSE_MIDDLE) ||
-		// 		(event.button === EVENT_BUTTON_RIGHT  && mouseFastDecrement === FLAG_MOUSE_RIGHT )) {
-	
-		// 		if (mouseFastDecrement === FLAG_MOUSE_RIGHT) {
-		// 			document.body.oncontextmenu = function() {return false;}; // Disable context menu first.
-		// 		}
-		// 		console.log("\t\tpressed fast decrement mouse");
-		// 		chrome.runtime.sendMessage({greeting: "fastUpdateTab", action: "Decrement"}, function() {});
-		// 	}
-
-		// };
-
 	return {
 		//setKeyCodeIncrement: setKeyCodeIncrement,
 		//setKeyEventIncrement: setKeyEventIncrement,
@@ -256,8 +164,6 @@ URLNP.ContentScript = URLNP.ContentScript || function() {
 		//setMouseFastDecrement: setMouseFastDecrement,
 		keyListener: keyListener,
 		quickKeyListener: quickKeyListener
-		// mouseListener: mouseListener,
-		// quickMouseListener: quickMouseListener
 	};
 }();
 

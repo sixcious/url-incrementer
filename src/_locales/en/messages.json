@@ -160,7 +160,7 @@
 	},
 
 	"options_default_action_scan_page_option": {
-		"message": "Look for the next and prev links on the page",
+		"message": "Use the next and prev links found on the page",
 		"description": ""
 	},
 	
