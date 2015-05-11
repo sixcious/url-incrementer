@@ -36,7 +36,7 @@ function DOMContentLoaded() {
 	document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
 	document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
 	document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-	document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+	//document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
 	document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
 	document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
 	document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");

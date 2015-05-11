@@ -15,14 +15,29 @@
 		  </div>
 	    <form id="popup-form" class="hidden">
 	      <fieldset>
-	        <legend id="next-prev-links-legend"></legend>
+					<legend>Setup</legend>
 	        <section>
-	          <fieldset>
-	            TODO Put next and prev links found
+	          <fieldset class="inline">
+  					  <input id="links-radio" type="radio" name="behavior"/>
+					    <label id="links-legend" for="links-radio">Use Links</label>
 	          </fieldset>
+	          <fieldset class="inline">
+	            			        <input id="url-radio" type="radio" name="behavior"/>
+					    <label id="modify-url-label" for="url-radio">Modify URL</label>
+	          </fieldset>
+	          
+						<fieldset>
+							<label>Next</label>
+							<input type="text" readonly="readonly" value="http://www.next.com"/>
+						</fieldset>
+						<fieldset>
+							<label>Prev</label>
+							<input type="text" readonly="readonly" value="http://www.prev.com"/>
+						</fieldset>
 	        </section>
 	      </fieldset>
 				<fieldset>
+				  
 					<legend id="url-legend"></legend>
 					<section>
 						<fieldset>
