@@ -21,10 +21,10 @@ var	FLAG_KEY_NONE = 0x0, // 0000
 		  "34": "Page Down",
 		  "35": "End",
 		  "36": "Home",
-		  "37": "Left",
-		  "38": "Up",
-		  "39": "Right",
-		  "40": "Down",
+		  "37": "Left", // \u2190 
+		  "38": "Up", // \u2191
+		  "39": "Right", // \u2192
+		  "40": "Down", // \u2193
 		  "45": "Insert",
 		  "46": "Delete",
 		  "96": "0 (Numpad)",
