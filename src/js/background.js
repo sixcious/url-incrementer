@@ -3,6 +3,7 @@
  */ 
 
 console.log("background.js start");
+
 var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
 
 /**
@@ -12,7 +13,7 @@ URLNP.Background = URLNP.Background || function () {
   
 	console.log("URLNP.Background()");
 	
-	var	urlnp = new URLNP.URLNextPlus(), // URL Next Plus object
+	var	instances,
 
   /**
    * Initializes the storage with the default values. The storage is initialized
@@ -42,9 +43,9 @@ URLNP.Background = URLNP.Background || function () {
 	 * 
 	 * @public
 	 */
-	getURLNP = function () {
-		console.log("function getURLNP");
-		return urlnp;
+	getInstances = function () {
+		console.log("function getInstances");
+		return instances;
 		//sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
 	},
 
@@ -53,9 +54,9 @@ URLNP.Background = URLNP.Background || function () {
 	 * 
 	 * @public
 	 */	
-	setURLNP = function(urlnp) {
-		console.log("function setURLNP");
-	  this.urlnp = urlnp;
+	setInstances = function(instances) {
+		console.log("function setInstances");
+	  this.instances = instances;
 	},
 
 	/**
@@ -63,7 +64,7 @@ URLNP.Background = URLNP.Background || function () {
 	 * 
 	 * @public
 	 */
-	clearURLNP = function () {
+	clearInstances = function () {
 		console.log("function clearURLNP");
 		console.log("\tremoving keyListener");
 		chrome.tabs.sendMessage(urlnp.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
@@ -340,29 +341,29 @@ URLNP.Background = URLNP.Background || function () {
 		}
 	},
 
-	checkIfFastIsEnabled = function () {
-		console.log("\tfunction checkIfFastIsEnabled");
-		chrome.tabs.getSelected(null,
-			function (tab) {
-				if (localStorage.keyEnabled === "1" && localStorage.keyFastEnabled === "1") {
-					console.log("\t\tadding fastKeyListener");
-					chrome.tabs.sendMessage(tab.id, {greeting: "setFastKeys", keyCodeFastIncrement: localStorage.keyCodeFastIncrement, keyEventFastIncrement: localStorage.keyEventFastIncrement, keyCodeFastDecrement: localStorage.keyCodeFastDecrement, keyEventFastDecrement: localStorage.keyEventFastDecrement}, function (response) {});
-					chrome.tabs.sendMessage(tab.id, {greeting: "addFastKeyListener"}, function (response) {});
-				}
-			}
-		);
-	},
+// 	checkIfFastIsEnabled = function () {
+// 		console.log("\tfunction checkIfFastIsEnabled");
+// 		chrome.tabs.getSelected(null,
+// 			function (tab) {
+// 				if (localStorage.keyEnabled === "1" && localStorage.keyFastEnabled === "1") {
+// 					console.log("\t\tadding fastKeyListener");
+// 					chrome.tabs.sendMessage(tab.id, {greeting: "setFastKeys", keyCodeFastIncrement: localStorage.keyCodeFastIncrement, keyEventFastIncrement: localStorage.keyEventFastIncrement, keyCodeFastDecrement: localStorage.keyCodeFastDecrement, keyEventFastDecrement: localStorage.keyEventFastDecrement}, function (response) {});
+// 					chrome.tabs.sendMessage(tab.id, {greeting: "addFastKeyListener"}, function (response) {});
+// 				}
+// 			}
+// 		);
+// 	},
 	
-	checkIfScanIsEnabled = function (request) {
-  	console.log("\tfunction checkIfScanIsEnabled");
-  	chrome.tabs.query({active: true, lastFocusedWindow: true},
-  		function (tabs) {
-  			var tab = tabs[0];
-  				console.log("\t\trequesting scanner to scan for next and prev links.");
-  				chrome.tabs.sendMessage(tab.id, {greeting: "getScannedNextAndPrev"}, function (response) {});
-  		}
-  	);
-  },
+// 	checkIfScanIsEnabled = function (request) {
+//   	console.log("\tfunction checkIfScanIsEnabled");
+//   	chrome.tabs.query({active: true, lastFocusedWindow: true},
+//   		function (tabs) {
+//   			var tab = tabs[0];
+//   				console.log("\t\trequesting scanner to scan for next and prev links.");
+//   				chrome.tabs.sendMessage(tab.id, {greeting: "getScannedNextAndPrev"}, function (response) {});
+//   		}
+//   	);
+//   },
 
 	fastUpdateTab = function (request) {
 		console.log("\tfunction fastUpdateTab");
@@ -380,13 +381,11 @@ URLNP.Background = URLNP.Background || function () {
 	// Public methods
 	return {
 		initStorage: initStorage,
-		getURLNP: getURLNP,
-		setURLNP: setURLNP,
-		clearURLNP: clearURLNP,
+		getInstances: getInstances,
+		setInstances: setInstances,
+		clearInstances: clearInstances,
 		findSelection: findSelection,
 		modifyUrliAndUpdateTab: modifyUrliAndUpdateTab,
-		checkIfFastIsEnabled: checkIfFastIsEnabled,
-		checkIfScanIsEnabled: checkIfScanIsEnabled,
 		fastUpdateTab: fastUpdateTab
 	};
 }();
@@ -404,7 +403,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(
 	function (request, sender, sendResponse) {
-		var U = URLNP.Background;
 		switch (request.greeting) {
 		  
 		// 	// From:      popup
@@ -481,29 +479,29 @@ chrome.runtime.onMessage.addListener(
 			// Callback:  None.
 			case "modifyUrliAndUpdateTab":
 				console.log("\t!request:modifyUrliAndUpdateTab");
-				U.modifyUrliAndUpdateTab(request);
+				URLNP.Background.modifyUrliAndUpdateTab(request);
 				sendResponse({});
 				break;
 
-			// From:      content_script
-			// Request:   When the contet_script loads, it checks to see if fast functionality is enabled.
-			// Action:    If fast is enabled, request content_script to add listeners (if applicable).
-			// Callback:  None.
-			case "checkIfFastIsEnabled":
-				console.log("\t!request:checkIfFastIsEnabled");
-				U.checkIfFastIsEnabled();
-				sendResponse({});
-				break;
+		// 	// From:      content_script
+		// 	// Request:   When the contet_script loads, it checks to see if fast functionality is enabled.
+		// 	// Action:    If fast is enabled, request content_script to add listeners (if applicable).
+		// 	// Callback:  None.
+		// 	case "checkIfFastIsEnabled":
+		// 		console.log("\t!request:checkIfFastIsEnabled");
+		// 		U.checkIfFastIsEnabled();
+		// 		sendResponse({});
+		// 		break;
 				
-			// From:      scanner
-			// Request:   When the contet_script loads, it checks to see if scan functionality is enabled.
-			// Action:    If scan is enabled, request scanners to scan the page for the next and prev links.
-			// Callback:  None.
-			case "checkIfScanIsEnabled":
-				console.log("\t!request:checkIfScanIsEnabled");
-				U.checkIfScanIsEnabled();
-				sendResponse({});
-				break;
+		// 	// From:      scanner
+		// 	// Request:   When the contet_script loads, it checks to see if scan functionality is enabled.
+		// 	// Action:    If scan is enabled, request scanners to scan the page for the next and prev links.
+		// 	// Callback:  None.
+		// 	case "checkIfScanIsEnabled":
+		// 		console.log("\t!request:checkIfScanIsEnabled");
+		// 		U.checkIfScanIsEnabled();
+		// 		sendResponse({});
+		// 		break;
 				
 			// From:      content_script
 			// Request:   Increment or decrement request from a fast shortcut key or fast shortcut mouse button.
@@ -511,7 +509,7 @@ chrome.runtime.onMessage.addListener(
 			// Callback:  None.
 			case "fastUpdateTab":
 				console.log("\t!request:fastUpdateTab");
-				U.fastUpdateTab(request);
+				URLNP.Background.fastUpdateTab(request);
 				sendResponse({});
 				break;
 				

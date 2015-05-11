@@ -172,7 +172,7 @@ stackoverflow
 
 document.addEventListener('DOMNodeInserted', URLNP.ScanLinks.filterResultInserts);
 
-chrome.runtime.sendMessage({greeting: "checkIfScanIsEnabled"}, function () {});
+// chrome.runtime.sendMessage({greeting: "checkIfScanIsEnabled"}, function () {});
 
 chrome.runtime.onMessage.addListener(
 

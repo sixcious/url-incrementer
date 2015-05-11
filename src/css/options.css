@@ -32,6 +32,10 @@ input[type="number"] {
   font-style: italic;
 }
 
+.inline {
+  display: inline;
+}
+
 /*.float-right {
   float: right;
 }*/

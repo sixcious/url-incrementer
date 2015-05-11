@@ -4,6 +4,9 @@
 
 console.log("options.js start");
 
+// JavaScript Revealing Module Pattern
+var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
+
 var	FLAG_KEY_NONE = 0x0, // 0000
 	  FLAG_KEY_ALT = 0x1, // 0001
 		FLAG_KEY_CTRL = 0x2, // 0010
@@ -78,7 +81,7 @@ var	FLAG_KEY_NONE = 0x0, // 0000
  * 
  * @public
  */
-function DOMContentLoaded() {
+DOMContentLoaded = function() {
 	console.log("DOMContentLoaded()");
 	// Add Event Listeners to the DOM elements (inputs)
   console.log("\tadding event listeners");
@@ -127,7 +130,7 @@ function DOMContentLoaded() {
 		document.getElementById("default-action-select").value = o.defaultAction;
 		document.getElementById("default-interval-input").value = o.defaultInterval;
   });
-}
+};
 
 /**
  * Sets (stores) the key that was pressed on a keydown event. This is needed 
@@ -137,7 +140,7 @@ function DOMContentLoaded() {
  * 
  * @private
  */ 
-function setKey(event) {
+setKey = function(event) {
 	console.log("setKey(event)");
 	var keyEventBits;
 	// Set the keyEventBits (Alt, Ctrl, Shift, Meta) from the event
@@ -148,7 +151,7 @@ function setKey(event) {
 	keyEventBits = event.metaKey  ? keyEventBits | FLAG_KEY_META  : keyEventBits;
 	// Set the key as the keyEventBits and the keyCode
 	key = [keyEventBits, event.which];
-}
+};
 
 /**
  * Writes the key to the text field. Uses the KEY_CODE_STRING_MAP in case of
@@ -159,7 +162,7 @@ function setKey(event) {
  * 
  * @private
  */ 
-function writeToText(text, key) {
+writeToText = function(text, key) {
 	console.log("writeToText(text, key)");
 	console.log("\ttext.id=" + text.id);
 	console.log("\tkey=[" + key[0] + "," + key[1] + "]");
@@ -175,6 +178,11 @@ function writeToText(text, key) {
 	console.log("\tvalue=" + value);
 	// Write to text
 	text.value = value;
-}
+};
 
-document.addEventListener("DOMContentLoaded", DOMContentLoaded, false);
+return {
+  DOMContentLoaded: DOMContentLoaded
+};
+}();
+
+document.addEventListener("DOMContentLoaded", URLNP.Options.DOMContentLoaded, false);
