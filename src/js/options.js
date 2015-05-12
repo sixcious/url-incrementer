@@ -139,7 +139,6 @@ var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
    * after to write the key to the text field and to save the key to storage.
    * 
    * @param event the keydown event fired
-   * 
    * @private
    */ 
   function setKey(event) {
@@ -161,7 +160,6 @@ var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
    * 
    * @param text the text input to write to
    * @param key the key object that was pressed
-   * 
    * @private
    */ 
   function writeToText(text, key) {
