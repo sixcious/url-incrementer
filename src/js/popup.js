@@ -12,7 +12,8 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   var instance,
   	  currentTab,
   	  //selectionStart = -1,
-  	  selectionProperties = { selection: "", selectionStart: -1 };
+  	  selectionProperties = { selection: "", selectionStart: -1 },
+      $ = document.getElementById.bind(document);
   	
   /**
    * Loads the DOM content needed to display the popup page.
@@ -26,27 +27,27 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   	console.log("DOMContentLoaded()");
   	// Add Event Listeners to the DOM elements (inputs)
   	console.log("\tadding event listeners");
-  	document.getElementById("next-input").addEventListener("click", clickNext, false);
-  	document.getElementById("prev-input").addEventListener("click", clickPrev, false);
-  	document.getElementById("clear-input").addEventListener("click", clickClear, false);
-  	document.getElementById("setup-input").addEventListener("click", toggleForm, false);
-  	document.getElementById("url-textarea").addEventListener("mouseup", handleURL, false);
-  	document.getElementById("url-textarea").addEventListener("keyup", handleURL, false);
-  	document.getElementById("accept-input").addEventListener("click", submitForm, false);
-  	document.getElementById("cancel-input").addEventListener("click", toggleForm, false);
-  	document.getElementById("popup-form").addEventListener("click", URLNP.UIHelper.dispatchFormClick_.bind(this));
+  	$("next-input").addEventListener("click", clickNext, false);
+  	$("prev-input").addEventListener("click", clickPrev, false);
+  	$("clear-input").addEventListener("click", clickClear, false);
+  	$("setup-input").addEventListener("click", toggleForm, false);
+  	$("url-textarea").addEventListener("mouseup", handleURL, false);
+  	$("url-textarea").addEventListener("keyup", handleURL, false);
+  	$("accept-input").addEventListener("click", submitForm, false);
+  	$("cancel-input").addEventListener("click", toggleForm, false);
+  	$("popup-form").addEventListener("click", URLNP.UIHelper.dispatchFormClick_.bind(this));
   	// Set localization text (i18n) from messages.json
   	console.log("\tadding i18n text");
-  	document.getElementById("next-input").title = chrome.i18n.getMessage("popup_next_input");
-  	document.getElementById("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
-  	document.getElementById("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
-  	document.getElementById("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-  	//document.getElementById("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-  	document.getElementById("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
-  	document.getElementById("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
-  	document.getElementById("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
-  	document.getElementById("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
-  	document.getElementById("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
+  	$("next-input").title = chrome.i18n.getMessage("popup_next_input");
+  	$("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
+  	$("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
+  	$("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
+  	//$("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+  	$("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
+  	$("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
+  	$("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
+  	$("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
+  	$("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
   	// Set the current tab, instance, and update images
   	chrome.tabs.getSelected(null,
   		function (tab) {
@@ -99,10 +100,10 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   function handleURL() {
   	console.log("\tfunction handleURL");
   	// Stores the selectionStart for later (to be returned to background.html).
-  	selectionProperties.selectionStart = document.getElementById("url-textarea").selectionStart;
+  	selectionProperties.selectionStart = $("url-textarea").selectionStart;
   	// Update the "selectionInput" element to show the selected text.
-  	document.getElementById("selection-input").value = window.getSelection().toString();
-  	console.log("\t\tselection-input.value=" + document.getElementById("selection-input").value);
+  	$("selection-input").value = window.getSelection().toString();
+  	console.log("\t\tselection-input.value=" + $("selection-input").value);
   }
   	
   // Called when the user clicks on the Accept button on the form.  Checks
@@ -112,8 +113,8 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   	console.log("\tfunction submitForm");
   	var errorMessage = [],
   		errorCount = 0,
-  		selection = document.getElementById("selection-input").value,
-  		interval = document.getElementById("interval-input").value,
+  		selection = $("selection-input").value,
+  		interval = $("interval-input").value,
   		i,
   		length;
   	// ERROR If the selected text from the URL are not digits (0-9).
@@ -226,8 +227,8 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
    */ 
   function toggleForm() {
   	console.log("\tfunction toggleForm");
-  	var form = document.getElementById("popup-form"),
-  	    controls = document.getElementById("popup-controls");
+  	var form = $("popup-form"),
+  	    controls = $("popup-controls");
   	console.log("\t\tform.style.display=" + form.style.display);
   	if (form.style.display === "block") {
   		// Hide form, show controls, reduce body (popup window) size
@@ -253,13 +254,13 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   	chrome.runtime.getBackgroundPage(function(backgroundPage) {
   	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
   	  // selectionStart = selectionProperties.selectionStart;
-  		document.getElementById("url-textarea").value = currentTab.url;
-  		document.getElementById("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
-  		document.getElementById("selection-input").value = selectionProperties.selection;
+  		$("url-textarea").value = currentTab.url;
+  		$("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  		$("selection-input").value = selectionProperties.selection;
   	});
-    if (!document.getElementById("interval-input").value) {
+    if (!$("interval-input").value) {
       chrome.storage.sync.get(null, function (o) {
-        document.getElementById("interval-input").value = o.defaultInterval;
+        $("interval-input").value = o.defaultInterval;
       });
     }
   			}
