@@ -147,7 +147,7 @@ var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
   	var keyEventBits;
   	// Set the keyEventBits (Alt, Ctrl, Shift, Meta) from the event
   	keyEventBits = FLAG_KEY_NONE;
-  	keyEventBits = event.altKey 	? keyEventBits | FLAG_KEY_ALT   : keyEventBits;
+  	keyEventBits = event.altKey   ? keyEventBits | FLAG_KEY_ALT   : keyEventBits;
   	keyEventBits = event.ctrlKey  ? keyEventBits | FLAG_KEY_CTRL  : keyEventBits;
   	keyEventBits = event.shiftKey ? keyEventBits | FLAG_KEY_SHIFT : keyEventBits;
   	keyEventBits = event.metaKey  ? keyEventBits | FLAG_KEY_META  : keyEventBits;
