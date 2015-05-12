@@ -9,7 +9,7 @@ console.log("URLNP.Options");
  */ 
 var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
 
-  var	FLAG_KEY_NONE = 0x0, // 0000
+  var FLAG_KEY_NONE = 0x0, // 0000
       FLAG_KEY_ALT = 0x1, // 0001
       FLAG_KEY_CTRL = 0x2, // 0010
       FLAG_KEY_SHIFT = 0x4, // 0100
