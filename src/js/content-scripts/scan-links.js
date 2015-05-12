@@ -202,6 +202,6 @@ chrome.runtime.onMessage.addListener(
 				break;
 		}
 		
-		return true;
+		// return true;
 	}
 );

@@ -1,6 +1,4 @@
-/**
- * TODO
- */ 
+// TODO
 
 console.log("shortcuts.js start");
 var URLNP = URLNP || {}; // JavaScript Revealing Module Pattern
@@ -23,32 +21,38 @@ URLNP.Shortcuts = URLNP.Shortcuts || function() {
   		keyQuickPrev; // cached key from storage
 
   /**
+   * TODO
+   * 
    * @param event
    * @public
    */
-  keyListener = function (event) {
+  function keyListener(event) {
   	console.log("function keyListener");
   	if (keyPressed(event, keyNext)) { console.log("\tpressed next key"); chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", direction: "Next"}, function() {}); }
   	else if (keyPressed(event, keyPrev)) { console.log("\tpressed prev key"); chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", direction: "Prev"}, function() {}); }
   	else if (keyPressed(event, keyClear)) { console.log("\tpressed clear key"); chrome.runtime.sendMessage({greeting: "clearUrli"}, function() {}); }
-  };
-    
+  }
+
   /**
+   * TODO
+   * 
    * @param event
    * @public
    */
-  quickKeyListener = function (event) {
+  function quickKeyListener(event) {
   	console.log("\tfunction fastKeyListener");
   	if (keyPressed(event, keyQuickNext)) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "Next"}, function() {}); }
   	else if (keyPressed(event, keyQuickPrev)) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "Prev"}, function() {}); }
-  };
-    
+  }
+ 
   /**
+   * TODO
+   * 
    * @param event
    * @param key
    * @private
    */
-  keyPressed = function(event, key) {
+  function keyPressed(event, key) {
     return (
       !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
       !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
@@ -56,7 +60,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function() {
       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3) &&
        (event.keyCode === key[1])
     );
-  };
+  }
 
   return {
   	keyListener: keyListener,
@@ -77,8 +81,8 @@ chrome.storage.sync.get(null, function (o) {
   }
 });
 
-// Send a request to the background to check if fast shortcuts are enabled.
-chrome.runtime.sendMessage({greeting: "checkIfFastIsEnabled"}, function () {});
+// // Send a request to the background to check if fast shortcuts are enabled.
+// chrome.runtime.sendMessage({greeting: "checkIfFastIsEnabled"}, function () {});
 
 // Listen for requests from chrome.runtime.sendMessage.
 chrome.runtime.onMessage.addListener(
@@ -105,19 +109,19 @@ chrome.runtime.onMessage.addListener(
 				sendResponse({});
 				break;
 				
-			// ?
-			case "addFastKeyListener":
-				console.log("\t!request:addFastKeyListener");
-				document.addEventListener("keydown", U.quickKeyListener, false);
-				sendResponse({});
-				break;
+		// 	// ?
+		// 	case "addQuickKeyListener":
+		// 		console.log("\t!request:addFastKeyListener");
+		// 		document.addEventListener("keydown", U.quickKeyListener, false);
+		// 		sendResponse({});
+		// 		break;
 
-			// ?
-			case "removeFastKeyListener":
-				console.log("\t!request:removeFastKeyListener");
-				document.removeEventListener("keydown", U.quickKeyListener, false);
-				sendResponse({});
-				break;
+		// 	// ?
+		// 	case "removeQuickKeyListener":
+		// 		console.log("\t!request:removeFastKeyListener");
+		// 		document.removeEventListener("keydown", U.quickKeyListener, false);
+		// 		sendResponse({});
+		// 		break;
 				
 			// Unspecified request -- should not be needed!
 			default:
@@ -215,6 +219,6 @@ chrome.runtime.onMessage.addListener(
 
 
 		}
-		return true;
+		// return true;
 	}
 );
