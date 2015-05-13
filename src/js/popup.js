@@ -234,7 +234,7 @@ var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
   		// Hide form, show controls, reduce body (popup window) size
   		form.style.display = "none";
   		controls.style.display = "inline";
-  		document.body.style.width = "82px";
+  		document.body.style.width = "102px";
   		document.body.style.height = "16px";
   		document.body.style.background = "#EDECEB";
   	} else {

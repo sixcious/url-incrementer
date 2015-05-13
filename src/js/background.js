@@ -28,7 +28,7 @@ var URLNP = URLNP || {}; URLNP.Background = URLNP.Background || function () {
 		  'keyClear': [0, 13],
 		  'keyQuickNext': [7, 39],
 		  'keyQuickPrev': [7, 37],
-		  'defaultAction': 1,
+		  'defaultMode': 1,
 		  'defaultInterval': 1
     });
 	}

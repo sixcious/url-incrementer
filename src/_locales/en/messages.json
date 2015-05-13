@@ -154,17 +154,17 @@
 		"description": ""
 	},
 
-	"options_default_action_label": {
-		"message": "Action",
+	"options_default_mode_label": {
+		"message": "Mode",
 		"description": ""
 	},
 
-	"options_default_action_scan_page_option": {
+	"options_default_mode_use_links_option": {
 		"message": "Use the next and prev links found on the page",
 		"description": ""
 	},
 	
-	"options_default_action_modify_url_option": {
+	"options_default_mode_modify_url_option": {
 		"message": "Modify the URL and increment (+) or decrement (-)",
 		"description": ""
 	},
@@ -177,16 +177,6 @@
 	"options_save_disclaimer": {
 	  "message": "Note: Changes you make are saved upon closing this dialog.",
 	  "description": ""
-	},
-
-	"options_secret_1": {
-		"message": "URL Next Plus v3",
-		"description": "It's a secret."
-	},
-	
-	"options_secret_2": {
-		"message": "Thanks for using! :)",
-		"description": "It's a secret."
 	}
 
 }

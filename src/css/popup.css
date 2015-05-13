@@ -14,7 +14,8 @@ html {
 body {
 	background: #EDECEB;
 	height: 16px; /* Use 24 for 24px images. */
-	width: 82px; /* Use 114 for 24px images.*/
+	/*width: 82px;*/ /* Use 114 for 24px images.*/
+	width: 102px;
 	margin: 5px;
   padding: 0;/* override chromium/index.css */
 }

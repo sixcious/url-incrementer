@@ -39,7 +39,7 @@
 
 /* Div for form; hidden by default when the popup opens. */
 
-div[id="form"] {
+div > form {
 	/* display: none; */
 	border-radius: 5px;
 /*	font: 14px/1 "Helvetica Neue", Arial, Helvetica, sans-serif;
