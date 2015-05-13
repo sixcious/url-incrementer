@@ -7,13 +7,14 @@ console.log("URLNP.Options");
  * 
  * Uses the JavaScript Revealing Module Pattern.
  */ 
-var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
+var URLNP = URLNP || {};
+URLNP.Options = URLNP.Options || function() {
 
-  var KEY_FLAG_NONE = 0x0, // 0000
-      KEY_FLAG_ALT = 0x1, // 0001
-      KEY_FLAG_CTRL = 0x2, // 0010
-      KEY_FLAG_SHIFT = 0x4, // 0100
-      KEY_FLAG_META = 0x8, // 1000
+  var FLAG_KEY_NONE = 0x0, // 0000
+      FLAG_KEY_ALT = 0x1, // 0001
+      FLAG_KEY_CTRL = 0x2, // 0010
+      FLAG_KEY_SHIFT = 0x4, // 0100
+      FLAG_KEY_META = 0x8, // 1000
       KEY_CODE_STRING_MAP = { // Map for key codes that don't have String values
         "8": "Backspace",
         "9": "Tab",
@@ -145,12 +146,12 @@ var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
   function setKey(event) {
     console.log("setKey(event)");
     var keyEventBits;
-    // Set the keyEventBits (Alt, Ctrl, Shift, Meta) from the event
-    keyEventBits = KEY_FLAG_NONE;
-    keyEventBits = event.altKey   ? keyEventBits | KEY_FLAG_ALT   : keyEventBits;
-    keyEventBits = event.ctrlKey  ? keyEventBits | KEY_FLAG_CTRL  : keyEventBits;
-    keyEventBits = event.shiftKey ? keyEventBits | KEY_FLAG_SHIFT : keyEventBits;
-    keyEventBits = event.metaKey  ? keyEventBits | KEY_FLAG_META  : keyEventBits;
+    // Set the keyEventBits using the event and the Alt, Ctrl, Shift, Meta flags
+    keyEventBits = FLAG_KEY_NONE;
+    keyEventBits = event.altKey   ? keyEventBits | FLAG_KEY_ALT   : keyEventBits;
+    keyEventBits = event.ctrlKey  ? keyEventBits | FLAG_KEY_CTRL  : keyEventBits;
+    keyEventBits = event.shiftKey ? keyEventBits | FLAG_KEY_SHIFT : keyEventBits;
+    keyEventBits = event.metaKey  ? keyEventBits | FLAG_KEY_META  : keyEventBits;
     // Set the key as the keyEventBits and the keyCode
     key = [keyEventBits, event.which];
   }
@@ -169,12 +170,12 @@ var URLNP = URLNP || {}; URLNP.Options = URLNP.Options || function() {
     console.log("\tkey=[" + key[0] + "," + key[1] + "]");
     var value = "",
         keyCodeString = KEY_CODE_STRING_MAP[key[1]];
-    // key[0] (keyEventBits) value
-    value = (key[0] & KEY_FLAG_ALT)        ? value + "Alt + "   : value;
-    value = (key[0] & KEY_FLAG_CTRL)  >> 1 ? value + "Ctrl + "  : value;
-    value = (key[0] & KEY_FLAG_SHIFT) >> 2 ? value + "Shift + " : value;
-    value = (key[0] & KEY_FLAG_META)  >> 3 ? value + "Meta + "  : value;
-    // key[1] (keyCode) value
+    // Check key[0] (the keyEventBits) with the bitmask flags
+    value = (key[0] & FLAG_KEY_ALT)        ? value + "Alt + "   : value;
+    value = (key[0] & FLAG_KEY_CTRL)  >> 1 ? value + "Ctrl + "  : value;
+    value = (key[0] & FLAG_KEY_SHIFT) >> 2 ? value + "Shift + " : value;
+    value = (key[0] & FLAG_KEY_META)  >> 3 ? value + "Meta + "  : value;
+    // Check key[1] (the keyCode) with the KEY_CODE_STRING_MAP or get it direct
     value += keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]);
     console.log("\tvalue=" + value);
     // Write to text
