@@ -101,7 +101,7 @@ URLNP.Options = URLNP.Options || function() {
     $("key-clear-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyClear': key}); }, false);
     $("key-quick-next-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickNext': key}); }, false);
     $("key-quick-prev-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickPrev': key}); }, false);
-    $("default-action-select").addEventListener("change", function() { chrome.storage.sync.set({'defaultAction': this.options[this.selectedIndex].value}); }, false);
+    $("default-mode-select").addEventListener("change", function() { chrome.storage.sync.set({'defaultMode': this.options[this.selectedIndex].value}); }, false);
     $("default-interval-input").addEventListener("change", function() { chrome.storage.sync.set({'defaultInterval': this.value}); }, false);
     // Set localization text (i18n) from messages.json
     console.log("\tadding i18n text");
@@ -116,9 +116,9 @@ URLNP.Options = URLNP.Options || function() {
     $("key-quick-prev-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_prev_label");
     $("default-settings").innerText = chrome.i18n.getMessage("options_default_settings");
     $("default-settings-p").innerText = chrome.i18n.getMessage("options_default_settings_p");
-    $("default-action-label").innerText = chrome.i18n.getMessage("options_default_action_label");
-    $("default-action-scan-page-option").innerText = chrome.i18n.getMessage("options_default_action_scan_page_option");
-    $("default-action-modify-url-option").innerText = chrome.i18n.getMessage("options_default_action_modify_url_option");
+    $("default-mode-label").innerText = chrome.i18n.getMessage("options_default_mode_label");
+    $("default-mode-use-links-option").innerText = chrome.i18n.getMessage("options_default_mode_use_links_option");
+    $("default-mode-modify-url-option").innerText = chrome.i18n.getMessage("options_default_mode_modify_url_option");
     $("default-interval-label").innerText = chrome.i18n.getMessage("options_default_interval_label");
     $("save-disclaimer").innerText = chrome.i18n.getMessage("options_save_disclaimer");
     // Populate values from storage
@@ -131,7 +131,7 @@ URLNP.Options = URLNP.Options || function() {
       writeToText($("key-clear-input"), o.keyClear);
       writeToText($("key-quick-next-input"), o.keyQuickNext);
       writeToText($("key-quick-prev-input"), o.keyQuickPrev);
-      $("default-action-select").value = o.defaultAction;
+      $("default-mode-select").value = o.defaultMode;
       $("default-interval-input").value = o.defaultInterval;
     });
   }
