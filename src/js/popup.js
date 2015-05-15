@@ -7,7 +7,8 @@ console.log("URLNP.Popup");
  * 
  * Uses the JavaScript Revealing Module Pattern.
  */ 
-var URLNP = URLNP || {}; URLNP.Popup = URLNP.Popup || function () {
+var URLNP = URLNP || {};
+URLNP.Popup = URLNP.Popup || function () {
 
   var instance,
   	  currentTab,

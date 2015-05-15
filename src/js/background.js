@@ -7,7 +7,8 @@ console.log("URLNP.Background");
  * 
  * Uses the JavaScript Revealing Module Pattern.
  */ 
-var URLNP = URLNP || {}; URLNP.Background = URLNP.Background || function () {
+var URLNP = URLNP || {};
+URLNP.Background = URLNP.Background || function () {
 
 	var	instances;
 
@@ -353,7 +354,7 @@ var URLNP = URLNP || {}; URLNP.Background = URLNP.Background || function () {
 		);
 	}
 
-	// Public methods
+  // Return Public Methods
 	return {
 		initStorage: initStorage,
 		getInstance: getInstance,
