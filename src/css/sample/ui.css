@@ -1,0 +1,166 @@
+/* Copyright (c) 2009, Google Inc. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+
+/* This file is CSS for the overlay used in the generateAlert_() messages. The 
+   code is from the sample Google extension, Proxy Settings by Mike West. */
+
+.overlay {
+	display: block;
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 400px;
+	padding: 20px;
+	margin: -80px 0 0 -220px;
+	opacity: 0;
+	background: rgba(0, 0, 0, 0.75);
+	border-radius: 5px;
+	color: #FFF;
+	/*font: 1.5em/1.2; Arial, sans-serif; */
+	font-size: 1.3em;
+	-webkit-transition: all 1.0s ease;
+	-webkit-transform: scale(0);
+}
+
+.overlay a {
+	color:  #FFF;
+}
+
+.overlay ul {
+  list-style-type: none;
+}
+
+.overlay.visible {
+	opacity: 1;
+	-webkit-transform: scale(1);
+}
+
+/* Div for form; hidden by default when the popup opens. */
+
+div > form {
+	/* display: none; */
+	border-radius: 5px;
+/*	font: 14px/1 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #777777;*/
+	padding: 10px;
+	width: 563px;
+	box-shadow: inset 0px 2px 5px rgba(0,0,0,0.5); 
+	-webkit-transition: background-color 0.5s ease-out;
+	overflow: hidden;
+	background-color: #EDECEB;
+	background-image: linear-gradient(top, #EDECEB, #F5F5F5);
+	background-image: -webkit-gradient(linear, left top, left 500, color-stop(0, #EDECEB), color-stop(1, #F5F5F5));
+	background-image: -moz-linear-gradient(center top, #EDECEB 0%, #F5F5F5 100%);
+	background-image: -o-linear-gradient(top, #EDECEB, #F5F5F5);
+}
+
+/* Form properties. */
+
+form {
+	width: 563px;
+	-webkit-transition: -webkit-transform 0.25s ease;
+}
+
+/* Form housekeeping. */
+
+form.offscreen {
+	-webkit-transform: translateX(-600px);
+}
+
+/* Form -> fieldset spacing.  Fieldsets are subsections of the form. */
+
+form > fieldset {
+	border-radius:  5px;
+	border: 1px solid transparent;
+	padding: 10px 10px 10px 30px;
+	margin: 5px 0;
+	-webkit-transition: all 0.5s ease;
+}
+
+/* On the fieldsets, a little hover interaction. */
+
+form > fieldset:hover {
+	background: rgba(255,255,255,0.1);
+	border-color: rgba(0,0,0,0.1);
+}
+
+/* Same as above, but on active.  Helps user friendliness. */
+
+form > fieldset.active {
+	background: rgba(255,255,255,0.25);
+	border-color: rgba(0,0,0,0.25);
+}
+
+/* Fieldset properties. */
+
+fieldset {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+/* All elements in the options fieldset should be inline instead of block. */
+
+fieldset#options {
+	display: inline;
+}
+
+/* Section properties (sections reside in fieldsets to divide elements). */
+
+section {
+	margin: 5px 0 0;
+}
+
+/* Give the last section some top spacing over the first. */
+
+section fieldset:last-child {
+	margin-top: 5px;
+}
+
+/* Arbitrary left padding/spacing for fieldset subsections in the form section to indent them. */
+
+section > fieldset {
+	position: relative;
+	padding-left: 40px;
+}
+
+/* Legend properties. */
+
+legend {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+	font-size:  16px;
+}
+
+/* Label properties. */
+
+/*label {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+}
+*/
+/* All URL/Selection labels should have their content appear below them (block). */
+
+label.block {
+	display: block;
+}
+
+/* All options labels should have their content appear next to them (inline). */
+
+label.inline {
+	display: inline;
+}
+
+/* Transitioning effects for active labels in the form (need to fix for legends). */
+
+section label, section legend {
+	color: #999;
+	-webkit-transition: color 0.5s ease;
+}
+
+.active section label, .active section legend, form > fieldset > label  {
+	color:  #000;
+	-webkit-transition: color 0.5s ease;
+}
