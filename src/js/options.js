@@ -74,7 +74,7 @@ URLNP.Options = URLNP.Options || function() {
         "221": "]",
         "222": "'"
       },
-      key = [0, 0], // Stores the keyEventBits [0] and keyCode [1] on keydown
+      key = [0,0], // Stores the keyEventBits [0] and keyCode [1] on keydown
       $ = document.getElementById.bind(document); // Cache DOM document
 
   /**
