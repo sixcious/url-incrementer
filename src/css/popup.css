@@ -3,7 +3,8 @@
 
 */
 
-@import url("shared.css");
+@import url("chromium/chrome_shared.css");
+@import url("sample/ui.css");
 
 /* Initial popup body background color and window size (for 16px images). */
 
@@ -76,4 +77,27 @@ textarea {
 	display: block;
 	text-align: center;
 	position: relative;
+}
+
+
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.hidden {
+	display: none;
+}
+
+.inline {
+  display: inline;
+}
+
+.block {
+  display: block;
+}
+
+.shadow {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }

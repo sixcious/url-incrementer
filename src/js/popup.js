@@ -36,7 +36,7 @@ URLNP.Popup = URLNP.Popup || function () {
   	$("url-textarea").addEventListener("keyup", handleURL, false);
   	$("accept-input").addEventListener("click", submitForm, false);
   	$("cancel-input").addEventListener("click", toggleForm, false);
-  	$("popup-form").addEventListener("click", URLNP.UIHelper.dispatchFormClick_.bind(this));
+  // 	$("popup-form").addEventListener("click", URLNP.UI.dispatchFormClick_.bind(this));
   	// Set localization text (i18n) from messages.json
   	console.log("\tadding i18n text");
   	$("next-input").title = chrome.i18n.getMessage("popup_next_input");
@@ -151,7 +151,7 @@ URLNP.Popup = URLNP.Popup || function () {
   	// If there was an error, show the error message
   	if (errorCount !== 0) {
   		console.log("\t\terrorMessage:" + errorMessage);
-  		URLNP.UIHelper.generateAlert_(errorMessage, false);
+  		URLNP.UI.generateAlert(errorMessage);
   	}
   	// Else there was not an error (successful)...
   	else {
