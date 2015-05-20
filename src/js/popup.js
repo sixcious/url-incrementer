@@ -11,9 +11,9 @@ var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
   var instance,
-      currentTab,
+      // currentTab,
       //selectionStart = -1,
-      selectionProperties = { selection: "", selectionStart: -1 },
+      // selectionProperties = { selection: "", selectionStart: -1 },
       images = document.querySelectorAll("#popup-controls input.image-control"),
       $ = document.getElementById.bind(document);
 
@@ -53,10 +53,10 @@ URLNP.Popup = URLNP.Popup || function () {
     // Set the current tab, instance, and update images
     chrome.tabs.getSelected(null,
       function (tab) {
-        currentTab = tab;
-        console.log("\tgetting currentTab (currentTab.id=" + currentTab.id +")");
+        // currentTab = tab;
+        console.log("\tgetting currentTab (tab.id=" + tab.id +")");
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          instance = backgroundPage.URLNP.Background.getInstance(tab.id);  
+          instance = backgroundPage.URLNP.Background.getInstance(tab);
           updateImages();
         });
       }
@@ -72,7 +72,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function updateImages() {
     console.log("updateImages()");
     var i,
-        className = instance && instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
+        className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
     for (i = 0; i < images.length; i++) {
       images[i].className = className;
     }
@@ -86,7 +86,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function handleURL() {
     console.log("handleURL()");
     // Stores the selectionStart for later (to be returned to background.html).
-    selectionProperties.selectionStart = $("url-textarea").selectionStart;
+    instance.selectionStart = $("url-textarea").selectionStart;
     // Update the "selectionInput" element to show the selected text.
     $("selection-input").value = window.getSelection().toString();
     console.log("\t\tselection-input.value=" + $("selection-input").value);
@@ -143,17 +143,17 @@ URLNP.Popup = URLNP.Popup || function () {
   		console.log("\t\tsuccess -- now enabling urlnp");
   		// Stores the form's information into urlnp, update the images
   		// (enabled) and hide the form by toggling it.
-  		urlnp.enabled = true;
-  		urlnp.tab = currentTab;
+  		instance.enabled = true;
+  		// urlnp.tab = currentTab;
   		chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  		  backgroundPage.URLNP.Background.setURLNP(urlnp);  
+  		  backgroundPage.URLNP.Background.setInstance(instance);  
   			updateImages();
   			toggleForm();
         chrome.storage.sync.get(null, function (o) {
   				if (o.keyEnabled) {
       			console.log("\t\tadding keyListener");
       			//chrome.tabs.sendMessage(instance.getTab().id, {greeting: "setKeys", keyCodeIncrement: localStorage.keyCodeIncrement, keyEventIncrement: localStorage.keyEventIncrement, keyCodeDecrement: localStorage.keyCodeDecrement, keyEventDecrement: localStorage.keyEventDecrement, keyCodeClear: localStorage.keyCodeClear, keyEventClear: localStorage.keyEventClear}, function(response) {});
-      			chrome.tabs.sendMessage(instance.getTab().id, {greeting: "addKeyListener"}, function (response) {});
+      			chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function (response) {});
       		}
         });
   		});
@@ -167,9 +167,9 @@ URLNP.Popup = URLNP.Popup || function () {
   
   function clickNext() {
   	console.log("\tfunction clickNext");
-  	if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
+  	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
   		console.log("\t\tgoing next");
-  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Next"}, function (response) {});
+  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "next"}, function (response) {});
   	}
   }
   
@@ -179,9 +179,9 @@ URLNP.Popup = URLNP.Popup || function () {
   
   function clickPrev() {
   	console.log("\tfunction clickPrev");
-  	if (urlnp.enabled && urlnp.tab.id === currentTab.id) {
+  	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
   		console.log("\t\tgoing prev");
-  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "Prev"}, function (response) {});
+  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "prev"}, function (response) {});
   	}
   }
   
@@ -193,11 +193,17 @@ URLNP.Popup = URLNP.Popup || function () {
    */ 
   function clickClear() {
   	console.log("\tfunction clickClear");
-  	if (urlnp.enabled) {
+  	if (instance.enabled) {
   		console.log("\t\tclearing urlnp");
+		  instance = {
+		    enabled: false,
+		    tab: instance.tab,
+		    selection: "",
+		    selectionStart: -1,
+		    interval: 0
+		  };
   		chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  		  backgroundPage.URLNP.Background.clearURLNP();
-  			urlnp = backgroundPage.URLNP.Background.getURLNP();
+  		  backgroundPage.URLNP.Background.setInstance(instance);
   			//urlnp.enabled = false;
   		  updateImages();
   		});

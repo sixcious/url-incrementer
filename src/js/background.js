@@ -39,9 +39,20 @@ URLNP.Background = URLNP.Background || function () {
 	 * 
 	 * @public
 	 */
-	function getInstance(id) {
-		console.log("getInstance(id)");
-		return instances[id];
+	function getInstance(tab) {
+		console.log("getInstance(tab)");
+		var instance = instances[tab.id];
+		if (!instance) {
+		  instance = {
+		    enabled: false,
+		    tab: tab,
+		    selection: "",
+		    selectionStart: -1,
+		    interval: 0
+		  };
+		}
+		return instance;
+		//return instances[id];
 		//sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
 	}
 
@@ -55,24 +66,25 @@ URLNP.Background = URLNP.Background || function () {
 		instances[instance.id] = instance;
 		if (!instance || !instance.enabled) {
   		console.log("\tinstance is not active -- removing listeners");
-  		chrome.tabs.sendMessage(instance.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
+  		chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function (response) {});
       chrome.tabs.onUpdated.removeListener(updateListeners);
+      instances[instance.tab.id] = undefined;
 		}
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @public
-	 */
-	function clearInstance(instance) {
-		console.log("clearInstance(instance)");
-		console.log("\tremoving keyListener");
-		chrome.tabs.sendMessage(instance.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
-		chrome.tabs.onUpdated.removeListener(updateListeners);
-		//urlnp.clear();
-		instances[instance.id] = instance;
-	}
+// 	/**
+// 	 * TODO
+// 	 * 
+// 	 * @public
+// 	 */
+// 	function clearInstance(instance) {
+// 		console.log("clearInstance(instance)");
+// 		console.log("\tremoving keyListener");
+// 		chrome.tabs.sendMessage(instance.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
+// 		chrome.tabs.onUpdated.removeListener(updateListeners);
+// 		//urlnp.clear();
+// 		instances[instance.id] = instance;
+// 	}
 
 	/**
 	 * Modifies the URL by the user's selection by either incrementing or
@@ -359,7 +371,7 @@ URLNP.Background = URLNP.Background || function () {
 		initStorage: initStorage,
 		getInstance: getInstance,
 		setInstance: setInstance,
-		clearInstance: clearInstance,
+		// clearInstance: clearInstance,
 		findSelection: findSelection,
 		modifyUrliAndUpdateTab: modifyUrliAndUpdateTab,
 		fastUpdateTab: fastUpdateTab
