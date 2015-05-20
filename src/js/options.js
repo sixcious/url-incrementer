@@ -74,7 +74,7 @@ URLNP.Options = URLNP.Options || function() {
         "221": "]",
         "222": "'"
       },
-      key = [0,0], // Stores the keyEventBits [0] and keyCode [1] on keydown
+      key = [0,0], // Stores the key event modifiers [0] and key code [1]
       $ = document.getElementById.bind(document); // Cache DOM document
 
   /**
@@ -89,11 +89,11 @@ URLNP.Options = URLNP.Options || function() {
     console.log("DOMContentLoaded()");
     // Add Event Listeners to the DOM elements (inputs)
     console.log("\tadding event listeners");
-    $("key-next-input").addEventListener("keydown", function () { setKey(event); writeToText(this, key); }, false);
-    $("key-prev-input").addEventListener("keydown", function () { setKey(event); writeToText(this, key); }, false);
-    $("key-clear-input").addEventListener("keydown", function () { setKey(event); writeToText(this, key); }, false);
-    $("key-quick-next-input").addEventListener("keydown", function () { setKey(event); writeToText(this, key); }, false);
-    $("key-quick-prev-input").addEventListener("keydown", function () { setKey(event); writeToText(this, key); }, false);
+    $("key-next-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    $("key-prev-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    $("key-clear-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    $("key-quick-next-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    $("key-quick-prev-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
     $("key-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyEnabled': this.checked}); }, false);
     $("key-quick-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyQuickEnabled': this.checked}); }, false);
     $("key-next-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyNext': key}); }, false);
@@ -126,11 +126,11 @@ URLNP.Options = URLNP.Options || function() {
     chrome.storage.sync.get(null, function (o) {
       $("key-enable-input").checked = o.keyEnabled;
       $("key-quick-enable-input").checked = o.keyQuickEnabled;
-      writeToText($("key-next-input"), o.keyNext);
-      writeToText($("key-prev-input"), o.keyPrev);
-      writeToText($("key-clear-input"), o.keyClear);
-      writeToText($("key-quick-next-input"), o.keyQuickNext);
-      writeToText($("key-quick-prev-input"), o.keyQuickPrev);
+      writeInput($("key-next-input"), o.keyNext);
+      writeInput($("key-prev-input"), o.keyPrev);
+      writeInput($("key-clear-input"), o.keyClear);
+      writeInput($("key-quick-next-input"), o.keyQuickNext);
+      writeInput($("key-quick-prev-input"), o.keyQuickPrev);
       $("default-mode-select").value = o.defaultMode;
       $("default-interval-input").value = o.defaultInterval;
     });
@@ -138,7 +138,7 @@ URLNP.Options = URLNP.Options || function() {
 
   /**
    * Sets the key that was pressed on a keydown event. This is needed shortly
-   * after to write the key to the text field and to save the key to storage.
+   * after to write the key to the input value and to save the key to storage.
    * 
    * @param event the keydown event fired
    * @private
@@ -156,29 +156,24 @@ URLNP.Options = URLNP.Options || function() {
   }
 
   /**
-   * Writes the key to the text field. Uses the KEY_CODE_STRING_MAP in case of
+   * Writes the key to the input value. Uses the KEY_CODE_STRING_MAP in case of
    * special characters that String.fromCharCode() doesn't display.
    * 
-   * @param text the text input to write to
+   * @param input the input to write to
    * @param key the key object that was pressed
    * @private
    */ 
-  function writeToText(text, key) {
-    console.log("writeToText(text, key)");
-    console.log("\ttext.id=" + text.id);
+  function writeInput(input, key) {
+    console.log("writeInput(input, key)");
+    console.log("\tinput.id=" + input.id);
     console.log("\tkey=[" + key[0] + "," + key[1] + "]");
-    var value = "",
-        keyCodeString = KEY_CODE_STRING_MAP[key[1]];
-    // Check key[0] (the keyEventBits) with the bitmask flags
-    value = (key[0] & FLAG_KEY_ALT)        ? value + "Alt + "   : value;
-    value = (key[0] & FLAG_KEY_CTRL)  >> 1 ? value + "Ctrl + "  : value;
-    value = (key[0] & FLAG_KEY_SHIFT) >> 2 ? value + "Shift + " : value;
-    value = (key[0] & FLAG_KEY_META)  >> 3 ? value + "Meta + "  : value;
-    // Check key[1] (the keyCode) with the KEY_CODE_STRING_MAP or get it direct
-    value += keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]);
-    console.log("\tvalue=" + value);
-    // Write to text
-    text.value = value;
+    var keyCodeString = KEY_CODE_STRING_MAP[key[1]];
+    // Write the input value based on the key event modifier bits and key code
+    input.value = ((key[0] & FLAG_KEY_ALT)        ? "Alt + "   : "") +
+                  ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl + "  : "") +
+                  ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift + " : "") +
+                  ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta + "  : "") +
+                  (keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]));
   }
 
   // Return Public Functions
