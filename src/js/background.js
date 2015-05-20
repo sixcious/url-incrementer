@@ -354,7 +354,7 @@ URLNP.Background = URLNP.Background || function () {
 		);
 	}
 
-  // Return Public Methods
+  // Return Public Functions
 	return {
 		initStorage: initStorage,
 		getInstance: getInstance,

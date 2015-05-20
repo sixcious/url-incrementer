@@ -37,7 +37,7 @@ URLNP.UI = URLNP.UI || function () {
     setTimeout(function() { div.classList.remove('visible'); document.body.removeChild(div); }, 3000);
   }
 
-  // Return Public Methods
+  // Return Public Functions
   return {
     generateAlert: generateAlert
   };

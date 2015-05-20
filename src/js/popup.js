@@ -269,7 +269,7 @@ URLNP.Popup = URLNP.Popup || function () {
   	}
   }
 
-  // Return Public Methods
+  // Return Public Functions
   return {
     DOMContentLoaded: DOMContentLoaded
   };

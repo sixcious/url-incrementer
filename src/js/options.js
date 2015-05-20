@@ -145,15 +145,14 @@ URLNP.Options = URLNP.Options || function() {
    */ 
   function setKey(event) {
     console.log("setKey(event)");
-    var keyEventBits;
-    // Set the keyEventBits using the event and the Alt, Ctrl, Shift, Meta flags
-    keyEventBits = FLAG_KEY_NONE;
-    keyEventBits = event.altKey   ? keyEventBits | FLAG_KEY_ALT   : keyEventBits;
-    keyEventBits = event.ctrlKey  ? keyEventBits | FLAG_KEY_CTRL  : keyEventBits;
-    keyEventBits = event.shiftKey ? keyEventBits | FLAG_KEY_SHIFT : keyEventBits;
-    keyEventBits = event.metaKey  ? keyEventBits | FLAG_KEY_META  : keyEventBits;
-    // Set the key as the keyEventBits and the keyCode
-    key = [keyEventBits, event.which];
+    // Set key [0] as the event modifiiers OR'd together and [1] as the key code
+    key = [
+            (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+            (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+            (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+            (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
+            event.which
+    ];
   }
 
   /**
@@ -182,7 +181,7 @@ URLNP.Options = URLNP.Options || function() {
     text.value = value;
   }
 
-  // Return Public Methods
+  // Return Public Functions
   return {
     DOMContentLoaded: DOMContentLoaded
   };

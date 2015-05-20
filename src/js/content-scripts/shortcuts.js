@@ -28,13 +28,13 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
   }
   
   /**
-  * A keydown event listener for regular keyboard shortcuts.
-  * Listens for next, prev, and clear keyboard shortcuts.
-  * This listener is added after the instance is enabled (on the popup).
-  * 
-  * @param event the keydown event
-  * @public
-  */
+   * A keydown event listener for regular keyboard shortcuts.
+   * Listens for next, prev, and clear keyboard shortcuts.
+   * This listener is added after the instance is enabled (on the popup).
+   * 
+   * @param event the keydown event
+   * @public
+   */
   function keyListener(event) {
     console.log("keyListener(event)");
     if (keyPressed(event, keys[0])) { console.log("\tpressed next key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "Next"}); }
@@ -43,13 +43,13 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
   }
 
   /**
-  * A keydown event listener for quick keyboard shortcuts.
-  * Listens for quick next and quick prev keyboard shortcuts.
-  * This listener is added if quick keys are enabled in storage (via options).
-  * 
-  * @param event the keydown event
-  * @public
-  */
+   * A keydown event listener for quick keyboard shortcuts.
+   * Listens for quick next and quick prev keyboard shortcuts.
+   * This listener is added if quick keys are enabled in storage (via options).
+   * 
+   * @param event the keydown event
+   * @public
+   */
   function keyQuickListener(event) {
     console.log("keyQuickListener(event)");
     if (keyPressed(event, keys[3])) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "Next"}); }
@@ -57,14 +57,14 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
   }
 
   /**
-  * Checks if the key was pressed by comparing the event against the flags 
-  * using bitwise operators and checking if the keyCode matches.
-  * 
-  * @param event the keydown event
-  * @param key the key to check
-  * @returns true if the keydown event (press) matches the key, false otherwise
-  * @private
-  */
+   * Checks if the key was pressed by comparing the event against the flags 
+   * using bitwise operators and checking if the keyCode matches.
+   * 
+   * @param event the keydown event
+   * @param key the key to check
+   * @returns true if the keydown event (press) matches the key, false otherwise
+   * @private
+   */
   function keyPressed(event, key) {
     console.log("keyPressed(event, key)");
     return (
@@ -76,7 +76,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
     );
   }
 
-  // Return Public Methods
+  // Return Public Functions
   return {
     setKeys: setKeys,
     keyListener: keyListener,
