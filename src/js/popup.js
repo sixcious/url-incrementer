@@ -11,11 +11,12 @@ var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
   var instance,
-  	  currentTab,
-  	  //selectionStart = -1,
-  	  selectionProperties = { selection: "", selectionStart: -1 },
+      currentTab,
+      //selectionStart = -1,
+      selectionProperties = { selection: "", selectionStart: -1 },
+      images = document.querySelectorAll("#popup-controls input.image-control"),
       $ = document.getElementById.bind(document);
-  	
+
   /**
    * Loads the DOM content needed to display the popup page.
    * 
@@ -25,86 +26,70 @@ URLNP.Popup = URLNP.Popup || function () {
    * @public
    */
   function DOMContentLoaded() {
-  	console.log("DOMContentLoaded()");
-  	// Add Event Listeners to the DOM elements (inputs)
-  	console.log("\tadding event listeners");
-  	$("next-input").addEventListener("click", clickNext, false);
-  	$("prev-input").addEventListener("click", clickPrev, false);
-  	$("clear-input").addEventListener("click", clickClear, false);
-  	$("setup-input").addEventListener("click", toggleForm, false);
-  	$("url-textarea").addEventListener("mouseup", handleURL, false);
-  	$("url-textarea").addEventListener("keyup", handleURL, false);
-  	$("accept-input").addEventListener("click", submitForm, false);
-  	$("cancel-input").addEventListener("click", toggleForm, false);
-  // 	$("popup-form").addEventListener("click", URLNP.UI.dispatchFormClick_.bind(this));
-  	// Set localization text (i18n) from messages.json
-  	console.log("\tadding i18n text");
-  	$("next-input").title = chrome.i18n.getMessage("popup_next_input");
-  	$("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
-  	$("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
-  	$("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-  	//$("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-  	$("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
-  	$("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
-  	$("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
-  	$("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
-  	$("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
-  	// Set the current tab, instance, and update images
-  	chrome.tabs.getSelected(null,
-  		function (tab) {
-  			currentTab = tab;
-  			console.log("\tgetting currentTab (currentTab.id=" + currentTab.id +")");
-      	chrome.runtime.getBackgroundPage(function(backgroundPage) {
-    	    instance = backgroundPage.URLNP.Background.getInstance(tab.id);  
-      		updateImages();
-      	});
-  		}
-  	);
+    console.log("DOMContentLoaded()");
+    // Add Event Listeners to the DOM elements
+    console.log("\tadding event listeners");
+    $("next-input").addEventListener("click", clickNext, false);
+    $("prev-input").addEventListener("click", clickPrev, false);
+    $("clear-input").addEventListener("click", clickClear, false);
+    $("setup-input").addEventListener("click", toggleForm, false);
+    $("url-textarea").addEventListener("mouseup", handleURL, false);
+    $("url-textarea").addEventListener("keyup", handleURL, false);
+    $("accept-input").addEventListener("click", submitForm, false);
+    $("cancel-input").addEventListener("click", toggleForm, false);
+    // $("popup-form").addEventListener("click", URLNP.UI.dispatchFormClick_.bind(this));
+    // Set localization text (i18n) from messages.json
+    console.log("\tadding i18n text");
+    $("next-input").title = chrome.i18n.getMessage("popup_next_input");
+    $("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
+    $("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
+    $("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
+    //$("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+    $("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
+    $("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
+    $("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
+    $("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
+    $("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
+    // Set the current tab, instance, and update images
+    chrome.tabs.getSelected(null,
+      function (tab) {
+        currentTab = tab;
+        console.log("\tgetting currentTab (currentTab.id=" + currentTab.id +")");
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+          instance = backgroundPage.URLNP.Background.getInstance(tab.id);  
+          updateImages();
+        });
+      }
+    );
   }
 
   /**
    * Updates the images' class to either enabled or disabled depending on
-   * whether this instance is active.
+   * whether this instance is enabled.
    * 
    * @private
    */ 
   function updateImages() {
-  	console.log("\tfunction updateImages");
-  	var imageNodeList,
-        i,
-        length;
-  	// Get the images.  Assume they're disabled, their default state in the
-  	// HTML (we really don't know yet).
-  	imageNodeList = document.querySelectorAll(".disabled");
-  	// If the images disabled nodelist is empty, it means they're
-  	// currently enabled instead, so get them.
-  	if (imageNodeList.length === 0) {
-  		imageNodeList = document.querySelectorAll(".enabled");
-  	}
-  	// If urlnp is enabled on this tab, images should be enabled.
-  	if (urlnp.enabled && ulrnp.tab.id === currentTab.id) {
-  		console.log("\t\turlnp enabled so images enabled");
-  		for (i = 0, length = imageNodeList.length; i < length; i++) {
-  			imageNodeList[i].className = "enabled";
-  		}
-  	}
-  	// Else urlnp is not enabled, images should be disabled.
-  	else {
-  		console.log("\t\turlnp disabled so images disabled");
-  		for (i = 0, length = imageNodeList.length; i < length; i++) {
-  			imageNodeList[i].className = "disabled";
-  		}
-  	}
+    console.log("updateImages()");
+    var i,
+        className = instance && instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
+    for (i = 0; i < images.length; i++) {
+      images[i].className = className;
+    }
   }
-  	
-  // Handle URL event on mouseup and onkeyup for selection.
+
+  /**
+   * Handle URL selection on mouseup and keyup events.
+   * 
+   * @private
+   */ 
   function handleURL() {
-  	console.log("\tfunction handleURL");
-  	// Stores the selectionStart for later (to be returned to background.html).
-  	selectionProperties.selectionStart = $("url-textarea").selectionStart;
-  	// Update the "selectionInput" element to show the selected text.
-  	$("selection-input").value = window.getSelection().toString();
-  	console.log("\t\tselection-input.value=" + $("selection-input").value);
+    console.log("handleURL()");
+    // Stores the selectionStart for later (to be returned to background.html).
+    selectionProperties.selectionStart = $("url-textarea").selectionStart;
+    // Update the "selectionInput" element to show the selected text.
+    $("selection-input").value = window.getSelection().toString();
+    console.log("\t\tselection-input.value=" + $("selection-input").value);
   }
   	
   // Called when the user clicks on the Accept button on the form.  Checks

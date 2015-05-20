@@ -87,7 +87,7 @@ URLNP.Options = URLNP.Options || function() {
    */
   function DOMContentLoaded() {
     console.log("DOMContentLoaded()");
-    // Add Event Listeners to the DOM elements (inputs)
+    // Add Event Listeners to the DOM elements
     console.log("\tadding event listeners");
     $("key-next-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
     $("key-prev-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
@@ -147,11 +147,11 @@ URLNP.Options = URLNP.Options || function() {
     console.log("setKey(event)");
     // Set key [0] as the event modifiiers OR'd together and [1] as the key code
     key = [
-            (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-            (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
-            (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-            (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-            event.which
+      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
+      event.which
     ];
   }
 
@@ -165,15 +165,14 @@ URLNP.Options = URLNP.Options || function() {
    */ 
   function writeInput(input, key) {
     console.log("writeInput(input, key)");
-    console.log("\tinput.id=" + input.id);
-    console.log("\tkey=[" + key[0] + "," + key[1] + "]");
     var keyCodeString = KEY_CODE_STRING_MAP[key[1]];
     // Write the input value based on the key event modifier bits and key code
-    input.value = ((key[0] & FLAG_KEY_ALT)        ? "Alt + "   : "") +
-                  ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl + "  : "") +
-                  ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift + " : "") +
-                  ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta + "  : "") +
-                  (keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]));
+    input.value =
+      ((key[0] & FLAG_KEY_ALT)        ? "Alt + "   : "") +
+      ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl + "  : "") +
+      ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift + " : "") +
+      ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta + "  : "") +
+      (keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]));
   }
 
   // Return Public Functions

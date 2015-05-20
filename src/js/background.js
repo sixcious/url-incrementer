@@ -10,7 +10,7 @@ console.log("URLNP.Background");
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
-	var	instances;
+	var	instances = [];
 
   /**
    * Initializes the storage with the default values. The storage is initialized
@@ -53,7 +53,7 @@ URLNP.Background = URLNP.Background || function () {
 	function setInstance(instance) {
 		console.log("setInstance(instance)");
 		instances[instance.id] = instance;
-		if (!instance || !instance.active) {
+		if (!instance || !instance.enabled) {
   		console.log("\tinstance is not active -- removing listeners");
   		chrome.tabs.sendMessage(instance.getTab().id, {greeting: "removeKeyListener"}, function (response) {});
       chrome.tabs.onUpdated.removeListener(updateListeners);

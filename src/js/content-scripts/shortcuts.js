@@ -37,8 +37,8 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    */
   function keyListener(event) {
     console.log("keyListener(event)");
-    if (keyPressed(event, keys[0])) { console.log("\tpressed next key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "Next"}); }
-    else if (keyPressed(event, keys[1])) { console.log("\tpressed prev key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "Prev"}); }
+    if (keyPressed(event, keys[0])) { console.log("\tpressed next key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
+    else if (keyPressed(event, keys[1])) { console.log("\tpressed prev key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
     else if (keyPressed(event, keys[2])) { console.log("\tpressed clear key"); chrome.runtime.sendMessage({greeting: "clearInstance"}); }
   }
 
@@ -52,8 +52,8 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    */
   function keyQuickListener(event) {
     console.log("keyQuickListener(event)");
-    if (keyPressed(event, keys[3])) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "Next"}); }
-    else if (keyPressed(event, keys[4])) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "Prev"}); }
+    if (keyPressed(event, keys[3])) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next"}); }
+    else if (keyPressed(event, keys[4])) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev"}); }
   }
 
   /**
@@ -95,21 +95,17 @@ chrome.storage.sync.get(null, function (o) {
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
+    console.log("!request.greeting=" + (request && request.greeting ? request.greeting : "Unknown Request"));
     switch (request.greeting) {
-      case "addKeyListener": // From ?
-        console.log("!request.greeting='addKeyListener'");
+      case "addKeyListener":
         document.addEventListener("keydown", URLNP.Shortcuts.keyListener, false);
-        sendResponse({});
         break;
-      case "removeKeyListener": // From ?
-        console.log("!request.greeting='removeKeyListener'");
+      case "removeKeyListener":
         document.removeEventListener("keydown", URLNP.Shortcuts.keyListener, false);
-        sendResponse({});
         break;
-      default: // Unspecified request
-        console.warn("!request.greeting is unspecified");
-        sendResponse({});
+      default:
         break;
     }
+    sendResponse({});
   }
 );
