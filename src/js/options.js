@@ -156,17 +156,17 @@ URLNP.Options = URLNP.Options || function() {
   }
 
   /**
-   * Writes the key to the input value. Uses the KEY_CODE_STRING_MAP in case of
-   * special characters that String.fromCharCode() doesn't display.
+   * Writes the key to the input value.
    * 
    * @param input the input to write to
-   * @param key the key object that was pressed
+   * @param key the key object to write
    * @private
    */ 
   function writeInput(input, key) {
     console.log("writeInput(input, key)");
     var keyCodeString = KEY_CODE_STRING_MAP[key[1]];
     // Write the input value based on the key event modifier bits and key code
+    // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
     input.value =
       ((key[0] & FLAG_KEY_ALT)        ? "Alt + "   : "") +
       ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl + "  : "") +

@@ -14,31 +14,14 @@
 			  <input id="setup-input" type="image" src="../img/setup.png" alt=""/>
 			  <input id="setup-input2" type="image" src="../img/setup.png" alt=""/>
 		  </div>
-	    <form id="popup-form" class="hidden">
-	      <fieldset>
-					<legend>Setup</legend>
-	        <section>
-	          <fieldset class="inline">
-  					  <input id="links-radio" type="radio" name="behavior"/>
-					    <label id="links-legend" for="links-radio">Use Links</label>
-	          </fieldset>
-	          <fieldset class="inline">
-	            			        <input id="url-radio" type="radio" name="behavior"/>
-					    <label id="modify-url-label" for="url-radio">Modify URL</label>
-	          </fieldset>
-	          
-						<fieldset>
-							<label>Next</label>
-							<input type="text" readonly="readonly" value="http://www.next.com"/>
-						</fieldset>
-						<fieldset>
-							<label>Prev</label>
-							<input type="text" readonly="readonly" value="http://www.prev.com"/>
-						</fieldset>
-	        </section>
-	      </fieldset>
+		  <div id="popup-use-links">
+        <label>Next</label>
+        <input type="text" readonly="readonly" value="http://www.next.com"/>
+        <label>Prev</label>
+        <input type="text" readonly="readonly" value="http://www.prev.com"/>
+		  </div>
+		  <div id="popup-modify-url">
 				<fieldset>
-				  
 					<legend id="url-legend"></legend>
 					<section>
 						<fieldset>
@@ -57,6 +40,24 @@
 						</fieldset>
 					</section>
 				</fieldset>
+		  </div>
+	    <form id="popup-form" class="hidden">
+	      <fieldset>
+					<legend>Setup</legend>
+	        <section>
+	          <fieldset class="inline">
+  					  <input id="links-radio" type="radio" name="behavior"/>
+					    <label id="links-legend" for="links-radio">Use Links</label>
+	          </fieldset>
+	          <fieldset class="inline">
+	            			        <input id="url-radio" type="radio" name="behavior"/>
+					    <label id="modify-url-label" for="url-radio">Modify URL</label>
+	          </fieldset>
+	          
+
+	        </section>
+	      </fieldset>
+
 				<div id="popup-form-buttons">
 					<input id="accept-input" type="button" value=""/>
 					<input id="cancel-input" type="button" value=""/>

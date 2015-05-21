@@ -23,7 +23,7 @@ URLNP.Background = URLNP.Background || function () {
 		chrome.storage.sync.clear();
 		chrome.storage.sync.set({
 		  'keyEnabled': true,
-		  'keyQuickEnabled': true,
+		  'keyQuickEnabled': false,
 		  'keyNext': [0, 39],
 		  'keyPrev': [0, 37],
 		  'keyClear': [0, 13],
