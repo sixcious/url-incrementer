@@ -1,70 +1,71 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<link type="text/css" rel="stylesheet" href="../css/popup.css"/>
-		<title>URL Next Plus Popup</title>
-	</head>
-	<body>
-	  <div id="popup">
-		  <div id="popup-controls">
-			  <input id="prev-input" class="image-control disabled" type="image" src="../img/prev.png" alt=""/>
-			  <input id="next-input" class="image-control disabled" type="image" src="../img/next.png" alt=""/>
-			  <input id="clear-input" class="image-control disabled" type="image" src="../img/clear.png" alt=""/>
-			  <input id="setup-input" type="image" src="../img/setup.png" alt=""/>
-			  <input id="setup-input2" type="image" src="../img/setup.png" alt=""/>
-		  </div>
-		  <div id="popup-use-links">
+  <head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../css/popup.css"/>
+    <title>URL Next Plus Popup</title>
+  </head>
+  <body>
+    <div id="popup">
+      <div id="popup-controls">
+        <input id="prev-input" class="disabled" type="image" src="../img/prev.png" alt=""/>
+        <input id="next-input" class="disabled" type="image" src="../img/next.png" alt=""/>
+        <input id="clear-input" class="disabled" type="image" src="../img/clear.png" alt=""/>
+        <input id="setup-use-links-input" type="image" src="../img/setup.png" alt=""/>
+        <input id="setup-modify-url-input" type="image" src="../img/setup.png" alt=""/>
+      </div>
+      <div id="popup-setup-use-links" class="hidden">
         <label>Next</label>
         <input type="text" readonly="readonly" value="http://www.next.com"/>
         <label>Prev</label>
         <input type="text" readonly="readonly" value="http://www.prev.com"/>
-		  </div>
-		  <div id="popup-modify-url">
-				<fieldset>
-					<legend id="url-legend"></legend>
-					<section>
-						<fieldset>
-							<label id="url-label" class="block" for="url-textarea"></label>
-							<textarea id="url-textarea" readonly="readonly"></textarea>
-						</fieldset>
-					</section>
-					<section>
-						<fieldset class="inline">
-							<label id="selection-label" class="block" for="selection-input"></label>
-							<input id="selection-input" type="text" readonly="readonly"/>
-						</fieldset>
-						<fieldset class="inline">
-							<label id="interval-label" class="block" for="interval-input"></label>
-							<input id="interval-input" type="number" min="1"/>
-						</fieldset>
-					</section>
-				</fieldset>
-		  </div>
-	    <form id="popup-form" class="hidden">
-	      <fieldset>
-					<legend>Setup</legend>
-	        <section>
-	          <fieldset class="inline">
-  					  <input id="links-radio" type="radio" name="behavior"/>
-					    <label id="links-legend" for="links-radio">Use Links</label>
-	          </fieldset>
-	          <fieldset class="inline">
-	            			        <input id="url-radio" type="radio" name="behavior"/>
-					    <label id="modify-url-label" for="url-radio">Modify URL</label>
-	          </fieldset>
-	          
+        <input id="accept-input" type="button" value=""/>
+        <input id="cancel-input" type="button" value=""/>
+      </div>
+      <div id="popup-setup-modify-url" class="hidden">
+        <fieldset>
+        <legend id="url-legend"></legend>
+        <section>
+        <fieldset>
+        <label id="url-label" class="block" for="url-textarea"></label>
+        <textarea id="url-textarea" readonly="readonly"></textarea>
+        </fieldset>
+        </section>
+        <section>
+        <fieldset class="inline">
+        <label id="selection-label" class="block" for="selection-input"></label>
+        <input id="selection-input" type="text" readonly="readonly"/>
+        </fieldset>
+        <fieldset class="inline">
+        <label id="interval-label" class="block" for="interval-input"></label>
+        <input id="interval-input" type="number" min="1"/>
+        </fieldset>
+        </section>
+        </fieldset>
+      </div>
+<!--      <form id="popup-form" class="hidden">
+      <fieldset>
+      <legend>Setup</legend>
+      <section>
+      <fieldset class="inline">
+      <input id="links-radio" type="radio" name="behavior"/>
+      <label id="links-legend" for="links-radio">Use Links</label>
+      </fieldset>
+      <fieldset class="inline">
+      <input id="url-radio" type="radio" name="behavior"/>
+      <label id="modify-url-label" for="url-radio">Modify URL</label>
+      </fieldset>
+      
+      
+      </section>
+      </fieldset>
+      
+      <div id="popup-form-buttons">
 
-	        </section>
-	      </fieldset>
-
-				<div id="popup-form-buttons">
-					<input id="accept-input" type="button" value=""/>
-					<input id="cancel-input" type="button" value=""/>
-				</div>
-			</form>
-	  </div>
-		<script type="text/javascript" src="../js/sample/ui.js"></script>
-		<script type="text/javascript" src="../js/popup.js"></script>
-	</body>
+      </div>
+      </form>-->
+    </div>
+    <script type="text/javascript" src="../js/sample/ui.js"></script>
+    <script type="text/javascript" src="../js/popup.js"></script>
+  </body>
 </html>

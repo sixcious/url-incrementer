@@ -14,8 +14,9 @@ URLNP.Popup = URLNP.Popup || function () {
       // currentTab,
       //selectionStart = -1,
       // selectionProperties = { selection: "", selectionStart: -1 },
-      images = document.querySelectorAll("#popup-controls input.image-control"),
-      $ = document.getElementById.bind(document);
+      // images = document.querySelectorAll("#popup-controls input.image-control"),
+      //$ = document.getElementById.bind(document),
+      DOM = {};
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -27,29 +28,35 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function DOMContentLoaded() {
     console.log("DOMContentLoaded()");
+    // Cache DOM elements
+    var ids = document.querySelectorAll("[id]"),
+        i;
+    for (i = 0; i < ids.length; i++) {
+      DOM[ids[i].id] = ids[i];
+    }
     // Add Event Listeners to the DOM elements
     console.log("\tadding event listeners");
-    $("next-input").addEventListener("click", clickNext, false);
-    $("prev-input").addEventListener("click", clickPrev, false);
-    $("clear-input").addEventListener("click", clickClear, false);
-    $("setup-input").addEventListener("click", toggleForm, false);
-    $("url-textarea").addEventListener("mouseup", handleURL, false);
-    $("url-textarea").addEventListener("keyup", handleURL, false);
-    $("accept-input").addEventListener("click", submitForm, false);
-    $("cancel-input").addEventListener("click", toggleForm, false);
-    // $("popup-form").addEventListener("click", URLNP.UI.dispatchFormClick_.bind(this));
+    DOM["next-input"].addEventListener("click", clickNext, false);
+    DOM["prev-input"].addEventListener("click", clickPrev, false);
+    DOM["clear-input"].addEventListener("click", clickClear, false);
+    DOM["setup-input"].addEventListener("click", toggleForm, false);
+    DOM["url-textarea"].addEventListener("mouseup", handleURL, false);
+    DOM["url-textarea"].addEventListener("keyup", handleURL, false);
+    DOM["accept-input"].addEventListener("click", submitForm, false);
+    DOM["cancel-input"].addEventListener("click", toggleForm, false);
+    // DOM["popup-form").addEventListener("click", URLNP.UI.dispatchFormClick_.bind(this));
     // Set localization text (i18n) from messages.json
     console.log("\tadding i18n text");
-    $("next-input").title = chrome.i18n.getMessage("popup_next_input");
-    $("prev-input").title = chrome.i18n.getMessage("popup_prev_input");
-    $("clear-input").title = chrome.i18n.getMessage("popup_clear_input");
-    $("setup-input").title = chrome.i18n.getMessage("popup_setup_input");
-    //$("url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-    $("url-label").innerText = chrome.i18n.getMessage("popup_url_label"); 
-    $("selection-label").innerText = chrome.i18n.getMessage("popup_selection_label"); 
-    $("interval-label").innerText = chrome.i18n.getMessage("popup_interval_label");
-    $("accept-input").value = chrome.i18n.getMessage("popup_accept_input");
-    $("cancel-input").value = chrome.i18n.getMessage("popup_cancel_input");
+    DOM["next-input"].title = chrome.i18n.getMessage("popup_next_input");
+    DOM["prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
+    DOM["clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
+    DOM["setup-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    //DOM["url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+    DOM["url-label"].innerText = chrome.i18n.getMessage("popup_url_label"); 
+    DOM["selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label"); 
+    DOM["interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
+    DOM["accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Set the current tab, instance, and update images
     chrome.tabs.getSelected(null,
       function (tab) {
@@ -71,11 +78,10 @@ URLNP.Popup = URLNP.Popup || function () {
    */ 
   function updateImages() {
     console.log("updateImages()");
-    var i,
-        className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
-    for (i = 0; i < images.length; i++) {
-      images[i].className = className;
-    }
+    var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
+    DOM["next-input"].className = className;
+    DOM["prev-input"].className = className;
+    DOM["clear-input"].className = className;
   }
 
   /**
@@ -86,10 +92,10 @@ URLNP.Popup = URLNP.Popup || function () {
   function handleURL() {
     console.log("handleURL()");
     // Stores the selectionStart for later (to be returned to background.html).
-    instance.selectionStart = $("url-textarea").selectionStart;
+    instance.selectionStart = DOM["url-textarea"].selectionStart;
     // Update the "selectionInput" element to show the selected text.
-    $("selection-input").value = window.getSelection().toString();
-    console.log("\t\tselection-input.value=" + $("selection-input").value);
+    DOM["selection-input"].value = window.getSelection().toString();
+    console.log("\t\tselection-input.value=" + DOM["selection-input"].value);
   }
   	
   // Called when the user clicks on the Accept button on the form.  Checks
@@ -99,8 +105,8 @@ URLNP.Popup = URLNP.Popup || function () {
   	console.log("\tfunction submitForm");
   	var errorMessage = [],
   		errorCount = 0,
-  		selection = $("selection-input").value,
-  		interval = $("interval-input").value,
+  		selection = DOM["selection-input"].value,
+  		interval = DOM["interval-input"].value,
   		i,
   		length;
   	// ERROR If the selected text from the URL are not digits (0-9).
@@ -211,16 +217,16 @@ URLNP.Popup = URLNP.Popup || function () {
   }
   	
   /**
-   * Toggles the popup form. When the user clicks the setup input, the form
+   * Toggles the popup view between the controls and the setup divs. When the user clicks the setup input, the form
    * will expand and be visible. When the user clicks the Cancel input, the
    * form will be hidden and the popup controls view will return.
    * 
    * @private
    */ 
-  function toggleForm() {
-  	console.log("\tfunction toggleForm");
-  	var form = $("popup-form"),
-  	    controls = $("popup-controls");
+  function toggleView() {
+  	console.log("toggleView");
+  	var form = DOM["popup-form"],
+  	    controls = DOM["popup-controls"];
   	console.log("\t\tform.style.display=" + form.style.display);
   	if (form.style.display === "block") {
   		// Hide form, show controls, reduce body (popup window) size
@@ -246,13 +252,13 @@ URLNP.Popup = URLNP.Popup || function () {
   	chrome.runtime.getBackgroundPage(function(backgroundPage) {
   	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
   	  // selectionStart = selectionProperties.selectionStart;
-  		$("url-textarea").value = currentTab.url;
-  		$("url-textarea").setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
-  		$("selection-input").value = selectionProperties.selection;
+  		DOM["url-textarea"].value = currentTab.url;
+  		DOM["url-textarea"].setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  		DOM["selection-input"].value = selectionProperties.selection;
   	});
-    if (!$("interval-input").value) {
+    if (!DOM["interval-input"].value) {
       chrome.storage.sync.get(null, function (o) {
-        $("interval-input").value = o.defaultInterval;
+        DOM["interval-input"].value = o.defaultInterval;
       });
     }
   			}

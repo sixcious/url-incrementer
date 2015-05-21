@@ -74,8 +74,8 @@ URLNP.Options = URLNP.Options || function() {
         "221": "]",
         "222": "'"
       },
-      key = [0,0], // Stores the key event modifiers [0] and key code [1]
-      $ = document.getElementById.bind(document); // Cache DOM document
+      key = [0,0], // Stores the key event modifiers [0] and key code [1],
+      DOM = {}; // Map to cache DOM elements
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -87,52 +87,58 @@ URLNP.Options = URLNP.Options || function() {
    */
   function DOMContentLoaded() {
     console.log("DOMContentLoaded()");
+    // Cache DOM elements
+    var ids = document.querySelectorAll("[id]"),
+        i;
+    for (i = 0; i < ids.length; i++) {
+      DOM[ids[i].id] = ids[i];
+    }
     // Add Event Listeners to the DOM elements
     console.log("\tadding event listeners");
-    $("key-next-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    $("key-prev-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    $("key-clear-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    $("key-quick-next-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    $("key-quick-prev-input").addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    $("key-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyEnabled': this.checked}); }, false);
-    $("key-quick-enable-input").addEventListener("change", function() { chrome.storage.sync.set({'keyQuickEnabled': this.checked}); }, false);
-    $("key-next-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyNext': key}); }, false);
-    $("key-prev-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyPrev': key}); }, false);
-    $("key-clear-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyClear': key}); }, false);
-    $("key-quick-next-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickNext': key}); }, false);
-    $("key-quick-prev-input").addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickPrev': key}); }, false);
-    $("default-mode-select").addEventListener("change", function() { chrome.storage.sync.set({'defaultMode': this.options[this.selectedIndex].value}); }, false);
-    $("default-interval-input").addEventListener("change", function() { chrome.storage.sync.set({'defaultInterval': this.value}); }, false);
+    DOM["key-next-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    DOM["key-prev-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    DOM["key-clear-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    DOM["key-quick-next-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    DOM["key-quick-prev-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
+    DOM["key-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({'keyEnabled': this.checked}); }, false);
+    DOM["key-quick-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({'keyQuickEnabled': this.checked}); }, false);
+    DOM["key-next-input"].addEventListener("keyup", function() { chrome.storage.sync.set({'keyNext': key}); }, false);
+    DOM["key-prev-input"].addEventListener("keyup", function() { chrome.storage.sync.set({'keyPrev': key}); }, false);
+    DOM["key-clear-input"].addEventListener("keyup", function() { chrome.storage.sync.set({'keyClear': key}); }, false);
+    DOM["key-quick-next-input"].addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickNext': key}); }, false);
+    DOM["key-quick-prev-input"].addEventListener("keyup", function() { chrome.storage.sync.set({'keyQuickPrev': key}); }, false);
+    DOM["default-mode-select"].addEventListener("change", function() { chrome.storage.sync.set({'defaultMode': this.options[this.selectedIndex].value}); }, false);
+    DOM["default-interval-input"].addEventListener("change", function() { chrome.storage.sync.set({'defaultInterval': this.value}); }, false);
     // Set localization text (i18n) from messages.json
     console.log("\tadding i18n text");
-    $("shortcut-keys").innerText = chrome.i18n.getMessage("options_shortcut_keys");
-    $("key-enable-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_enable_label");
-    $("key-quick-enable-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_enable_label");
-    $("key-p").innerText = chrome.i18n.getMessage("options_shortcut_keys_p");
-    $("key-next-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_next_label");
-    $("key-prev-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_prev_label");
-    $("key-clear-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_clear_label");
-    $("key-quick-next-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_next_label");
-    $("key-quick-prev-label").innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_prev_label");
-    $("default-settings").innerText = chrome.i18n.getMessage("options_default_settings");
-    $("default-settings-p").innerText = chrome.i18n.getMessage("options_default_settings_p");
-    $("default-mode-label").innerText = chrome.i18n.getMessage("options_default_mode_label");
-    $("default-mode-use-links-option").innerText = chrome.i18n.getMessage("options_default_mode_use_links_option");
-    $("default-mode-modify-url-option").innerText = chrome.i18n.getMessage("options_default_mode_modify_url_option");
-    $("default-interval-label").innerText = chrome.i18n.getMessage("options_default_interval_label");
-    $("save-disclaimer").innerText = chrome.i18n.getMessage("options_save_disclaimer");
+    DOM["shortcut-keys"].innerText = chrome.i18n.getMessage("options_shortcut_keys");
+    DOM["key-enable-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_enable_label");
+    DOM["key-quick-enable-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_enable_label");
+    DOM["key-p"].innerText = chrome.i18n.getMessage("options_shortcut_keys_p");
+    DOM["key-next-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_next_label");
+    DOM["key-prev-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_prev_label");
+    DOM["key-clear-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_clear_label");
+    DOM["key-quick-next-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_next_label");
+    DOM["key-quick-prev-label"].innerText = chrome.i18n.getMessage("options_shortcut_keys_quick_prev_label");
+    DOM["default-settings"].innerText = chrome.i18n.getMessage("options_default_settings");
+    DOM["default-settings-p"].innerText = chrome.i18n.getMessage("options_default_settings_p");
+    DOM["default-mode-label"].innerText = chrome.i18n.getMessage("options_default_mode_label");
+    DOM["default-mode-use-links-option"].innerText = chrome.i18n.getMessage("options_default_mode_use_links_option");
+    DOM["default-mode-modify-url-option"].innerText = chrome.i18n.getMessage("options_default_mode_modify_url_option");
+    DOM["default-interval-label"].innerText = chrome.i18n.getMessage("options_default_interval_label");
+    DOM["save-disclaimer"].innerText = chrome.i18n.getMessage("options_save_disclaimer");
     // Populate values from storage
     console.log("\tpopulating values from storage");
     chrome.storage.sync.get(null, function (o) {
-      $("key-enable-input").checked = o.keyEnabled;
-      $("key-quick-enable-input").checked = o.keyQuickEnabled;
-      writeInput($("key-next-input"), o.keyNext);
-      writeInput($("key-prev-input"), o.keyPrev);
-      writeInput($("key-clear-input"), o.keyClear);
-      writeInput($("key-quick-next-input"), o.keyQuickNext);
-      writeInput($("key-quick-prev-input"), o.keyQuickPrev);
-      $("default-mode-select").value = o.defaultMode;
-      $("default-interval-input").value = o.defaultInterval;
+      DOM["key-enable-input"].checked = o.keyEnabled;
+      DOM["key-quick-enable-input"].checked = o.keyQuickEnabled;
+      writeInput(DOM["key-next-input"], o.keyNext);
+      writeInput(DOM["key-prev-input"], o.keyPrev);
+      writeInput(DOM["key-clear-input"], o.keyClear);
+      writeInput(DOM["key-quick-next-input"], o.keyQuickNext);
+      writeInput(DOM["key-quick-prev-input"], o.keyQuickPrev);
+      DOM["default-mode-select"].value = o.defaultMode;
+      DOM["default-interval-input"].value = o.defaultInterval;
     });
   }
 
