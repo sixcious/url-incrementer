@@ -1,3 +1,4 @@
+<!-- TODO -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,88 +8,94 @@
   </head>
   <body>
     <div id="options">
-      <img src="../img/font-awesome/keyboard-o.png" alt="" width="16" height="16"/>
-      <h3 id="shortcut-keys"></h3>
-      <hr/>
-      <label>
-        <input id="key-enable-input" type="checkbox"/>
-        <label id="key-enable-label" for="key-enable-input"></label>
-      </label>
-      <br/>
-      <label>
-        <input id="key-quick-enable-input" type="checkbox" />
-        <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
-      </label>
-      <p id="key-p"></p>
-      <div class="table">
-        <div class="row">
-          <div class="column">
-            <label id="key-next-label" for="key-next-input"></label>
+      <div id="options-shortcut-keys">
+        <img src="../img/font-awesome/keyboard-o.png" alt="" width="16" height="16"/>
+        <h3 id="shortcut-keys"></h3>
+        <hr/>
+        <label>
+          <input id="key-enable-input" type="checkbox"/>
+          <label id="key-enable-label" for="key-enable-input"></label>
+        </label>
+        <br/>
+        <label>
+          <input id="key-quick-enable-input" type="checkbox" />
+          <label id="key-quick-enable-label" for="key-quick-enable-input"></label>
+        </label>
+        <p id="key-p"></p>
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="key-next-label" for="key-next-input"></label>
+            </div>
+            <div class="column">
+              <input id="key-next-input" type="text" readonly="readonly"/>
+            </div>
           </div>
-          <div class="column">
-            <input id="key-next-input" type="text" readonly="readonly"/>
+          <div class="row">
+            <div class="column">
+              <label id="key-prev-label" for="key-prev-input"></label>
+            </div>
+            <div class="column">
+              <input id="key-prev-input" type="text" readonly="readonly"/>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="column">
-            <label id="key-prev-label" for="key-prev-input"></label>
+          <div class="row">
+            <div class="column">
+              <label id="key-clear-label" for="key-clear-input"></label>
+            </div>
+            <div class="column">
+              <input id="key-clear-input" type="text" readonly="readonly"/>
+            </div>
           </div>
-          <div class="column">
-            <input id="key-prev-input" type="text" readonly="readonly"/>
+          <div class="row">
+            <div class="column">
+              <label id="key-quick-next-label" for="key-quick-next-input"></label>
+            </div>
+            <div class="column">
+              <input id="key-quick-next-input" type="text" readonly="readonly"/>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="column">
-            <label id="key-clear-label" for="key-clear-input"></label>
-          </div>
-          <div class="column">
-            <input id="key-clear-input" type="text" readonly="readonly"/>
-          </div>
-        </div>
-        <div class="row">
-          <div class="column">
-            <label id="key-quick-next-label" for="key-quick-next-input"></label>
-          </div>
-          <div class="column">
-            <input id="key-quick-next-input" type="text" readonly="readonly"/>
-          </div>
-        </div>
-        <div class="row">
-          <div class="column">
-            <label id="key-quick-prev-label" for="key-quick-prev-input"></label>
-          </div>
-          <div class="column">
-            <input id="key-quick-prev-input" type="text" readonly="readonly"/>
-          </div>
-        </div>
-      </div>
-      <img src="../img/font-awesome/check-square-o.png" alt="" width="16" height="16"/>
-      <h3 id="default-settings"></h3>
-      <hr/>
-      <p id="default-settings-p"></p>
-      <div class="table">
-        <div class="row">
-          <div class="column">
-            <label id="default-mode-label" for="default-mode-select"></label>
-          </div>
-          <div class="column">
-            <select id="default-mode-select">
-              <option id="default-mode-use-links-option" value="1"></option>
-              <option id="default-mode-modify-url-option" value="2"></option>
-            </select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="column">
-            <label id="default-interval-label" for="default-interval-input"></label>
-          </div>
-          <div class="column">
-            <input id="default-interval-input" type="number" min="1" />
+          <div class="row">
+            <div class="column">
+              <label id="key-quick-prev-label" for="key-quick-prev-input"></label>
+            </div>
+            <div class="column">
+              <input id="key-quick-prev-input" type="text" readonly="readonly"/>
+            </div>
           </div>
         </div>
       </div>
-      <img src="../img/urli.png" alt="" width="28" height="28"/>
-      <p id="save-disclaimer" class="inline italic"></p>
+      <div id="options-default-settings">
+        <img src="../img/font-awesome/check-square-o.png" alt="" width="16" height="16"/>
+        <h3 id="default-settings"></h3>
+        <hr/>
+        <p id="default-settings-p"></p>
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="default-mode-label" for="default-mode-select"></label>
+            </div>
+            <div class="column">
+              <select id="default-mode-select">
+                <option id="default-mode-use-links-option" value="1"></option>
+                <option id="default-mode-modify-url-option" value="2"></option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="default-interval-label" for="default-interval-input"></label>
+            </div>
+            <div class="column">
+              <input id="default-interval-input" type="number" min="1" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="options-disclaimer">
+        <img src="../img/urli.png" alt="" width="28" height="28"/>
+        <p id="save-disclaimer" class="inline italic"></p>
+      </div>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
   </body>

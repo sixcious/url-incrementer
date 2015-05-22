@@ -353,7 +353,7 @@ URLNP.Background = URLNP.Background || function () {
 //   	);
 //   },
 
-	function fastUpdateTab(request) {
+	function quickUpdateTab(request) {
 		console.log("\tfunction fastUpdateTab");
 		chrome.tabs.getSelected(null,
 			function (tab) {
@@ -374,7 +374,7 @@ URLNP.Background = URLNP.Background || function () {
 		// clearInstance: clearInstance,
 		findSelection: findSelection,
 		modifyUrliAndUpdateTab: modifyUrliAndUpdateTab,
-		fastUpdateTab: fastUpdateTab
+		quickUpdateTab: quickUpdateTab
 	};
 }();
 
@@ -491,13 +491,13 @@ chrome.runtime.onMessage.addListener(
 		// 		sendResponse({});
 		// 		break;
 				
-			// From:      content_script
+			// From:      content_script (shortcuts.js)
 			// Request:   Increment or decrement request from a fast shortcut key or fast shortcut mouse button.
 			// Action:    Modify the current tab's URL by incrementing it or decrementing it and update the tab with the new URL.
 			// Callback:  None.
-			case "fastUpdateTab":
-				console.log("\t!request:fastUpdateTab");
-				URLNP.Background.fastUpdateTab(request);
+			case "quickUpdateTab":
+				console.log("\t!request:quickUpdateTab");
+				URLNP.Background.quickUpdateTab(request);
 				sendResponse({});
 				break;
 				

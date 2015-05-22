@@ -14,7 +14,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
       FLAG_KEY_CTRL = 0x2, // 0010
       FLAG_KEY_SHIFT = 0x4, // 0100
       FLAG_KEY_META = 0x8, // 1000
-      keys; // keys array [0:Next, 1:Prev, 2:Clear, 3:QuickNext, 4:QuickPrev]
+      keys = []; // keys [0:Next, 1:Prev, 2:Clear, 3:QuickNext, 4:QuickPrev]
 
   /**
    * Sets the keys from storage. This function is needed because the keys var

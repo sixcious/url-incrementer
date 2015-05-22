@@ -1,45 +1,28 @@
-/*
-
-*/
+/* TODO */
 
 h3 {
   display: inline;
 }
-
 div.table {
 	display: table;
 }
-
 div.row  {
 	display: table-row;
 }
-
 div.column {
 	display: table-cell;
 	padding-right: 10px;
 	padding-bottom: 10px;
 }
-
 input[type="text"] {
 	width: 200px;
 }
-
 input[type="number"] {
 	width: 52px;
 }
-
 .italic {
   font-style: italic;
 }
-
 .inline {
   display: inline;
 }
-
-/*.float-right {
-  float: right;
-}*/
-
-/*.shadow {
-	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-}*/
