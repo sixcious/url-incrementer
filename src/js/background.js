@@ -22,15 +22,15 @@ URLNP.Background = URLNP.Background || function () {
 		console.log("initStorage()");
 		chrome.storage.sync.clear();
 		chrome.storage.sync.set({
-		  'keyEnabled': true,
-		  'keyQuickEnabled': false,
-		  'keyNext': [0, 39],
-		  'keyPrev': [0, 37],
-		  'keyClear': [0, 13],
-		  'keyQuickNext': [7, 39],
-		  'keyQuickPrev': [7, 37],
-		  'defaultMode': 1,
-		  'defaultInterval': 1
+		  "keyEnabled": true,
+		  "keyQuickEnabled": false,
+		  "keyNext": [0, 39],
+		  "keyPrev": [0, 37],
+		  "keyClear": [0, 13],
+		  "keyQuickNext": [7, 39],
+		  "keyQuickPrev": [7, 37],
+		  "defaultMode": "use-links",
+		  "defaultInterval": 1
     });
 	}
 	
@@ -48,6 +48,7 @@ URLNP.Background = URLNP.Background || function () {
 		    tab: tab,
 		    selection: "",
 		    selectionStart: -1,
+		    mode: "",
 		    interval: 0
 		  };
 		}
@@ -63,7 +64,7 @@ URLNP.Background = URLNP.Background || function () {
 	 */	
 	function setInstance(instance) {
 		console.log("setInstance(instance)");
-		instances[instance.id] = instance;
+		instances[instance.tab.id] = instance;
 		if (!instance || !instance.enabled) {
   		console.log("\tinstance is not active -- removing listeners");
   		chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function (response) {});
@@ -90,9 +91,10 @@ URLNP.Background = URLNP.Background || function () {
 	 * Modifies the URL by the user's selection by either incrementing or
 	 * decrementing the selection. The URL is then updated in the tab object.
 	 * 
+	 * @return JSON object {modified url, selection string that was modified}
 	 * @public
 	 */
-	function modifyURL(url, selectionString, selectionStart, interval, action) {
+	function modifyURL(instance, action) {
 		console.log("\tmodifyURL()");
 		console.log("url=" + url + "\nselectionString=" + selectionString + "\nselectionStart=" + selectionStart + "\ninterval=" + interval + "\naction=" + action);
 		var	firstPartURL = url.substring(0, selectionStart),
@@ -129,13 +131,13 @@ URLNP.Background = URLNP.Background || function () {
 		if (alphanumeric) {
 		  var lastChar = 0;
 	    for (i = selectionStringLength - 1; i >= 0; i--) {
-	      switch (selectionString.charCodeAt(i)) {
+	      var temp = selectionString.charCodeAt(i);
+	      switch (temp) {
 	        case 90:
 	          continue;
           case 122:
             continue;
           default:
-          var temp = selectionString.charCodeAt(i);
             if (temp >= 65 && temp <= 90) {
              // selectionString.charC
             }
@@ -149,9 +151,9 @@ URLNP.Background = URLNP.Background || function () {
 		     // }
 		     
 		  }
-			if (action === "Next") {
+			if (action === "next") {
 				selectionString = (selectionInteger + interval).toString();
-			} else if (action === "Prev") {
+			} else if (action === "prev") {
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
 		}
@@ -167,11 +169,11 @@ URLNP.Background = URLNP.Background || function () {
 					break;
 				}
 			}
-			if (action === "Next") {
+			if (action === "next") {
 				// selectionInteger already strips the zeros, we only care about the value here.
 				selectionString = (selectionInteger + interval).toString();
 			}
-			else if (action === "Prev") {
+			else if (action === "prev") {
 				// selectionInteger already strips the zeros, we only care about the value here.
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
@@ -214,9 +216,9 @@ URLNP.Background = URLNP.Background || function () {
 		// that the user cannot decrement below 0 (design decision).
 
 		else {
-			if (action === "Next") {
+			if (action === "next") {
 				selectionString = (selectionInteger + interval).toString();
-			} else if (action === "Prev") {
+			} else if (action === "prev") {
 				selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 			}
 		}
@@ -230,17 +232,6 @@ URLNP.Background = URLNP.Background || function () {
 		return {url: firstPartURL + selectionString + secondPartURL, selectionString: selectionString};
 	}
 
-	// After the url is modified in modifyurl, go ahead and update
-	// the tab to the new url using the chrome API's chrome.tabs.update.
-	function updateTab() {
-		console.log("\tfunction updateTab");
-		chrome.tabs.getSelected(null, function(tab) {
-			if (tab.id === urlnp.getTab().id) {
-				console.log("\t\tupdating tab id:" + urlnp.getTab().id);
-				chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
-			}
-		});
-	}
 
 	// Necessary for the keys/mouse.  When the tab changes the URL due to
 	// increment or decrement, we must send another request to add
@@ -269,7 +260,7 @@ URLNP.Background = URLNP.Background || function () {
 	}
 
   /**
-   * Finds a selection in the url to modify. First looks for common prefixes
+   * Finds a selection in the url to modify.First looks for common prefixes
    * that come before numbers, such as = (equals) and / (slash). Example URLs:
    * 
    * http://www.google.com?page=1234
@@ -278,14 +269,16 @@ URLNP.Background = URLNP.Background || function () {
    * If no prefixes with numbers exist, finds the last number in the url.
    * 
    * @param url the url to find the selection in
-   * @private
+   * @public
    */ 
 	function findSelection(url) {
 		console.log("\tfunction findSelection");
 		var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
 		    re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
 		    matches;
-		return (matches = re1.exec(url)) !== null ? {selection:matches[1], selectionStart:matches.index + 1} : (matches = re2.exec(url)) !== null ? {selection:matches[0], selectionStart:matches.index} : {selection:"", selectionStart:-1};
+		return (matches = re1.exec(url)) !== null ? {selection:matches[1], selectionStart:matches.index + 1} :
+           (matches = re2.exec(url)) !== null ? {selection:matches[0], selectionStart:matches.index} :
+           {selection:"", selectionStart:-1};
 	}
 
 // 	onPopupFormAccept = function (request) {
@@ -308,25 +301,35 @@ URLNP.Background = URLNP.Background || function () {
 // 		}
 // 	},
 
-// 	processSelection = function (request, sendResponse) {
-// 		console.log("\tfunction processSelection");
-// 		var selectionProperties;
-// 		selectionProperties = findSelection(request.url);
-// 		sendResponse({selection: selectionProperties.selection, selectionStart: selectionProperties.selectionStart, defaultInterval: localStorage.defaultInterval});
-// 	},
 
-	function modifyUrliAndUpdateTab(request) {
+	function updateTab(request) {
 		console.log("\tfunction modifyUrliAndUpdateTab");
-		var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
-			tab = urlnp.getTab();
+		// var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
+		// 	tab = urlnp.getTab();
+		var urlAndSelection = modifyURL(instances[request.tab.id], request.direction);
 		tab.url = urlAndSelection.url;
 		urlnp.setTab(tab);					// Update urlnp's tab.
 		urlnp.setSelection(urlAndSelection.selectionString);	// Update urlnp's selection.
-		updateTab();
-
-		if (localStorage.keyEnabled === "1") {
-			chrome.tabs.onUpdated.addListener(updateListeners);
-		}
+		// updateTab(); removed old updatetab function and renamed this method to update tab because the old function was only being used here
+		// Begin updatetab function code
+			// After the url is modified in modifyurl, go ahead and update
+	// the tab to the new url using the chrome API's chrome.tabs.update.
+				console.log("\tfunction updateTab");
+		chrome.tabs.getSelected(null, function(tab) {
+			if (tab.id === urlnp.getTab().id) {
+				console.log("\t\tupdating tab id:" + urlnp.getTab().id);
+				chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
+			}
+		});
+		// end old updatetab function code
+    chrome.storage.sync.get(null, function (o) {
+		  if (o.keyEnabled) {
+	      chrome.tabs.onUpdated.addListener(updateListeners);
+		  }
+    });
+		// if (localStorage.keyEnabled) {
+		// 	chrome.tabs.onUpdated.addListener(updateListeners);
+		// }
 	}
 
 // 	checkIfFastIsEnabled = function () {
@@ -373,7 +376,7 @@ URLNP.Background = URLNP.Background || function () {
 		setInstance: setInstance,
 		// clearInstance: clearInstance,
 		findSelection: findSelection,
-		modifyUrliAndUpdateTab: modifyUrliAndUpdateTab,
+		updateTab: updateTab,
 		quickUpdateTab: quickUpdateTab
 	};
 }();

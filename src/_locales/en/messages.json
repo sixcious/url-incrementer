@@ -160,7 +160,7 @@
 	},
 
 	"options_default_mode_use_links_option": {
-		"message": "Use the next and prev links found on the page",
+		"message": "Use the next (>) and prev (<) links found on the page",
 		"description": ""
 	},
 	

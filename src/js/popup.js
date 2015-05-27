@@ -16,7 +16,7 @@ URLNP.Popup = URLNP.Popup || function () {
       // selectionProperties = { selection: "", selectionStart: -1 },
       // images = document.querySelectorAll("#popup-controls input.image-control"),
       //$ = document.getElementById.bind(document),
-      DOM = {}; // Map to cache DOM elements
+      DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -34,6 +34,19 @@ URLNP.Popup = URLNP.Popup || function () {
     for (i = 0; i < ids.length; i++) {
       DOM[ids[i].id] = ids[i];
     }
+    // Set localization text (i18n) from messages.json
+    console.log("\tadding i18n text");
+    DOM["next-input"].title = chrome.i18n.getMessage("popup_next_input");
+    DOM["prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
+    DOM["clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
+    DOM["setup-use-links-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    DOM["setup-modify-url-input"].title = chrome.i18n.getMessage("popup_setup_input");
+//DOM["url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
+    DOM["url-label"].innerText = chrome.i18n.getMessage("popup_url_label"); 
+    DOM["selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label"); 
+    DOM["interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
+    DOM["accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
     console.log("\tadding event listeners");
     DOM["next-input"].addEventListener("click", clickNext, false);
@@ -45,19 +58,6 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["url-textarea"].addEventListener("keyup", handleURL, false);
     DOM["accept-input"].addEventListener("click", submitForm, false);
     DOM["cancel-input"].addEventListener("click", toggleView, false);
-    // Set localization text (i18n) from messages.json
-    console.log("\tadding i18n text");
-    DOM["next-input"].title = chrome.i18n.getMessage("popup_next_input");
-    DOM["prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
-    DOM["clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
-    DOM["setup-use-links-input"].title = chrome.i18n.getMessage("popup_setup_input");
-    DOM["setup-modify-url-input"].title = chrome.i18n.getMessage("popup_setup_input");
-    //DOM["url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-    DOM["url-label"].innerText = chrome.i18n.getMessage("popup_url_label"); 
-    DOM["selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label"); 
-    DOM["interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
-    DOM["accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Set the current tab, instance, and update images
     chrome.tabs.getSelected(null,
       function (tab) {
@@ -98,7 +98,7 @@ URLNP.Popup = URLNP.Popup || function () {
     console.log("\tselection-input.value=" + DOM["selection-input"].value);
   }
   	
-  // Called when the user clicks on the Accept button on the form.  Checks
+  // Called when the user clicks on the Accept button on the form. Checks
   // to make sure there are no errors with any of the fields, and if not,
   // passes the data back to the urlnp object in background.html.
   function submitForm() {
@@ -113,8 +113,8 @@ URLNP.Popup = URLNP.Popup || function () {
       	  parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : undefined
     	  ];
   	if (errors.length > 0) {
-  		console.log("\t\terrorMessage:" + errorMessage);
-  		URLNP.UI.generateAlert(errorMessage);
+  		console.log("\terrors:" + errors);
+  		URLNP.UI.generateAlert(errors);
   	} else {
   	  
   	}
