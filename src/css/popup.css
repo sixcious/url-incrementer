@@ -15,7 +15,6 @@ body {
 	/*width: 82px;*/ /* Use 114 for 24px images.*/
 	width: 102px;
 	margin: 5px;
-  padding: 0;/* override chromium/index.css */
 }
 
 /* Div for images; displayed by default when the popup opens. */

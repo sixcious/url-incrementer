@@ -32,7 +32,7 @@
   list-style-type: none;
 }
 
-.overlay.visible {
+.visible {
 	opacity: 1;
 	-webkit-transform: scale(1);
 }

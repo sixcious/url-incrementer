@@ -175,7 +175,7 @@
 	},
 	
 	"options_save_disclaimer": {
-	  "message": "Note: Changes you make are saved upon closing this dialog.",
+	  "message": "Note: Changes you make get saved after closing this dialog.",
 	  "description": ""
 	}
 

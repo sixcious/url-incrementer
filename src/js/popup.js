@@ -10,12 +10,10 @@ console.log("URLNP.Popup");
 var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
-  var instance,
+  var instance, // Stores this tab's instance
       // currentTab,
       //selectionStart = -1,
       // selectionProperties = { selection: "", selectionStart: -1 },
-      // images = document.querySelectorAll("#popup-controls input.image-control"),
-      //$ = document.getElementById.bind(document),
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
@@ -71,19 +69,7 @@ URLNP.Popup = URLNP.Popup || function () {
     );
   }
 
-  /**
-   * Updates the images' class to either enabled or disabled depending on
-   * whether this instance is enabled.
-   * 
-   * @private
-   */ 
-  function updateImages() {
-    console.log("updateImages()");
-    var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
-    DOM["next-input"].className = className;
-    DOM["prev-input"].className = className;
-    DOM["clear-input"].className = className;
-  }
+
 
   /**
    * Handle URL selection on mouseup and keyup events. Sets the instance's
@@ -106,11 +92,11 @@ URLNP.Popup = URLNP.Popup || function () {
   	var selection = DOM["selection-input"].value,
         interval = DOM["interval-input"].value,
         errors = [
-      	  selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") : undefined,
-      	  instance.tab.url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") : undefined,
-      	  interval === "" ? chrome.i18n.getMessage("popup_interval_blank_error") : undefined,
-      	  interval === "0" ? chrome.i18n.getMessage("popup_interval_0_error") : undefined,
-      	  parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : undefined
+      	  selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") : "",
+      	  instance.tab.url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") : "",
+      	  interval === "" ? chrome.i18n.getMessage("popup_interval_blank_error") : "",
+      	  interval === "0" ? chrome.i18n.getMessage("popup_interval_0_error") : "",
+      	  parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : ""
     	  ];
   	if (errors.length > 0) {
   		console.log("\terrors:" + errors);
@@ -182,41 +168,42 @@ URLNP.Popup = URLNP.Popup || function () {
   // 		//chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, interval: interval}, function (response) {});
   // 	}
   }
-  	
-  // User clicked on Increment image; need to find out if urlnp is enabled
-  // and if the current tab is urlnp's tab before sending a request to
-  // increment via modifyUrliAndUpdateTab.
-  
+
+  /**
+   * Updates this tab to the next URL if the instance is enabled.
+   * 
+   * @private
+   */ 
   function clickNext() {
   	console.log("clickNext()");
   	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
   		console.log("\tgoing next");
-  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "next"}, function (response) {});
+  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function (response) {});
   	}
   }
-  
-  // User clicked on Decrement image; need to find out if urlnp is enabled
-  // and if the current tab is urlnp's tab before sending a request to
-  // decrement via modifyU?rliAndUpdateTab.
-  
+
+  /**
+   * Updates this tab to the previous URL if the instance is enabled.
+   * 
+   * @private
+   */ 
   function clickPrev() {
   	console.log("clickPrev()");
   	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
   		console.log("\tgoing prev");
-  		chrome.runtime.sendMessage({greeting: "modifyUrliAndUpdateTab", action: "prev"}, function (response) {});
+  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function (response) {});
   	}
   }
   
   /**
-   * Clears and disables the instance's state if it is currently enabled. Then
-   * calls updateImages() to set the images to a disabled/off state.
+   * Clears and disables this tab's instance if it is enabled.
    * 
    * @private
    */ 
   function clickClear() {
   	console.log("clickClear()");
   	if (instance.enabled) {
-  		console.log("\t\tclearing urlnp");
+  		console.log("\tclearing instance");
 		  instance = {
 		    enabled: false,
 		    tab: instance.tab,
@@ -232,26 +219,45 @@ URLNP.Popup = URLNP.Popup || function () {
   }
   	
   /**
-   * Toggles the popup view between the controls and the setup divs. When the user clicks the setup input, the form
-   * will expand and be visible. When the user clicks the Cancel input, the
-   * form will be hidden and the popup controls view will return.
+   * Toggles the popup between the controls and the setup views.
    * 
    * @private
    */ 
   function toggleView() {
-  	console.log("toggleView");
+  	console.log("toggleView()");
+  	var style = document.body.style,
+  	    width,
+  	    height;
   	switch (this.id) {
   	  case "setup-use-links-input":
-  	    DOM["popup-controls"].class = "hidden";
-  	    DOM["popup-setup-use-links"].class = "visible";
+        setTimeout(function() {
+    	    DOM["popup-controls"].className = "hidden";
+          DOM["popup-setup-use-links"].className = "visible";
+    	    DOM["popup-setup-modify-url"].className = "hidden";
+          style.width = "auto";
+          style.height = "auto";
+          style.background = "#FFFFFF";
+        }, 10);
         break;
       case "setup-modify-url-input":
+        setTimeout(function() {
+    	    DOM["popup-controls"].className = "hidden";
+          DOM["popup-setup-use-links"].className = "hidden";
+    	    DOM["popup-setup-modify-url"].className = "visible";
+          style.width = "auto";
+          style.height = "auto";
+          style.background = "#FFFFFF";
+        }, 10);
+        break;
+      case "accept-input":
         break;
       case "cancel-input":
         break;
       default:
         break;
   	}
+
+
   // 	var form = DOM["popup-form"],
   // 	    controls = DOM["popup-controls"];
   // 	console.log("\t\tform.style.display=" + form.style.display);
@@ -291,6 +297,20 @@ URLNP.Popup = URLNP.Popup || function () {
   // 			}
   // 		);
   // 	}
+  }
+
+  /**
+   * Updates the images' class to either enabled or disabled depending on
+   * whether this instance is enabled.
+   * 
+   * @private
+   */ 
+  function updateImages() {
+    console.log("updateImages()");
+    var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
+    DOM["next-input"].className = className;
+    DOM["prev-input"].className = className;
+    DOM["clear-input"].className = className;
   }
 
   // Return Public Functions
