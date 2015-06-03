@@ -55,22 +55,23 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["accept-input"].addEventListener("click", submitForm, false);
     DOM["cancel-input"].addEventListener("click", toggleView, false);
     // Set the current tab, instance, and update images
-    chrome.tabs.getSelected(null,
-      function (tab) {
-        // currentTab = tab;
-        console.log("\tgetting currentTab (tab.id=" + tab.id +")");
-        chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          instance = backgroundPage.URLNP.Background.getInstance(tab);
-          updateImages();
-          DOM["url-textarea"].value = instance.tab.url;
-          DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
-          DOM["selection-input"].value = instance.selection;
-        });
-      }
-    );
-    chrome.storage.sync.get(null, function (o) {
-      DOM["interval-input"].value = o.defaultInterval;
+    chrome.tabs.query({active: true}, function (tab) {
+      // currentTab = tab;
+      console.log("\tgetting currentTab (tab.id=" + tab.id +")");
+      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        console.log("backgroundPage=" + backgroundPage);
+        instance = backgroundPage.URLNP.Background.getInstance(tab);
+        console.log("instance=" + instance);
+        DOM["url-textarea"].value = instance.tab.url;
+        DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+        DOM["selection-input"].value = instance.selection;
+        DOM["interval-input"].value = instance.interval;
+        updateImages();
+      });
     });
+    // chrome.storage.sync.get(null, function (o) {
+    //   DOM["interval-input"].value = o.defaultInterval;
+    // });
  // 		chrome.tabs.getSelected(null,
   // 			function(tab) {
   // 				currentTab = tab;

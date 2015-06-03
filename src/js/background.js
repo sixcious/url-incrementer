@@ -37,23 +37,68 @@ URLNP.Background = URLNP.Background || function () {
 	/**
 	 * TODO
 	 * 
-	 * @param tab
+	 * @param tab the tab to lookup this instance
+	 * @return instance the instance
 	 * @public
 	 */
 	function getInstance(tab) {
 		console.log("getInstance(tab)");
-		var instance = instances[tab.id];
-		if (!instance) {
-		  instance = {
+		var selection = findSelection(tab.url),
+		    instance;
+		chrome.storage.sync.get(null, function (o) {
+	    instance = {
 		    enabled: false,
 		    tab: tab,
-		    selection: "",
-		    selectionStart: -1,
-		    mode: "",
-		    interval: 0
+		    selection: selection.string,
+		    selectionStart: selection.start,
+		    mode: o.defaultMode,
+		    interval: o.defaultInterval
 		  };
-		}
-		return instance;
+		});
+
+  		  return instance;
+    // chrome.storage.sync.get(null, function (o) {
+		  // var instance = instances[tab.id];
+		  // if (!instance) {
+		  //   var selection = findSelection(tab.url);
+  		//   instance = {
+  		//     enabled: false,
+  		//     tab: tab,
+  		//     selection: selection.string,
+  		//     selectionStart: selection.start,
+  		//     mode: o.defaultMode,
+  		//     interval: o.defaultInterval
+  		//   };
+		  // }
+		  // return instance;
+
+    // });
+		// if (!tab && !tab.id) {
+		//   return null;
+		// }
+		// var instance = instances[tab.id];
+		// if (!instance) {
+		//   var selection = findSelection(tab.url);
+  //     chrome.storage.sync.get(null, function (o) {
+  // 		  instance = {
+  // 		    enabled: false,
+  // 		    tab: tab,
+  // 		    selection: selection.string,
+  // 		    selectionStart: selection.start,
+  // 		    mode: o.defaultMode,
+  // 		    interval: o.defaultInterval
+  // 		  };
+  		  
+  // 		        //instances[tab.id] = instance;
+  // 		  console.log("instance inside backgroundPAge getInstance storage get is" + instance);
+  // 		  return instance;
+  //     });
+
+		// } else {
+		//   return instance;
+		// }
+		// console.log("background page instance is..." + instances[tab.id]);
+		// return instance;
 		//return instances[id];
 		//sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
 	}
@@ -238,6 +283,7 @@ URLNP.Background = URLNP.Background || function () {
    * If no prefixes with numbers exist, finds the last number in the url.
    * 
    * @param url the url to find the selection in
+   * @return JSON object {string (selection string), start (selection start)}
    * @public
    */ 
 	function findSelection(url) {
@@ -245,9 +291,9 @@ URLNP.Background = URLNP.Background || function () {
 		var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
 		    re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
 		    matches;
-		return (matches = re1.exec(url)) !== null ? {selection:matches[1], selectionStart:matches.index + 1} :
-           (matches = re2.exec(url)) !== null ? {selection:matches[0], selectionStart:matches.index} :
-           {selection:"", selectionStart:-1};
+		return (matches = re1.exec(url)) !== null ? {string:matches[1], start:matches.index + 1} :
+           (matches = re2.exec(url)) !== null ? {string:matches[0], start:matches.index} :
+           {string:"", start:-1};
 	}
 
   /**
@@ -269,7 +315,7 @@ URLNP.Background = URLNP.Background || function () {
 			// After the url is modified in modifyurl, go ahead and update
 	// the tab to the new url using the chrome API's chrome.tabs.update.
 				console.log("\tfunction updateTab");
-		chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.get(instance.tab.id, function(tab) {
 			if (tab.id === urlnp.getTab().id) {
 				console.log("\t\tupdating tab id:" + urlnp.getTab().id);
 				chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
@@ -294,10 +340,10 @@ URLNP.Background = URLNP.Background || function () {
    */ 
 	function quickUpdateTab(request) {
 		console.log("\tfunction fastUpdateTab");
-		chrome.tabs.getSelected(null,
+		chrome.tabs.get(instance.tab.id, // TODO get the instance in quick funcitonality setup
 			function (tab) {
-				var	selectionProperties = findSelection(tab.url),
-					urlAndSelection = modifyURL(tab.url, selectionProperties.selection, selectionProperties.selectionStart, parseInt(localStorage.defaultInterval), request.action);
+				var	selection = findSelection(tab.url),
+					urlAndSelection = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
 				if (urlAndSelection !== undefined){
  					chrome.tabs.update(tab.id, {url:urlAndSelection.url});
 				}
