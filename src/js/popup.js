@@ -33,7 +33,6 @@ URLNP.Popup = URLNP.Popup || function () {
       DOM[ids[i].id] = ids[i];
     }
     // Set localization text (i18n) from messages.json
-    console.log("\tadding i18n text");
     DOM["next-input"].title = chrome.i18n.getMessage("popup_next_input");
     DOM["prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
     DOM["clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
@@ -46,14 +45,13 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
     DOM["cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
-    console.log("\tadding event listeners");
     DOM["next-input"].addEventListener("click", clickNext, false);
     DOM["prev-input"].addEventListener("click", clickPrev, false);
     DOM["clear-input"].addEventListener("click", clickClear, false);
     DOM["setup-use-links-input"].addEventListener("click", toggleView, false);
     DOM["setup-modify-url-input"].addEventListener("click", toggleView, false);
-    DOM["url-textarea"].addEventListener("mouseup", handleURL, false);
-    DOM["url-textarea"].addEventListener("keyup", handleURL, false);
+    DOM["url-textarea"].addEventListener("mouseup", selectURL, false);
+    DOM["url-textarea"].addEventListener("keyup", selectURL, false);
     DOM["accept-input"].addEventListener("click", submitForm, false);
     DOM["cancel-input"].addEventListener("click", toggleView, false);
     // Set the current tab, instance, and update images
@@ -64,12 +62,168 @@ URLNP.Popup = URLNP.Popup || function () {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           instance = backgroundPage.URLNP.Background.getInstance(tab);
           updateImages();
+          DOM["url-textarea"].value = instance.tab.url;
+          DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          DOM["selection-input"].value = instance.selection;
         });
       }
     );
+    chrome.storage.sync.get(null, function (o) {
+      DOM["interval-input"].value = o.defaultInterval;
+    });
+ // 		chrome.tabs.getSelected(null,
+  // 			function(tab) {
+  // 				currentTab = tab;
+  // 				//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
+  // 				// initForm();
+  // 	//console.log("\tfunction initForm");
+  // 	// Fill out the form elements' contents and load the default values
+  // 	chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  // 	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
+  // 	  // selectionStart = selectionProperties.selectionStart;
+  // 		DOM["url-textarea"].value = currentTab.url;
+  // 		DOM["url-textarea"].setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  // 		DOM["selection-input"].value = selectionProperties.selection;
+  // 	});
+  //   if (!DOM["interval-input"].value) {
+  //     chrome.storage.sync.get(null, function (o) {
+  //       DOM["interval-input"].value = o.defaultInterval;
+  //     });
+  //   }
   }
 
+  /**
+   * Updates this tab to the next URL if the instance is enabled.
+   * 
+   * @private
+   */ 
+  function clickNext() {
+  	console.log("clickNext()");
+  	if (instance.enabled) {
+  		console.log("\tgoing next");
+  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function (response) {});
+  	}
+  }
 
+  /**
+   * Updates this tab to the previous URL if the instance is enabled.
+   * 
+   * @private
+   */ 
+  function clickPrev() {
+  	console.log("clickPrev()");
+  	if (instance.enabled) {
+  		console.log("\tgoing prev");
+  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function (response) {});
+  	}
+  }
+  
+  /**
+   * Clears and disables this tab's instance if it is enabled.
+   * 
+   * @private
+   */ 
+  function clickClear() {
+  	console.log("clickClear()");
+  	if (instance.enabled) {
+  		console.log("\tclearing instance");
+		  instance = {
+		    enabled: false,
+		    tab: instance.tab,
+		    selection: "",
+		    selectionStart: -1,
+		    interval: 0
+		  };
+  		chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  		  backgroundPage.URLNP.Background.setInstance(instance);
+  		  updateImages();
+  		});
+  	}
+  }
+  	
+  /**
+   * Toggles the popup between the controls and the setup views.
+   * 
+   * @private
+   */ 
+  function toggleView() {
+  	console.log("toggleView()");
+  	switch (this.id) {
+  	  case "setup-use-links-input":
+  	    DOM["popup-controls"].className = "display-none";
+        DOM["popup-setup-use-links"].className = "fade-in";
+        break;
+      case "setup-modify-url-input":
+  	    DOM["popup-controls"].className = "display-none";
+        DOM["popup-setup-modify-url"].className = "fade-in";
+        break;
+      case "accept-input":
+        DOM["popup-controls"].className = "fade-in";
+        DOM["popup-setup-use-links"].className = "display-none";
+        break;
+      case "cancel-input":
+  	    DOM["popup-controls"].className = "fade-in";
+        DOM["popup-setup-use-links"].className = "display-none";
+        break;
+      default:
+        break;
+  	}
+
+
+  // 	var form = DOM["popup-form"],
+  // 	    controls = DOM["popup-controls"];
+  // 	console.log("\t\tform.style.display=" + form.style.display);
+  // 	if (form.style.display === "block") {
+  // 		// Hide form, show controls, reduce body (popup window) size
+  // 		form.style.display = "none";
+  // 		controls.style.display = "inline";
+  // 		document.body.style.width = "102px";
+  // 		document.body.style.height = "16px";
+  // 		document.body.style.background = "#EDECEB";
+  // 	} else {
+  // 		// Show form, hide controls, increase body (popup window) size, update tab
+  // 		form.style.display = "block";
+  // 		controls.style.display = "none";
+  // 		document.body.style.width = "auto" /*'583px' */;
+  // 		document.body.style.height = "auto"/*'287px'*/;
+  // 		document.body.style.background = "#FFFFFF";
+  // 		chrome.tabs.getSelected(null,
+  // 			function(tab) {
+  // 				currentTab = tab;
+  // 				//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
+  // 				// initForm();
+  // 	//console.log("\tfunction initForm");
+  // 	// Fill out the form elements' contents and load the default values
+  // 	chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  // 	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
+  // 	  // selectionStart = selectionProperties.selectionStart;
+  // 		DOM["url-textarea"].value = currentTab.url;
+  // 		DOM["url-textarea"].setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
+  // 		DOM["selection-input"].value = selectionProperties.selection;
+  // 	});
+  //   if (!DOM["interval-input"].value) {
+  //     chrome.storage.sync.get(null, function (o) {
+  //       DOM["interval-input"].value = o.defaultInterval;
+  //     });
+  //   }
+  // 			}
+  // 		);
+  // 	}
+  }
+
+  /**
+   * Updates the images' class to either enabled or disabled depending on
+   * whether this instance is enabled.
+   * 
+   * @private
+   */ 
+  function updateImages() {
+    console.log("updateImages()");
+    var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
+    DOM["next-input"].className = className;
+    DOM["prev-input"].className = className;
+    DOM["clear-input"].className = className;
+  }
 
   /**
    * Handle URL selection on mouseup and keyup events. Sets the instance's
@@ -77,8 +231,8 @@ URLNP.Popup = URLNP.Popup || function () {
    * 
    * @private
    */ 
-  function handleURL() {
-    console.log("handleURL()");
+  function selectURL() {
+    console.log("selectURL()");
     instance.selectionStart = DOM["url-textarea"].selectionStart;
     DOM["selection-input"].value = window.getSelection().toString();
     console.log("\tselection-input.value=" + DOM["selection-input"].value);
@@ -167,150 +321,6 @@ URLNP.Popup = URLNP.Popup || function () {
   // 		});
   // 		//chrome.runtime.sendMessage({greeting: "onPopupFormAccept", enabled: urlnp.enabled, tab: currentTab, selection: selection, selectionStart: selectionStart, interval: interval}, function (response) {});
   // 	}
-  }
-
-  /**
-   * Updates this tab to the next URL if the instance is enabled.
-   * 
-   * @private
-   */ 
-  function clickNext() {
-  	console.log("clickNext()");
-  	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
-  		console.log("\tgoing next");
-  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function (response) {});
-  	}
-  }
-
-  /**
-   * Updates this tab to the previous URL if the instance is enabled.
-   * 
-   * @private
-   */ 
-  function clickPrev() {
-  	console.log("clickPrev()");
-  	if (instance.enabled /*&& urlnp.tab.id === currentTab.id*/) {
-  		console.log("\tgoing prev");
-  		chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function (response) {});
-  	}
-  }
-  
-  /**
-   * Clears and disables this tab's instance if it is enabled.
-   * 
-   * @private
-   */ 
-  function clickClear() {
-  	console.log("clickClear()");
-  	if (instance.enabled) {
-  		console.log("\tclearing instance");
-		  instance = {
-		    enabled: false,
-		    tab: instance.tab,
-		    selection: "",
-		    selectionStart: -1,
-		    interval: 0
-		  };
-  		chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  		  backgroundPage.URLNP.Background.setInstance(instance);
-  		  updateImages();
-  		});
-  	}
-  }
-  	
-  /**
-   * Toggles the popup between the controls and the setup views.
-   * 
-   * @private
-   */ 
-  function toggleView() {
-  	console.log("toggleView()");
-  	var style = document.body.style,
-  	    width,
-  	    height;
-  	switch (this.id) {
-  	  case "setup-use-links-input":
-        setTimeout(function() {
-    	    DOM["popup-controls"].className = "hidden";
-          DOM["popup-setup-use-links"].className = "visible";
-    	    DOM["popup-setup-modify-url"].className = "hidden";
-          style.width = "auto";
-          style.height = "auto";
-          style.background = "#FFFFFF";
-        }, 10);
-        break;
-      case "setup-modify-url-input":
-        setTimeout(function() {
-    	    DOM["popup-controls"].className = "hidden";
-          DOM["popup-setup-use-links"].className = "hidden";
-    	    DOM["popup-setup-modify-url"].className = "visible";
-          style.width = "auto";
-          style.height = "auto";
-          style.background = "#FFFFFF";
-        }, 10);
-        break;
-      case "accept-input":
-        break;
-      case "cancel-input":
-        break;
-      default:
-        break;
-  	}
-
-
-  // 	var form = DOM["popup-form"],
-  // 	    controls = DOM["popup-controls"];
-  // 	console.log("\t\tform.style.display=" + form.style.display);
-  // 	if (form.style.display === "block") {
-  // 		// Hide form, show controls, reduce body (popup window) size
-  // 		form.style.display = "none";
-  // 		controls.style.display = "inline";
-  // 		document.body.style.width = "102px";
-  // 		document.body.style.height = "16px";
-  // 		document.body.style.background = "#EDECEB";
-  // 	} else {
-  // 		// Show form, hide controls, increase body (popup window) size, update tab
-  // 		form.style.display = "block";
-  // 		controls.style.display = "none";
-  // 		document.body.style.width = "auto" /*'583px' */;
-  // 		document.body.style.height = "auto"/*'287px'*/;
-  // 		document.body.style.background = "#FFFFFF";
-  // 		chrome.tabs.getSelected(null,
-  // 			function(tab) {
-  // 				currentTab = tab;
-  // 				//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
-  // 				// initForm();
-  // 	//console.log("\tfunction initForm");
-  // 	// Fill out the form elements' contents and load the default values
-  // 	chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  // 	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
-  // 	  // selectionStart = selectionProperties.selectionStart;
-  // 		DOM["url-textarea"].value = currentTab.url;
-  // 		DOM["url-textarea"].setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
-  // 		DOM["selection-input"].value = selectionProperties.selection;
-  // 	});
-  //   if (!DOM["interval-input"].value) {
-  //     chrome.storage.sync.get(null, function (o) {
-  //       DOM["interval-input"].value = o.defaultInterval;
-  //     });
-  //   }
-  // 			}
-  // 		);
-  // 	}
-  }
-
-  /**
-   * Updates the images' class to either enabled or disabled depending on
-   * whether this instance is enabled.
-   * 
-   * @private
-   */ 
-  function updateImages() {
-    console.log("updateImages()");
-    var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
-    DOM["next-input"].className = className;
-    DOM["prev-input"].className = className;
-    DOM["clear-input"].className = className;
   }
 
   // Return Public Functions

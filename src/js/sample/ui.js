@@ -21,20 +21,20 @@ URLNP.UI = URLNP.UI || function () {
    */ 
   function generateAlert(msg) {
     console.log("generateAlert(msg)");
-    var div = document.createElement('div'),
-        ul = document.createElement('ul'),
+    var div = document.createElement("div"),
+        ul = document.createElement("ul"),
         li,
         i;
-    div.classList.add('overlay');
+    div.classList.add("overlay");
     for (i = 0; i < msg.length; i++) {
-      li = document.createElement('li');
+      li = document.createElement("li");
       li.appendChild(document.createTextNode(msg[i]));
       ul.appendChild(li);
     }
     div.appendChild(ul);
     document.body.appendChild(div);
-    setTimeout(function() { div.classList.add('visible'); }, 10);
-    setTimeout(function() { div.classList.remove('visible'); document.body.removeChild(div); }, 3000);
+    setTimeout(function() { div.classList.add("overlay-visible"); }, 10);
+    setTimeout(function() { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 3000);
   }
 
   // Return Public Functions

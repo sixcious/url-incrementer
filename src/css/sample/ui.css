@@ -11,30 +11,30 @@
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	width: 400px;
-	padding: 20px;
-	margin: -80px 0 0 -220px;
+	width: 200px;
+	padding: 10px;
+	margin: -80px 0 0 -110px;
 	opacity: 0;
 	background: rgba(0, 0, 0, 0.75);
 	border-radius: 5px;
-	color: #FFF;
+	color: #FFFFFF;
 	/*font: 1.5em/1.2; Arial, sans-serif; */
-	font-size: 1.3em;
-	-webkit-transition: all 1.0s ease;
-	-webkit-transform: scale(0);
+	font-size: 1.2em;
+	transition: all 1.0s ease;
+	transform: scale(0);
 }
 
-.overlay a {
-	color:  #FFF;
-}
+/*.overlay a {
+	color:  #FFFFFF;
+}*/
 
 .overlay ul {
   list-style-type: none;
 }
 
-.visible {
+.overlay-visible {
 	opacity: 1;
-	-webkit-transform: scale(1);
+	transform: scale(1);
 }
 
 /* Div for form; hidden by default when the popup opens. */
@@ -48,7 +48,7 @@ div > form {
 	padding: 10px;
 	width: 563px;
 	box-shadow: inset 0px 2px 5px rgba(0,0,0,0.5); 
-	-webkit-transition: background-color 0.5s ease-out;
+	transition: background-color 0.5s ease-out;
 	overflow: hidden;
 	background-color: #EDECEB;
 	background-image: linear-gradient(top, #EDECEB, #F5F5F5);
@@ -61,13 +61,13 @@ div > form {
 
 form {
 	width: 563px;
-	-webkit-transition: -webkit-transform 0.25s ease;
+	transition: transform 0.25s ease;
 }
 
 /* Form housekeeping. */
 
 form.offscreen {
-	-webkit-transform: translateX(-600px);
+	transform: translateX(-600px);
 }
 
 /* Form -> fieldset spacing.  Fieldsets are subsections of the form. */
@@ -77,7 +77,7 @@ form > fieldset {
 	border: 1px solid transparent;
 	padding: 10px 10px 10px 30px;
 	margin: 5px 0;
-	-webkit-transition: all 0.5s ease;
+	transition: all 0.5s ease;
 }
 
 /* On the fieldsets, a little hover interaction. */
@@ -157,10 +157,10 @@ label.inline {
 
 section label, section legend {
 	color: #999;
-	-webkit-transition: color 0.5s ease;
+	transition: color 0.5s ease;
 }
 
 .active section label, .active section legend, form > fieldset > label  {
 	color:  #000;
-	-webkit-transition: color 0.5s ease;
+	transition: color 0.5s ease;
 }
