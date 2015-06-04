@@ -11,9 +11,6 @@ var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
   var instance, // Stores this tab's instance
-      // currentTab,
-      //selectionStart = -1,
-      // selectionProperties = { selection: "", selectionStart: -1 },
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
@@ -54,43 +51,19 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["url-textarea"].addEventListener("keyup", selectURL, false);
     DOM["accept-input"].addEventListener("click", submitForm, false);
     DOM["cancel-input"].addEventListener("click", toggleView, false);
-    // Set the current tab, instance, and update images
-    chrome.tabs.query({active: true}, function (tab) {
-      // currentTab = tab;
-      console.log("\tgetting currentTab (tab.id=" + tab.id +")");
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        console.log("backgroundPage=" + backgroundPage);
-        instance = backgroundPage.URLNP.Background.getInstance(tab);
-        console.log("instance=" + instance);
-        DOM["url-textarea"].value = instance.tab.url;
-        DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
-        DOM["selection-input"].value = instance.selection;
-        DOM["interval-input"].value = instance.interval;
-        updateImages();
+    // Set the instance and update images
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+        chrome.storage.sync.get(null, function(o) {
+          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], o);
+          console.log("instance=" + instance);
+          DOM["url-textarea"].value = instance.tab.url;
+          DOM["selection-input"].value = instance.selection;
+          DOM["interval-input"].value = instance.interval;
+          updateImages();
+        });
       });
     });
-    // chrome.storage.sync.get(null, function (o) {
-    //   DOM["interval-input"].value = o.defaultInterval;
-    // });
- // 		chrome.tabs.getSelected(null,
-  // 			function(tab) {
-  // 				currentTab = tab;
-  // 				//chrome.runtime.sendMessage({greeting: "findSelection", url: currentTab.url}, initForm);
-  // 				// initForm();
-  // 	//console.log("\tfunction initForm");
-  // 	// Fill out the form elements' contents and load the default values
-  // 	chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  // 	  selectionProperties = backgroundPage.URLNP.Background.findSelection(currentTab.url);
-  // 	  // selectionStart = selectionProperties.selectionStart;
-  // 		DOM["url-textarea"].value = currentTab.url;
-  // 		DOM["url-textarea"].setSelectionRange(selectionProperties.selectionStart, selectionProperties.selectionStart + selectionProperties.selection.length);
-  // 		DOM["selection-input"].value = selectionProperties.selection;
-  // 	});
-  //   if (!DOM["interval-input"].value) {
-  //     chrome.storage.sync.get(null, function (o) {
-  //       DOM["interval-input"].value = o.defaultInterval;
-  //     });
-  //   }
   }
 
   /**
@@ -157,6 +130,8 @@ URLNP.Popup = URLNP.Popup || function () {
       case "setup-modify-url-input":
   	    DOM["popup-controls"].className = "display-none";
         DOM["popup-setup-modify-url"].className = "fade-in";
+        DOM["url-textarea"].focus();
+        DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
         break;
       case "accept-input":
         DOM["popup-controls"].className = "fade-in";
@@ -253,7 +228,8 @@ URLNP.Popup = URLNP.Popup || function () {
       	  interval === "0" ? chrome.i18n.getMessage("popup_interval_0_error") : "",
       	  parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : ""
     	  ];
-  	if (errors.length > 0) {
+	  // We can tell there was an error if any of the array slots weren't empty
+  	if (errors[0] !== "" || errors[1] !== "" || errors[2] !== "" || errors[3] !== "") {
   		console.log("\terrors:" + errors);
   		URLNP.UI.generateAlert(errors);
   	} else {

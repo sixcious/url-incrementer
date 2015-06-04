@@ -10,5 +10,5 @@
 	"content_scripts": [{"matches": ["http://*/*", "https://*/*"], "run_at": "document_start", "js": ["js/content-scripts/shortcuts.js" ,"js/content-scripts/links.js"]}],
 	"options_ui": { "page": "html/options.html", "chrome_style": true},
 	"options_page": "html/options.html",
-	"permissions": ["storage", "tabs"]
+	"permissions": ["storage", "activeTab"]
 }

@@ -38,69 +38,26 @@ URLNP.Background = URLNP.Background || function () {
 	 * TODO
 	 * 
 	 * @param tab the tab to lookup this instance
+	 * @param o   the storage object (optional)
 	 * @return instance the instance
 	 * @public
 	 */
-	function getInstance(tab) {
+	function getInstance(tab, o) {
 		console.log("getInstance(tab)");
-		var selection = findSelection(tab.url),
-		    instance;
-		chrome.storage.sync.get(null, function (o) {
-	    instance = {
-		    enabled: false,
-		    tab: tab,
-		    selection: selection.string,
-		    selectionStart: selection.start,
-		    mode: o.defaultMode,
-		    interval: o.defaultInterval
-		  };
-		});
-
-  		  return instance;
-    // chrome.storage.sync.get(null, function (o) {
-		  // var instance = instances[tab.id];
-		  // if (!instance) {
-		  //   var selection = findSelection(tab.url);
-  		//   instance = {
-  		//     enabled: false,
-  		//     tab: tab,
-  		//     selection: selection.string,
-  		//     selectionStart: selection.start,
-  		//     mode: o.defaultMode,
-  		//     interval: o.defaultInterval
-  		//   };
-		  // }
-		  // return instance;
-
-    // });
-		// if (!tab && !tab.id) {
-		//   return null;
-		// }
-		// var instance = instances[tab.id];
-		// if (!instance) {
-		//   var selection = findSelection(tab.url);
-  //     chrome.storage.sync.get(null, function (o) {
-  // 		  instance = {
-  // 		    enabled: false,
-  // 		    tab: tab,
-  // 		    selection: selection.string,
-  // 		    selectionStart: selection.start,
-  // 		    mode: o.defaultMode,
-  // 		    interval: o.defaultInterval
-  // 		  };
-  		  
-  // 		        //instances[tab.id] = instance;
-  // 		  console.log("instance inside backgroundPAge getInstance storage get is" + instance);
-  // 		  return instance;
-  //     });
-
-		// } else {
-		//   return instance;
-		// }
-		// console.log("background page instance is..." + instances[tab.id]);
-		// return instance;
-		//return instances[id];
-		//sendResponse({enabled: urlnp.getEnabled(), tab: urlnp.getTab(), selection: urlnp.getSelection(), selectionStart: urlnp.getSelectionStart(), interval: urlnp.getInterval()});
+		var instance = instances[tab.id],
+		    selection;
+		if (!instance) {
+		  selection = findSelection(tab ? tab.url : "");
+      instance = {
+  	    enabled: false,
+  	    tab: tab,
+  	    selection: selection.string,
+  	    selectionStart: selection.start,
+  	    mode: o ? o.defaultMode : "",
+  	    interval: o ? o.defaultInterval : 0
+  	  };
+		}
+		return instance;
 	}
 
 	/**
