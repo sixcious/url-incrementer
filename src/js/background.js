@@ -10,7 +10,7 @@ console.log("URLNP.Background");
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
-	var	instances = [];
+	var	instances = []; // Keeps track of the tab instances (TODO: Put in storage)
 
   /**
    * Initializes the storage with the default values. The storage is initialized
@@ -35,46 +35,165 @@ URLNP.Background = URLNP.Background || function () {
 	}
 	
 	/**
-	 * TODO
+	 * Gets the tab's instance. If this tab doesn't have an instance yet, a
+	 * default instance is made for it.
 	 * 
 	 * @param tab the tab to lookup this instance
 	 * @param o   the storage object (optional)
-	 * @return instance the instance
+	 * @return instance the tab's instance
 	 * @public
 	 */
 	function getInstance(tab, o) {
-		console.log("getInstance(tab)");
-		var instance = instances[tab.id],
+		console.log("getInstance(tab, o)");
+		var instance,
 		    selection;
-		if (!instance) {
-		  selection = findSelection(tab ? tab.url : "");
-      instance = {
-  	    enabled: false,
-  	    tab: tab,
-  	    selection: selection.string,
-  	    selectionStart: selection.start,
-  	    mode: o ? o.defaultMode : "",
-  	    interval: o ? o.defaultInterval : 0
-  	  };
+		if (tab) {
+		  instance = instances[tab.id];
+		  if (!instance) {
+		    selection = findSelection(tab.url);
+        instance = {
+    	    enabled: false,
+    	    tab: tab,
+    	    selection: selection.string,
+    	    selectionStart: selection.start,
+    	    mode: o ? o.defaultMode : "",
+    	    interval: o ? o.defaultInterval : 1
+    	  };
+    	  instances[tab.id] = instance;
+		  }
 		}
 		return instance;
 	}
 
 	/**
-	 * TODO
+	 * Sets the tab's instance. If the instance is null or undefined or it is not
+	 * enabled, any active listeners on the tab will be removed.
 	 * 
-	 * @param instance
+	 * @param tab      the tab to lookup this instance
+	 * @param instance the instance to set
 	 * @public
 	 */	
-	function setInstance(instance) {
-		console.log("setInstance(instance)");
-		instances[instance.tab.id] = instance;
-		if (!instance || !instance.enabled) {
-  		console.log("\tinstance is not enabled so removing key listener");
-  		chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function (response) {});
-      chrome.tabs.onUpdated.removeListener(updateListeners);
-      instances[instance.tab.id] = undefined;
+	function setInstance(tab, instance) {
+		console.log("setInstance(tab, instance)");
+		if (tab) {
+  		instances[tab.id] = instance;
+  		if (!instance || !instance.enabled) {
+    		console.log("\tinstance is not enabled so removing key listener");
+    		chrome.tabs.sendMessage(tab.id, {greeting: "removeKeyListener"}, function (response) {});
+        chrome.tabs.onUpdated.removeListener(updateListeners);
+  		}
 		}
+	}
+
+  /**
+   * TODO
+   * 
+   * @param request
+   * @public
+   */ 
+	function updateTab(request) {
+		console.log("updateTab(request)");
+		// var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
+		// 	tab = urlnp.getTab();
+		var urlAndSelection = modifyURL(instances[request.id], request.direction);
+		tab.url = urlAndSelection.url;
+		urlnp.setTab(tab);					// Update urlnp's tab.
+		urlnp.setSelection(urlAndSelection.selectionString);	// Update urlnp's selection.
+		// updateTab(); removed old updatetab function and renamed this method to update tab because the old function was only being used here
+		// Begin updatetab function code
+			// After the url is modified in modifyurl, go ahead and update
+	// the tab to the new url using the chrome API's chrome.tabs.update.
+				console.log("\tfunction updateTab");
+		chrome.tabs.get(instance.tab.id, function(tab) {
+			if (tab.id === urlnp.getTab().id) {
+				console.log("\t\tupdating tab id:" + urlnp.getTab().id);
+				chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
+			}
+		});
+		// end old updatetab function code
+    chrome.storage.sync.get(null, function (o) {
+		  if (o.keyEnabled) {
+	      chrome.tabs.onUpdated.addListener(updateListeners);
+		  }
+    });
+		// if (localStorage.keyEnabled) {
+		// 	chrome.tabs.onUpdated.addListener(updateListeners);
+		// }
+	}
+
+  /**
+   * TODO
+   * 
+   * @param request
+   * @public
+   */ 
+	function quickUpdateTab(request) {
+		console.log("\tfunction fastUpdateTab");
+		chrome.tabs.get(instance.tab.id, // TODO get the instance in quick funcitonality setup
+			function (tab) {
+				var	selection = findSelection(tab.url),
+					urlAndSelection = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
+				if (urlAndSelection !== undefined){
+ 					chrome.tabs.update(tab.id, {url:urlAndSelection.url});
+				}
+			}
+		);
+	}
+	
+		// Necessary for the keys/mouse.  When the tab changes the URL due to
+	// increment or decrement, we must send another request to add
+	// a keyListener to the new URL page.  This function is called by the
+	// tab listener chrome.tabs.onUpdated.addListener(updateListeners),
+	// in modifyUrliAndUpdateTab.
+  /**
+   * TODO
+   * 
+   * @param tabId
+   * @param changeInfo
+   * @param tab
+   * @private
+   */ 
+	function updateListeners(tabId, changeInfo, tab) {
+		console.log("\tfunction updateListeners");
+		if (!urlnp.getEnabled()) { // Forces the listener to be removed on this tab.
+			console.log("\t\treturn: nothing because removing listener");
+			chrome.tabs.onUpdated.removeListener(arguments.callee);
+			return;
+		}
+		if (tabId !== urlnp.getTab().id) {
+			console.log("\t\treturn: nothing because tabId !== urlnp.getTab().id");
+			return;
+		}
+		chrome.storage.sync.get(null, function (o) {
+			if (o.keyEnabled) {
+				console.log("\t\tadding keyListener");
+				chrome.tabs.sendMessage(tabId, {greeting: "setKeys", keyNext: o.keyNext, keyPrev: o.keyPrev, keyClear: o.keyClear}, function(response) {});
+				chrome.tabs.sendMessage(tabId, {greeting: "addKeyListener"}, function (response){});
+			}
+		});
+	}
+
+  /**
+   * Finds a selection in the url to modify.First looks for common prefixes
+   * that come before numbers, such as = (equals) and / (slash). Example URLs:
+   * 
+   * http://www.google.com?page=1234
+   * http://www.google.com/1234
+   * 
+   * If no prefixes with numbers exist, finds the last number in the url.
+   * 
+   * @param url the url to find the selection in
+   * @return JSON object {string (selection string), start (selection start)}
+   * @private
+   */ 
+	function findSelection(url) {
+		console.log("findSelection(url)");
+		var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
+		    re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+		    matches;
+		return (matches = re1.exec(url)) !== null ? {string:matches[1], start:matches.index + 1} :
+           (matches = re2.exec(url)) !== null ? {string:matches[0], start:matches.index} :
+           {string:"", start:-1};
 	}
 
 	/**
@@ -230,125 +349,13 @@ URLNP.Background = URLNP.Background || function () {
 		return {url: firstPartURL + selectionString + secondPartURL, selectionString: selectionString};
 	}
 
-  /**
-   * Finds a selection in the url to modify.First looks for common prefixes
-   * that come before numbers, such as = (equals) and / (slash). Example URLs:
-   * 
-   * http://www.google.com?page=1234
-   * http://www.google.com/1234
-   * 
-   * If no prefixes with numbers exist, finds the last number in the url.
-   * 
-   * @param url the url to find the selection in
-   * @return JSON object {string (selection string), start (selection start)}
-   * @public
-   */ 
-	function findSelection(url) {
-		console.log("findSelection(url)");
-		var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
-		    re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-		    matches;
-		return (matches = re1.exec(url)) !== null ? {string:matches[1], start:matches.index + 1} :
-           (matches = re2.exec(url)) !== null ? {string:matches[0], start:matches.index} :
-           {string:"", start:-1};
-	}
-
-  /**
-   * TODO
-   * 
-   * @param request
-   * @public
-   */ 
-	function updateTab(request) {
-		console.log("updateTab(request)");
-		// var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
-		// 	tab = urlnp.getTab();
-		var urlAndSelection = modifyURL(instances[request.id], request.direction);
-		tab.url = urlAndSelection.url;
-		urlnp.setTab(tab);					// Update urlnp's tab.
-		urlnp.setSelection(urlAndSelection.selectionString);	// Update urlnp's selection.
-		// updateTab(); removed old updatetab function and renamed this method to update tab because the old function was only being used here
-		// Begin updatetab function code
-			// After the url is modified in modifyurl, go ahead and update
-	// the tab to the new url using the chrome API's chrome.tabs.update.
-				console.log("\tfunction updateTab");
-		chrome.tabs.get(instance.tab.id, function(tab) {
-			if (tab.id === urlnp.getTab().id) {
-				console.log("\t\tupdating tab id:" + urlnp.getTab().id);
-				chrome.tabs.update(tab.id, {url:urlnp.getTab().url});
-			}
-		});
-		// end old updatetab function code
-    chrome.storage.sync.get(null, function (o) {
-		  if (o.keyEnabled) {
-	      chrome.tabs.onUpdated.addListener(updateListeners);
-		  }
-    });
-		// if (localStorage.keyEnabled) {
-		// 	chrome.tabs.onUpdated.addListener(updateListeners);
-		// }
-	}
-
-  /**
-   * TODO
-   * 
-   * @param request
-   * @public
-   */ 
-	function quickUpdateTab(request) {
-		console.log("\tfunction fastUpdateTab");
-		chrome.tabs.get(instance.tab.id, // TODO get the instance in quick funcitonality setup
-			function (tab) {
-				var	selection = findSelection(tab.url),
-					urlAndSelection = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
-				if (urlAndSelection !== undefined){
- 					chrome.tabs.update(tab.id, {url:urlAndSelection.url});
-				}
-			}
-		);
-	}
-	
-		// Necessary for the keys/mouse.  When the tab changes the URL due to
-	// increment or decrement, we must send another request to add
-	// a keyListener to the new URL page.  This function is called by the
-	// tab listener chrome.tabs.onUpdated.addListener(updateListeners),
-	// in modifyUrliAndUpdateTab.
-  /**
-   * TODO
-   * 
-   * @param tabId
-   * @param changeInfo
-   * @param tab
-   * @private
-   */ 
-	function updateListeners(tabId, changeInfo, tab) {
-		console.log("\tfunction updateListeners");
-		if (!urlnp.getEnabled()) { // Forces the listener to be removed on this tab.
-			console.log("\t\treturn: nothing because removing listener");
-			chrome.tabs.onUpdated.removeListener(arguments.callee);
-			return;
-		}
-		if (tabId !== urlnp.getTab().id) {
-			console.log("\t\treturn: nothing because tabId !== urlnp.getTab().id");
-			return;
-		}
-		chrome.storage.sync.get(null, function (o) {
-			if (o.keyEnabled) {
-				console.log("\t\tadding keyListener");
-				chrome.tabs.sendMessage(tabId, {greeting: "setKeys", keyNext: o.keyNext, keyPrev: o.keyPrev, keyClear: o.keyClear}, function(response) {});
-				chrome.tabs.sendMessage(tabId, {greeting: "addKeyListener"}, function (response){});
-			}
-		});
-	}
-
   // Return Public Functions
 	return {
 		initStorage: initStorage,
 		getInstance: getInstance,
 		setInstance: setInstance,
 		updateTab: updateTab,
-		quickUpdateTab: quickUpdateTab,
-		findSelection: findSelection
+		quickUpdateTab: quickUpdateTab
 	};
 }();
 

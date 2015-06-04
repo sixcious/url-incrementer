@@ -99,9 +99,9 @@
 		"description": "Form error message if user tries to enter zero for Increment."
 	},
 	
-	"options_shortcut_keys": {
+	"options_shortcut_keys_h3": {
 		"message": "Shortcut Keys",
-		"description": "The options page's shortcuts keys title."
+		"description": "The options page's shortcuts keys heading."
 	},
 
 	"options_shortcut_keys_enable_label": {
@@ -144,9 +144,9 @@
 		"description": "Shortcut Key Fast Decrement label."
 	},
 
-	"options_default_settings": {
+	"options_default_settings_h3": {
 		"message": "Default Settings",
-		"description": "Default Settings sub header."
+		"description": "Default Settings sub heading."
 	},
 
 	"options_default_settings_p": {

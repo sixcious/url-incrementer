@@ -10,47 +10,35 @@ html {
 }
 
 body {
-height: auto;
 	background: #EDECEB;
-		margin: 5px;
 }
 
-/*
-.element {
-  height: 100px;
-  transition: height 2s linear;
+* {
+	margin: 0;
+	padding: 0;
 }
-
-.element:hover {
-  height: 200px;
-}
-*/
 
 #popup {
-
-/*	opacity: 1;
-	transform: scale(1);*/
+	margin: 5px;
 }
 
-#popup-controls {
+#controls {
 	width: 102px; /*width: 82px;*/ /* Use 114 for 24px images.*/
 	height: 16px; /* Use 24 for 24px images. */
 }
 
-#popup-setup-use-links {
+#setup-use-links {
   width: 400px;
   height: 300px;
 }
 
-#popup-setup-modify-url {
+#setup-modify-url {
   width: 600px;
   height: 400px;
 }
 
-/* Div for images; displayed by default when the popup opens. */
-
-div[id="images"] {
-	/*display: inline;*/
+input[type="image"]:focus {
+  outline: none;
 }
 
 /* Gives 2px right spacing to images set inline (except for the last). */
@@ -107,10 +95,7 @@ textarea {
 
 
 
-* {
-	margin: 0;
-	padding: 0;
-}
+
 
 @keyframes fade-in {
   from { opacity: 0; transform: scale(0); }
@@ -122,7 +107,7 @@ textarea {
   to { max-height: 1000px; }
 }
 
-/*@keyframes fade-out {
+@keyframes fade-out {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(0); }
 }
@@ -131,15 +116,14 @@ textarea {
   from { max-height: 1000px; }
   to { max-height: 0; }
 }
-*/
+
 .fade-in {
-  display: block;
   animation: fade-in 0.3s ease-out, fade-in-max-height 0.6s ease-out;
 }
 
-/*.fade-out {
-  animation: fade-out 0.5s ease-in-out, fade-out-max-height 1.5s ease-in-out both;
-}*/
+.fade-out {
+  animation: fade-out 0.3s ease-out, fade-out-max-height 0.3s ease-out;
+}
 
 .display-block {
   display: block;

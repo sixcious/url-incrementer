@@ -27,39 +27,41 @@ URLNP.Popup = URLNP.Popup || function () {
     var ids = document.querySelectorAll("[id]"),
         i;
     for (i = 0; i < ids.length; i++) {
-      DOM[ids[i].id] = ids[i];
+      DOM["#" + ids[i].id] = ids[i];
     }
     // Set localization text (i18n) from messages.json
-    DOM["next-input"].title = chrome.i18n.getMessage("popup_next_input");
-    DOM["prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
-    DOM["clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
-    DOM["setup-use-links-input"].title = chrome.i18n.getMessage("popup_setup_input");
-    DOM["setup-modify-url-input"].title = chrome.i18n.getMessage("popup_setup_input");
-//DOM["url-legend").innerText = chrome.i18n.getMessage("popup_url_legend");
-    DOM["url-label"].innerText = chrome.i18n.getMessage("popup_url_label"); 
-    DOM["selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label"); 
-    DOM["interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
-    DOM["accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
+    DOM["#next-input"].title = chrome.i18n.getMessage("popup_next_input");
+    DOM["#prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
+    DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
+    DOM["#setup-use-links-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    DOM["#setup-modify-url-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    DOM["#url-label"].innerText = chrome.i18n.getMessage("popup_url_label"); 
+    DOM["#selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label"); 
+    DOM["#interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
+    DOM["#setup-use-links-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["#setup-use-links-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
+    DOM["#setup-modify-url-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["#setup-modify-url-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
-    DOM["next-input"].addEventListener("click", clickNext, false);
-    DOM["prev-input"].addEventListener("click", clickPrev, false);
-    DOM["clear-input"].addEventListener("click", clickClear, false);
-    DOM["setup-use-links-input"].addEventListener("click", toggleView, false);
-    DOM["setup-modify-url-input"].addEventListener("click", toggleView, false);
-    DOM["url-textarea"].addEventListener("mouseup", selectURL, false);
-    DOM["url-textarea"].addEventListener("keyup", selectURL, false);
-    DOM["accept-input"].addEventListener("click", submitForm, false);
-    DOM["cancel-input"].addEventListener("click", toggleView, false);
-    // Set the instance and update images
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+    DOM["#next-input"].addEventListener("click", clickNext, false);
+    DOM["#prev-input"].addEventListener("click", clickPrev, false);
+    DOM["#clear-input"].addEventListener("click", clickClear, false);
+    DOM["#setup-use-links-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-modify-url-input"].addEventListener("click", toggleView, false);
+    DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
+    DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
+    DOM["#setup-use-links-accept-input"].addEventListener("click", submitForm, false);
+    DOM["#setup-use-links-cancel-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-modify-url-accept-input"].addEventListener("click", submitForm, false);
+    DOM["#setup-modify-url-cancel-input"].addEventListener("click", toggleView, false);
+    // Get this active tab's instance and update images
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+      chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(o) {
           instance = backgroundPage.URLNP.Background.getInstance(tabs[0], o);
-          console.log("instance=" + instance);
-          DOM["url-textarea"].value = instance.tab.url;
-          DOM["selection-input"].value = instance.selection;
-          DOM["interval-input"].value = instance.interval;
+          DOM["#url-textarea"].value = instance.tab.url;
+          DOM["#selection-input"].value = instance.selection;
+          DOM["#interval-input"].value = instance.interval;
           updateImages();
         });
       });
@@ -101,15 +103,9 @@ URLNP.Popup = URLNP.Popup || function () {
   	console.log("clickClear()");
   	if (instance.enabled) {
   		console.log("\tclearing instance");
-		  instance = {
-		    enabled: false,
-		    tab: instance.tab,
-		    selection: "",
-		    selectionStart: -1,
-		    interval: 0
-		  };
   		chrome.runtime.getBackgroundPage(function(backgroundPage) {
-  		  backgroundPage.URLNP.Background.setInstance(instance);
+  		  backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
+  		  instance.enabled = false;
   		  updateImages();
   		});
   	}
@@ -118,28 +114,40 @@ URLNP.Popup = URLNP.Popup || function () {
   /**
    * Toggles the popup between the controls and the setup views.
    * 
+   * @param id TODO (optional)
    * @private
    */ 
-  function toggleView() {
+  function toggleView(id) {
   	console.log("toggleView()");
-  	switch (this.id) {
+  	console.log("id=" + id + " and this.id=" + this.id);
+  	switch (this.id ? this.id : id) {
   	  case "setup-use-links-input":
-  	    DOM["popup-controls"].className = "display-none";
-        DOM["popup-setup-use-links"].className = "fade-in";
+  	    DOM["#controls"].className = "display-none";
+        DOM["#setup-use-links"].className = "display-block fade-in";
         break;
       case "setup-modify-url-input":
-  	    DOM["popup-controls"].className = "display-none";
-        DOM["popup-setup-modify-url"].className = "fade-in";
-        DOM["url-textarea"].focus();
-        DOM["url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+  	    DOM["#controls"].className = "display-none";
+        DOM["#setup-modify-url"].className = "display-block fade-in";
+        DOM["#url-textarea"].focus();
+        DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
         break;
-      case "accept-input":
-        DOM["popup-controls"].className = "fade-in";
-        DOM["popup-setup-use-links"].className = "display-none";
+      case "setup-use-links-accept-input":
+        DOM["#controls"].className = "display-block fade-in";
+        DOM["#setup-use-links"].className = "display-none";
         break;
-      case "cancel-input":
-  	    DOM["popup-controls"].className = "fade-in";
-        DOM["popup-setup-use-links"].className = "display-none";
+      case "setup-use-links-cancel-input":
+        DOM["#setup-use-links"].className = "fade-out";
+        setTimeout(function() { DOM["#setup-use-links"].classList.add("display-none"); }, 300);
+        setTimeout(function() { DOM["#controls"].className = "display-block fade-in"; }, 300);
+        break;
+      case "setup-modify-url-accept-input":
+        DOM["#controls"].className = "display-block fade-in";
+        DOM["#setup-modify-url"].className = "display-none";
+        break;
+      case "setup-modify-url-cancel-input":
+        DOM["#setup-modify-url"].className = "fade-out";
+        setTimeout(function() { DOM["#setup-modify-url"].classList.add("display-none"); }, 300);
+        setTimeout(function() { DOM["#controls"].className = "display-block fade-in"; }, 300);
         break;
       default:
         break;
@@ -196,9 +204,9 @@ URLNP.Popup = URLNP.Popup || function () {
   function updateImages() {
     console.log("updateImages()");
     var className = /*instance && */ instance.enabled /*&& instance.tab.id === currentTab.id */? "enabled" : "disabled";
-    DOM["next-input"].className = className;
-    DOM["prev-input"].className = className;
-    DOM["clear-input"].className = className;
+    DOM["#next-input"].className = className;
+    DOM["#prev-input"].className = className;
+    DOM["#clear-input"].className = className;
   }
 
   /**
@@ -209,8 +217,8 @@ URLNP.Popup = URLNP.Popup || function () {
    */ 
   function selectURL() {
     console.log("selectURL()");
-    instance.selectionStart = DOM["url-textarea"].selectionStart;
-    DOM["selection-input"].value = window.getSelection().toString();
+    instance.selectionStart = DOM["#url-textarea"].selectionStart;
+    DOM["#selection-input"].value = window.getSelection().toString();
     console.log("\tselection-input.value=" + DOM["selection-input"].value);
   }
   	
@@ -219,8 +227,8 @@ URLNP.Popup = URLNP.Popup || function () {
   // passes the data back to the urlnp object in background.html.
   function submitForm() {
   	console.log("submitForm()");
-  	var selection = DOM["selection-input"].value,
-        interval = DOM["interval-input"].value,
+  	var selection = DOM["#selection-input"].value,
+        interval = DOM["#interval-input"].value,
         errors = [
       	  selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") : "",
       	  instance.tab.url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") : "",
@@ -233,7 +241,19 @@ URLNP.Popup = URLNP.Popup || function () {
   		console.log("\terrors:" + errors);
   		URLNP.UI.generateAlert(errors);
   	} else {
-  	  
+  	  chrome.runtime.getBackgroundPage(function(backgroundPage) {
+  	    chrome.storage.sync.get(null, function(o) {
+  	      instance.enabled = true;
+  	      instance.mode = "modify-url";
+  	      backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
+  	      toggleView("setup-modify-url-accept-input");
+  	      updateImages();
+  				if (o.keyEnabled) {
+	console.log("\t\tadding keyListener");
+	          chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function (response) {});
+          }
+  	    });
+  	  });
   	}
   	  // 	var errorMessage = [],
   // 		errorCount = 0,
