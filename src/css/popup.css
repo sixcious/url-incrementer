@@ -2,6 +2,7 @@
 
 @import url("chromium/chrome_shared.css");
 @import url("sample/ui.css");
+@import url("hover/hover.css");
 
 /* Initial popup body background color and window size (for 16px images). */
 

@@ -59,8 +59,9 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(o) {
           instance = backgroundPage.URLNP.Background.getInstance(tabs[0], o);
-          DOM["#url-textarea"].value = instance.tab.url;
+          DOM["#url-textarea"].value = instance.tab.url; // tab.url
           DOM["#selection-input"].value = instance.selection;
+          DOM["#selection-start-input"].value = instance.selectionStart;
           DOM["#interval-input"].value = instance.interval;
           updateImages();
         });
@@ -75,8 +76,12 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function clickNext() {
     console.log("clickNext()");
+    var that = this;
     if (instance.enabled) {
       console.log("\tgoing next");
+      console.log("this classlist" + this.classList);
+      this.classList.remove("hvr-wobble-to-top-right-click");
+      setTimeout(function() {  that.classList.add("hvr-wobble-to-top-right-click"); }, 0);
       chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function (response) {});
     }
   }
@@ -88,8 +93,11 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function clickPrev() {
     console.log("clickPrev()");
+    var that = this;
     if (instance.enabled) {
       console.log("\tgoing prev");
+            this.classList.remove("hvr-push-click");
+      setTimeout(function() {  that.classList.add("hvr-push-click"); }, 0);
       chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function (response) {});
     }
   }
@@ -133,7 +141,9 @@ URLNP.Popup = URLNP.Popup || function () {
           DOM["#controls"].classList.add("display-none");
           DOM["#setup-modify-url"].className = "display-block fade-in";
           DOM["#url-textarea"].focus();
-          DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          //DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          selectURL();
+          console.log("instance.selectionStart=" + instance.selectionStart + " and selection  = " + instance.selection + " and tempSel =" + DOM["#selection-start-input"].value);
         }, 300);
         break;
       case "setup-use-links-accept-input":
@@ -165,7 +175,7 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function updateImages() {
     console.log("updateImages()");
-    var className = instance.enabled ? "enabled" : "disabled";
+    var className = instance.enabled ? "hvr-grow hvr-wobble-to-top-right" : "disabled";
     DOM["#next-input"].className = className;
     DOM["#prev-input"].className = className;
     DOM["#clear-input"].className = className;
@@ -173,15 +183,15 @@ URLNP.Popup = URLNP.Popup || function () {
 
   /**
    * Handle URL selection on mouseup and keyup events. Saves the selectionStart
-   * to a temp value and updates the selection input to show the selected text.
+   * to a hidden input and updates the selection input to the selected text.
    * 
    * @private
    */
   function selectURL() {
     console.log("selectURL()");
-    instance.tempSelectionStart = DOM["#url-textarea"].selectionStart;
+    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     DOM["#selection-input"].value = window.getSelection().toString();
-    console.log("\tselection-input.value=" + DOM["selection-input"].value);
+    console.log("\tselection-input.value=" + DOM["#selection-input"].value);
   }
 
   /**
@@ -193,6 +203,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function submitForm() {
     console.log("submitForm()");
     var selection = DOM["#selection-input"].value,
+        selectionStart = DOM["#selection-start-input"].value,
         interval = DOM["#interval-input"].value,
         errors = [
           selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") : "",
@@ -212,7 +223,7 @@ URLNP.Popup = URLNP.Popup || function () {
           instance.mode = "modify-url";
           instance.interval = interval;
           instance.selection = selection;
-          instance.selectionStart = instance.tempSelectionStart;
+          instance.selectionStart = selectionStart;
           instance.tempSelectionStart = undefined;
           backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
           toggleView(DOM["#setup-modify-url-accept-input"]);
