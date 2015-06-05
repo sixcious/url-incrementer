@@ -6,7 +6,7 @@ console.log("URLNP.Options");
  * URL Next Plus Options.
  * 
  * Uses the JavaScript Revealing Module Pattern.
- */ 
+ */
 var URLNP = URLNP || {};
 URLNP.Options = URLNP.Options || function() {
 
@@ -145,7 +145,7 @@ URLNP.Options = URLNP.Options || function() {
    * 
    * @param event the keydown event fired
    * @private
-   */ 
+   */
   function setKey(event) {
     console.log("setKey(event)");
     // Set key [0] as the event modifiiers OR'd together and [1] as the key code
@@ -164,7 +164,7 @@ URLNP.Options = URLNP.Options || function() {
    * @param input the input to write to
    * @param key the key object to write
    * @private
-   */ 
+   */
   function writeInput(input, key) {
     console.log("writeInput(input, key)");
     var keyCodeString = KEY_CODE_STRING_MAP[key[1]];

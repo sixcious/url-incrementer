@@ -1,4 +1,4 @@
-// TODO
+// TODO URL Next Plus for Google Chrome © 2011 Roy Six
 
 console.log("URLNP.UI");
 
@@ -6,7 +6,7 @@ console.log("URLNP.UI");
  * URL Next Plus UI (User Interface).
  * 
  * Uses the JavaScript Revealing Module Pattern.
- */ 
+ */
 var URLNP = URLNP || {};
 URLNP.UI = URLNP.UI || function () {
 
@@ -18,7 +18,7 @@ URLNP.UI = URLNP.UI || function () {
    * 
    * @param msg the messages array to display, line by line
    * @public
-   */ 
+   */
   function generateAlert(msg) {
     console.log("generateAlert(msg)");
     var div = document.createElement("div"),

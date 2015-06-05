@@ -15,17 +15,17 @@
 	},
 
 	"popup_next_input": {
-		"message": "Next +",
+		"message": "Next [+]",
 		"description": "Title (tool tip) for the increment button image when hovered."
 	},
 
 	"popup_prev_input": {
-		"message": "Prev -",
+		"message": "Prev [-]",
 		"description": "Title (tool tip) for the decrement button image when hovered."
 	},
 
 	"popup_clear_input": {
-		"message": "Clear",
+		"message": "Clear [x]",
 		"description": "Title (tool tip) for the clear button image when hovered."
 	},
 

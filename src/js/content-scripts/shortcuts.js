@@ -6,7 +6,7 @@ console.log("URLNP.Shortcuts");
  * URL Next Plus Shortcuts.
  * 
  * Uses the JavaScript Revealing Module Pattern.
- */ 
+ */
 var URLNP = URLNP || {};
 URLNP.Shortcuts = URLNP.Shortcuts || function () {
 
@@ -22,7 +22,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    * 
    * @param storageKeys the storage key array
    * @public
-   */ 
+   */
   function setKeys(storageKeys) {
     keys = storageKeys;
   }

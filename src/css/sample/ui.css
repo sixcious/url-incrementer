@@ -18,15 +18,10 @@
 	background: rgba(0, 0, 0, 0.75);
 	border-radius: 5px;
 	color: #FFFFFF;
-	/*font: 1.5em/1.2; Arial, sans-serif; */
 	font-size: 1.2em;
 	transition: all 1.0s ease;
 	transform: scale(0);
 }
-
-/*.overlay a {
-	color:  #FFFFFF;
-}*/
 
 .overlay ul {
   list-style-type: none;

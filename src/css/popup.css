@@ -85,6 +85,11 @@ textarea {
 	color: #777777;
 }
 
+/*textarea::selection {*/
+/*  color: #FFFFFF;*/
+/*  background: #ffb7b7;*/
+/*}*/
+
 /* Form buttons. */
 
 #popup-form-buttons {
