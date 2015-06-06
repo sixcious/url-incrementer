@@ -26,7 +26,7 @@
   -webkit-transition-property: transform;
   transition-property: transform;
 }
-.hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
+.hvr-grow:hover/*, .hvr-grow:focus, .hvr-grow:active*/ {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
@@ -208,7 +208,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-/*.hvr-push:hover, .hvr-push:focus, .hvr-push:active*/ .hvr-push-click {
+.hvr-push-click {
   -webkit-animation-name: hvr-push;
   animation-name: hvr-push;
   -webkit-animation-duration: 0.3s;
@@ -670,7 +670,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-wobble-vertical:hover, .hvr-wobble-vertical:focus, .hvr-wobble-vertical:active {
+.hvr-wobble-vertical-click/*:hover, .hvr-wobble-vertical:focus, .hvr-wobble-vertical:active */{
   -webkit-animation-name: hvr-wobble-vertical;
   animation-name: hvr-wobble-vertical;
   -webkit-animation-duration: 1s;
@@ -756,7 +756,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-wobble-horizontal:hover, .hvr-wobble-horizontal:focus, .hvr-wobble-horizontal:active {
+.hvr-wobble-horizontal-click {
   -webkit-animation-name: hvr-wobble-horizontal;
   animation-name: hvr-wobble-horizontal;
   -webkit-animation-duration: 1s;
@@ -842,7 +842,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-wobble-to-bottom-right:hover, .hvr-wobble-to-bottom-right:focus, .hvr-wobble-to-bottom-right:active {
+.hvr-wobble-to-bottom-right-click {
   -webkit-animation-name: hvr-wobble-to-bottom-right;
   animation-name: hvr-wobble-to-bottom-right;
   -webkit-animation-duration: 1s;
@@ -928,7 +928,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-/*.hvr-wobble-to-top-right:hover, .hvr-wobble-to-top-right:focus, .hvr-wobble-to-top-right:active*/ .hvr-wobble-to-top-right-click {
+.hvr-wobble-to-top-right-click {
   -webkit-animation-name: hvr-wobble-to-top-right;
   animation-name: hvr-wobble-to-top-right;
   -webkit-animation-duration: 1s;
@@ -1190,7 +1190,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-wobble-skew:hover, .hvr-wobble-skew:focus, .hvr-wobble-skew:active {
+.hvr-wobble-skew:hover {
   -webkit-animation-name: hvr-wobble-skew;
   animation-name: hvr-wobble-skew;
   -webkit-animation-duration: 1s;
@@ -1362,7 +1362,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-buzz-out:hover, .hvr-buzz-out:focus, .hvr-buzz-out:active {
+/*.hvr-buzz-out:hover, .hvr-buzz-out:focus, .hvr-buzz-out:active*/ .hvr-buzz-out-click {
   -webkit-animation-name: hvr-buzz-out;
   animation-name: hvr-buzz-out;
   -webkit-animation-duration: 0.75s;

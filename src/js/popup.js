@@ -79,9 +79,7 @@ URLNP.Popup = URLNP.Popup || function () {
     var that = this;
     if (instance.enabled) {
       console.log("\tgoing next");
-      console.log("this classlist" + this.classList);
-      this.classList.remove("hvr-wobble-to-top-right-click");
-      setTimeout(function() {  that.classList.add("hvr-wobble-to-top-right-click"); }, 0);
+      URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function (response) {});
     }
   }
@@ -96,8 +94,7 @@ URLNP.Popup = URLNP.Popup || function () {
     var that = this;
     if (instance.enabled) {
       console.log("\tgoing prev");
-            this.classList.remove("hvr-push-click");
-      setTimeout(function() {  that.classList.add("hvr-push-click"); }, 0);
+      URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function (response) {});
     }
   }
@@ -111,6 +108,7 @@ URLNP.Popup = URLNP.Popup || function () {
     console.log("clickClear()");
     if (instance.enabled) {
       console.log("\tclearing instance");
+      URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
         instance.enabled = false;
@@ -152,6 +150,7 @@ URLNP.Popup = URLNP.Popup || function () {
         setTimeout(function() {
           DOM["#setup-use-links"].classList.add("display-none");
           DOM["#controls"].className = "display-block fade-in";
+          updateImages(); // Needed to reset hover.css click effect
         }, 300);
         break;
       case "setup-modify-url-accept-input":
@@ -160,6 +159,7 @@ URLNP.Popup = URLNP.Popup || function () {
         setTimeout(function() {
           DOM["#setup-modify-url"].classList.add("display-none");
           DOM["#controls"].className = "display-block fade-in";
+          updateImages(); // Needed to reset hover.css click effect
         }, 300);
         break;
       default:

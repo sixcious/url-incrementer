@@ -13,7 +13,7 @@ URLNP.UI = URLNP.UI || function () {
   /**
    * Generates a popup alert.
    * 
-   * This function uses code from the sample Google extension, Proxy Settings,
+   * This function is derived from the sample Google extension, Proxy Settings,
    * by Mike West.
    * 
    * @param msg the messages array to display, line by line
@@ -37,8 +37,24 @@ URLNP.UI = URLNP.UI || function () {
     setTimeout(function() { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 3000);
   }
 
+  /**
+   * Applies a Hover.css effect on click events to DOM elements.
+   * 
+   * Hover.css is created by Ian Lunn.
+   * 
+   * @param el     the DOM element to apply the effect to
+   * @param effect the Hover.css effect (String name) to use
+   * @public
+   */
+  function clickHoverCss(el, effect) {
+    // Carefully toggle the Hover.css class using setTimeout()
+    el.classList.remove(effect);
+    setTimeout(function() {  el.classList.add(effect); }, 0);
+  }
+
   // Return Public Functions
   return {
-    generateAlert: generateAlert
+    generateAlert: generateAlert,
+    clickHoverCss: clickHoverCss
   };
 }();
