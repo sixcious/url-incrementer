@@ -172,8 +172,7 @@ URLNP.Popup = URLNP.Popup || function () {
   }
 
   /**
-   * Updates the images' class to either enabled or disabled depending on
-   * whether this instance is enabled.
+   * Updates the images' class based on whether the instance is enabled.
    * 
    * @private
    */
