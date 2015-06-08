@@ -50,8 +50,8 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#setup-modify-url-input"].addEventListener("click", function () { toggleView(this); }, false);
     DOM["#setup-use-links-cancel-input"].addEventListener("click", function () { toggleView(this); }, false);
     DOM["#setup-modify-url-cancel-input"].addEventListener("click", function () { toggleView(this); }, false);
-    DOM["#setup-use-links-accept-input"].addEventListener("click", submitForm, false);
-    DOM["#setup-modify-url-accept-input"].addEventListener("click", submitForm, false);
+    DOM["#setup-use-links-accept-input"].addEventListener("click", useLinksAccept, false);
+    DOM["#setup-modify-url-accept-input"].addEventListener("click", modifyURLAccept, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     // Get this active tab's instance and update images
@@ -76,7 +76,6 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function clickNext() {
     console.log("clickNext()");
-    var that = this;
     if (instance.enabled) {
       console.log("\tgoing next");
       URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
@@ -91,7 +90,6 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function clickPrev() {
     console.log("clickPrev()");
-    var that = this;
     if (instance.enabled) {
       console.log("\tgoing prev");
       URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
@@ -109,11 +107,13 @@ URLNP.Popup = URLNP.Popup || function () {
     if (instance.enabled) {
       console.log("\tclearing instance");
       URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      setTimeout(function() {
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
         instance.enabled = false;
         updateImages();
       });
+      }, 1000);
     }
   }
 
@@ -182,26 +182,37 @@ URLNP.Popup = URLNP.Popup || function () {
   }
 
   /**
-   * Handle URL selection on mouseup and keyup events. Saves the selectionStart
-   * to a hidden input and updates the selection input to the selected text.
+   * TODO
    * 
    * @private
    */
-  function selectURL() {
-    console.log("selectURL()");
-    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
-    DOM["#selection-input"].value = window.getSelection().toString();
-    console.log("\tselection-input.value=" + DOM["#selection-input"].value);
+  function useLinksAccept() {
+    console.log("useLinksAccept()");
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      chrome.storage.sync.get(null, function(o) {
+        instance.enabled = true;
+        instance.mode = "use-links";
+        instance.links = "?";
+        backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
+        toggleView(DOM["#setup-use-links-accept-input"]);
+        updateImages();
+        if (o.keyEnabled) {
+          console.log("\t\tadding keyListener");
+          chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function (response) {});
+        }
+      });
+    });
   }
 
   /**
+   * TODO
    * Submits the form. First validates user input for any errors then saves the
    * values to the instance and toggles the view back to the controls.
    * 
    * @private
    */
-  function submitForm() {
-    console.log("submitForm()");
+  function modifyURLAccept() {
+    console.log("modifyURLAccept()");
     var selection = DOM["#selection-input"].value,
         selectionStart = DOM["#selection-start-input"].value,
         interval = DOM["#interval-input"].value,
@@ -224,7 +235,6 @@ URLNP.Popup = URLNP.Popup || function () {
           instance.interval = interval;
           instance.selection = selection;
           instance.selectionStart = selectionStart;
-          instance.tempSelectionStart = undefined;
           backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
           toggleView(DOM["#setup-modify-url-accept-input"]);
           updateImages();
@@ -235,6 +245,19 @@ URLNP.Popup = URLNP.Popup || function () {
         });
       });
     }
+  }
+
+  /**
+   * Handle URL selection on mouseup and keyup events. Saves the selectionStart
+   * to a hidden input and updates the selection input to the selected text.
+   * 
+   * @private
+   */
+  function selectURL() {
+    console.log("selectURL()");
+    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
+    DOM["#selection-input"].value = window.getSelection().toString();
+    console.log("\tselection-input.value=" + DOM["#selection-input"].value);
   }
 
   // Return Public Functions

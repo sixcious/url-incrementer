@@ -56,8 +56,8 @@ URLNP.Background = URLNP.Background || function () {
     	    tab: tab,
     	    selection: selection.string,
     	    selectionStart: selection.start,
-    	    mode: o ? o.defaultMode : "",
-    	    interval: o ? o.defaultInterval : 1
+    	    mode: o.defaultMode,
+    	    interval: o.defaultInterval
     	  };
     	  instances[tab.id] = instance;
 		  }

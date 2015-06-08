@@ -1,8 +1,8 @@
 /* TODO */
 
 @import url("chromium/chrome_shared.css");
-@import url("sample/ui.css");
-@import url("hover/hover.css");
+@import url("ui/ui.css");
+@import url("ui/hover.css");
 
 /* Initial popup body background color and window size (for 16px images). */
 
@@ -25,17 +25,22 @@ body {
 
 #controls {
 	width: 102px; /*width: 82px;*/ /* Use 114 for 24px images.*/
-	height: 16px; /* Use 24 for 24px images. */
+	/*height: 16px;*/ /* Use 24 for 24px images. */
 }
 
 #setup-use-links {
   width: 400px;
-  height: 300px;
+/*  height: 300px;*/
 }
 
 #setup-modify-url {
   width: 600px;
-  height: 400px;
+/*  height: 400px;*/
+}
+
+#controls input {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 input[type="image"]:focus {
@@ -56,7 +61,7 @@ input[type="image"].disabled {
 
 /* Enabled class for images, set by updateImages(). */
 
-input[type="image"].enabled {
+input[type="image"]:not(.disabled) {
 	opacity: 1.0;
 }
 
