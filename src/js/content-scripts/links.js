@@ -76,7 +76,7 @@ var	    foundNextPriority = 10,
   			return {next: next, prev: prev};
   		},
 
-		scan = function (elements, elementsLength) {
+		scan = function(elements, elementsLength) {
 			console.log("\t\tfunction scan");
 			var	i, j, attributes, attributesLength;
 
@@ -183,8 +183,7 @@ document.addEventListener('DOMNodeInserted', URLNP.Links.filterResultInserts);
 
 // chrome.runtime.sendMessage({greeting: "checkIfScanIsEnabled"}, function () {});
 
-chrome.runtime.onMessage.addListener(
-	function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		switch (request.greeting) {
 			// From:      background
 			// Request:   Keys are enabled in options and user clicked accept button in popup form or enabled keys in options.

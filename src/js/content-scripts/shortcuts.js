@@ -20,11 +20,11 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    * Sets the keys from storage. This function is needed because the keys var
    * is private and cannot be set outside.
    * 
-   * @param storageKeys the storage key array
+   * @param items the storage items
    * @public
    */
-  function setKeys(storageKeys) {
-    keys = storageKeys;
+  function setKeys(items) {
+    keys = [items.keyNext, items.keyPrev, items.keyClear, items.keyQuickNext, items.keyQuickPrev];
   }
   
   /**
@@ -85,16 +85,15 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
 }();
 
 // Cache shortcut keys from storage and check if quick keys are enabled
-chrome.storage.sync.get(null, function (o) {
-  URLNP.Shortcuts.setKeys([o.keyNext, o.keyPrev, o.keyClear, o.keyQuickNext, o.keyQuickPrev]);
-  if (o.keyQuickEnabled) {
+chrome.storage.sync.get(null, function(items) {
+  URLNP.Shortcuts.setKeys(items);
+  if (items.keyQuickEnabled) {
     document.addEventListener("keydown", URLNP.Shortcuts.keyQuickListener, false);
   }
 });
 
 // Listen for requests from chrome.runtime.sendMessage
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log("!request.greeting=" + (request && request.greeting ? request.greeting : "Unknown Request"));
     switch (request.greeting) {
       case "addKeyListener":

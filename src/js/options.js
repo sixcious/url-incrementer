@@ -8,7 +8,7 @@ console.log("URLNP.Options");
  * Uses the JavaScript Revealing Module Pattern.
  */
 var URLNP = URLNP || {};
-URLNP.Options = URLNP.Options || function() {
+URLNP.Options = URLNP.Options || function () {
 
   var FLAG_KEY_NONE = 0x0, // 0000
       FLAG_KEY_ALT = 0x1, // 0001
@@ -116,26 +116,26 @@ URLNP.Options = URLNP.Options || function() {
     DOM["#key-clear-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
     DOM["#key-quick-next-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
     DOM["#key-quick-prev-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
-    DOM["#key-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"keyEnabled": this.checked}); }, false);
-    DOM["#key-quick-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); }, false);
-    DOM["#key-next-input"].addEventListener("keyup", function() { chrome.storage.sync.set({"keyNext": key}); }, false);
-    DOM["#key-prev-input"].addEventListener("keyup", function() { chrome.storage.sync.set({"keyPrev": key}); }, false);
-    DOM["#key-clear-input"].addEventListener("keyup", function() { chrome.storage.sync.set({"keyClear": key}); }, false);
-    DOM["#key-quick-next-input"].addEventListener("keyup", function() { chrome.storage.sync.set({"keyQuickNext": key}); }, false);
-    DOM["#key-quick-prev-input"].addEventListener("keyup", function() { chrome.storage.sync.set({"keyQuickPrev": key}); }, false);
-    DOM["#default-mode-select"].addEventListener("change", function() { chrome.storage.sync.set({"defaultMode": this.options[this.selectedIndex].value}); }, false);
-    DOM["#default-interval-input"].addEventListener("change", function() { chrome.storage.sync.set({"defaultInterval": this.value}); }, false);
+    DOM["#key-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyEnabled": this.checked}); }, false);
+    DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); }, false);
+    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}); }, false);
+    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}); }, false);
+    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}); }, false);
+    DOM["#key-quick-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyQuickNext": key}); }, false);
+    DOM["#key-quick-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyQuickPrev": key}); }, false);
+    DOM["#default-mode-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.options[this.selectedIndex].value}); }, false);
+    DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": this.value}); }, false);
     // Populate values from storage
-    chrome.storage.sync.get(null, function (o) {
-      DOM["#key-enable-input"].checked = o.keyEnabled;
-      DOM["#key-quick-enable-input"].checked = o.keyQuickEnabled;
-      writeInput(DOM["#key-next-input"], o.keyNext);
-      writeInput(DOM["#key-prev-input"], o.keyPrev);
-      writeInput(DOM["#key-clear-input"], o.keyClear);
-      writeInput(DOM["#key-quick-next-input"], o.keyQuickNext);
-      writeInput(DOM["#key-quick-prev-input"], o.keyQuickPrev);
-      DOM["#default-mode-select"].value = o.defaultMode;
-      DOM["#default-interval-input"].value = o.defaultInterval;
+    chrome.storage.sync.get(null, function(items) {
+      DOM["#key-enable-input"].checked = items.keyEnabled;
+      DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
+      writeInput(DOM["#key-next-input"], items.keyNext);
+      writeInput(DOM["#key-prev-input"], items.keyPrev);
+      writeInput(DOM["#key-clear-input"], items.keyClear);
+      writeInput(DOM["#key-quick-next-input"], items.keyQuickNext);
+      writeInput(DOM["#key-quick-prev-input"], items.keyQuickPrev);
+      DOM["#default-mode-select"].value = items.defaultMode;
+      DOM["#default-interval-input"].value = items.defaultInterval;
     });
   }
 
