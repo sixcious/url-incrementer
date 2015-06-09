@@ -48,11 +48,6 @@ URLNP.Background = URLNP.Background || function () {
 		console.log("getInstance(tab, items)");
 		var instance,
 		    selection;
-		if (!tab) {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-        tab = tabs[0];
-      });
-		}
 		if (tab) {
 		  instance = instances[tab.id];
 		  if (!instance) {
@@ -351,6 +346,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch (request.greeting) {
       case "getInstance":
         URLNP.Background.getInstance(sender.tab);
+        // TODO return this
         break;
 			case "updateTab":
 				URLNP.Background.updateTab(request);
