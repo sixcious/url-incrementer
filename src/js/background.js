@@ -20,18 +20,19 @@ URLNP.Background = URLNP.Background || function () {
    */ 
 	function initStorage() {
 		console.log("initStorage()");
-		chrome.storage.sync.clear();
-		chrome.storage.sync.set({
-		  "keyEnabled": true,
-		  "keyQuickEnabled": false,
-		  "keyNext": [0, 39],
-		  "keyPrev": [0, 37],
-		  "keyClear": [0, 13],
-		  "keyQuickNext": [7, 39],
-		  "keyQuickPrev": [7, 37],
-		  "defaultMode": "use-links",
-		  "defaultInterval": 1
-    });
+		chrome.storage.sync.clear(function() {
+  		chrome.storage.sync.set({
+  		  "keyEnabled": true,
+  		  "keyQuickEnabled": false,
+  		  "keyNext": [0, 39],
+  		  "keyPrev": [0, 37],
+  		  "keyClear": [0, 13],
+  		  "keyQuickNext": [7, 39],
+  		  "keyQuickPrev": [7, 37],
+  		  "defaultMode": "use-links",
+  		  "defaultInterval": 1
+      });
+		});
 	}
 	
 	/**
@@ -47,6 +48,11 @@ URLNP.Background = URLNP.Background || function () {
 		console.log("getInstance(tab, items)");
 		var instance,
 		    selection;
+		if (!tab) {
+      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+        tab = tabs[0];
+      });
+		}
 		if (tab) {
 		  instance = instances[tab.id];
 		  if (!instance) {
@@ -56,8 +62,8 @@ URLNP.Background = URLNP.Background || function () {
     	    tab: tab,
     	    selection: selection.string,
     	    selectionStart: selection.start,
-    	    mode: items.defaultMode,
-    	    interval: items.defaultInterval
+    	    mode: items ? items.defaultMode : "",
+    	    interval: items ? items.defaultInterval : 0
     	  };
     	  instances[tab.id] = instance;
 		  }
@@ -80,7 +86,7 @@ URLNP.Background = URLNP.Background || function () {
   		if (!instance || !instance.enabled) {
     		console.log("\tinstance is not enabled so removing key listener");
     		chrome.tabs.sendMessage(tab.id, {greeting: "removeKeyListener"}, function(response) {});
-        chrome.tabs.onUpdated.removeListener(updateListeners);
+        //chrome.tabs.onUpdated.removeListener(updateListeners);
   		}
 		}
 	}
@@ -97,9 +103,16 @@ URLNP.Background = URLNP.Background || function () {
 		if (instance.mode === "use-links") {
 		  // TODO
 		} else if (instance.mode === "modify-url") {
-		  instance = modifyURL(instance, direction);
+		  //instance = modifyURL(instance, direction);
 		}
 		chrome.tabs.update(instance.tab.id, { url: instance.tab.url });
+		// chrome.tabs.update(instance.tab.id, {url: instance.tab.url}, function(tab) {
+  //     chrome.storage.sync.get(null, function(items) {
+  // 		  if (items.keyEnabled) {
+  // 	      chrome.tabs.onUpdated.addListener(updateListeners);
+  // 		  }
+  //     });
+		// });
 		
 		// var	urlAndSelection = modifyURL(urlnp.getTab().url, urlnp.getSelection(), urlnp.getSelectionStart(), parseInt(urlnp.getInterval(), 10), request.action),
 		// 	tab = urlnp.getTab();
@@ -119,11 +132,11 @@ URLNP.Background = URLNP.Background || function () {
 		// 	}
 		// });
 		// end old updatetab function code
-    chrome.storage.sync.get(null, function(items) {
-		  if (items.keyEnabled) {
-	      chrome.tabs.onUpdated.addListener(updateListeners);
-		  }
-    });
+    // chrome.storage.sync.get(null, function(items) {
+		  // if (items.keyEnabled) {
+	   //   chrome.tabs.onUpdated.addListener(updateListeners);
+		  // }
+    // });
 		// if (localStorage.keyEnabled) {
 		// 	chrome.tabs.onUpdated.addListener(updateListeners);
 		// }
@@ -146,39 +159,6 @@ URLNP.Background = URLNP.Background || function () {
 				}
 			}
 		);
-	}
-	
-		// Necessary for the keys/mouse.  When the tab changes the URL due to
-	// increment or decrement, we must send another request to add
-	// a keyListener to the new URL page.  This function is called by the
-	// tab listener chrome.tabs.onUpdated.addListener(updateListeners),
-	// in modifyUrliAndUpdateTab.
-  /**
-   * TODO
-   * 
-   * @param tabId
-   * @param changeInfo
-   * @param tab
-   * @private
-   */ 
-	function updateListeners(tabId, changeInfo, tab) {
-		console.log("\tfunction updateListeners");
-		if (!urlnp.getEnabled()) { // Forces the listener to be removed on this tab.
-			console.log("\t\treturn: nothing because removing listener");
-			chrome.tabs.onUpdated.removeListener(arguments.callee);
-			return;
-		}
-		if (tabId !== urlnp.getTab().id) {
-			console.log("\t\treturn: nothing because tabId !== urlnp.getTab().id");
-			return;
-		}
-		chrome.storage.sync.get(null, function(items) {
-			if (items.keyEnabled) {
-				console.log("\t\tadding keyListener");
-			//	chrome.tabs.sendMessage(tabId, {greeting: "setKeys", keyNext: items.keyNext, keyPrev: items.keyPrev, keyClear: items.keyClear}, function(response) {});
-				chrome.tabs.sendMessage(tabId, {greeting: "addKeyListener"}, function(response){});
-			}
-		});
 	}
 
   /**
@@ -219,16 +199,16 @@ URLNP.Background = URLNP.Background || function () {
 	function modifyURL(url, selection, selectionStart, interval, direction) {
 		console.log("modifyURL(instance, direction)");
 		console.log("url=" + url + "\nselection=" + selection + "\nselectionStart=" + selectionStart + "\ninterval=" + interval + "\ndirection=" + direction);
-		var x,
-		  firstPartURL = url.substring(0, selectionStart),
-			secondPartURL = url.substring(selectionStart + selectionString.length),
+		var // x,
+		//   firstPartURL = url.substring(0, selectionStart),
+		// 	secondPartURL = url.substring(selectionStart + selectionString.length),
 			selectionInteger = parseInt(selectionString, 10), // Base 10 needed due to bug with parseInt for leading zeros
-			selectionStringLength = selectionString.length,
+		// 	selectionStringLength = selectionString.length,
 			newSelectionStringLength,
 			countZeros = 0,
 			differenceInAmountOfDigits,
 			paddedZeros = "",
-			length,
+		// 	length,
 			i,
 			leadingzeros = false,
 			alphanumeric = false;
@@ -271,18 +251,8 @@ URLNP.Background = URLNP.Background || function () {
 	      // A - Z is 65 - 90
 		    // a - z is 97 - 122
 		     // if () {
-		        
 		     // }
-		     
 		  }
-		  selectionString = direction === "next" ? (selectionInteger + interval).toString() : 
-		                    direction === "prev" ? (selectionInteger - interval).toString() :
-		                    "";
-		// 	if (action === "next") {
-		// 		selectionString = (selectionInteger + interval).toString();
-		// 	} else if (action === "prev") {
-		// 		selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
-		// 	}
 		}
 		// Leading 0s
 		else if (leadingzeros) {
@@ -326,40 +296,34 @@ URLNP.Background = URLNP.Background || function () {
 			// E.g. original = "009" and new = "010" means we need to
 			// remove one of the leading zeros and only pad one zero
 			// instead of two.
-
 			length = countZeros - differenceInAmountOfDigits;
 			for (i = 0; i < length; i++) {
 				paddedZeros += "0";
 			}
-
 			// Pad with zeros.
-
 			selectionString = paddedZeros + selectionString;
 		}
-
 		// Either there are no leading zeros or the user wants them removed.
 		// Therefore, just use selectionInteger instead of the string.
 		// A check on the subtraction of pageValue needs to be done to ensure
 		// that the user cannot decrement below 0 (design decision).
-
 		else {
 		// 	if (action === "next") {
 		// 		selectionString = (selectionInteger + interval).toString();
 		// 	} else if (action === "prev") {
 		// 		selectionString = (selectionInteger - interval >= 0 ? selectionInteger - interval : 0).toString();
 		// 	}
-    selectionString = direction === "next" ? (selectionInteger + interval).toString() : 
-                      direction === "prev" ? (selectionInteger - interval).toString() :
-                      "";
+    selection = direction === "next" ? (selectionInteger + interval).toString() : 
+                direction === "prev" ? (selectionInteger - interval).toString() :
+                "";
+    url = url.substring(0, selectionStart) + selection + url.substring(selectionStart + selection.length);
 		}
-
 		// Update the tab object with the updated url and save it in urlnp.
 		// Also save the "new" selectionString (which was just incremented
 		// or decremented in this function).
-
-		console.log("\t\treturn url:" + firstPartURL + selectionString + secondPartURL);
-		console.log("\t\treturn selectionString:" + selectionString);
-		return {url: firstPartURL + selection + secondPartURL, selection: selection};
+		console.log("\t\treturn url:" + firstPartURL + selection + secondPartURL);
+		console.log("\t\treturn selectionString:" + selection);
+		return {url: url, selection: selection};
 	}
 
   // Return Public Functions
@@ -376,7 +340,6 @@ URLNP.Background = URLNP.Background || function () {
 // TODO: Remove the details.reason === "update" after this release
 chrome.runtime.onInstalled.addListener(function(details) {
   if (details.reason === "install" || details.reason === "update") {
-    console.log("URL Next Plus installed or updated");
     URLNP.Background.initStorage();
     chrome.runtime.openOptionsPage();
   }
@@ -384,12 +347,15 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log("!request.greeting=" + (request && request.greeting ? request.greeting : "Unknown Request"));
+    console.log("!request.greeting=" + request.greeting + " from " + sender.tab.id);
     switch (request.greeting) {
-			case "updateTab": // From popup or content_script (shortcuts.js)
+      case "getInstance":
+        URLNP.Background.getInstance(sender.tab);
+        break;
+			case "updateTab":
 				URLNP.Background.updateTab(request);
 				break;
-			case "quickUpdateTab": // From content_script (shortcuts.js)
+			case "quickUpdateTab":
 				URLNP.Background.quickUpdateTab(request);
 				break;
       default:
@@ -398,6 +364,43 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({});
   }
 );
+
+	// Necessary for the keys/mouse.  When the tab changes the URL due to
+// 	// increment or decrement, we must send another request to add
+// 	// a keyListener to the new URL page.  This function is called by the
+// 	// tab listener chrome.tabs.onUpdated.addListener(updateListeners),
+// 	// in modifyUrliAndUpdateTab.
+//   /**
+//   * TODO
+//   * 
+//   * @param tabId
+//   * @param changeInfo
+//   * @param tab
+//   * @private
+//   */ 
+// 	function updateListeners(tabId, changeInfo, tab) {
+// 		console.log("\tupdateListeners(tabId, changeInfo, tab)");
+// 		if (changeInfo.status === "complete") {
+// 		  var instance = getInstance(tab);
+		  
+//   		if (!urlnp.getEnabled()) { // Forces the listener to be removed on this tab.
+//   			console.log("\t\treturn: nothing because removing listener");
+//   			chrome.tabs.onUpdated.removeListener(arguments.callee);
+//   			return;
+//   		}
+//   		if (tabId !== urlnp.getTab().id) {
+//   			console.log("\t\treturn: nothing because tabId !== urlnp.getTab().id");
+//   			return;
+//   		}
+//   		chrome.storage.sync.get(null, function(items) {
+//   			if (items.keyEnabled) {
+//   				console.log("\t\tadding keyListener");
+//   			//	chrome.tabs.sendMessage(tabId, {greeting: "setKeys", keyNext: items.keyNext, keyPrev: items.keyPrev, keyClear: items.keyClear}, function(response) {});
+//   				chrome.tabs.sendMessage(tabId, {greeting: "addKeyListener"}, function(response){});
+//   			}
+//   		});
+// 		}
+// 	}
 
 
 // 	/**

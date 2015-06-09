@@ -179,7 +179,8 @@ var	    foundNextPriority = 10,
 	};
 }();
 
-document.addEventListener('DOMNodeInserted', URLNP.Links.filterResultInserts);
+// TODO Uncomment this line :
+// document.addEventListener('DOMNodeInserted', URLNP.Links.filterResultInserts);
 
 // chrome.runtime.sendMessage({greeting: "checkIfScanIsEnabled"}, function () {});
 
@@ -196,7 +197,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				sendResponse({});
 				break;
 			default:
-				console.warn("!request:unspecified");
 				sendResponse({});
 				break;
 		}

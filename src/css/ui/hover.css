@@ -244,7 +244,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale;
 }
-.hvr-pop:hover, .hvr-pop:focus, .hvr-pop:active {
+/*.hvr-pop:hover, .hvr-pop:focus, .hvr-pop:active*/ .hvr-pop-click {
   -webkit-animation-name: hvr-pop;
   animation-name: hvr-pop;
   -webkit-animation-duration: 0.3s;
@@ -288,7 +288,7 @@
   -webkit-transition-duration: 0.5s;
   transition-duration: 0.5s;
 }
-.hvr-bounce-out:hover, .hvr-bounce-out:focus, .hvr-bounce-out:active {
+/*.hvr-bounce-out:hover, .hvr-bounce-out:focus, .hvr-bounce-out:active*/ .hvr-bounce-out-click {
   -webkit-transform: scale(0.8);
   transform: scale(0.8);
   -webkit-transition-timing-function: cubic-bezier(0.47, 2.02, 0.31, -0.36);

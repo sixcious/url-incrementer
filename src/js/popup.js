@@ -46,10 +46,10 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#next-input"].addEventListener("click", clickNext, false);
     DOM["#prev-input"].addEventListener("click", clickPrev, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#setup-use-links-input"].addEventListener("click",  function () { toggleView(this); }, false);
-    DOM["#setup-modify-url-input"].addEventListener("click", function () { toggleView(this); }, false);
-    DOM["#setup-use-links-cancel-input"].addEventListener("click", function () { toggleView(this); }, false);
-    DOM["#setup-modify-url-cancel-input"].addEventListener("click", function () { toggleView(this); }, false);
+    DOM["#setup-use-links-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-modify-url-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-use-links-cancel-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-modify-url-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#setup-use-links-accept-input"].addEventListener("click", useLinksAccept, false);
     DOM["#setup-modify-url-accept-input"].addEventListener("click", modifyURLAccept, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
@@ -77,13 +77,11 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickNext() {
     console.log("clickNext()");
     if (instance.enabled) {
-      console.log("\tgoing next");
       URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next");
-        instance = backgroundPage.getInstance(instance.tab);
+        instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
       });
-      //chrome.runtime.sendMessage({greeting: "updateTab", direction: "next", id: instance.tab.id}, function(response) {});
     }
   }
 
@@ -95,7 +93,6 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickPrev() {
     console.log("clickPrev()");
     if (instance.enabled) {
-      console.log("\tgoing prev");
       URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function(response) {});
     }
@@ -109,14 +106,13 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickClear() {
     console.log("clickClear()");
     if (instance.enabled) {
-      console.log("\tclearing instance");
       URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
       setTimeout(function () {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
-        instance.enabled = false;
-        updateImages();
-      });
+          backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
+          instance.enabled = false;
+          updateImages();
+        });
       }, 1000);
     }
   }
@@ -124,12 +120,11 @@ URLNP.Popup = URLNP.Popup || function () {
   /**
    * Toggles the popup between the controls and the setup views.
    * 
-   * @param el the element that triggered the toggle (e.g. the input/button)
    * @private
    */
-  function toggleView(el) {
-    console.log("toggleView(el)");
-    switch (el.id) {
+  function toggleView() {
+    console.log("toggleView()");
+    switch (this.id) {
       case "setup-use-links-input":
         DOM["#controls"].className = "fade-out";
         setTimeout(function () {
@@ -145,7 +140,6 @@ URLNP.Popup = URLNP.Popup || function () {
           DOM["#url-textarea"].focus();
           DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
           //selectURL();
-          console.log("instance.selectionStart=" + instance.selectionStart + " and selection  = " + instance.selection + " and tempSel =" + DOM["#selection-start-input"].value);
         }, 300);
         break;
       case "setup-use-links-accept-input":
@@ -197,10 +191,10 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.mode = "use-links";
         instance.links = "?";
         backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
-        toggleView(DOM["#setup-use-links-accept-input"]);
+        toggleView.call(DOM["#setup-use-links-accept-input"]);
         updateImages();
         if (items.keyEnabled) {
-          console.log("\t\tadding keyListener");
+          console.log("\tadding keyListener");
           chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});
         }
       });
@@ -239,7 +233,7 @@ URLNP.Popup = URLNP.Popup || function () {
           instance.selection = selection;
           instance.selectionStart = selectionStart;
           backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
-          toggleView(DOM["#setup-modify-url-accept-input"]);
+          toggleView.call(DOM["#setup-modify-url-accept-input"]);
           updateImages();
           if (items.keyEnabled) {
             console.log("\t\tadding keyListener");
