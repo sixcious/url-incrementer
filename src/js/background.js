@@ -30,7 +30,8 @@ URLNP.Background = URLNP.Background || function () {
   		  "keyQuickNext": [7, 39],
   		  "keyQuickPrev": [7, 37],
   		  "defaultMode": "use-links",
-  		  "defaultInterval": 1
+  		  "defaultInterval": 1,
+  		  "uiAnimationsEnabled": true
       });
 		});
 	}
@@ -57,8 +58,8 @@ URLNP.Background = URLNP.Background || function () {
     	    tab: tab,
     	    selection: selection.string,
     	    selectionStart: selection.start,
-    	    mode: items ? items.defaultMode : "",
-    	    interval: items ? items.defaultInterval : 0
+    	    mode: items.defaultMode,
+    	    interval: items.defaultInterval
     	  };
     	  instances[tab.id] = instance;
 		  }
@@ -140,20 +141,21 @@ URLNP.Background = URLNP.Background || function () {
   /**
    * TODO
    * 
-   * @param request
+   * @param tab
    * @public
    */ 
-	function quickUpdateTab(request) {
+	function quickUpdateTab(tab) {
 		console.log("\tfunction fastUpdateTab");
 		// TODO get the instance in quick funcitonality setup
-		chrome.tabs.get(instance.tab.id, function(tab) {
-				var	selection = findSelection(tab.url),
-					urlAndSelection = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
-				if (urlAndSelection !== undefined){
- 					chrome.tabs.update(tab.id, {url:urlAndSelection.url});
-				}
-			}
-		);
+		// chrome.tabs.get(instance.tab.id, function(tab) {
+
+		// 	}
+		// );
+		var	selection = findSelection(tab.url),
+			urlAndSelection = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
+		if (urlAndSelection !== undefined){
+ 			chrome.tabs.update(tab.id, {url:urlAndSelection.url});
+		}
 	}
 
   /**
@@ -342,22 +344,26 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log("!request.greeting=" + request.greeting + " from " + sender.tab.id);
+    console.log("!request.greeting \"" + request.greeting + "\" from tab #" + sender.tab.id);
     switch (request.greeting) {
       case "getInstance":
-        URLNP.Background.getInstance(sender.tab);
-        // TODO return this
+        sendResponse({instance: URLNP.Background.getInstance(sender.tab, request.items)});
+        break;
+      case "setInstance":
+        URLNP.Background.setInstance(sender.tab, request.instance);
+        sendResponse({});
         break;
 			case "updateTab":
-				URLNP.Background.updateTab(request);
+				URLNP.Background.updateTab(request.instance, request.direction);
+		    sendResponse({});
 				break;
 			case "quickUpdateTab":
-				URLNP.Background.quickUpdateTab(request);
+				URLNP.Background.quickUpdateTab(sender.tab);
+		    sendResponse({});
 				break;
       default:
         break;
     }
-    sendResponse({});
   }
 );
 

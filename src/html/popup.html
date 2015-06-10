@@ -12,58 +12,53 @@
         <input id="prev-input" class="disabled" type="image" src="../img/popup/prev.png" alt=""/>
         <input id="next-input" class="disabled" type="image" src="../img/popup/next.png" alt=""/>
         <input id="clear-input" class="disabled" type="image" src="../img/popup/clear.png" alt=""/>
-        <input id="setup-use-links-input" class="hvr-wobble-bottom" type="image" src="../img/popup/setup.png" alt=""/>
-        <input id="setup-modify-url-input" class="hvr-wobble-bottom" type="image" src="../img/popup/setup.png" alt=""/>
+        <input id="setup-input" class="hvr-wobble-bottom" type="image" src="../img/popup/setup.png" alt=""/>
       </div>
-      <div id="setup-use-links" class="display-none">
-        <label>Next</label>
-        <input type="text" readonly="readonly" value="http://www.next.com"/>
-        <label>Prev</label>
-        <input type="text" readonly="readonly" value="http://www.prev.com"/>
-        <input id="setup-use-links-accept-input" type="button" value=""/>
-        <input id="setup-use-links-cancel-input" type="button" value=""/>
-      </div>
-      <div id="setup-modify-url" class="display-none">
-        <fieldset>
-        <legend id="url-legend"></legend>
-        <section>
-        <fieldset>
-        <label id="url-label" class="block" for="url-textarea"></label>
-        <textarea id="url-textarea" readonly="readonly"></textarea>
-        </fieldset>
-        </section>
-        <section>
+      <form id="setup" class="display-none">
+        <div id="setup-use-links">
         <fieldset class="inline">
-        <label id="selection-label" class="block" for="selection-input"></label>
-        <input id="selection-input" type="text" readonly="readonly"/>
-        <input id="selection-start-input" type="hidden" value="-1"/> <!-- temp -->
+          <input id="links-radio" type="radio" name="mode" value="use-links"/>
+          <label id="links-legend" for="links-radio">Use Links</label>
         </fieldset>
-        <fieldset class="inline">
-        <label id="interval-label" class="block" for="interval-input"></label>
-        <input id="interval-input" type="number" min="1"/>
-        </fieldset>
-        </section>
-        </fieldset>
-        <input id="setup-modify-url-accept-input" type="button" value=""/>
-        <input id="setup-modify-url-cancel-input" type="button" value=""/>
-      </div>
-<!--      <form id="popup-form" class="hidden">
-      <fieldset>
-      <legend>Setup</legend>
-      <section>
-      <fieldset class="inline">
-      <input id="links-radio" type="radio" name="behavior"/>
-      <label id="links-legend" for="links-radio">Use Links</label>
-      </fieldset>
-      <fieldset class="inline">
-      <input id="url-radio" type="radio" name="behavior"/>
-      <label id="modify-url-label" for="url-radio">Modify URL</label>
-      </fieldset>
-      </section>
-      </fieldset>
-      <div id="popup-form-buttons">
-      </div>
-      </form>-->
+          <label>Next
+          <input type="text" readonly="readonly" value="http://www.next.com"/>
+          </label>
+          <br/>
+          <label>Prev
+          <input type="text" readonly="readonly" value="http://www.prev.com"/>
+          </label>
+        </div>
+        <div id="setup-modify-url">
+          <fieldset class="inline">
+            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
+            <label id="modify-url-label" for="url-radio">Modify URL</label>
+          </fieldset>
+          <fieldset>
+            <legend id="url-legend"></legend>
+            <section>
+            <fieldset>
+              <label id="url-label" class="block" for="url-textarea"></label>
+              <textarea id="url-textarea" readonly="readonly"></textarea>
+            </fieldset>
+            </section>
+            <section>
+            <fieldset class="inline">
+              <label id="selection-label" class="block" for="selection-input"></label>
+              <input id="selection-input" type="text" readonly="readonly"/>
+              <input id="selection-start-input" type="hidden" value="-1"/> <!-- temp -->
+            </fieldset>
+            <fieldset class="inline">
+              <label id="interval-label" class="block" for="interval-input"></label>
+              <input id="interval-input" type="number" min="1"/>
+            </fieldset>
+            </section>
+          </fieldset>
+          <fieldset id="setup-buttons">
+            <input id="setup-accept-input" type="button" value=""/>
+            <input id="setup-cancel-input" type="button" value=""/>
+          </fieldset>
+        </div>
+      </form>
     </div>
     <script type="text/javascript" src="../js/ui/ui.js"></script>
     <script type="text/javascript" src="../js/popup.js"></script>

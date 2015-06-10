@@ -10,7 +10,8 @@ console.log("URLNP.Popup");
 var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
-  var instance, // Caches this tab's instance
+  var instance, // tab's instance cache
+      itemsc,   // storage items cache
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
@@ -33,37 +34,33 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#next-input"].title = chrome.i18n.getMessage("popup_next_input");
     DOM["#prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
-    DOM["#setup-use-links-input"].title = chrome.i18n.getMessage("popup_setup_input");
-    DOM["#setup-modify-url-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    DOM["#setup-input"].title = chrome.i18n.getMessage("popup_setup_input");
     DOM["#url-label"].innerText = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
-    DOM["#setup-use-links-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["#setup-use-links-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
-    DOM["#setup-modify-url-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["#setup-modify-url-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
+    DOM["#setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["#setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
     DOM["#next-input"].addEventListener("click", clickNext, false);
     DOM["#prev-input"].addEventListener("click", clickPrev, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#setup-use-links-input"].addEventListener("click", toggleView, false);
-    DOM["#setup-modify-url-input"].addEventListener("click", toggleView, false);
-    DOM["#setup-use-links-cancel-input"].addEventListener("click", toggleView, false);
-    DOM["#setup-modify-url-cancel-input"].addEventListener("click", toggleView, false);
-    DOM["#setup-use-links-accept-input"].addEventListener("click", useLinksAccept, false);
-    DOM["#setup-modify-url-accept-input"].addEventListener("click", modifyURLAccept, false);
+    DOM["#setup-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-cancel-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-accept-input"].addEventListener("click", setup, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
-    // Get this active tab's instance and update images
+    // Get this active tab's instance and update controls
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(items) {
+          itemsc = items;
           instance = backgroundPage.URLNP.Background.getInstance(tabs[0], items);
-          DOM["#url-textarea"].value = instance.tab.url; // tab.url
+          DOM["#setup"].mode.value = instance.mode;
+          DOM["#url-textarea"].value = instance.tab.url; // or tab.url
           DOM["#selection-input"].value = instance.selection;
           DOM["#selection-start-input"].value = instance.selectionStart;
           DOM["#interval-input"].value = instance.interval;
-          updateImages();
+          updateControls();
         });
       });
     });
@@ -94,7 +91,10 @@ URLNP.Popup = URLNP.Popup || function () {
     console.log("clickPrev()");
     if (instance.enabled) {
       URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
-      chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev", id: instance.tab.id}, function(response) {});
+      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        backgroundPage.URLNP.Background.updateTab(instance, "prev");
+        instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
+      });
     }
   }
 
@@ -107,13 +107,13 @@ URLNP.Popup = URLNP.Popup || function () {
     console.log("clickClear()");
     if (instance.enabled) {
       URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
-      setTimeout(function () {
-        chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
+      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
+        setTimeout(function () {
           instance.enabled = false;
-          updateImages();
-        });
-      }, 1000);
+          updateControls();
+        }, 1000);
+      });
     }
   }
 
@@ -125,39 +125,23 @@ URLNP.Popup = URLNP.Popup || function () {
   function toggleView() {
     console.log("toggleView()");
     switch (this.id) {
-      case "setup-use-links-input":
+      case "setup-input": // Case 1: Hide controls, show setup
         DOM["#controls"].className = "fade-out";
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
-          DOM["#setup-use-links"].className = "display-block fade-in";
-        }, 300);
-        break;
-      case "setup-modify-url-input":
-        DOM["#controls"].className = "fade-out";
-        setTimeout(function () {
-          DOM["#controls"].classList.add("display-none");
-          DOM["#setup-modify-url"].className = "display-block fade-in";
+          DOM["#setup"].className = "display-block fade-in";
           DOM["#url-textarea"].focus();
           DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
           //selectURL();
         }, 300);
         break;
-      case "setup-use-links-accept-input":
-      case "setup-use-links-cancel-input":
-        DOM["#setup-use-links"].className = "fade-out";
+      case "setup-accept-input": // Case2: Hide setup, show controls
+      case "setup-cancel-input":
+        DOM["#setup"].className = "fade-out";
         setTimeout(function () {
-          DOM["#setup-use-links"].classList.add("display-none");
+          DOM["#setup"].classList.add("display-none");
           DOM["#controls"].className = "display-block fade-in";
-          updateImages(); // Needed to reset hover.css click effect
-        }, 300);
-        break;
-      case "setup-modify-url-accept-input":
-      case "setup-modify-url-cancel-input":
-        DOM["#setup-modify-url"].className = "fade-out";
-        setTimeout(function () {
-          DOM["#setup-modify-url"].classList.add("display-none");
-          DOM["#controls"].className = "display-block fade-in";
-          updateImages(); // Needed to reset hover.css click effect
+          updateControls(); // Needed to reset hover.css click effect
         }, 300);
         break;
       default:
@@ -166,12 +150,12 @@ URLNP.Popup = URLNP.Popup || function () {
   }
 
   /**
-   * Updates the images' class based on whether the instance is enabled.
+   * Updates the control images based on whether the instance is enabled.
    * 
    * @private
    */
-  function updateImages() {
-    console.log("updateImages()");
+  function updateControls() {
+    console.log("updateControls()");
     var className = instance.enabled ? "hvr-grow hvr-wobble-to-top-right" : "disabled";
     DOM["#next-input"].className = className;
     DOM["#prev-input"].className = className;
@@ -179,38 +163,16 @@ URLNP.Popup = URLNP.Popup || function () {
   }
 
   /**
-   * TODO
+   * Sets up the instance. First validates user input for any errors, then saves
+   * and enables the instance, and then toggles the view back to the controls.
    * 
    * @private
    */
-  function useLinksAccept() {
-    console.log("useLinksAccept()");
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      chrome.storage.sync.get(null, function(items) {
-        instance.enabled = true;
-        instance.mode = "use-links";
-        instance.links = "?";
-        backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
-        toggleView.call(DOM["#setup-use-links-accept-input"]);
-        updateImages();
-        if (items.keyEnabled) {
-          console.log("\tadding keyListener");
-          chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});
-        }
-      });
-    });
-  }
-
-  /**
-   * TODO
-   * Submits the form. First validates user input for any errors then saves the
-   * values to the instance and toggles the view back to the controls.
-   * 
-   * @private
-   */
-  function modifyURLAccept() {
-    console.log("modifyURLAccept()");
-    var selection = DOM["#selection-input"].value,
+  function setup() {
+    console.log("setup()");
+    //document.querySelector('input[name=genderS]:checked').value
+    var mode = DOM["#setup"].mode.value,
+        selection = DOM["#selection-input"].value,
         selectionStart = DOM["#selection-start-input"].value,
         interval = DOM["#interval-input"].value,
         errors = [
@@ -220,21 +182,22 @@ URLNP.Popup = URLNP.Popup || function () {
           interval === "0" ? chrome.i18n.getMessage("popup_interval_0_error") : "",
           parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : ""
         ];
+        console.log("mode is " + mode);
     // We can tell there was an error if any of the array slots weren't empty
-    if (errors[0] !== "" || errors[1] !== "" || errors[2] !== "" || errors[3] !== "") {
+    if (mode === "modify-url" && (errors[0] !== "" || errors[1] !== "" || errors[2] !== "" || errors[3] !== "")) {
       console.log("\terrors:" + errors);
       URLNP.UI.generateAlert(errors);
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(items) {
           instance.enabled = true;
-          instance.mode = "modify-url";
+          instance.mode = mode;
           instance.interval = interval;
           instance.selection = selection;
           instance.selectionStart = selectionStart;
           backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
-          toggleView.call(DOM["#setup-modify-url-accept-input"]);
-          updateImages();
+          toggleView.call(DOM["#setup-accept-input"]);
+          updateControls();
           if (items.keyEnabled) {
             console.log("\t\tadding keyListener");
             chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});

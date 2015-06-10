@@ -182,6 +182,27 @@ var	    foundNextPriority = 10,
 // TODO Uncomment this line :
 // document.addEventListener('DOMNodeInserted', URLNP.Links.filterResultInserts);
 
+// actually usemutation observers intsead of mutation events!
+// see https://developers.google.com/web/updates/2012/02/Detect-DOM-changes-with-Mutation-Observers?hl=en
+/*
+Here’s an example of listing inserted nodes with Mutation Events:
+var insertedNodes = [];
+document.addEventListener("DOMNodeInserted", function(e) {
+  insertedNodes.push(e.target);
+}, false);
+console.log(insertedNodes);
+And here’s how it looks with Mutation Observers:
+var insertedNodes = [];
+var observer = new MutationObserver(function(mutations) {
+ mutations.forEach(function(mutation) {
+   for (var i = 0; i < mutation.addedNodes.length; i++)
+     insertedNodes.push(mutation.addedNodes[i]);
+ })
+});
+observer.observe(document, { childList: true });
+console.log(insertedNodes);
+*/
+
 // chrome.runtime.sendMessage({greeting: "checkIfScanIsEnabled"}, function () {});
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

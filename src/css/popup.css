@@ -4,7 +4,7 @@
 @import url("ui/ui.css");
 @import url("ui/hover.css");
 
-/* Initial popup body background color and window size (for 16px images). */
+/* Popup properties */
 
 html {
   height: auto; /* override chromium/chrome-shared.css */
@@ -24,21 +24,16 @@ body {
 }
 
 #controls {
-	width: 102px; /*width: 82px;*/ /* Use 114 for 24px images.*/
-	/*height: 16px;*/ /* Use 24 for 24px images. */
+	width: 82px;
 }
 
-#setup-use-links {
+#setup {
   width: 400px;
-/*  height: 300px;*/
 }
 
-#setup-modify-url {
-  width: 600px;
-/*  height: 400px;*/
-}
+/* Controls properties */
 
-#controls input {
+input[type="image"] {
   display: inline-block;
   vertical-align: middle;
 }
@@ -47,32 +42,19 @@ input[type="image"]:focus {
   outline: none;
 }
 
-/* Gives 2px right spacing to images set inline (except for the last). */
-
 input[type="image"]:not(:last-child) {
 	margin-right: 2px;
 }
-
-/* Disabled class for images, set by updateImages(). */
 
 input[type="image"].disabled {
 	opacity: 0.2;
 }
 
-/* Enabled class for images, set by updateImages(). */
-
 input[type="image"]:not(.disabled) {
 	opacity: 1.0;
 }
 
-
-/* Textarea properties. */
-
-textarea {
-	width: 412px;
-}
-
-/* Input properties. */
+/* Setup properties */
 
 input[type="text"] {
 	width: 206px;
@@ -82,31 +64,30 @@ input[type="number"] {
 	width: 52px;
 }
 
-
-
 textarea {
+	width: 412px;
 	letter-spacing: -1px;
 	font: 14px/1 Arial, sans-serif;
 	font-weight: normal;
 	color: #777777;
 }
 
-/*textarea::selection {*/
-/*  color: #FFFFFF;*/
-/*  background: #ffb7b7;*/
-/*}*/
+fieldset {
+  border: none;
+}
 
-/* Form buttons. */
+legend {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+	font-size:  16px;
+}
 
-#popup-form-buttons {
+#setup-buttons {
 	display: block;
 	text-align: center;
 	position: relative;
 }
 
-
-
-
+/* Toggle View Animation / CSS TODO: make fade-out-max-height work better */
 
 @keyframes fade-in {
   from { opacity: 0; transform: scale(0); }
@@ -143,16 +124,3 @@ textarea {
 .display-none {
   display: none;
 }
-
-
-/*.inline {
-  display: inline;
-}
-
-.block {
-  display: block;
-}
-
-.shadow {
-	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-}*/

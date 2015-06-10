@@ -38,7 +38,7 @@ URLNP.UI = URLNP.UI || function () {
   }
 
   /**
-   * Applies a Hover.css effect on click events to DOM elements.
+   * Applies a Hover.css effect to DOM elements on click events.
    * 
    * Hover.css is created by Ian Lunn.
    * 

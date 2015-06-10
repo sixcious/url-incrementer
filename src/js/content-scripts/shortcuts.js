@@ -15,18 +15,16 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
       FLAG_KEY_SHIFT = 0x4, // 0100
       FLAG_KEY_META = 0x8, // 1000
       items = {};
-      // keys = []; // keys [0:Next, 1:Prev, 2:Clear, 3:QuickNext, 4:QuickPrev]
 
   /**
-   * Sets the items from storage. This function is needed because the keys var
+   * Sets the items from storage. This function is needed because the items var
    * is private and cannot be set outside.
    * 
-   * @param items the storage items
+   * @param value the storage items
    * @public
    */
-  function setItems(items) {
-    //keys = [items.keyNext, items.keyPrev, items.keyClear, items.keyQuickNext, items.keyQuickPrev];
-    this.items = items;
+  function setItems(value) {
+    items = value;
   }
   
   /**
@@ -88,28 +86,35 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
 
 // Cache shortcut keys from storage and check if keys or instance are enabled
 chrome.storage.sync.get(null, function(items) {
+  console.log("HELLO?? tring to get storage sync");
   URLNP.Shortcuts.setItems(items);
   if (items.keyQuickEnabled) {
-    document.addEventListener("keydown", URLNP.Shortcuts.keyQuickListener, false);
+    console.log("adding keyquicklistener");
+    document.addEventListener("keyup", URLNP.Shortcuts.keyQuickListener, false);
   }
   if (items.keyEnabled) {
-    chrome.runtime.sendMessage({greeting: "getInstance", function(response) {
+    console.log("keys are enabled...");
+    chrome.runtime.sendMessage({greeting: "getInstance", items: items, function(response) {
+      console.log("sending message to getinstance instance=" + response.instance);
       if (response.instance.enabled) {
-        document.addEventListener("keydown", URLNP.Shortcuts.keyListener, false);
+        console.log("instance enabled adding keylistener");
+        document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
       }
     }}); 
   }
 });
+
+//document.addEventListener("DOMContentLoaded", URLNP.Shortcuts);
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log("!request.greeting=" + request.greeting);
     switch (request.greeting) {
       case "addKeyListener":
-        document.addEventListener("keydown", URLNP.Shortcuts.keyListener, false);
+        document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
         break;
       case "removeKeyListener":
-        document.removeEventListener("keydown", URLNP.Shortcuts.keyListener, false);
+        document.removeEventListener("keyup", URLNP.Shortcuts.keyListener, false);
         break;
       default:
         break;
