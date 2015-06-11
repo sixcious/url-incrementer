@@ -41,22 +41,22 @@
 
 	"popup_url_legend": {
 		"message": "Select the part of the URL to modify",
-		"description": "Form legend for URL fieldset."
+		"description": "TODO"
 	},
 
 	"popup_url_label": {
 		"message": "URL",
-		"description": "Form label for URL textarea."
+		"description": "URL textarea label"
 	},
 
 	"popup_selection_label": {
 		"message": "Selection",
-		"description": "Form label for Selection input text."
+		"description": "Selection input text label"
 	},
 
 	"popup_options_legend": {
 		"message": "Options",
-		"description": "Form legend for Options fieldset."
+		"description": "TODO"
 	},
 
 	"popup_interval_label": {
@@ -66,39 +66,49 @@
 
 	"popup_accept_input": {
 		"message": "Accept",
-		"description": "Form accept button."
+		"description": "Setup accept button."
 	},
 
 	"popup_cancel_input": {
 		"message": "Cancel",
-		"description": "Form cancel button."
+		"description": "Setup cancel button."
 	},
 
 	"popup_selection_blank_error": {
 		"message": "Selection can't be blank",
-		"description": "Form error message if user does not select a part of the URL."
+		"description": "Setup error message if the selection is blank."
+	},
+
+	"popup_selection_notalphanumeric_error": {
+		"message": "Selection can only contain alphanumeric characters",
+		"description": "Setup error message if the selection is not alphanumeric."
 	},
 
 	"popup_selection_notinurl_error": {
 		"message": "Selection must be a part of the URL",
-		"description": "Form error message if user is somehow able to select something that isn't part of the URL."
+		"description": "Setup error message if the selection is not part of the URL."
+	},
+
+	"popup_selectionstart_invalid_error": {
+		"message": "TODO",
+		"description": "TODO"
 	},
 
 	"popup_interval_blank_error": {
 		"message": "Interval can't be blank",
-		"description": "Form error message if user does not enter a number for Increment."
-	},
-	
-	"popup_interval_negative_error": {
-		"message": "Interval can't be a negative number",
-		"description": "TODO"
+		"description": "Setup error message if the interval is blank."
 	},
 
 	"popup_interval_0_error": {
 		"message": "Interval can't be 0",
-		"description": "Form error message if user tries to enter zero for Increment."
+		"description": "Setup error message if the interval is 0."
 	},
-	
+
+	"popup_interval_negative_error": {
+		"message": "Interval can't be a negative number",
+		"description": "Setup error message if the interval is negative."
+	},
+
 	"options_shortcut_keys_h3": {
 		"message": "Shortcut Keys",
 		"description": "The options page's shortcuts keys heading."

@@ -177,10 +177,12 @@ URLNP.Popup = URLNP.Popup || function () {
         interval = DOM["#interval-input"].value,
         errors = [
           selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") : "",
+          !/^[a-z0-9]+$/i.exec(selection) ? chrome.i18n.getMessage("popup_selection_notalphanumeric_error") : "",
           instance.tab.url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") : "",
+          selectionStart < 0 ? chrome.i18n.getMessage("popup_selectionstart_invalid_error") : "",
           interval === "" ? chrome.i18n.getMessage("popup_interval_blank_error") : "",
           interval === "0" ? chrome.i18n.getMessage("popup_interval_0_error") : "",
-          parseInt(interval, 10) < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : ""
+          +interval < 0 ? chrome.i18n.getMessage("popup_interval_negative_error") : ""
         ];
         console.log("mode is " + mode);
     // We can tell there was an error if any of the array slots weren't empty

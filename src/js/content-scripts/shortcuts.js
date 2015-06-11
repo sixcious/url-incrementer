@@ -28,41 +28,43 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
   }
   
   /**
-   * A keydown event listener for regular keyboard shortcuts.
-   * Listens for next, prev, and clear keyboard shortcuts.
-   * This listener is added after the instance is enabled (on the popup).
+   * A key event listener for regular keyboard shortcuts.
    * 
-   * @param event the keydown event
+   * Listens for next, prev, and clear keyboard shortcuts.
+   * This listener is added after discovering the tab's instance is enabled.
+   * 
+   * @param event the key event
    * @public
    */
   function keyListener(event) {
     console.log("keyListener(event)");
-    if (keyPressed(event, items.keyNext)) { console.log("\tpressed next key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
-    else if (keyPressed(event, items.keyPrev)) { console.log("\tpressed prev key"); chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
+    if (keyPressed(event, items.keyNext)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
+    else if (keyPressed(event, items.keyPrev)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
     else if (keyPressed(event, items.keyClear)) { console.log("\tpressed clear key"); chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
   }
 
   /**
-   * A keydown event listener for quick keyboard shortcuts.
-   * Listens for quick next and quick prev keyboard shortcuts.
-   * This listener is added if quick keys are enabled in storage (via options).
+   * A key event listener for quick keyboard shortcuts.
    * 
-   * @param event the keydown event
+   * Listens for quick next and quick prev keyboard shortcuts.
+   * This listener is added if quick keys are enabled in storage.
+   * 
+   * @param event the key event
    * @public
    */
   function keyQuickListener(event) {
     console.log("keyQuickListener(event)");
-    if (keyPressed(event, items.keyQuickNext)) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next"}); }
-    else if (keyPressed(event, items.keyQuickPrev)) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev"}); }
+    if (keyPressed(event, items.keyQuickNext)) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next", items: items}); }
+    else if (keyPressed(event, items.keyQuickPrev)) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev", items: items}); }
   }
 
   /**
    * Checks if the key was pressed by comparing the event against the flags 
    * using bitwise operators and checking if the keyCode matches.
    * 
-   * @param event the keydown event
+   * @param event the key event
    * @param key the key to check
-   * @returns true if the keydown event (press) matches the key, false otherwise
+   * @returns true if the key event matches the key, false otherwise
    * @private
    */
   function keyPressed(event, key) {
@@ -86,25 +88,18 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
 
 // Cache shortcut keys from storage and check if keys or instance are enabled
 chrome.storage.sync.get(null, function(items) {
-  console.log("HELLO?? tring to get storage sync");
   URLNP.Shortcuts.setItems(items);
   if (items.keyQuickEnabled) {
-    console.log("adding keyquicklistener");
     document.addEventListener("keyup", URLNP.Shortcuts.keyQuickListener, false);
   }
   if (items.keyEnabled) {
-    console.log("keys are enabled...");
-    chrome.runtime.sendMessage({greeting: "getInstance", items: items, function(response) {
-      console.log("sending message to getinstance instance=" + response.instance);
+    chrome.runtime.sendMessage({greeting: "getInstance", items: items}, function(response) {
       if (response.instance.enabled) {
-        console.log("instance enabled adding keylistener");
         document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
       }
-    }}); 
+    }); 
   }
 });
-
-//document.addEventListener("DOMContentLoaded", URLNP.Shortcuts);
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

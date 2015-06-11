@@ -140,10 +140,10 @@ URLNP.Options = URLNP.Options || function () {
   }
 
   /**
-   * Sets the key that was pressed on a keydown event. This is needed shortly
-   * after to write the key to the input value and to save the key to storage.
+   * Sets the key that was pressed on a key event. This is needed shortly after
+   * to write the key to the input value and to save the key to storage.
    * 
-   * @param event the keydown event fired
+   * @param event the key event fired
    * @private
    */
   function setKey(event) {
