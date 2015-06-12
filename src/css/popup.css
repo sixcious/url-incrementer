@@ -57,7 +57,7 @@ input[type="image"]:not(.disabled) {
 /* Setup properties */
 
 input[type="text"] {
-	width: 206px;
+	width: 200px;
 }
 
 input[type="number"] {

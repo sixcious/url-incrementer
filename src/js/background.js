@@ -48,19 +48,25 @@ URLNP.Background = URLNP.Background || function () {
 	function getInstance(tab, items) {
 		console.log("getInstance(tab, items)");
 		var instance,
-		    selection;
+		    jselection;
 		if (tab) {
 		  instance = instances[tab.id];
-		  if (!instance /*|| instance.tab.url !== tab.url*/) { // In case navigate away
-		    selection = findSelection(tab.url);
-        instance = {
-    	    enabled: false,
-    	    tab: tab,
-    	    selection: selection.string,
-    	    selectionStart: selection.start,
-    	    mode: items.defaultMode,
-    	    interval: items.defaultInterval
-    	  };
+		  if (!instance || instance.tab.url !== tab.url) {
+		    jselection = findSelection(tab.url);
+		    if (!instance) {
+          instance = {
+      	    enabled: false,
+      	    tab: tab,
+      	    selection: jselection.selection,
+      	    selectionStart: jselection.selectionStart,
+      	    mode: items.defaultMode,
+      	    interval: items.defaultInterval
+      	  };
+		    } else if (instance.tab.url !== tab.url) { // In case navigating away
+		      instance.tab = tab;
+		      instance.selection = jselection.selection;
+		      instance.selectionStart = jselection.selectionStart;
+		    }
     	  instances[tab.id] = instance;
 		  }
 		}
@@ -79,61 +85,74 @@ URLNP.Background = URLNP.Background || function () {
 		console.log("setInstance(tab, instance)");
 		if (tab) {
   		instances[tab.id] = instance;
-  		if (!instance || !instance.enabled) {
-    		console.log("\tinstance is not enabled so removing key listener");
+  		if (!instance || !instance.enabled) { // Clear
     		chrome.tabs.sendMessage(tab.id, {greeting: "removeKeyListener"}, function(response) {});
-        //chrome.tabs.onUpdated.removeListener(updateListeners);
   		}
 		}
 	}
 
   /**
-   * TODO
+   * Updates the instance's tab based on the desired direction.
    * 
-   * @param instance  TODO
-   * @param direction TODO
+   * This function updates the tab based on the instance's properties.
+   * 
+   * @param instance  the instance belonging to this tab
+   * @param direction the direction to go
    * @public
    */ 
 	function updateTab(instance, direction) {
 		console.log("updateTab(instance, direction)");
-		var props;
-		if (instance.mode === "use-links") {
-		  // TODO
-		} else if (instance.mode === "modify-url") {
-		  props = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-		  instance.tab.url = props.url2;
-		  instance.selection = props.selection2;
-		  setInstance(instance.tab.id, instance);
+		var jurl;
+		switch (instance.mode) {
+		  case "use-links":
+		    break;
+	    case "modify-url":
+  		  jurl = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+  		  instance.tab.url = jurl.url2;
+  		  instance.selection = jurl.selection2;
+  		  setInstance(instance.tab.id, instance);
+		    break;
+	    default:
+	      break;
 		}
 		chrome.tabs.update(instance.tab.id, {url:instance.tab.url});
 	}
 
   /**
-   * TODO
+   * "Quick" updates the tab based on the desired direction.
    * 
-   * @param tab       TODO
-   * @param direction TODO
-   * @param items     TODO
+   * This function can only be called by quick keyboard shortcuts and uses the
+   * tab and storage items to determine to determine the proper action.
+   * 
+   * @param tab       the tab to update
+   * @param direction the direction to go
+   * @param items     the storage items
    * @public
    */ 
 	function quickUpdateTab(tab, direction, items) {
 		console.log("quickUpdateTab(tab, direction)");
+		var jselection,
+		    jurl;
 		switch (items.defaultMode) {
 		  case "use-links":
 		    break;
 	    case "modify-url":
+    		jselection = findSelection(tab.url);
+    		jurl = modifyURL(tab.url, jselection.selection, jselection.selectionStart, items.defaultInterval, direction);
+    		if (jurl && jurl.url2 && tab.url !== jurl.url2) {
+     			chrome.tabs.update(tab.id, {url:jurl.url2});
+    		}
 	      break;
-		}
-		var	selection = findSelection(tab.url),
-		    props = modifyURL(tab.url, selection.string, selection.start, parseInt(localStorage.defaultInterval), request.action);
-		if (props && props.url && tab.url !== props.url) {
- 			chrome.tabs.update(tab.id, {url:props.url});
+	    default:
+	      break;
 		}
 	}
 
   /**
-   * Finds a selection in the url to modify.First looks for common prefixes
-   * that come before numbers, such as = (equals) and / (slash). Example URLs:
+   * Finds a selection in the url to modify.
+   * 
+   * First looks for common prefixes that come before numbers, such as 
+   * = (equals) and / (slash). Example URLs with prefixes:
    * 
    * http://www.google.com?page=1234
    * http://www.google.com/1234
@@ -141,7 +160,7 @@ URLNP.Background = URLNP.Background || function () {
    * If no prefixes with numbers exist, finds the last number in the url.
    * 
    * @param url the url to find the selection in
-   * @return JSON object {string (selection string), start (selection start)}
+   * @return JSON object {selection, selectionStart}
    * @private
    */ 
 	function findSelection(url) {
@@ -149,9 +168,9 @@ URLNP.Background = URLNP.Background || function () {
 		var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
 		    re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
 		    matches;
-		return (matches = re1.exec(url)) !== null ? {string:matches[1], start:matches.index + 1} :
-           (matches = re2.exec(url)) !== null ? {string:matches[0], start:matches.index} :
-           {string:"", start:-1};
+		return (matches = re1.exec(url)) ? {selection:matches[1], selectionStart:matches.index + 1} :
+           (matches = re2.exec(url)) ? {selection:matches[0], selectionStart:matches.index} :
+           {selection:"", selectionStart:-1};
 	}
 
 	/**

@@ -40,7 +40,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
     console.log("keyListener(event)");
     if (keyPressed(event, items.keyNext)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
     else if (keyPressed(event, items.keyPrev)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
-    else if (keyPressed(event, items.keyClear)) { console.log("\tpressed clear key"); chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
+    else if (keyPressed(event, items.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
   }
 
   /**
@@ -54,8 +54,8 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    */
   function keyQuickListener(event) {
     console.log("keyQuickListener(event)");
-    if (keyPressed(event, items.keyQuickNext)) { console.log("\tpressed quick next key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next", items: items}); }
-    else if (keyPressed(event, items.keyQuickPrev)) { console.log("\tpressed quick prev key"); chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev", items: items}); }
+    if (keyPressed(event, items.keyQuickNext)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next", items: items}); }
+    else if (keyPressed(event, items.keyQuickPrev)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev", items: items}); }
   }
 
   /**

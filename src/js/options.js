@@ -175,7 +175,7 @@ URLNP.Options = URLNP.Options || function () {
       ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl + "  : "") +
       ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift + " : "") +
       ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta + "  : "") +
-      (keyCodeString !== undefined ? keyCodeString : String.fromCharCode(key[1]));
+      (keyCodeString ? keyCodeString : String.fromCharCode(key[1]));
   }
 
   // Return Public Functions
