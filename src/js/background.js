@@ -10,7 +10,7 @@ console.log("URLNP.Background");
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
-  var	instances = []; // Keeps track of the tab instances (TODO: Put in storage)
+  var instances = []; // Keeps track of the tab instances (TODO: Put in storage)
 
   /**
    * Initializes the storage with the default values. The storage is initialized
