@@ -194,9 +194,9 @@ URLNP.Popup = URLNP.Popup || function () {
         chrome.storage.sync.get(null, function(items) {
           instance.enabled = true;
           instance.mode = mode;
-          instance.interval = interval;
+          instance.interval = +interval;
           instance.selection = selection;
-          instance.selectionStart = selectionStart;
+          instance.selectionStart = +selectionStart;
           backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
           toggleView.call(DOM["#setup-accept-input"]);
           updateControls();
