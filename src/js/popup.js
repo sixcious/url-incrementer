@@ -11,7 +11,7 @@ var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
   var instance, // tab's instance cache
-      itemsc,   // storage items cache
+      itemsc,   // storage items cache TODO
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
