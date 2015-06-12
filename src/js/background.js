@@ -3,10 +3,10 @@
 console.log("URLNP.Background");
 
 /**
-* URL Next Plus Background.
-* 
-* Uses the JavaScript Revealing Module Pattern.
-*/
+ * URL Next Plus Background.
+ * 
+ * Uses the JavaScript Revealing Module Pattern.
+ */
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
