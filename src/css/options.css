@@ -20,9 +20,12 @@ input[type="text"] {
 input[type="number"] {
 	width: 52px;
 }
-.italic {
+.font-style-italic {
   font-style: italic;
 }
-.inline {
+.display-inline {
   display: inline;
+}
+p {
+  font-style: italic;
 }

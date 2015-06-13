@@ -11,7 +11,7 @@ var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
   var instance, // tab's instance cache
-      itemsc,   // storage items cache TODO
+      items_,   // storage items cache TODO
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
@@ -53,13 +53,14 @@ URLNP.Popup = URLNP.Popup || function () {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(items) {
-          itemsc = items;
+          items_ = items;
           instance = backgroundPage.URLNP.Background.getInstance(tabs[0], items);
           DOM["#setup"].mode.value = instance.mode;
           DOM["#url-textarea"].value =instance.tab.url; // or tab.url
           DOM["#selection-input"].value = instance.selection;
           DOM["#selection-start-input"].value = instance.selectionStart;
           DOM["#interval-input"].value = instance.interval;
+          DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
           updateControls();
         });
       });
@@ -74,7 +75,9 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickNext() {
     console.log("clickNext()");
     if (instance.enabled) {
-      URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+      if (items_.animationsEnabled) {
+        URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+      }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next");
         instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
@@ -90,7 +93,9 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickPrev() {
     console.log("clickPrev()");
     if (instance.enabled) {
-      URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+      if (items_.animationsEnabled) {
+        URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+      }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev");
         instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
@@ -106,13 +111,13 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickClear() {
     console.log("clickClear()");
     if (instance.enabled) {
-      URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
+      if (items_.animationsEnabled) {
+        URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
+      }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
-        setTimeout(function () {
-          instance.enabled = false;
-          updateControls();
-        }, 1000);
+        instance.enabled = false;
+        updateControls();
       });
     }
   }
@@ -156,7 +161,7 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function updateControls() {
     console.log("updateControls()");
-    var className = instance.enabled ? "hvr-grow hvr-wobble-to-top-right" : "disabled";
+    var className = instance.enabled ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#next-input"].className = className;
     DOM["#prev-input"].className = className;
     DOM["#clear-input"].className = className;

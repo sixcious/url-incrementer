@@ -1,192 +1,158 @@
 {
-	"name": {
-		"message": "URL Next Plus",
-		"description": "Extension name."
-	},
-
-	"description": {
-		"message": "Finds the next URL and lets you + (increment) numbers in a URL",
-		"description": "Extension description."
-	},
-
-	"title": {
-		"message": "URL Next Plus",
-		"description": "Extension title (tool tip)."
-	},
-
-	"popup_next_input": {
-		"message": "Next [+]",
-		"description": "Title (tool tip) for the increment button image when hovered."
-	},
-
-	"popup_prev_input": {
-		"message": "Prev [-]",
-		"description": "Title (tool tip) for the decrement button image when hovered."
-	},
-
-	"popup_clear_input": {
-		"message": "Clear [x]",
-		"description": "Title (tool tip) for the clear button image when hovered."
-	},
-
-	"popup_setup_input": {
-		"message": "Setup",
-		"description": "Title (tool tip) for the setup button image when hovered."
-	},
-	
-	"popup_link_legend": {
-		"message": "Use link=\"rel\"?",
-		"description": "TODO"
-	},
-
-	"popup_url_legend": {
-		"message": "Select the part of the URL to modify",
-		"description": "TODO"
-	},
-
-	"popup_url_label": {
-		"message": "URL",
-		"description": "URL textarea label"
-	},
-
-	"popup_selection_label": {
-		"message": "Selection",
-		"description": "Selection input text label"
-	},
-
-	"popup_options_legend": {
-		"message": "Options",
-		"description": "TODO"
-	},
-
-	"popup_interval_label": {
-		"message": "Interval",
-		"description": "Form label for Increment input number."
-	},
-
-	"popup_accept_input": {
-		"message": "Accept",
-		"description": "Setup accept button."
-	},
-
-	"popup_cancel_input": {
-		"message": "Cancel",
-		"description": "Setup cancel button."
-	},
-
-	"popup_selection_blank_error": {
-		"message": "Selection can't be blank",
-		"description": "Setup error message if the selection is blank."
-	},
-
-	"popup_selection_notalphanumeric_error": {
-		"message": "Selection can only contain alphanumeric characters",
-		"description": "Setup error message if the selection is not alphanumeric."
-	},
-
-	"popup_selection_notinurl_error": {
-		"message": "Selection must be a part of the URL",
-		"description": "Setup error message if the selection is not part of the URL."
-	},
-
-	"popup_selectionstart_invalid_error": {
-		"message": "TODO",
-		"description": "TODO"
-	},
-
-	"popup_interval_blank_error": {
-		"message": "Interval can't be blank",
-		"description": "Setup error message if the interval is blank."
-	},
-
-	"popup_interval_0_error": {
-		"message": "Interval can't be 0",
-		"description": "Setup error message if the interval is 0."
-	},
-
-	"popup_interval_negative_error": {
-		"message": "Interval can't be a negative number",
-		"description": "Setup error message if the interval is negative."
-	},
-
-	"options_shortcut_keys_h3": {
-		"message": "Shortcut Keys",
-		"description": "The options page's shortcuts keys heading."
-	},
-
-	"options_shortcut_keys_enable_label": {
-		"message": "Enable Shortcut Keys",
-		"description": "Label for Shortcut Keys checkbox to enable or disable them."
-	},
-
-	"options_shortcut_keys_quick_enable_label": {
-		"message": "Enable Quick Shortcut Keys",
-		"description": "Quick Shortcut Keys checkbox label."
-	},
-
-	"options_shortcut_keys_p": {
-		"message": "Click on the text boxes and then press the keys you want to assign as shortcuts. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to click the extension icon.",
-		"description": "Shortcut Keys paragraph."
-	},
-	
-	"options_shortcut_keys_next_label": {
-	  "message": "Next (+)",
-  	"description": "Shortcut Key Increment label."
-	},
-
-	"options_shortcut_keys_prev_label": {
-		"message": "Prev (-)",
-		"description": "Shortcut Key Decrement label."
-	},
-
-	"options_shortcut_keys_clear_label": {
-		"message": "Clear",
-		"description": "Shortcut Key Clear label."
-	},
-
-	"options_shortcut_keys_quick_next_label": {
-		"message": "Quick Next (+)",
-		"description": "Shortcut Key Fast Increment label."
-	},
-
-	"options_shortcut_keys_quick_prev_label": {
-		"message": "Quick Prev (-)",
-		"description": "Shortcut Key Fast Decrement label."
-	},
-
-	"options_default_settings_h3": {
-		"message": "Default Settings",
-		"description": "Default Settings sub heading."
-	},
-
-	"options_default_settings_p": {
-		"message": "You can have URL Next Plus act with these defaults each time you use \"Quick\" shortcuts or enter Setup.",
-		"description": ""
-	},
-
-	"options_default_mode_label": {
-		"message": "Mode",
-		"description": ""
-	},
-
-	"options_default_mode_use_links_option": {
-		"message": "Use the next (>) and prev (<) links found on the page",
-		"description": ""
-	},
-	
-	"options_default_mode_modify_url_option": {
-		"message": "Modify the URL and increment (+) or decrement (-)",
-		"description": ""
-	},
-
-	"options_default_interval_label": {
-		"message": "Interval",
-		"description": ""
-	},
-	
-	"options_save_disclaimer": {
-	  "message": "Note: Changes you make are saved upon closing this dialog.",
-	  "description": ""
-	}
-
+  "name": {
+    "message": "URL Next Plus",
+    "description": "Extension name."
+  },
+  "description": {
+    "message": "Finds the next URL and lets you + (increment) numbers in a URL",
+    "description": "Extension description."
+  },
+  "title": {
+    "message": "URL Next Plus",
+    "description": "Extension title (tool tip)."
+  },
+  "popup_next_input": {
+    "message": "Next [+]",
+    "description": "Title (tool tip) for the increment button image when hovered."
+  },
+  "popup_prev_input": {
+    "message": "Prev [-]",
+    "description": "Title (tool tip) for the decrement button image when hovered."
+  },
+  "popup_clear_input": {
+    "message": "Clear [x]",
+    "description": "Title (tool tip) for the clear button image when hovered."
+  },
+  "popup_setup_input": {
+    "message": "Setup",
+    "description": "Title (tool tip) for the setup button image when hovered."
+  },
+  "popup_link_legend": {
+    "message": "Use link=\"rel\"?",
+    "description": "TODO"
+  },
+  "popup_url_legend": {
+    "message": "Select the part of the URL to modify",
+    "description": "TODO"
+  },
+  "popup_url_label": {
+    "message": "URL",
+    "description": "URL textarea label"
+  },
+  "popup_selection_label": {
+    "message": "Selection",
+    "description": "Selection input text label"
+  },
+  "popup_options_legend": {
+    "message": "Options",
+    "description": "TODO"
+  },
+  "popup_interval_label": {
+    "message": "Interval",
+    "description": "Form label for Increment input number."
+  },
+  "popup_accept_input": {
+    "message": "Accept",
+    "description": "Setup accept button."
+  },
+  "popup_cancel_input": {
+    "message": "Cancel",
+    "description": "Setup cancel button."
+  },
+  "popup_selection_blank_error": {
+    "message": "Selection can't be blank",
+    "description": "Setup error message if the selection is blank."
+  },
+  "popup_selection_notalphanumeric_error": {
+    "message": "Selection can only contain alphanumeric characters",
+    "description": "Setup error message if the selection is not alphanumeric."
+  },
+  "popup_selection_notinurl_error": {
+    "message": "Selection must be a part of the URL",
+    "description": "Setup error message if the selection is not part of the URL."
+  },
+  "popup_selectionstart_invalid_error": {
+    "message": "TODO",
+    "description": "TODO"
+  },
+  "popup_interval_blank_error": {
+    "message": "Interval can't be blank",
+    "description": "Setup error message if the interval is blank."
+  },
+  "popup_interval_0_error": {
+    "message": "Interval can't be 0",
+    "description": "Setup error message if the interval is 0."
+  },
+  "popup_interval_negative_error": {
+    "message": "Interval can't be a negative number",
+    "description": "Setup error message if the interval is negative."
+  },
+  "options_shortcut_keys_h3": {
+    "message": "Shortcut Keys",
+    "description": "The options page's shortcuts keys heading."
+  },
+  "options_shortcut_keys_enable_label": {
+    "message": "Enable Shortcut Keys",
+    "description": "Label for Shortcut Keys checkbox to enable or disable them."
+  },
+  "options_shortcut_keys_quick_enable_label": {
+    "message": "Enable Quick Shortcut Keys",
+    "description": "Quick Shortcut Keys checkbox label."
+  },
+  "options_shortcut_keys_p": {
+    "message": "Click on the text boxes and then press the keys you want to assign as shortcuts. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to click the extension icon.",
+    "description": "Shortcut Keys paragraph."
+  },
+  "options_shortcut_keys_next_label": {
+    "message": "Next (+)",
+    "description": "Shortcut Key Increment label."
+  },
+  "options_shortcut_keys_prev_label": {
+    "message": "Prev (-)",
+    "description": "Shortcut Key Decrement label."
+  },
+  "options_shortcut_keys_clear_label": {
+    "message": "Clear",
+    "description": "Shortcut Key Clear label."
+  },
+  "options_shortcut_keys_quick_next_label": {
+    "message": "Quick Next (+)",
+    "description": "Shortcut Key Fast Increment label."
+  },
+  "options_shortcut_keys_quick_prev_label": {
+    "message": "Quick Prev (-)",
+    "description": "Shortcut Key Fast Decrement label."
+  },
+  "options_default_settings_h3": {
+    "message": "Default Settings",
+    "description": "Default Settings sub heading."
+  },
+  "options_default_settings_p": {
+    "message": "You can have URL Next Plus act with these defaults each time you use \"Quick\" shortcuts or enter Setup.",
+    "description": ""
+  },
+  "options_default_mode_label": {
+    "message": "Mode",
+    "description": ""
+  },
+  "options_default_mode_use_links_option": {
+    "message": "Use the next (>) and prev (<) links found on the page",
+    "description": ""
+  },
+  "options_default_mode_modify_url_option": {
+    "message": "Modify the URL and increment (+) or decrement (-)",
+    "description": ""
+  },
+  "options_default_interval_label": {
+    "message": "Interval",
+    "description": ""
+  },
+  "options_animations_enable_label": {
+    "message": "Enable Hover.css (CSS3) Animations",
+    "description": "Label for CSS3 Animations enable checkbox."
+  },
+  "options_save_disclaimer": {
+    "message": "Note: Changes you make are saved upon closing this dialog.",
+    "description": ""
+  }
 }

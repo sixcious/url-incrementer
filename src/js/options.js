@@ -109,6 +109,7 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#default-mode-use-links-option"].innerText = chrome.i18n.getMessage("options_default_mode_use_links_option");
     DOM["#default-mode-modify-url-option"].innerText = chrome.i18n.getMessage("options_default_mode_modify_url_option");
     DOM["#default-interval-label"].innerText = chrome.i18n.getMessage("options_default_interval_label");
+    DOM["#animations-enable-label"].innerText = chrome.i18n.getMessage("options_animations_enable_label");
     DOM["#save-disclaimer"].innerText = chrome.i18n.getMessage("options_save_disclaimer");
     // Add Event Listeners to the DOM elements
     DOM["#key-next-input"].addEventListener("keydown", function () { setKey(event); writeInput(this, key); }, false);
@@ -125,6 +126,7 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#key-quick-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyQuickPrev": key}); }, false);
     DOM["#default-mode-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.options[this.selectedIndex].value}); }, false);
     DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": this.value}); }, false);
+    DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); }, false);
     // Populate values from storage
     chrome.storage.sync.get(null, function(items) {
       DOM["#key-enable-input"].checked = items.keyEnabled;
@@ -136,18 +138,19 @@ URLNP.Options = URLNP.Options || function () {
       writeInput(DOM["#key-quick-prev-input"], items.keyQuickPrev);
       DOM["#default-mode-select"].value = items.defaultMode;
       DOM["#default-interval-input"].value = items.defaultInterval;
+      DOM["#animations-enable-input"].checked = items.animationsEnabled;
     });
   }
 
   /**
-   * Sets the key that was pressed on a key event. This is needed shortly after
+   * Sets the key that was pressed on a key event. This is neseded shortly after
    * to write the key to the input value and to save the key to storage.
    * 
    * @param event the key event fired
    * @private
    */
   function setKey(event) {
-    console.log("setKey(event)");
+    console.log("setKey(event=" + event + ")");
     // Set key [0] as the event modifiiers OR'd together and [1] as the key code
     key = [
       (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
@@ -166,7 +169,7 @@ URLNP.Options = URLNP.Options || function () {
    * @private
    */
   function writeInput(input, key) {
-    console.log("writeInput(input, key)");
+    console.log("writeInput(input=" + input + ", key=" + key + ")");
     var keyCodeString = KEY_CODE_STRING_MAP[key[1]];
     // Write the input value based on the key event modifier bits and key code
     // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()

@@ -30,8 +30,9 @@ URLNP.Background = URLNP.Background || function () {
         "keyQuickNext": [7, 39],
         "keyQuickPrev": [7, 37],
         "defaultMode": "use-links",
+        "defaultLinks": "", // TODO
         "defaultInterval": 1,
-        "uiAnimationsEnabled": true
+        "animationsEnabled": true
       });
     });
   }
