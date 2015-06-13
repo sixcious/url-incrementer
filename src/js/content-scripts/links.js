@@ -44,6 +44,7 @@ URLNP.Links = URLNP.Links || function () {
   function parseLinks(elements) {
     console.log("parseElements(elements=" + elements +")");
     var element,
+        attributes,
         attribute,
         i,
         j;
@@ -93,6 +94,7 @@ URLNP.Links = URLNP.Links || function () {
     }
   }
 
+  // Return Public Functions
 	return {
 	  getLinks: getLinks
 	};
