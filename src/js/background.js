@@ -120,14 +120,14 @@ URLNP.Background = URLNP.Background || function () {
       default:
         break;
     }
-    chrome.tabs.update(instance.tab.id, {url:jurl.url2}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
+    chrome.tabs.update(instance.tab.id, {url: jurl.url2}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
   }
 
   /**
    * "Quick" updates the tab based on the desired direction.
    * 
    * This function can only be called by quick keyboard shortcuts and uses the
-   * tab and storage items to determine to determine the proper action.
+   * tab and storage items to determine to determine the action.
    * 
    * @param tab       the tab to update
    * @param direction the direction to go
@@ -145,7 +145,7 @@ URLNP.Background = URLNP.Background || function () {
         jselection = findSelection(tab.url);
         jurl = modifyURL(tab.url, jselection.selection, jselection.selectionStart, items.defaultInterval, direction);
         if (jurl && jurl.url2 && tab.url !== jurl.url2) {
-        chrome.tabs.update(tab.id, {url:jurl.url2});
+        chrome.tabs.update(tab.id, {url: jurl.url2});
         }
         break;
       default:
@@ -173,9 +173,9 @@ URLNP.Background = URLNP.Background || function () {
     var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
         re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         matches;
-    return (matches = re1.exec(url)) ? {selection:matches[1], selectionStart:matches.index + 1} :
-           (matches = re2.exec(url)) ? {selection:matches[0], selectionStart:matches.index} :
-                                       {selection:"", selectionStart:-1};
+    return (matches = re1.exec(url)) ? {selection: matches[1], selectionStart: matches.index + 1} :
+           (matches = re2.exec(url)) ? {selection: matches[0], selectionStart: matches.index} :
+                                       {selection: "", selectionStart: -1};
   }
 
   /**
