@@ -14,17 +14,17 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
       FLAG_KEY_CTRL = 0x2, // 0010
       FLAG_KEY_SHIFT = 0x4, // 0100
       FLAG_KEY_META = 0x8, // 1000
-      items = {};
+      items_ = {}; // storage items cache
 
   /**
-   * Sets the items from storage. This function is needed because the items var
+   * Sets the items from storage. This function is needed because the items_ var
    * is private and cannot be set outside.
    * 
-   * @param value the storage items
+   * @param items the storage items
    * @public
    */
-  function setItems(value) {
-    items = value;
+  function setItems(items) {
+    items_ = items;
   }
   
   /**
@@ -38,9 +38,9 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    */
   function keyListener(event) {
     console.log("keyListener(event)");
-    if (keyPressed(event, items.keyNext)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
-    else if (keyPressed(event, items.keyPrev)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
-    else if (keyPressed(event, items.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
+    if (keyPressed(event, items_.keyNext)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
+    else if (keyPressed(event, items_.keyPrev)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
+    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
   }
 
   /**
@@ -54,8 +54,8 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
    */
   function keyQuickListener(event) {
     console.log("keyQuickListener(event)");
-    if (keyPressed(event, items.keyQuickNext)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next", items: items}); }
-    else if (keyPressed(event, items.keyQuickPrev)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev", items: items}); }
+    if (keyPressed(event, items_.keyQuickNext)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "next", items: items_}); }
+    else if (keyPressed(event, items_.keyQuickPrev)) { chrome.runtime.sendMessage({greeting: "quickUpdateTab", direction: "prev", items: items_}); }
   }
 
   /**
@@ -103,17 +103,16 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log("!request.greeting=" + request.greeting);
-    switch (request.greeting) {
-      case "addKeyListener":
-        document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
-        break;
-      case "removeKeyListener":
-        document.removeEventListener("keyup", URLNP.Shortcuts.keyListener, false);
-        break;
-      default:
-        break;
-    }
-    sendResponse({});
+  console.log("!chrome.runtime.onMessage request.greeting \"" + request.greeting + "\" from tab #" + sender.tab.id);
+  switch (request.greeting) {
+    case "addKeyListener":
+      document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
+      break;
+    case "removeKeyListener":
+      document.removeEventListener("keyup", URLNP.Shortcuts.keyListener, false);
+      break;
+    default:
+      break;
   }
-);
+  sendResponse({});
+});

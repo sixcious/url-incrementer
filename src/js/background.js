@@ -49,22 +49,26 @@ URLNP.Background = URLNP.Background || function () {
   function getInstance(tab, items) {
     console.log("getInstance(tab=" + tab + ", items=" + items + ")");
     var instance,
+        links,
         jselection;
     if (tab) {
       instance = instances[tab.id];
       if (!instance || instance.tab.url !== tab.url) {
         jselection = findSelection(tab.url);
+        chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {links = response;});
         if (!instance) {
           instance = {
           enabled: false,
           tab: tab,
           mode: items.defaultMode,
+          links: links,
           selection: jselection.selection,
           selectionStart: jselection.selectionStart,
           interval: items.defaultInterval
           };
         } else if (instance.tab.url !== tab.url) { // In case navigating away
           instance.tab = tab;
+          instance.links = links;
           instance.selection = jselection.selection;
           instance.selectionStart = jselection.selectionStart;
         }
@@ -244,6 +248,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       sendResponse({});
       break;
     default:
+      sendResponse({});
       break;
   }
 });

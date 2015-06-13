@@ -10,8 +10,8 @@ console.log("URLNP.Popup");
 var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
-  var instance, // tab's instance cache
-      items_,   // storage items cache TODO
+  var instance = {}, // tab's instance cache
+      items_ = {}, // storage items cache
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
