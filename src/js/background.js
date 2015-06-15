@@ -218,7 +218,7 @@ URLNP.Background = URLNP.Background || function () {
   };
 }();
 
-// If first run, initialize localStorage and go to options.html.
+// If first run, initialize storage and go to options
 // TODO: Remove the details.reason === "update" after this release
 chrome.runtime.onInstalled.addListener(function(details) {
   console.log("!chrome.runtime.onInstalled details.reason=" + details.reason);

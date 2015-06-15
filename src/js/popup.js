@@ -54,7 +54,7 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         chrome.storage.sync.get(null, function(items) {
           items_ = items;
-          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], items);
+          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], items_);
           DOM["#setup"].mode.value = instance.mode;
           DOM["#url-textarea"].value =instance.tab.url; // or tab.url
           DOM["#selection-input"].value = instance.selection;
