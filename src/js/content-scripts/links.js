@@ -10,10 +10,7 @@ console.log("URLNP.Links");
 var URLNP = URLNP || {};
 URLNP.Links = URLNP.Links || function () {
 
-  // var next,
-  //     prev;
-  
-  var links = {};
+  var links = {innerHTML: {}, rel: {}};
 
   /**
    * TODO
@@ -22,16 +19,23 @@ URLNP.Links = URLNP.Links || function () {
    */
   function getLinks() {
     console.log("getLinks()");
-    var links = document.getElementsByTagName("link"),
+    var links_ = document.getElementsByTagName("link"),
+        //areas = document.getElementsByTagName("area"),
+        //bases = document.getElementsByTagName("base"),
         anchors = document.links; // All anchor and area elements e.g. documents.getElementsByTagName("a")
-		console.log("\ttotal scanned links:" + links.length);
-		console.log("\ttotal scanned anchors:" + anchors.length);
+		console.log("\ttotal links found:" + links_.length);
+		for (i = 0; i < links_.length; i++) {
+		  console.log("\t" + (i + 1) + ":" + links_[i].rel + " " + links_[i].href);
+		}
+		console.log("\ttotal anchors found:" + anchors.length);
 		for (i = 0; i < anchors.length; i++) {
-		  console.log("\t\t" + (i + 1) + ":" + anchors[i].href);
+		  console.log("\t" + (i + 1) + ":" + anchors[i].href);
 		}
 		console.time("scan");
-	  parseLinks(links);
-	  parseAnchors(anchors);
+	  parseElements(links_);
+	 // parseElements(areas);
+	 // parseElements(bases);
+	  parseElements(anchors);
 		console.timeEnd("scan");
   	return links;
   }
@@ -41,55 +45,37 @@ URLNP.Links = URLNP.Links || function () {
    * 
    * @private
    */
-  function parseLinks(elements) {
+  function parseElements(elements) {
     console.log("parseElements(elements=" + elements +")");
     var element,
         attributes,
         attribute,
+        icache,
+        jcache,
         i,
         j;
-    for (i = 0, element = elements[i], attributes = element.attributes; i < elements.length; i++) {
-      for (j = 0, attribute = attributes[j]; j < attributes.length; j++) {
-        switch (attribute.nodeName.toLowerCase()) {
-          case "rel":
-            switch (attribute.nodeValue.toLowerCase()) {
-              case "next":
-  							links.links.rel.next = element.href;
-                break;
-              case "prev":
-  							links.links.rel.prev = element.href;
-                break;
-              default:
-                break;
-            }
-            break;
-          default:
-            break;
-        }
+    for (i = 0; i < elements.length; i++) {
+      element = elements[i];
+      if (!element.href) {
+        continue;
       }
-    }
-  }
-
-  /**
-   * TODO
-   * 
-   * @private
-   */
-  function parseAnchors(elements) {
-    console.log("parseAnchorElements(elements=" + elements + ")");
-    var element,
-        i,
-        j;
-    for (i = 0, element = elements[i]; i < elements.length; i++) {
-      switch (element.innerHTML.toLowerCase()) {
-        case "next":
-          links.anchors.next = element.href;
-          break;
-        case "prev":
-          links.anchors.prev = element.href;
-          break;
-        default:
-          break;
+      icache = element.innerHTML.toLowerCase();
+      if (icache.indexOf("next") !== -1) {
+        links.innerHTML.next = element.href;
+      } else if (icache.indexOf("prev") !== -1) {
+        links.innerHTML.prev = element.href;
+      }
+      attributes = element.attributes;
+      for (j = 0; j < attributes.length; j++) {
+        attribute = attributes[j];
+        jcache = attribute.nodeName.toLowerCase();
+        if (jcache === "rel") {
+          if (attribute.nodeValue.toLowerCase() === "next") {
+					  links.rel.next = element.href;
+          } else if (attribute.nodeValue.toLowerCase() === "prev") {
+					  links.rel.prev = element.href;
+          }
+        }
       }
     }
   }
@@ -102,16 +88,41 @@ URLNP.Links = URLNP.Links || function () {
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("!chrome.runtime.onMessage request.greeting \"" + request.greeting + "\" from tab #" + sender.tab.id);
+  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.id);
   switch (request.greeting) {
 		case "getLinks":
-      sendResponse({links: URLNP.Links.getLinks()});
+		  console.log("getting dem links...");
+      sendResponse({somethingCool: URLNP.Links.getLinks()});
 			break;
     default:
       sendResponse({});
       break;
   }
+  return true;
 });
+
+
+
+  /**
+   * TODO
+   * 
+   * @private
+   */
+  // function parseAnchors(elements) {
+  //   console.log("parseAnchorElements(elements=" + elements + ")");
+  //   var element,
+  //       cache,
+  //       i,
+  //       j;
+  //   for (i = 0, element = elements[i]; i < elements.length; i++) {
+  //     cache = element.innerHTML.toLowerCase();
+  //     if (cache.indexOf("next") !== -1) {
+  //       links.anchors.next = element.href;
+  //     } else if (cache.indexOf("prev") !== -1) {
+  //       links.anchors.prev = element.href;
+  //     }
+  //   }
+  // }
 
 // TODO Uncomment this line :
 // document.addEventListener('DOMNodeInserted', URLNP.Links.filterResultInserts);
@@ -138,6 +149,9 @@ console.log(insertedNodes);
 */
 
 
+
+  // var next,
+  //     prev;
 /*
 
 // Next:  next, forward

@@ -74,6 +74,16 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function clickNext() {
     console.log("clickNext()");
+  chrome.tabs.sendMessage(instance.tab.id, {greeting: "getLinks"}, function(response) {
+    console.log("HeLLO??? response..!!!");
+    if (response) {
+      console.log("gotta response:" + response);
+    }
+    if (response.links) {
+      console.log("gotta response:" + response.somethingCool);
+      console.log("rel.next url in links:" +response.links.rel.next);
+    }
+  });
     if (instance.enabled) {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");

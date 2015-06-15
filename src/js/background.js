@@ -53,26 +53,35 @@ URLNP.Background = URLNP.Background || function () {
         jselection;
     if (tab) {
       instance = instances[tab.id];
-      if (!instance || instance.tab.url !== tab.url) {
+      if (!instance || instance.tab !== tab) {
         jselection = findSelection(tab.url);
-        chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {links = response;});
-        if (!instance) {
-          instance = {
-          enabled: false,
-          tab: tab,
-          mode: items.defaultMode,
-          links: links,
-          selection: jselection.selection,
-          selectionStart: jselection.selectionStart,
-          interval: items.defaultInterval
-          };
-        } else if (instance.tab.url !== tab.url) { // In case navigating away
-          instance.tab = tab;
-          instance.links = links;
-          instance.selection = jselection.selection;
-          instance.selectionStart = jselection.selectionStart;
-        }
-        instances[tab.id] = instance;
+        chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {
+          if (response) {
+          console.log(response);
+          }
+          if (response.links) {
+            links = response.links;
+            console.log("setting response.links!");
+          }
+          if (!instance) {
+            instance = {
+              enabled: false,
+              tab: tab,
+              mode: items.defaultMode,
+              links: links,
+              selection: jselection.selection,
+              selectionStart: jselection.selectionStart,
+              interval: items.defaultInterval
+            };
+          } else if (instance.tab !== tab) { // In case navigating away
+            instance.tab = tab;
+            instance.links = links;
+            instance.selection = jselection.selection;
+            instance.selectionStart = jselection.selectionStart;
+          }
+          instances[tab.id] = instance;
+        });
+
       }
     }
     return instance;
@@ -116,11 +125,11 @@ URLNP.Background = URLNP.Background || function () {
         //instance.tab.url = jurl.url2;
         instance.selection = jurl.selection2;
         // setInstance(instance.tab.id, instance);
+        chrome.tabs.update(instance.tab.id, {url: jurl.url2}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
         break;
       default:
         break;
     }
-    chrome.tabs.update(instance.tab.id, {url: jurl.url2}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
   }
 
   /**
@@ -145,7 +154,7 @@ URLNP.Background = URLNP.Background || function () {
         jselection = findSelection(tab.url);
         jurl = modifyURL(tab.url, jselection.selection, jselection.selectionStart, items.defaultInterval, direction);
         if (jurl && jurl.url2 && tab.url !== jurl.url2) {
-        chrome.tabs.update(tab.id, {url: jurl.url2});
+          chrome.tabs.update(tab.id, {url: jurl.url2});
         }
         break;
       default:

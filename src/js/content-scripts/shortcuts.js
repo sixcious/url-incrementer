@@ -103,7 +103,7 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.runtime.sendMessage
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("!chrome.runtime.onMessage request.greeting \"" + request.greeting + "\" from tab #" + sender.tab.id);
+  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.id);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
