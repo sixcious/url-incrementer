@@ -11,24 +11,24 @@ var URLNP = URLNP || {};
 URLNP.UI = URLNP.UI || function () {
 
   /**
-   * Generates a popup alert.
+   * Generates a popup with messages.
    * 
    * This function is derived from the sample Google extension, Proxy Settings,
    * by Mike West.
    * 
-   * @param msg the messages array to display, line by line
+   * @param messages the messages array to display, line by line
    * @public
    */
-  function generateAlert(msg) {
-    console.log("generateAlert(msg)");
+  function generatePopup(messages) {
+    console.log("generatePopup(messages)");
     var div = document.createElement("div"),
         ul = document.createElement("ul"),
         li,
         i;
     div.classList.add("overlay");
-    for (i = 0; i < msg.length; i++) {
+    for (i = 0; i < messages.length; i++) {
       li = document.createElement("li");
-      li.appendChild(document.createTextNode(msg[i]));
+      li.appendChild(document.createTextNode(messages[i]));
       ul.appendChild(li);
     }
     div.appendChild(ul);
@@ -43,7 +43,7 @@ URLNP.UI = URLNP.UI || function () {
    * Hover.css is created by Ian Lunn.
    * 
    * @param el     the DOM element to apply the effect to
-   * @param effect the Hover.css effect (String name) to use
+   * @param effect the Hover.css effect (class name) to use
    * @public
    */
   function clickHoverCss(el, effect) {
@@ -55,7 +55,7 @@ URLNP.UI = URLNP.UI || function () {
 
   // Return Public Functions
   return {
-    generateAlert: generateAlert,
+    generatePopup: generatePopup,
     clickHoverCss: clickHoverCss
   };
 }();

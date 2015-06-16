@@ -38,60 +38,55 @@ URLNP.Background = URLNP.Background || function () {
   }
 
   /**
-   * Gets the tab's instance. If this tab doesn't have an instance yet, a
-   * default instance is made for it.
+   * Gets the tab's instance (if requested and none exists, builds a default).
    * 
    * @param tab   the tab to lookup this instance by
-   * @param items the storage items (optional)
+   * @param build boolean indicating to build a default instance if none exists
+   * @param items the storage items used to build the default instance
    * @return instance the tab's instance
    * @public
    */
-  function getInstance(tab, items) {
-    console.log("getInstance(tab=" + tab + ", items=" + items + ")");
+  function getInstance(tab, build, items) {
+    console.log("getInstance(tab=" + tab + ", build=" + build + ", items=" + items + ")");
     var instance,
-        links,
-        jselection;
+        selection_,
+        links;
     if (tab) {
       instance = instances[tab.id];
-      if (!instance || instance.tab !== tab) {
-        jselection = findSelection(tab.url);
-        chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {
-          if (response) {
-          console.log(response);
-          }
-          if (response.links) {
-            links = response.links;
-            console.log("setting response.links!");
-          }
-          if (!instance) {
-            instance = {
-              enabled: false,
-              tab: tab,
-              mode: items.defaultMode,
-              links: links,
-              selection: jselection.selection,
-              selectionStart: jselection.selectionStart,
-              interval: items.defaultInterval
-            };
-          } else if (instance.tab !== tab) { // In case navigating away
-            instance.tab = tab;
-            instance.links = links;
-            instance.selection = jselection.selection;
-            instance.selectionStart = jselection.selectionStart;
-          }
-          instances[tab.id] = instance;
-        });
-
+    }
+    if (build && items && (!instance || instance.tab.url != tab.url)) {
+      selection_ = findSelection(tab.url);
+      chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {
+        if (response.links) {
+          links = response.links;
+          console.log("setting response.links!");
+        }
+      });
+      if (!instance) {
+        instance = {
+          enabled: false,
+          tab: tab,
+          mode: items.defaultMode,
+          links: links,
+          selection: selection_.selection,
+          selectionStart: selection_.selectionStart,
+          interval: items.defaultInterval
+        };
+      } else if (instance.tab.url !== tab.url) { // In case navigating away
+        instance.tab = tab;
+        instance.links = links;
+        instance.selection = selection_.selection;
+        instance.selectionStart = selection_.selectionStart;
       }
+      // instances[tab.id] = instance;
     }
     return instance;
   }
 
   /**
-   * Sets the tab's instance. If the instance is null or undefined or it is not
-   * enabled, any active listeners on the tab will be removed.
+   * Sets the tab's instance.
    * 
-   * @param tab      the tab to lookup this instance
+   * @param tab      the tab to lookup this instance by
    * @param instance the instance to set
    * @public
    */
@@ -99,9 +94,6 @@ URLNP.Background = URLNP.Background || function () {
     console.log("setInstance(tab=" + tab + ", instance=" + instance + ")");
     if (tab) {
       instances[tab.id] = instance;
-      if (!instance || !instance.enabled) { // Clear
-        chrome.tabs.sendMessage(tab.id, {greeting: "removeKeyListener"}, function(response) {});
-      }
     }
   }
 
@@ -242,7 +234,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("!chrome.runtime.onMessage request.greeting \"" + request.greeting + "\" from tab #" + sender.tab.id);
   switch (request.greeting) {
     case "getInstance":
-      sendResponse({instance: URLNP.Background.getInstance(sender.tab, request.items)});
+      sendResponse({instance: URLNP.Background.getInstance(sender.tab)});
       break;
     case "setInstance":
       URLNP.Background.setInstance(sender.tab, request.instance);

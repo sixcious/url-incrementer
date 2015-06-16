@@ -72,20 +72,12 @@
     "description": "Setup error message if the selection is not part of the URL."
   },
   "popup_selectionstart_invalid_error": {
-    "message": "TODO",
+    "message": "Selection position must be from URL",
     "description": "TODO"
   },
-  "popup_interval_blank_error": {
-    "message": "Interval can't be blank",
-    "description": "Setup error message if the interval is blank."
-  },
-  "popup_interval_0_error": {
-    "message": "Interval can't be 0",
-    "description": "Setup error message if the interval is 0."
-  },
-  "popup_interval_negative_error": {
-    "message": "Interval can't be a negative number",
-    "description": "Setup error message if the interval is negative."
+  "popup_interval_invalid_error": {
+    "message": "Interval has to be 1 or higher",
+    "description": "Setup error message if the interval is 0 or negative."
   },
   "options_shortcut_keys_h3": {
     "message": "Shortcut Keys",

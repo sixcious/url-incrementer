@@ -40,7 +40,7 @@ URLNP.Shortcuts = URLNP.Shortcuts || function () {
     console.log("keyListener(event)");
     if (keyPressed(event, items_.keyNext)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "next"}); }
     else if (keyPressed(event, items_.keyPrev)) { chrome.runtime.sendMessage({greeting: "updateTab", direction: "prev"}); }
-    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); }
+    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); document.removeEventListener("keyup", keyListener, false); }
   }
 
   /**
@@ -93,8 +93,8 @@ chrome.storage.sync.get(null, function(items) {
     document.addEventListener("keyup", URLNP.Shortcuts.keyQuickListener, false);
   }
   if (items.keyEnabled) {
-    chrome.runtime.sendMessage({greeting: "getInstance", items: items}, function(response) {
-      if (response.instance.enabled) {
+    chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+      if (response && response.instance && response.instance.enabled) {
         document.addEventListener("keyup", URLNP.Shortcuts.keyListener, false);
       }
     }); 
