@@ -51,10 +51,14 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     // Initialization: get tab instance from background and cache storage
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        chrome.storage.sync.get(null, function(items) {
+      chrome.tabs.executeScript(tabs[0].id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+          chrome.storage.sync.get(null, function(items) {
           items_ = items;
-          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], true, items);
+          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], true, items, results[0]);
+          console.log("instance.links=" + instance.links);
+          DOM["#link-next"].value = instance.links.rel.next;
+          DOM["#link-prev"].value = instance.links.rel.prev;
           DOM["#setup"].mode.value = instance.mode;
           DOM["#url-textarea"].value = instance.tab.url; // or tab.url
           DOM["#selection-input"].value = instance.selection;
@@ -65,6 +69,7 @@ URLNP.Popup = URLNP.Popup || function () {
         });
       });
     });
+  });
   }
 
   /**

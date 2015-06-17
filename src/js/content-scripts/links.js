@@ -37,6 +37,8 @@ URLNP.Links = URLNP.Links || function () {
 	 // parseElements(bases);
 	  parseElements(anchors);
 		console.timeEnd("scan");
+		console.log("links innerHTML:" + links.innerHTML.next);
+		console.log("links rel:" + links.rel.next);
   	return links;
   }
 
@@ -86,20 +88,27 @@ URLNP.Links = URLNP.Links || function () {
 	};
 }();
 
+URLNP.Links.getLinks();
 // Listen for requests from chrome.runtime.sendMessage
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.id);
-  switch (request.greeting) {
-		case "getLinks":
-		  console.log("getting dem links...");
-      sendResponse({somethingCool: URLNP.Links.getLinks()});
-			break;
-    default:
-      sendResponse({});
-      break;
-  }
-  return true;
-});
+// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+//   if (request.greeting === "getLinks") {
+//     sendReponse({links: URLNP.Links.getLinks()});
+//   }
+//   console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.id);
+//   switch (request.greeting) {
+// 		case "getLinks":
+// 		  console.log("getting dem links...");
+// 		  sendResponse({links: "FAREWELL !!!! 12"});
+//       //sendResponse({instance: URLNP.Background.getInstance(sender.tab)});
+//       //sendResponse({links: URLNP.Links.getLinks(), something: "farewell!"});
+//       return true;
+// 			//break;
+//     default:
+//       sendResponse({});
+//       break;
+//   }
+//   return true;
+// });
 
 
 

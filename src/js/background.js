@@ -46,39 +46,36 @@ URLNP.Background = URLNP.Background || function () {
    * @return instance the tab's instance
    * @public
    */
-  function getInstance(tab, build, items) {
+  function getInstance(tab, build, items, links) {
     console.log("getInstance(tab=" + tab + ", build=" + build + ", items=" + items + ")");
     var instance,
-        selection_,
-        links;
+        selection_;
+        // links;
     if (tab) {
       instance = instances[tab.id];
-    }
-    if (build && items && (!instance || instance.tab.url != tab.url)) {
-      selection_ = findSelection(tab.url);
-      chrome.tabs.sendMessage(tab.id, {greeting: "getLinks"}, function(response) {
-        if (response.links) {
-          links = response.links;
-          console.log("setting response.links!");
-        }
-      });
-      if (!instance) {
-        instance = {
-          enabled: false,
-          tab: tab,
-          mode: items.defaultMode,
-          links: links,
-          selection: selection_.selection,
-          selectionStart: selection_.selectionStart,
-          interval: items.defaultInterval
-        };
-      } else if (instance.tab.url !== tab.url) { // In case navigating away
-        instance.tab = tab;
-        instance.links = links;
-        instance.selection = selection_.selection;
-        instance.selectionStart = selection_.selectionStart;
+      if (build) {
+        // chrome.tabs.executeScript(tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+          // links = results[0];
+          selection_ = findSelection(tab.url);
+          if (!instance) {
+            instance = {
+              enabled: false,
+              tab: tab,
+              mode: items.defaultMode,
+              links: links,
+              selection: selection_.selection,
+              selectionStart: selection_.selectionStart,
+              interval: items.defaultInterval
+            };
+          } else if (instance.tab.url !== tab.url) { // In case navigating away
+            instance.tab = tab;
+            instance.links = links;
+            instance.selection = selection_.selection;
+            instance.selectionStart = selection_.selectionStart;
+          }
+        // });
+        // instances[tab.id] = instance;
       }
-      // instances[tab.id] = instance;
     }
     return instance;
   }
@@ -252,4 +249,5 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       sendResponse({});
       break;
   }
+  return true;
 });
