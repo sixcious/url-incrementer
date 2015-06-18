@@ -88,6 +88,7 @@ URLNP.Links = URLNP.Links || function () {
 	};
 }();
 
+// This last line will be returned in the chrome.tabs.executeScript() call
 URLNP.Links.getLinks();
 // Listen for requests from chrome.runtime.sendMessage
 // chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

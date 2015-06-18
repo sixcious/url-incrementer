@@ -54,22 +54,25 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.tabs.executeScript(tabs[0].id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           chrome.storage.sync.get(null, function(items) {
-          items_ = items;
-          instance = backgroundPage.URLNP.Background.getInstance(tabs[0], true, items, results[0]);
-          console.log("instance.links=" + instance.links);
-          DOM["#link-next"].value = instance.links.rel.next;
-          DOM["#link-prev"].value = instance.links.rel.prev;
-          DOM["#setup"].mode.value = instance.mode;
-          DOM["#url-textarea"].value = instance.tab.url; // or tab.url
-          DOM["#selection-input"].value = instance.selection;
-          DOM["#selection-start-input"].value = instance.selectionStart;
-          DOM["#interval-input"].value = instance.interval;
-          DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
-          updateControls();
+            items_ = items;
+            instance = backgroundPage.URLNP.Background.getInstance(tabs[0]);
+            if (!instance || instance.tab.url !== tabs[0].url) {
+              instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
+            }
+            console.log("instance.links=" + instance.links);
+            DOM["#link-next"].value = instance.links.rel.next;
+            DOM["#link-prev"].value = instance.links.rel.prev;
+            DOM["#setup"].mode.value = instance.mode;
+            DOM["#url-textarea"].value = instance.tab.url; // or tab.url
+            DOM["#selection-input"].value = instance.selection;
+            DOM["#selection-start-input"].value = instance.selectionStart;
+            DOM["#interval-input"].value = instance.interval;
+            DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
+            updateControls();
+          });
         });
       });
     });
-  });
   }
 
   /**
@@ -116,7 +119,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickClear() {
     console.log("clickClear()");
     if (instance.enabled) {
-      chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function(response) {});
+      // chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function(response) {});
       instance.enabled = false;
       updateControls();
       if (items_.animationsEnabled) {
@@ -206,10 +209,10 @@ URLNP.Popup = URLNP.Popup || function () {
         backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
         toggleView.call(DOM["#setup-accept-input"]);
         updateControls();
-        if (items_.keyEnabled) {
-          console.log("\tadding keyListener");
-          chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});
-        }
+        // if (items_.keyEnabled) {
+        //   console.log("\tadding keyListener");
+        //   chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});
+        // }
       });
     }
   }

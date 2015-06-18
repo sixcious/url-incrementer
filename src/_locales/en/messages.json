@@ -80,40 +80,12 @@
     "description": "Setup error message if the interval is 0 or negative."
   },
   "options_shortcut_keys_h3": {
-    "message": "Shortcut Keys",
+    "message": "Keyboard Shortcuts",
     "description": "The options page's shortcuts keys heading."
   },
-  "options_shortcut_keys_enable_label": {
-    "message": "Enable Shortcut Keys",
-    "description": "Label for Shortcut Keys checkbox to enable or disable them."
-  },
-  "options_shortcut_keys_quick_enable_label": {
-    "message": "Enable Quick Shortcut Keys",
-    "description": "Quick Shortcut Keys checkbox label."
-  },
-  "options_shortcut_keys_p": {
-    "message": "Click on the text boxes and then press the keys you want to assign as shortcuts. \"Quick\" shortcuts allow you to next (+) or prev (-) instantly without having to click the extension icon.",
-    "description": "Shortcut Keys paragraph."
-  },
-  "options_shortcut_keys_next_label": {
-    "message": "Next (+)",
-    "description": "Shortcut Key Increment label."
-  },
-  "options_shortcut_keys_prev_label": {
-    "message": "Prev (-)",
-    "description": "Shortcut Key Decrement label."
-  },
-  "options_shortcut_keys_clear_label": {
-    "message": "Clear",
-    "description": "Shortcut Key Clear label."
-  },
-  "options_shortcut_keys_quick_next_label": {
-    "message": "Quick Next (+)",
-    "description": "Shortcut Key Fast Increment label."
-  },
-  "options_shortcut_keys_quick_prev_label": {
-    "message": "Quick Prev (-)",
-    "description": "Shortcut Key Fast Decrement label."
+  "options_shortcut_keys_a": {
+    "message": "Configure Keyboard Shortcuts",
+    "description": "TODO"
   },
   "options_default_settings_h3": {
     "message": "Default Settings",
@@ -142,9 +114,5 @@
   "options_animations_enable_label": {
     "message": "Enable Hover.css (CSS3) Animations",
     "description": "Label for CSS3 Animations enable checkbox."
-  },
-  "options_save_disclaimer": {
-    "message": "Note: Changes you make are saved upon closing this dialog.",
-    "description": ""
   }
 }
