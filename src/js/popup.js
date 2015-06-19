@@ -55,9 +55,9 @@ URLNP.Popup = URLNP.Popup || function () {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           chrome.storage.sync.get(null, function(items) {
             items_ = items;
-            instance = backgroundPage.URLNP.Background.getInstance(tabs[0]);
+            instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
             if (!instance || instance.tab.url !== tabs[0].url) {
-              instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
+              instance = backgroundPage.URLNP.Background.buildInstance(tabs[0], instance, items, results[0]);
             }
             console.log("instance.links=" + instance.links);
             DOM["#link-next"].value = instance.links.rel.next;
@@ -88,7 +88,7 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next");
-        instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
+        instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
@@ -106,7 +106,7 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev");
-        instance = backgroundPage.URLNP.Background.getInstance(instance.tab);
+        instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
@@ -119,14 +119,13 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickClear() {
     console.log("clickClear()");
     if (instance.enabled) {
-      // chrome.tabs.sendMessage(instance.tab.id, {greeting: "removeKeyListener"}, function(response) {});
       instance.enabled = false;
       updateControls();
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.setInstance(instance.tab, undefined);
+        backgroundPage.URLNP.Background.setInstance(instance.tab.id, undefined);
       });
     }
   }
@@ -185,14 +184,15 @@ URLNP.Popup = URLNP.Popup || function () {
   function setup() {
     console.log("setup()");
     var mode = DOM["#setup"].mode.value,
+        url = DOM["url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
         errors = [ // 0 index for selection and 1 index for interval errors
           selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") :
-          instance.tab.url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") :
+          url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") :
           !/^[a-z0-9]+$/i.exec(selection) ? chrome.i18n.getMessage("popup_selection_notalphanumeric_error") :
-          selectionStart < 0 || instance.tab.url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("popup_selectionstart_invalid_error") : "",
+          selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("popup_selectionstart_invalid_error") : "",
           interval <= 0 ? chrome.i18n.getMessage("popup_interval_invalid_error") : ""
         ];
     console.log("debugging selection start error:" + instance.tab.url.substr(selectionStart, selection.length));
@@ -206,13 +206,9 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.interval = interval;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
-        backgroundPage.URLNP.Background.setInstance(instance.tab, instance);
+        backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
         toggleView.call(DOM["#setup-accept-input"]);
         updateControls();
-        // if (items_.keyEnabled) {
-        //   console.log("\tadding keyListener");
-        //   chrome.tabs.sendMessage(instance.tab.id, {greeting: "addKeyListener"}, function(response) {});
-        // }
       });
     }
   }

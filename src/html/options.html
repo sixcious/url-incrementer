@@ -8,28 +8,73 @@
   </head>
   <body>
     <div id="options">
-      <div id="shortcut-keys">
+      <div id="keyboard-shortcuts">
         <img src="../img/font-awesome/keyboard-o.png" alt="" width="16" height="16"/>
-        <h3 id="shortcut-keys-h3"></h3>
+        <h3 id="keyboard-shortcuts-h3"></h3>
         <hr/>
-        <p id="key-p"></p>
-        <p><a id="shortcut-keys-a" href="#"></a></p>
+        <p id="keyboard-shortcuts-p"></p>
+        <div class="checkbox">
+          <label>
+            <input id="keyboard-shortcuts-quick-enable-input" type="checkbox"/>
+            <span id="keyboard-shortcuts-quick-enable-label"></span>
+          </label>
+        </div>
+        <p>
+          <button id="keyboard-shortcuts-a"></button>
+        </p>
       </div>
       <div id="default-settings">
         <img src="../img/font-awesome/check-square-o.png" alt="" width="16" height="16"/>
         <h3 id="default-settings-h3"></h3>
         <hr/>
         <p id="default-settings-p"></p>
+        <div class="checkbox">
+          <label>
+            <input id="animations-enable-input" type="checkbox"/>
+            <span id="animations-enable-label"></span>
+          </label>
+        </div>
         <div class="table">
           <div class="row">
             <div class="column">
               <label id="default-mode-label" for="default-mode-select"></label>
             </div>
             <div class="column">
-              <select id="default-mode-select">
-                <option id="default-mode-use-links-option" value="use-links"></option>
-                <option id="default-mode-modify-url-option" value="modify-url"></option>
+              <div class="radio">
+                <label>
+                  <input id="default-mode-use-links-input" type="radio" name="default-mode" value="use-links"/>
+                  <span id="default-mode-use-links-option"></span>
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id="default-mode-modify-url-input" type="radio" name="default-mode" value="modify-url"/>
+                  <span id="default-mode-modify-url-option"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="default-links-label" for="default-links-select"></label>
+            </div>
+            <div class="column">
+              <select id="default-links-select">
+                <option id="default-links-attributes-option" value="attributes"></option>
+                <option id="default-links-innerHTML-option" value="innerHTML"></option>
               </select>
+<!--              <div class="radio">
+                <label>
+                  <input id="default-links-attributes-input" type="radio" name="default-links" value="attributes"/>
+                  <span id="default-links-attributes-option"></span>
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id="default-links-innerHTML-input" type="radio" name="default-links" value="innerHTML"/>
+                  <span id="default-links-innerHTML-option"></span>
+                </label>
+              </div>-->
             </div>
           </div>
           <div class="row">
@@ -41,12 +86,17 @@
             </div>
           </div>
         </div>
-        <label>
-          <input id="animations-enable-input" type="checkbox"/>
-          <label id="animations-enable-label" for="animations-enable-input"></label>
-        </label>
       </div>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
   </body>
 </html>
+
+<!--              <select id="default-mode-select">
+                <option id="default-mode-use-links-option" value="use-links"></option>
+                <option id="default-mode-modify-url-option" value="modify-url"></option>
+              </select>-->
+<!--              <select id="default-links-select">
+                <option id="default-links-attributes-option" value="attributes"></option>
+                <option id="default-links-innerHTML-option" value="innerHTML"></option>
+              </select>-->

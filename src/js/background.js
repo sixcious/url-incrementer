@@ -12,15 +12,15 @@ URLNP.Background = URLNP.Background || function () {
 
   var instances = []; // Keeps track of the tab instances (TODO: Put in storage)
 
-  /**
-   * Initializes the storage with the default values. The storage is initialized
-   * when the extension is first installed.
-   * 
-   * @public
-   */
-  function init() {
-    console.log("init()");
-  }
+  // /**
+  // * Initializes the storage with the default values. The storage is initialized
+  // * when the extension is first installed.
+  // * 
+  // * @public
+  // */
+  // function init() {
+  //   console.log("init()");
+  // }
 
   /**
    * Gets the tab's instance.
@@ -29,13 +29,9 @@ URLNP.Background = URLNP.Background || function () {
    * @return instance the tab's instance
    * @public
    */
-  function getInstance(tab) {
-    console.log("getInstance(tab=" + tab + ")");
-    var instance;
-    if (tab) {
-      instance = instances[tab.id];
-    }
-    return instance;
+  function getInstance(tabId) {
+    console.log("getInstance(tabId=" + tabId + ")");
+    return instances[tabId];
   }
 
   /**
@@ -45,37 +41,39 @@ URLNP.Background = URLNP.Background || function () {
    * @param instance the instance to set
    * @public
    */
-  function setInstance(tab, instance) {
-    console.log("setInstance(tab=" + tab + ", instance=" + instance + ")");
-    if (tab) {
-      instances[tab.id] = instance;
-    }
+  function setInstance(tabId, instance) {
+    console.log("setInstance(tabId=" + tabId + ", instance=" + instance + ")");
+    instances[tabId] = instance;
   }
 
   /**
-   * Builds/Updates a default instance.
+   * Builds/Updates a instance with default values.
    * 
-   * @param tab   the tab to lookup this instance by
-   * @param build boolean indicating to build a default instance if none exists
-   * @param items the storage items used to build the default instance
-   * @param links the next and prev links found for this tab
-   * @return instance the tab's instance
+   * @param tab      the tab to lookup this instance by
+   * @param instance the instance, if any, to continue building off of
+   * @param items    the storage items used to build the default instance
+   * @param links    the next and prev links found for this tab
+   * @return instance the newly built instance
    * @public
    */
-  function buildInstance(instance, tab, items, links) {
-    console.log("buildInstance(instance=" + instance + ", tab=" + tab + "items=" + items + ", links=" + links + ")");
-    var selection_ = findSelection(tab.url);
-    if (!instance) {
-      instance = {};
-      instance.enabled = false;
-      instance.mode = items.defaultMode;
-      instance.interval = items.defaultInterval;
+  function buildInstance(tab, instance, items, links) {
+    console.log("buildInstance(tab=" + tab + ", instance=" + instance + "items=" + items + ", links=" + links + ")");
+    var selection_;
+    if (tab) {
+      selection_ = findSelection(tab.url);
+      if (!instance) {
+        instance = {};
+        instance.enabled = false;
+        instance.mode = items.defaultMode;
+        instance.linksPriority = items.defaultLinks;
+        instance.interval = items.defaultInterval;
+      }
+      instance.tab = tab;
+      instance.links = links;
+      instance.selection = selection_.selection;
+      instance.selectionStart = selection_.selectionStart;
+      return instance;
     }
-    instance.tab = tab;
-    instance.links = links;
-    instance.selection = selection_.selection;
-    instance.selectionStart = selection_.selectionStart;
-    return instance;
   }
 
   /**
@@ -118,27 +116,31 @@ URLNP.Background = URLNP.Background || function () {
    */
   function quickUpdateTab(tab, direction, items) {
     console.log("quickUpdateTab(tab=" + tab + ", direction=" + direction + ", items=" + items + ")");
-    var selection_,
+    var links,
+        selection_,
         url_,
-        links;
-    switch (items.defaultMode) {
+        mode = items.defaultMode,
+        url;
+    switch (mode) {
       case "use-links":
         chrome.tabs.executeScript(tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
           links = results[0];
-          chrome.tabs.update(tab.id, {
-            url: direction === "next" ? links.rel.next ? links.rel.next : links.innerHTML.next ? links.innerHTML.next : "" :
-                 direction === "prev" ? links.rel.prev ? links.rel.prev : links.innerHTML.prev ? links.innerHTML.prev : "" : ""
-          });
+          // TODO attributes and innerHTML items.defaultLinks check
+          url = direction === "next" ? links.rel.next ? links.rel.next : links.innerHTML.next ? links.innerHTML.next : undefined :
+                direction === "prev" ? links.rel.prev ? links.rel.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
+                undefined;
+          if (url && tab.url !== url) {
+            chrome.tabs.update(tab.id, {url: url});
+          }
         });
         break;
       case "modify-url":
         selection_ = findSelection(tab.url);
         url_ = modifyURL(tab.url, selection_.selection, selection_.selectionStart, items.defaultInterval, direction);
-        if (url_ && url_.url2 && tab.url !== url_.url2) {
-          chrome.tabs.update(tab.id, {url: url_.url2});
+        url = url_.url2;
+        if (url && tab.url !== url) {
+          chrome.tabs.update(tab.id, {url: url});
         }
-        break;
-      default:
         break;
     }
   }
@@ -200,7 +202,7 @@ URLNP.Background = URLNP.Background || function () {
 
   // Return Public Functions
   return {
-    init: init,
+    // init: init,
     getInstance: getInstance,
     setInstance: setInstance,
     buildInstance: buildInstance,
@@ -216,8 +218,9 @@ chrome.runtime.onInstalled.addListener(function(details) {
   if (details.reason === "install" || details.reason === "update") {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
+        "quickEnabled": true,
         "defaultMode": "use-links",
-        "defaultLinks": "", // TODO
+        "defaultLinks": "attributes",
         "defaultInterval": 1,
         "animationsEnabled": true
       });
@@ -231,19 +234,39 @@ chrome.commands.onCommand.addListener(function(command) {
   chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
     chrome.storage.sync.get(null, function(items) {
       console.log("!chrome.commands.onCommand command=" + command);
-      switch (command) {
-        case "next":
-          URLNP.Background.quickUpdateTab(tabs[0], "next", items);
-          break;
-        case "prev":
-          URLNP.Background.quickUpdateTab(tabs[0], "prev", items);
-          break;
-        case "clear":
-          URLNP.Background.setInstance(tabs[0], undefined);
-          break;
-        default:
-          break;
+      var instance = URLNP.Background.getInstance(tabs[0].id);
+      if (command === "next" || command === "prev") {
+        if (instance && instance.enabled) {
+          URLNP.Background.updateTab(instance, command);
+        } else if (items.quickEnabled) {
+          URLNP.Background.quickUpdateTab(tabs[0], command, items);
+        }
+      } else if (command === "clear" && instance && instance.enabled) {
+        URLNP.Background.setInstance(tabs[0].id, undefined);
       }
+      // switch (command) {
+      //   case "next":
+      //     if (instance && instance.enabled) {
+      //       URLNP.Background.updateTab(instance, "next");
+      //     } else if (items.quickEnabled) {
+      //       URLNP.Background.quickUpdateTab(tabs[0], "next", items);
+      //     }
+      //     break;
+      //   case "prev":
+      //     if (instance && instance.enabled) {
+      //       URLNP.Background.updateTab(instance, "prev");
+      //     } else if (items.quickEnabled) {
+      //       URLNP.Background.quickUpdateTab(tabs[0], "prev", items);
+      //     }
+      //     break;
+      //   case "clear":
+      //     if (instance && instance.enabled) {
+      //       URLNP.Background.setInstance(tabs[0], undefined);
+      //     }
+      //     break;
+      //   default:
+      //     break;
+      // }
     });
   });
 });

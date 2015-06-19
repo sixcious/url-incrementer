@@ -79,11 +79,19 @@
     "message": "Interval has to be 1 or higher",
     "description": "Setup error message if the interval is 0 or negative."
   },
-  "options_shortcut_keys_h3": {
+  "options_keyboard_shortcuts_h3": {
     "message": "Keyboard Shortcuts",
     "description": "The options page's shortcuts keys heading."
   },
-  "options_shortcut_keys_a": {
+  "options_keyboard_shortcuts_p": {
+    "message": "Keyboard Shortcuts can be configured via Chrome. If Quick is enabled, you can Next [+] and Prev [-] instantly without having to enter Setup.",
+    "description": ""
+  },
+  "options_keyboard_shortcuts_quick_enable_label": {
+    "message": "Enable Quick Keyboard Shortcuts",
+    "description": "TODO"
+  },
+  "options_keyboard_shortcuts_a": {
     "message": "Configure Keyboard Shortcuts",
     "description": "TODO"
   },
@@ -92,7 +100,7 @@
     "description": "Default Settings sub heading."
   },
   "options_default_settings_p": {
-    "message": "You can have URL Next Plus act with these defaults each time you use \"Quick\" shortcuts or enter Setup.",
+    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or enter Setup.",
     "description": ""
   },
   "options_default_mode_label": {
@@ -100,11 +108,23 @@
     "description": ""
   },
   "options_default_mode_use_links_option": {
-    "message": "Use the next (>) and prev (<) links found on the page",
+    "message": "Use the Next [>] and Prev [<] links on the page",
     "description": ""
   },
   "options_default_mode_modify_url_option": {
-    "message": "Modify the URL and increment (+) or decrement (-)",
+    "message": "Increment [+] or Decrement [-] the URL",
+    "description": ""
+  },
+  "options_default_links_label": {
+    "message": "Links",
+    "description": ""
+  },
+  "options_default_links_attributes_option": {
+    "message": "Prefer links with attributes like \"rel=next\"",
+    "description": ""
+  },
+  "options_default_links_innerHTML_option": {
+    "message": "Prefer links with words like \"Next\" in them",
     "description": ""
   },
   "options_default_interval_label": {
@@ -112,7 +132,7 @@
     "description": ""
   },
   "options_animations_enable_label": {
-    "message": "Enable Hover.css (CSS3) Animations",
+    "message": "Enable Hover.css (CSS3) Animations in UI",
     "description": "Label for CSS3 Animations enable checkbox."
   }
 }
