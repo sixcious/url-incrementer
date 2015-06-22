@@ -209,7 +209,7 @@ chrome.commands.onCommand.addListener(function(command) {
           chrome.storage.sync.get(null, function(items) {
             if (items.quickEnabled) {
               instance = URLNP.Background.buildInstance(instance, tab, items, blah);
-              URLNP.Background.quickUpdateTab(tabs[0], command, items);
+              URLNP.Background.updateTab(instance, command);
             }
           });
         }

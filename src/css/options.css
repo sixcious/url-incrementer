@@ -6,6 +6,10 @@ h3 {
   display: inline;
 }
 
+section:not(:last-child) {
+  margin-bottom: 32px;
+}
+
 div.table {
 	display: table;
 }

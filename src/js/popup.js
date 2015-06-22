@@ -59,9 +59,10 @@ URLNP.Popup = URLNP.Popup || function () {
             if (!instance || instance.tab.url !== tabs[0].url) {
               instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
             }
-            DOM["#setup"].mode.value = instance.mode;
-            DOM["#link-next"].value = instance.links.rel.next;
-            DOM["#link-prev"].value = instance.links.rel.prev;
+            //DOM["#setup"].mode.value = instance.mode;
+            DOM["#mode"].value = instance.mode;
+            DOM["#attribute-links-next"].value = instance.links ? instance.links.attributes.next : "";
+            DOM["#attribute-links-prev"].value = instance.links ? instance.links.attributes.prev : "";
             DOM["#url-textarea"].value = instance.tab.url; // or tab.url
             DOM["#selection-input"].value = instance.selection;
             DOM["#selection-start-input"].value = instance.selectionStart;

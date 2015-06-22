@@ -10,7 +10,7 @@ console.log("URLNP.Links");
 var URLNP = URLNP || {};
 URLNP.Links = URLNP.Links || function () {
 
-  var links = {innerHTML: {}, rel: {}};
+  var links = {attributes: {}, innerHTML: {}};
 
   /**
    * TODO
@@ -73,9 +73,9 @@ URLNP.Links = URLNP.Links || function () {
         jcache = attribute.nodeName.toLowerCase();
         if (jcache === "rel") {
           if (attribute.nodeValue.toLowerCase() === "next") {
-					  links.rel.next = element.href;
+					  links.attributes.next = element.href;
           } else if (attribute.nodeValue.toLowerCase() === "prev") {
-					  links.rel.prev = element.href;
+					  links.attributes.prev = element.href;
           }
         }
       }

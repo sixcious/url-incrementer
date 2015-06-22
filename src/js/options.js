@@ -49,7 +49,7 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); }, false);
     DOM["#default-mode-use-links-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.value}); }, false);
     DOM["#default-mode-modify-url-input"].addEventListener("change", function () {chrome.storage.sync.set({"defaultMode": this.value}); }, false);
-    DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": +this.value}); }, false);
+    DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": +this.value > 0 ? +this.value : 1}); }, false);
     DOM["#default-links-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultLinks": this.options[this.selectedIndex].value}); }, false);
     // Populate values from storage
     chrome.storage.sync.get(null, function(items) {

@@ -18,25 +18,15 @@
         <input id="mode" type="hidden"/>
         <div id="use-links">
           <div id="attribute-links">
-            a
+            <input id="attribute-links-next" type="text" readonly="readonly"/>
+            <input id="attribute-links-prev" type="text" readonly="readonly"/>
           </div>
           <div id="innerHTML-links">
-            a
+            <input id="innerHTML-links-next" type="text" readonly="readonly"/>
+            <input id="innnerHTML-links-prev" type="text" readonly="readonly"/>
           </div>
-<!--          <input id="links-radio" type="radio" name="mode" value="use-links"/>
-          <label id="links-legend" for="links-radio">Use Links</label>-->
-<!--          <label>Next
-            <input id="link-next" type="text" readonly="readonly"/>
-          </label>
-          <br/>
-          <label>Prev
-            <input id="link-prev" type="text" readonly="readonly"/>
-          </label>-->
         </div>
         <div id="modify-url">
-<!--            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
-            <label id="modify-url-label" for="url-radio">Modify URL</label>-->
-            
             <legend id="url-legend"></legend>
             <section>
             <fieldset>
@@ -48,7 +38,7 @@
             <fieldset class="inline">
               <label id="selection-label" class="block" for="selection-input"></label>
               <input id="selection-input" type="text" readonly="readonly"/>
-              <input id="selection-start-input" type="hidden" value="-1"/> <!-- temp -->
+              <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
             </fieldset>
             <fieldset class="inline">
               <label id="interval-label" class="block" for="interval-input"></label>
@@ -67,3 +57,7 @@
     <script type="text/javascript" src="../js/popup.js"></script>
   </body>
 </html>
+<!--          <input id="links-radio" type="radio" name="mode" value="use-links"/>
+          <label id="links-legend" for="links-radio">Use Links</label>-->
+          <!--            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
+            <label id="modify-url-label" for="url-radio">Modify URL</label>-->
