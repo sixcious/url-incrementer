@@ -13,15 +13,15 @@
   },
   "popup_next_input": {
     "message": "Next [+]",
-    "description": "Title (tool tip) for the increment button image when hovered."
+    "description": "Next input button title (tool tip)."
   },
   "popup_prev_input": {
     "message": "Prev [-]",
-    "description": "Title (tool tip) for the decrement button image when hovered."
+    "description": "Prev input button title (tool tip)."
   },
   "popup_clear_input": {
     "message": "Clear [x]",
-    "description": "Title (tool tip) for the clear button image when hovered."
+    "description": "Clear input button title (tool tip)."
   },
   "popup_setup_input": {
     "message": "Setup",
@@ -42,10 +42,6 @@
   "popup_selection_label": {
     "message": "Selection",
     "description": "Selection input text label"
-  },
-  "popup_options_legend": {
-    "message": "Options",
-    "description": "TODO"
   },
   "popup_interval_label": {
     "message": "Interval",
@@ -84,7 +80,7 @@
     "description": "The options page's shortcuts keys heading."
   },
   "options_keyboard_shortcuts_p": {
-    "message": "Keyboard Shortcuts can be configured via Chrome. If Quick is enabled, you can Next [+] and Prev [-] instantly without having to enter Setup.",
+    "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [+] and Prev [-] instantly without having to enter Setup.",
     "description": ""
   },
   "options_keyboard_shortcuts_quick_enable_label": {

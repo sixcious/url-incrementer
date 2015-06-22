@@ -14,26 +14,29 @@
         <input id="clear-input" type="image" src="../img/controls/clear.png" alt="" class="disabled"/>
         <input id="setup-input" type="image" src="../img/controls/setup.png" alt=""/>
       </div>
-      <form id="setup" class="display-none">
-        <div id="setup-use-links">
-        <fieldset class="inline">
-          <input id="links-radio" type="radio" name="mode" value="use-links"/>
-          <label id="links-legend" for="links-radio">Use Links</label>
-        </fieldset>
-          <label>Next
-          <input id="link-next" type="text" readonly="readonly"/>
+      <div id="setup" class="display-none">
+        <input id="mode" type="hidden"/>
+        <div id="use-links">
+          <div id="attribute-links">
+            a
+          </div>
+          <div id="innerHTML-links">
+            a
+          </div>
+<!--          <input id="links-radio" type="radio" name="mode" value="use-links"/>
+          <label id="links-legend" for="links-radio">Use Links</label>-->
+<!--          <label>Next
+            <input id="link-next" type="text" readonly="readonly"/>
           </label>
           <br/>
           <label>Prev
             <input id="link-prev" type="text" readonly="readonly"/>
-          </label>
+          </label>-->
         </div>
-        <div id="setup-modify-url">
-          <fieldset class="inline">
-            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
-            <label id="modify-url-label" for="url-radio">Modify URL</label>
-          </fieldset>
-          <fieldset>
+        <div id="modify-url">
+<!--            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
+            <label id="modify-url-label" for="url-radio">Modify URL</label>-->
+            
             <legend id="url-legend"></legend>
             <section>
             <fieldset>
@@ -58,7 +61,7 @@
             <input id="setup-cancel-input" type="button" value=""/>
           </fieldset>
         </div>
-      </form>
+      </div>
     </div>
     <script type="text/javascript" src="../js/ui/ui.js"></script>
     <script type="text/javascript" src="../js/popup.js"></script>

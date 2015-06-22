@@ -1,28 +1,24 @@
 /* TODO */
 
+/* Options CSS is minimal because the page is set to use Chrome's style */
+
 h3 {
   display: inline;
 }
+
 div.table {
 	display: table;
 }
+
 div.row  {
 	display: table-row;
 }
+
 div.column {
 	display: table-cell;
-	padding-right: 10px;
-	padding-bottom: 10px;
+	padding: 0 10px 10px 0;
 }
-input[type="text"] {
-	width: 200px;
-}
+
 input[type="number"] {
 	width: 52px;
-}
-.font-style-italic {
-  font-style: italic;
-}
-.display-inline {
-  display: inline;
 }

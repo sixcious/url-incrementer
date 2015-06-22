@@ -3,15 +3,15 @@
 console.log("URLNP.Popup");
 
 /**
- * URL Next Plus Popup.
+ * URL Next Plus Popup
  * 
- * Uses the JavaScript Revealing Module Pattern.
+ * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
-  var instance = {}, // tab's instance cache
-      items_ = {}, // storage items cache
+  var instance = {}, // Tab's instance cache
+      items_ = {}, // Storage items cache
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   /**
@@ -57,12 +57,11 @@ URLNP.Popup = URLNP.Popup || function () {
             items_ = items;
             instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
             if (!instance || instance.tab.url !== tabs[0].url) {
-              instance = backgroundPage.URLNP.Background.buildInstance(tabs[0], instance, items, results[0]);
+              instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
             }
-            console.log("instance.links=" + instance.links);
+            DOM["#setup"].mode.value = instance.mode;
             DOM["#link-next"].value = instance.links.rel.next;
             DOM["#link-prev"].value = instance.links.rel.prev;
-            DOM["#setup"].mode.value = instance.mode;
             DOM["#url-textarea"].value = instance.tab.url; // or tab.url
             DOM["#selection-input"].value = instance.selection;
             DOM["#selection-start-input"].value = instance.selectionStart;
@@ -184,7 +183,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function setup() {
     console.log("setup()");
     var mode = DOM["#setup"].mode.value,
-        url = DOM["url-textarea"].value,
+        url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,

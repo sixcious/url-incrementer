@@ -50,9 +50,9 @@ input[type="image"].disabled {
 	opacity: 0.2;
 }
 
-input[type="image"]:not(.disabled) {
+/*input[type="image"]:not(.disabled) {
 	opacity: 1.0;
-}
+}*/
 
 /* Setup properties */
 
@@ -67,19 +67,19 @@ input[type="number"] {
 textarea {
 	width: 412px;
 	letter-spacing: -1px;
-	font: 14px/1 Arial, sans-serif;
+	font: 14px/1 inherit;
 	font-weight: normal;
 	color: #777777;
 }
 
-fieldset {
+/*fieldset {
   border: none;
 }
 
 legend {
 	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 	font-size:  16px;
-}
+}*/
 
 #setup-buttons {
 	display: block;

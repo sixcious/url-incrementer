@@ -3,24 +3,14 @@
 console.log("URLNP.Background");
 
 /**
- * URL Next Plus Background.
+ * URL Next Plus Background
  * 
- * Uses the JavaScript Revealing Module Pattern.
+ * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
   var instances = []; // Keeps track of the tab instances (TODO: Put in storage)
-
-  // /**
-  // * Initializes the storage with the default values. The storage is initialized
-  // * when the extension is first installed.
-  // * 
-  // * @public
-  // */
-  // function init() {
-  //   console.log("init()");
-  // }
 
   /**
    * Gets the tab's instance.
@@ -49,15 +39,15 @@ URLNP.Background = URLNP.Background || function () {
   /**
    * Builds/Updates a instance with default values.
    * 
-   * @param tab      the tab to lookup this instance by
    * @param instance the instance, if any, to continue building off of
+   * @param tab      the tab to lookup this instance by
    * @param items    the storage items used to build the default instance
    * @param links    the next and prev links found for this tab
    * @return instance the newly built instance
    * @public
    */
-  function buildInstance(tab, instance, items, links) {
-    console.log("buildInstance(tab=" + tab + ", instance=" + instance + "items=" + items + ", links=" + links + ")");
+  function buildInstance(instance, tab, items, links) {
+    console.log("buildInstance(instance=" + instance + ", tab=" + tab +  ", items=" + items + ", links=" + links + ")");
     var selection_;
     if (tab) {
       selection_ = findSelection(tab.url);
@@ -72,8 +62,8 @@ URLNP.Background = URLNP.Background || function () {
       instance.links = links;
       instance.selection = selection_.selection;
       instance.selectionStart = selection_.selectionStart;
-      return instance;
     }
+    return instance;
   }
 
   /**
@@ -90,39 +80,6 @@ URLNP.Background = URLNP.Background || function () {
     var url_;
     switch (instance.mode) {
       case "use-links":
-        break;
-      case "modify-url":
-        url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-        //instance.tab.url = jurl.url2;
-        instance.selection = url_.selection2;
-        // setInstance(instance.tab.id, instance);
-        chrome.tabs.update(instance.tab.id, {url: url_.url2}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
-        break;
-      default:
-        break;
-    }
-  }
-
-  /**
-   * "Quick" updates the tab based on the desired direction.
-   * 
-   * This function can only be called by quick keyboard shortcuts and uses the
-   * tab and storage items to determine to determine the action.
-   * 
-   * @param tab       the tab to update
-   * @param direction the direction to go
-   * @param items     the storage items
-   * @public
-   */
-  function quickUpdateTab(tab, direction, items) {
-    console.log("quickUpdateTab(tab=" + tab + ", direction=" + direction + ", items=" + items + ")");
-    var links,
-        selection_,
-        url_,
-        mode = items.defaultMode,
-        url;
-    switch (mode) {
-      case "use-links":
         chrome.tabs.executeScript(tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
           links = results[0];
           // TODO attributes and innerHTML items.defaultLinks check
@@ -135,6 +92,8 @@ URLNP.Background = URLNP.Background || function () {
         });
         break;
       case "modify-url":
+        /*
+              case "modify-url":
         selection_ = findSelection(tab.url);
         url_ = modifyURL(tab.url, selection_.selection, selection_.selectionStart, items.defaultInterval, direction);
         url = url_.url2;
@@ -142,19 +101,29 @@ URLNP.Background = URLNP.Background || function () {
           chrome.tabs.update(tab.id, {url: url});
         }
         break;
+        */
+        url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        //instance.tab.url = jurl.urlm;
+        instance.selection = url_.selectionm;
+        // setInstance(instance.tab.id, instance);
+        chrome.tabs.update(instance.tab.id, {url: url_.urlm}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
+        break;
+      default:
+        break;
     }
   }
 
   /**
-   * Finds a selection in the url to modify.
+   * Finds a selection in the url to modify (increment or decrement).
    * 
    * First looks for common prefixes that come before numbers, such as
-   * = (equals) and / (slash). Example URLs with prefixes:
+   * = (equals) and / (slash). Example URLs with prefixes (= and /):
    * 
    * http://www.google.com?page=1234
    * http://www.google.com/1234
    * 
-   * If no prefixes with numbers exist, finds the last number in the url.
+   * Second, if no prefixes with numbers exist, finds the last number in the
+   * url. If no numbers exist in the URL, returns an empty selection.
    * 
    * @param url the url to find the selection in
    * @return JSON object {selection, selectionStart}
@@ -179,35 +148,33 @@ URLNP.Background = URLNP.Background || function () {
    * @param selectionStart the starting index of the selection in the URL
    * @param interval       the amount to increment or decrement
    * @param direction      the direction to go: next/increment or prev/decrement
-   * @return JSON object {url2: modified url, selection2: modified selection}
+   * @return JSON object {urlm: modified url, selectionm: modified selection}
    * @private
    */
   function modifyURL(url, selection, selectionStart, interval, direction) {
     console.log("modifyURL(url=" + url + ", selection=" + selection + ", selectionStart=" + selectionStart + ", interval=" + interval + ", direction=" + direction + ")");
-    var url2,
-        selection2,
+    var urlm,
+        selectionm,
         leadingzeros = selection.charAt(0) === '0',
-        alphanumeric = /^[a-z0-9]+$/i.exec(selection); // TODO
+        alphanumeric = /^[a-z]+$/i.exec(selection); // TODO
     // In case of minus, set the selection to 0 in case the result is negative
-    selection2 = direction === "next" ? (+selection + interval).toString() :
+    selectionm = direction === "next" ? (+selection + interval).toString() :
                  direction === "prev" ? (+selection - interval >= 0 ? +selection - interval : 0).toString() :
                                         "";
-    if (leadingzeros && selection.length > selection2.length) {
+    if (leadingzeros && selection.length > selectionm.length) {
       // Or use Array(1000).join("0") instead of literal "0000..." String?
-      selection2 = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selection2.toString().length) + selection2;
+      selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.toString().length) + selectionm;
     }
-    url2 = url.substring(0, selectionStart) + selection2 + url.substring(selectionStart + selection.length);
-    return {url2: url2, selection2: selection2};
+    urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
+    return {urlm: urlm, selectionm: selectionm};
   }
 
   // Return Public Functions
   return {
-    // init: init,
     getInstance: getInstance,
     setInstance: setInstance,
     buildInstance: buildInstance,
-    updateTab: updateTab,
-    quickUpdateTab: quickUpdateTab
+    updateTab: updateTab
   };
 }();
 
@@ -229,21 +196,46 @@ chrome.runtime.onInstalled.addListener(function(details) {
   }
 });
 
-// Listen for commands (keyboard shortcuts)
+// Listen for commands (keyboard shortcuts) and perform the action
 chrome.commands.onCommand.addListener(function(command) {
-  chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-    chrome.storage.sync.get(null, function(items) {
-      console.log("!chrome.commands.onCommand command=" + command);
+  console.log("!chrome.commands.onCommand command=" + command);
+  if (command === "next" || command === "prev" || command === "clear") {
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       var instance = URLNP.Background.getInstance(tabs[0].id);
       if (command === "next" || command === "prev") {
         if (instance && instance.enabled) {
           URLNP.Background.updateTab(instance, command);
-        } else if (items.quickEnabled) {
-          URLNP.Background.quickUpdateTab(tabs[0], command, items);
+        } else {
+          chrome.storage.sync.get(null, function(items) {
+            if (items.quickEnabled) {
+              instance = URLNP.Background.buildInstance(instance, tab, items, blah);
+              URLNP.Background.quickUpdateTab(tabs[0], command, items);
+            }
+          });
         }
       } else if (command === "clear" && instance && instance.enabled) {
         URLNP.Background.setInstance(tabs[0].id, undefined);
       }
+    });
+  }
+});
+
+// // Listen for storage changes and update the background's storage items cache
+// chrome.storage.onChanged.addListener(function(changes, namespace) {
+//   for (var key in changes) {
+//     var storageChange = changes[key];
+// console.log('Storage key "%s" in namespace "%s" changed. ' +
+// 'Old value was "%s", new value is "%s".',
+// key,
+// namespace,
+// storageChange.oldValue,
+// storageChange.newValue);
+// }
+// });
+
+// chrome.runtime.onStartup.addListener(function() {
+//   //
+// });
       // switch (command) {
       //   case "next":
       //     if (instance && instance.enabled) {
@@ -267,6 +259,3 @@ chrome.commands.onCommand.addListener(function(command) {
       //   default:
       //     break;
       // }
-    });
-  });
-});
