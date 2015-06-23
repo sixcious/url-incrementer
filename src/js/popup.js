@@ -35,9 +35,11 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
     DOM["#setup-input"].title = chrome.i18n.getMessage("popup_setup_input");
-    DOM["#url-label"].innerText = chrome.i18n.getMessage("popup_url_label");
-    DOM["#selection-label"].innerText = chrome.i18n.getMessage("popup_selection_label");
-    DOM["#interval-label"].innerText = chrome.i18n.getMessage("popup_interval_label");
+    // DOM["#use-links-tab"].textContent = chrome.i18n.getMessage("popup_use_links_title");
+    // DOM["#modify-url-tab"].textContent = chrome.i18n.getMessage("popup_modify_url_title");
+    DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
+    DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
+    DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
     DOM["#setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
     DOM["#setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
@@ -59,10 +61,10 @@ URLNP.Popup = URLNP.Popup || function () {
             if (!instance || instance.tab.url !== tabs[0].url) {
               instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
             }
-            //DOM["#setup"].mode.value = instance.mode;
+            DOM["#setup"].mode.value = instance.mode;
             DOM["#mode"].value = instance.mode;
-            DOM["#attribute-links-next"].value = instance.links ? instance.links.attributes.next : "";
-            DOM["#attribute-links-prev"].value = instance.links ? instance.links.attributes.prev : "";
+            DOM["#attribute-links-next"].textContent = instance.links.attributes.next;
+            DOM["#attribute-links-prev"].textContent = instance.links.attributes.prev;
             DOM["#url-textarea"].value = instance.tab.url; // or tab.url
             DOM["#selection-input"].value = instance.selection;
             DOM["#selection-start-input"].value = instance.selectionStart;
@@ -143,8 +145,12 @@ URLNP.Popup = URLNP.Popup || function () {
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
           DOM["#setup"].className = "display-block fade-in";
+          DOM["#selection-input"].value = instance.selection;
+          DOM["#url-textarea"].value = instance.tab.url; // or tab.url
           DOM["#url-textarea"].focus();
           DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          // DOM["#selection-start-input"].value = instance.selectionStart;
+          // DOM["#interval-input"].value = instance.interval;
           //selectURL();
         }, 300);
         break;

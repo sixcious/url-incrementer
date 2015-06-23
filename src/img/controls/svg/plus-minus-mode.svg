@@ -25,8 +25,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="16.126726"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="-7.373274"
      inkscape:cy="70.330791"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -69,43 +69,36 @@
        height="32"
        width="32" />
     <g
-       id="g3828">
-      <rect
-         transform="matrix(-0.74267416,-0.66965296,-0.66965296,0.74267416,0,0)"
-         ry="0"
-         rx="0"
-         y="655.18457"
-         x="-743.73853"
-         height="33.837765"
-         width="87.333778"
-         id="rect3014"
-         style="fill:#4c4c4c;fill-opacity:1;stroke:none" />
-      <rect
-         style="fill:#4c4c4c;fill-opacity:1;stroke:none"
-         id="rect3033"
-         width="87.333778"
-         height="33.837765"
-         x="659.13953"
-         y="-740.57812"
-         rx="0"
-         ry="0"
-         transform="matrix(-0.66578369,0.74614481,-0.74614481,-0.66578369,0,0)" />
+       id="g3361"
+       transform="translate(2,6.25)">
+      <g
+         id="g3365"
+         transform="translate(3.5355339,2.8284271)">
+        <rect
+           y="-48.999031"
+           x="931.61224"
+           height="24.706909"
+           width="58.208897"
+           id="rect3787"
+           style="fill:#4c4c4c;fill-opacity:1;stroke:none"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <rect
+           transform="scale(-1,-1)"
+           style="fill:#4c4c4c;fill-opacity:1;stroke:none"
+           id="rect3794"
+           width="58.208897"
+           height="24.706909"
+           x="-65.750015"
+           y="-973.07013" />
+      </g>
     </g>
     <rect
-       y="-117.72392"
-       x="924.36218"
-       height="15.156728"
-       width="35.708893"
-       id="rect3787"
+       y="-1036.1515"
+       x="-116.81068"
+       height="24.706909"
+       width="58.208897"
+       id="rect3359"
        style="fill:#4c4c4c;fill-opacity:1;stroke:none"
-       transform="matrix(0,1,-1,0,0,0)" />
-    <rect
-       transform="scale(-1,-1)"
-       style="fill:#4c4c4c;fill-opacity:1;stroke:none"
-       id="rect3794"
-       width="35.708893"
-       height="15.156728"
-       x="-128"
-       y="-949.79498" />
+       transform="scale(-1,-1)" />
   </g>
 </svg>

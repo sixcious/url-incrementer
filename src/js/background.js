@@ -76,7 +76,7 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function updateTab(instance, direction) {
-    console.log("updateTab(instance=" + instance + ", direction=" + direction + ")");
+    console.log("updateTab(instance=" + instance.tab.url + ", direction=" + direction + ")");
     var url_;
     switch (instance.mode) {
       case "use-links":
@@ -103,10 +103,10 @@ URLNP.Background = URLNP.Background || function () {
         break;
         */
         url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-        //instance.tab.url = jurl.urlm;
+        instance.tab.url = url_.urlm;
         instance.selection = url_.selectionm;
-        // setInstance(instance.tab.id, instance);
-        chrome.tabs.update(instance.tab.id, {url: url_.urlm}, function(tab) { instance.tab = tab; setInstance(tab.id, instance);});
+        setInstance(instance.tab.id, instance);
+        chrome.tabs.update(instance.tab.id, {url: url_.urlm});
         break;
       default:
         break;
@@ -163,7 +163,8 @@ URLNP.Background = URLNP.Background || function () {
                                         "";
     if (leadingzeros && selection.length > selectionm.length) {
       // Or use Array(1000).join("0") instead of literal "0000..." String?
-      selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.toString().length) + selectionm;
+      //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.toString().length) + selectionm;
+      selectionm = "0".repeat(selection.length - selectionm.toString().length) + selectionm;
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
     return {urlm: urlm, selectionm: selectionm};

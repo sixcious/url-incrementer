@@ -14,36 +14,41 @@
         <input id="clear-input" type="image" src="../img/controls/clear.png" alt="" class="disabled"/>
         <input id="setup-input" type="image" src="../img/controls/setup.png" alt=""/>
       </div>
-      <div id="setup" class="display-none">
-        <input id="mode" type="hidden"/>
+      <form id="setup" class="display-none">
+        <input id="mode" type="hidden"/> <!-- saves mode -->
         <div id="use-links">
+          <input id="links-radio" type="radio" name="mode" value="use-links"/>
+          <label id="links-legend" for="links-radio">Use Links</label>
           <div id="attribute-links">
-            <input id="attribute-links-next" type="text" readonly="readonly"/>
-            <input id="attribute-links-prev" type="text" readonly="readonly"/>
+            <span id="attribute-links-next"></span>
+            <span id="attribute-links-prev"></span>
           </div>
           <div id="innerHTML-links">
-            <input id="innerHTML-links-next" type="text" readonly="readonly"/>
-            <input id="innnerHTML-links-prev" type="text" readonly="readonly"/>
+            <span id="innerHTML-links-next"></span>
+            <span id="innnerHTML-links-prev"></span>
           </div>
         </div>
         <div id="modify-url">
-            <legend id="url-legend"></legend>
+          <input id="url-radio" type="radio" name="mode" value="modify-url"/>
+          <label id="modify-url-label" for="url-radio">Modify URL</label>
+          <legend id="url-legend"></legend>
+          <fieldset>
             <section>
-            <fieldset>
-              <label id="url-label" class="block" for="url-textarea"></label>
-              <textarea id="url-textarea" readonly="readonly"></textarea>
-            </fieldset>
+              <fieldset>
+                <label id="url-label" class="block" for="url-textarea"></label>
+                <textarea id="url-textarea" readonly="readonly"></textarea>
+              </fieldset>
             </section>
             <section>
-            <fieldset class="inline">
-              <label id="selection-label" class="block" for="selection-input"></label>
-              <input id="selection-input" type="text" readonly="readonly"/>
-              <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
-            </fieldset>
-            <fieldset class="inline">
-              <label id="interval-label" class="block" for="interval-input"></label>
-              <input id="interval-input" type="number" min="1"/>
-            </fieldset>
+              <fieldset class="inline">
+                <label id="selection-label" class="block" for="selection-input"></label>
+                <input id="selection-input" type="text" readonly="readonly"/>
+                <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
+              </fieldset>
+              <fieldset class="inline">
+                <label id="interval-label" class="block" for="interval-input"></label>
+                <input id="interval-input" type="number" min="1"/>
+              </fieldset>
             </section>
           </fieldset>
           <fieldset id="setup-buttons">
@@ -51,13 +56,19 @@
             <input id="setup-cancel-input" type="button" value=""/>
           </fieldset>
         </div>
-      </div>
+      </form>
     </div>
     <script type="text/javascript" src="../js/ui/ui.js"></script>
     <script type="text/javascript" src="../js/popup.js"></script>
   </body>
 </html>
-<!--          <input id="links-radio" type="radio" name="mode" value="use-links"/>
-          <label id="links-legend" for="links-radio">Use Links</label>-->
-          <!--            <input id="url-radio" type="radio" name="mode" value="modify-url"/>
-            <label id="modify-url-label" for="url-radio">Modify URL</label>-->
+
+<!--            
+                    <ul class="tabs">
+          <li class="tab">
+            <span id="use-links-tab"></span>
+          </li>
+          <li class="tab">
+            <span id="modify-url-tab"></span>
+          </li>
+        </ul>-->

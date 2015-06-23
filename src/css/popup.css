@@ -2,6 +2,7 @@
 
 @import url("chromium/chrome_shared.css");
 @import url("ui/ui.css");
+@import url("ui/ui-old.css");
 @import url("ui/hover.css");
 
 /* Popup properties */
@@ -124,3 +125,87 @@ legend {
 .display-none {
   display: none;
 }
+
+
+/*.tabs { border-bottom: 1px solid #BDBDBD; background-color: #EDEDED; margin: 0; padding: 0.2em 0.2em 0.2em 0; }
+.tabs li { list-style: none; margin: 0; padding: 0; display: inline; }
+.tabs li span { margin: 0; padding: 0.2em 0.2em 0.3em 0.2em; border-right: 1px solid #BDBDBD; border-bottom: none; text-decoration: none; }
+.tabs li span.selected { background: white; border-bottom: 1px solid white; }
+.tabs li span:hover { background-color: #CCC; }*/
+
+/*
+.tab-link {
+  text-transform: uppercase;
+  font-size: 10px;
+  cursor: pointer;
+  color: #555;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+  float: left;
+  width: 55px;
+  padding: 5px 0;
+  text-align: center;
+  background: #ccc;
+  border: 1px solid #bbb;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.tab-link:hover {
+  background: #eee;
+}
+
+.tab-link:nth-of-type(1) {
+  border-left: 1px solid #bbb;
+}
+
+.tab-link:hover {
+  color: #666;
+}
+
+.tab {
+  clear: both;
+  background: #ddd;
+  padding: 25px;
+  display: none;
+  height: 180px;
+  border: 1px solid #bbb;
+}
+
+.target-fix {
+  display: block;
+  top: 0;
+  left: 0;
+  position: fixed;
+}
+
+
+
+.tabs-focus .tab-link:focus,
+.tabs-hover .tab-link:hover,
+#tabC:target ~ a:nth-of-type(3),
+#tabB:target ~ a:nth-of-type(2),
+#tabC:not(:target) ~ #tabB:not(:target) ~ a:nth-of-type(1),
+#tab-C:checked ~ label:nth-of-type(3),
+#tab-B:checked ~ label:nth-of-type(2),
+#tab-B:not(:checked) ~ #tab-C:not(:checked) ~ label:nth-of-type(1) {
+  background: #ddd;
+}
+
+.tabs-focus .tab-link:focus:after,
+.tabs-hover .tab-link:hover:after,
+#tabC:target ~ a:nth-of-type(3):after,
+#tabB:target ~ a:nth-of-type(2):after,
+#tabC:not(:target) ~ #tabB:not(:target) ~ a:nth-of-type(1):after,
+#tab-C:checked ~ label:nth-of-type(3):after,
+#tab-B:checked ~ label:nth-of-type(2):after,
+#tab-B:not(:checked) ~ #tab-C:not(:checked) ~ label:nth-of-type(1):after {
+  position: absolute;
+  content: "";
+  margin: 5px 0 0 0;
+  width: 55px;
+  height: 1px;
+  display: block;
+  background: #ddd;
+}*/

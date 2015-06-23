@@ -29,20 +29,20 @@ URLNP.Options = URLNP.Options || function () {
       DOM["#" + ids[i].id] = ids[i];
     }
     // Set localization text (i18n) from messages.json
-    DOM["#keyboard-shortcuts-h3"].innerText = chrome.i18n.getMessage("options_keyboard_shortcuts_h3");
-    DOM["#keyboard-shortcuts-p"].innerText = chrome.i18n.getMessage("options_keyboard_shortcuts_p");
-    DOM["#keyboard-shortcuts-quick-enable-label"].innerText = chrome.i18n.getMessage("options_keyboard_shortcuts_quick_enable_label");
-    DOM["#keyboard-shortcuts-a"].innerText = chrome.i18n.getMessage("options_keyboard_shortcuts_a");
-    DOM["#default-settings-h3"].innerText = chrome.i18n.getMessage("options_default_settings_h3");
-    DOM["#default-settings-p"].innerText = chrome.i18n.getMessage("options_default_settings_p");
-    DOM["#default-mode-label"].innerText = chrome.i18n.getMessage("options_default_mode_label");
-    DOM["#default-mode-use-links-option"].innerText = chrome.i18n.getMessage("options_default_mode_use_links_option");
-    DOM["#default-mode-modify-url-option"].innerText = chrome.i18n.getMessage("options_default_mode_modify_url_option");
-    DOM["#default-links-label"].innerText = chrome.i18n.getMessage("options_default_links_label");
-    DOM["#default-links-attributes-option"].innerText = chrome.i18n.getMessage("options_default_links_attributes_option");
-    DOM["#default-links-innerHTML-option"].innerText = chrome.i18n.getMessage("options_default_links_innerHTML_option");
-    DOM["#default-interval-label"].innerText = chrome.i18n.getMessage("options_default_interval_label");
-    DOM["#animations-enable-label"].innerText = chrome.i18n.getMessage("options_animations_enable_label");
+    DOM["#keyboard-shortcuts-h3"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_h3");
+    DOM["#keyboard-shortcuts-p"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_p");
+    DOM["#keyboard-shortcuts-quick-enable-label"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_quick_enable_label");
+    DOM["#keyboard-shortcuts-a"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_a");
+    DOM["#default-settings-h3"].textContent = chrome.i18n.getMessage("options_default_settings_h3");
+    DOM["#default-settings-p"].textContent = chrome.i18n.getMessage("options_default_settings_p");
+    DOM["#default-mode-label"].textContent = chrome.i18n.getMessage("options_default_mode_label");
+    DOM["#default-mode-use-links-option"].textContent = chrome.i18n.getMessage("options_default_mode_use_links_option");
+    DOM["#default-mode-modify-url-option"].textContent = chrome.i18n.getMessage("options_default_mode_modify_url_option");
+    DOM["#default-links-label"].textContent = chrome.i18n.getMessage("options_default_links_label");
+    DOM["#default-links-attributes-option"].textContent = chrome.i18n.getMessage("options_default_links_attributes_option");
+    DOM["#default-links-innerHTML-option"].textContent = chrome.i18n.getMessage("options_default_links_innerHTML_option");
+    DOM["#default-interval-label"].textContent = chrome.i18n.getMessage("options_default_interval_label");
+    DOM["#animations-enable-label"].textContent = chrome.i18n.getMessage("options_animations_enable_label");
     // Add Event Listeners to the DOM elements
     DOM["#keyboard-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); }, false);
     DOM["#keyboard-shortcuts-a"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/configureCommands"}); });

@@ -27,8 +27,12 @@
     "message": "Setup",
     "description": "Title (tool tip) for the setup button image when hovered."
   },
-  "popup_link_legend": {
-    "message": "Use link=\"rel\"?",
+  "popup_use_links_title": {
+    "message": "Use Links",
+    "description": "TODO"
+  },
+  "popup_modify_url_title": {
+    "message": "Modify URL",
     "description": "TODO"
   },
   "popup_url_legend": {

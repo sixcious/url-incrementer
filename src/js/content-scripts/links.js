@@ -5,7 +5,9 @@ console.log("URLNP.Links");
 /**
  * URL Next Plus Links.
  * 
- * Uses the JavaScript Revealing Module Pattern.
+ * Uses the JavaScript Revealing Module Pattern
+ * 
+ * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.Links = URLNP.Links || function () {
@@ -22,7 +24,7 @@ URLNP.Links = URLNP.Links || function () {
     var links_ = document.getElementsByTagName("link"),
         //areas = document.getElementsByTagName("area"),
         //bases = document.getElementsByTagName("base"),
-        anchors = document.links; // All anchor and area elements e.g. documents.getElementsByTagName("a")
+        anchors = document.links; // Includes all anchor and area elements
 		console.log("\ttotal links found:" + links_.length);
 		for (i = 0; i < links_.length; i++) {
 		  console.log("\t" + (i + 1) + ":" + links_[i].rel + " " + links_[i].href);
@@ -37,8 +39,8 @@ URLNP.Links = URLNP.Links || function () {
 	 // parseElements(bases);
 	  parseElements(anchors);
 		console.timeEnd("scan");
+		console.log("links attributes:" + links.attributes);
 		console.log("links innerHTML:" + links.innerHTML.next);
-		console.log("links rel:" + links.rel.next);
   	return links;
   }
 
@@ -70,13 +72,12 @@ URLNP.Links = URLNP.Links || function () {
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        jcache = attribute.nodeName.toLowerCase();
-        if (jcache === "rel") {
-          if (attribute.nodeValue.toLowerCase() === "next") {
-					  links.attributes.next = element.href;
-          } else if (attribute.nodeValue.toLowerCase() === "prev") {
-					  links.attributes.prev = element.href;
-          }
+        jcache = attribute.nodeValue.toLowerCase();
+        // TODO: Separate all attributes by attribute.nodeName.toLowerCase()
+        if (jcache === "next") {
+          links.attributes.next = element.href;
+        } else if (jcache === "prev") {
+          links.attributes.prev = element.href;
         }
       }
     }
@@ -90,6 +91,8 @@ URLNP.Links = URLNP.Links || function () {
 
 // This last line will be returned in the chrome.tabs.executeScript() call
 URLNP.Links.getLinks();
+
+
 // Listen for requests from chrome.runtime.sendMessage
 // chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 //   if (request.greeting === "getLinks") {
