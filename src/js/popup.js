@@ -47,13 +47,16 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#prev-input"].addEventListener("click", clickPrev, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
     DOM["#setup-input"].addEventListener("click", toggleView, false);
+    DOM["#use-links-input"].addEventListener("change", function () { DOM["#mode"].value = this.value; }, false);
+    DOM["#modify-url-input"].addEventListener("change", function () { DOM["#mode"].value = this.value; }, false);
     DOM["#setup-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#setup-accept-input"].addEventListener("click", setup, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
+    
     // Initialization: get tab instance from background and cache storage
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.tabs.executeScript(tabs[0].id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+      chrome.tabs.executeScript(/*tabs[0].id, */{file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           chrome.storage.sync.get(null, function(items) {
             items_ = items;
@@ -61,10 +64,23 @@ URLNP.Popup = URLNP.Popup || function () {
             if (!instance || instance.tab.url !== tabs[0].url) {
               instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
             }
-            DOM["#setup"].mode.value = instance.mode;
+            // DOM["#setup"].mode.value = instance.mode;
+            DOM["#" + instance.mode + "-input"].checked = true;
             DOM["#mode"].value = instance.mode;
-            DOM["#attribute-links-next"].textContent = instance.links.attributes.next;
-            DOM["#attribute-links-prev"].textContent = instance.links.attributes.prev;
+            // Links initialization:
+            if (instance.links.attributes.next || instance.links.attributes.prev) {
+              DOM["#links-attributes-next"].textContent = instance.links.attributes.next;
+              DOM["#links-attributes-prev"].textContent = instance.links.attributes.prev;
+            } else {
+              // No Links were found
+            }
+            if (instance.links.innerHTML.next || instance.links.innerHTML.prev) {
+              DOM["#links-innerHTML-next"].textContent = instance.links.innerHTML.next;
+              DOM["#links-innerHTML-prev"].textContent = instance.links.innerHTML.prev;
+            } else {
+              // No links found
+            }
+            // Modify URL initialization:
             DOM["#url-textarea"].value = instance.tab.url; // or tab.url
             DOM["#selection-input"].value = instance.selection;
             DOM["#selection-start-input"].value = instance.selectionStart;
@@ -89,6 +105,9 @@ URLNP.Popup = URLNP.Popup || function () {
         URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        if (instance.mode === "use-links") {
+          
+        }
         backgroundPage.URLNP.Background.updateTab(instance, "next");
         instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
@@ -189,7 +208,7 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function setup() {
     console.log("setup()");
-    var mode = DOM["#setup"].mode.value,
+    var mode = DOM["#mode"].value, //DOM["#setup"].mode.value,
         url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,

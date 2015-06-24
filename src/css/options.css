@@ -26,3 +26,7 @@ div.column {
 input[type="number"] {
 	width: 52px;
 }
+
+img {
+  vertical-align: text-bottom;
+}

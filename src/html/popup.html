@@ -9,29 +9,32 @@
   <body>
     <div id="popup">
       <div id="controls" class="display-block fade-in">
-        <input id="prev-input" type="image" src="../img/controls/prev.png" alt="" class="disabled"/>
-        <input id="next-input" type="image" src="../img/controls/next.png" alt="" class="disabled"/>
-        <input id="clear-input" type="image" src="../img/controls/clear.png" alt="" class="disabled"/>
-        <input id="setup-input" type="image" src="../img/controls/setup.png" alt=""/>
+        <input id="prev-input" type="image" src="../img/popup/prev.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="next-input" type="image" src="../img/popup/next.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="clear-input" type="image" src="../img/popup/clear.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="setup-input" type="image" src="../img/popup/setup.png" alt="" width="16" height="16"/>
       </div>
-      <form id="setup" class="display-none">
+      <div id="setup" class="display-none">
         <input id="mode" type="hidden"/> <!-- saves mode -->
         <div id="use-links">
-          <input id="links-radio" type="radio" name="mode" value="use-links"/>
-          <label id="links-legend" for="links-radio">Use Links</label>
-          <div id="attribute-links">
-            <span id="attribute-links-next"></span>
-            <span id="attribute-links-prev"></span>
+          <input id="use-links-input" type="radio" name="mode" value="use-links"/>
+          <label id="links-legend" for="use-links-input">Use Links</label>
+          <div id="links-attributes">
+            <span id="links-attributes-links-next"></span>
+            <span id="links-attributes-links-prev"></span>
           </div>
-          <div id="innerHTML-links">
-            <span id="innerHTML-links-next"></span>
-            <span id="innnerHTML-links-prev"></span>
+          <div id="links-innerHTML">
+            <span id="links-innerHTML-next"></span>
+            <span id="links-innerHTML-prev"></span>
           </div>
         </div>
         <div id="modify-url">
-          <input id="url-radio" type="radio" name="mode" value="modify-url"/>
-          <label id="modify-url-label" for="url-radio">Modify URL</label>
-          <legend id="url-legend"></legend>
+          <legend id="url-legend" class="radio">
+            <label>
+              <input id="modify-url-input" type="radio" name="mode" value="modify-url"/>
+              <span id="modify-url-label" for="modify-url-input">Modify URL</span>
+            </label>
+            </legend>
           <fieldset>
             <section>
               <fieldset>
@@ -56,19 +59,9 @@
             <input id="setup-cancel-input" type="button" value=""/>
           </fieldset>
         </div>
-      </form>
+      </div>
     </div>
     <script type="text/javascript" src="../js/ui/ui.js"></script>
     <script type="text/javascript" src="../js/popup.js"></script>
   </body>
 </html>
-
-<!--            
-                    <ul class="tabs">
-          <li class="tab">
-            <span id="use-links-tab"></span>
-          </li>
-          <li class="tab">
-            <span id="modify-url-tab"></span>
-          </li>
-        </ul>-->

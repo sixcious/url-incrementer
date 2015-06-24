@@ -80,28 +80,20 @@ URLNP.Background = URLNP.Background || function () {
     var url_;
     switch (instance.mode) {
       case "use-links":
-        chrome.tabs.executeScript(tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
-          links = results[0];
+            chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+        chrome.tabs.executeScript(/*tabs[0].id, */{file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+          var links = results[0];
           // TODO attributes and innerHTML items.defaultLinks check
-          url = direction === "next" ? links.rel.next ? links.rel.next : links.innerHTML.next ? links.innerHTML.next : undefined :
-                direction === "prev" ? links.rel.prev ? links.rel.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
+          url = direction === "next" ? links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
+                direction === "prev" ? links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
                 undefined;
-          if (url && tab.url !== url) {
-            chrome.tabs.update(tab.id, {url: url});
+          if (url && instance.tab.url !== url) {
+            chrome.tabs.update(instance.tab.id, {url: url});
           }
         });
+            });
         break;
       case "modify-url":
-        /*
-              case "modify-url":
-        selection_ = findSelection(tab.url);
-        url_ = modifyURL(tab.url, selection_.selection, selection_.selectionStart, items.defaultInterval, direction);
-        url = url_.url2;
-        if (url && tab.url !== url) {
-          chrome.tabs.update(tab.id, {url: url});
-        }
-        break;
-        */
         url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
         instance.tab.url = url_.urlm;
         instance.selection = url_.selectionm;
@@ -122,8 +114,8 @@ URLNP.Background = URLNP.Background || function () {
    * http://www.google.com?page=1234
    * http://www.google.com/1234
    * 
-   * Second, if no prefixes with numbers exist, finds the last number in the
-   * url. If no numbers exist in the URL, returns an empty selection.
+   * If no prefixes with numbers are found, uses the last number in the url. If
+   * no numbers exist in the URL, returns an empty selection.
    * 
    * @param url the url to find the selection in
    * @return JSON object {selection, selectionStart}
@@ -179,7 +171,7 @@ URLNP.Background = URLNP.Background || function () {
   };
 }();
 
-// Listen for installation changes -- initialize storage and go to options
+// Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
   console.log("!chrome.runtime.onInstalled details.reason=" + details.reason);
   // TODO: Remove the details.reason === "update" after this release
@@ -197,7 +189,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
   }
 });
 
-// Listen for commands (keyboard shortcuts) and perform the action
+// Listen for commands (keyboard shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
   console.log("!chrome.commands.onCommand command=" + command);
   if (command === "next" || command === "prev" || command === "clear") {
