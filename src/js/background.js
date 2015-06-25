@@ -172,7 +172,7 @@ URLNP.Background = URLNP.Background || function () {
         selectionm,
         leadingzeros = selection.charAt(0) === '0',
         alphanumeric = /[a-z]/i.test(selection),
-        selectionint = parseInt(selection, alphanumeric ? 36 : 10); // Base 36
+        selectionint = parseInt(selection, alphanumeric ? 36 : 10);
     // In case of minus producing negative, set selectionm to 0
     selectionm = direction === "next" ? (selectionint + interval).toString() :
                  direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :
@@ -183,9 +183,7 @@ URLNP.Background = URLNP.Background || function () {
       selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
     }
     if (alphanumeric) {
-      console.log("alphanumeric - selectionm before toString=" + selectionm);
       selectionm = (+selectionm).toString(36).toUpperCase();
-        console.log("alphanumeric - selectionm after toString=" + selectionm);
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
     return {urlm: urlm, selectionm: selectionm};
