@@ -9,5 +9,5 @@ basically any website that keeps its URLs organized sequentially by numbers
 It's similar to the FireFox URL Flipper extension.
 
 
-URLNP not finding links on a website? Discovered a bug? Have a feature in mind?
+Discovered a bug? Have a feature in mind? URLNP not finding the next/prev links on a website? 
 Please open an issue.

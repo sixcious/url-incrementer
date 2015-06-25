@@ -24,7 +24,7 @@ body {
 }
 
 #controls {
-	width: 82px;
+	width: 104px; /*82px;*/
 }
 
 #setup {
@@ -81,7 +81,7 @@ legend {
 	font-size:  16px;
 }*/
 
-#setup-buttons {
+.setup-buttons {
 	display: block;
 	text-align: center;
 	position: relative;
@@ -123,4 +123,8 @@ legend {
 
 .display-none {
   display: none;
+}
+
+.display-inline {
+  display: inline;
 }

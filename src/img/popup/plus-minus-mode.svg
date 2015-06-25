@@ -25,14 +25,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="-73.84131"
+     inkscape:cx="-86.215678"
      inkscape:cy="70.330791"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1600"
-     inkscape:window-height="1178"
-     inkscape:window-x="1592"
+     inkscape:window-height="1138"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -54,21 +54,23 @@
      transform="translate(0,-924.3622)">
     <g
        id="g3361"
-       transform="translate(2,6.25)">
+       transform="translate(2,6.25)"
+       style="stroke:none;fill:#333333;fill-opacity:1">
       <g
          id="g3365"
-         transform="translate(3.5355339,2.8284271)">
+         transform="translate(3.5355339,2.8284271)"
+         style="stroke:none;fill:#333333;fill-opacity:1">
         <rect
            y="-48.999031"
            x="931.61224"
            height="24.706909"
            width="58.208897"
            id="rect3787"
-           style="fill:#4c4c4c;fill-opacity:1;stroke:none"
+           style="fill:#333333;fill-opacity:1;stroke:none"
            transform="matrix(0,1,-1,0,0,0)" />
         <rect
            transform="scale(-1,-1)"
-           style="fill:#4c4c4c;fill-opacity:1;stroke:none"
+           style="fill:#333333;fill-opacity:1;stroke:none"
            id="rect3794"
            width="58.208897"
            height="24.706909"
@@ -82,7 +84,7 @@
        height="24.706909"
        width="58.208897"
        id="rect3359"
-       style="fill:#4c4c4c;fill-opacity:1;stroke:none"
+       style="fill:#333333;fill-opacity:1;stroke:none"
        transform="scale(-1,-1)" />
   </g>
 </svg>

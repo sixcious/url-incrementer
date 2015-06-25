@@ -4,38 +4,38 @@
     "description": "Extension name."
   },
   "description": {
-    "message": "Finds the next URL and lets you + (increment) numbers in a URL",
+    "message": "Finds the next [>] URL link and lets you plus [+] numbers in a URL",
     "description": "Extension description."
   },
   "title": {
     "message": "URL Next Plus",
-    "description": "Extension title (tool tip)."
+    "description": "Extension title (tool tip) shown when hovered."
   },
   "popup_next_input": {
     "message": "Next [+]",
-    "description": "Next input button title (tool tip)."
+    "description": "Next input button title (tool tip) shown when hovered."
   },
   "popup_prev_input": {
     "message": "Prev [-]",
-    "description": "Prev input button title (tool tip)."
+    "description": "Prev input button title (tool tip) shown when hovered."
   },
   "popup_clear_input": {
     "message": "Clear [x]",
-    "description": "Clear input button title (tool tip)."
+    "description": "Clear input button title (tool tip) when hovered."
   },
-  "popup_setup_input": {
-    "message": "Setup",
-    "description": "Title (tool tip) for the setup button image when hovered."
-  },
-  "popup_use_links_title": {
-    "message": "Use Links",
+  "popup_next_prev_setup_input": {
+    "message": "Next Prev Links Setup",
     "description": "TODO"
   },
-  "popup_modify_url_title": {
-    "message": "Modify URL",
+  "popup_plus_minus_setup_input": {
+    "message": "Plus Minus URL Setup",
     "description": "TODO"
   },
-  "popup_url_legend": {
+  "popup_next_prev_h3": {
+    "message": "Choose which next and prev links to use",
+    "description": "TODO"
+  },
+  "popup_plus_minus_h3": {
     "message": "Select the part of the URL to modify",
     "description": "TODO"
   },
@@ -68,7 +68,7 @@
     "description": "Setup error message if the selection is not alphanumeric."
   },
   "popup_selection_notinurl_error": {
-    "message": "Selection must be a part of the URL",
+    "message": "Selection has to be a part of the URL",
     "description": "Setup error message if the selection is not part of the URL."
   },
   "popup_selectionstart_invalid_error": {
@@ -107,11 +107,11 @@
     "message": "Mode",
     "description": ""
   },
-  "options_default_mode_use_links_option": {
+  "options_default_mode_next_prev_option": {
     "message": "Use the Next [>] and Prev [<] links on the page",
     "description": ""
   },
-  "options_default_mode_modify_url_option": {
+  "options_default_mode_plus_minus_option": {
     "message": "Increment [+] or Decrement [-] the URL",
     "description": ""
   },

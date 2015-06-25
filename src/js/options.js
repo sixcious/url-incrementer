@@ -28,7 +28,7 @@ URLNP.Options = URLNP.Options || function () {
     for (i = 0; i < ids.length; i++) {
       DOM["#" + ids[i].id] = ids[i];
     }
-    // Set localization text (i18n) from messages.json
+    // Set i18n (internationalization) text from messages.json
     DOM["#keyboard-shortcuts-h3"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_h3");
     DOM["#keyboard-shortcuts-p"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_p");
     DOM["#keyboard-shortcuts-quick-enable-label"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_quick_enable_label");
@@ -36,8 +36,8 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#default-settings-h3"].textContent = chrome.i18n.getMessage("options_default_settings_h3");
     DOM["#default-settings-p"].textContent = chrome.i18n.getMessage("options_default_settings_p");
     DOM["#default-mode-label"].textContent = chrome.i18n.getMessage("options_default_mode_label");
-    DOM["#default-mode-use-links-option"].textContent = chrome.i18n.getMessage("options_default_mode_use_links_option");
-    DOM["#default-mode-modify-url-option"].textContent = chrome.i18n.getMessage("options_default_mode_modify_url_option");
+    DOM["#default-mode-next-prev-option"].textContent = chrome.i18n.getMessage("options_default_mode_next_prev_option");
+    DOM["#default-mode-plus-minus-option"].textContent = chrome.i18n.getMessage("options_default_mode_plus_minus_option");
     DOM["#default-links-label"].textContent = chrome.i18n.getMessage("options_default_links_label");
     DOM["#default-links-attributes-option"].textContent = chrome.i18n.getMessage("options_default_links_attributes_option");
     DOM["#default-links-innerHTML-option"].textContent = chrome.i18n.getMessage("options_default_links_innerHTML_option");
@@ -47,16 +47,16 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#keyboard-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); }, false);
     DOM["#keyboard-shortcuts-a"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/configureCommands"}); });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); }, false);
-    DOM["#default-mode-use-links-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.value}); }, false);
-    DOM["#default-mode-modify-url-input"].addEventListener("change", function () {chrome.storage.sync.set({"defaultMode": this.value}); }, false);
+    DOM["#default-mode-next-prev-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.value}); }, false);
+    DOM["#default-mode-plus-minus-input"].addEventListener("change", function () {chrome.storage.sync.set({"defaultMode": this.value}); }, false);
     DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": +this.value > 0 ? +this.value : 1}); }, false);
-    DOM["#default-links-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultLinks": this.options[this.selectedIndex].value}); }, false);
+    DOM["#default-links-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultLinksPriority": this.options[this.selectedIndex].value}); }, false);
     // Populate values from storage
     chrome.storage.sync.get(null, function(items) {
       DOM["#keyboard-shortcuts-quick-enable-input"].checked = items.quickEnabled;
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
       DOM["#default-mode-" + items.defaultMode + "-input"].checked = true;
-      DOM["#default-links-select"].value = items.defaultLinks;
+      DOM["#default-links-select"].value = items.defaultLinksPriority;
       DOM["#default-interval-input"].value = items.defaultInterval;
     });
   }

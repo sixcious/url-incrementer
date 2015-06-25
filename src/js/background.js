@@ -55,7 +55,7 @@ URLNP.Background = URLNP.Background || function () {
         instance = {};
         instance.enabled = false;
         instance.mode = items.defaultMode;
-        instance.linksPriority = items.defaultLinks;
+        instance.linksPriority = items.defaultLinksPriority;
         instance.interval = items.defaultInterval;
       }
       instance.tab = tab;
@@ -77,32 +77,55 @@ URLNP.Background = URLNP.Background || function () {
    */
   function updateTab(instance, direction) {
     console.log("updateTab(instance=" + instance.tab.url + ", direction=" + direction + ")");
-    var url_;
+    var url;
     switch (instance.mode) {
-      case "use-links":
-            chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+      case "next-prev":
         chrome.tabs.executeScript(/*tabs[0].id, */{file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
           var links = results[0];
           // TODO attributes and innerHTML items.defaultLinks check
-          url = direction === "next" ? links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
-                direction === "prev" ? links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
-                undefined;
+          url = processLinks(results[0], instance.linksPriority, direction);
           if (url && instance.tab.url !== url) {
             chrome.tabs.update(instance.tab.id, {url: url});
           }
         });
-            });
         break;
-      case "modify-url":
-        url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-        instance.tab.url = url_.urlm;
-        instance.selection = url_.selectionm;
+      case "plus-minus":
+        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        instance.tab.url = url.urlm;
+        instance.selection = url.selectionm;
         setInstance(instance.tab.id, instance);
-        chrome.tabs.update(instance.tab.id, {url: url_.urlm});
+        chrome.tabs.update(instance.tab.id, {url: url.urlm});
         break;
       default:
         break;
     }
+  }
+
+  /**
+   * Processes the next and prev links and return the correct URL link to use.
+   * 
+   * @param links     the JSON object containing the next and prev links
+   * @param priority  the link priority to use: attributes or innerHTML
+   * @param direction the direction to go: next or prev
+   * @return url the url to use based on the parameters
+   * @private
+   */
+  function processLinks(links, priority, direction) {
+    var url;
+    url = direction === "next" ?
+            priority === "attributes" ?
+              links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
+            priority === "innerHTML" ?
+              links.innerHTML.next ? links.innerHTML.next : links.attributes.next ? links.attributes.next : undefined :
+            undefined :
+        direction === "prev" ?
+          priority === "attributes" ?
+            links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
+          priority === "innerHTML" ?
+              links.innerHTML.prev ? links.innerHTML.prev : links.attributes.prev ? links.attributes.prev : undefined :
+          undefined :
+        undefined;
+    return url;
   }
 
   /**
@@ -148,15 +171,21 @@ URLNP.Background = URLNP.Background || function () {
     var urlm,
         selectionm,
         leadingzeros = selection.charAt(0) === '0',
-        alphanumeric = /^[a-z]+$/i.exec(selection); // TODO
-    // In case of minus, set the selection to 0 in case the result is negative
-    selectionm = direction === "next" ? (+selection + interval).toString() :
-                 direction === "prev" ? (+selection - interval >= 0 ? +selection - interval : 0).toString() :
+        alphanumeric = /[a-z]/i.test(selection),
+        selectionint = parseInt(selection, alphanumeric ? 36 : 10); // Base 36
+    // In case of minus producing negative, set selectionm to 0
+    selectionm = direction === "next" ? (selectionint + interval).toString() :
+                 direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :
                                         "";
     if (leadingzeros && selection.length > selectionm.length) {
       // Or use Array(1000).join("0") instead of literal "0000..." String?
       //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.toString().length) + selectionm;
-      selectionm = "0".repeat(selection.length - selectionm.toString().length) + selectionm;
+      selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
+    }
+    if (alphanumeric) {
+      console.log("alphanumeric - selectionm before toString=" + selectionm);
+      selectionm = (+selectionm).toString(36).toUpperCase();
+        console.log("alphanumeric - selectionm after toString=" + selectionm);
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
     return {urlm: urlm, selectionm: selectionm};
@@ -179,8 +208,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
         "quickEnabled": true,
-        "defaultMode": "use-links",
-        "defaultLinks": "attributes",
+        "defaultMode": "next-prev",
+        "defaultLinksPriority": "attributes",
         "defaultInterval": 1,
         "animationsEnabled": true
       });
@@ -201,7 +230,7 @@ chrome.commands.onCommand.addListener(function(command) {
         } else {
           chrome.storage.sync.get(null, function(items) {
             if (items.quickEnabled) {
-              instance = URLNP.Background.buildInstance(instance, tab, items, blah);
+              instance = URLNP.Background.buildInstance(instance, tab, items, links); // TODO links
               URLNP.Background.updateTab(instance, command);
             }
           });
@@ -212,43 +241,3 @@ chrome.commands.onCommand.addListener(function(command) {
     });
   }
 });
-
-// // Listen for storage changes and update the background's storage items cache
-// chrome.storage.onChanged.addListener(function(changes, namespace) {
-//   for (var key in changes) {
-//     var storageChange = changes[key];
-// console.log('Storage key "%s" in namespace "%s" changed. ' +
-// 'Old value was "%s", new value is "%s".',
-// key,
-// namespace,
-// storageChange.oldValue,
-// storageChange.newValue);
-// }
-// });
-
-// chrome.runtime.onStartup.addListener(function() {
-//   //
-// });
-      // switch (command) {
-      //   case "next":
-      //     if (instance && instance.enabled) {
-      //       URLNP.Background.updateTab(instance, "next");
-      //     } else if (items.quickEnabled) {
-      //       URLNP.Background.quickUpdateTab(tabs[0], "next", items);
-      //     }
-      //     break;
-      //   case "prev":
-      //     if (instance && instance.enabled) {
-      //       URLNP.Background.updateTab(instance, "prev");
-      //     } else if (items.quickEnabled) {
-      //       URLNP.Background.quickUpdateTab(tabs[0], "prev", items);
-      //     }
-      //     break;
-      //   case "clear":
-      //     if (instance && instance.enabled) {
-      //       URLNP.Background.setInstance(tabs[0], undefined);
-      //     }
-      //     break;
-      //   default:
-      //     break;
-      // }

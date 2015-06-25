@@ -11,7 +11,7 @@ var URLNP = URLNP || {};
 URLNP.UI = URLNP.UI || function () {
 
   /**
-   * Generates a popup with messages.
+   * Generates an alert to display messages.
    * 
    * This function is derived from the sample Google extension, Proxy Settings,
    * by Mike West.
@@ -19,8 +19,8 @@ URLNP.UI = URLNP.UI || function () {
    * @param messages the messages array to display, line by line
    * @public
    */
-  function generatePopup(messages) {
-    console.log("generatePopup(messages)");
+  function generateAlert(messages) {
+    console.log("generateAlert(messages)");
     var div = document.createElement("div"),
         ul = document.createElement("ul"),
         li,
@@ -55,7 +55,7 @@ URLNP.UI = URLNP.UI || function () {
 
   // Return Public Functions
   return {
-    generatePopup: generatePopup,
+    generateAlert: generateAlert,
     clickHoverCss: clickHoverCss
   };
 }();
