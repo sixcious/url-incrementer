@@ -74,27 +74,34 @@ URLNP.Background = URLNP.Background || function () {
    */
   function updateTab(instance, direction) {
     console.log("updateTab(instance=" + instance.tab.url + ", direction=" + direction + ")");
-    var url;
+    var url_,
+        url;
     switch (instance.mode) {
       case "next-prev":
-        chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
-          var links = results[0];
-          url = processLinks(results[0], instance.linksPriority, direction);
-          if (url && instance.tab.url !== url) {
-            chrome.tabs.update(instance.tab.id, {url: url});
-          }
-        });
+          url = processLinks(instance.links, instance.linksPriority, direction);
+        // chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+        //   var links = results[0];
+        //   url = processLinks(results[0], instance.linksPriority, direction);
+        //   if (url && instance.tab.url !== url) {
+        //     chrome.tabs.update(instance.tab.id, {url: url});
+        //   }
+        // });
         break;
       case "plus-minus":
-        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-        instance.tab.url = url.urlm;
-        instance.selection = url.selectionm;
+        url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        url = url_.urlm;
+        instance.tab.url = url_.urlm;
+        instance.selection = url_.selectionm;
         setInstance(instance.tab.id, instance);
-        chrome.tabs.update(instance.tab.id, {url: url.urlm});
+        // chrome.tabs.update(instance.tab.id, {url: url.urlm});
         break;
-      default:
-        break;
+      // default:
+      //   break;
     }
+    if (url && instance.tab.url !== url) {
+      chrome.tabs.update(instance.tab.id, {url: url});
+    }
+    return url ? url : instance.tab.url;
   }
 
   /**
@@ -107,22 +114,8 @@ URLNP.Background = URLNP.Background || function () {
    * @private
    */
   function processLinks(links, priority, direction) {
+    console.log("processLinks(links=" + links +", priority=" + priority + ", direction=" + direction + ")");
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
-    // var url;
-    // url = direction === "next" ?
-    //         priority === "attributes" ?
-    //           links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
-    //         priority === "innerHTML" ?
-    //           links.innerHTML.next ? links.innerHTML.next : links.attributes.next ? links.attributes.next : undefined :
-    //         undefined :
-    //     direction === "prev" ?
-    //       priority === "attributes" ?
-    //         links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
-    //       priority === "innerHTML" ?
-    //           links.innerHTML.prev ? links.innerHTML.prev : links.attributes.prev ? links.attributes.prev : undefined :
-    //       undefined :
-    //     undefined;
-    // return url;
   }
 
   /**
@@ -224,7 +217,7 @@ chrome.commands.onCommand.addListener(function(command) {
         } else {
           chrome.storage.sync.get(null, function(items) {
             if (items.quickEnabled) {
-              instance = URLNP.Background.buildInstance(instance, tab, items, links); // TODO links
+              instance = URLNP.Background.buildInstance(instance, tabs[0], items, undefined); // TODO links
               URLNP.Background.updateTab(instance, command);
             }
           });

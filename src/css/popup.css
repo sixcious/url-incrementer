@@ -69,7 +69,7 @@ input[type="number"] {
 textarea {
 	width: 412px;
 	color: #777777;
-	letter-spacing: -1px;
+/*	letter-spacing: -1px;*/
 }
 
 .left {

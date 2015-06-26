@@ -110,13 +110,25 @@ URLNP.Popup = URLNP.Popup || function () {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       }
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      // chrome.runtime.getBackgroundPage(function(backgroundPage) {
         if (instance.mode === "next-prev") {
-          
+          console.log("next-prev next");
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+      chrome.tabs.executeScript({file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+            console.log("executing script in next-prev");
+            instance.links = results[0];
+            instance.tab.url = backgroundPage.URLNP.Background.updateTab(instance, "next");
+            //instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
+            backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
+          });
+          });
+    });
+        } else {
+          backgroundPage.URLNP.Background.updateTab(instance, "next");
+          instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
         }
-        backgroundPage.URLNP.Background.updateTab(instance, "next");
-        instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
-      });
+      // });
     }
   }
 
@@ -230,7 +242,7 @@ URLNP.Popup = URLNP.Popup || function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       instance.enabled = true;
       instance.mode = mode;
-      instance.links = links;
+      // instance.links = links;
       backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
       toggleView.call(DOM["#next-prev-setup-accept-input"]);
       updateControls();
