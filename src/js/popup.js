@@ -268,8 +268,6 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.interval = interval;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
-        instance.leadingzeros = selection.charAt(0) === '0';
-        instance.alphanumeric = /[a-z]/i.test(selection);
         backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
         toggleView.call(DOM["#plus-minus-setup-accept-input"]);
         updateControls();

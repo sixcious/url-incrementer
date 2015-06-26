@@ -59,8 +59,6 @@ URLNP.Background = URLNP.Background || function () {
       instance.links = links;
       instance.selection = selection_.selection;
       instance.selectionStart = selection_.selectionStart;
-      instance.leadingzeros = instance.selection.charAt(0) === '0';
-      instance.alphanumeric = /[a-z]/i.test(instance.selection);
     }
     return instance;
   }
@@ -88,7 +86,7 @@ URLNP.Background = URLNP.Background || function () {
         });
         break;
       case "plus-minus":
-        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, instance.leadingzeros, instance.alphanumeric, direction);
+        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
         instance.tab.url = url.urlm;
         instance.selection = url.selectionm;
         setInstance(instance.tab.id, instance);
@@ -109,21 +107,22 @@ URLNP.Background = URLNP.Background || function () {
    * @private
    */
   function processLinks(links, priority, direction) {
-    var url;
-    url = direction === "next" ?
-            priority === "attributes" ?
-              links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
-            priority === "innerHTML" ?
-              links.innerHTML.next ? links.innerHTML.next : links.attributes.next ? links.attributes.next : undefined :
-            undefined :
-        direction === "prev" ?
-          priority === "attributes" ?
-            links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
-          priority === "innerHTML" ?
-              links.innerHTML.prev ? links.innerHTML.prev : links.attributes.prev ? links.attributes.prev : undefined :
-          undefined :
-        undefined;
-    return url;
+    return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
+    // var url;
+    // url = direction === "next" ?
+    //         priority === "attributes" ?
+    //           links.attributes.next ? links.attributes.next : links.innerHTML.next ? links.innerHTML.next : undefined :
+    //         priority === "innerHTML" ?
+    //           links.innerHTML.next ? links.innerHTML.next : links.attributes.next ? links.attributes.next : undefined :
+    //         undefined :
+    //     direction === "prev" ?
+    //       priority === "attributes" ?
+    //         links.attributes.prev ? links.attributes.prev : links.innerHTML.prev ? links.innerHTML.prev : undefined :
+    //       priority === "innerHTML" ?
+    //           links.innerHTML.prev ? links.innerHTML.prev : links.attributes.prev ? links.attributes.prev : undefined :
+    //       undefined :
+    //     undefined;
+    // return url;
   }
 
   /**
@@ -164,11 +163,12 @@ URLNP.Background = URLNP.Background || function () {
    * @return JSON object {urlm: modified url, selectionm: modified selection}
    * @private
    */
-  function modifyURL(url, selection, selectionStart, interval, leadingzeros, alphanumeric, direction) {
-    console.log("leadingzeros=" + leadingzeros + ", alphanumeric=" + alphanumeric);
+  function modifyURL(url, selection, selectionStart, interval, direction) {
     console.log("modifyURL(url=" + url + ", selection=" + selection + ", selectionStart=" + selectionStart + ", interval=" + interval + ", direction=" + direction + ")");
     var urlm,
         selectionm,
+        leadingzeros = selection.charAt(0) === '0',
+        alphanumeric = /[a-z]/i.test(selection),
         selectionint = parseInt(selection, alphanumeric ? 36 : 10);
     // In case of minus producing negative, set selectionm to 0
     selectionm = direction === "next" ? (selectionint + interval).toString() :
