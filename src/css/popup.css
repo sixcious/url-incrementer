@@ -24,17 +24,17 @@ body {
 }
 
 #controls {
-	width: 104px; /*82px;*/
+	width: 102px; /*82px;*/
 }
 
-#setup {
-  width: 400px;
-}
+/*#plus-minus-setup {
+  width: auto;
+}*/
 
 /* Controls properties */
 
 input[type="image"] {
-  display: inline-block;
+/*  display: inline-block;*/
   vertical-align: middle;
 }
 
@@ -57,34 +57,38 @@ input[type="image"].disabled {
 /* Setup properties */
 
 input[type="text"] {
-	width: 200px;
+	width: 152px;
+	display: block;
 }
 
 input[type="number"] {
 	width: 52px;
+	display: block;
 }
 
 textarea {
 	width: 412px;
-	letter-spacing: -1px;
-	font: 14px/1 inherit;
-	font-weight: normal;
 	color: #777777;
+	letter-spacing: -1px;
 }
 
-/*fieldset {
-  border: none;
+.left {
+  float: left;
 }
 
-legend {
+.right {
+  float: right;
+  margin-right: 150px;
+}
+
+label {
 	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-	font-size:  16px;
-}*/
+}
 
 .setup-buttons {
-	display: block;
+  margin-top: 58px;
 	text-align: center;
-	position: relative;
+  clear: both;
 }
 
 /* Toggle View Animation / CSS TODO: make fade-out-max-height work better */
@@ -123,8 +127,4 @@ legend {
 
 .display-none {
   display: none;
-}
-
-.display-inline {
-  display: inline;
 }

@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="68.7021"
+     inkscape:cx="34.7021"
      inkscape:cy="40.330791"
      inkscape:document-units="px"
      inkscape:current-layer="g3828"
@@ -56,7 +56,8 @@
        id="g3828">
       <g
          id="g5196"
-         style="fill:#333333;fill-opacity:1;stroke:none">
+         style="fill:#333333;fill-opacity:1;stroke:none"
+         transform="translate(-5.9115881,0.26517443)">
         <rect
            style="fill:#333333;fill-opacity:1;stroke:none"
            id="rect3014"

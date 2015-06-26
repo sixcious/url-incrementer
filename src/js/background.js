@@ -1,21 +1,18 @@
-// TODO URL Next Plus for Google Chrome © 2011 Roy Six
-
-console.log("URLNP.Background");
-
 /**
  * URL Next Plus Background
  * 
+ * @author Roy Six
  * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
-  var instances = []; // Keeps track of the tab instances (TODO: Put in storage)
+  var instances = []; // Tab instances (TODO:Put in storage to convert to event)
 
   /**
    * Gets the tab's instance.
    * 
-   * @param tab the tab to lookup this instance by
+   * @param tab the tab id to lookup this instance by
    * @return instance the tab's instance
    * @public
    */
@@ -27,7 +24,7 @@ URLNP.Background = URLNP.Background || function () {
   /**
    * Sets the tab's instance.
    * 
-   * @param tab      the tab to lookup this instance by
+   * @param tab      the tab id to lookup this instance by
    * @param instance the instance to set
    * @public
    */
@@ -40,9 +37,9 @@ URLNP.Background = URLNP.Background || function () {
    * Builds/Updates a instance with default values.
    * 
    * @param instance the instance, if any, to continue building off of
-   * @param tab      the tab to lookup this instance by
+   * @param tab      the tab to set this instance with
    * @param items    the storage items used to build the default instance
-   * @param links    the next and prev links found for this tab
+   * @param links    the next and prev links found for this instance
    * @return instance the newly built instance
    * @public
    */
@@ -62,6 +59,8 @@ URLNP.Background = URLNP.Background || function () {
       instance.links = links;
       instance.selection = selection_.selection;
       instance.selectionStart = selection_.selectionStart;
+      instance.leadingzeros = instance.selection.charAt(0) === '0';
+      instance.alphanumeric = /[a-z]/i.test(instance.selection);
     }
     return instance;
   }
@@ -80,9 +79,8 @@ URLNP.Background = URLNP.Background || function () {
     var url;
     switch (instance.mode) {
       case "next-prev":
-        chrome.tabs.executeScript(/*tabs[0].id, */{file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+        chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
           var links = results[0];
-          // TODO attributes and innerHTML items.defaultLinks check
           url = processLinks(results[0], instance.linksPriority, direction);
           if (url && instance.tab.url !== url) {
             chrome.tabs.update(instance.tab.id, {url: url});
@@ -90,7 +88,7 @@ URLNP.Background = URLNP.Background || function () {
         });
         break;
       case "plus-minus":
-        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        url = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, instance.leadingzeros, instance.alphanumeric, direction);
         instance.tab.url = url.urlm;
         instance.selection = url.selectionm;
         setInstance(instance.tab.id, instance);
@@ -166,24 +164,22 @@ URLNP.Background = URLNP.Background || function () {
    * @return JSON object {urlm: modified url, selectionm: modified selection}
    * @private
    */
-  function modifyURL(url, selection, selectionStart, interval, direction) {
+  function modifyURL(url, selection, selectionStart, interval, leadingzeros, alphanumeric, direction) {
+    console.log("leadingzeros=" + leadingzeros + ", alphanumeric=" + alphanumeric);
     console.log("modifyURL(url=" + url + ", selection=" + selection + ", selectionStart=" + selectionStart + ", interval=" + interval + ", direction=" + direction + ")");
     var urlm,
         selectionm,
-        leadingzeros = selection.charAt(0) === '0',
-        alphanumeric = /[a-z]/i.test(selection),
         selectionint = parseInt(selection, alphanumeric ? 36 : 10);
     // In case of minus producing negative, set selectionm to 0
     selectionm = direction === "next" ? (selectionint + interval).toString() :
                  direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :
                                         "";
     if (leadingzeros && selection.length > selectionm.length) {
-      // Or use Array(1000).join("0") instead of literal "0000..." String?
-      //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.toString().length) + selectionm;
       selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
+      //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.length) + selectionm;
     }
     if (alphanumeric) {
-      selectionm = (+selectionm).toString(36).toUpperCase();
+      selectionm = (+selectionm).toString(36);
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
     return {urlm: urlm, selectionm: selectionm};

@@ -31,11 +31,11 @@
     "message": "Plus Minus URL Setup",
     "description": "TODO"
   },
-  "popup_next_prev_h3": {
+  "popup_next_prev_setup_h3": {
     "message": "Choose which next and prev links to use",
     "description": "TODO"
   },
-  "popup_plus_minus_h3": {
+  "popup_plus_minus_setup_h3": {
     "message": "Select the part of the URL to modify",
     "description": "TODO"
   },
@@ -100,7 +100,7 @@
     "description": "Default Settings sub heading."
   },
   "options_default_settings_p": {
-    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or enter Setup.",
+    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or in Setup.",
     "description": ""
   },
   "options_default_mode_label": {

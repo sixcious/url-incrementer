@@ -36,7 +36,8 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
     DOM["#next-prev-setup-input"].title = chrome.i18n.getMessage("popup_next_prev_setup_input");
     DOM["#plus-minus-setup-input"].title = chrome.i18n.getMessage("popup_plus_minus_setup_input");
-    DOM["#plus-minus-h3"].textContent = chrome.i18n.getMessage("popup_plus_minus_h3");
+    DOM["#next-prev-setup-h3"].textContent = chrome.i18n.getMessage("popup_next_prev_setup_h3");
+    DOM["#plus-minus-setup-h3"].textContent = chrome.i18n.getMessage("popup_plus_minus_setup_h3");
     DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
@@ -267,6 +268,8 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.interval = interval;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
+        instance.leadingzeros = selection.charAt(0) === '0';
+        instance.alphanumeric = /[a-z]/i.test(selection);
         backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
         toggleView.call(DOM["#plus-minus-setup-accept-input"]);
         updateControls();
