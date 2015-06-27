@@ -78,14 +78,15 @@ URLNP.Background = URLNP.Background || function () {
         url;
     switch (instance.mode) {
       case "next-prev":
-          url = processLinks(instance.links, instance.linksPriority, direction);
-        // chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
-        //   var links = results[0];
-        //   url = processLinks(results[0], instance.linksPriority, direction);
-        //   if (url && instance.tab.url !== url) {
-        //     chrome.tabs.update(instance.tab.id, {url: url});
-        //   }
-        // });
+        //url = processLinks(instance.links, instance.linksPriority, direction);
+        chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
+          // var links = results[0];
+          url = processLinks(results[0], instance.linksPriority, direction);
+          chrome.tabs.update(instance.tab.id, {url: url});
+          // if (url && instance.tab.url !== url) {
+          //   chrome.tabs.update(instance.tab.id, {url: url});
+          // }
+        });
         break;
       case "plus-minus":
         url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
@@ -93,15 +94,17 @@ URLNP.Background = URLNP.Background || function () {
         instance.tab.url = url_.urlm;
         instance.selection = url_.selectionm;
         setInstance(instance.tab.id, instance);
-        // chrome.tabs.update(instance.tab.id, {url: url.urlm});
+        chrome.tabs.update(instance.tab.id, {url: url});
         break;
       // default:
       //   break;
     }
-    if (url && instance.tab.url !== url) {
-      chrome.tabs.update(instance.tab.id, {url: url});
-    }
-    return url ? url : instance.tab.url;
+    // if (url && instance.tab.url !== url) {
+    //   chrome.tabs.update(instance.tab.id, {url: url});
+    // }
+    // return url ? url : instance.tab.url;
+    // console.log("url=" + url);
+    // chrome.tabs.update(instance.tab.id, {url: url});
   }
 
   /**

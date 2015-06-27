@@ -28,6 +28,10 @@ URLNP.Links = URLNP.Links || function () {
 	  parseElements(links_);
 	  parseElements(anchors);
 		// TODO: mutationObserver();
+		console.log("lan:" + links.attributes.next);
+		console.log("lap:" + links.attributes.prev);
+				console.log("lin:" + links.innerHTML.next);
+						console.log("lip:" + links.innerHTML.prev);
   	return links;
   }
 
