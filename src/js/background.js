@@ -85,22 +85,23 @@ URLNP.Background = URLNP.Background || function () {
       case "next-prev":
         //instance = getInstance(instance.tab.id) ? getInstance(instance.tab.id) : instance;
         //url = processLinks(instance.links, instance.linksPriority, direction);
-        req = new XMLHttpRequest();
-        req.open("GET", instance.tab.url, true);
-        req.responseType = "document";
-        req.onload = function() {
-          if (req.readyState === 4) {
-            //console.log(req.responseText);
-            // parser = new DOMParser();
-            doc = this.responseXML; // parser.parseFromString(req.responseText, "text/html");
-            links = getLinks(doc);
-            url = processLinks(links, instance.linksPriority, direction);
-            instance.tab.url = url ? url : instance.tab.url;
-            setInstance(instance.tab.id, instance);
-            chrome.tabs.update(instance.tab.id, {url: url});
-          }
-        };
-        req.send();
+        // req = new XMLHttpRequest();
+        // req.open("GET", instance.tab.url, true);
+        // req.responseType = "document";
+        // req.onload = function() {
+        //   if (req.readyState === 4) {
+        //     //console.log(req.responseText);
+        //     // parser = new DOMParser();
+        //     doc = this.responseXML; // parser.parseFromString(req.responseText, "text/html");
+        //     links = getLinks(doc);
+        //     url = processLinks(links, instance.linksPriority, direction);
+        //     instance.tab.url = url ? url : instance.tab.url;
+        //     setInstance(instance.tab.id, instance);
+        //     chrome.tabs.update(instance.tab.id, {url: url});
+        //   }
+        // };
+        // req.send();
+        nextPrev(instance.tab.id, instance.tab.url, instance.linkPriority, direction);
         break;
       case "plus-minus":
         url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
@@ -119,6 +120,17 @@ URLNP.Background = URLNP.Background || function () {
     // return url ? url : instance.tab.url;
     // console.log("url=" + url);
     // chrome.tabs.update(instance.tab.id, {url: url});
+  }
+  
+  function nextPrev(id, url, priority, direction) {
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.responseType = "document";
+    req.onloadend = function() {
+      url = processLinks(getLinks(this.responseXML), priority, direction);
+      chrome.tabs.update(id, {url: url});
+    };
+    req.send();
   }
 
   /**
