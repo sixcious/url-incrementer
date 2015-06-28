@@ -47,8 +47,6 @@ URLNP.Links = URLNP.Links || function () {
     var element,
         attributes,
         attribute,
-        icache,
-        jcache,
         i,
         j;
     for (i = 0; i < elements.length; i++) {
@@ -56,24 +54,30 @@ URLNP.Links = URLNP.Links || function () {
       if (!element.href) {
         continue;
       }
-      icache = element.innerHTML.toLowerCase();
-      if (icache.indexOf("next") !== -1) {
-        links.innerHTML.next = element.href;
-      } else if (icache.indexOf("prev") !== -1) {
-        links.innerHTML.prev = element.href;
-      }
+      buildLinks(element, element.innerHTML.toLowerCase(), "innerHTML");
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        jcache = attribute.nodeValue.toLowerCase();
         // TODO: Separate all attributes by attribute.nodeName.toLowerCase()
-        if (jcache === "next") {
-          links.attributes.next = element.href;
-        } else if (jcache === "prev") {
-          links.attributes.prev = element.href;
-        }
+        buildLinks(element, attribute.nodeValue.toLowerCase(), "attributes");
       }
     }
+  }
+  
+  function buildLinks(element, icache, type) {
+    if (icache.indexOf("next") !== -1) {
+      links[type].next = element.href;
+    } else if (icache.indexOf("forward") !== -1) {
+      links[type].forward = element.href;
+    } else if (icache.indexOf(">") !== -1) {
+      links[type].gt = element.href;
+    } else if (icache.indexOf("prev") !== -1) {
+      links[type].prev = element.href;
+    } else if (icache.indexOf("back") !== -1) {
+      links[type].back = element.href;
+    } else if (icache.indexOf("<") !== -1) {
+      links[type].lt = element.href;
+    } 
   }
 
 //   /**

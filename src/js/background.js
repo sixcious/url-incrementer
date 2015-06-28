@@ -70,23 +70,37 @@ URLNP.Background = URLNP.Background || function () {
    * 
    * @param instance  the instance belonging to this tab
    * @param direction the direction to go
+   * @param quick     true if this was called via a quick command, false else
    * @public
    */
-  function updateTab(instance, direction) {
+  function updateTab(instance, direction, quick) {
     console.log("updateTab(instance=" + instance.tab.url + ", direction=" + direction + ")");
     var url_,
-        url;
+        url,
+        links,
+        doc,
+        req;
+    instance = quick ? instance : getInstance(instance.tab.id);
     switch (instance.mode) {
       case "next-prev":
+        //instance = getInstance(instance.tab.id) ? getInstance(instance.tab.id) : instance;
         //url = processLinks(instance.links, instance.linksPriority, direction);
-        chrome.tabs.executeScript(instance.tab.id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
-          // var links = results[0];
-          url = processLinks(results[0], instance.linksPriority, direction);
-          chrome.tabs.update(instance.tab.id, {url: url});
-          // if (url && instance.tab.url !== url) {
-          //   chrome.tabs.update(instance.tab.id, {url: url});
-          // }
-        });
+        req = new XMLHttpRequest();
+        req.open("GET", instance.tab.url, true);
+        req.responseType = "document";
+        req.onload = function() {
+          if (req.readyState === 4) {
+            //console.log(req.responseText);
+            // parser = new DOMParser();
+            doc = this.responseXML; // parser.parseFromString(req.responseText, "text/html");
+            links = getLinks(doc);
+            url = processLinks(links, instance.linksPriority, direction);
+            instance.tab.url = url ? url : instance.tab.url;
+            setInstance(instance.tab.id, instance);
+            chrome.tabs.update(instance.tab.id, {url: url});
+          }
+        };
+        req.send();
         break;
       case "plus-minus":
         url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
@@ -119,6 +133,73 @@ URLNP.Background = URLNP.Background || function () {
   function processLinks(links, priority, direction) {
     console.log("processLinks(links=" + links +", priority=" + priority + ", direction=" + direction + ")");
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
+  }
+
+  /**
+   * Gets the next and prev links in the document by parsing all link and anchor
+   * elements.
+   * 
+   * @public
+   */
+  function getLinks(doc) {
+    console.log("getLinks()");
+    // Note: The following DOM elements contain links: link, a, area, and base
+    var links = {attributes: {}, innerHTML: {}},
+        links_ = doc.getElementsByTagName("link"),
+        anchors = doc.links; // Includes all anchor and area elements
+	  parseElements(links, links_);
+	  parseElements(links, anchors);
+		// TODO: mutationObserver();
+		console.log("lan:" + links.attributes.next);
+		console.log("lap:" + links.attributes.prev);
+		console.log("lin:" + links.innerHTML.next);
+		console.log("lip:" + links.innerHTML.prev);
+  	return links;
+  }
+
+  /**
+   * Parses the elements by examining if their attributes or innerHTML contain
+   * next or prev keywords in them.
+   * 
+   * @param elements the DOM elements to parse
+   * @private
+   */
+  function parseElements(links, elements) {
+    console.log("parseElements(elements=" + elements +")");
+    var element,
+        attributes,
+        attribute,
+        i,
+        j;
+    for (i = 0; i < elements.length; i++) {
+      element = elements[i];
+      if (!element.href) {
+        continue;
+      }
+      buildLinks(links, element, element.innerHTML.toLowerCase(), "innerHTML");
+      attributes = element.attributes;
+      for (j = 0; j < attributes.length; j++) {
+        attribute = attributes[j];
+        // TODO: Separate all attributes by attribute.nodeName.toLowerCase()
+        buildLinks(links, element, attribute.nodeValue.toLowerCase(), "attributes");
+      }
+    }
+  }
+  
+  function buildLinks(links, element, icache, type) {
+    if (icache.indexOf("next") !== -1) {
+      links[type].next = element.href;
+    } else if (icache.indexOf("forward") !== -1) {
+      links[type].forward = element.href;
+    } else if (icache.indexOf(">") !== -1) {
+      links[type].gt = element.href;
+    } else if (icache.indexOf("prev") !== -1) {
+      links[type].prev = element.href;
+    } else if (icache.indexOf("back") !== -1) {
+      links[type].back = element.href;
+    } else if (icache.indexOf("<") !== -1) {
+      links[type].lt = element.href;
+    } 
   }
 
   /**
