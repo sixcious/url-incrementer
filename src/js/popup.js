@@ -61,38 +61,40 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.tabs.executeScript(tabs[0].id, {file: "js/content-scripts/links.js", runAt: "document_end"}, function(results) {
-        chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          chrome.storage.sync.get(null, function(items) {
-            items_ = items;
-            instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
-            if (!instance || instance.tab.url !== tabs[0].url) {
-              instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
-            }
-            updateControls();
-            DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
-            DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
-            // DOM["#setup"].mode.value = instance.mode;
-            // DOM["#" + instance.mode + "-input"].checked = true;
-            // DOM["#mode"].value = instance.mode;
-            // Next Prev initialization:
-            if (instance.links.attributes.next || instance.links.attributes.prev) {
-              DOM["#links-attributes-next"].textContent = instance.links.attributes.next;
-              DOM["#links-attributes-prev"].textContent = instance.links.attributes.prev;
-            } else {
-              // No Links were found
-            }
-            if (instance.links.innerHTML.next || instance.links.innerHTML.prev) {
-              DOM["#links-innerHTML-next"].textContent = instance.links.innerHTML.next;
-              DOM["#links-innerHTML-prev"].textContent = instance.links.innerHTML.prev;
-            } else {
-              // No links found
-            }
-            // Plus Minus initialization:
-            DOM["#url-textarea"].value = instance.tab.url; // or tab.url
-            DOM["#selection-input"].value = instance.selection;
-            DOM["#selection-start-input"].value = instance.selectionStart;
-            DOM["#interval-input"].value = instance.interval;
+      chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+        chrome.tabs.executeScript(tabs[0].id, {code: "URLNP.NextPrev.setDoc(document); URLNP.NextPrev.getLinks();", runAt: "document_end"}, function(results){
+          chrome.runtime.getBackgroundPage(function(backgroundPage) {
+            chrome.storage.sync.get(null, function(items) {
+              items_ = items;
+              instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
+              if (!instance || instance.tab.url !== tabs[0].url) {
+                instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
+              }
+              updateControls();
+              DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
+              DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
+              // DOM["#setup"].mode.value = instance.mode;
+              // DOM["#" + instance.mode + "-input"].checked = true;
+              // DOM["#mode"].value = instance.mode;
+              // Next Prev initialization:
+              if (instance.links.attributes.next || instance.links.attributes.prev) {
+                DOM["#links-attributes-next"].textContent = instance.links.attributes.next;
+                DOM["#links-attributes-prev"].textContent = instance.links.attributes.prev;
+              } else {
+                // No Links were found
+              }
+              if (instance.links.innerHTML.next || instance.links.innerHTML.prev) {
+                DOM["#links-innerHTML-next"].textContent = instance.links.innerHTML.next;
+                DOM["#links-innerHTML-prev"].textContent = instance.links.innerHTML.prev;
+              } else {
+                // No links found
+              }
+              // Plus Minus initialization:
+              DOM["#url-textarea"].value = instance.tab.url; // or tab.url
+              DOM["#selection-input"].value = instance.selection;
+              DOM["#selection-start-input"].value = instance.selectionStart;
+              DOM["#interval-input"].value = instance.interval;
+            });
           });
         });
       });
