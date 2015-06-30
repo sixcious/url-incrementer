@@ -57,8 +57,8 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
                  direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :
                                         "";
     if (leadingzeros && selection.length > selectionm.length) {
-      selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
       //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.length) + selectionm;
+      selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
     }
     if (alphanumeric) {
       selectionm = (+selectionm).toString(36);

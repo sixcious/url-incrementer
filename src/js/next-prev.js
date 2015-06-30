@@ -54,6 +54,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links_ = doc.getElementsByTagName("link"),
         anchors = doc.links; // Includes all anchor and area elements
+    links = {attributes: {}, innerHTML: {}}; // Needed to reset links
 	  parseElements(links_);
 	  parseElements(anchors);
 	 // console.log("links attributes next:" + links.attributes.next);
