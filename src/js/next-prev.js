@@ -11,18 +11,26 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
       links = {attributes: {}, innerHTML: {}};
 
   /**
-   * TODO
+   * Sets the document, which will be used later to to build the links. This 
+   * document varies depending on the context of when this code is run:
    * 
-   * @param contextDoc
+   * 1: If ran as a content_script via a call from chrome.tabs.executeScript, it
+   *    will pass in that tab's document natively
+   * 
+   * 2: If ran in the background via a call from background.js, it will pass in
+   *    a document created from an Ajax-sent XMLHttpRequest (XHR) responseXML
+   * 
+   * @param contextDoc the document
    * @public
    */
   function setDoc(contextDoc) {
-    console.log("setDoc(contextDoc=" + contextDoc + ")");
+    console.log("setDoc(contextDoc)");
     doc = contextDoc;
   }
 
   /**
-   * Processes the next and prev links and return the correct URL link to use.
+   * Gets the URL by examining the links object based off of the requested
+   * priority and direction.
    * 
    * @param priority  the link priority to use: attributes or innerHTML
    * @param direction the direction to go: next or prev
@@ -30,7 +38,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * @public
    */
   function getURL(priority, direction) {
-    console.log("getURL(priority=" + priority + ", direction=" + direction + ")");
+    console.log("getURL(priority, direction)");
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
   }
 
@@ -38,6 +46,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * Gets the next and prev links in the document by parsing all link and anchor
    * elements.
    * 
+   * @return links the links containing the next and prev links (if any)
    * @public
    */
   function getLinks() {
@@ -47,11 +56,10 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
         anchors = doc.links; // Includes all anchor and area elements
 	  parseElements(links_);
 	  parseElements(anchors);
-		// TODO: mutationObserver();
-		console.log("lan:" + links.attributes.next);
-		console.log("lap:" + links.attributes.prev);
-		console.log("lin:" + links.innerHTML.next);
-		console.log("lip:" + links.innerHTML.prev);
+	 // console.log("links attributes next:" + links.attributes.next);
+	 // console.log("links attributes prev:" + links.attributes.prev);
+	 // console.log("links innerHTML next:" + links.innerHTML.next);
+	 // console.log("links innerHTML prev:" + links.innerHTML.prev);
   	return links;
   }
 
@@ -63,7 +71,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * @private
    */
   function parseElements(elements) {
-    console.log("parseElements(elements=" + elements +")");
+    console.log("parseElements(elements)");
     var element,
         attributes,
         attribute,
@@ -74,38 +82,54 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
       if (!element.href) {
         continue;
       }
-      parseElement(element, element.innerHTML.toLowerCase(), "innerHTML");
+      parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href);
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        // TODO: Separate all attributes by attribute.nodeName.toLowerCase()
-        parseElement(element, attribute.nodeValue.toLowerCase(), "attributes");
+        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href);
       }
     }
   }
 
   /**
-   * TODO
+   * Parses an element's text for keywords that might indicate a next or prev
+   * links and builds the links object if found.
    * 
-   * @param TODO
+   * TODO: Separate all attributes by attribute.nodeName.toLowerCase()
+   * 
+   * @param text the text to parse keywords from
+   * @param type the link type: innerHTML or attributes
+   * @param href the URL to set this link to 
    * @private
    */
-  function parseElement(element, keyword, type) {
-    if (keyword.indexOf("next") !== -1) {
-      links[type].next = element.href;
-    } else if (keyword.indexOf("forward") !== -1) {
-      links[type].forward = element.href;
-    } else if (keyword.indexOf(">") !== -1) {
-      links[type].gt = element.href;
-    } else if (keyword.indexOf("prev") !== -1) {
-      links[type].prev = element.href;
-    } else if (keyword.indexOf("back") !== -1) {
-      links[type].back = element.href;
-    } else if (keyword.indexOf("<") !== -1) {
-      links[type].lt = element.href;
+  function parseText(text, type, href) {
+    console.log("parseText(text, type, href)");
+    if (text.indexOf("next") !== -1) {
+      links[type].next = href;
+    } else if (text.indexOf("forward") !== -1) {
+      links[type].forward = href;
+    } else if (text.indexOf("new") !== -1) {
+      links[type].new = href;
+    } else if (text.indexOf(">") !== -1) {
+      links[type].gt = href;
+    } else if (text.indexOf("prev") !== -1) {
+      links[type].prev = href;
+    } else if (text.indexOf("back") !== -1) {
+      links[type].back = href;
+    } else if (text.indexOf("old") !== -1) {
+     links[type].old = href; 
+    } else if (text.indexOf("<") !== -1) {
+      links[type].lt = href;
     }
   }
 
+  // Return Public Functions
+  return {
+    setDoc: setDoc,
+    getURL: getURL,
+    getLinks: getLinks
+  };
+}();
 //   /**
 //   * TODO
 //   * 
@@ -130,11 +154,3 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
 //     });
 //     observer.observe(document.body, { attributes: true, childList: true, characterData: true, subtree: true });
 //   }
-
-  // Return Public Functions
-  return {
-    setDoc: setDoc,
-    getURL: getURL,
-    getLinks: getLinks
-  };
-}();

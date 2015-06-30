@@ -24,7 +24,7 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @public
    */
   function findSelection(url) {
-    console.log("findSelection(url=" + url + ")");
+    console.log("findSelection(url)");
     var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
         re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         matches;
@@ -46,7 +46,7 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @public
    */
   function modifyURL(url, selection, selectionStart, interval, direction) {
-    console.log("modifyURL(url=" + url + ", selection=" + selection + ", selectionStart=" + selectionStart + ", interval=" + interval + ", direction=" + direction + ")");
+    console.log("modifyURL(url, selection, selectionStart, interval, direction)");
     var urlm,
         selectionm,
         leadingzeros = selection.charAt(0) === '0',

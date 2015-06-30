@@ -36,27 +36,27 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
     DOM["#next-prev-setup-input"].title = chrome.i18n.getMessage("popup_next_prev_setup_input");
     DOM["#plus-minus-setup-input"].title = chrome.i18n.getMessage("popup_plus_minus_setup_input");
-    DOM["#next-prev-setup-h3"].textContent = chrome.i18n.getMessage("popup_next_prev_setup_h3");
+    // DOM["#next-prev-setup-h3"].textContent = chrome.i18n.getMessage("popup_next_prev_setup_h3");
     DOM["#plus-minus-setup-h3"].textContent = chrome.i18n.getMessage("popup_plus_minus_setup_h3");
     DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
-    DOM["#next-prev-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["#next-prev-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
+    // DOM["#next-prev-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    // DOM["#next-prev-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     DOM["#plus-minus-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
     DOM["#plus-minus-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
     DOM["#next-input"].addEventListener("click", clickNext, false);
     DOM["#prev-input"].addEventListener("click", clickPrev, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#next-prev-setup-input"].addEventListener("click", toggleView, false);
+    DOM["#next-prev-setup-input"].addEventListener("click", setupNextPrev, false);
     DOM["#plus-minus-setup-input"].addEventListener("click", toggleView, false);
-    DOM["#next-prev-setup-cancel-input"].addEventListener("click", toggleView, false);
+    // DOM["#next-prev-setup-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#plus-minus-setup-cancel-input"].addEventListener("click", toggleView, false);
-    DOM["#next-prev-setup-accept-input"].addEventListener("click", setupNextPrev, false);
+    // DOM["#next-prev-setup-accept-input"].addEventListener("click", setupNextPrev, false);
     DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
-    DOM["#links-attributes-input"].addEventListener("change", function () { DOM["#links"].value = this.value; }, false);
-    DOM["#links-innerHTML-input"].addEventListener("change", function () { DOM["#links"].value = this.value; }, false);
+    // DOM["#links-attributes-input"].addEventListener("change", function () { DOM["#links"].value = this.value; }, false);
+    // DOM["#links-innerHTML-input"].addEventListener("change", function () { DOM["#links"].value = this.value; }, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     // Initialize popup content
@@ -76,19 +76,19 @@ URLNP.Popup = URLNP.Popup || function () {
               // DOM["#setup"].mode.value = instance.mode;
               // DOM["#" + instance.mode + "-input"].checked = true;
               // DOM["#mode"].value = instance.mode;
-              // Next Prev initialization:
-              if (instance.links.attributes.next || instance.links.attributes.prev) {
-                DOM["#links-attributes-next"].textContent = instance.links.attributes.next;
-                DOM["#links-attributes-prev"].textContent = instance.links.attributes.prev;
-              } else {
-                // No Links were found
-              }
-              if (instance.links.innerHTML.next || instance.links.innerHTML.prev) {
-                DOM["#links-innerHTML-next"].textContent = instance.links.innerHTML.next;
-                DOM["#links-innerHTML-prev"].textContent = instance.links.innerHTML.prev;
-              } else {
-                // No links found
-              }
+              // // Next Prev initialization:
+              // if (instance.links.attributes.next || instance.links.attributes.prev) {
+              //   DOM["#links-attributes-next"].textContent = instance.links.attributes.next;
+              //   DOM["#links-attributes-prev"].textContent = instance.links.attributes.prev;
+              // } else {
+              //   // No Links were found
+              // }
+              // if (instance.links.innerHTML.next || instance.links.innerHTML.prev) {
+              //   DOM["#links-innerHTML-next"].textContent = instance.links.innerHTML.next;
+              //   DOM["#links-innerHTML-prev"].textContent = instance.links.innerHTML.prev;
+              // } else {
+              //   // No links found
+              // }
               // Plus Minus initialization:
               DOM["#url-textarea"].value = instance.tab.url; // or tab.url
               DOM["#selection-input"].value = instance.selection;
@@ -113,8 +113,8 @@ URLNP.Popup = URLNP.Popup || function () {
         URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "next");
-        instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
+        backgroundPage.URLNP.Background.updateTab(instance, "next", "popup");
+        //instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
@@ -131,8 +131,8 @@ URLNP.Popup = URLNP.Popup || function () {
         URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "prev");
-        instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
+        backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup");
+        //instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
@@ -177,10 +177,10 @@ URLNP.Popup = URLNP.Popup || function () {
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
           DOM["#plus-minus-setup"].className = "display-block fade-in";
-          DOM["#selection-input"].value = instance.selection;
+          //DOM["#selection-input"].value = instance.selection;
           DOM["#url-textarea"].value = instance.tab.url; // or tab.url
-          DOM["#url-textarea"].focus();
           DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          DOM["#url-textarea"].focus();
           // DOM["#selection-start-input"].value = instance.selectionStart;
           // DOM["#interval-input"].value = instance.interval;
           //selectURL();

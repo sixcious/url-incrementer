@@ -84,7 +84,7 @@
     "description": "The options page's shortcuts keys heading."
   },
   "options_keyboard_shortcuts_p": {
-    "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [+] and Prev [-] instantly without having to enter Setup.",
+    "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [>] or Plus [+] instantly without having to enter Setup.",
     "description": ""
   },
   "options_keyboard_shortcuts_quick_enable_label": {
@@ -100,7 +100,7 @@
     "description": "Default Settings sub heading."
   },
   "options_default_settings_p": {
-    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or in Setup.",
+    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or inside Setup.",
     "description": ""
   },
   "options_default_mode_label": {

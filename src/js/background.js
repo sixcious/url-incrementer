@@ -17,7 +17,7 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function getInstance(tabId) {
-    console.log("getInstance(tabId=" + tabId + ")");
+    console.log("getInstance(tabId)");
     return instances[tabId];
   }
 
@@ -29,7 +29,7 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    console.log("setInstance(tabId=" + tabId + ", instance=" + instance + ")");
+    console.log("setInstance(tabId, instance)");
     instances[tabId] = instance;
   }
 
@@ -44,10 +44,10 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function buildInstance(instance, tab, items, links) {
-    console.log("buildInstance(instance=" + instance + ", tab=" + tab +  ", items=" + items + ", links=" + links + ")");
-    var selection_;
+    console.log("buildInstance(instance, tab, items, links)");
+    var selectionProps;
     if (tab) {
-      selection_ = URLNP.PlusMinus.findSelection(tab.url);
+      selectionProps = URLNP.PlusMinus.findSelection(tab.url);
       if (!instance) {
         instance = {};
         instance.enabled = false;
@@ -57,8 +57,8 @@ URLNP.Background = URLNP.Background || function () {
       }
       instance.tab = tab;
       instance.links = links;
-      instance.selection = selection_.selection;
-      instance.selectionStart = selection_.selectionStart;
+      instance.selection = selectionProps.selection;
+      instance.selectionStart = selectionProps.selectionStart;
     }
     return instance;
   }
@@ -74,8 +74,8 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function updateTab(instance, direction, caller) {
-    console.log("updateTab(instance=" + instance.tab.url + ", direction=" + direction + ")");
-    var url_,
+    console.log("updateTab(instance, direction, caller)");
+    var urlProps,
         url,
         req;
     instance = caller === "quick-command" ? instance : getInstance(instance.tab.id);
@@ -83,10 +83,16 @@ URLNP.Background = URLNP.Background || function () {
       case "next-prev":
         if (caller === "command" || caller === "quick-command") {
           chrome.tabs.executeScript(instance.tab.id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-            chrome.tabs.executeScript(instance.tab.id, {code: "URLNP.NextPrev.setDoc(document); URLNP.NextPrev.getLinks(); URLNP.NextPrev.getURL(" + instance.linksPriority.toString() + ", " + direction + ");", runAt: "document_end"}, function(results){
+            var code =
+              "URLNP.NextPrev.setDoc(document);" + 
+              "URLNP.NextPrev.getLinks();" +
+              "URLNP.NextPrev.getURL(" + JSON.stringify(instance.linksPriority) + ", " + JSON.stringify(direction) + ");";
+            chrome.tabs.executeScript(instance.tab.id, {code: code, runAt: "document_end"}, function(results){
               url = results[0];
-              instance.tab.url = url ? url : instance.tab.url;
-              setInstance(instance.tab.id, instance);
+              if (caller !== "quick-command") {
+                instance.tab.url = url ? url : instance.tab.url;
+                setInstance(instance.tab.id, instance);
+              }
               chrome.tabs.update(instance.tab.id, {url: url});
             });
           });
@@ -94,24 +100,26 @@ URLNP.Background = URLNP.Background || function () {
           req = new XMLHttpRequest();
           req.open("GET", instance.tab.url, true);
           req.responseType = "document";
-          req.onloadend = function() {
-            if (req.readyState === 4) {
-              URLNP.NextPrev.setDoc(this.responseXML);
-              url = URLNP.NextPrev.getURL(instance.linksPriority, direction);
-              instance.tab.url = url ? url : instance.tab.url;
-              setInstance(instance.tab.id, instance);
-              chrome.tabs.update(instance.tab.id, {url: url});
-            }
+          req.onload = function() { // Equivalent to onreadystate and checking 4
+            URLNP.NextPrev.setDoc(this.responseXML);
+            URLNP.NextPrev.getLinks();
+            url = URLNP.NextPrev.getURL(instance.linksPriority, direction);
+            console.log("url after req:" + url);
+            instance.tab.url = url ? url : instance.tab.url;
+            setInstance(instance.tab.id, instance);
+            chrome.tabs.update(instance.tab.id, {url: url});
           };
           req.send();
         }
         break;
       case "plus-minus":
-        url_ = modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
-        url = url_.urlm;
-        instance.tab.url = url_.urlm;
-        instance.selection = url_.selectionm;
-        setInstance(instance.tab.id, instance);
+        urlProps = URLNP.PlusMinus.modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        url = urlProps.urlm;
+        if (caller !== "quick=command") {
+          instance.tab.url = urlProps.urlm;
+          instance.selection = urlProps.selectionm;
+          setInstance(instance.tab.id, instance);
+        }
         chrome.tabs.update(instance.tab.id, {url: url});
         break;
       default:
@@ -158,7 +166,7 @@ chrome.commands.onCommand.addListener(function(command) {
         } else {
           chrome.storage.sync.get(null, function(items) {
             if (items.quickEnabled) {
-              instance = URLNP.Background.buildInstance(instance, tabs[0], items, undefined); // TODO links
+              instance = URLNP.Background.buildInstance(instance, tabs[0], items, undefined);
               URLNP.Background.updateTab(instance, command, "quick-command");
             }
           });
