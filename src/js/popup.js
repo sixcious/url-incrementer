@@ -56,14 +56,14 @@ URLNP.Popup = URLNP.Popup || function () {
             chrome.storage.sync.get(null, function(items) {
               items_ = items;
               instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
-              if (!instance || instance.tab.url !== tabs[0].url) {
+              if (!instance || instance.url !== tabs[0].url) {
                 instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
               }
               updateControls();
               DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
               DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
               // Plus Minus initialization:
-              DOM["#url-textarea"].value = instance.tab.url; // or tab.url
+              DOM["#url-textarea"].value = instance.url;
               DOM["#selection-input"].value = instance.selection;
               DOM["#selection-start-input"].value = instance.selectionStart;
               DOM["#interval-input"].value = instance.interval;
@@ -119,7 +119,7 @@ URLNP.Popup = URLNP.Popup || function () {
         URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.setInstance(instance.tab.id, undefined);
+        backgroundPage.URLNP.Background.setInstance(instance.tabId, undefined);
       });
     }
   }
@@ -137,15 +137,21 @@ URLNP.Popup = URLNP.Popup || function () {
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
           DOM["#plus-minus-setup"].className = "display-block fade-in";
+          // Need to make sure the current URL is always shown:
           chrome.runtime.getBackgroundPage(function(backgroundPage) {
-            var bgInstance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
+            var bgInstance = backgroundPage.URLNP.Background.getInstance(instance.tabId),
+                selectionProps = backgroundPage.URLNP.PlusMinus.findSelection(instance.url);
             instance = bgInstance ? bgInstance : instance;
-            DOM["#url-textarea"].value = instance.tab.url;
+            if (instance.mode !== "plus-minus") { // Need to refresh selection
+              instance.selection = selectionProps.selection;
+              instance.selectionStart = selectionProps.selectionStart;
+            }
+            DOM["#url-textarea"].value = instance.url;
             DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
             DOM["#url-textarea"].focus();
             DOM["#selection-input"].value = instance.selection;
             DOM["#selection-start-input"].value = instance.selectionStart;
-            DOM["#interval-input"].value = instance.interval;
+            // DOM["#interval-input"].value = instance.interval;
           });
         }, 300);
         break;
@@ -187,8 +193,7 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         instance.enabled = true;
         instance.mode = mode;
-        backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
-        toggleView.call(DOM["#next-prev-setup-accept-input"]);
+        backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
         updateControls();
       });
     }
@@ -224,7 +229,7 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.interval = interval;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
-        backgroundPage.URLNP.Background.setInstance(instance.tab.id, instance);
+        backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
         toggleView.call(DOM["#plus-minus-setup-accept-input"]);
         updateControls();
       });

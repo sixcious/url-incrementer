@@ -52,7 +52,10 @@ URLNP.Background = URLNP.Background || function () {
         instance.linksPriority = items.defaultLinksPriority;
         instance.interval = items.defaultInterval;
       }
-      instance.tab = tab;
+      instance.tabId = tab.id;
+      instance.url = tab.url;
+      instance.nexturl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "next", links) : undefined;
+      instance.prevurl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "prev", links) : undefined;
       instance.links = links;
       instance.selection = selectionProps.selection;
       instance.selectionStart = selectionProps.selectionStart;
@@ -67,7 +70,7 @@ URLNP.Background = URLNP.Background || function () {
    * 
    * @param instance  the instance for this tab
    * @param direction the direction to go
-   * @param caller    String indicating how this function was called
+   * @param caller    String indicating who called this function (e.g. command)
    * @public
    */
   function updateTab(instance, direction, caller) {
@@ -75,7 +78,7 @@ URLNP.Background = URLNP.Background || function () {
         url,
         req;
     // Ensures we always get the latest instance (TODO: Refactor this)
-    instance = caller === "quick-command" ? instance : getInstance(instance.tab.id);
+    instance = caller === "quick-command" ? instance : getInstance(instance.tabId);
     switch (instance.mode) {
       case "next-prev":
         // Note on next-prev:
@@ -84,31 +87,31 @@ URLNP.Background = URLNP.Background || function () {
         // (if called via popup), we'll have to do some XHR work and hope the
         // current URL complies with the same-origin policy in our Ajax request.
         if (caller === "command" || caller === "quick-command") {
-          chrome.tabs.executeScript(instance.tab.id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+          chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
             var code =
               "URLNP.NextPrev.getURL(" +
                 JSON.stringify(instance.linksPriority) +
                 ", " +
                 JSON.stringify(direction) +
                 ", URLNP.NextPrev.getLinks(document));";
-            chrome.tabs.executeScript(instance.tab.id, {code: code, runAt: "document_end"}, function(results){
+            chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
               url = results[0];
               if (caller !== "quick-command") {
-                instance.tab.url = url ? url : instance.tab.url;
-                setInstance(instance.tab.id, instance);
+                instance.url = url ? url : instance.url;
+                setInstance(instance.tabId, instance);
               }
-              chrome.tabs.update(instance.tab.id, {url: url});
+              chrome.tabs.update(instance.tabId, {url: url});
             });
           });
         } else { // Need to use XHR
           req = new XMLHttpRequest();
-          req.open("GET", instance.tab.url, true);
+          req.open("GET", instance.url, true);
           req.responseType = "document";
           req.onload = function() { // Equivalent to onreadystate and checking 4
             url = URLNP.NextPrev.getURL(instance.linksPriority, direction, URLNP.NextPrev.getLinks(this.responseXML));
-            instance.tab.url = url ? url : instance.tab.url;
-            setInstance(instance.tab.id, instance);
-            chrome.tabs.update(instance.tab.id, {url: url});
+            instance.url = url ? url : instance.url;
+            setInstance(instance.tabId, instance);
+            chrome.tabs.update(instance.tabId, {url: url});
           };
           req.send();
         }
@@ -117,14 +120,14 @@ URLNP.Background = URLNP.Background || function () {
         // Note on plus-minus:
         // This is a lot more straight-forward; chrome.tabs.update will work
         // regardless of permissions and all logic is done in background
-        urlProps = URLNP.PlusMinus.modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        urlProps = URLNP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, direction);
         url = urlProps.urlm;
         if (caller !== "quick=command") {
-          instance.tab.url = urlProps.urlm;
+          instance.url = urlProps.urlm;
           instance.selection = urlProps.selectionm;
-          setInstance(instance.tab.id, instance);
+          setInstance(instance.tabId, instance);
         }
-        chrome.tabs.update(instance.tab.id, {url: url});
+        chrome.tabs.update(instance.tabId, {url: url});
         break;
       default:
         break;
@@ -170,6 +173,7 @@ chrome.commands.onCommand.addListener(function(command) {
             if (items.quickEnabled) {
               instance = URLNP.Background.buildInstance(instance, tabs[0], items, undefined);
               URLNP.Background.updateTab(instance, command, "quick-command");
+              // TODO: Add the ability to use other mode if tab isn't updated
             }
           });
         }
