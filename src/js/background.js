@@ -7,7 +7,7 @@
 var URLNP = URLNP || {};
 URLNP.Background = URLNP.Background || function () {
 
-  var instances = []; // Tab instances (TODO:Put in storage to convert to event)
+  var instances = []; // Tab instances (TODO: Use storage to make bg event page)
 
   /**
    * Gets the tab's instance.
@@ -35,7 +35,7 @@ URLNP.Background = URLNP.Background || function () {
    * Builds/Updates a instance with default values.
    * 
    * @param instance the instance, if any, to continue building off of
-   * @param tab      the tab to set this instance with
+   * @param tab      the tab properties (id, url) to set this instance with
    * @param items    the storage items used to build the default instance
    * @param links    the next and prev links found for this instance
    * @return instance the newly built instance
