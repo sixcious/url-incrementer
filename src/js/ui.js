@@ -1,11 +1,8 @@
-// TODO URL Next Plus for Google Chrome © 2011 Roy Six
-
-console.log("URLNP.UI");
-
 /**
- * URL Next Plus UI (User Interface).
+ * URL Next Plus UI (User Interface)
  * 
- * Uses the JavaScript Revealing Module Pattern.
+ * @author Roy Six
+ * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.UI = URLNP.UI || function () {
@@ -20,7 +17,6 @@ URLNP.UI = URLNP.UI || function () {
    * @public
    */
   function generateAlert(messages) {
-    console.log("generateAlert(messages)");
     var div = document.createElement("div"),
         ul = document.createElement("ul"),
         li,
@@ -47,7 +43,6 @@ URLNP.UI = URLNP.UI || function () {
    * @public
    */
   function clickHoverCss(el, effect) {
-    console.log("clickHoverCss(el, effect)");
     // Carefully toggle the Hover.css class using setTimeout() to force a delay
     el.classList.remove(effect);
     setTimeout(function () { el.classList.add(effect); }, 1);

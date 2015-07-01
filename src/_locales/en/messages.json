@@ -24,20 +24,16 @@
     "description": "Clear input button title (tool tip) when hovered."
   },
   "popup_next_prev_setup_input": {
-    "message": "Next Prev Links Setup",
-    "description": "TODO"
+    "message": "Next Prev Links Mode",
+    "description": ""
   },
   "popup_plus_minus_setup_input": {
     "message": "Plus Minus URL Setup",
-    "description": "TODO"
-  },
-  "popup_next_prev_setup_h3": {
-    "message": "Choose which next and prev links to use",
-    "description": "TODO"
+    "description": ""
   },
   "popup_plus_minus_setup_h3": {
     "message": "Select the part of the URL to modify",
-    "description": "TODO"
+    "description": ""
   },
   "popup_url_label": {
     "message": "URL",
@@ -133,6 +129,6 @@
   },
   "options_animations_enable_label": {
     "message": "Enable Hover.css (CSS3) Animations in UI",
-    "description": "Label for CSS3 Animations enable checkbox."
+    "description": ""
   }
 }

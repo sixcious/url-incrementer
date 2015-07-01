@@ -17,7 +17,6 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function getInstance(tabId) {
-    console.log("getInstance(tabId)");
     return instances[tabId];
   }
 
@@ -29,7 +28,6 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    console.log("setInstance(tabId, instance)");
     instances[tabId] = instance;
   }
 
@@ -44,7 +42,6 @@ URLNP.Background = URLNP.Background || function () {
    * @public
    */
   function buildInstance(instance, tab, items, links) {
-    console.log("buildInstance(instance, tab, items, links)");
     var selectionProps;
     if (tab) {
       selectionProps = URLNP.PlusMinus.findSelection(tab.url);
@@ -68,25 +65,32 @@ URLNP.Background = URLNP.Background || function () {
    * 
    * This function updates the tab based on the instance's properties.
    * 
-   * @param instance  the instance belonging to this tab
+   * @param instance  the instance for this tab
    * @param direction the direction to go
    * @param caller    String indicating how this function was called
    * @public
    */
   function updateTab(instance, direction, caller) {
-    console.log("updateTab(instance, direction, caller)");
     var urlProps,
         url,
         req;
+    // Ensures we always get the latest instance (TODO: Refactor this)
     instance = caller === "quick-command" ? instance : getInstance(instance.tab.id);
     switch (instance.mode) {
       case "next-prev":
+        // Note on next-prev:
+        // Due to the way activeTab permissions work, we can only call
+        // chrome.tabs.executeScript on commands (and quick commands). Otherwise
+        // (if called via popup), we'll have to do some XHR work and hope the
+        // current URL complies with the same-origin policy in our Ajax request.
         if (caller === "command" || caller === "quick-command") {
           chrome.tabs.executeScript(instance.tab.id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
             var code =
-              "URLNP.NextPrev.setDoc(document);" + 
-              "URLNP.NextPrev.getLinks();" +
-              "URLNP.NextPrev.getURL(" + JSON.stringify(instance.linksPriority) + ", " + JSON.stringify(direction) + ");";
+              "URLNP.NextPrev.getURL(" +
+                JSON.stringify(instance.linksPriority) +
+                ", " +
+                JSON.stringify(direction) +
+                ", URLNP.NextPrev.getLinks(document));";
             chrome.tabs.executeScript(instance.tab.id, {code: code, runAt: "document_end"}, function(results){
               url = results[0];
               if (caller !== "quick-command") {
@@ -96,15 +100,12 @@ URLNP.Background = URLNP.Background || function () {
               chrome.tabs.update(instance.tab.id, {url: url});
             });
           });
-        } else {
+        } else { // Need to use XHR
           req = new XMLHttpRequest();
           req.open("GET", instance.tab.url, true);
           req.responseType = "document";
           req.onload = function() { // Equivalent to onreadystate and checking 4
-            URLNP.NextPrev.setDoc(this.responseXML);
-            URLNP.NextPrev.getLinks();
-            url = URLNP.NextPrev.getURL(instance.linksPriority, direction);
-            console.log("url after req:" + url);
+            url = URLNP.NextPrev.getURL(instance.linksPriority, direction, URLNP.NextPrev.getLinks(this.responseXML));
             instance.tab.url = url ? url : instance.tab.url;
             setInstance(instance.tab.id, instance);
             chrome.tabs.update(instance.tab.id, {url: url});
@@ -113,6 +114,9 @@ URLNP.Background = URLNP.Background || function () {
         }
         break;
       case "plus-minus":
+        // Note on plus-minus:
+        // This is a lot more straight-forward; chrome.tabs.update will work
+        // regardless of permissions and all logic is done in background
         urlProps = URLNP.PlusMinus.modifyURL(instance.tab.url, instance.selection, instance.selectionStart, instance.interval, direction);
         url = urlProps.urlm;
         if (caller !== "quick=command") {
@@ -138,7 +142,6 @@ URLNP.Background = URLNP.Background || function () {
 
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
-  console.log("!chrome.runtime.onInstalled details.reason=" + details.reason);
   // TODO: Remove the details.reason === "update" after this release
   if (details.reason === "install" || details.reason === "update") {
     chrome.storage.sync.clear(function() {
@@ -156,7 +159,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 // Listen for commands (keyboard shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  console.log("!chrome.commands.onCommand command=" + command);
   if (command === "next" || command === "prev" || command === "clear") {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       var instance = URLNP.Background.getInstance(tabs[0].id);

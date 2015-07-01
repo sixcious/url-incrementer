@@ -1,32 +1,11 @@
 /**
- * URL Next Plus NextPrev
+ * URL Next Plus Next Prev
  * 
  * @author Roy Six
  * @namespace
  */
 var URLNP = URLNP || {};
 URLNP.NextPrev = URLNP.NextPrev || function () {
-  
-  var doc,
-      links = {attributes: {}, innerHTML: {}};
-
-  /**
-   * Sets the document, which will be used later to to build the links. This 
-   * document varies depending on the context of when this code is run:
-   * 
-   * 1: If ran as a content_script via a call from chrome.tabs.executeScript, it
-   *    will pass in that tab's document natively
-   * 
-   * 2: If ran in the background via a call from background.js, it will pass in
-   *    a document created from an Ajax-sent XMLHttpRequest (XHR) responseXML
-   * 
-   * @param contextDoc the document
-   * @public
-   */
-  function setDoc(contextDoc) {
-    console.log("setDoc(contextDoc)");
-    doc = contextDoc;
-  }
 
   /**
    * Gets the URL by examining the links object based off of the requested
@@ -34,11 +13,11 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * 
    * @param priority  the link priority to use: attributes or innerHTML
    * @param direction the direction to go: next or prev
+   * @param links     the links object to use
    * @return url the url to use based on the parameters
    * @public
    */
-  function getURL(priority, direction) {
-    console.log("getURL(priority, direction)");
+  function getURL(priority, direction, links) {
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
   }
 
@@ -46,21 +25,26 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * Gets the next and prev links in the document by parsing all link and anchor
    * elements.
    * 
+   * Note: the document is passed in as a param to to build the links. The
+   * document varies depending on the context of when this code is run:
+   * 
+   * 1: If ran as a content_script (via a call from chrome.tabs.executeScript),
+   *    it will pass in that tab's document natively
+   * 
+   * 2: If ran in the background (via a call from background.js), it will pass
+   *    in a document created from an Ajax-sent XMLHttpRequest (XHR) responseXML
+   * 
+   * @param doc the document to use based on the callee's context
    * @return links the links containing the next and prev links (if any)
    * @public
    */
-  function getLinks() {
-    console.log("getLinks()");
+  function getLinks(doc) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    var links_ = doc.getElementsByTagName("link"),
+    var links = {attributes: {}, innerHTML: {}},
+        links_ = doc.getElementsByTagName("link"),
         anchors = doc.links; // Includes all anchor and area elements
-    links = {attributes: {}, innerHTML: {}}; // Needed to reset links
-	  parseElements(links_);
-	  parseElements(anchors);
-	 // console.log("links attributes next:" + links.attributes.next);
-	 // console.log("links attributes prev:" + links.attributes.prev);
-	 // console.log("links innerHTML next:" + links.innerHTML.next);
-	 // console.log("links innerHTML prev:" + links.innerHTML.prev);
+	  parseElements(links_, links);
+	  parseElements(anchors, links);
   	return links;
   }
 
@@ -69,10 +53,10 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * next or prev keywords in them.
    * 
    * @param elements the DOM elements to parse
+   * @param links    the links object to use
    * @private
    */
-  function parseElements(elements) {
-    console.log("parseElements(elements)");
+  function parseElements(elements, links) {
     var element,
         attributes,
         attribute,
@@ -83,11 +67,12 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
       if (!element.href) {
         continue;
       }
-      parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href);
+      parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href, links);
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href);
+        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
+        // TODO: Separate by attribute.nodeName.toLowerCase()
       }
     }
   }
@@ -96,15 +81,13 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * Parses an element's text for keywords that might indicate a next or prev
    * links and builds the links object if found.
    * 
-   * TODO: Separate all attributes by attribute.nodeName.toLowerCase()
-   * 
    * @param text the text to parse keywords from
    * @param type the link type: innerHTML or attributes
-   * @param href the URL to set this link to 
+   * @param href the URL to set this link to
+   * @param links the links object to use
    * @private
    */
-  function parseText(text, type, href) {
-    console.log("parseText(text, type, href)");
+  function parseText(text, type, href, links) {
     if (text.indexOf("next") !== -1) {
       links[type].next = href;
     } else if (text.indexOf("forward") !== -1) {
@@ -126,32 +109,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
 
   // Return Public Functions
   return {
-    setDoc: setDoc,
     getURL: getURL,
     getLinks: getLinks
   };
 }();
-//   /**
-//   * TODO
-//   * 
-//   * @private
-//   */ 
-//   function mutationObserver() {
-//     console.log("mutationObserver()");
-// //var insertedNodes = [];
-//     var observer = new MutationObserver(function(mutations) {
-//       mutations.forEach(function(mutation) {
-//         var i;
-//         console.log("mutation type=" + mutation.type +", mutation target=" + mutation.target + ", mutation node name=" + mutation.nodeName);
-//         for (i = 0, node = mutation.addedNodes[i]; i < mutation.addedNodes.length; i++) {
-//           console.log("added node:" + node.id + " with tag name=" + node.tagName);
-//           var tagName = node.tagName.toLowerCase();
-//           if (tagName === "a" || tagName === "link") {
-//             parseElements([node]);
-//             // TODO parse the element and then if it is a next/prev send a message to popup
-//           }
-//         }
-//       });
-//     });
-//     observer.observe(document.body, { attributes: true, childList: true, characterData: true, subtree: true });
-//   }

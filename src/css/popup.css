@@ -1,10 +1,8 @@
-/* TODO */
+/* Popup CSS relies on Chromium CSS */
 
 @import url("chromium/chrome_shared.css");
-@import url("ui/ui.css");
+@import url("ui/generate-alert.css");
 @import url("ui/hover.css");
-
-/* Popup properties */
 
 html {
   height: auto; /* override chromium/chrome-shared.css */
@@ -23,18 +21,14 @@ body {
 	margin: 5px;
 }
 
+/* Controls CSS */
+
 #controls {
 	width: 102px; /*82px;*/
 }
 
-/*#plus-minus-setup {
-  width: auto;
-}*/
-
-/* Controls properties */
-
 input[type="image"] {
-/*  display: inline-block;*/
+  display: inline-block;
   vertical-align: middle;
 }
 
@@ -50,11 +44,11 @@ input[type="image"].disabled {
 	opacity: 0.2;
 }
 
-/*input[type="image"]:not(.disabled) {
-	opacity: 1.0;
-}*/
+/* Setup CSS */
 
-/* Setup properties */
+label {
+	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+}
 
 input[type="text"] {
 	width: 152px;
@@ -69,7 +63,6 @@ input[type="number"] {
 textarea {
 	width: 412px;
 	color: #777777;
-/*	letter-spacing: -1px;*/
 }
 
 .left {
@@ -81,17 +74,13 @@ textarea {
   margin-right: 150px;
 }
 
-label {
-	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-}
-
 .setup-buttons {
   margin-top: 58px;
 	text-align: center;
   clear: both;
 }
 
-/* Toggle View Animation / CSS TODO: make fade-out-max-height work better */
+/* Toggle View Animation CSS TODO: make fade-out-max-height work better */
 
 @keyframes fade-in {
   from { opacity: 0; transform: scale(0); }

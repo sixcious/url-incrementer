@@ -1,10 +1,7 @@
-// TODO URL Next Plus for Google Chrome © 2011 Roy Six
-
-console.log("URLNP.Options");
-
 /**
  * URL Next Plus Options
  * 
+ * @author Roy Six
  * @namespace
  */
 var URLNP = URLNP || {};
@@ -21,7 +18,6 @@ URLNP.Options = URLNP.Options || function () {
    * @public
    */
   function DOMContentLoaded() {
-    console.log("DOMContentLoaded()");
     // Cache DOM elements
     var ids = document.querySelectorAll("[id]"),
         i;
