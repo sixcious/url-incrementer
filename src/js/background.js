@@ -12,7 +12,7 @@ URLNP.Background = URLNP.Background || function () {
   /**
    * Gets the tab's instance.
    * 
-   * @param tab the tab id to lookup this instance by
+   * @param tabId the tab id to lookup this instance by
    * @return instance the tab's instance
    * @public
    */
@@ -23,7 +23,7 @@ URLNP.Background = URLNP.Background || function () {
   /**
    * Sets the tab's instance.
    * 
-   * @param tab      the tab id to lookup this instance by
+   * @param tabId    the tab id to lookup this instance by
    * @param instance the instance to set
    * @public
    */
