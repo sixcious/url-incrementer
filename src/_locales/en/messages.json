@@ -12,11 +12,11 @@
     "description": "Extension title (tool tip) shown when hovered."
   },
   "popup_next_input": {
-    "message": "Next [+]",
+    "message": "Next [>] Plus [+]",
     "description": "Next input button title (tool tip) shown when hovered."
   },
   "popup_prev_input": {
-    "message": "Prev [-]",
+    "message": "Prev [<] Minus [-]",
     "description": "Prev input button title (tool tip) shown when hovered."
   },
   "popup_clear_input": {
@@ -69,7 +69,7 @@
   },
   "popup_selectionstart_invalid_error": {
     "message": "Selection position must be from URL",
-    "description": "TODO"
+    "description": ""
   },
   "popup_interval_invalid_error": {
     "message": "Interval has to be 1 or higher",
@@ -85,11 +85,11 @@
   },
   "options_keyboard_shortcuts_quick_enable_label": {
     "message": "Enable Quick Keyboard Shortcuts",
-    "description": "TODO"
+    "description": ""
   },
   "options_keyboard_shortcuts_a": {
     "message": "Configure Keyboard Shortcuts",
-    "description": "TODO"
+    "description": ""
   },
   "options_default_settings_h3": {
     "message": "Default Settings",

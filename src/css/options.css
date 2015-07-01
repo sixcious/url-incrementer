@@ -9,20 +9,20 @@ section:not(:last-child) {
 }
 
 div.table {
-	display: table;
+  display: table;
 }
 
 div.row  {
-	display: table-row;
+  display: table-row;
 }
 
 div.column {
-	display: table-cell;
-	padding: 0 10px 10px 0;
+  display: table-cell;
+  padding: 0 10px 10px 0;
 }
 
 input[type="number"] {
-	width: 52px;
+  width: 52px;
 }
 
 img {

@@ -1,22 +1,22 @@
-/* This file is CSS for the overlay used in the generateAlert() messages. Code 
-   is derived from the sample Google extension, Proxy Settings by Mike West. */
+/* Generate Alert CSS is derived from the sample Google extension, Proxy
+   Settings by Mike West. */
 
 .overlay {
-	display: block;
-	text-align: center;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	width: 240px;
-	padding: 10px;
-	margin: -40px 0 0 -120px;
-	opacity: 0;
-	background: rgba(0, 0, 0, 0.75);
-	border-radius: 5px;
-	color: #FFFFFF;
-	font-size: 1.2em;
-	transition: all 1.0s ease;
-	transform: scale(0);
+  display: block;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 240px;
+  padding: 10px;
+  margin: -40px 0 0 -120px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 5px;
+  color: #FFFFFF;
+  font-size: 1.2em;
+  transition: all 1.0s ease;
+  transform: scale(0);
 }
 
 .overlay ul {
@@ -24,6 +24,6 @@
 }
 
 .overlay-visible {
-	opacity: 1;
-	transform: scale(1);
+  opacity: 1;
+  transform: scale(1);
 }

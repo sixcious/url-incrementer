@@ -9,22 +9,22 @@ html {
 }
 
 body {
-	background: #EDECEB;
+  background: #EDECEB;
 }
 
 * {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #popup {
-	margin: 5px;
+  margin: 5px;
 }
 
 /* Controls CSS */
 
 #controls {
-	width: 102px; /*82px;*/
+  width: 102px; /*82px;*/
 }
 
 input[type="image"] {
@@ -37,32 +37,32 @@ input[type="image"]:focus {
 }
 
 input[type="image"]:not(:last-child) {
-	margin-right: 2px;
+  margin-right: 2px;
 }
 
 input[type="image"].disabled {
-	opacity: 0.2;
+  opacity: 0.2;
 }
 
 /* Setup CSS */
 
 label {
-	text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+  text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }
 
 input[type="text"] {
-	width: 152px;
-	display: block;
+  width: 152px;
+  display: block;
 }
 
 input[type="number"] {
-	width: 52px;
-	display: block;
+  width: 52px;
+  display: block;
 }
 
 textarea {
-	width: 412px;
-	color: #777777;
+  width: 412px;
+  color: #777777;
 }
 
 .left {
@@ -76,7 +76,7 @@ textarea {
 
 .setup-buttons {
   margin-top: 58px;
-	text-align: center;
+  text-align: center;
   clear: both;
 }
 
