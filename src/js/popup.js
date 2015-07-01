@@ -86,7 +86,6 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup");
-        //instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
@@ -103,7 +102,6 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup");
-        //instance = backgroundPage.URLNP.Background.getInstance(instance.tab.id);
       });
     }
   }
