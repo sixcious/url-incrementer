@@ -145,8 +145,7 @@ URLNP.Background = URLNP.Background || function () {
 
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
-  // TODO: Remove the details.reason === "update" after this release
-  if (details.reason === "install" || details.reason === "update") {
+  if (details.reason === "install" || (details.reason === "update" && details.previousVersion !== "3")) {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
         "quickEnabled": true,
@@ -156,6 +155,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
         "animationsEnabled": true
       });
     });
+  }
+  if (details.reason === "install") {
     chrome.runtime.openOptionsPage();
   }
 });
