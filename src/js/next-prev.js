@@ -43,9 +43,9 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
     var links = {attributes: {}, innerHTML: {}},
         links_ = doc.getElementsByTagName("link"),
         anchors = doc.links; // Includes all anchor and area elements
-	  parseElements(links_, links);
-	  parseElements(anchors, links);
-  	return links;
+    parseElements(links_, links);
+    parseElements(anchors, links);
+    return links;
   }
 
   /**
