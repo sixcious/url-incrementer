@@ -60,8 +60,8 @@ URLNP.Popup = URLNP.Popup || function () {
                 instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
               }
               updateControls();
-              DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
-              DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? "hvr-wobble-bottom" : "";
+              DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? /*"hvr-wobble-bottom" : */"hvr-grow" : "";
+              DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? /*"hvr-wobble-bottom" : */"hvr-grow" : "";
               // Plus Minus initialization:
               DOM["#url-textarea"].value = instance.url;
               DOM["#selection-input"].value = instance.selection;
@@ -82,7 +82,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickNext() {
     if (instance.enabled) {
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+        URLNP.UI.clickHoverCss(this, /*"hvr-wobble-horizontal-click"*/"hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup");
@@ -98,7 +98,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickPrev() {
     if (instance.enabled) {
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-wobble-horizontal-click");
+        URLNP.UI.clickHoverCss(this, /*"hvr-wobble-horizontal-click"*/"hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup");
@@ -116,7 +116,7 @@ URLNP.Popup = URLNP.Popup || function () {
       instance.enabled = false;
       updateControls();
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-buzz-out-click");
+        URLNP.UI.clickHoverCss(this, /*"hvr-buzz-out-click"*/"hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.setInstance(instance.tabId, undefined);
@@ -176,7 +176,7 @@ URLNP.Popup = URLNP.Popup || function () {
    * @private
    */
   function updateControls() {
-    var className = instance.enabled ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+    var className = instance.enabled ? items_.animationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className = className;
     DOM["#prev-input"].className = className;
     DOM["#clear-input"].className = className;
