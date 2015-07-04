@@ -32,7 +32,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    *    it will pass in that tab's document natively
    * 
    * 2: If ran in the background (via a call from background.js), it will pass
-   *    in a document created from an Ajax-sent XMLHttpRequest (XHR) responseXML
+   *    in a document created from an Ajax XMLHttpRequest response
    * 
    * @param doc the document to use based on the callee's context
    * @return links the links containing the next and prev links (if any)

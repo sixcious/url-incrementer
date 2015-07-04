@@ -60,22 +60,26 @@ input[type="number"] {
   display: block;
 }
 
+select {
+  display: block;
+}
+
 textarea {
   width: 412px;
   color: #777777;
 }
 
-.left {
+/*.left {
   float: left;
 }
 
 .right {
   float: right;
   margin-right: 150px;
-}
+}*/
 
 .setup-buttons {
-  margin-top: 58px;
+  margin-top: 12px;
   text-align: center;
   clear: both;
 }
@@ -116,4 +120,17 @@ textarea {
 
 .display-none {
   display: none;
+}
+
+div.table {
+  display: table;
+}
+
+div.row  {
+  display: table-row;
+}
+
+div.column {
+  display: table-cell;
+  padding: 0 10px 10px 0;
 }

@@ -44,12 +44,12 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @return JSON object {urlm: modified url, selectionm: modified selection}
    * @public
    */
-  function modifyURL(url, selection, selectionStart, interval, direction) {
+  function modifyURL(url, selection, selectionStart, interval, direction, special) {
     var urlm,
         selectionm,
         leadingzeros = selection.charAt(0) === '0',
         alphanumeric = /[a-z]/i.test(selection),
-        selectionint = parseInt(selection, alphanumeric ? 36 : 10);
+        selectionint = parseInt(selection, alphanumeric ? 36 : special);
     // In case of minus producing negative, set selectionm to 0
     selectionm = direction === "next" ? (selectionint + interval).toString() :
                  direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :

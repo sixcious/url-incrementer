@@ -190,6 +190,9 @@ URLNP.Popup = URLNP.Popup || function () {
   function setupNextPrev() {
     var mode = "next-prev";
     if (!instance.enabled || instance.mode !== mode) {
+      if (items_.animationsEnabled) {
+        URLNP.UI.clickHoverCss(this, "hvr-push-click");
+      }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         instance.enabled = true;
         instance.mode = mode;
