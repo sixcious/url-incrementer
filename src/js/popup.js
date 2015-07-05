@@ -221,7 +221,7 @@ URLNP.Popup = URLNP.Popup || function () {
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
         base = DOM["#base-select"].value,
-        baseCase = DOM["#base-case-upperCase-input"].checked ? "upperCase" : DOM["base-case=lowerCase-input"].checked ? "lowerCase" : undefined, // document.querySelector('input[name="base-case"]:checked').value
+        baseCase = DOM["#base-case-upperCase-input"].checked ? "upperCase" : DOM["#base-case-lowerCase-input"].checked ? "lowerCase" : undefined, // document.querySelector('input[name="base-case"]:checked').value
         leadingZeros = DOM["#leading-zeros-input"].checked,
         errors = [ // 0 index for selection and 1 index for interval errors
           selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") :
