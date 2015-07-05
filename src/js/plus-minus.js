@@ -55,11 +55,10 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
     selectionm = direction === "next" ? (selectionint + interval).toString(base) :
                  direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                                         "";
-    if ((leadingZeros || selection.charAt(0)) && selection.length > selectionm.length) { // If Leading Zeros
-      //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.length) + selectionm;
+    if ((leadingZeros || selection.charAt(0)) && selection.length > selectionm.length) { // If Leading Zeros, pad 0s
       selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
     }
-    if (base > 10 || /[a-z]/i.test(selection)) { // If Alphanumeric
+    if (base > 10 || /[a-z]/i.test(selection)) { // If Alphanumeric, convert case
       selectionm = baseCase === "upperCase" ? selectionm.toUpperCase() : selectionm.toLowerCase();
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
