@@ -40,26 +40,27 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @param selection      the specific selection in the URL to modify
    * @param selectionStart the starting index of the selection in the URL
    * @param interval       the amount to increment or decrement
+   * @param base           the base to use (from base 2- to base 36)
+   * @param baseCase       the case to use for letters (lowercase or uppercase)
+   * @param leadingZeros   if true, keep leading zeros, false don't keep them
    * @param direction      the direction to go: next/increment or prev/decrement
    * @return JSON object {urlm: modified url, selectionm: modified selection}
    * @public
    */
-  function modifyURL(url, selection, selectionStart, interval, direction, special) {
+  function modifyURL(url, selection, selectionStart, interval, base, baseCase, leadingZeros, direction) {
     var urlm,
         selectionm,
-        leadingzeros = selection.charAt(0) === '0',
-        alphanumeric = /[a-z]/i.test(selection),
-        selectionint = parseInt(selection, alphanumeric ? 36 : special);
+        selectionint = parseInt(selection, base);
     // In case of minus producing negative, set selectionm to 0
-    selectionm = direction === "next" ? (selectionint + interval).toString() :
-                 direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString() :
+    selectionm = direction === "next" ? (selectionint + interval).toString(base) :
+                 direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                                         "";
-    if (leadingzeros && selection.length > selectionm.length) {
+    if ((leadingZeros || selection.charAt(0)) && selection.length > selectionm.length) { // If Leading Zeros
       //selectionm = "00000000000000000000000000000000000000000000000000".substring(0, selection.length - selectionm.length) + selectionm;
       selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
     }
-    if (alphanumeric) {
-      selectionm = (+selectionm).toString(36);
+    if (base > 10 || /[a-z]/i.test(selection)) { // If Alphanumeric
+      selectionm = baseCase === "upperCase" ? selectionm.toUpperCase() : selectionm.toLowerCase();
     }
     urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
     return {urlm: urlm, selectionm: selectionm};

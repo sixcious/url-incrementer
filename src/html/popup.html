@@ -10,7 +10,7 @@
       <div id="controls" class="display-block fade-in">
         <input id="prev-input" type="image" src="../img/popup/prev.png" alt="" width="16" height="16" class="disabled"/>
         <input id="clear-input" type="image" src="../img/popup/clear.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="next-input" type="image" src="../img/popup/next.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="next-input" type="image" src="../img/icons/16.png" alt="" width="16" height="16" class="disabled"/>
         <input id="next-prev-setup-input" type="image" src="../img/popup/next-prev-setup.png" alt="" width="16" height="16"/>
         <input id="plus-minus-setup-input" type="image" src="../img/popup/plus-minus-setup.png" alt="" width="16" height="16"/>
       </div>
@@ -33,42 +33,77 @@
             </div>
           </div>
           <div class="row">
-            <div class="column">
+                        <div class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="leading-zeros-input" type="checkbox"/>
+                  <span id="leading-zeros-label">Leading 0s</span>
+                </label>
+              </div>
+            </div>
+          <div class="column">
               <label id="base-label" for="base-select">Base</label>
               <select id="base-select">
-                <option label=" "></option>
-                <option id="base-option-2">Base 2 Binary [0-1]</option>
-<!--                <option id="base-option-3">3 Ternary [0-2]</option>
-                <option id="base-option-4">4 Quaternary [0-3]</option>
-                <option id="base-option-5">5 Quinary [0-4]</option>
-                <option id="base-option-6">6 Senary [0-5]</option>
-                <option id="base-option-6">7 Septenary [0-6]</option>-->
-                <option id="base-option-8">Base 8 Octal [0-7]</option>
-<!--                <option id="base-option-8">9 Nonary [0-8]</option>
-                <option id="base-option-10">10 Decimal [0-9]</option>
-                <option id="base-option-11">11 Undecimal [0-]</option>
-                <option id="base-option-12">12 Duodecimal [0-]</option>
-                <option id="base-option-13">13 Tridecimal [0-]</option>
-                <option id="base-option-14">14 Tetradecimal [0-]</option>
-                <option id="base-option-15">15 Pentadecimal [0-]</option>-->
-                <option id="base-option-16">Base 16 Hexadecimal [0-]</option>
-<!--                <option id="base-option-17">17 Septendecimal [0-]</option>
-                <option id="base-option-18">18 Octodecimal [0-]</option>
-                <option id="base-option-19">19 Nonadecimal [0-]</option>
-                <option id="base-option-20">20 Vigesimal [0-]</option>
-                <option id="base-option-24">24 Tetravigesimal [0-]</option>
-                <option id="base-option-27">27 Heptavigesimal [0-]</option>
-                <option id="base-option-30">30 Trigesimal [0-]</option>
-                <option id="base-option-32">32 Duotrigesimal [0-]</option>
-                <option id="base-option-36">36 Hexatrigesimal [0-Z]</option>-->
-                
+                <option id="base-option-default" value="10">(Default)</option>
+                <option id="base-option-2" value="2">2 Binary [0-1]</option>
+                <option id="base-option-3" value="3">3 Ternary [0-2]</option>
+                <option id="base-option-4" value="4">4 Quaternary [0-3]</option>
+                <option id="base-option-5" value="5">5 Quinary [0-4]</option>
+                <option id="base-option-6" value="6">6 Senary [0-5]</option>
+                <option id="base-option-7" value="7">7 Septenary [0-6]</option>
+                <option id="base-option-8" value="8">8 Octal [0-7]</option>
+                <option id="base-option-9" value="9">9 Nonary [0-8]</option>
+                <option id="base-option-10" value="10">10 Decimal [0-9]</option>
+                <option id="base-option-11" value="11">11 Undecimal [0-9][A]</option>
+                <option id="base-option-12" value="12">12 Duodecimal [0-9][A-B]</option>
+                <option id="base-option-13" value="13">13 Tridecimal [0-9][A-C]</option>
+                <option id="base-option-14" value="14">14 Tetradecimal [0-9][A-D]</option>
+                <option id="base-option-15" value="15">15 Pentadecimal [0-9][A-E]</option>
+                <option id="base-option-16" value="16">16 Hexadecimal [0-9][A-F]</option>
+                <option id="base-option-17" value="17">17 Septendecimal [0-9][A-G]</option>
+                <option id="base-option-18" value="18">18 Octodecimal [0-9][A-H]</option>
+                <option id="base-option-19" value="19">19 Nonadecimal [0-9][A-I]</option>
+                <option id="base-option-20" value="20">20 Vigesimal [0-9][A-J]</option>
+                <option id="base-option-21" value="21">21 Unvigesimal [0-9][A-K]</option>
+                <option id="base-option-22" value="22">22 Duovigesimal [0-9][A-L]</option>
+                <option id="base-option-23" value="23">23 Trivigesimal [0-9][A-M]</option>
+                <option id="base-option-24" value="24">24 Tetravigesimal [0-9][A-N]</option>
+                <option id="base-option-25" value="25">25 Pentavigesimal [0-9][A-O]</option>
+                <option id="base-option-26" value="26">26 Hexavigesimal[0-9][A-P]</option>
+                <option id="base-option-27" value="27">27 Heptavigesimal [0-9][A-Q]</option>
+                <option id="base-option-28" value="28">28 Octovigesimal [0-9][A-R]</option>
+                <option id="base-option-29" value="29">29 Nonavigesimal [0-9][A-S]</option>
+                <option id="base-option-30" value="30">30 Trigesimal [0-9][A-T]</option>
+                <option id="base-option-31" value="31">31 Unotrigesimal[0-9][A-U]</option>
+                <option id="base-option-32" value="32">32 Duotrigesimal [0-9][A-V]</option>
+                <option id="base-option-33" value="33">33 Tritrigesimal [0-9][A-W]</option>
+                <option id="base-option-34" value="34">34 Tetratrigesimal [0-9][A-X]</option>
+                <option id="base-option-35" value="35">35 Pentatrigesimal [0-9][A-Y]</option>
+                <option id="base-option-36" value="36">36 Hexatrigesimal [0-9[A-Z]</option>
               </select>
             </div>
             <div class="column">
-              Leading 0s
+              <div class="radio">
+                <label>
+                  <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
+                  <span id="base-case-lowerCase-option">Lowercase Base</span>
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id="base-case-upperCase-input" type="radio" name="base-case" value="upperCase"/>
+                  <span id="base-case-upperCase-option">Uppercase Base</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
+<!--                  <div class="checkbox">
+          <label>
+            <input id="show-advanced-input" type="checkbox"/>
+            <span id="animations-enable-label">Show Advanced Options (Leading 0s, Base)</span>
+          </label>
+        </div>-->
         <div class="setup-buttons">
           <input id="plus-minus-setup-accept-input" type="button" value=""/>
           <input id="plus-minus-setup-cancel-input" type="button" value=""/>

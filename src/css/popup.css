@@ -46,7 +46,7 @@ input[type="image"].disabled {
 
 /* Setup CSS */
 
-label {
+h3, label {
   text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }
 
@@ -65,8 +65,12 @@ select {
 }
 
 textarea {
-  width: 412px;
+  width: 516px;
   color: #777777;
+}
+
+.column > label {
+  display: block;
 }
 
 /*.left {

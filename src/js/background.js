@@ -51,6 +51,9 @@ URLNP.Background = URLNP.Background || function () {
         instance.mode = items.defaultMode;
         instance.linksPriority = items.defaultLinksPriority;
         instance.interval = items.defaultInterval;
+        instance.base = 10;
+        instance.baseCase = undefined;
+        instance.leadingZeros = false;
       }
       instance.tabId = tab.id;
       instance.url = tab.url;
@@ -120,7 +123,7 @@ URLNP.Background = URLNP.Background || function () {
         // Note on plus-minus:
         // This is a lot more straight-forward; chrome.tabs.update will work
         // regardless of permissions and all logic is done in background
-        urlProps = URLNP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, direction);
+        urlProps = URLNP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, direction);
         url = urlProps.urlm;
         if (caller !== "quick=command") {
           instance.url = urlProps.urlm;
