@@ -76,7 +76,7 @@ URLNP.Background = URLNP.Background || function () {
    * @param caller    String indicating who called this function (e.g. command)
    * @public
    */
-  function updateTab(instance, direction, caller) {
+  function updateTab(instance, direction, caller, callback) {
     var urlProps,
         url,
         req;
@@ -106,7 +106,7 @@ URLNP.Background = URLNP.Background || function () {
               chrome.tabs.update(instance.tabId, {url: url});
             });
           });
-        } else { // Need to use XHR
+        } else { // Need to use XHR for Popup
           req = new XMLHttpRequest();
           req.open("GET", instance.url, true);
           req.responseType = "document";
@@ -114,7 +114,9 @@ URLNP.Background = URLNP.Background || function () {
             url = URLNP.NextPrev.getURL(instance.linksPriority, direction, URLNP.NextPrev.getLinks(this.responseXML));
             instance.url = url ? url : instance.url;
             setInstance(instance.tabId, instance);
-            chrome.tabs.update(instance.tabId, {url: url});
+            chrome.tabs.update(instance.tabId, {url: url}, function(tab) {
+              
+            });
           };
           req.send();
         }

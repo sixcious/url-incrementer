@@ -89,7 +89,10 @@ URLNP.Popup = URLNP.Popup || function () {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "next", "popup");
+        backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
+          instance = result;
+          //
+        });
       });
     }
   }
