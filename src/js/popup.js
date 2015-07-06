@@ -30,8 +30,8 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#next-input"].title = chrome.i18n.getMessage("popup_next_input");
     DOM["#prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
-    DOM["#next-prev-setup-input"].title = chrome.i18n.getMessage("popup_next_prev_setup_input");
-    DOM["#plus-minus-setup-input"].title = chrome.i18n.getMessage("popup_plus_minus_setup_input");
+    DOM["#next-prev-mode-input"].title = chrome.i18n.getMessage("popup_next_prev_setup_input");
+    DOM["#plus-minus-mode-input"].title = chrome.i18n.getMessage("popup_plus_minus_setup_input");
     DOM["#plus-minus-setup-h3"].textContent = chrome.i18n.getMessage("popup_plus_minus_setup_h3");
     DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
@@ -42,26 +42,32 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#next-input"].addEventListener("click", clickNext, false);
     DOM["#prev-input"].addEventListener("click", clickPrev, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#next-prev-setup-input"].addEventListener("click", setupNextPrev, false);
-    DOM["#plus-minus-setup-input"].addEventListener("click", toggleView, false);
+    DOM["#next-prev-mode-input"].addEventListener("click", setupNextPrev, false);
+    DOM["#plus-minus-mode-input"].addEventListener("click", toggleView, false);
     DOM["#plus-minus-setup-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-        chrome.tabs.executeScript(tabs[0].id, {code: "URLNP.NextPrev.getLinks(document);", runAt: "document_end"}, function(results){
+      // chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+      //   chrome.tabs.executeScript(tabs[0].id, {code: "URLNP.NextPrev.getLinks(document);", runAt: "document_end"}, function(results){
           chrome.runtime.getBackgroundPage(function(backgroundPage) {
             chrome.storage.sync.get(null, function(items) {
+              backgroundPage.URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
+                
+console.log("links.attributes.next="  + links.attributes.next);
+console.log("links.attributes.prev="  + links.attributes.prev);
+console.log("links.innerHTML.next="  + links.innerHTML.next);
+console.log("links.innerHTML.prev="  + links.innerHTML.prev);
               items_ = items;
               instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
               if (!instance || instance.url !== tabs[0].url) {
-                instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, results[0]);
+                instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, links);
               }
               updateControls();
-              DOM["#next-prev-setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
-              DOM["#plus-minus-setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
+              DOM["#next-prev-mode-input"].className = items_.animationsEnabled && instance.nexturl || instance.prevurl ? "hvr-grow" : "";
+              DOM["#plus-minus-mode-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
               // Plus Minus initialization:
               DOM["#url-textarea"].value = instance.url;
               DOM["#selection-input"].value = instance.selection;
@@ -73,8 +79,9 @@ URLNP.Popup = URLNP.Popup || function () {
               DOM["#leading-zeros-input"].checked = instance.leadingZeros;
             });
           });
-        });
-      });
+          });
+      //   });
+      // });
     });
   }
 
@@ -90,8 +97,9 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
+          console.log("result is ..." + result.nexturl);
           instance = result;
-          //
+          updateControls();
         });
       });
     }
@@ -107,8 +115,14 @@ URLNP.Popup = URLNP.Popup || function () {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }
+      // chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      //   backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup");
+      // });
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup");
+        backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
+          instance = result;
+          updateControls();
+        });
       });
     }
   }
@@ -139,7 +153,7 @@ URLNP.Popup = URLNP.Popup || function () {
   function toggleView() {
     var setup;
     switch (this.id) {
-      case "plus-minus-setup-input": // Hide controls, show plus minus setup
+      case "plus-minus-mode-input": // Hide controls, show plus minus setup
         DOM["#controls"].className = "fade-out";
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
@@ -187,6 +201,14 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#next-input"].className = className;
     DOM["#prev-input"].className = className;
     DOM["#clear-input"].className = className;
+    if (instance.mode === "plus-minus") {
+      DOM["#next-input"].src = "../img/popup/plus.png";
+      DOM["#prev-input"].src = "../img/popup/minus.png";
+    } else {
+      DOM["#next-input"].src = "../img/popup/next.png";
+      DOM["#prev-input"].src = "../img/popup/prev.png";
+    }
+    DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
   }
 
   /**
@@ -196,7 +218,7 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function setupNextPrev() {
     var mode = "next-prev";
-    if (!instance.enabled || instance.mode !== mode) {
+    if ((!instance.enabled || instance.mode !== mode) && (instance.nexturl || instance.prevurl)) {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }

@@ -44,25 +44,25 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @param baseCase       the case to use for letters (lowercase or uppercase)
    * @param leadingZeros   if true, keep leading zeros, false don't keep them
    * @param direction      the direction to go: next/increment or prev/decrement
-   * @return JSON object {urlm: modified url, selectionm: modified selection}
+   * @return JSON object {urlmod: modified url, selectionmod: modified selection}
    * @public
    */
   function modifyURL(url, selection, selectionStart, interval, base, baseCase, leadingZeros, direction) {
-    var urlm,
-        selectionm,
+    var urlmod,
+        selectionmod,
         selectionint = parseInt(selection, base);
     // In case of minus producing negative, set selectionm to 0
-    selectionm = direction === "next" ? (selectionint + interval).toString(base) :
-                 direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
+    selectionmod = direction === "next" ? (selectionint + interval).toString(base) :
+                   direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                                         "";
-    if ((leadingZeros || selection.charAt(0)) && selection.length > selectionm.length) { // If Leading Zeros, pad 0s
-      selectionm = "0".repeat(selection.length - selectionm.length) + selectionm;
+    if ((leadingZeros || selection.charAt(0) === '0') && selection.length > selectionmod.length) { // If Leading Zeros, pad 0s
+      selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
-    if (base > 10 || /[a-z]/i.test(selection)) { // If Alphanumeric, convert case
-      selectionm = baseCase === "upperCase" ? selectionm.toUpperCase() : selectionm.toLowerCase();
+    if (/[a-z]/i.test(selection)) { // If Alphanumeric, convert case
+      selectionmod = baseCase === "upperCase" ? selectionmod.toUpperCase() : baseCase === "lowerCase" ? selectionmod.toLowerCase() : selectionmod;
     }
-    urlm = url.substring(0, selectionStart) + selectionm + url.substring(selectionStart + selection.length);
-    return {urlm: urlm, selectionm: selectionm};
+    urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
+    return {urlmod: urlmod, selectionmod: selectionmod};
   }
 
   // Return Public Functions

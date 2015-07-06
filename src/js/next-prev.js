@@ -8,6 +8,33 @@ var URLNP = URLNP || {};
 URLNP.NextPrev = URLNP.NextPrev || function () {
 
   /**
+   * TODO
+   */ 
+  function getLinksViaExecuteScript(tabId, callback) {
+    chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+      var code = "URLNP.NextPrev.getLinks(document);";
+      chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
+        callback(results[0]);
+      });
+    });
+  }
+
+  /**
+   * TODO
+   * 
+   */ 
+  function getLinksViaXHR(url, callback) {
+    console.log("getting url in xhr" + url);
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.responseType = "document";
+    req.onload = function() { // Equivalent to onreadystate and checking 4
+      callback(getLinks(this.responseXML));
+    };
+    req.send();
+  }
+
+  /**
    * Gets the URL by examining the links object based off of the requested
    * priority and direction.
    * 
@@ -36,7 +63,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * 
    * @param doc the document to use based on the callee's context
    * @return links the links containing the next and prev links (if any)
-   * @public
+   * @private
    */
   function getLinks(doc) {
     // Note: The following DOM elements contain links: link, a, area, and base
@@ -110,6 +137,8 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
   // Return Public Functions
   return {
     getURL: getURL,
-    getLinks: getLinks
+    getLinks: getLinks,
+    getLinksViaXHR: getLinksViaXHR,
+    getLinksViaExecuteScript: getLinksViaExecuteScript
   };
 }();
