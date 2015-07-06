@@ -90,11 +90,11 @@ URLNP.Background = URLNP.Background || function () {
         // (if called via popup), we'll have to do some XHR work and hope the
         // current URL complies with the same-origin policy in our Ajax request.
         url = direction === "next" ? instance.nexturl : direction === "prev" ? instance.prevurl : instance.url;
-        chrome.tabs.update(instance.tabId, {url: url}, function(tab) {
-          if (caller === "command") {
+        chrome.tabs.update(instance.tabId, {url: url});
+        
+                  if (caller === "command") {
             URLNP.NextPrev.getLinksViaExecuteScript(instance.tabId, function(links) {
-              instance.tabId = tab.id;
-              instance.url = url; // tab.url
+              instance.url = url;
               instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
               instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
               instance.links = links;
@@ -102,9 +102,7 @@ URLNP.Background = URLNP.Background || function () {
               callback(instance);
             });
           } else if (caller === "popup") {
-            console.log("calling popup before xhr req in bg..." + instance.tabId + " with url" + url);
             URLNP.NextPrev.getLinksViaXHR(url, function(links) {
-              instance.tabId = tab.id;
               instance.url = url;
               instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
               instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
@@ -113,7 +111,6 @@ URLNP.Background = URLNP.Background || function () {
               callback(instance);
             });
           }
-        });
         break;
       case "plus-minus":
         // Note on plus-minus:
@@ -126,14 +123,14 @@ URLNP.Background = URLNP.Background || function () {
         //   instance.selection = urlProps.selectionmod;
         //   setInstance(instance.tabId, instance);
         // }
-        chrome.tabs.update(instance.tabId, {url: url}, function(tab) {
-          if (caller !== "quick-command") {
+        chrome.tabs.update(instance.tabId, {url: url});
+        
+                  if (caller !== "quick-command") {
             instance.url = urlProps.urlmod; // tab.url
             instance.selection = urlProps.selectionmod;
             setInstance(instance.tabId, instance);
             callback(instance);
           }
-        });
         break;
       default:
         break;

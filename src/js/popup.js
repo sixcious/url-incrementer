@@ -99,7 +99,7 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
           console.log("result is ..." + result.nexturl);
           instance = result;
-          updateControls();
+              DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
         });
       });
     }
@@ -121,7 +121,7 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
           instance = result;
-          updateControls();
+          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
         });
       });
     }
