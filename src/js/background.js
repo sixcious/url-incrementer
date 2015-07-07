@@ -89,7 +89,7 @@ URLNP.Background = URLNP.Background || function () {
         // current URL complies with the same-origin policy in our Ajax request.
         url = direction === "next" ? instance.nexturl : direction === "prev" ? instance.prevurl : instance.url;
             chrome.tabs.update(instance.tabId, {url: url}); // Can't access tab.url
-        if (caller !== "command") {
+       /* if (caller !== "command") {
               chrome.tabs.update(instance.tabId, {url: url}, function(tab) {
                 if (tab.rea)
                          URLNP.NextPrev.getLinksViaExecuteScript(instance.tabId, function(links) {
@@ -103,7 +103,7 @@ URLNP.Background = URLNP.Background || function () {
             }
           }); 
               }
-        } else if (caller === "command" || caller === "popup") {
+        } else*/ if (caller === "command" || caller === "popup") {
           URLNP.NextPrev.getLinksViaXHR(url, function(links) {
             instance.url = url;
             instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
