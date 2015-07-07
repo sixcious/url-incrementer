@@ -25,27 +25,27 @@
   },
   "popup_next_prev_setup_input": {
     "message": "Next Prev Links Mode",
-    "description": ""
+    "description": "Next Prev input button title (tool tip) when hovered."
   },
   "popup_plus_minus_setup_input": {
     "message": "Plus Minus URL Setup",
-    "description": ""
+    "description": "Plus Minus input button title (tool tip) when hovered."
   },
   "popup_plus_minus_setup_h3": {
-    "message": "Select the part of the URL to [+] or [-]",
-    "description": ""
+    "message": "Select the part of the URL to plus [+] or minus [-]",
+    "description": "Plus Minus Setup Heading 3."
   },
   "popup_url_label": {
     "message": "URL",
-    "description": "URL textarea label"
+    "description": "URL textarea label."
   },
   "popup_selection_label": {
     "message": "Selection",
-    "description": "Selection input text label"
+    "description": "Selection input text label."
   },
   "popup_interval_label": {
     "message": "Interval",
-    "description": "Form label for Increment input number."
+    "description": "Interval input number label."
   },
   "popup_accept_input": {
     "message": "Accept",
@@ -57,47 +57,51 @@
   },
   "popup_selection_blank_error": {
     "message": "Selection can't be blank",
-    "description": "Setup error message if the selection is blank."
+    "description": "Plus Minus Setup error message if the selection is blank."
   },
   "popup_selection_notalphanumeric_error": {
     "message": "Selection can only contain alphanumeric characters",
-    "description": "Setup error message if the selection is not alphanumeric."
+    "description": "Plus Minus Setup error message if the selection is not alphanumeric."
   },
   "popup_selection_notinurl_error": {
     "message": "Selection has to be a part of the URL",
-    "description": "Setup error message if the selection is not part of the URL."
+    "description": "Plus Minus Setup error message if the selection is not part of the URL."
+  },
+  "popup_selection_base_error": {
+    "message": "Select a higher base to match characters in selection",
+    "description": "Plus Minus Setup error message if the selection doesn't match the base."
   },
   "popup_selectionstart_invalid_error": {
     "message": "Selection position must be from URL",
-    "description": ""
+    "description": "Plus Minus Setup error message if the selectionStart is invalid."
   },
   "popup_interval_invalid_error": {
     "message": "Interval has to be 1 or higher",
-    "description": "Setup error message if the interval is 0 or negative."
+    "description": "Plus Minus Setup error message if the interval is 0 or negative."
   },
   "options_keyboard_shortcuts_h3": {
     "message": "Keyboard Shortcuts",
-    "description": "The options page's shortcuts keys heading."
+    "description": "Keyboard Shortcuts Heading 3."
   },
   "options_keyboard_shortcuts_p": {
     "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [>] or Plus [+] instantly without having to enter Setup.",
-    "description": ""
+    "description": "Keyboard Shortcuts paragraph."
   },
   "options_keyboard_shortcuts_quick_enable_label": {
     "message": "Enable Quick Keyboard Shortcuts",
-    "description": ""
+    "description": "Enable Quick Keyboard Shortcuts checkbox label."
   },
-  "options_keyboard_shortcuts_a": {
+  "options_keyboard_shortcuts_button": {
     "message": "Configure Keyboard Shortcuts",
-    "description": ""
+    "description": "Configure Keyboard Shortcuts button."
   },
   "options_default_settings_h3": {
     "message": "Default Settings",
-    "description": "Default Settings sub heading."
+    "description": "Default Settings Heading 3."
   },
   "options_default_settings_p": {
     "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or inside Setup.",
-    "description": ""
+    "description": "Default Settings paragraph."
   },
   "options_default_mode_label": {
     "message": "Mode",
@@ -108,7 +112,7 @@
     "description": ""
   },
   "options_default_mode_plus_minus_option": {
-    "message": "Increment [+] or Decrement [-] the URL",
+    "message": "Plus [+] or Minus [-] the URL",
     "description": ""
   },
   "options_default_links_label": {

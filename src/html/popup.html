@@ -31,13 +31,25 @@
               <label id="interval-label" for="interval-input"></label>
               <input id="interval-input" type="number" min="1"/>
             </div>
+                      <div class="column">
+                              <div class="checkbox">
+          <label>
+            <input id="advanced-options-input" type="checkbox"/>
+            <span id="advanced-options-label">Advanced Options</span>
+          </label>
+        </div>
           </div>
+          </div>
+        </div>
+
+        <div id="advanced-options">
+        <div  class="table">
           <div class="row">
-                        <div class="column">
+            <div class="column">
               <div class="checkbox">
                 <label>
                   <input id="leading-zeros-input" type="checkbox"/>
-                  <span id="leading-zeros-label">Leading 0s</span>
+                  <span id="leading-zeros-label">Pad With Leading Zeros</span>
                 </label>
               </div>
             </div>
@@ -83,31 +95,27 @@
               </select>
             </div>
             <div class="column">
+              <label>Letter Case</label>
               <div class="radio">
                 <label>
                   <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
-                  <span id="base-case-lowerCase-option">Lowercase Base</span>
+                  <span id="base-case-lowerCase-option">Lowercase [a-z]</span>
                 </label>
               </div>
               <div class="radio">
                 <label>
                   <input id="base-case-upperCase-input" type="radio" name="base-case" value="upperCase"/>
-                  <span id="base-case-upperCase-option">Uppercase Base</span>
+                  <span id="base-case-upperCase-option">Uppercase [A-Z]</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
-<!--                  <div class="checkbox">
-          <label>
-            <input id="show-advanced-input" type="checkbox"/>
-            <span id="animations-enable-label">Show Advanced Options (Leading 0s, Base)</span>
-          </label>
-        </div>-->
         <div class="setup-buttons">
           <input id="plus-minus-setup-accept-input" type="button" value=""/>
           <input id="plus-minus-setup-cancel-input" type="button" value=""/>
         </div>
+      </div>
       </div>
     </div>
     <script type="text/javascript" src="../js/ui.js"></script>

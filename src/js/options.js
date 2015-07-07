@@ -28,7 +28,7 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#keyboard-shortcuts-h3"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_h3");
     DOM["#keyboard-shortcuts-p"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_p");
     DOM["#keyboard-shortcuts-quick-enable-label"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_quick_enable_label");
-    DOM["#keyboard-shortcuts-a"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_a");
+    DOM["#keyboard-shortcuts-button"].textContent = chrome.i18n.getMessage("options_keyboard_shortcuts_button");
     DOM["#default-settings-h3"].textContent = chrome.i18n.getMessage("options_default_settings_h3");
     DOM["#default-settings-p"].textContent = chrome.i18n.getMessage("options_default_settings_p");
     DOM["#default-mode-label"].textContent = chrome.i18n.getMessage("options_default_mode_label");
@@ -41,7 +41,7 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#animations-enable-label"].textContent = chrome.i18n.getMessage("options_animations_enable_label");
     // Add Event Listeners to the DOM elements
     DOM["#keyboard-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); }, false);
-    DOM["#keyboard-shortcuts-a"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/configureCommands"}); });
+    DOM["#keyboard-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/configureCommands"}); });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); }, false);
     DOM["#default-mode-next-prev-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.value}); }, false);
     DOM["#default-mode-plus-minus-input"].addEventListener("change", function () {chrome.storage.sync.set({"defaultMode": this.value}); }, false);

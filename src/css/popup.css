@@ -88,6 +88,10 @@ textarea {
   clear: both;
 }
 
+#advanced-options-input:not(checked) ~ #advanced-options { display: none; }
+
+#advanced-options-input:checked ~ #advanced-options { display: block; }
+
 /* Toggle View Animation CSS TODO: make fade-out-max-height work better */
 
 @keyframes fade-in {

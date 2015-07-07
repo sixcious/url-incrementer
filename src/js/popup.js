@@ -48,23 +48,20 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
+    //DOM["#advanced-options-input"].addEventListener("click", function() { if DOM["#advanced-options"].className = "display:none"- });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       // chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
       //   chrome.tabs.executeScript(tabs[0].id, {code: "URLNP.NextPrev.getLinks(document);", runAt: "document_end"}, function(results){
           chrome.runtime.getBackgroundPage(function(backgroundPage) {
             chrome.storage.sync.get(null, function(items) {
-              backgroundPage.URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
-                
-console.log("links.attributes.next="  + links.attributes.next);
-console.log("links.attributes.prev="  + links.attributes.prev);
-console.log("links.innerHTML.next="  + links.innerHTML.next);
-console.log("links.innerHTML.prev="  + links.innerHTML.prev);
+                backgroundPage.URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
               items_ = items;
               instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
               if (!instance || instance.url !== tabs[0].url) {
                 instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, links);
               }
+
               updateControls();
               DOM["#next-prev-mode-input"].className = items_.animationsEnabled && instance.nexturl || instance.prevurl ? "hvr-grow" : "";
               DOM["#plus-minus-mode-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
@@ -77,7 +74,7 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
               DOM["#base-case-lowerCase-input"].checked = instance.baseCase === "lowerCase";
               DOM["#base-case-upperCase-input"].checked = instance.baseCase === "upperCase";
               DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-            });
+          });
           });
           });
       //   });
@@ -91,15 +88,26 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
    * @private
    */
   function clickNext() {
-    if (instance.enabled) {
+    if (instance.enabled && !(instance.mode === "next-prev" && !instance.nexturl)) {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
-          console.log("result is ..." + result.nexturl);
           instance = result;
-              DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
+          if (instance.mode === "next-prev") {
+            if (!instance.nexturl) {
+              DOM["#next-input"].classList.add("disabled");
+            } else {
+              DOM["#next-input"].classList.remove("disabled");
+            }
+            if (!instance.prevurl) {
+              DOM["#prev-input"].classList.add("disabled");
+            } else {
+              DOM["#prev-input"].classList.remove("disabled");
+            }
+          }
+          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
     }
@@ -121,7 +129,9 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
           instance = result;
-          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
+          DOM["#next-input"].className = instance.mode === "next-prev" && !instance.nexturl ? "disabled" : DOM["#next-input"].className;
+          DOM["#prev-input"].className = instance.mode === "next-prev" && !instance.prevurl ? "disabled" : DOM["#prev-input"].className;
+          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
     }
@@ -246,13 +256,15 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
         base = DOM["#base-select"].value,
-        baseCase = DOM["#base-case-upperCase-input"].checked ? "upperCase" : DOM["#base-case-lowerCase-input"].checked ? "lowerCase" : undefined, // document.querySelector('input[name="base-case"]:checked').value
+        baseCase = DOM["#base-case-upperCase-input"].checked ? "upperCase" : DOM["#base-case-lowerCase-input"].checked ? "lowerCase" : undefined,
+        selectionparse = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
         errors = [ // 0 index for selection and 1 index for interval errors
           selection === "" ? chrome.i18n.getMessage("popup_selection_blank_error") :
           url.indexOf(selection) === -1 ? chrome.i18n.getMessage("popup_selection_notinurl_error") :
           !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("popup_selection_notalphanumeric_error") :
-          selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("popup_selectionstart_invalid_error") : "",
+          selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("popup_selectionstart_invalid_error") :
+          isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionparse.length) + selectionparse.toUpperCase()) ? chrome.i18n.getMessage("popup_selection_base_error") : "",
           interval <= 0 ? chrome.i18n.getMessage("popup_interval_invalid_error") : ""
         ];
     // We can tell there was an error if some of the array slots weren't empty
@@ -284,6 +296,7 @@ console.log("links.innerHTML.prev="  + links.innerHTML.prev);
   function selectURL() {
     DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     DOM["#selection-input"].value = window.getSelection().toString();
+    DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' /*&& DOM["#selection-input"].value.length > 1*/;
   }
 
   // Return Public Functions
