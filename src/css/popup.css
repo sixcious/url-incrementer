@@ -5,7 +5,7 @@
 @import url("ui/hover.css");
 
 html {
-  height: auto; /* override chromium/chrome-shared.css */
+  height: auto; /* Needed to override chromium/chrome-shared.css */
 }
 
 body {
@@ -24,7 +24,7 @@ body {
 /* Controls CSS */
 
 #controls {
-  width: 102px; /*82px;*/
+  width: 102px;
 }
 
 input[type="image"] {
@@ -69,28 +69,33 @@ textarea {
   color: #777777;
 }
 
-.column > label {
-  display: block;
-}
-
-/*.left {
-  float: left;
-}
-
-.right {
-  float: right;
-  margin-right: 150px;
-}*/
-
 .setup-buttons {
   margin-top: 12px;
   text-align: center;
   clear: both;
 }
 
-#advanced-options-input:not(checked) ~ #advanced-options { display: none; }
+/*div.table {
+  display: table;
+}*/
 
-#advanced-options-input:checked ~ #advanced-options { display: block; }
+div.row  {
+  margin-top: 10px;
+/*  display: table-row;*/
+}
+
+div.column {
+  display: table-cell;
+  padding: 0 10px 10px 0;
+}
+
+div.column:not(:last-child) {
+  padding-right: 50px;
+}
+
+div.column > label {
+  display: block;
+}
 
 /* Toggle View Animation CSS TODO: make fade-out-max-height work better */
 
@@ -128,17 +133,4 @@ textarea {
 
 .display-none {
   display: none;
-}
-
-div.table {
-  display: table;
-}
-
-div.row  {
-  display: table-row;
-}
-
-div.column {
-  display: table-cell;
-  padding: 0 10px 10px 0;
 }

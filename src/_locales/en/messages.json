@@ -47,6 +47,10 @@
     "message": "Interval",
     "description": "Interval input number label."
   },
+  "popup_base_label": {
+    "message": "Interval",
+    "description": "Interval input number label."
+  },
   "popup_accept_input": {
     "message": "Accept",
     "description": "Setup accept button."

@@ -53,7 +53,7 @@ URLNP.Background = URLNP.Background || function () {
         instance.interval = items.defaultInterval;
         instance.base = 10;
         instance.baseCase = "lowerCase";
-        instance.leadingZeros = false;
+        // instance.leadingZeros = selectionProps.selection.charAt(0) === '0' && selectionProps.sele;
       }
       instance.tabId = tab.id;
       instance.url = tab.url;
@@ -62,6 +62,7 @@ URLNP.Background = URLNP.Background || function () {
       instance.links = links;
       instance.selection = selectionProps.selection;
       instance.selectionStart = selectionProps.selectionStart;
+      instance.leadingZeros = selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
     }
     return instance;
   }
@@ -87,29 +88,28 @@ URLNP.Background = URLNP.Background || function () {
         // chrome.tabs.executeScript on commands (and quick commands). Otherwise
         // (if called via popup), we'll have to do some XHR work and hope the
         // current URL complies with the same-origin policy in our Ajax request.
-        url = direction === "next" ? instance.nexturl : direction === "prev" ? instance.prevurl : instance.url;
-            chrome.tabs.update(instance.tabId, {url: url}); // Can't access tab.url
-       /* if (caller !== "command") {
-              chrome.tabs.update(instance.tabId, {url: url}, function(tab) {
-                if (tab.rea)
-                         URLNP.NextPrev.getLinksViaExecuteScript(instance.tabId, function(links) {
-            instance.url = url;
-            instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
-            instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
-            instance.links = links;
-            setInstance(instance.tabId, instance);
-            if (callback) {
-              callback(instance);
-            }
-          }); 
+        if (caller === "command") {
+            URLNP.NextPrev.getLinksViaExecuteScript(instance.tabId, function(links) {
+              instance.links = links;
+              instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
+              instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
+              instance.url = direction === "next" && instance.nexturl ? instance.nexturl : direction === "prev" && instance.prevurl ? instance.prevurl : instance.url;
+              setInstance(instance.tabId, instance);
+              chrome.tabs.update(instance.tabId, {url: url});
+              if (callback) {
+                callback(instance);
               }
-        } else*/ if (caller === "command" || caller === "popup") {
-          URLNP.NextPrev.getLinksViaXHR(url, function(links) {
-            instance.url = url;
+            });
+        } else if (/*caller === "command" ||*/ caller === "popup") {
+          instance.url = direction === "next" && instance.nexturl ? instance.nexturl : direction === "prev" && instance.prevurl ? instance.prevurl : instance.url;
+          chrome.tabs.update(instance.tabId, {url: url});
+          URLNP.NextPrev.getLinksViaXHR(instance.url, function(links) {
+            instance.links = links;
             instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
             instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
-            instance.links = links;
+
             setInstance(instance.tabId, instance);
+
             if (callback) {
               callback(instance);
             }
@@ -174,6 +174,12 @@ chrome.commands.onCommand.addListener(function(command) {
       var instance = URLNP.Background.getInstance(tabs[0].id);
       if (command === "next" || command === "prev") {
         if (instance && instance.enabled) {
+          // if (instance.mode === "next-prev") {
+          //   URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
+          //     instance = URLNP.Background.buildInstance(instance, tabs[0], items, links);
+          //     URLNP.Background.updateTab(instance, command, "command");
+          //   });
+          // }
           URLNP.Background.updateTab(instance, command, "command");
         } else {
           chrome.storage.sync.get(null, function(items) {

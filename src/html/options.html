@@ -93,6 +93,29 @@
           
           
           
+
+
+
+
+          <div class="row">
+            <div class="column">
+              <label id="default-selection-label" for="default-selection-select">Selection</label>
+            </div>
+            <div class="column">
+              <select id="selection-select">
+                <option id="selection-option-prefixes" value="prefixes">Select numbers with prefixes like =123 and /456</option>
+                <option id="selection-option-lastnumber" value="lastnumber">Select the last number in the URL</option>
+                <option id="selection-option-custom" value="custom">Use a custom regular expression</option>
+              </select>
+              <div style="margin-top: 1em;"> / 
+              <input type="text" value="" placeholder="Pattern" style="width:124px;"/>
+              /
+              <input type="text" value="" placeholder="Flags" style="width:52px;"/>
+              <br/>
+              (Use <a href="https://regex101.com/#javascript">https://regex101.com</a> to test)
+              </div>
+            </div>
+          </div>
           
           <div class="row">
             <div class="column">
