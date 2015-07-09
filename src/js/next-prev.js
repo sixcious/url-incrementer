@@ -24,7 +24,6 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * 
    */ 
   function getLinksViaXHR(url, callback) {
-    console.log("getting url in xhr" + url);
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
     req.responseType = "document";
@@ -69,9 +68,12 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = {attributes: {}, innerHTML: {}},
         links_ = doc.getElementsByTagName("link"),
-        anchors = doc.links; // Includes all anchor and area elements
-    parseElements(links_, links);
-    parseElements(anchors, links);
+        anchors = doc.links, // Includes all anchor and area elements
+        hostName = doc.location.hostName,
+        port = doc.location.port,
+        protocol = doc.location.protocol;
+    parseElements(links_, links, hostName, port, protocol);
+    parseElements(anchors, links, hostName, port, protocol);
     return links;
   }
 
@@ -83,7 +85,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, links) {
+  function parseElements(elements, links, hostName, port, protocol) {
     var element,
         attributes,
         attribute,
@@ -91,7 +93,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
         j;
     for (i = 0; i < elements.length; i++) {
       element = elements[i];
-      if (!element.href) {
+      if (!element.href /*|| element.tagName === "a" && element.hostName !==*/) {
         continue;
       }
       parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href, links);
@@ -131,6 +133,13 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
      links[type].old = href; 
     } else if (text.indexOf("<") !== -1) {
       links[type].lt = href;
+    }
+  }
+  
+  function parseXXXX(keyword) {
+    if (text.indexOf(keyword) !== -1) {
+      //if (keyword)
+      //links[type][keyword]
     }
   }
 

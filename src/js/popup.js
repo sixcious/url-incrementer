@@ -36,6 +36,8 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
+    DOM["#base-label"].textContent = chrome.i18n.getMessage("popup_base_label");
+    DOM["#leading-zeros-label"].textContent = chrome.i18n.getMessage("popup_leading_zeros_label");
     DOM["#plus-minus-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
     DOM["#plus-minus-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
@@ -48,7 +50,6 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
-    //DOM["#advanced-options-input"].addEventListener("click", function() { DOM["#advanced-options"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value > 10 ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
@@ -97,10 +98,10 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
           instance = result;
-          if (instance.mode === "next-prev") {
-            DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-            DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          }
+          // if (instance.mode === "next-prev") {
+          //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+          //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+          // }
           DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
@@ -120,10 +121,10 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
           instance = result;
-          if (instance.mode === "next-prev") {
-            DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-            DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          }
+          // if (instance.mode === "next-prev") {
+          //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+          //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+          // }
           DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
@@ -230,10 +231,10 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.mode = mode;
         backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
         updateControls();
-        if (instance.mode === "next-prev") {
-          DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-        }
+        // if (instance.mode === "next-prev") {
+        //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+        //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
+        // }
       });
     }
   }
@@ -265,6 +266,7 @@ URLNP.Popup = URLNP.Popup || function () {
         ];
     // We can tell there was an error if some of the array slots weren't empty
     if (errors.some(function(error) { return error !== ""; })) {
+      errors.unshift("Ooops...");
       URLNP.UI.generateAlert(errors);
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {

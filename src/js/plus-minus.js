@@ -19,17 +19,22 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * If no prefixes with numbers are found, uses the last number in the url. If
    * no numbers exist in the URL, returns an empty selection.
    * 
-   * @param url the url to find the selection in
+   * @param url        the url to find the selection in
+   * @param preference the preferred strategy to use to find the selection
    * @return JSON object {selection, selectionStart}
    * @public
    */
-  function findSelection(url) {
+  function findSelection(url, preference) {
+    // var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
+    //     re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+    //     matches1 = re1.exec(url),
+    //     matches2 = re2.exec(url);
     var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
         re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         matches;
     return (matches = re1.exec(url)) ? {selection: matches[1], selectionStart: matches.index + 1} :
-           (matches = re2.exec(url)) ? {selection: matches[0], selectionStart: matches.index} :
-                                       {selection: "", selectionStart: -1};
+          (matches = re2.exec(url)) ? {selection: matches[0], selectionStart: matches.index} :
+                                      {selection: "", selectionStart: -1};
   }
 
   /**
@@ -55,7 +60,7 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
     selectionmod = direction === "next" ? (selectionint + interval).toString(base) :
                    direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                                         "";
-    if ((leadingZeros || selection.charAt(0) === '0') && selection.length > selectionmod.length) { // If Leading Zeros, pad 0s
+    if (leadingZeros && selection.length > selectionmod.length) { // If Leading Zeros, pad 0s
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
     if (/[a-z]/i.test(selectionmod)) { // If Alphanumeric, convert case

@@ -48,8 +48,12 @@
     "description": "Interval input number label."
   },
   "popup_base_label": {
-    "message": "Interval",
-    "description": "Interval input number label."
+    "message": "Base",
+    "description": "Base selection label."
+  },
+  "popup_leading_zeros_label": {
+    "message": "Pad With Leading Zeros",
+    "description": "Leading Zeros input checkbox label."
   },
   "popup_accept_input": {
     "message": "Accept",

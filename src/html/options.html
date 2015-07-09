@@ -53,50 +53,35 @@
               </div>
             </div>
           </div>
-          
-          
-          
         </div>
         </section>
-        
-              <section id="next-prev">
-                                <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
-                <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
-        <h3 id="aadsfa">Next Prev Settings</h3>
-        <hr/>
-        <p id="adsfadf">Customize Next [>] and Prev [<] default settings.</p>
-        <div class="table">
-          
-          
-          
-          <div class="row">
-            <div class="column">
-              <label id="default-links-label" for="default-links-select"></label>
-            </div>
-            <div class="column">
-              <select id="default-links-select">
-                <option id="default-links-attributes-option" value="attributes"></option>
-                <option id="default-links-innerHTML-option" value="innerHTML"></option>
-              </select>
+        <section id="next-prev">
+          <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
+          <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
+          <h3 id="aadsfa">Next Prev Settings</h3>
+          <hr/>
+          <p id="adsfadf">Customize Next [>] and Prev [<] default settings.</p>
+          <div class="table">
+            <div class="row">
+              <div class="column">
+                <label id="default-links-label" for="default-links-select"></label>
+              </div>
+              <div class="column">
+                <select id="default-links-select">
+                  <option id="default-links-attributes-option" value="attributes"></option>
+                  <option id="default-links-innerHTML-option" value="innerHTML"></option>
+                </select>
+              </div>
             </div>
           </div>
-          
-          
-          </section>
-                        <section id="plus-minus">
-        <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
-                <img src="../img/options/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
-        <h3 id="aaasdfsdfdsfa">Plus Minus Settings</h3>
-        <hr/>
-        <p id="adsfasdfasdfdf">Customize Plus [+] and Minus [-] default settings.</p>
-        <div class="table">
-          
-          
-          
-
-
-
-
+        </section>
+        <section id="plus-minus">
+          <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
+          <img src="../img/options/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
+          <h3 id="aaasdfsdfdsfa">Plus Minus Settings</h3>
+          <hr/>
+          <p id="adsfasdfasdfdf">Customize Plus [+] and Minus [-] default settings.</p>
+          <div class="table">
           <div class="row">
             <div class="column">
               <label id="default-selection-label" for="default-selection-select">Selection</label>
@@ -105,18 +90,43 @@
               <select id="selection-select">
                 <option id="selection-option-prefixes" value="prefixes">Select numbers with prefixes like =123 and /456</option>
                 <option id="selection-option-lastnumber" value="lastnumber">Select the last number in the URL</option>
-                <option id="selection-option-custom" value="custom">Use a custom regular expression</option>
+                <option id="selection-option-custom" value="custom">Use my own custom JavaScript regular expression</option>
               </select>
-              <div style="margin-top: 1em;"> / 
-              <input type="text" value="" placeholder="Pattern" style="width:124px;"/>
-              /
-              <input type="text" value="" placeholder="Flags" style="width:52px;"/>
-              <br/>
-              (Use <a href="https://regex101.com/#javascript">https://regex101.com</a> to test)
+              <div id="selection-custom" style="margin-top: 10px; margin-bottom: 10px" class="display-none">
+                <label class="display-block">Test URL</label>
+                <textarea id="selection-custom-url" placeholder="http://www.google.com?id=1" style="width:290px;"></textarea>
+                <div class="table">
+                  <div class="row">
+                    <div class="column">
+                      <lable class="display-block">Pattern</lable>
+                      /
+                      <input id="selection-custom-pattern" type="text" value="" placeholder="\d+(?!.*\d+)" style="width:124px;"/>
+                      /
+                    </div>
+                    <div class="column">
+                      <label class="display-block">Flags (Usually Empty)</label>
+                      <input id="selection-custom-flags" type="text" value="" placeholder="gmi" style="width:52px;"/>
+                    </div>
+                  </div>
+                                    <div class="row">
+                    <div class="column">
+                      <label class="display-block">Group # (Usually 0)</label>
+                  <input id="selection-custom-group" type="number" value="0" min="0"/>                      
+                    </div>
+                    <div class="column">
+                      <label class="display-block">Index Position (Usually 0)</label>
+                  <input id="selection-custom-index" type="number" value="0" min="0"/>                      
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top: 10px; margin-bottom: 10px;">
+                  <button id="selection-custom-test-button">Test</button>
+                  <button id="selection-custom-button">Save</button>
+                </div>
+                                 (Use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a> to test)
               </div>
             </div>
           </div>
-          
           <div class="row">
             <div class="column">
               <label id="default-interval-label" for="default-interval-input"></label>
@@ -181,24 +191,19 @@ Zeros
                 <option id="base-option-35" value="35">35 Pentatrigesimal [0-9][A-Y]</option>
                 <option id="base-option-36" value="36">36 Hexatrigesimal [0-9][A-Z]</option>
               </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="aaadsf">Base Case</label>
-            </div>
-                        <div class="column">
-              <div class="radio">
-                <label>
-                  <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
-                  <span id="base-case-lowerCase-option">lowercase [a-z]</span>
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input id="base-case-upperCase-input" type="radio" name="base-case" value="upperCase"/>
-                  <span id="base-case-upperCase-option">UPPERCASE [A-Z]</span>
-                </label>
+              <div id="base-case" class="display-none">
+                <div class="radio">
+                  <label>
+                    <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
+                    <span id="base-case-lowerCase-option">Lowercase [a-z]</span>
+                  </label>
+                </div>
+                <div class="radio">
+                  <label>
+                    <input id="base-case-upperCase-input" type="radio" name="base-case" value="upperCase"/>
+                    <span id="base-case-upperCase-option">Uppercase [A-Z]</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>

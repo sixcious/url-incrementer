@@ -1,5 +1,7 @@
 /* Options CSS is minimal because Options is set to use Chrome style */
 
+@import url("ui/ui.css");
+
 h3 {
   display: inline;
 }

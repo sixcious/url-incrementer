@@ -28,7 +28,7 @@
             <div class="checkbox">
               <label>
                 <input id="leading-zeros-input" type="checkbox"/>
-                <span id="leading-zeros-label">Pad With Leading Zeros</span>
+                <span id="leading-zeros-label"></span>
               </label>
             </div>
           </div>
@@ -37,7 +37,7 @@
             <input id="interval-input" type="number" min="1"/>
           </div>
           <div id="base" class="column">
-            <label id="base-label" for="base-select">Base</label>
+            <label id="base-label" for="base-select"></label>
             <select id="base-select">
               <option id="base-option-default" value="10">(Default)</option>
               <option id="base-option-2" value="2">2 Binary [0-1]</option>
@@ -76,7 +76,7 @@
               <option id="base-option-35" value="35">35 Pentatrigesimal [0-9][A-Y]</option>
               <option id="base-option-36" value="36">36 Hexatrigesimal [0-9][A-Z]</option>
             </select>
-            <div id="base-case">
+            <div id="base-case" class="display-none">
               <div class="radio">
                 <label>
                   <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
