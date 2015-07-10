@@ -69,11 +69,11 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
     var links = {attributes: {}, innerHTML: {}},
         links_ = doc.getElementsByTagName("link"),
         anchors = doc.links, // Includes all anchor and area elements
-        hostName = doc.location.hostName,
+        hostname = doc.location.hostname,
         port = doc.location.port,
         protocol = doc.location.protocol;
-    parseElements(links_, links, hostName, port, protocol);
-    parseElements(anchors, links, hostName, port, protocol);
+    parseElements(links_, links, hostname, port, protocol);
+    parseElements(anchors, links, hostname, port, protocol);
     return links;
   }
 
@@ -85,7 +85,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, links, hostName, port, protocol) {
+  function parseElements(elements, links, hostname, port, protocol) {
     var element,
         attributes,
         attribute,
