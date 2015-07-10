@@ -64,7 +64,7 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
     if (/[a-z]/i.test(selectionmod)) { // If Alphanumeric, convert case
-      selectionmod = baseCase === "upperCase" ? selectionmod.toUpperCase() : baseCase === "lowerCase" ? selectionmod.toLowerCase() : selectionmod;
+      selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
     }
     // Append: part 1 of the URL + modified selection + part 2 of the URL
     urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);

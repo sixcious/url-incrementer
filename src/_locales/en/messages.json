@@ -49,7 +49,15 @@
   },
   "popup_base_label": {
     "message": "Base",
-    "description": "Base selection label."
+    "description": "Base select label."
+  },
+  "popup_base_case_lowercase_label": {
+    "message": "Lowercase [a-z]",
+    "description": "Base case lowercase input radio label."
+  },
+  "popup_base_case_uppercase_label": {
+    "message": "Uppercase [A-Z]",
+    "description": "Base case uppercase input radio label."
   },
   "popup_leading_zeros_label": {
     "message": "Pad With Leading Zeros",
@@ -63,6 +71,10 @@
     "message": "Cancel",
     "description": "Setup cancel button."
   },
+  "popup_oops_error": {
+    "message": "Oops...",
+    "description": "Beginning line of popup error message."
+  },  
   "popup_selection_blank_error": {
     "message": "Selection can't be blank",
     "description": "Plus Minus Setup error message if the selection is blank."
@@ -72,7 +84,7 @@
     "description": "Plus Minus Setup error message if the selection is not alphanumeric."
   },
   "popup_selection_notinurl_error": {
-    "message": "Selection has to be a part of the URL",
+    "message": "Selection has to be part of the URL",
     "description": "Plus Minus Setup error message if the selection is not part of the URL."
   },
   "popup_selection_base_error": {
@@ -135,9 +147,25 @@
     "message": "Prefer links with words like \"Next\" in them",
     "description": ""
   },
+  "options_default_selection_label": {
+    "message": "Selection",
+    "description": ""
+  },
   "options_default_interval_label": {
     "message": "Interval",
     "description": ""
+  },
+  "options_default_base_label": {
+    "message": "Base",
+    "description": ""
+  },
+  "options_base_case_lowercase_label": {
+    "message": "Lowercase [a-z]",
+    "description": "Base case lowercase input radio label."
+  },
+  "options_base_case_uppercase_label": {
+    "message": "Uppercase [A-Z]",
+    "description": "Base case uppercase input radio label."
   },
   "options_animations_enable_label": {
     "message": "Enable Hover.css (CSS3) Animations in UI",

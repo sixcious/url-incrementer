@@ -44,17 +44,16 @@ URLNP.Background = URLNP.Background || function () {
   function buildInstance(instance, tab, items, links) {
     var selectionProps;
     if (tab) {
-      selectionProps = URLNP.PlusMinus.findSelection(tab.url);
       if (!instance) {
         instance = {};
         instance.enabled = false;
-        instance.mode = items.defaultMode;
-        instance.linksPriority = items.defaultLinksPriority;
-        instance.interval = items.defaultInterval;
-        instance.base = 10;
-        instance.baseCase = "lowerCase";
-        // instance.leadingZeros = selectionProps.selection.charAt(0) === '0' && selectionProps.sele;
+        instance.mode = items.defaultMode ? items.defaultMode : "next-prev";
+        instance.linksPriority = items.defaultLinksPriority ? items.defaultLinksPriority : "attributes";
+        instance.interval = items.defaultInterval ? items.defaultInterval : 1;
+        instance.base = items.base ? items.base : 10;
+        instance.casing = items.baseCase ? items.baseCase : "lowercase";
       }
+      selectionProps = URLNP.PlusMinus.findSelection(tab.url);
       instance.tabId = tab.id;
       instance.url = tab.url;
       instance.nexturl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "next", links) : undefined;
@@ -123,7 +122,7 @@ URLNP.Background = URLNP.Background || function () {
         // regardless of permissions and all logic is done in background
         urlProps = URLNP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, direction);
         url = urlProps.urlmod;
-            chrome.tabs.update(instance.tabId, {url: url}); // Can't access tab.url
+        chrome.tabs.update(instance.tabId, {url: url});
         instance.url = urlProps.urlmod;
         instance.selection = urlProps.selectionmod;
         if (caller !== "quick-command") {
@@ -151,17 +150,29 @@ URLNP.Background = URLNP.Background || function () {
 
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
-  if (details.reason === "install" /*|| (details.reason === "update" && details.previousVersion !== "3")*/) {
+  if (details.reason === "install" || (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) !== 0)) {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
         "quickEnabled": true,
+        "animationsEnabled": true,
         "defaultMode": "next-prev",
         "defaultLinksPriority": "attributes",
+        "defaultSelectionPriority": "prefixes",
         "defaultInterval": 1,
-        "animationsEnabled": true
+        "defaultBase": 10,
+        "defaultBaseCase": "lowercase"
       });
     });
   }
+  // if (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) === 0) {
+  //   chrome.storage.sync.get(null, function(items) {
+  //     chrome.storage.sync.clear(function() {
+  //       chrome.storage.sync.set({
+  //         "quick": items.quickEnabled
+  //       });
+  //     });
+  //   });
+  // } 
   if (details.reason === "install") {
     chrome.runtime.openOptionsPage();
   }

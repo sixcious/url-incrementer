@@ -8,7 +8,7 @@
   <body>
     <div id="options">
       <section id="keyboard-shortcuts">
-        <img src="../img/options/chrome-512.png" alt="" width="16" height="16"/>
+        <img src="../img/options/chrome.png" alt="" width="16" height="16"/>
         <img src="../img/options/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
         <h3 id="keyboard-shortcuts-h3"></h3>
         <hr/>
@@ -124,7 +124,7 @@
                   <button id="selection-custom-test-button">Test</button>
                   <button id="selection-custom-button">Save</button>
                 </div>
-                                 (Use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a> to test)
+                                 (Use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a> for additional testing)
               </div>
             </div>
           </div>
@@ -137,21 +137,20 @@
             </div>
           </div>
           <div class="row">
+            <div class="column">Zeros    </div>
             <div class="column">
-Zeros
-            </div>
-            <div class="column">
+<!--              Smart Detection (Selection will be padded with leading zeros if it starts with a zero-->
               <div class="checkbox">
                 <label>
                   <input id="force-leading-zeros-input" type="checkbox"/>
-                  <span id="force-leading-zeros-label">Always Pad With Leading Zeros</span>
+                  <span id="force-leading-zeros-label">Only Pad With Leading Zeros If Selection Starts With 0 and is at least two or more characters</span>
                 </label>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="default-base-label" for="default-base-select">Base</label>
+              <label id="default-base-label" for="default-base-select"></label>
             </div>
             <div class="column">
               <select id="base-select">
@@ -195,14 +194,14 @@ Zeros
               <div id="base-case" class="display-none">
                 <div class="radio">
                   <label>
-                    <input id="base-case-lowerCase-input" type="radio" name="base-case" value="lowerCase"/>
-                    <span id="base-case-lowerCase-option">Lowercase [a-z]</span>
+                    <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowerCase"/>
+                    <span id="base-case-lowercase-label"></span>
                   </label>
                 </div>
                 <div class="radio">
                   <label>
-                    <input id="base-case-upperCase-input" type="radio" name="base-case" value="upperCase"/>
-                    <span id="base-case-upperCase-option">Uppercase [A-Z]</span>
+                    <input id="base-case-uppercase-input" type="radio" name="base-case" value="upperCase"/>
+                    <span id="base-case-uppercase-label"></span>
                   </label>
                 </div>
               </div>

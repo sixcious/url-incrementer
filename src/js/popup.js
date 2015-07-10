@@ -37,6 +37,8 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
     DOM["#base-label"].textContent = chrome.i18n.getMessage("popup_base_label");
+    DOM["#base-case-lowercase-label"].textContent = chrome.i18n.getMessage("popup_base_case_lowercase_label");
+    DOM["#base-case-uppercase-label"].textContent = chrome.i18n.getMessage("popup_base_case_uppercase_label");
     DOM["#leading-zeros-label"].textContent = chrome.i18n.getMessage("popup_leading_zeros_label");
     DOM["#plus-minus-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
     DOM["#plus-minus-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
@@ -46,11 +48,11 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#clear-input"].addEventListener("click", clickClear, false);
     DOM["#next-prev-mode-input"].addEventListener("click", setupNextPrev, false);
     DOM["#plus-minus-mode-input"].addEventListener("click", toggleView, false);
-    DOM["#plus-minus-setup-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
+    DOM["#plus-minus-setup-cancel-input"].addEventListener("click", toggleView, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
-    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       // chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
@@ -60,10 +62,9 @@ URLNP.Popup = URLNP.Popup || function () {
                 backgroundPage.URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
               items_ = items;
               instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
-              if (!instance || instance.url !== tabs[0].url) {
+              if (!instance /*|| instance.url !== tabs[0].url*/) {
                 instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, links);
               }
-
               updateControls();
               DOM["#next-prev-mode-input"].className = items_.animationsEnabled && (instance.nexturl || instance.prevurl) ? "hvr-grow" : "";
               DOM["#plus-minus-mode-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
@@ -74,8 +75,8 @@ URLNP.Popup = URLNP.Popup || function () {
               DOM["#interval-input"].value = instance.interval;
               DOM["#base-select"].value = instance.base;
               DOM["#base-case"].className = instance.base > 10 ? "display-block fade-in" : "display-none";
-              DOM["#base-case-lowerCase-input"].checked = instance.baseCase === "lowerCase";
-              DOM["#base-case-upperCase-input"].checked = instance.baseCase === "upperCase";
+              DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
+              DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
               DOM["#leading-zeros-input"].checked = instance.leadingZeros;
           });
           });
@@ -98,10 +99,6 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
           instance = result;
-          // if (instance.mode === "next-prev") {
-          //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          // }
           DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
@@ -121,10 +118,6 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
           instance = result;
-          // if (instance.mode === "next-prev") {
-          //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-          // }
           DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
@@ -231,10 +224,6 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.mode = mode;
         backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
         updateControls();
-        // if (instance.mode === "next-prev") {
-        //   DOM["#next-input"].className = instance.nexturl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-        //   DOM["#prev-input"].className = instance.prevurl ? items_.animationsEnabled ? "hvr-grow" : "" : "disabled";
-        // }
       });
     }
   }
@@ -253,7 +242,7 @@ URLNP.Popup = URLNP.Popup || function () {
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
         base = DOM["#base-select"].value,
-        baseCase = DOM["#base-case-upperCase-input"].checked ? "upperCase" : DOM["#base-case-lowerCase-input"].checked ? "lowerCase" : undefined,
+        baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
         selectionparse = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
         errors = [ // [0] = selection errors and [1] = interval errors
@@ -266,7 +255,7 @@ URLNP.Popup = URLNP.Popup || function () {
         ];
     // We can tell there was an error if some of the array slots weren't empty
     if (errors.some(function(error) { return error !== ""; })) {
-      errors.unshift("Ooops...");
+      errors.unshift(chrome.i18n.getMessage("popup_oops_error"));
       URLNP.UI.generateAlert(errors);
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -280,20 +269,20 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.leadingZeros = leadingZeros;
         backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
         toggleView.call(DOM["#plus-minus-setup-accept-input"]);
-        //updateControls();
       });
     }
   }
 
   /**
    * Handle URL selection on mouseup and keyup events. Saves the selectionStart
-   * to a hidden input and updates the selection input to the selected text.
+   * to a hidden input and updates the selection input to the selected text and
+   * checks the leading zeros checkbox based on leading zeros present.
    * 
    * @private
    */
   function selectURL() {
-    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     DOM["#selection-input"].value = window.getSelection().toString();
+    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
   }
 
