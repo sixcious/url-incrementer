@@ -158,7 +158,7 @@ URLNP.Popup = URLNP.Popup || function () {
           // Need to make sure the current URL is always shown:
           chrome.runtime.getBackgroundPage(function(backgroundPage) {
             var bgInstance = backgroundPage.URLNP.Background.getInstance(instance.tabId),
-                selectionProps = backgroundPage.URLNP.PlusMinus.findSelection(instance.url);
+                selectionProps = backgroundPage.URLNP.PlusMinus.findSelection(instance.url, items_.defaultSelectionPriority, items_.defaultSelectionCustom);
             instance = bgInstance ? bgInstance : instance;
             if (instance.mode !== "plus-minus") { // Need to refresh selection
               instance.selection = selectionProps.selection;

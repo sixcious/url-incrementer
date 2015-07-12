@@ -50,10 +50,10 @@ URLNP.Background = URLNP.Background || function () {
         instance.mode = items.defaultMode ? items.defaultMode : "next-prev";
         instance.linksPriority = items.defaultLinksPriority ? items.defaultLinksPriority : "attributes";
         instance.interval = items.defaultInterval ? items.defaultInterval : 1;
-        instance.base = items.base ? items.base : 10;
-        instance.casing = items.baseCase ? items.baseCase : "lowercase";
+        instance.base = items.defaultBase ? items.defaultBase : 10;
+        instance.casing = items.defaultBaseCase ? items.defaultBaseCase : "lowercase";
       }
-      selectionProps = URLNP.PlusMinus.findSelection(tab.url);
+      selectionProps = URLNP.PlusMinus.findSelection(tab.url, items.defaultSelectionPriority, items.defaultSelectionCustom);
       instance.tabId = tab.id;
       instance.url = tab.url;
       instance.nexturl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "next", links) : undefined;

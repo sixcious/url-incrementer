@@ -8,33 +8,46 @@ var URLNP = URLNP || {};
 URLNP.PlusMinus = URLNP.PlusMinus || function () {
 
   /**
-   * Finds a selection in the url to modify (increment or decrement).
+   * Finds a selection in the url to plus or minus depending on the preference.
    * 
-   * First looks for common prefixes that come before numbers, such as
+   * "Prefixes" Preference:
+   * Looks for common prefixes that come before numbers, such as
    * = (equals) and / (slash). Example URLs with prefixes (= and /):
    * 
    * http://www.google.com?page=1234
    * http://www.google.com/1234
    * 
-   * If no prefixes with numbers are found, uses the last number in the url. If
-   * no numbers exist in the URL, returns an empty selection.
+   * "Last Number" Preference:
+   * Uses the last number in the url.
+   * 
+   * If no numbers exist in the URL, returns an empty selection.
    * 
    * @param url        the url to find the selection in
    * @param preference the preferred strategy to use to find the selection
+   * @param custom     the JSON object with custom regular expression parameters
    * @return JSON object {selection, selectionStart}
    * @public
    */
-  function findSelection(url, preference) {
-    // var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
-    //     re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-    //     matches1 = re1.exec(url),
-    //     matches2 = re2.exec(url);
+  function findSelection(url, preference, custom) {
     var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
         re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-        matches;
-    return (matches = re1.exec(url)) ? {selection: matches[1], selectionStart: matches.index + 1} :
-          (matches = re2.exec(url)) ? {selection: matches[0], selectionStart: matches.index} :
-                                      {selection: "", selectionStart: -1};
+        re3 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
+        matches1 = re1.exec(url),
+        matches2 = re2.exec(url),
+        matches3 = re3 ? re3.exec(url) : undefined;
+    console.log(!/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length)));
+    return preference === "prefixes" ?
+                            matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
+                            matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+                            {selection: "", selectionStart: -1} :
+           preference === "last-number" ?
+                            matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+                            matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
+                            {selection: "", selectionStart: -1} :
+           preference === "custom" && matches3 && matches3[custom.group] /*&& !/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length))*/ ? {selection: matches3[custom.group].substring(custom.index), selectionStart: matches3.index + custom.index} :
+                            matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
+                            matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+                            {selection: "", selectionStart: -1};
   }
 
   /**

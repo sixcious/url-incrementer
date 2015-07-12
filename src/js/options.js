@@ -50,32 +50,9 @@ URLNP.Options = URLNP.Options || function () {
     DOM["#default-mode-next-prev-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultMode": this.value}); }, false);
     DOM["#default-mode-plus-minus-input"].addEventListener("change", function () {chrome.storage.sync.set({"defaultMode": this.value}); }, false);
     DOM["#default-links-select"].addEventListener("change", function () { chrome.storage.sync.set({"defaultLinksPriority": this.value /*this.options[this.selectedIndex].value*/}); }, false);
-    DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"defaultSelection": this.value}); }, false);
-    DOM["#selection-custom-button"].addEventListener("click", function() { chrome.storage.sync.set({"defaultSelectionCustom": {url: DOM["#selection-custom-url"].value, pattern: DOM["#selection-custom-pattern"].value, flags: /\bg\b|\bm\b|\bi\b|\bgm\b|\bgi\b|\bmi\b|\bgmi\b/.test(DOM["#selection-custom-flags"].value) ? DOM["#selection-custom-flags"].value : "", group: +DOM["#selection-custom-group"].value > 0 ? +DOM["#selection-custom-group"].value : 0, index: +DOM["#selection-custom-index"].value > 0 ? +DOM["#selection-custom-index"].value : 0}}); }, false);
-    DOM["#selection-custom-test-button"].addEventListener("click", function() {
-      var url = DOM["#selection-custom-url"].value,
-          pattern = DOM["#selection-custom-pattern"].value,
-          flags = DOM["#selection-custom-flags"].value,
-          group = +DOM["#selection-custom-group"].value,
-          index = +DOM["#selection-custom-index"].value,
-          rex = new RegExp(pattern, flags),
-          matches = rex.exec(url),
-          selection,
-          selectionStart;
-          console.log("matches=" + matches);
-    if (matches) {
-      selection = matches[group];
-      selectionStart = matches.index + index;
-      console.log("Matches:" + matches  + " Selection:" + selection + " SelectionStart:" + selectionStart);
-      if (matches && selection && selectionStart <= url.length && selectionStart + selection.length <= url.length) {
-        DOM["#selection-custom-url"].setSelectionRange(selectionStart, selectionStart + selection.length);
-        DOM["#selection-custom-url"].focus();
-      }
-    } else {
-      console.log("ERROR: No Match!");
-    }
-      
-    });
+    DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"defaultSelectionPriority": this.value}); }, false);
+    DOM["#selection-custom-button"].addEventListener("click", function () { customSelection("save"); }, false);
+    DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); }, false);
     DOM["#default-interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultInterval": +this.value > 0 ? +this.value : 1}); }, false);
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"defaultBase": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"defaultBaseCase": this.value}); }, false);
@@ -101,6 +78,69 @@ URLNP.Options = URLNP.Options || function () {
       DOM["#base-case-lowercase-input"].checked = items.defaultBaseCase === "lowercase";
       DOM["#base-case-uppercase-input"].checked = items.defaultBaseCase === "uppercase";
     });
+  }
+
+  /**
+   * TODO
+   * 
+   * @private
+   */
+  function customSelection(action) {
+    var url = DOM["#selection-custom-url"].value,
+        pattern = DOM["#selection-custom-pattern"].value,
+        flags = DOM["#selection-custom-flags"].value,
+        group = +DOM["#selection-custom-group"].value,
+        index = +DOM["#selection-custom-index"].value,
+        regexp,
+        matches,
+        selection,
+        selectionStart;
+    try {
+      // if (!/^$|\bg\b|\bm\b|\bi\b|\bgm\b|\bgi\b|\bmg\b|\bmi\b|ig\b|im\b|\bgmi\b|\bgim\b|\bmgi\b|\bmig\b|\bigm\b|\bimg\b/.test(flags)) {
+      //   throw "Flags can only be g, m, or i";
+      // }
+      regexp = new RegExp(pattern, flags);
+      matches = regexp.exec(url);
+      if (!matches || !pattern) {
+        throw "no match found";
+      }
+      if (group < 0) {
+        throw "Group must be 0 or higher";
+      }
+      if (index < 0) {
+        throw "Index must be 0 or higher";
+      }
+      if (!matches[group]) {
+        throw "Match found, but not in group entered";
+      }
+      selection = matches[group].substring(index);
+      if (!selection || selection === "") {
+        throw "Match found but index is not right";
+      }
+      selectionStart = matches.index + index;
+      console.log("matches[group]=" + matches[group]);
+      console.log("selection is.." + selection);
+      console.log("selectionSTart is" + selectionStart);
+      console.log("url in selectionSTart index is " + url.charAt(selectionStart));
+      if (selectionStart > url.length || selectionStart + selection.length > url.length) {
+        throw "Match found but index is not right";
+      }
+      if (!/^[a-z0-9]+$/i.test(url.substring(selectionStart, selectionStart + selection.length))) {
+        throw url.substring(selectionStart, selectionStart + selection.length) + " is not alphanumeric";
+      }
+    } catch (error) {
+      console.log(error);
+      DOM["#selection-custom-span"].textContent = error;
+      return;
+    }
+    if (action === "test") {
+      DOM["#selection-custom-span"].textContent = "Success!";
+      DOM["#selection-custom-url"].setSelectionRange(selectionStart, selectionStart + selection.length);
+      DOM["#selection-custom-url"].focus();
+    } else if (action === "save") {
+      DOM["#selection-custom-span"].textContent = "Saved!";
+      chrome.storage.sync.set({"defaultSelectionCustom": { url: url, pattern: pattern, flags: flags, group: group, index: index }});
+    }
   }
 
   // Return Public Functions
