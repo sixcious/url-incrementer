@@ -3,19 +3,18 @@
   <head>
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" href="../css/popup.css"/>
-    <title>URL Next Plus Popup</title>
+    <title>URL Plus Popup</title>
   </head>
   <body>
     <div id="popup">
       <div id="controls" class="display-block fade-in">
-        <input id="prev-input" type="image" src="../img/popup/prev.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="minus-input" type="image" src="../img/popup/prev.png" alt="" width="16" height="16" class="disabled"/>
         <input id="clear-input" type="image" src="../img/popup/clear.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="next-input" type="image" src="../img/popup/next.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="next-prev-mode-input" type="image" src="../img/popup/next-on-prev-on-mode.png" alt="" width="16" height="16"/>
-        <input id="plus-minus-mode-input" type="image" src="../img/popup/plus-minus-mode.png" alt="" width="16" height="16"/>
+        <input id="plus-input" type="image" src="../img/popup/next.png" alt="" width="16" height="16" class="disabled"/>
+        <input id="setup-input" type="image" src="../img/popup/plus-minus-mode.png" alt="" width="16" height="16"/>
       </div>
-      <div id="plus-minus-setup" class="display-none">
-        <h3 id="plus-minus-setup-h3"></h3>
+      <div id="setup" class="display-none">
+        <h3 id="setup-h3"></h3>
         <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
         <div id="url">
           <label id="url-label" for="url-textarea"></label>
@@ -93,8 +92,8 @@
           </div>
         </div>
         <div class="setup-buttons">
-          <input id="plus-minus-setup-accept-input" type="button" value=""/>
-          <input id="plus-minus-setup-cancel-input" type="button" value=""/>
+          <input id="accept-input" type="button" value=""/>
+          <input id="cancel-input" type="button" value=""/>
         </div>
       </div>
     </div>

@@ -8,6 +8,6 @@
   "background": { "scripts": ["js/next-prev.js", "js/plus-minus.js", "js/background.js"], "persistent": true },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": "img/icons/19.png", "default_popup": "html/popup.html" },
   "options_ui": { "page": "html/options.html", "chrome_style": true },
-  "commands": { "next": { "description": "Next [>] Plus [+]" }, "prev": { "description": "Prev [<] Minus [-]" }, "clear": { "description": "Clear [x]" } },
+  "commands": { "next": { "description": "Next [>]" }, "plus": { "description": "Plus [+]" }, "prev": { "description": "Prev [<]" }, "minus": { "description": "Minus [-]" }, "clear": { "description": "Clear [x]" } },
   "permissions": ["activeTab", "storage"]
 }

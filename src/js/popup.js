@@ -1,5 +1,5 @@
 /**
- * URL Next Plus Popup
+ * URL Plus Popup
  * 
  * @author Roy Six
  * @namespace
@@ -7,7 +7,8 @@
 var URLNP = URLNP || {};
 URLNP.Popup = URLNP.Popup || function () {
 
-  var instance = {}, // Tab instance cache
+  var tab = {}, // Tab cache (only used in clear to reset the instance URL)
+      instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
@@ -27,12 +28,11 @@ URLNP.Popup = URLNP.Popup || function () {
       DOM["#" + ids[i].id] = ids[i];
     }
     // Set i18n (internationalization) text from messages.json
-    DOM["#next-input"].title = chrome.i18n.getMessage("popup_next_input");
-    DOM["#prev-input"].title = chrome.i18n.getMessage("popup_prev_input");
+    DOM["#plus-input"].title = chrome.i18n.getMessage("popup_plus_input");
+    DOM["#minus-input"].title = chrome.i18n.getMessage("popup_minus_input");
     DOM["#clear-input"].title = chrome.i18n.getMessage("popup_clear_input");
-    DOM["#next-prev-mode-input"].title = chrome.i18n.getMessage("popup_next_prev_setup_input");
-    DOM["#plus-minus-mode-input"].title = chrome.i18n.getMessage("popup_plus_minus_setup_input");
-    DOM["#plus-minus-setup-h3"].textContent = chrome.i18n.getMessage("popup_plus_minus_setup_h3");
+    DOM["#setup-input"].title = chrome.i18n.getMessage("popup_setup_input");
+    DOM["#setup-h3"].textContent = chrome.i18n.getMessage("popup_setup_h3");
     DOM["#url-label"].textContent = chrome.i18n.getMessage("popup_url_label");
     DOM["#selection-label"].textContent = chrome.i18n.getMessage("popup_selection_label");
     DOM["#interval-label"].textContent = chrome.i18n.getMessage("popup_interval_label");
@@ -40,85 +40,75 @@ URLNP.Popup = URLNP.Popup || function () {
     DOM["#base-case-lowercase-label"].textContent = chrome.i18n.getMessage("popup_base_case_lowercase_label");
     DOM["#base-case-uppercase-label"].textContent = chrome.i18n.getMessage("popup_base_case_uppercase_label");
     DOM["#leading-zeros-label"].textContent = chrome.i18n.getMessage("popup_leading_zeros_label");
-    DOM["#plus-minus-setup-accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
-    DOM["#plus-minus-setup-cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
+    DOM["#accept-input"].value = chrome.i18n.getMessage("popup_accept_input");
+    DOM["#cancel-input"].value = chrome.i18n.getMessage("popup_cancel_input");
     // Add Event Listeners to the DOM elements
-    DOM["#next-input"].addEventListener("click", clickNext, false);
-    DOM["#prev-input"].addEventListener("click", clickPrev, false);
+    DOM["#plus-input"].addEventListener("click", clickPlus, false);
+    DOM["#minus-input"].addEventListener("click", clickMinus, false);
     DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#next-prev-mode-input"].addEventListener("click", setupNextPrev, false);
-    DOM["#plus-minus-mode-input"].addEventListener("click", toggleView, false);
-    DOM["#plus-minus-setup-accept-input"].addEventListener("click", setupPlusMinus, false);
-    DOM["#plus-minus-setup-cancel-input"].addEventListener("click", toggleView, false);
+    DOM["#setup-input"].addEventListener("click", toggleView, false);
+    DOM["#accept-input"].addEventListener("click", setup, false);
+    DOM["#cancel-input"].addEventListener("click", toggleView, false);
     DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
     DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      // chrome.tabs.executeScript(tabs[0].id, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-      //   chrome.tabs.executeScript(tabs[0].id, {code: "URLNP.NextPrev.getLinks(document);", runAt: "document_end"}, function(results){
-          chrome.runtime.getBackgroundPage(function(backgroundPage) {
-            chrome.storage.sync.get(null, function(items) {
-                backgroundPage.URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
-              items_ = items;
-              instance = backgroundPage.URLNP.Background.getInstance(tabs[0].id);
-              if (!instance /*|| instance.url !== tabs[0].url*/) {
-                instance = backgroundPage.URLNP.Background.buildInstance(instance, tabs[0], items, links);
-              }
-              updateControls();
-              DOM["#next-prev-mode-input"].className = items_.animationsEnabled && (instance.nexturl || instance.prevurl) ? "hvr-grow" : "";
-              DOM["#plus-minus-mode-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
-              // Plus Minus initialization:
-              DOM["#url-textarea"].value = instance.url;
-              DOM["#selection-input"].value = instance.selection;
-              DOM["#selection-start-input"].value = instance.selectionStart;
-              DOM["#interval-input"].value = instance.interval;
-              DOM["#base-select"].value = instance.base;
-              DOM["#base-case"].className = instance.base > 10 ? "display-block fade-in" : "display-none";
-              DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
-              DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
-              DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-          });
-          });
-          });
-      //   });
-      // });
+      tab = tabs[0];
+      chrome.storage.sync.get(null, function(items) {
+        items_ = items;
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+          instance = backgroundPage.URLNP.Background.getInstance(tab.id);
+          if (!instance) {
+            instance = backgroundPage.URLNP.Background.buildInstance(instance, tab, items_);
+          }
+          updateControls();
+          DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
+          DOM["#url-textarea"].value = instance.url;
+          DOM["#selection-input"].value = instance.selection;
+          DOM["#selection-start-input"].value = instance.selectionStart;
+          DOM["#interval-input"].value = instance.interval;
+          DOM["#base-select"].value = instance.base;
+          DOM["#base-case"].className = instance.base > 10 ? "display-block fade-in" : "display-none";
+          DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
+          DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
+          DOM["#leading-zeros-input"].checked = instance.leadingZeros;
+        });
+      });
     });
   }
 
   /**
-   * Updates this tab to the next URL if the instance is enabled.
+   * Updates this tab by incrementing the URL if the instance is enabled.
    * 
    * @private
    */
-  function clickNext() {
-    if (instance.enabled && !(instance.mode === "next-prev" && !instance.nexturl)) {
+  function clickPlus() {
+    if (instance.enabled) {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "next", "popup", function(result) {
+        backgroundPage.URLNP.Background.updateTab(instance, "plus", "popup", function(result) {
           instance = result;
-          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
     }
   }
 
   /**
-   * Updates this tab to the previous URL if the instance is enabled.
+   * Updates this tab by decrementing the URL if the instance is enabled.
    * 
    * @private
    */
-  function clickPrev() {
-    if (instance.enabled && !(instance.mode === "next-prev" && !instance.prevurl)) {
+  function clickMinus() {
+    if (instance.enabled) {
       if (items_.animationsEnabled) {
         URLNP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "prev", "popup", function(result) {
+        backgroundPage.URLNP.Background.updateTab(instance, "minus", "popup", function(result) {
           instance = result;
-          DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png";
         });
       });
     }
@@ -130,7 +120,7 @@ URLNP.Popup = URLNP.Popup || function () {
    * @private
    */
   function clickClear() {
-    if (instance.enabled) { // or !this.classList.contains("disabled")
+    if (instance.enabled) {
       instance.enabled = false;
       updateControls();
       if (items_.animationsEnabled) {
@@ -138,47 +128,35 @@ URLNP.Popup = URLNP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLNP.Background.setInstance(instance.tabId, undefined);
+        instance = backgroundPage.URLNP.Background.buildInstance(instance, tab, items_);
       });
     }
   }
 
   /**
-   * Toggles the popup between the controls and the setup views.
+   * Toggles the popup between the controls and setup views.
    * 
    * @private
    */
   function toggleView() {
-    var setup;
     switch (this.id) {
-      case "plus-minus-mode-input": // Hide controls, show plus minus setup
+      case "setup-input": // Hide controls, show setup
         DOM["#controls"].className = "fade-out";
         setTimeout(function () {
           DOM["#controls"].classList.add("display-none");
-          DOM["#plus-minus-setup"].className = "display-block fade-in";
-          // Need to make sure the current URL is always shown:
-          chrome.runtime.getBackgroundPage(function(backgroundPage) {
-            var bgInstance = backgroundPage.URLNP.Background.getInstance(instance.tabId),
-                selectionProps = backgroundPage.URLNP.PlusMinus.findSelection(instance.url, items_.defaultSelectionPriority, items_.defaultSelectionCustom);
-            instance = bgInstance ? bgInstance : instance;
-            if (instance.mode !== "plus-minus") { // Need to refresh selection
-              instance.selection = selectionProps.selection;
-              instance.selectionStart = selectionProps.selectionStart;
-            }
-            DOM["#url-textarea"].value = instance.url;
-            DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
-            DOM["#url-textarea"].focus();
-            DOM["#selection-input"].value = instance.selection;
-            DOM["#selection-start-input"].value = instance.selectionStart;
-            // DOM["#interval-input"].value = instance.interval;
-          });
+          DOM["#setup"].className = "display-block fade-in";
+          DOM["#url-textarea"].value = instance.url;
+          DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+          DOM["#url-textarea"].focus();
+          DOM["#selection-input"].value = instance.selection;
+          DOM["#selection-start-input"].value = instance.selectionStart;
         }, 300);
         break;
-      case "plus-minus-setup-accept-input":  // Hide setup, show controls
-      case "plus-minus-setup-cancel-input":
-        setup = "#" + this.id.split("setup")[0] + "setup";
-        DOM[setup].className = "fade-out";
+      case "accept-input": // Hide setup, show controls
+      case "cancel-input":
+        DOM["#setup"].className = "fade-out";
         setTimeout(function () {
-          DOM[setup].classList.add("display-none");
+          DOM["#setup"].classList.add("display-none");
           DOM["#controls"].className = "display-block fade-in";
           updateControls(); // Needed to reset hover.css click effect
         }, 300);
@@ -195,37 +173,9 @@ URLNP.Popup = URLNP.Popup || function () {
    */
   function updateControls() {
     var className = instance.enabled ? items_.animationsEnabled ? "hvr-grow"  : "" : "disabled";
-    DOM["#next-input"].className = className;
-    DOM["#prev-input"].className = className;
+    DOM["#plus-input"].className = className;
+    DOM["#minus-input"].className = className;
     DOM["#clear-input"].className = className;
-    if (instance.mode === "plus-minus") {
-      DOM["#next-input"].src = "../img/popup/plus.png";
-      DOM["#prev-input"].src = "../img/popup/minus.png";
-    } else {
-      DOM["#next-input"].src = "../img/popup/next.png";
-      DOM["#prev-input"].src = "../img/popup/prev.png";
-    }
-    DOM["#next-prev-mode-input"].src = "../img/popup/next-" + (instance.nexturl ? "on" : "off") + "-prev-" + (instance.prevurl ? "on" : "off") + "-mode.png"; 
-  }
-
-  /**
-   * Makes the instance work in next prev mode.
-   * 
-   * @private
-   */
-  function setupNextPrev() {
-    var mode = "next-prev";
-    if ((!instance.enabled || instance.mode !== mode) && (instance.nexturl || instance.prevurl)) {
-      if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-push-click");
-      }
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        instance.enabled = true;
-        instance.mode = mode;
-        backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
-        updateControls();
-      });
-    }
   }
   
   /**
@@ -235,7 +185,7 @@ URLNP.Popup = URLNP.Popup || function () {
    * 
    * @private
    */
-  function setupPlusMinus() {
+  function setup() {
     var mode = "plus-minus",
         url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
@@ -268,7 +218,7 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
         backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
-        toggleView.call(DOM["#plus-minus-setup-accept-input"]);
+        toggleView.call(DOM["#accept-input"]);
       });
     }
   }

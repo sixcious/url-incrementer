@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "URL Next Plus",
+    "message": "URL Plus",
     "description": "Extension name."
   },
   "description": {
@@ -8,30 +8,26 @@
     "description": "Extension description."
   },
   "title": {
-    "message": "URL Next Plus",
+    "message": "URL Plus",
     "description": "Extension title (tool tip) shown when hovered."
   },
-  "popup_next_input": {
-    "message": "Next [>] Plus [+]",
-    "description": "Next input button title (tool tip) shown when hovered."
+  "popup_plus_input": {
+    "message": "Plus [+]",
+    "description": "Plus input button title (tool tip) shown when hovered."
   },
-  "popup_prev_input": {
-    "message": "Prev [<] Minus [-]",
-    "description": "Prev input button title (tool tip) shown when hovered."
+  "popup_minus_input": {
+    "message": "Minus [-]",
+    "description": "Minus input button title (tool tip) shown when hovered."
   },
   "popup_clear_input": {
     "message": "Clear [x]",
     "description": "Clear input button title (tool tip) when hovered."
   },
-  "popup_next_prev_setup_input": {
-    "message": "Next Prev Links Mode",
-    "description": "Next Prev input button title (tool tip) when hovered."
-  },
-  "popup_plus_minus_setup_input": {
+  "popup_setup_input": {
     "message": "Plus Minus URL Setup",
     "description": "Plus Minus input button title (tool tip) when hovered."
   },
-  "popup_plus_minus_setup_h3": {
+  "popup_setup_h3": {
     "message": "Select the part of the URL to plus [+] or minus [-]",
     "description": "Plus Minus Setup Heading 3."
   },
@@ -115,13 +111,17 @@
     "message": "Configure Keyboard Shortcuts",
     "description": "Configure Keyboard Shortcuts button."
   },
-  "options_default_settings_h3": {
-    "message": "Default Settings",
-    "description": "Default Settings Heading 3."
+  "options_basic_settings_h3": {
+    "message": "Basic Settings",
+    "description": "Basic Settings Heading 3."
   },
-  "options_default_settings_p": {
-    "message": "You can have URL Next Plus use these values by default when you use Quick Keyboard Shortcuts or inside Setup.",
-    "description": "Default Settings paragraph."
+  "options_basic_settings_p": { 
+    "message": "Customize Basic Settings. If you set the mode to Next/Prev, URL Plus will try using the next/prev links on the page and then fall back to Plus/Minus mode.",
+    "description": "Basic Settings paragraph."
+  },
+  "options_animations_enable_label": {
+    "message": "Enable Hover.css (CSS3) Animations in UI",
+    "description": ""
   },
   "options_default_mode_label": {
     "message": "Mode",
@@ -134,6 +134,14 @@
   "options_default_mode_plus_minus_option": {
     "message": "Plus [+] or Minus [-] the URL",
     "description": ""
+  },
+  "options_plus_minus_settings_h3": {
+    "message": "Plus Minus Settings",
+    "description": "Plus Minus Settings Heading 3."
+  },
+  "options_plus_minus_settings_p": { 
+    "message": "Customize Plus [+] and Minus [-] default settings.",
+    "description": "Plus Minus Settings paragraph."
   },
   "options_default_links_label": {
     "message": "Links",
@@ -167,8 +175,16 @@
     "message": "Uppercase [A-Z]",
     "description": "Base case uppercase input radio label."
   },
-  "options_animations_enable_label": {
-    "message": "Enable Hover.css (CSS3) Animations in UI",
+  "options_next_prev_settings_h3": {
+    "message": "Next Prev Settings",
+    "description": "Next Prev Settings Heading 3."
+  },
+  "options_next_prev_settings_p": { 
+    "message": "Customize Next [>] and Prev [<] default settings.",
+    "description": "Next Prev Settings paragraph."
+  },
+  "options_same_domain_policy_enable_label": {
+    "message": "Only use links from the same domain of the page",
     "description": ""
   }
 }

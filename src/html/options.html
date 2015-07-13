@@ -23,11 +23,11 @@
           <button id="keyboard-shortcuts-button"></button>
         </p>
       </section>
-      <section id="default-settings">
+      <section id="basic-settings">
         <img src="../img/options/font-awesome/check-square.png" alt="" width="18" height="18"/>
-        <h3 id="default-settings-h3"></h3>
+        <h3 id="basic-settings-h3"></h3>
         <hr/>
-        <p id="default-settings-p"></p>
+        <p id="basic-settings-p"></p>
         <div class="checkbox">
           <label>
             <input id="animations-enable-input" type="checkbox"/>
@@ -56,32 +56,12 @@
           </div>
         </div>
         </section>
-        <section id="next-prev">
-          <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
-          <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
-          <h3 id="aadsfa">Next Prev Settings</h3>
-          <hr/>
-          <p id="adsfadf">Customize Next [>] and Prev [<] default settings.</p>
-          <div class="table">
-            <div class="row">
-              <div class="column">
-                <label id="default-links-label" for="default-links-select"></label>
-              </div>
-              <div class="column">
-                <select id="default-links-select">
-                  <option id="default-links-attributes-option" value="attributes"></option>
-                  <option id="default-links-innerHTML-option" value="innerHTML"></option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section id="plus-minus">
+        <section id="plus-minus-settings">
           <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
           <img src="../img/options/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
-          <h3 id="aaasdfsdfdsfa">Plus Minus Settings</h3>
+          <h3 id="plus-minus-settings-h3"></h3>
           <hr/>
-          <p id="adsfasdfasdfdf">Customize Plus [+] and Minus [-] default settings.</p>
+          <p id="plus-minus-settings-p"></p>
           <div class="table">
           <div class="row">
             <div class="column">
@@ -125,7 +105,7 @@
                   <button id="selection-custom-button">Save</button>
                   <span id="selection-custom-span"></span>
                 </div>
-                                 (Use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a> for more help and testing)
+                                 (For additional testing, use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a>)
               </div>
             </div>
           </div>
@@ -138,13 +118,13 @@
             </div>
           </div>
           <div class="row">
-            <div class="column">Zeros    </div>
+            <div class="column">Zeros</div>
             <div class="column">
 <!--              Smart Detection (Selection will be padded with leading zeros if it starts with a zero-->
               <div class="checkbox">
                 <label>
-                  <input id="force-leading-zeros-input" type="checkbox"/>
-                  <span id="force-leading-zeros-label">Only Pad With Leading Zeros If Selection Starts With 0 and is at least two or more characters</span>
+                  <input id="leading-zeros-input" type="checkbox" checked="checked"/>
+                  <span id="leading-zeros-label">Pad Leading Zeros By Detection (Recommended)</span>
                 </label>
               </div>
             </div>
@@ -195,13 +175,13 @@
               <div id="base-case" class="display-none">
                 <div class="radio">
                   <label>
-                    <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowerCase"/>
+                    <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
                     <span id="base-case-lowercase-label"></span>
                   </label>
                 </div>
                 <div class="radio">
                   <label>
-                    <input id="base-case-uppercase-input" type="radio" name="base-case" value="upperCase"/>
+                    <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
                     <span id="base-case-uppercase-label"></span>
                   </label>
                 </div>
@@ -210,6 +190,37 @@
           </div>
         </div>
       </section>
+        <section id="next-prev-settings">
+          <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
+          <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
+          <h3 id="next-prev-settings-h3"></h3>
+          <hr/>
+          <p id="next-prev-settings-p"></p>
+          <div class="table">
+            <div class="row">
+              <div class="column">
+                <label id="default-links-label" for="default-links-select"></label>
+              </div>
+              <div class="column">
+                <select id="default-links-select">
+                  <option id="default-links-attributes-option" value="attributes"></option>
+                  <option id="default-links-innerHTML-option" value="innerHTML"></option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="column">Domain</div>
+              <div class="column">
+                <div class="checkbox">
+                  <label>
+                    <input id="domain-input" type="checkbox" checked="checked"/>
+                    <span id="same-domain-policy-enable-label"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
   </body>

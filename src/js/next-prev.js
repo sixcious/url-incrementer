@@ -7,31 +7,31 @@
 var URLNP = URLNP || {};
 URLNP.NextPrev = URLNP.NextPrev || function () {
 
-  /**
-   * TODO
-   */ 
-  function getLinksViaExecuteScript(tabId, callback) {
-    chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-      var code = "URLNP.NextPrev.getLinks(document);";
-      chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
-        callback(results[0]);
-      });
-    });
-  }
+  // /**
+  // * TODO
+  // */ 
+  // function getLinksViaExecuteScript(tabId, callback) {
+  //   chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+  //     var code = "URLNP.NextPrev.getLinks(document);";
+  //     chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
+  //       callback(results[0]);
+  //     });
+  //   });
+  // }
 
-  /**
-   * TODO
-   * 
-   */ 
-  function getLinksViaXHR(url, callback) {
-    var req = new XMLHttpRequest();
-    req.open("GET", url, true);
-    req.responseType = "document";
-    req.onload = function() { // Equivalent to onreadystate and checking 4
-      callback(getLinks(this.responseXML));
-    };
-    req.send();
-  }
+  // /**
+  // * TODO
+  // * 
+  // */ 
+  // function getLinksViaXHR(url, callback) {
+  //   var req = new XMLHttpRequest();
+  //   req.open("GET", url, true);
+  //   req.responseType = "document";
+  //   req.onload = function() { // Equivalent to onreadystate and checking 4
+  //     callback(getLinks(this.responseXML));
+  //   };
+  //   req.send();
+  // }
 
   /**
    * Gets the URL by examining the links object based off of the requested
@@ -44,6 +44,7 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
    * @public
    */
   function getURL(priority, direction, links) {
+    //return links.rel ? links.rel.next ? links.rel.next : links.rel.forward ? links.rel.forward : links.rel.new ? links.rel.new : links.rel.gt ? : links.rel.gt : "" : "";
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
   }
 
@@ -146,8 +147,8 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
   // Return Public Functions
   return {
     getURL: getURL,
-    getLinks: getLinks,
-    getLinksViaXHR: getLinksViaXHR,
-    getLinksViaExecuteScript: getLinksViaExecuteScript
+    getLinks: getLinks//,
+    // getLinksViaXHR: getLinksViaXHR,
+    // getLinksViaExecuteScript: getLinksViaExecuteScript
   };
 }();

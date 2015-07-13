@@ -1,5 +1,5 @@
 /**
- * URL Next Plus PlusMinus
+ * URL Plus PlusMinus
  * 
  * @author Roy Six
  * @namespace
@@ -29,22 +29,23 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    var re1 = /(?:=|\/)(\d+)/, // RegExp to find prefixes = and / with numbers
-        re2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-        re3 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
-        matches1 = re1.exec(url),
-        matches2 = re2.exec(url),
-        matches3 = re3 ? re3.exec(url) : undefined;
-    console.log(!/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length)));
+    var regexp1 = /(?:=|\/)(\d+)/, // RegExp to find numbers with prefixes (= /)
+        regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+        regexp3 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
+        matches1 = regexp1.exec(url),
+        matches2 = regexp2.exec(url),
+        matches3 = regexp3 ? regexp3.exec(url) : undefined,
+        customparsed = matches3 && matches3[custom.group];
+    console.log(matches3 ? !/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length)) : "not setup for custom regex");
     return preference === "prefixes" ?
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
                             {selection: "", selectionStart: -1} :
-           preference === "last-number" ?
+           preference === "lastnumber" ?
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             {selection: "", selectionStart: -1} :
-           preference === "custom" && matches3 && matches3[custom.group] /*&& !/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length))*/ ? {selection: matches3[custom.group].substring(custom.index), selectionStart: matches3.index + custom.index} :
+           preference === "custom" && customparsed ? {selection: matches3[custom.group].substring(custom.index), selectionStart: matches3.index + custom.index} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
                             {selection: "", selectionStart: -1};
@@ -61,19 +62,19 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
    * @param base           the base to use (the supported base range is 2-36)
    * @param baseCase       the case to use for letters (lowercase or uppercase)
    * @param leadingZeros   if true, pad with leading zeros, false don't pad
-   * @param direction      the direction to go: next/plus or prev/minus
+   * @param operation      the mathemtical operation to perform (plus or minus)
    * @return JSON object {urlmod: modified url, selectionmod: modified selection}
    * @public
    */
-  function modifyURL(url, selection, selectionStart, interval, base, baseCase, leadingZeros, direction) {
+  function modifyURL(url, selection, selectionStart, interval, base, baseCase, leadingZeros, operation) {
     var urlmod,
         selectionmod,
         selectionint = parseInt(selection, base); // parseInt base range is 2-36
     // Plus or minus the selection -- if minus is negative, set to 0 (low bound)
-    selectionmod = direction === "next" ? (selectionint + interval).toString(base) :
-                   direction === "prev" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
-                                        "";
-    if (leadingZeros && selection.length > selectionmod.length) { // If Leading Zeros, pad 0s
+    selectionmod = operation === "plus"  ? (selectionint + interval).toString(base) :
+                   operation === "minus" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
+                                         "";
+    if (leadingZeros && selection.length > selectionmod.length) { // Leading 0s
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
     if (/[a-z]/i.test(selectionmod)) { // If Alphanumeric, convert case
