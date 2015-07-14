@@ -21,11 +21,20 @@ URLNP.Popup = URLNP.Popup || function () {
    * @public
    */
   function DOMContentLoaded() {
-    // Cache DOM elements
     var ids = document.querySelectorAll("[id]"),
+        i18ns = document.querySelectorAll("[data-i18n]"),
+        el,
         i;
+    // Cache DOM elements
     for (i = 0; i < ids.length; i++) {
-      DOM["#" + ids[i].id] = ids[i];
+      el = ids[i];
+      DOM["#" + el.id] = el;
+    }
+    // Set i18n (internationalization) text from messages.json
+    for (i = 0; i < i18ns.length; i++) {
+      el = i18ns[i];
+      console.log(el.id + " - " + chrome.i18n.getMessage(el.id.replace(/-/g, '_')));
+      el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_'));
     }
     // Set i18n (internationalization) text from messages.json
     DOM["#plus-input"].title = chrome.i18n.getMessage("popup_plus_input");

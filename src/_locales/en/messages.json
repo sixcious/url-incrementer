@@ -11,180 +11,225 @@
     "message": "URL Plus",
     "description": "Extension title (tool tip) shown when hovered."
   },
-  "popup_plus_input": {
+  "popup": { "message": "-- POPUP --" },
+  "plus_input": {
     "message": "Plus [+]",
     "description": "Plus input button title (tool tip) shown when hovered."
   },
-  "popup_minus_input": {
+  "minus_input": {
     "message": "Minus [-]",
     "description": "Minus input button title (tool tip) shown when hovered."
   },
-  "popup_clear_input": {
+  "clear_input": {
     "message": "Clear [x]",
     "description": "Clear input button title (tool tip) when hovered."
   },
-  "popup_setup_input": {
+  "setup_input": {
     "message": "Plus Minus URL Setup",
     "description": "Plus Minus input button title (tool tip) when hovered."
   },
-  "popup_setup_h3": {
+  "setup_h3": {
     "message": "Select the part of the URL to plus [+] or minus [-]",
     "description": "Plus Minus Setup Heading 3."
   },
-  "popup_url_label": {
+  "url_label": {
     "message": "URL",
     "description": "URL textarea label."
   },
-  "popup_selection_label": {
-    "message": "Selection",
-    "description": "Selection input text label."
-  },
-  "popup_interval_label": {
-    "message": "Interval",
-    "description": "Interval input number label."
-  },
-  "popup_base_label": {
-    "message": "Base",
-    "description": "Base select label."
-  },
-  "popup_base_case_lowercase_label": {
-    "message": "Lowercase [a-z]",
-    "description": "Base case lowercase input radio label."
-  },
-  "popup_base_case_uppercase_label": {
-    "message": "Uppercase [A-Z]",
-    "description": "Base case uppercase input radio label."
-  },
-  "popup_leading_zeros_label": {
+  "leading_zeros_pad_label": {
     "message": "Pad With Leading Zeros",
     "description": "Leading Zeros input checkbox label."
   },
-  "popup_accept_input": {
+  "accept_input": {
     "message": "Accept",
     "description": "Setup accept button."
   },
-  "popup_cancel_input": {
+  "cancel_input": {
     "message": "Cancel",
     "description": "Setup cancel button."
   },
-  "popup_oops_error": {
+  "oops_error": {
     "message": "Oops...",
     "description": "Beginning line of popup error message."
   },  
-  "popup_selection_blank_error": {
+  "selection_blank_error": {
     "message": "Selection can't be blank",
     "description": "Plus Minus Setup error message if the selection is blank."
   },
-  "popup_selection_notalphanumeric_error": {
+  "selection_notalphanumeric_error": {
     "message": "Selection can only contain alphanumeric characters",
     "description": "Plus Minus Setup error message if the selection is not alphanumeric."
   },
-  "popup_selection_notinurl_error": {
+  "selection_notinurl_error": {
     "message": "Selection has to be part of the URL",
     "description": "Plus Minus Setup error message if the selection is not part of the URL."
   },
-  "popup_selection_base_error": {
+  "selection_base_error": {
     "message": "Select a higher base to match characters in selection",
     "description": "Plus Minus Setup error message if the selection doesn't match the base."
   },
-  "popup_selectionstart_invalid_error": {
+  "selectionstart_invalid_error": {
     "message": "Selection position must be from URL",
     "description": "Plus Minus Setup error message if the selectionStart is invalid."
   },
-  "popup_interval_invalid_error": {
+  "interval_invalid_error": {
     "message": "Interval has to be 1 or higher",
     "description": "Plus Minus Setup error message if the interval is 0 or negative."
   },
-  "options_keyboard_shortcuts_h3": {
+  "options": { "message": "-- OPTIONS --" },
+  "keyboard_shortcuts_h3": {
     "message": "Keyboard Shortcuts",
     "description": "Keyboard Shortcuts Heading 3."
   },
-  "options_keyboard_shortcuts_p": {
+  "keyboard_shortcuts_p": {
     "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [>] or Plus [+] instantly without having to enter Setup.",
     "description": "Keyboard Shortcuts paragraph."
   },
-  "options_keyboard_shortcuts_quick_enable_label": {
+  "keyboard_shortcuts_quick_enable_label": {
     "message": "Enable Quick Keyboard Shortcuts",
     "description": "Enable Quick Keyboard Shortcuts checkbox label."
   },
-  "options_keyboard_shortcuts_button": {
+  "keyboard_shortcuts_button": {
     "message": "Configure Keyboard Shortcuts",
     "description": "Configure Keyboard Shortcuts button."
   },
-  "options_basic_settings_h3": {
+  "basic_settings_h3": {
     "message": "Basic Settings",
     "description": "Basic Settings Heading 3."
   },
-  "options_basic_settings_p": { 
+  "basic_settings_p": { 
     "message": "Customize Basic Settings. If you set the mode to Next/Prev, URL Plus will try using the next/prev links on the page and then fall back to Plus/Minus mode.",
     "description": "Basic Settings paragraph."
   },
-  "options_animations_enable_label": {
+  "animations_enable_label": {
     "message": "Enable Hover.css (CSS3) Animations in UI",
     "description": ""
   },
-  "options_default_mode_label": {
+  "mode_label": {
     "message": "Mode",
     "description": ""
   },
-  "options_default_mode_next_prev_option": {
+  "mode_next_prev_option": {
     "message": "Use the Next [>] and Prev [<] links on the page",
     "description": ""
   },
-  "options_default_mode_plus_minus_option": {
+  "mode_plus_minus_option": {
     "message": "Plus [+] or Minus [-] the URL",
     "description": ""
   },
-  "options_plus_minus_settings_h3": {
+  "plus_minus_settings_h3": {
     "message": "Plus Minus Settings",
     "description": "Plus Minus Settings Heading 3."
   },
-  "options_plus_minus_settings_p": { 
+  "plus_minus_settings_p": { 
     "message": "Customize Plus [+] and Minus [-] default settings.",
     "description": "Plus Minus Settings paragraph."
   },
-  "options_default_links_label": {
-    "message": "Links",
-    "description": ""
-  },
-  "options_default_links_attributes_option": {
-    "message": "Prefer links with attributes like \"rel=next\"",
-    "description": ""
-  },
-  "options_default_links_innerHTML_option": {
-    "message": "Prefer links with words like \"Next\" in them",
-    "description": ""
-  },
-  "options_default_selection_label": {
+  "selection_label": {
     "message": "Selection",
     "description": ""
   },
-  "options_default_interval_label": {
-    "message": "Interval",
+  "selection_option_prefixes": { 
+    "message": "Select numbers in the URL with prefixes like =123 and /456",
     "description": ""
   },
-  "options_default_base_label": {
-    "message": "Base",
+  "selection_option_lastnumber": { 
+    "message": "Select the last number in the URL",
     "description": ""
   },
-  "options_base_case_lowercase_label": {
-    "message": "Lowercase [a-z]",
-    "description": "Base case lowercase input radio label."
+  "selection_option_custom": { 
+    "message": "Use a custom JavaScript regular expression",
+    "description": ""
   },
-  "options_base_case_uppercase_label": {
-    "message": "Uppercase [A-Z]",
-    "description": "Base case uppercase input radio label."
+  "selection_custom_url_label": { "message": "Test URL (Required)" },
+  "selection_custom_pattern_label": { "message": "Pattern" },
+  "selection_custom_flags_label": { "message": "Flags" },
+  "selection_custom_group_label": { "message": "Capturing Group # (Usually 0)" },
+  "selection_custom_index_label": { "message": "Index Position (Usually 0)" },
+  "selection_custom_test_button": { "message": "Test" },
+  "selection_custom_save_button": { "message": "Save" },
+  "selection_custom_help_label": { "message": "For more testing, use" },
+  "selection_custom_match_error": { "message": "Match not found" },
+  "selection_custom_group_error": { "message": "Group must be 0 or higher" },
+  "selection_custom_index_error": { "message": "Index must be 0 or higher" },
+  "selection_custom_matchgroup_error": { "message": "Match found, but not in group entered" },
+  "selection_custom_matchindex_error": { "message": "Match found, but not in index entered" },
+  "selection_custom_matchnotalphanumeric_error": { "message": "Match is not alphanumeric" },
+  "selection_custom_test_success": { "message": "Success" },
+  "selection_custom_save_success": { "message": "Saved" },
+  "leading_zeros_label": {
+    "message": "Leading Zeros",
+    "description": ""
   },
-  "options_next_prev_settings_h3": {
+  "leading_zeros_pad_by_detection_label": {
+    "message": "Pad By Detection (Recommended)",
+    "description": ""
+  },
+  "next_prev_settings_h3": {
     "message": "Next Prev Settings",
     "description": "Next Prev Settings Heading 3."
   },
-  "options_next_prev_settings_p": { 
+  "next_prev_settings_p": { 
     "message": "Customize Next [>] and Prev [<] default settings.",
     "description": "Next Prev Settings paragraph."
   },
-  "options_same_domain_policy_enable_label": {
-    "message": "Only use links from the same domain of the page",
+  "links_label": {
+    "message": "Links",
     "description": ""
-  }
+  },
+  "links_attributes_option": {
+    "message": "Prefer links with attributes like \"rel=next\"",
+    "description": ""
+  },
+  "links_innerHTML_option": {
+    "message": "Prefer links with words like \"Next\" in them",
+    "description": ""
+  },
+  "domain_label": {
+    "message": "Domain",
+    "description": ""
+  },
+  "same_domain_policy_enable_label": { "message": "Only use links from the same domain of the page" },
+  "shared": { "message": "-- SHARED --" },
+  "selection_label": { "message": "Selection" },
+  "interval_label": { "message": "Interval" },
+  "base_label": { "message": "Base" },
+  "base_option_default": { "message": "(Default)" },
+  "base_option_2": { "message": "2 Binary [0-1]" },
+  "base_option_3": { "message": "3 Ternary [0-2]" },
+  "base_option_4": { "message": "4 Quaternary [0-3]" },
+  "base_option_5": { "message": "5 Quinary [0-4]" },
+  "base_option_6": { "message": "6 Senary [0-5]" },
+  "base_option_7": { "message": "7 Septenary [0-6]" },
+  "base_option_8": { "message": "8 Octal [0-7]" },
+  "base_option_9": { "message": "9 Nonary [0-8]" },
+  "base_option_10": { "message": "10 Decimal [0-9]" },
+  "base_option_11": { "message": "11 Undecimal [0-9][A]" },
+  "base_option_12": { "message": "12 Duodecimal [0-9][A-B]" },
+  "base_option_13": { "message": "13 Tridecimal [0-9][A-C]" },
+  "base_option_14": { "message": "14 Tetradecimal [0-9][A-D]" },
+  "base_option_15": { "message": "15 Pentadecimal [0-9][A-E]" },
+  "base_option_16": { "message": "16 Hexadecimal [0-9][A-F]" },
+  "base_option_17": { "message": "17 Septendecimal [0-9][A-G]" },
+  "base_option_18": { "message": "18 Octodecimal [0-9][A-H]" },
+  "base_option_19": { "message": "19 Nonadecimal [0-9][A-I]" },
+  "base_option_20": { "message": "20 Vigesimal [0-9][A-J]" },
+  "base_option_21": { "message": "21 Unvigesimal [0-9][A-K]" },
+  "base_option_22": { "message": "22 Duovigesimal [0-9][A-L]" },
+  "base_option_23": { "message": "23 Trivigesimal [0-9][A-M]" },
+  "base_option_24": { "message": "24 Tetravigesimal [0-9][A-N]" },
+  "base_option_25": { "message": "25 Pentavigesimal [0-9][A-O]" },
+  "base_option_26": { "message": "26 Hexavigesimal [0-9][A-P]" },
+  "base_option_27": { "message": "27 Heptavigesimal [0-9][A-Q]" },
+  "base_option_28": { "message": "28 Octovigesimal [0-9][A-R]" },
+  "base_option_29": { "message": "29 Nonavigesimal [0-9][A-S]" },
+  "base_option_30": { "message": "30 Trigesimal [0-9][A-T]" },
+  "base_option_31": { "message": "31 Unotrigesimal [0-9][A-U]" },
+  "base_option_32": { "message": "32 Duotrigesimal [0-9][A-V]" },
+  "base_option_33": { "message": "33 Tritrigesimal [0-9][A-W]" },
+  "base_option_34": { "message": "34 Tetratrigesimal [0-9][A-X]" },
+  "base_option_35": { "message": "35 Pentatrigesimal [0-9][A-Y]" },
+  "base_option_36": { "message": "36 Hexatrigesimal [0-9][A-Z]" },
+  "base_case_lowercase_label": { "message": "Lowercase [a-z]" },
+  "base_case_uppercase_label": { "message": "Uppercase [A-Z]" }
 }

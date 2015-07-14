@@ -30,3 +30,20 @@ input[type="number"] {
 img {
   vertical-align: text-bottom;
 }
+
+#selection-custom {
+  margin: 10px 0;
+}
+
+#selection-custom-url-textarea {
+  width: 290px;
+}
+
+#selection-custom-pattern-input {
+  width: 120px;
+  margin: 0 4px;
+}
+
+#selection-custom-flags-input {
+  width: 52px;
+}

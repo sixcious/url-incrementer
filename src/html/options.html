@@ -10,46 +10,46 @@
       <section id="keyboard-shortcuts">
         <img src="../img/options/chrome.png" alt="" width="16" height="16"/>
         <img src="../img/options/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
-        <h3 id="keyboard-shortcuts-h3"></h3>
+        <h3 id="keyboard-shortcuts-h3" data-i18n="textContent"></h3>
         <hr/>
-        <p id="keyboard-shortcuts-p"></p>
+        <p id="keyboard-shortcuts-p" data-i18n="textContent"></p>
         <div class="checkbox">
           <label>
             <input id="keyboard-shortcuts-quick-enable-input" type="checkbox"/>
-            <span id="keyboard-shortcuts-quick-enable-label"></span>
+            <span id="keyboard-shortcuts-quick-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
         <p>
-          <button id="keyboard-shortcuts-button"></button>
+          <button id="keyboard-shortcuts-button" data-i18n="textContent"></button>
         </p>
       </section>
       <section id="basic-settings">
         <img src="../img/options/font-awesome/check-square.png" alt="" width="18" height="18"/>
-        <h3 id="basic-settings-h3"></h3>
+        <h3 id="basic-settings-h3" data-i18n="textContent"></h3>
         <hr/>
-        <p id="basic-settings-p"></p>
+        <p id="basic-settings-p" data-i18n="textContent"></p>
         <div class="checkbox">
           <label>
             <input id="animations-enable-input" type="checkbox"/>
-            <span id="animations-enable-label"></span>
+            <span id="animations-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
         <div class="table">
           <div class="row">
             <div class="column">
-              <label id="default-mode-label"></label>
+              <label id="mode-label" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <div class="radio">
                 <label>
-                  <input id="default-mode-next-prev-input" type="radio" name="default-mode" value="next-prev"/>
-                  <span id="default-mode-next-prev-option"></span>
+                  <input id="mode-next-prev-input" type="radio" name="mode" value="next-prev"/>
+                  <span id="mode-next-prev-option" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="default-mode-plus-minus-input" type="radio" name="default-mode" value="plus-minus"/>
-                  <span id="default-mode-plus-minus-option"></span>
+                  <input id="mode-plus-minus-input" type="radio" name="mode" value="plus-minus"/>
+                  <span id="mode-plus-minus-option" data-i18n="textContent"></span>
                 </label>
               </div>
             </div>
@@ -59,130 +59,129 @@
         <section id="plus-minus-settings">
           <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
           <img src="../img/options/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
-          <h3 id="plus-minus-settings-h3"></h3>
+          <h3 id="plus-minus-settings-h3" data-i18n="textContent"></h3>
           <hr/>
-          <p id="plus-minus-settings-p"></p>
+          <p id="plus-minus-settings-p" data-i18n="textContent"></p>
           <div class="table">
           <div class="row">
             <div class="column">
-              <label id="default-selection-label" for="default-selection-select">Selection</label>
+              <label id="selection-label" for="selection-select" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <select id="selection-select">
-                <option id="selection-option-prefixes" value="prefixes">Select numbers with prefixes like =123 and /456</option>
-                <option id="selection-option-lastnumber" value="lastnumber">Select the last number in the URL</option>
-                <option id="selection-option-custom" value="custom">Use my own custom JavaScript regular expression</option>
+                <option id="selection-option-prefixes" value="prefixes" data-i18n="textContent"></option>
+                <option id="selection-option-lastnumber" value="lastnumber" data-i18n="textContent"></option>
+                <option id="selection-option-custom" value="custom" data-i18n="textContent"></option>
               </select>
-              <div id="selection-custom" style="margin-top: 10px; margin-bottom: 10px" class="display-none">
-                <label class="display-block">Test URL (Required)</label>
-                <textarea id="selection-custom-url" placeholder="http://www.google.com?id=1" style="width:290px;"></textarea>
+              <div id="selection-custom" class="display-none">
+                <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
+                <textarea id="selection-custom-url-textarea" placeholder="http://www.google.com?id=1"></textarea>
                 <div class="table">
                   <div class="row">
                     <div class="column">
-                      <lable class="display-block">Pattern</lable>
-                      /
-                      <input id="selection-custom-pattern" type="text" value="" placeholder="\d+(?!.*\d+)" style="width:124px;"/>
-                      /
+                      <lable id="selection-custom-pattern-label" for="selection-custom-pattern-input" data-i18n="textContent" class="display-block"></lable>
+                      /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+(?!.*\d+)"/>/
                     </div>
                     <div class="column">
-                      <label class="display-block">Flags (Usually Empty)</label>
-                      <input id="selection-custom-flags" type="text" value="" placeholder="gmi" style="width:52px;"/>
+                      <label id="selection-custom-flags-label" for="selection-custom-flags-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi"/>
                     </div>
                   </div>
-                                    <div class="row">
+                  <div class="row">
                     <div class="column">
-                      <label class="display-block">Group # (Usually 0)</label>
-                  <input id="selection-custom-group" type="number" value="0" min="0"/>                      
+                      <label id="selection-custom-group-label" for="selection-custom-group-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-group-input" type="number" value="0" min="0"/>                      
                     </div>
                     <div class="column">
-                      <label class="display-block">Index Position (Usually 0)</label>
-                  <input id="selection-custom-index" type="number" value="0" min="0"/>                      
+                      <label id="selection-custom-index-label" for="selection-custom-index-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-index-input" type="number" value="0" min="0"/>                      
                     </div>
                   </div>
                 </div>
-                <div style="margin-top: 10px; margin-bottom: 10px;">
-                  <button id="selection-custom-test-button">Test</button>
-                  <button id="selection-custom-button">Save</button>
-                  <span id="selection-custom-span"></span>
+                <div>
+                  <button id="selection-custom-test-button" data-i18n="textContent"></button>
+                  <button id="selection-custom-save-button" data-i18n="textContent"></button>
+                  <span id="selection-custom-message-span"></span>
                 </div>
-                                 (For additional testing, use <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a>)
+                (<span id="selection-custom-help-label" data-i18n="textContent"></span> <a href="https://regex101.com/#javascript" target="_blank">https://regex101.com</a>)
               </div>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="default-interval-label" for="default-interval-input"></label>
+              <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
-              <input id="default-interval-input" type="number" min="1" />
+              <input id="interval-input" type="number" min="1" />
             </div>
           </div>
           <div class="row">
-            <div class="column">Zeros</div>
             <div class="column">
-<!--              Smart Detection (Selection will be padded with leading zeros if it starts with a zero-->
+              <label id="leading-zeros-label" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
               <div class="checkbox">
                 <label>
-                  <input id="leading-zeros-input" type="checkbox" checked="checked"/>
-                  <span id="leading-zeros-label">Pad Leading Zeros By Detection (Recommended)</span>
+                  <input id="leading-zeros-pad-by-detection-input" type="checkbox" checked="checked"/>
+                  <span id="leading-zeros-pad-by-detection-label" data-i18n="textContent"></span>
                 </label>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="default-base-label" for="default-base-select"></label>
+              <label id="base-label" for="base-select" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <select id="base-select">
-                <option id="base-option-default" value="10">(Default)</option>
-                <option id="base-option-2" value="2">2 Binary [0-1]</option>
-                <option id="base-option-3" value="3">3 Ternary [0-2]</option>
-                <option id="base-option-4" value="4">4 Quaternary [0-3]</option>
-                <option id="base-option-5" value="5">5 Quinary [0-4]</option>
-                <option id="base-option-6" value="6">6 Senary [0-5]</option>
-                <option id="base-option-7" value="7">7 Septenary [0-6]</option>
-                <option id="base-option-8" value="8">8 Octal [0-7]</option>
-                <option id="base-option-9" value="9">9 Nonary [0-8]</option>
-                <option id="base-option-10" value="10">10 Decimal [0-9]</option>
-                <option id="base-option-11" value="11">11 Undecimal [0-9][A]</option>
-                <option id="base-option-12" value="12">12 Duodecimal [0-9][A-B]</option>
-                <option id="base-option-13" value="13">13 Tridecimal [0-9][A-C]</option>
-                <option id="base-option-14" value="14">14 Tetradecimal [0-9][A-D]</option>
-                <option id="base-option-15" value="15">15 Pentadecimal [0-9][A-E]</option>
-                <option id="base-option-16" value="16">16 Hexadecimal [0-9][A-F]</option>
-                <option id="base-option-17" value="17">17 Septendecimal [0-9][A-G]</option>
-                <option id="base-option-18" value="18">18 Octodecimal [0-9][A-H]</option>
-                <option id="base-option-19" value="19">19 Nonadecimal [0-9][A-I]</option>
-                <option id="base-option-20" value="20">20 Vigesimal [0-9][A-J]</option>
-                <option id="base-option-21" value="21">21 Unvigesimal [0-9][A-K]</option>
-                <option id="base-option-22" value="22">22 Duovigesimal [0-9][A-L]</option>
-                <option id="base-option-23" value="23">23 Trivigesimal [0-9][A-M]</option>
-                <option id="base-option-24" value="24">24 Tetravigesimal [0-9][A-N]</option>
-                <option id="base-option-25" value="25">25 Pentavigesimal [0-9][A-O]</option>
-                <option id="base-option-26" value="26">26 Hexavigesimal [0-9][A-P]</option>
-                <option id="base-option-27" value="27">27 Heptavigesimal [0-9][A-Q]</option>
-                <option id="base-option-28" value="28">28 Octovigesimal [0-9][A-R]</option>
-                <option id="base-option-29" value="29">29 Nonavigesimal [0-9][A-S]</option>
-                <option id="base-option-30" value="30">30 Trigesimal [0-9][A-T]</option>
-                <option id="base-option-31" value="31">31 Unotrigesimal [0-9][A-U]</option>
-                <option id="base-option-32" value="32">32 Duotrigesimal [0-9][A-V]</option>
-                <option id="base-option-33" value="33">33 Tritrigesimal [0-9][A-W]</option>
-                <option id="base-option-34" value="34">34 Tetratrigesimal [0-9][A-X]</option>
-                <option id="base-option-35" value="35">35 Pentatrigesimal [0-9][A-Y]</option>
-                <option id="base-option-36" value="36">36 Hexatrigesimal [0-9][A-Z]</option>
+                <option id="base-option-default" value="10" data-i18n="textContent"></option>
+                <option id="base-option-2" value="2" data-i18n="textContent"></option>
+                <option id="base-option-3" value="3" data-i18n="textContent"></option>
+                <option id="base-option-4" value="4" data-i18n="textContent"></option>
+                <option id="base-option-5" value="5" data-i18n="textContent"></option>
+                <option id="base-option-6" value="6" data-i18n="textContent"></option>
+                <option id="base-option-7" value="7" data-i18n="textContent"></option>
+                <option id="base-option-8" value="8" data-i18n="textContent"></option>
+                <option id="base-option-9" value="9" data-i18n="textContent"></option>
+                <option id="base-option-10" value="10" data-i18n="textContent"></option>
+                <option id="base-option-11" value="11" data-i18n="textContent"></option>
+                <option id="base-option-12" value="12" data-i18n="textContent"></option>
+                <option id="base-option-13" value="13" data-i18n="textContent"></option>
+                <option id="base-option-14" value="14" data-i18n="textContent"></option>
+                <option id="base-option-15" value="15" data-i18n="textContent"></option>
+                <option id="base-option-16" value="16" data-i18n="textContent"></option>
+                <option id="base-option-17" value="17" data-i18n="textContent"></option>
+                <option id="base-option-18" value="18" data-i18n="textContent"></option>
+                <option id="base-option-19" value="19" data-i18n="textContent"></option>
+                <option id="base-option-20" value="20" data-i18n="textContent"></option>
+                <option id="base-option-21" value="21" data-i18n="textContent"></option>
+                <option id="base-option-22" value="22" data-i18n="textContent"></option>
+                <option id="base-option-23" value="23" data-i18n="textContent"></option>
+                <option id="base-option-24" value="24" data-i18n="textContent"></option>
+                <option id="base-option-25" value="25" data-i18n="textContent"></option>
+                <option id="base-option-26" value="26" data-i18n="textContent"></option>
+                <option id="base-option-27" value="27" data-i18n="textContent"></option>
+                <option id="base-option-28" value="28" data-i18n="textContent"></option>
+                <option id="base-option-29" value="29" data-i18n="textContent"></option>
+                <option id="base-option-30" value="30" data-i18n="textContent"></option>
+                <option id="base-option-31" value="31" data-i18n="textContent"></option>
+                <option id="base-option-32" value="32" data-i18n="textContent"></option>
+                <option id="base-option-33" value="33" data-i18n="textContent"></option>
+                <option id="base-option-34" value="34" data-i18n="textContent"></option>
+                <option id="base-option-35" value="35" data-i18n="textContent"></option>
+                <option id="base-option-36" value="36" data-i18n="textContent"></option>
               </select>
               <div id="base-case" class="display-none">
                 <div class="radio">
                   <label>
                     <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
-                    <span id="base-case-lowercase-label"></span>
+                    <span id="base-case-lowercase-label" data-i18n="textContent"></span>
                   </label>
                 </div>
                 <div class="radio">
                   <label>
                     <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
-                    <span id="base-case-uppercase-label"></span>
+                    <span id="base-case-uppercase-label" data-i18n="textContent"></span>
                   </label>
                 </div>
               </div>
@@ -190,37 +189,39 @@
           </div>
         </div>
       </section>
-        <section id="next-prev-settings">
-          <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
-          <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
-          <h3 id="next-prev-settings-h3"></h3>
-          <hr/>
-          <p id="next-prev-settings-p"></p>
-          <div class="table">
-            <div class="row">
-              <div class="column">
-                <label id="default-links-label" for="default-links-select"></label>
-              </div>
-              <div class="column">
-                <select id="default-links-select">
-                  <option id="default-links-attributes-option" value="attributes"></option>
-                  <option id="default-links-innerHTML-option" value="innerHTML"></option>
-                </select>
-              </div>
+      <section id="next-prev-settings">
+        <img src="../img/options/font-awesome/chevron-circle-left.png" alt="" width="18" height="18"/>
+        <img src="../img/options/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
+        <h3 id="next-prev-settings-h3" data-i18n="textContent"></h3>
+        <hr/>
+        <p id="next-prev-settings-p" data-i18n="textContent"></p>
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="links-label" for="links-select" data-i18n="textContent"></label>
             </div>
-            <div class="row">
-              <div class="column">Domain</div>
-              <div class="column">
-                <div class="checkbox">
-                  <label>
-                    <input id="domain-input" type="checkbox" checked="checked"/>
-                    <span id="same-domain-policy-enable-label"></span>
-                  </label>
-                </div>
+            <div class="column">
+              <select id="links-select">
+                <option id="links-attributes-option" value="attributes" data-i18n="textContent"></option>
+                <option id="links-innerHTML-option" value="innerHTML" data-i18n="textContent"></option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="domain-label" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="same-domain-policy-enable-input" type="checkbox" checked="checked"/>
+                  <span id="same-domain-policy-enable-label" data-i18n="textContent"></span>
+                </label>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
   </body>
