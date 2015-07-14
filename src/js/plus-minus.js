@@ -70,7 +70,7 @@ URLNP.PlusMinus = URLNP.PlusMinus || function () {
     var urlmod,
         selectionmod,
         selectionint = parseInt(selection, base); // parseInt base range is 2-36
-    // Plus or minus the selection -- if minus is negative, set to 0 (low bound)
+    // Plus or minus the selection; if minus is negative, set to 0 (low bound)
     selectionmod = operation === "plus"  ? (selectionint + interval).toString(base) :
                    operation === "minus" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                                          "";

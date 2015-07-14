@@ -8,35 +8,35 @@
   <body>
     <div id="popup">
       <div id="controls" class="display-block fade-in">
-        <input id="minus-input" type="image" src="../img/popup/prev.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="clear-input" type="image" src="../img/popup/clear.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="plus-input" type="image" src="../img/popup/next.png" alt="" width="16" height="16" class="disabled"/>
-        <input id="setup-input" type="image" src="../img/popup/plus-minus-mode.png" alt="" width="16" height="16"/>
+        <input id="plus-input" type="image" src="../img/popup/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
+        <input id="minus-input" type="image" src="../img/popup/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
+        <input id="clear-input" type="image" src="../img/popup/clear.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
+        <input id="setup-input" type="image" src="../img/popup/plus-minus-mode.png" alt="" width="16" height="16" data-i18n="title"/>
       </div>
       <div id="setup" class="display-none">
-        <h3 id="setup-h3"></h3>
+        <h3 id="setup-h3" data-i18n="textContent"></h3>
         <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
         <div id="url">
-          <label id="url-label" for="url-textarea"></label>
+          <label id="url-label" for="url-textarea" data-i18n="textContent"></label>
           <textarea id="url-textarea" readonly="readonly"></textarea>
         </div>
         <div class="row">
           <div id="selection" class="column">
-            <label id="selection-label" for="selection-input"></label>
+            <label id="selection-label" for="selection-input" data-i18n="textContent"></label>
             <input id="selection-input" type="text" readonly="readonly"/>
             <div class="checkbox">
               <label>
                 <input id="leading-zeros-input" type="checkbox"/>
-                <span id="leading-zeros-label"></span>
+                <span id="leading-zeros-pad-label" data-i18n="textContent"></span>
               </label>
             </div>
           </div>
           <div id="interval" class="column">
-            <label id="interval-label" for="interval-input"></label>
+            <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
             <input id="interval-input" type="number" min="1"/>
           </div>
           <div id="base" class="column">
-            <label id="base-label" for="base-select"></label>
+            <label id="base-label" for="base-select" data-i18n="textContent"></label>
             <select id="base-select">
               <option id="base-option-default" value="10" data-i18n="textContent"></option>
               <option id="base-option-2" value="2" data-i18n="textContent"></option>
@@ -79,21 +79,21 @@
               <div class="radio">
                 <label>
                   <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
-                  <span id="base-case-lowercase-label"></span>
+                  <span id="base-case-lowercase-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
                   <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
-                  <span id="base-case-uppercase-label"></span>
+                  <span id="base-case-uppercase-label" data-i18n="textContent"></span>
                 </label>
               </div>
             </div>
           </div>
         </div>
         <div class="setup-buttons">
-          <input id="accept-input" type="button"/>
-          <input id="cancel-input" type="button"/>
+          <button id="accept-button" data-i18n="textContent"></button>
+          <button id="cancel-button" data-i18n="textContent"></button>
         </div>
       </div>
     </div>

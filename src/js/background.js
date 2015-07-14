@@ -154,8 +154,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
         "defaultBaseCase": "lowercase"
       });
     });
-  }
-  if (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) === 0) {
+  } else if (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) === 0) {
     chrome.storage.sync.set({
       "defaultSameDomainPolicy": true,
       "defaultSelectionPriority": "prefixes",
@@ -171,10 +170,10 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 // Listen for commands (keyboard shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  if (command === "next" || command === "prev" || command === "clear") {
+  if (command === "plus" || command === "minus" || command === "next" || command === "prev" || command === "clear") {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       var instance = URLNP.Background.getInstance(tabs[0].id);
-      if (command === "next" || command === "prev") {
+      if (command === "plus" || command === "minus" || command === "next" || command === "prev") {
         if (instance && instance.enabled) {
           URLNP.Background.updateTab(instance, command, "command");
         } else {

@@ -40,11 +40,11 @@
     "message": "Pad With Leading Zeros",
     "description": "Leading Zeros input checkbox label."
   },
-  "accept_input": {
+  "accept_button": {
     "message": "Accept",
     "description": "Setup accept button."
   },
-  "cancel_input": {
+  "cancel_button": {
     "message": "Cancel",
     "description": "Setup cancel button."
   },
@@ -144,7 +144,7 @@
   "selection_custom_url_label": { "message": "Test URL (Required)" },
   "selection_custom_pattern_label": { "message": "Pattern" },
   "selection_custom_flags_label": { "message": "Flags" },
-  "selection_custom_group_label": { "message": "Capturing Group # (Usually 0)" },
+  "selection_custom_group_label": { "message": "Capturing Group (Usually 0)" },
   "selection_custom_index_label": { "message": "Index Position (Usually 0)" },
   "selection_custom_test_button": { "message": "Test" },
   "selection_custom_save_button": { "message": "Save" },

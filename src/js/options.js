@@ -67,6 +67,7 @@ URLNP.Options = URLNP.Options || function () {
       DOM["#base-case-lowercase-input"].checked = items.defaultBaseCase === "lowercase";
       DOM["#base-case-uppercase-input"].checked = items.defaultBaseCase === "uppercase";
     });
+    DOM["#optional-permissions-request-button"].addEventListener("click", function () { chrome.permissions.request({ permissions: ["tabs"], origins: ["<all_urls>"]}, function(granted) { if (granted) { console.log("got ya!"); DOM["#keyboard-shortcuts"].className ="display-none"; } else { console.log("nopers!");}}); });
   }
 
   /**

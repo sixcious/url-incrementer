@@ -7,17 +7,17 @@
 var URLNP = URLNP || {};
 URLNP.NextPrev = URLNP.NextPrev || function () {
 
-  // /**
-  // * TODO
-  // */ 
-  // function getLinksViaExecuteScript(tabId, callback) {
-  //   chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-  //     var code = "URLNP.NextPrev.getLinks(document);";
-  //     chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
-  //       callback(results[0]);
-  //     });
-  //   });
-  // }
+  /**
+  * TODO
+  */ 
+  function getLinksViaExecuteScript(tabId, callback) {
+    chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+      var code = "URLNP.NextPrev.getLinks(document);";
+      chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
+        callback(results[0]);
+      });
+    });
+  }
 
   // /**
   // * TODO
