@@ -78,11 +78,11 @@
   },
   "options": { "message": "-- OPTIONS --" },
   "keyboard_shortcuts_h3": {
-    "message": "Keyboard Shortcuts",
+    "message": "Chrome Keyboard Shortcuts",
     "description": "Keyboard Shortcuts Heading 3."
   },
   "keyboard_shortcuts_p": {
-    "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Next [>] or Plus [+] instantly without having to enter Setup.",
+    "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter Setup.",
     "description": "Keyboard Shortcuts paragraph."
   },
   "keyboard_shortcuts_quick_enable_label": {
@@ -98,7 +98,7 @@
     "description": "Basic Settings Heading 3."
   },
   "basic_settings_p": { 
-    "message": "Customize Basic Settings. If you set the mode to Next/Prev, URL Plus will try using the next/prev links on the page and then fall back to Plus/Minus mode.",
+    "message": "Customize Basic Settings...like, um... enabling/disabling animations! :)",
     "description": "Basic Settings paragraph."
   },
   "animations_enable_label": {

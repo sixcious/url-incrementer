@@ -87,7 +87,7 @@ URLNP.Background = URLNP.Background || function () {
         // (if called via popup), we'll have to do some XHR work and hope the
         // current URL complies with the same-origin policy in our Ajax request.
         // if (caller === "command") {
-        chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+        chrome.tabs.executeScript(instance.tabId/*tabId*/, {file: "js/next-prev.js", runAt: "document_end"}, function() {
           var code = "URLNP.NextPrev.getLinks(document);";
           chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
             callback(results[0]);
@@ -142,6 +142,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
   if (details.reason === "install" || (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) !== 0)) {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
+        "shortcuts": "chrome",
         "quickEnabled": true,
         "animationsEnabled": true,
         "defaultMode": "next-prev",
@@ -156,6 +157,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     });
   } else if (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) === 0) {
     chrome.storage.sync.set({
+      "shortcuts": "chrome",
       "defaultSameDomainPolicy": true,
       "defaultSelectionPriority": "prefixes",
       "padLeadingZerosByDetection": true,
@@ -179,17 +181,17 @@ chrome.commands.onCommand.addListener(function(command) {
         } else {
           chrome.storage.sync.get(null, function(items) {
             if (items.quickEnabled) { // Quick Mode:
-              URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
-                instance = URLNP.Background.buildInstance(instance, tabs[0], items, links);
+              //URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
+                instance = URLNP.Background.buildInstance(instance, tabs[0], items/*, links*/);
                 URLNP.Background.updateTab(instance, command, "quick-command", function(result) {
                   instance = result;
                   // Quick: If the URL didn't change, fallback to other mode
                   if (instance.url === tabs[0].url) {
                     instance.mode = instance.mode === "next-prev" ? "plus-minus" : "next-prev";
-                    URLNP.Backgroung.updateTab(instance, command, "quick-command");
+                    URLNP.Background.updateTab(instance, command, "quick-command");
                   }
                 });
-              });
+            //  });
             }
           });
         }
@@ -198,4 +200,28 @@ chrome.commands.onCommand.addListener(function(command) {
       }
     });
   }
+});
+
+// Listen for requests from chrome.runtime.sendMessage (shortcuts.js)
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  var instance;
+  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.tab.id);
+  switch (request.greeting) {
+    case "getInstance":
+      sendResponse({instance: URLNP.Background.getInstance(sender.tab.id)});
+      break;
+    case "setInstance":
+      URLNP.Background.setInstance(undefined);
+      break;
+    case "updateTab":
+      instance = URLNP.Background.getInstance(sender.tab.id);
+      // if (!instance) {
+      //   instance = URLNP.Background.buildInstance(undefined, )
+      // }
+      URLNP.Background.updateTab(URLNP.Background.getInstance(sender.tab.id), request.direction, "content_script");
+      break;
+    default:
+      break;
+  }
+  sendResponse({});
 });

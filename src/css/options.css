@@ -31,6 +31,11 @@ img {
   vertical-align: text-bottom;
 }
 
+input[type="image"] {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 #selection-custom {
   margin: 10px 0;
 }
@@ -46,4 +51,8 @@ img {
 
 #selection-custom-flags-input {
   width: 52px;
+}
+
+.key-input {
+  width: 180px;
 }

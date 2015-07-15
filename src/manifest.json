@@ -10,5 +10,5 @@
   "options_ui": { "page": "html/options.html", "chrome_style": true },
   "commands": { "next": { "description": "Next [>]" }, "plus": { "description": "Plus [+]" }, "prev": { "description": "Prev [<]" }, "minus": { "description": "Minus [-]" }, "clear": { "description": "Clear [x]" } },
   "permissions": ["activeTab", "storage"],
-  "optional_permissions": ["tabs", "<all_urls>"]
+  "optional_permissions": ["declarativeContent", "<all_urls>"]
 }

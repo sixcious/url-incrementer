@@ -149,6 +149,6 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
     getURL: getURL,
     getLinks: getLinks//,
     // getLinksViaXHR: getLinksViaXHR,
-    // getLinksViaExecuteScript: getLinksViaExecuteScript
+    //getLinksViaExecuteScript: getLinksViaExecuteScript
   };
 }();

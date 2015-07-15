@@ -23,11 +23,122 @@
           <button id="keyboard-shortcuts-button" data-i18n="textContent"></button>
         </p>
         <p id="keyboard-shortcuts-p2">
-          Currently, Chrome shortcuts are limiting in functionality. If you'd like to enable advanced shortcuts, click the button below. This requires granting URL Plus with additional permissions in order to use its own shortcuts script.</p>
+          Chrome keyboard shortcuts currently have limited key support.
+          If you'd like to enable more advanced keyboard (and mouse button) shortcuts, click the button below. You'll be asked to grant URL Plus with additional permissions needed in order to use its internal shortcuts script instead.</p>
         <p>
-          <button id="optional-permissions-request-button">Enable Advanced Keyboard/Mouse Shortcuts</button>
+          <button id="optional-permissions-request-button">Grant Permissions and Enable Internal Shortcuts</button>
         </p>
 
+      </section>
+      <section id="internal-shortcuts">
+        <img src="../img/options/font-awesome/location-arrow.png" alt="" width="16" height="16"/>
+        <img src="../img/options/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
+<!--        -->
+        <h3 id="keyboard-shortcuts-h3a">Internal Keyboard/Mouse Shortcuts</h3>
+        <hr/>
+        <p id="keyboard-shortcuts-pa">You're using URL Plus's internal shortcuts. Click on the text boxes and press the key(s) you'd like to set. Any combination of the Alt, Ctrl, Shift, and Meta modifier keys can be used.
+        If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter setup.</p>
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              
+            </div>
+            <div class="column">
+              Key
+            </div>
+            <div class="column">
+              Mouse Button
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="key-plus-label" for="key-plus-input">Plus [+]</label>
+            </div>
+            <div class="column">
+              <input id="key-plus-input" type="text" class="key-input" readonly/>
+              <input id="key-plus-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+            </div>
+                        <div class="column">
+              <select>
+                <option>(Not set)</option>
+                <option>Left</option>
+                <option>Middle</option>
+                <option>Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="key-minus-label" for="key-minus-input">Minus [-]</label>
+            </div>
+            <div class="column">
+              <input id="key-minus-input" type="text" class="key-input" readonly/>
+              <input id="key-minus-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+            </div>
+                        <div class="column">
+              <select>
+                <option>(Not set)</option>
+                <option>Left</option>
+                <option>Middle</option>
+                <option>Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="key-next-label" for="key-next-input">Next [>]</label>
+            </div>
+            <div class="column">
+              <input id="key-next-input" type="text" class="key-input" readonly/>
+              <input id="key-next-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+            </div>
+            <div class="column">
+              <select>
+                <option>(Not set)</option>
+                <option>Left</option>
+                <option>Middle</option>
+                <option>Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="key-prev-label" for="key-prev-input">Prev [<]</label>
+            </div>
+            <div class="column">
+              <input id="key-prev-input" type="text" class="key-input" readonly/>
+              <input id="key-prev-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+            </div>
+                        <div class="column">
+              <select>
+                <option>(Not set)</option>
+                <option>Left</option>
+                <option>Middle</option>
+                <option>Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="key-clear-label" for="key-clear-input">Clear [x]</label>
+            </div>
+            <div class="column">
+              <input id="key-clear-input" type="text" class="key-input" readonly/>
+              <input id="key-clear-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+            </div>
+                        <div class="column">
+              <select>
+                <option>(Not set)</option>
+                <option>Left</option>
+                <option>Middle</option>
+                <option>Right</option>
+              </select>
+            </div>
+          </div>
+        </div>
+                <p>
+          <button id="optional-permissions-remove-button">Remove Permissions and Disable Internal Shortcuts</button>
+        </p>
       </section>
       <section id="basic-settings">
         <img src="../img/options/font-awesome/check-square.png" alt="" width="18" height="18"/>
@@ -40,7 +151,7 @@
             <span id="animations-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
-        <div class="table">
+<!--        <div class="table">
           <div class="row">
             <div class="column">
               <label id="mode-label" data-i18n="textContent"></label>
@@ -60,7 +171,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
         </section>
         <section id="plus-minus-settings">
           <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
@@ -81,7 +192,7 @@
               </select>
               <div id="selection-custom" class="display-none">
                 <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
-                <textarea id="selection-custom-url-textarea" placeholder="http://www.google.com?id=1"></textarea>
+                <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=flandre&start=10"></textarea>
                 <div class="table">
                   <div class="row">
                     <div class="column">
@@ -227,6 +338,13 @@
             </div>
           </div>
         </div>
+      </section>
+      <section id="feedback">
+                <img src="../img/options/font-awesome/question-circle.png" alt="" width="18" height="18"/>
+                <h3>Feedback / About</h3>
+                <hr/>
+                <p>Found a bug, want a feature added in, or? </p>
+                        <img src="../img/options/urli.png" alt="" width="30" height="30"/>
       </section>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
