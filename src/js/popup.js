@@ -7,8 +7,7 @@
 var URLP = URLP || {};
 URLP.Popup = URLP.Popup || function () {
 
-  var tab = {}, // Tab cache (only used in clear to reset the instance URL)
-      instance = {}, // Tab instance cache
+  var instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       DOM = {}; // Map to cache DOM elements: key=id, value=element
 
@@ -36,24 +35,23 @@ URLP.Popup = URLP.Popup || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_'));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#plus-input"].addEventListener("click", clickPlus, false);
-    DOM["#minus-input"].addEventListener("click", clickMinus, false);
-    DOM["#clear-input"].addEventListener("click", clickClear, false);
-    DOM["#setup-input"].addEventListener("click", toggleView, false);
-    DOM["#accept-button"].addEventListener("click", setup, false);
-    DOM["#cancel-button"].addEventListener("click", toggleView, false);
-    DOM["#url-textarea"].addEventListener("mouseup", selectURL, false);
-    DOM["#url-textarea"].addEventListener("keyup", selectURL, false);
+    DOM["#plus-input"].addEventListener("click", clickPlus);
+    DOM["#minus-input"].addEventListener("click", clickMinus);
+    DOM["#clear-input"].addEventListener("click", clickClear);
+    DOM["#setup-input"].addEventListener("click", toggleView);
+    DOM["#accept-button"].addEventListener("click", setup);
+    DOM["#cancel-button"].addEventListener("click", toggleView);
+    DOM["#url-textarea"].addEventListener("mouseup", selectURL);
+    DOM["#url-textarea"].addEventListener("keyup", selectURL);
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      tab = tabs[0];
       chrome.storage.sync.get(null, function(items) {
         items_ = items;
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          instance = backgroundPage.URLP.Background.getInstance(tab.id);
+          instance = backgroundPage.URLP.Background.getInstance(tabs[0].id);
           if (!instance) {
-            instance = backgroundPage.URLP.Background.buildInstance(instance, tab, items_);
+            instance = backgroundPage.URLP.Background.buildInstance(instance, tabs[0], items_);
           }
           updateControls();
           DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
@@ -121,8 +119,13 @@ URLP.Popup = URLP.Popup || function () {
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLP.Background.setInstance(instance.tabId, undefined);
-        instance = backgroundPage.URLP.Background.buildInstance(instance, tab, items_);
       });
+      if (items_.shortcuts === "internal" && items_.keyEnabled && !items_.keyQuickEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
+      }
+      if (items_.shortcuts === "internal" && items_.mouseEnabled && !items_.mouseQuickEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+      }
     }
   }
 
@@ -211,6 +214,12 @@ URLP.Popup = URLP.Popup || function () {
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
         backgroundPage.URLP.Background.setInstance(instance.tabId, instance);
+        if (items_.shortcuts === "internal" && items_.keyEnabled && !items_.quickKeyEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
+        }
+        if (items_.shortcuts === "internal" && items_.mouseEnabled && !items_.quickMouseEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
+        }
         toggleView.call(DOM["#accept-button"]);
       });
     }
@@ -235,4 +244,4 @@ URLP.Popup = URLP.Popup || function () {
   };
 }();
 
-document.addEventListener("DOMContentLoaded", URLP.Popup.DOMContentLoaded, false);
+document.addEventListener("DOMContentLoaded", URLP.Popup.DOMContentLoaded);

@@ -60,3 +60,11 @@ input[type="image"] {
 input[type="image"]:focus {
   outline: none;
 }
+
+.enabled {
+  color: green;
+}
+
+.disabled {
+  color: red;
+}

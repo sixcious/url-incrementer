@@ -107,21 +107,21 @@ URLP.Options = URLP.Options || function () {
     DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-plus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPlus": key}); });
-    DOM["#key-minus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyMinus": key}); });
-    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}); });
-    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}); });
-    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}); });
-    DOM["#key-plus-clear-input"].addEventListener("click", function () { chrome.storage.sync.remove("keyPlus"); writeInput(DOM["#key-plus-input"], []); });
-    DOM["#key-minus-clear-input"].addEventListener("click", function () { chrome.storage.sync.remove("keyMinus"); writeInput(DOM["#key-minus-input"], []); });
-    DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.remove("keyNext"); writeInput(DOM["#key-next-input"], []); });
-    DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.remove("keyPrev"); writeInput(DOM["#key-prev-input"], []); });
-    DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.remove("keyClear"); writeInput(DOM["#key-clear-input"], []); });
-    DOM["#mouse-plus-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePlus": +this.value}); });
-    DOM["#mouse-minus-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseMinus": +this.value}); });
-    DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}); });
-    DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}); });
-    DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}); });
+    DOM["#key-plus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPlus": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-minus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyMinus": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-plus-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPlus": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-plus-input"], []); });
+    DOM["#key-minus-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyMinus": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-minus-input"], []); });
+    DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], []); });
+    DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPrev": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-prev-input"], []); });
+    DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], []); });
+    DOM["#mouse-plus-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePlus": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-minus-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseMinus": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#optional-permissions-request-button"].addEventListener("click", requestPermissions);
     DOM["#optional-permissions-remove-button"].addEventListener("click", removePermissions);
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
@@ -129,6 +129,7 @@ URLP.Options = URLP.Options || function () {
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
     DOM["#interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"interval": +this.value > 0 ? +this.value : 1}); });
+    DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
@@ -141,6 +142,8 @@ URLP.Options = URLP.Options || function () {
       DOM["#internal-shortcuts"].className = items.shortcuts === "internal" ? "display-block" : "display-none";
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
+      DOM["#key-label"].className = items.keyEnabled ? "enabled" : "disabled";
+      DOM["#mouse-label"].className = items.mouseEnabled ? "enabled" : "disabled";
       writeInput(DOM["#key-plus-input"], items.keyPlus);
       writeInput(DOM["#key-minus-input"], items.keyMinus);
       writeInput(DOM["#key-next-input"], items.keyNext);
@@ -154,14 +157,13 @@ URLP.Options = URLP.Options || function () {
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
       DOM["#selection-select"].value = items.selectionPriority;
       DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block fade-in" : "display-none";
-      if (items.selectionCustom) {
-        DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
-        DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
-        DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
-        DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
-        DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
-      }
+      DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
+      DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
+      DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
+      DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
+      DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
       DOM["#interval-input"].value = items.interval;
+      DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
       DOM["#base-select"].value = items.base;
       DOM["#base-case"].className = items.base > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
@@ -172,7 +174,9 @@ URLP.Options = URLP.Options || function () {
   }
 
   /**
-   * TODO
+   * Requests permissions in order to enable and bring up internal shortcuts.
+   * 
+   * @private
    */
   function requestPermissions() {
     chrome.permissions.request({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(granted) {
@@ -186,14 +190,15 @@ URLP.Options = URLP.Options || function () {
             actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
           }]);
         });
-      }/* else { 
-        console.log("nopers!");
-      }*/
+      }
     });
   }
 
   /**
-   * TODO
+   * Removes permissions that were previously granted and brings back Chrome
+   * shortcuts.
+   * 
+   * @private
    */
   function removePermissions() {
     if (chrome.declarativeContent) {
@@ -204,18 +209,15 @@ URLP.Options = URLP.Options || function () {
         chrome.storage.sync.set({"shortcuts": "chrome"});
         DOM["#internal-shortcuts"].className = "display-none";
         DOM["#keyboard-shortcuts"].className = "display-block fade-in";
-      }/* else {
-        console.log("not removed...???");
-      }*/
+      }
     });
   }
 
   /**
    * Validates the custom selection regular expression fields and then performs
-   * the desired action (test or save).
+   * the desired action.
    * 
    * @param action the action to perform (test or save)
-   * 
    * @private
    */
   function customSelection(action) {
@@ -298,12 +300,38 @@ URLP.Options = URLP.Options || function () {
     // Write the input value based on the key event modifier bits and key code
     // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
     input.value =
-      !key || !key[1]                 ? "(Not set)" :
+      !key || key.length === 0        ? chrome.i18n.getMessage("key_notset_option") :
       ((key[0] & FLAG_KEY_ALT)        ? "Alt+"   : "") +
       ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl+"  : "") +
       ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift+" : "") +
       ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta+"  : "") +
       (keyCodeString ? keyCodeString : String.fromCharCode(key[1]));
+  }
+
+  /**
+   * TODO
+   * @private
+   */
+  function setKeyEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      var enabled = items.keyPlus.length !== 0 || items.keyMinus.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
+      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
+        DOM["#key-label"].className = enabled ? "enabled" : "disabled";
+      });
+    });
+  }
+
+  /**
+   * TODO
+   * @private
+   */
+  function setMouseEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      var enabled = items.mousePlus !== 0 || items.mouseMinus !== 0 || items.mouseNext !== 0 || items.mousePrev !== 0 || items.mouseClear !== 0;
+      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
+        DOM["#mouse-label"].className = enabled ? "enabled" : "disabled";
+      });
+    });
   }
 
   // Return Public Functions

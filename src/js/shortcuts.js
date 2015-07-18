@@ -69,7 +69,7 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
    * @private
    */
   function keyPressed(event, key) {
-    return (key &&
+    return (key && key.length !== 0 &&
       !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
       !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
       !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
@@ -88,7 +88,7 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    return (mouse &&
+    return (mouse && mouse !== 0 &&
       (event.which === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
       (event.which === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||
       (event.which === FLAG_MOUSE_RIGHT  && mouse === FLAG_MOUSE_RIGHT)
@@ -103,18 +103,16 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
   };
 }();
 
-// Cache shortcut keys from storage and check if keys or instance are enabled
+// Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     console.log("got a response:" + response.instance);
-    var keyEnabled = items.keyPlus || items.keyMinus || items.keyNext || items.keyPrev || items.keyClear,
-        mouseEnabled = items.mousePlus || items.mouseMinus || items.mouseNext || items.mousePrev || items.mouseClear;
     URLP.Shortcuts.setItems(items);
-    if (items.keyQuickEnabled || (keyEnabled && response && response.instance && response.instance.enabled)) {
+    if (items.keyQuickEnabled || (items.keyEnabled && response.instance && response.instance.enabled)) {
       console.log("adding keylistener");
       document.addEventListener("keyup", URLP.Shortcuts.keyListener);
     }
-    if (items.mouseQuickEnabled || (mouseEnabled && response && response.instance && response.instance.enabled)) {
+    if (items.mouseQuickEnabled || (items.mouseEnabled && response.instance && response.instance.enabled)) {
       console.log("adding mouse listener");
       document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
     }

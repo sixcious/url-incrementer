@@ -12,17 +12,17 @@ URLP.NextPrev = URLP.NextPrev || function () {
         prev: { "prev": "prev", "back": "back", "old": "old", "<": "lt" }
       };
 
-  /**
-  * TODO
-  */ 
-  function getLinksViaExecuteScript(tabId, callback) {
-    chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-      var code = "URLP.NextPrev.getLinks(document);";
-      chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
-        callback(results[0]);
-      });
-    });
-  }
+  // /**
+  // * TODO
+  // */ 
+  // function getLinksViaExecuteScript(tabId, callback) {
+  //   chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+  //     var code = "URLP.NextPrev.getLinks(document);";
+  //     chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
+  //       callback(results[0]);
+  //     });
+  //   });
+  // }
 
   // /**
   // * TODO
@@ -155,8 +155,6 @@ URLP.NextPrev = URLP.NextPrev || function () {
   // Return Public Functions
   return {
     getURL: getURL,
-    getLinks: getLinks//,
-    // getLinksViaXHR: getLinksViaXHR,
-    //getLinksViaExecuteScript: getLinksViaExecuteScript
+    getLinks: getLinks
   };
 }();

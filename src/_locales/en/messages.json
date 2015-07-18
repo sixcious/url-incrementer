@@ -13,80 +13,32 @@
   },
 
   "POPUP": { "message": "----- POPUP -----" },
-  "plus_input": {
-    "message": "Plus [+]",
-    "description": "Plus input button title (tool tip) shown when hovered."
-  },
-  "minus_input": {
-    "message": "Minus [-]",
-    "description": "Minus input button title (tool tip) shown when hovered."
-  },
-  "clear_input": {
-    "message": "Clear [x]",
-    "description": "Clear input button title (tool tip) when hovered."
-  },
-  "setup_input": {
-    "message": "Plus Minus URL Setup",
-    "description": "Plus Minus input button title (tool tip) when hovered."
-  },
-  "setup_h3": {
-    "message": "Select the part of the URL to plus [+] or minus [-]",
-    "description": "Plus Minus Setup Heading 3."
-  },
-  "url_label": {
-    "message": "URL",
-    "description": "URL textarea label."
-  },
-  "leading_zeros_pad_label": {
-    "message": "Pad With Leading Zeros",
-    "description": "Leading Zeros input checkbox label."
-  },
-  "accept_button": {
-    "message": "Accept",
-    "description": "Setup accept button."
-  },
-  "cancel_button": {
-    "message": "Cancel",
-    "description": "Setup cancel button."
-  },
-  "oops_error": {
-    "message": "Oops...",
-    "description": "Beginning line of popup error message."
-  },  
-  "selection_blank_error": {
-    "message": "Selection can't be blank",
-    "description": "Plus Minus Setup error message if the selection is blank."
-  },
-  "selection_notalphanumeric_error": {
-    "message": "Selection can only contain alphanumeric characters",
-    "description": "Plus Minus Setup error message if the selection is not alphanumeric."
-  },
-  "selection_notinurl_error": {
-    "message": "Selection has to be part of the URL",
-    "description": "Plus Minus Setup error message if the selection is not part of the URL."
-  },
-  "selection_base_error": {
-    "message": "Select a higher base to match characters in selection",
-    "description": "Plus Minus Setup error message if the selection doesn't match the base."
-  },
-  "selectionstart_invalid_error": {
-    "message": "Selection position must be from URL",
-    "description": "Plus Minus Setup error message if the selectionStart is invalid."
-  },
-  "interval_invalid_error": {
-    "message": "Interval has to be 1 or higher",
-    "description": "Plus Minus Setup error message if the interval is 0 or negative."
-  },
+  "plus_input": { "message": "Plus [+]" },
+  "minus_input": { "message": "Minus [-]" },
+  "clear_input": { "message": "Clear [x]" },
+  "setup_input": { "message": "Plus Minus URL Setup" },
+  "setup_h3": { "message": "Select the part of the URL to plus [+] or minus [-]" },
+  "url_label": { "message": "URL" },
+  "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
+  "accept_button": { "message": "Accept" },
+  "cancel_button": { "message": "Cancel" },
+  "oops_error": { "message": "Oops..." },  
+  "selection_blank_error": { "message": "Selection can't be blank" },
+  "selection_notalphanumeric_error": { "message": "Selection can only contain alphanumeric characters" },
+  "selection_notinurl_error": { "message": "Selection has to be part of the URL" },
+  "selection_base_error": { "message": "Select a higher base to match characters in selection" },
+  "selectionstart_invalid_error": { "message": "Selection position must be from URL" },
+  "interval_invalid_error": { "message": "Interval has to be 1 or higher" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
   "keyboard_shortcuts_h3": { "message": "Chrome Keyboard Shortcuts" },
-  "keyboard_shortcuts_p": { "message": "Keyboard Shortcuts are configured via Chrome. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter Setup."},
+  "keyboard_shortcuts_p": { "message": "Keyboard Shortcuts are currently set to be configured via Chrome. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter Setup."},
   "keyboard_shortcuts_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
   "keyboard_shortcuts_button": { "message": "Configure Chrome Keyboard Shortcuts" },
-  "keyboard_shortcuts_p2": { "message": "Note: Chrome keyboard shortcuts have limited key support. You can enable more complete internal keyboard (and mouse button) shortcuts. You'll be prompted to grant URL Plus with additional permissions first in order to use its internal shortcuts script instead." },
+  "keyboard_shortcuts_p2": { "message": "Note: Chrome keyboard shortcuts have limited key support. To enable more complete internal keyboard (and mouse button) shortcuts, click the button below. You'll be prompted to grant URL Plus with additional permissions it needs in order to use its internal shortcuts script instead." },
   "optional_permissions_request_button": { "message": "Grant Permissions and Enable Internal Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Keyboard/Mouse Shortcuts" },
-  "internal_shortcuts_p": { "message": "Shortcuts are configured via URL Plus internally. Click on the text boxes and press the key(s) you'd like to set. Any combination of the Alt, Ctrl, Shift, and Meta modifier keys can be used. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter setup." },
+  "internal_shortcuts_p": { "message": "Sweet! Shortcuts are now set to be configured via URL Plus internally. Click on the text boxes and press the key(s) you'd like to set. Any combination of the Alt, Ctrl, Shift, and Meta modifier keys can be used. Left/Middle/Right Mouse Buttons can also be set as shortcuts. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter setup." },
   "key_quick_enable_label": {"message": "Enable Quick Keyboard Shortcuts" },
   "mouse_quick_enable_label": {"message": "Enable Quick Mouse Button Shortcuts" },
   "key_label": { "message": "Key" },
@@ -96,6 +48,7 @@
   "key_next_label": { "message": "Next [>]" },
   "key_prev_label": { "message": "Prev [<]" },
   "key_clear_label": { "message": "Clear [x]" },
+  "key_notset_option": { "message": "(Not set)" },
   "mouse_notset_option": { "message": "(Not set)" },
   "mouse_left_option": { "message": "Left" },
   "mouse_middle_option": { "message": "Middle" },
