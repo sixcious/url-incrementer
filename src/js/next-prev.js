@@ -106,11 +106,14 @@ URLP.NextPrev = URLP.NextPrev || function () {
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
+        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
+        // TODO: Separate by attribute.nodeName.toLowerCase()
         if (!links[attribute.nodeName.toLowerCase()]) {
           links[attribute.nodeName.toLowerCase()] = {};
         }
-        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
-        // TODO: Separate by attribute.nodeName.toLowerCase()
+        for (i = 0; i < LINKS_MAP.length; i++) {
+          // TODO
+        }
       }
     }
   }
