@@ -1,6 +1,6 @@
 /* Options CSS is minimal because Options is set to use Chrome style */
 
-@import url("ui/ui.css");
+@import url("ui/fade.css");
 
 h3 {
   display: inline;
@@ -41,7 +41,7 @@ input[type="image"] {
 }
 
 #selection-custom-url-textarea {
-  width: 290px;
+  width: 320px;
 }
 
 #selection-custom-pattern-input {
@@ -55,4 +55,8 @@ input[type="image"] {
 
 .key-input {
   width: 180px;
+}
+
+input[type="image"]:focus {
+  outline: none;
 }

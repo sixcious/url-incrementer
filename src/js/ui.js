@@ -1,11 +1,11 @@
 /**
- * URL Next Plus UI (User Interface)
+ * URL Plus UI (User Interface)
  * 
  * @author Roy Six
  * @namespace
  */
-var URLNP = URLNP || {};
-URLNP.UI = URLNP.UI || function () {
+var URLP = URLP || {};
+URLP.UI = URLP.UI || function () {
 
   /**
    * Generates an alert to display messages.

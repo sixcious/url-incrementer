@@ -3,7 +3,7 @@
 @import url("chromium/chrome_shared.css");
 @import url("ui/generate-alert.css");
 @import url("ui/hover.css");
-@import url("ui/ui.css");
+@import url("ui/fade.css");
 
 html {
   height: auto; /* Needed to override chromium/chrome-shared.css */

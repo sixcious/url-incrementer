@@ -1,11 +1,11 @@
 /**
- * URL Next Plus Background
+ * URL Plus Background
  * 
  * @author Roy Six
  * @namespace
  */
-var URLNP = URLNP || {};
-URLNP.Background = URLNP.Background || function () {
+var URLP = URLP || {};
+URLP.Background = URLP.Background || function () {
 
   var instances = []; // Tab instances (TODO: Use storage to make bg event page)
 
@@ -47,17 +47,16 @@ URLNP.Background = URLNP.Background || function () {
       if (!instance) {
         instance = {};
         instance.enabled = false;
-        instance.mode = items.defaultMode ? items.defaultMode : "next-prev";
-        instance.linksPriority = items.defaultLinksPriority ? items.defaultLinksPriority : "attributes";
-        instance.interval = items.defaultInterval ? items.defaultInterval : 1;
-        instance.base = items.defaultBase ? items.defaultBase : 10;
-        instance.baseCase = items.defaultBaseCase ? items.defaultBaseCase : "lowercase";
+        instance.linksPriority = items.linksPriority ? items.linksPriority : "attributes";
+        instance.interval = items.interval ? items.interval : 1;
+        instance.base = items.base ? items.base : 10;
+        instance.baseCase = items.baseCase ? items.baseCase : "lowercase";
       }
-      selectionProps = URLNP.PlusMinus.findSelection(tab.url, items.defaultSelectionPriority, items.defaultSelectionCustom);
+      selectionProps = URLP.PlusMinus.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
       instance.tabId = tab.id;
       instance.url = tab.url;
-      instance.nexturl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "next", links) : undefined;
-      instance.prevurl = links ? URLNP.NextPrev.getURL(instance.linksPriority, "prev", links) : undefined;
+      instance.nexturl = links ? URLP.NextPrev.getURL(instance.linksPriority, "next", links) : undefined;
+      instance.prevurl = links ? URLP.NextPrev.getURL(instance.linksPriority, "prev", links) : undefined;
       instance.links = links;
       instance.selection = selectionProps.selection;
       instance.selectionStart = selectionProps.selectionStart;
@@ -79,8 +78,24 @@ URLNP.Background = URLNP.Background || function () {
     var url,
         // req,
         urlProps;
-    switch (instance.mode) {
-      case "next-prev":
+    switch (action) {
+      case "plus": case "minus":
+        // Note on plus-minus:
+        // This is a lot more straight-forward; chrome.tabs.update will work
+        // regardless of permissions and all logic is done in background
+        urlProps = URLP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
+        url = urlProps.urlmod;
+        chrome.tabs.update(instance.tabId, {url: url});
+        instance.url = urlProps.urlmod;
+        instance.selection = urlProps.selectionmod;
+        if (/*caller !== "quick-command"*/ instance.enabled) {
+          setInstance(instance.tabId, instance);
+        }
+        if (callback) {
+          callback(instance);
+        }
+        break;
+      case "next": case "prev":
         // Note on next-prev:
         // Due to the way activeTab permissions work, we can only call
         // chrome.tabs.executeScript on commands (and quick commands). Otherwise
@@ -88,39 +103,16 @@ URLNP.Background = URLNP.Background || function () {
         // current URL complies with the same-origin policy in our Ajax request.
         // if (caller === "command") {
         chrome.tabs.executeScript(instance.tabId/*tabId*/, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-          var code = "URLNP.NextPrev.getLinks(document);";
-          chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
-            callback(results[0]);
+          var code = "URLP.NextPrev.getLinks(document);";
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
+            // callback(results[0]);
+            url = URLP.NextPrev.getURL(instance.linksPriority, action, results[0]);
+            chrome.tabs.update(instance.tabId, {url: url});
+            if (callback) {
+              callback(instance);
+            }
           });
         });
-        URLNP.NextPrev.getLinksViaExecuteScript(instance.tabId, function(links) {
-          //instance.links = links;
-          // instance.nexturl = URLNP.NextPrev.getURL(instance.linksPriority, "next", links);
-          // instance.prevurl = URLNP.NextPrev.getURL(instance.linksPriority, "prev", links);
-          // instance.url = action === "next" && instance.nexturl ? instance.nexturl : direction === "prev" && instance.prevurl ? instance.prevurl : instance.url;
-          // setInstance(instance.tabId, instance);
-          url = URLNP.NextPrev.getURL(instance.linksPriority, action, links);
-          chrome.tabs.update(instance.tabId, {url: url});
-          if (callback) {
-            callback(instance);
-          }
-        });
-        break;
-      case "plus-minus":
-        // Note on plus-minus:
-        // This is a lot more straight-forward; chrome.tabs.update will work
-        // regardless of permissions and all logic is done in background
-        urlProps = URLNP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
-        url = urlProps.urlmod;
-        chrome.tabs.update(instance.tabId, {url: url});
-        instance.url = urlProps.urlmod;
-        instance.selection = urlProps.selectionmod;
-        if (caller !== "quick-command") {
-          setInstance(instance.tabId, instance);
-        }
-        if (callback) {
-          callback(instance);
-        }
         break;
       default:
         break;
@@ -138,33 +130,20 @@ URLNP.Background = URLNP.Background || function () {
 }();
 
 // Listen for installation changes and do storage/extension initialization work
-chrome.runtime.onInstalled.addListener(function(details) {
-  if (details.reason === "install" || (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) !== 0)) {
+chrome.runtime.onInstalled.addListener(function(details) { // TODO "Remove update"
+  if (details.reason === "install" || details.reason === "update") {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
         "shortcuts": "chrome",
         "quickEnabled": true,
         "animationsEnabled": true,
-        "defaultMode": "next-prev",
-        "defaultLinksPriority": "attributes",
-        "defaultSameDomainPolicy": true,
-        "defaultSelectionPriority": "prefixes",
-        "defaultInterval": 1,
-        "padLeadingZerosByDetection": true,
-        "defaultBase": 10,
-        "defaultBaseCase": "lowercase"
+        "selectionPriority": "prefixes", "interval": 1, "padLeadingZerosByDetection": true, "base": 10, "baseCase": "lowercase",
+        "linksPriority": "attributes", "sameDomainPolicy": true,
+        "keyQuickEnabled": true, "keyPlus": [7, 38], "keyMinus": [7, 40], "keyNext": [7, 39], "keyPrev": [7, 37], "keyClear": [],
+        "mouseQuickEnabled": false, "mousePlus": 0, "mouseMinus": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0
       });
     });
-  } else if (details.reason === "update" && details.previousVersion.lastIndexOf("3", 0) === 0) {
-    chrome.storage.sync.set({
-      "shortcuts": "chrome",
-      "defaultSameDomainPolicy": true,
-      "defaultSelectionPriority": "prefixes",
-      "padLeadingZerosByDetection": true,
-      "defaultBase": 10,
-      "defaultBaseCase": "lowercase"
-    });
-  } 
+  }
   if (details.reason === "install") {
     chrome.runtime.openOptionsPage();
   }
@@ -172,34 +151,31 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 // Listen for commands (keyboard shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  if (command === "plus" || command === "minus" || command === "next" || command === "prev" || command === "clear") {
+  chrome.storage.sync.get(null, function(items) {
+    if (items.shortcuts !== "internal" && (command === "plus" || command === "minus" || command === "next" || command === "prev" || command === "clear")) {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      var instance = URLNP.Background.getInstance(tabs[0].id);
+      var instance = URLP.Background.getInstance(tabs[0].id);
       if (command === "plus" || command === "minus" || command === "next" || command === "prev") {
         if (instance && instance.enabled) {
-          URLNP.Background.updateTab(instance, command, "command");
-        } else {
-          chrome.storage.sync.get(null, function(items) {
-            if (items.quickEnabled) { // Quick Mode:
-              //URLNP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
-                instance = URLNP.Background.buildInstance(instance, tabs[0], items/*, links*/);
-                URLNP.Background.updateTab(instance, command, "quick-command", function(result) {
-                  instance = result;
-                  // Quick: If the URL didn't change, fallback to other mode
-                  if (instance.url === tabs[0].url) {
-                    instance.mode = instance.mode === "next-prev" ? "plus-minus" : "next-prev";
-                    URLNP.Background.updateTab(instance, command, "quick-command");
-                  }
-                });
-            //  });
+          URLP.Background.updateTab(instance, command, "command");
+        } else if (items.quickEnabled) { // Quick Mode:
+          //URLP.NextPrev.getLinksViaExecuteScript(tabs[0].id, function(links) {
+          instance = URLP.Background.buildInstance(instance, tabs[0], items/*, links*/);
+          URLP.Background.updateTab(instance, command, "quick-command", function(result) {
+            instance = result;
+            // Quick: If the URL didn't change, fallback to other mode
+            if (instance.url === tabs[0].url) {
+              instance.mode = instance.mode === "next-prev" ? "plus-minus" : "next-prev";
+              URLP.Background.updateTab(instance, command, "quick-command");
             }
           });
         }
       } else if (command === "clear" && instance && instance.enabled) {
-        URLNP.Background.setInstance(tabs[0].id, undefined);
+        URLP.Background.setInstance(tabs[0].id, undefined);
       }
     });
-  }
+    } 
+  });
 });
 
 // Listen for requests from chrome.runtime.sendMessage (shortcuts.js)
@@ -208,17 +184,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.tab.id);
   switch (request.greeting) {
     case "getInstance":
-      sendResponse({instance: URLNP.Background.getInstance(sender.tab.id)});
+      sendResponse({instance: URLP.Background.getInstance(sender.tab.id)});
       break;
     case "setInstance":
-      URLNP.Background.setInstance(undefined);
+      URLP.Background.setInstance(sender.tab.id, request.instance);
       break;
     case "updateTab":
-      instance = URLNP.Background.getInstance(sender.tab.id);
-      // if (!instance) {
-      //   instance = URLNP.Background.buildInstance(undefined, )
-      // }
-      URLNP.Background.updateTab(URLNP.Background.getInstance(sender.tab.id), request.direction, "content_script");
+      console.log("tab url ? is " + sender.tab.url);
+      instance = URLP.Background.getInstance(sender.tab.id);
+      if (!instance && sender.tab && request.items) {
+        console.log("Building instance...");
+        instance = URLP.Background.buildInstance(undefined, sender.tab, request.items);
+      }
+      URLP.Background.updateTab(instance, request.action, "content_script");
       break;
     default:
       break;

@@ -1,18 +1,23 @@
 /**
- * URL Next Plus Next Prev
+ * URL Plus NextPrev
  * 
  * @author Roy Six
  * @namespace
  */
-var URLNP = URLNP || {};
-URLNP.NextPrev = URLNP.NextPrev || function () {
+var URLP = URLP || {};
+URLP.NextPrev = URLP.NextPrev || function () {
+
+  var LINKS_MAP = {
+        next: { "next": "next", "forward": "forward", "new": "new", ">": "gt" },
+        prev: { "prev": "prev", "back": "back", "old": "old", "<": "lt" }
+      };
 
   /**
   * TODO
   */ 
   function getLinksViaExecuteScript(tabId, callback) {
     chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-      var code = "URLNP.NextPrev.getLinks(document);";
+      var code = "URLP.NextPrev.getLinks(document);";
       chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
         callback(results[0]);
       });
@@ -101,6 +106,9 @@ URLNP.NextPrev = URLNP.NextPrev || function () {
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
+        if (!links[attribute.nodeName.toLowerCase()]) {
+          links[attribute.nodeName.toLowerCase()] = {};
+        }
         parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
         // TODO: Separate by attribute.nodeName.toLowerCase()
       }

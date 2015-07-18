@@ -4,8 +4,8 @@
  * @author Roy Six
  * @namespace
  */
-var URLNP = URLNP || {};
-URLNP.Popup = URLNP.Popup || function () {
+var URLP = URLP || {};
+URLP.Popup = URLP.Popup || function () {
 
   var tab = {}, // Tab cache (only used in clear to reset the instance URL)
       instance = {}, // Tab instance cache
@@ -51,9 +51,9 @@ URLNP.Popup = URLNP.Popup || function () {
       chrome.storage.sync.get(null, function(items) {
         items_ = items;
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
-          instance = backgroundPage.URLNP.Background.getInstance(tab.id);
+          instance = backgroundPage.URLP.Background.getInstance(tab.id);
           if (!instance) {
-            instance = backgroundPage.URLNP.Background.buildInstance(instance, tab, items_);
+            instance = backgroundPage.URLP.Background.buildInstance(instance, tab, items_);
           }
           updateControls();
           DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
@@ -79,10 +79,10 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickPlus() {
     if (instance.enabled) {
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-push-click");
+        URLP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "plus", "popup", function(result) {
+        backgroundPage.URLP.Background.updateTab(instance, "plus", "popup", function(result) {
           instance = result;
         });
       });
@@ -97,10 +97,10 @@ URLNP.Popup = URLNP.Popup || function () {
   function clickMinus() {
     if (instance.enabled) {
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-push-click");
+        URLP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.updateTab(instance, "minus", "popup", function(result) {
+        backgroundPage.URLP.Background.updateTab(instance, "minus", "popup", function(result) {
           instance = result;
         });
       });
@@ -117,11 +117,11 @@ URLNP.Popup = URLNP.Popup || function () {
       instance.enabled = false;
       updateControls();
       if (items_.animationsEnabled) {
-        URLNP.UI.clickHoverCss(this, "hvr-push-click");
+        URLP.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLNP.Background.setInstance(instance.tabId, undefined);
-        instance = backgroundPage.URLNP.Background.buildInstance(instance, tab, items_);
+        backgroundPage.URLP.Background.setInstance(instance.tabId, undefined);
+        instance = backgroundPage.URLP.Background.buildInstance(instance, tab, items_);
       });
     }
   }
@@ -199,7 +199,7 @@ URLNP.Popup = URLNP.Popup || function () {
     // We can tell there was an error if some of the array slots weren't empty
     if (errors.some(function(error) { return error !== ""; })) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
-      URLNP.UI.generateAlert(errors);
+      URLP.UI.generateAlert(errors);
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         instance.enabled = true;
@@ -210,7 +210,7 @@ URLNP.Popup = URLNP.Popup || function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
-        backgroundPage.URLNP.Background.setInstance(instance.tabId, instance);
+        backgroundPage.URLP.Background.setInstance(instance.tabId, instance);
         toggleView.call(DOM["#accept-button"]);
       });
     }
@@ -235,4 +235,4 @@ URLNP.Popup = URLNP.Popup || function () {
   };
 }();
 
-document.addEventListener("DOMContentLoaded", URLNP.Popup.DOMContentLoaded, false);
+document.addEventListener("DOMContentLoaded", URLP.Popup.DOMContentLoaded, false);

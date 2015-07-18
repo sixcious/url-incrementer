@@ -4,8 +4,8 @@
  * @author Roy Six
  * @namespace
  */
-var URLNP = URLNP || {};
-URLNP.PlusMinus = URLNP.PlusMinus || function () {
+var URLP = URLP || {};
+URLP.PlusMinus = URLP.PlusMinus || function () {
 
   /**
    * Finds a selection in the url to plus or minus depending on the preference.

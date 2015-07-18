@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <link type="text/css" rel="stylesheet" href="../css/options.css"/>
-    <title>URL Next Plus Options</title>
+    <title>URL Plus Options</title>
   </head>
   <body>
     <div id="options">
@@ -22,122 +22,128 @@
         <p>
           <button id="keyboard-shortcuts-button" data-i18n="textContent"></button>
         </p>
-        <p id="keyboard-shortcuts-p2">
-          Chrome keyboard shortcuts currently have limited key support.
-          If you'd like to enable more advanced keyboard (and mouse button) shortcuts, click the button below. You'll be asked to grant URL Plus with additional permissions needed in order to use its internal shortcuts script instead.</p>
+        <p id="keyboard-shortcuts-p2" data-i18n="textContent"></p>
         <p>
-          <button id="optional-permissions-request-button">Grant Permissions and Enable Internal Shortcuts</button>
+          <button id="optional-permissions-request-button" data-i18n="textContent"></button>
         </p>
-
       </section>
       <section id="internal-shortcuts">
         <img src="../img/options/font-awesome/location-arrow.png" alt="" width="16" height="16"/>
         <img src="../img/options/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
-<!--        -->
-        <h3 id="keyboard-shortcuts-h3a">Internal Keyboard/Mouse Shortcuts</h3>
+        <h3 id="internal-shortcuts-h3" data-i18n="textContent"></h3>
         <hr/>
-        <p id="keyboard-shortcuts-pa">You're using URL Plus's internal shortcuts. Click on the text boxes and press the key(s) you'd like to set. Any combination of the Alt, Ctrl, Shift, and Meta modifier keys can be used.
-        If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter setup.</p>
+        <p id="internal-shortcuts-p" data-i18n="textContent"></p>
+        <div class="checkbox">
+          <label>
+            <input id="key-quick-enable-input" type="checkbox"/>
+            <span id="key-quick-enable-label" data-i18n="textContent"></span>
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input id="mouse-quick-enable-input" type="checkbox"/>
+            <span id="mouse-quick-enable-label" data-i18n="textContent"></span>
+          </label>
+        </div>
         <div class="table">
           <div class="row">
             <div class="column">
-              
             </div>
             <div class="column">
-              Key
+              <span id="key-label" data-i18n="textContent"></span>
             </div>
             <div class="column">
-              Mouse Button
+              <span id="mouse-label" data-i18n="textContent"></span>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="key-plus-label" for="key-plus-input">Plus [+]</label>
+              <label id="key-plus-label" for="key-plus-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <input id="key-plus-input" type="text" class="key-input" readonly/>
-              <input id="key-plus-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+              <input id="key-plus-clear-input" type="image" src="../img/options/font-awesome/times.png" alt="" width="18" height="18"/>
             </div>
-                        <div class="column">
-              <select>
-                <option>(Not set)</option>
-                <option>Left</option>
-                <option>Middle</option>
-                <option>Right</option>
+            <div class="column">
+              <select id="mouse-plus-select">
+                <option id="mouse-notset-option*plus" data-i18n="textContent" value="0"></option>
+                <option id="mouse-left-option*plus" data-i18n="textContent" value="1"></option>
+                <option id="mouse-middle-option*plus" data-i18n="textContent" value="2"></option>
+                <option id="mouse-right-option*plus" data-i18n="textContent" value="3"></option>
               </select>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="key-minus-label" for="key-minus-input">Minus [-]</label>
+              <label id="key-minus-label" for="key-minus-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <input id="key-minus-input" type="text" class="key-input" readonly/>
-              <input id="key-minus-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+              <input id="key-minus-clear-input" type="image" src="../img/options/font-awesome/times.png" alt="" width="18" height="18"/>
             </div>
-                        <div class="column">
-              <select>
-                <option>(Not set)</option>
-                <option>Left</option>
-                <option>Middle</option>
-                <option>Right</option>
+            <div class="column">
+              <select id="mouse-minus-select">
+                <option id="mouse-notset-option*minus" data-i18n="textContent" value="0"></option>
+                <option id="mouse-left-option*minus" data-i18n="textContent" value="1"></option>
+                <option id="mouse-middle-option*minus" data-i18n="textContent" value="2"></option>
+                <option id="mouse-right-option*minus" data-i18n="textContent" value="3"></option>
               </select>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="key-next-label" for="key-next-input">Next [>]</label>
+              <label id="key-next-label" for="key-next-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <input id="key-next-input" type="text" class="key-input" readonly/>
-              <input id="key-next-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+              <input id="key-next-clear-input" type="image" src="../img/options/font-awesome/times.png" alt="" width="18" height="18"/>
             </div>
             <div class="column">
-              <select>
-                <option>(Not set)</option>
-                <option>Left</option>
-                <option>Middle</option>
-                <option>Right</option>
+              <select id="mouse-next-select">
+                <option id="mouse-notset-option*next" data-i18n="textContent" value="0"></option>
+                <option id="mouse-left-option*next" data-i18n="textContent" value="1"></option>
+                <option id="mouse-middle-option*next" data-i18n="textContent" value="2"></option>
+                <option id="mouse-right-option*next" data-i18n="textContent" value="3"></option>
               </select>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="key-prev-label" for="key-prev-input">Prev [<]</label>
+              <label id="key-prev-label" for="key-prev-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <input id="key-prev-input" type="text" class="key-input" readonly/>
-              <input id="key-prev-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+              <input id="key-prev-clear-input" type="image" src="../img/options/font-awesome/times.png" alt="" width="18" height="18"/>
             </div>
-                        <div class="column">
-              <select>
-                <option>(Not set)</option>
-                <option>Left</option>
-                <option>Middle</option>
-                <option>Right</option>
+            <div class="column">
+              <select id="mouse-prev-select">
+                <option id="mouse-notset-option*prev" data-i18n="textContent" value="0"></option>
+                <option id="mouse-left-option*prev" data-i18n="textContent" value="1"></option>
+                <option id="mouse-middle-option*prev" data-i18n="textContent" value="2"></option>
+                <option id="mouse-right-option*prev" data-i18n="textContent" value="3">Right</option>
               </select>
             </div>
           </div>
           <div class="row">
             <div class="column">
-              <label id="key-clear-label" for="key-clear-input">Clear [x]</label>
+              <label id="key-clear-label" for="key-clear-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
               <input id="key-clear-input" type="text" class="key-input" readonly/>
-              <input id="key-clear-clear-input" type="image" src="../img/options/font-awesome/times-circle.png" alt="" width="18" height="18"/>
+              <input id="key-clear-clear-input" type="image" src="../img/options/font-awesome/times.png" alt="" width="18" height="18"/>
             </div>
-                        <div class="column">
-              <select>
-                <option>(Not set)</option>
-                <option>Left</option>
-                <option>Middle</option>
-                <option>Right</option>
+            <div class="column">
+              <select id="mouse-clear-select">
+                <option id="mouse-notset-option*clear" data-i18n="textContent" value="0">(Not set)</option>
+                <option id="mouse-left-option*clear" data-i18n="textContent" value="1">Left</option>
+                <option id="mouse-middle-option*clear" data-i18n="textContent" value="2">Middle</option>
+                <option id="mouse-right-option*clear" data-i18n="textContent" value="3">Right</option>
               </select>
             </div>
           </div>
         </div>
-                <p>
-          <button id="optional-permissions-remove-button">Remove Permissions and Disable Internal Shortcuts</button>
+        <p>
+          <button id="optional-permissions-remove-button" data-i18n="textContent"></button>
         </p>
       </section>
       <section id="basic-settings">
@@ -151,27 +157,6 @@
             <span id="animations-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
-<!--        <div class="table">
-          <div class="row">
-            <div class="column">
-              <label id="mode-label" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <div class="radio">
-                <label>
-                  <input id="mode-next-prev-input" type="radio" name="mode" value="next-prev"/>
-                  <span id="mode-next-prev-option" data-i18n="textContent"></span>
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input id="mode-plus-minus-input" type="radio" name="mode" value="plus-minus"/>
-                  <span id="mode-plus-minus-option" data-i18n="textContent"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>-->
         </section>
         <section id="plus-minus-settings">
           <img src="../img/options/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
@@ -192,7 +177,7 @@
               </select>
               <div id="selection-custom" class="display-none">
                 <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
-                <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=flandre&start=10"></textarea>
+                <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=flandre&start=0"></textarea>
                 <div class="table">
                   <div class="row">
                     <div class="column">
@@ -331,7 +316,7 @@
             <div class="column">
               <div class="checkbox">
                 <label>
-                  <input id="same-domain-policy-enable-input" type="checkbox" checked="checked"/>
+                  <input id="same-domain-policy-enable-input" type="checkbox"/>
                   <span id="same-domain-policy-enable-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -340,11 +325,20 @@
         </div>
       </section>
       <section id="feedback">
-                <img src="../img/options/font-awesome/question-circle.png" alt="" width="18" height="18"/>
-                <h3>Feedback / About</h3>
-                <hr/>
-                <p>Found a bug, want a feature added in, or? </p>
-                        <img src="../img/options/urli.png" alt="" width="30" height="30"/>
+        <img src="../img/options/font-awesome/question-circle.png" alt="" width="18" height="18"/>
+        <h3>Feedback / About</h3>
+        <hr/>
+        <p>
+          Found a bug? Have a feature request? Or just some feedback in general? Please do
+          <a href="">open an issue</a>, <a href="">rate or write a review</a> (**5 Stars crossing fingers**), or <a href="mailto:royxsix@gmail.com?subject=URL%20Plus%20Feedback">send an email</a>.
+        </p>
+        <p>
+          <a href="http://www.github.com/roysix/url-plus">Website / Source Code (GitHub)</a>
+        </p>
+        <div>
+          <img src="../img/options/urli.png" alt="" width="32" height="32"/>
+          <span>Formerly urli, a URL Incrementer 2011-2015</span>
+        </div>
       </section>
     </div>
     <script type="text/javascript" src="../js/options.js"></script>
