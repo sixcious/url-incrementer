@@ -10,6 +10,11 @@ section:not(:last-child) {
   margin-bottom: 32px;
 }
 
+div.heading {
+  border-bottom: 1px solid #333333;
+  padding-bottom: 6px;
+}
+
 div.table {
   display: table;
 }

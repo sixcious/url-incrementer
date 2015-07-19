@@ -1,37 +1,22 @@
 # URL Plus
 
-URL Plus lets you "plus" [+] any part of the URL and can also try to find the "next" [>] link. You can use it on gallery or thumbnail websites, forums, or any website that keeps its URLs paginated via links or organized sequentially by numbers or letters.
+URL Plus lets you "plus" [+] (increment) any part of the URL and can also try to find the "next" [>] link. You can use it on gallery or thumbnail websites, forums, or any website that keeps its URLs paginated via links or organized sequentially by numbers or letters.
 
-Set your own keyboard shortcuts and customize other options. It's a lightweight extension that is similar to URL Flipper for Firefox and it was developed with care to not require any special permissions from you.
+Set your own keyboard shortcuts and customize a wide variety of options, including alphanumeric/base and custom regular expression support. It's a lightweight extension that is similar to URL Flipper for Firefox and it was developed with care to not require any special permissions from you.
+
+Note: Next/Prev functionality is currently limited, but will be vastly improved in the next release!
 
 (This extension was previously known as "urli, A URL Incrementer")
 
-
-
-What's New...
-
-3.3 (July 2015)
-- Added back in urli's internal keyboard shortcuts and mouse buttons
-- Plus/Minus support for Alphanumeric and Base 2 (Binary) thru Base 36 (Hexatrigesimal)
+What's New:
+3.3 (July 19 2015)
+- Added back internal keyboard shortcuts and mouse buttons
+- Plus [+] Minus [-] support for Alphanumeric and Base 2 (Binary) thru Base 36 (Hexatrigesimal)
 - Selection customization support including using custom Regular Expressions
-- Fixed leading zeros bug where it would forget the number originally had a leading zero (e.g. 09 -> 10)
-- Fixed the extension forgetting its URL/pattern when you go back to Setup
-- Plus, Minus, Next, and Prev are now separate shortcut operations and no longer shared to avoid confusion
-- Next [>] Prev [<] functionality in UI was removed to avoid confusion with Plus and Minus
-- Next/prev now only works with quick shortcuts
+- Fixed leading zeros issue where it would forget the number originally had a leading zero (e.g. 09 -> 10)
+- Fixed the issue where it would forget its URL/Pattern when you go back to Setup after navigating away
+- Plus [+], Minus [-], Next [>], and Prev [<] are now each separate shortcut operations and no longer shared to avoid confusion (Mode is gone)
+- Next [>] Prev [<] functionality now only works with quick shortcuts and was removed from UI to avoid confusion with Plus [+] Minus [-]
 
-Version History
-
-3.2
-- Fixed Hover.css CSS3 UI animations bug
-
-3.1
-- Emergency fix to remove the extension's options page from popping up when it updated (this should only happen when the extension is first installed)
-
-3
-- Extension name changed
-- Added support for next and prev links
-- Refactored code; extension size dropped from 89KB to 49KB
-
-2.2
-- Fixed bug where the extension would lose its state/memory
+Special Thanks:
+Coolio Wolfus, Will, Blue Chan, and all the reviewers for providing valuable feedback!

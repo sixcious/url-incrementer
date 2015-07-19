@@ -35,7 +35,7 @@
   "keyboard_shortcuts_p": { "message": "Keyboard Shortcuts are currently set to be configured via Chrome. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter Setup."},
   "keyboard_shortcuts_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
   "keyboard_shortcuts_button": { "message": "Configure Chrome Keyboard Shortcuts" },
-  "keyboard_shortcuts_p2": { "message": "Note: Chrome keyboard shortcuts have limited key support. To enable more complete keyboard (and mouse button) shortcuts, click the button below. You'll be prompted to grant URL Plus with additional permissions it needs in order to use its own internal shortcuts script instead." },
+  "keyboard_shortcuts_p2": { "message": "Note: Chrome keyboard shortcuts support limited key combinations. If you click the button below, you can enable more complete keyboard (and mouse button) shortcuts. You'll be prompted to grant URL Plus with additional permissions it needs in order to use its own internal shortcuts script instead." },
   "optional_permissions_request_button": { "message": "Grant Permissions and Enable Internal Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Keyboard/Mouse Shortcuts" },
   "internal_shortcuts_p": { "message": "Sweet! Shortcuts are now set to be configured via URL Plus internally. Click on the text boxes and press the key(s) you'd like to set. Any combination of the Alt, Ctrl, Shift, and Meta modifier keys can be used. Left/Middle/Right Mouse Buttons can also be set as shortcuts. If Quick is enabled, you can Plus [+] or Next [>] instantly without having to enter setup." },

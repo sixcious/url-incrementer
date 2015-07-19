@@ -17,8 +17,7 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
       items_ = {}; // storage items cache
 
   /**
-   * Sets the items from storage. This function is needed because the items_ var
-   * is private and cannot be set outside.
+   * Sets the items storage cache.
    * 
    * @param items the storage items
    * @public
@@ -107,10 +106,12 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLP.Shortcuts.setItems(items);
-    if (items.keyQuickEnabled || (items.keyEnabled && response.instance && response.instance.enabled)) {
+    if (items.keyEnabled && items.keyQuickEnabled || (items.keyEnabled && response.instance && response.instance.enabled)) {
+      console.log("adding lkey listener");
       document.addEventListener("keyup", URLP.Shortcuts.keyListener);
     }
-    if (items.mouseQuickEnabled || (items.mouseEnabled && response.instance && response.instance.enabled)) {
+    if (items.mouseEnabled && items.mouseQuickEnabled || (items.mouseEnabled && response.instance && response.instance.enabled)) {
+      console.log("adding Mouse listener");
       document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
     }
   });

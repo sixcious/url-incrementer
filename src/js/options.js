@@ -171,7 +171,7 @@ URLP.Options = URLP.Options || function () {
       DOM["#links-select"].value = items.linksPriority;
       DOM["#same-domain-policy-enable-input"].checked = items.sameDomainPolicy;
       DOM["#support-a"].href = "https://chrome.google.com/webstore/detail/url-plus/" + chrome.runtime.id + "/support";
-      DOM["#review-a"].href = "https://chrome.google.com/webstore/detail/url-plus/" + chrome.runtime.id + "/reviews";
+      //DOM["#review-a"].href = "https://chrome.google.com/webstore/detail/url-plus/" + chrome.runtime.id + "/reviews";
     });
   }
 

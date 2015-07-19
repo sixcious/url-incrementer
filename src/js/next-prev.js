@@ -75,7 +75,7 @@ URLP.NextPrev = URLP.NextPrev || function () {
         anchorelement.href = element.href;
       }
       if (sameDomainPolicyEnabled && ((element.tagName === "A" ? element.origin : anchorelement.origin) !== origin)) {
-        console.log("blocked a not valid domain origin!: element.origin=" + elementorigin + " - origin=" + origin);
+        console.log("blocked a not valid domain origin!: element.href=" + element.href + " element.origin=" + (element.tagName === "A" ? element.origin : anchorelement.origin) + " - origin=" + origin);
         continue;
       }
       parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href, links);
