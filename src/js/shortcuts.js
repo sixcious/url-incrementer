@@ -106,12 +106,10 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLP.Shortcuts.setItems(items);
-    if (items.keyEnabled && items.keyQuickEnabled || (items.keyEnabled && response.instance && response.instance.enabled)) {
-      console.log("adding lkey listener");
+    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && response.instance.enabled))) {
       document.addEventListener("keyup", URLP.Shortcuts.keyListener);
     }
-    if (items.mouseEnabled && items.mouseQuickEnabled || (items.mouseEnabled && response.instance && response.instance.enabled)) {
-      console.log("adding Mouse listener");
+    if (items.mouseEnabled && (items.mouseQuickEnabled || (response.instance && response.instance.enabled))) {
       document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
     }
   });
