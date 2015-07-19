@@ -106,14 +106,11 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
 // Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    console.log("got a response:" + response.instance);
     URLP.Shortcuts.setItems(items);
     if (items.keyQuickEnabled || (items.keyEnabled && response.instance && response.instance.enabled)) {
-      console.log("adding keylistener");
       document.addEventListener("keyup", URLP.Shortcuts.keyListener);
     }
     if (items.mouseQuickEnabled || (items.mouseEnabled && response.instance && response.instance.enabled)) {
-      console.log("adding mouse listener");
       document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
     }
   });
@@ -121,7 +118,6 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.runtime.sendMessage (Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.id);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLP.Shortcuts.keyListener);
@@ -140,4 +136,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   sendResponse({});
 });
-console.log("HELLO? from SHORTCUTS.JS!!!!!");

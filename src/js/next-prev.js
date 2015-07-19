@@ -7,37 +7,6 @@
 var URLP = URLP || {};
 URLP.NextPrev = URLP.NextPrev || function () {
 
-  var LINKS_MAP = {
-        next: { "next": "next", "forward": "forward", "new": "new", ">": "gt" },
-        prev: { "prev": "prev", "back": "back", "old": "old", "<": "lt" }
-      };
-
-  // /**
-  // * TODO
-  // */ 
-  // function getLinksViaExecuteScript(tabId, callback) {
-  //   chrome.tabs.executeScript(tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-  //     var code = "URLP.NextPrev.getLinks(document);";
-  //     chrome.tabs.executeScript(tabId, {code: code, runAt: "document_end"}, function(results){
-  //       callback(results[0]);
-  //     });
-  //   });
-  // }
-
-  // /**
-  // * TODO
-  // * 
-  // */ 
-  // function getLinksViaXHR(url, callback) {
-  //   var req = new XMLHttpRequest();
-  //   req.open("GET", url, true);
-  //   req.responseType = "document";
-  //   req.onload = function() { // Equivalent to onreadystate and checking 4
-  //     callback(getLinks(this.responseXML));
-  //   };
-  //   req.send();
-  // }
-
   /**
    * Gets the URL by examining the links object based off of the requested
    * priority and direction.
@@ -49,7 +18,6 @@ URLP.NextPrev = URLP.NextPrev || function () {
    * @public
    */
   function getURL(priority, direction, links) {
-    //return links.rel ? links.rel.next ? links.rel.next : links.rel.forward ? links.rel.forward : links.rel.new ? links.rel.new : links.rel.gt ? : links.rel.gt : "" : "";
     return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
   }
 
@@ -68,18 +36,17 @@ URLP.NextPrev = URLP.NextPrev || function () {
    * 
    * @param doc the document to use based on the callee's context
    * @return links the links containing the next and prev links (if any)
-   * @private
+   * @public
    */
-  function getLinks(doc) {
+  function getLinks(doc, sameDomainPolicyEnabled) {
+    console.log("sameDomainPolicyEnabled:" + sameDomainPolicyEnabled);
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = {attributes: {}, innerHTML: {}},
         links_ = doc.getElementsByTagName("link"),
         anchors = doc.links, // Includes all anchor and area elements
-        hostname = doc.location.hostname,
-        port = doc.location.port,
-        protocol = doc.location.protocol;
-    parseElements(links_, links, hostname, port, protocol);
-    parseElements(anchors, links, hostname, port, protocol);
+        origin = doc.location.origin;
+    parseElements(links_, links, sameDomainPolicyEnabled, origin);
+    parseElements(anchors, links, sameDomainPolicyEnabled, origin);
     return links;
   }
 
@@ -91,29 +58,32 @@ URLP.NextPrev = URLP.NextPrev || function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, links, hostname, port, protocol) {
-    var element,
+  function parseElements(elements, links, sameDomainPolicyEnabled, origin) {
+    var anchorelement,
+        element,
         attributes,
         attribute,
         i,
         j;
     for (i = 0; i < elements.length; i++) {
       element = elements[i];
-      if (!element.href /*|| element.tagName === "a" && element.hostName !==*/) {
+      if (!element.href) {
+        continue;
+      }
+      if (element.tagName !== "A") {
+        anchorelement = document.createElement("a");
+        anchorelement.href = element.href;
+      }
+      if (sameDomainPolicyEnabled && ((element.tagName === "A" ? element.origin : anchorelement.origin) !== origin)) {
+        console.log("blocked a not valid domain origin!: element.origin=" + elementorigin + " - origin=" + origin);
         continue;
       }
       parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href, links);
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
         // TODO: Separate by attribute.nodeName.toLowerCase()
-        if (!links[attribute.nodeName.toLowerCase()]) {
-          links[attribute.nodeName.toLowerCase()] = {};
-        }
-        for (i = 0; i < LINKS_MAP.length; i++) {
-          // TODO
-        }
+        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
       }
     }
   }
@@ -145,13 +115,6 @@ URLP.NextPrev = URLP.NextPrev || function () {
      links[type].old = href; 
     } else if (text.indexOf("<") !== -1) {
       links[type].lt = href;
-    }
-  }
-  
-  function parseXXXX(keyword) {
-    if (text.indexOf(keyword) !== -1) {
-      //if (keyword)
-      //links[type][keyword]
     }
   }
 

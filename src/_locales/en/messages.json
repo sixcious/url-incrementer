@@ -87,7 +87,7 @@
   "links_attributes_option": { "message": "Prefer links with attributes like \"rel=next\"" },
   "links_innerHTML_option": { "message": "Prefer links with words like \"Next\" in them" },
   "domain_label": { "message": "Domain" },
-  "same_domain_policy_enable_label": { "message": "Only use links from the same domain of the page" },
+  "same_domain_policy_enable_label": { "message": "Only use links from the same domain of the current page" },
 
   "SHARED": { "message": "----- SHARED -----" },
   "selection_label": { "message": "Selection" },

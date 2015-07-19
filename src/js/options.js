@@ -214,6 +214,72 @@ URLP.Options = URLP.Options || function () {
   }
 
   /**
+   * Sets the enabled state of keyboard shortcuts.
+   * 
+   * @private
+   */
+  function setKeyEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      var enabled = items.keyPlus.length !== 0 || items.keyMinus.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
+      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
+        DOM["#key-label"].className = enabled ? "enabled" : "disabled";
+      });
+    });
+  }
+
+  /**
+   * Sets the enabled state of mouse button shortcuts.
+   * 
+   * @private
+   */
+  function setMouseEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      var enabled = items.mousePlus !== 0 || items.mouseMinus !== 0 || items.mouseNext !== 0 || items.mousePrev !== 0 || items.mouseClear !== 0;
+      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
+        DOM["#mouse-label"].className = enabled ? "enabled" : "disabled";
+      });
+    });
+  }
+
+  /**
+   * Sets the key that was pressed on a keydown event. This is needed afterwards
+   * to write the key to the input value and save the key to storage on keyup.
+   * 
+   * @param event the key event fired
+   * @private
+   */
+  function setKey(event) {
+    // Set key [0] as the event modifiiers OR'd together and [1] as the key code
+    key = [
+      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
+      event.which
+    ];
+  }
+
+  /**
+   * Writes the key to the input value.
+   * 
+   * @param input the input to write to
+   * @param key the key object to write
+   * @private
+   */
+  function writeInput(input, key) {
+    var keyCodeString = key && key[1] ? KEY_CODE_STRING_MAP[key[1]] : "";
+    // Write the input value based on the key event modifier bits and key code
+    // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
+    input.value =
+      !key || key.length === 0        ? chrome.i18n.getMessage("key_notset_option") :
+      ((key[0] & FLAG_KEY_ALT)        ? "Alt+"   : "") +
+      ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl+"  : "") +
+      ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift+" : "") +
+      ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta+"  : "") +
+      (keyCodeString ? keyCodeString : String.fromCharCode(key[1]));
+  }
+
+  /**
    * Validates the custom selection regular expression fields and then performs
    * the desired action.
    * 
@@ -268,70 +334,6 @@ URLP.Options = URLP.Options || function () {
       DOM["#selection-custom-message-span"].textContent = chrome.i18n.getMessage("selection_custom_save_success");
       chrome.storage.sync.set({"selectionCustom": { url: url, pattern: pattern, flags: flags, group: group, index: index }});
     }
-  }
-
-  /**
-   * Sets the key that was pressed on a keydown event. This is needed afterwards
-   * to write the key to the input value and save the key to storage on keyup.
-   * 
-   * @param event the key event fired
-   * @private
-   */
-  function setKey(event) {
-    // Set key [0] as the event modifiiers OR'd together and [1] as the key code
-    key = [
-      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
-      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-      event.which
-    ];
-  }
-
-  /**
-   * Writes the key to the input value.
-   * 
-   * @param input the input to write to
-   * @param key the key object to write
-   * @private
-   */
-  function writeInput(input, key) {
-    var keyCodeString = key && key[1] ? KEY_CODE_STRING_MAP[key[1]] : "";
-    // Write the input value based on the key event modifier bits and key code
-    // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
-    input.value =
-      !key || key.length === 0        ? chrome.i18n.getMessage("key_notset_option") :
-      ((key[0] & FLAG_KEY_ALT)        ? "Alt+"   : "") +
-      ((key[0] & FLAG_KEY_CTRL)  >> 1 ? "Ctrl+"  : "") +
-      ((key[0] & FLAG_KEY_SHIFT) >> 2 ? "Shift+" : "") +
-      ((key[0] & FLAG_KEY_META)  >> 3 ? "Meta+"  : "") +
-      (keyCodeString ? keyCodeString : String.fromCharCode(key[1]));
-  }
-
-  /**
-   * TODO
-   * @private
-   */
-  function setKeyEnabled() {
-    chrome.storage.sync.get(null, function(items) {
-      var enabled = items.keyPlus.length !== 0 || items.keyMinus.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
-      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
-        DOM["#key-label"].className = enabled ? "enabled" : "disabled";
-      });
-    });
-  }
-
-  /**
-   * TODO
-   * @private
-   */
-  function setMouseEnabled() {
-    chrome.storage.sync.get(null, function(items) {
-      var enabled = items.mousePlus !== 0 || items.mouseMinus !== 0 || items.mouseNext !== 0 || items.mousePrev !== 0 || items.mouseClear !== 0;
-      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
-        DOM["#mouse-label"].className = enabled ? "enabled" : "disabled";
-      });
-    });
   }
 
   // Return Public Functions
