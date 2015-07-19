@@ -93,8 +93,7 @@ URLP.Background = URLP.Background || function () {
        chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
          var code = "URLP.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
-          instance.url = URLP.NextPrev.getURL(instance.linksPriority, action, results[0]);
-          chrome.tabs.update(instance.tabId, {url: instance.url});
+          chrome.tabs.update(instance.tabId, {url: URLP.NextPrev.getURL(instance.linksPriority, action, results[0])});
             if (callback) {
               callback(instance);
             }
