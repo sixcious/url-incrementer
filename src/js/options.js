@@ -107,11 +107,11 @@ URLP.Options = URLP.Options || function () {
     DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-plus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPlus": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
-    DOM["#key-minus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyMinus": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
-    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
-    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
-    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key, "keyEnabled": true}); DOM["#key-label"].className = "enabled"; });
+    DOM["#key-plus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPlus": key, "keyEnabled": true}); DOM["#key-enable-img"].className = "display-inline"; });
+    DOM["#key-minus-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyMinus": key, "keyEnabled": true}); DOM["#key-enable-img"].className = "display-inline";});
+    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key, "keyEnabled": true}); DOM["#key-enable-img"].className = "display-inline"; });
+    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key, "keyEnabled": true}); DOM["#key-enable-img"].className = "display-inline";});
+    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key, "keyEnabled": true}); DOM["#key-enable-img"].className = "display-inline"; });
     DOM["#key-plus-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPlus": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-plus-input"], []); });
     DOM["#key-minus-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyMinus": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-minus-input"], []); });
     DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], []); });
@@ -142,8 +142,8 @@ URLP.Options = URLP.Options || function () {
       DOM["#internal-shortcuts"].className = items.shortcuts === "internal" ? "display-block" : "display-none";
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
-      DOM["#key-label"].className = items.keyEnabled ? "enabled" : "disabled";
-      DOM["#mouse-label"].className = items.mouseEnabled ? "enabled" : "disabled";
+      DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
+      DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
       writeInput(DOM["#key-plus-input"], items.keyPlus);
       writeInput(DOM["#key-minus-input"], items.keyMinus);
       writeInput(DOM["#key-next-input"], items.keyNext);
@@ -170,6 +170,8 @@ URLP.Options = URLP.Options || function () {
       DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
       DOM["#links-select"].value = items.linksPriority;
       DOM["#same-domain-policy-enable-input"].checked = items.sameDomainPolicy;
+      DOM["#support-a"].href = "https://chrome.google.com/webstore/detail/url-plus/" + chrome.runtime.id + "/support";
+      DOM["#review-a"].href = "https://chrome.google.com/webstore/detail/url-plus/" + chrome.runtime.id + "/reviews";
     });
   }
 
@@ -222,7 +224,7 @@ URLP.Options = URLP.Options || function () {
     chrome.storage.sync.get(null, function(items) {
       var enabled = items.keyPlus.length !== 0 || items.keyMinus.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
       chrome.storage.sync.set({"keyEnabled": enabled}, function() {
-        DOM["#key-label"].className = enabled ? "enabled" : "disabled";
+        DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
   }
@@ -236,7 +238,7 @@ URLP.Options = URLP.Options || function () {
     chrome.storage.sync.get(null, function(items) {
       var enabled = items.mousePlus !== 0 || items.mouseMinus !== 0 || items.mouseNext !== 0 || items.mousePrev !== 0 || items.mouseClear !== 0;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
-        DOM["#mouse-label"].className = enabled ? "enabled" : "disabled";
+        DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
   }
