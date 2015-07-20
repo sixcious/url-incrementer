@@ -9,7 +9,7 @@ Next [>] Prev [<] functionality is currently very basic and may not work properl
 (This extension was previously known as "urli, A URL Incrementer")
 
 What's New - Version 3.3 (July 20, 2015)
-- Added back internal keyboard and mouse button shortcuts (you'll first need to grant the same permissions additional permissions urli used to have)
+- Added back internal keyboard and mouse button shortcuts
 - To provide better flexibility, Plus [+], Minus [-], Next [>], and Prev [<] are now each separate shortcut operations and are no longer "shared" together
 - Next [>] Prev [<] functionality now only works with quick shortcuts and was removed from UI to avoid confusion with Plus [+] Minus [-] Setup
 - Plus [+] Minus [-] Alphanumeric and multi Base support (Base 2 Binary thru Base 36 Hexatrigesimal)
