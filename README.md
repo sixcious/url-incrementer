@@ -21,4 +21,4 @@ Note: The options had to be reset to fix and make all the changes in this update
 I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated.
 
 Special Thanks:
-Coolio Wolfus, Adam C., Will, Blue Chan, and everyone for providing valuable feedback/comments in the reviews and support!
+Coolio Wolfus, Adam C., Will, Blue Chan, and everyone for providing valuable feedback/comments in the reviews and support.
