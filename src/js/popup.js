@@ -182,8 +182,7 @@ URLP.Popup = URLP.Popup || function () {
    * @private
    */
   function setup() {
-    var mode = "plus-minus",
-        url = DOM["#url-textarea"].value,
+    var url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
@@ -206,7 +205,6 @@ URLP.Popup = URLP.Popup || function () {
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         instance.enabled = true;
-        instance.mode = mode;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
         instance.interval = interval;
