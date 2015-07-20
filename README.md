@@ -18,7 +18,7 @@ What's New - Version 3.3 (July 20, 2015)
 - Fixed an issue where it would forget its URL/Pattern when you go back to Setup after navigating away
 
 Note: The options had to be reset to fix and make all the changes in this update. I'm very sorry for the inconvenience.
-I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated. Hopefully Version 3.3 works better now!
+I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated.
 
 Special Thanks:
 Coolio Wolfus, Adam C., Will, Blue Chan, and everyone for providing valuable feedback/comments in the reviews and support!
