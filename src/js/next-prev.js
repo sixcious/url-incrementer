@@ -39,7 +39,6 @@ URLP.NextPrev = URLP.NextPrev || function () {
    * @public
    */
   function getLinks(doc, sameDomainPolicyEnabled) {
-    console.log("sameDomainPolicyEnabled:" + sameDomainPolicyEnabled);
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = {attributes: {}, innerHTML: {}},
         links_ = doc.getElementsByTagName("link"),

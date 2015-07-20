@@ -155,7 +155,6 @@ chrome.commands.onCommand.addListener(function(command) {
 // Listen for requests from chrome.runtime.sendMessage (shortcuts.js)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   var instance;
-  console.log("!chrome.runtime.onMessage request.greeting=\"" + request.greeting + "\" sender.id=" + sender.tab.id);
   switch (request.greeting) {
     case "getInstance":
       sendResponse({instance: URLP.Background.getInstance(sender.tab.id)});

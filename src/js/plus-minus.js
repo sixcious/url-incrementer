@@ -36,7 +36,7 @@ URLP.PlusMinus = URLP.PlusMinus || function () {
         matches2 = regexp2.exec(url),
         matches3 = regexp3 ? regexp3.exec(url) : undefined,
         customparsed = matches3 && matches3[custom.group];
-    console.log(matches3 ? !/^[a-z0-9]+$/i.test(url.substring(matches3.index + custom.index, matches3.index + custom.index + matches3[custom.group].substring(custom.index).length)) : "not setup for custom regex");
+    // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
