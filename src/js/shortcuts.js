@@ -39,7 +39,7 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
     else if (keyPressed(event, items_.keyMinus)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "minus", items: items_}); }
     else if (keyPressed(event, items_.keyNext))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
     else if (keyPressed(event, items_.keyPrev))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
-    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); document.removeEventListener("keyup", keyListener); document.removeEventListener("mouseup", mouseListener); }
+    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); } if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); } }
   }
 
   /**
@@ -55,7 +55,7 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
     else if (mousePressed(event, items_.mouseMinus)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "minus", items: items_}); }
     else if (mousePressed(event, items_.mouseNext))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
     else if (mousePressed(event, items_.mousePrev))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
-    else if (mousePressed(event, items_.mouseClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); document.removeEventListener("keyup", keyListener); document.removeEventListener("mouseup", mouseListener); }
+    else if (mousePressed(event, items_.mouseClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); } if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); } }
   }
 
   /**
