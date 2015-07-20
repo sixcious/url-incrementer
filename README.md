@@ -8,7 +8,7 @@ Next [>] Prev [<] functionality is currently very basic and may not work properl
 
 (This extension was previously known as "urli, A URL Incrementer")
 
-What's New - Version 3.3 (July 19, 2015)
+What's New - Version 3.3 (July 20, 2015)
 - Added back internal keyboard and mouse button shortcuts
 - To provide better flexibility, Plus [+], Minus [-], Next [>], and Prev [<] are now each separate shortcut operations and are no longer "shared" together
 - Next [>] Prev [<] functionality now only works with quick shortcuts and was removed from UI to avoid confusion with Plus [+] Minus [-] Setup
@@ -21,4 +21,4 @@ Note: The options had to be reset to fix and make all the changes in this update
 I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated. Hopefully Version 3.3 works better now!
 
 Special Thanks:
-Coolio Wolfus, Will, Blue Chan, and everyone for providing valuable feedback/comments.
+Coolio Wolfus, Adam C., Will, Blue Chan, and everyone for providing valuable feedback/comments in the reviews and support!
