@@ -8,12 +8,12 @@ Next [>] Prev [<] functionality is currently very basic and may not work properl
 
 (This extension was previously known as "urli, A URL Incrementer")
 
-What's New - Version 3.3 (July 20, 2015)
+What's New in Version 3.3 (July 20, 2015)
 - Added back internal keyboard and mouse button shortcuts
+- Added support for Alphanumeric and Bases (Base 2 Binary thru Base 36 Hexatrigesimal)
+- Added support for selection customization including using custom Regular Expressions
 - To provide better flexibility, Plus [+], Minus [-], Next [>], and Prev [<] are now each separate shortcut operations and are no longer "shared" together
 - Next [>] Prev [<] functionality now only works with quick shortcuts and was removed from UI to avoid confusion with Plus [+] Minus [-] Setup
-- Plus [+] Minus [-] Alphanumeric and multi Base support (Base 2 Binary thru Base 36 Hexatrigesimal)
-- Plus [+] Minus [-] selection customization support including using custom Regular Expressions
 - Fixed leading zeros issue where it would forget a number originally had a leading zero after Plus [+]'ing it (e.g. 09 -> 10)
 - Fixed an issue where it would forget its URL/Pattern when you go back to Setup after navigating away
 
