@@ -4,7 +4,7 @@
  * @author Roy Six
  * @namespace
  */
-var URLP = URLP || {};//
+var URLP = URLP || {};
 URLP.Background = URLP.Background || function () {
 
   var instances = []; // Tab instances (TODO: Use storage to make bg event page)
