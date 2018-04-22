@@ -1,16 +1,18 @@
 /**
- * URL Plus NextPrev
+ * URL Incrementer Next Prev
  * 
  * @author Roy Six
  * @namespace
  */
-var URLP = URLP || {};
-URLP.NextPrev = URLP.NextPrev || function () {
+
+var URLI = URLI || {};
+
+URLI.NextPrev = URLI.NextPrev || function () {
 
   /**
    * Gets the URL by examining the links object based off of the requested
    * priority and direction.
-   * 
+   *
    * @param priority  the link priority to use: attributes or innerHTML
    * @param direction the direction to go: next or prev
    * @param links     the links object to use
@@ -24,16 +26,16 @@ URLP.NextPrev = URLP.NextPrev || function () {
   /**
    * Gets the next and prev links in the document by parsing all link and anchor
    * elements.
-   * 
+   *
    * Note: the document is passed in as a param to to build the links. The
    * document varies depending on the context of when this code is run:
-   * 
+   *
    * 1: If ran as a content_script (via a call from chrome.tabs.executeScript),
    *    it will pass in that tab's document natively
-   * 
+   *
    * 2: If ran in the background (via a call from background.js), it will pass
    *    in a document created from an Ajax XMLHttpRequest response
-   * 
+   *
    * @param doc the document to use based on the callee's context
    * @return links the links containing the next and prev links (if any)
    * @public
@@ -52,7 +54,7 @@ URLP.NextPrev = URLP.NextPrev || function () {
   /**
    * Parses the elements by examining if their attributes or innerHTML contain
    * next or prev keywords in them.
-   * 
+   *
    * @param elements the DOM elements to parse
    * @param links    the links object to use
    * @private
@@ -89,7 +91,7 @@ URLP.NextPrev = URLP.NextPrev || function () {
   /**
    * Parses an element's text for keywords that might indicate a next or prev
    * links and builds the links object if found.
-   * 
+   *
    * @param text the text to parse keywords from
    * @param type the link type: innerHTML or attributes
    * @param href the URL to set this link to
@@ -110,7 +112,7 @@ URLP.NextPrev = URLP.NextPrev || function () {
     } else if (text.indexOf("back") !== -1) {
       links[type].back = href;
     } else if (text.indexOf("old") !== -1) {
-     links[type].old = href; 
+      links[type].old = href;
     } else if (text.indexOf("<") !== -1) {
       links[type].lt = href;
     }

@@ -1,13 +1,24 @@
 /**
- * URL Plus Background
- * 
+ * URL Incrementer Background
+ *
  * @author Roy Six
  * @namespace
  */
-var URLP = URLP || {};
-URLP.Background = URLP.Background || function () {
 
-  var instances = []; // Tab instances (TODO: Use storage to make bg event page)
+var URLI = URLI || {};
+
+URLI.Background = URLI.Background || function () {
+
+  var instances = new Map(); // TODO: Use storage and make background an event page
+
+  /**
+   * Gets all the tab instances.
+   *
+   * @returns {Map<tabId, instance>} the tab instances
+   */
+  function getInstances() {
+    return instances;
+  }
 
   /**
    * Gets the tab's instance.
@@ -17,7 +28,7 @@ URLP.Background = URLP.Background || function () {
    * @public
    */
   function getInstance(tabId) {
-    return instances[tabId];
+    return instances.get(tabId);
   }
 
   /**
@@ -28,32 +39,44 @@ URLP.Background = URLP.Background || function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    instances[tabId] = instance;
+    instances.set(tabId, instance);
   }
 
   /**
-   * Builds/Updates a instance with default values.
+   * Deletes the tab's instance.
+   *
+   * @param tabId the tab id to lookup this instance by
+   * @public
+   */
+  function deleteInstance(tabId) {
+    instances.delete(tabId);
+  }
+
+  /**
+   * Builds/Updates an instance with default values.
    * 
    * @param instance the instance, if any, to continue building off of
    * @param tab      the tab properties (id, url) to set this instance with
    * @param items    the storage items used to build the default instance
-   * @param links    the next and prev links found for this instance
    * @return instance the newly built instance
    * @public
    */
-  function buildInstance(instance, tab, items, links) {
+  function buildInstance(instance, tab, items) {
     var selectionProps;
     if (tab) {
       if (!instance) {
         instance = {};
         instance.enabled = false;
+        instance.autoAction = items.autoAction;
+        instance.autoTimes = items.autoTimes;
+        instance.autoSeconds = items.autoSeconds;
         instance.interval = items.interval;
         instance.base = items.base;
         instance.baseCase = items.baseCase;
         instance.linksPriority = items.linksPriority;
         instance.sameDomainPolicy = items.sameDomainPolicy;
       }
-      selectionProps = URLP.PlusMinus.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+      selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
       instance.tabId = tab.id;
       instance.url = tab.url;
       instance.selection = selectionProps.selection;
@@ -67,7 +90,7 @@ URLP.Background = URLP.Background || function () {
    * Updates the instance's tab based on the desired action.
    * 
    * @param instance the instance for this tab
-   * @param action   the operation (plus/minus) or direction (next/prev)
+   * @param action   the operation (e.g. increment or decrement)
    * @param caller   String indicating who called this function (e.g. command)
    * @param callback the function callback (optional)
    * @public
@@ -75,9 +98,9 @@ URLP.Background = URLP.Background || function () {
   function updateTab(instance, action, caller, callback) {
     var urlProps;
     switch (action) {
-      case "plus":
-      case "minus":
-       urlProps = URLP.PlusMinus.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
+      case "increment":
+      case "decrement":
+       urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
        instance.url = urlProps.urlmod;
        instance.selection = urlProps.selectionmod;
        chrome.tabs.update(instance.tabId, {url: instance.url});
@@ -91,9 +114,9 @@ URLP.Background = URLP.Background || function () {
       case "next":
       case "prev":
        chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-         var code = "URLP.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
+         var code = "URLI.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
-          chrome.tabs.update(instance.tabId, {url: URLP.NextPrev.getURL(instance.linksPriority, action, results[0])});
+          chrome.tabs.update(instance.tabId, {url: URLI.NextPrev.getURL(instance.linksPriority, action, results[0])});
             if (callback) {
               callback(instance);
             }
@@ -101,31 +124,55 @@ URLP.Background = URLP.Background || function () {
        });
        break;
     }
+    // Icon Feedback
+    chrome.storage.sync.get(null, function(items) {
+      if (items.iconFeedbackEnabled) {
+        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
+      }
+    });
   }
 
   // Return Public Functions
   return {
+    getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,
+    deleteInstance: deleteInstance,
     buildInstance: buildInstance,
     updateTab: updateTab
   };
 }();
 
 // Listen for installation changes and do storage/extension initialization work
-chrome.runtime.onInstalled.addListener(function(details) { // TODO "Remove update"
-  if (details.reason === "install" || details.reason === "update") {
+chrome.runtime.onInstalled.addListener(function(details) {
+  if (details.reason === "install") {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
-        "shortcuts": "chrome",
-        "quickEnabled": true,
+        "permissionsGranted": false,
+        "chromeQuickEnabled": true,
+        "iconFeedbackEnabled": false,
         "animationsEnabled": true,
         "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
         "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
         "linksPriority": "attributes", "sameDomainPolicy": true,
-        "keyEnabled": true, "keyQuickEnabled": true, "keyPlus": [7, 38], "keyMinus": [7, 40], "keyNext": [7, 39], "keyPrev": [7, 37], "keyClear": [7, 88],
-        "mouseEnabled": false, "mouseQuickEnabled": false, "mousePlus": 0, "mouseMinus": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0
+        "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [5, 39], "keyPrev": [5, 37], "keyClear": [5, 88],
+        "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
+        "autoAction": "", "autoTimes": 10, "autoSeconds": 5
       });
+    });
+  } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
+    chrome.storage.sync.get(null, function(items) {
+      chrome.storage.sync.set({"permissionsGranted": items.shortcuts !== "chrome"});
+      chrome.storage.sync.set({"chromeQuickEnabled": items.quickEnabled});
+      chrome.storage.sync.set({"iconFeedbackEnabled": false});
+      chrome.storage.sync.set({"keyIncrement": items.keyPlus});
+      chrome.storage.sync.set({"keyDecrement": items.keyMinus});
+      chrome.storage.sync.set({"mouseIncrement": items.mousePlus});
+      chrome.storage.sync.set({"mouseDecrement": items.mouseMinus});
+      chrome.storage.sync.set({"autoAction": ""});
+      chrome.storage.sync.set({"autoTimes": 10});
+      chrome.storage.sync.set({"autoSeconds": 5});
+      chrome.storage.sync.remove(["shortcuts", "quickEnabled", "keyPlus", "keyMinus", "mousePlus", "mouseMinus"]);
     });
   }
   if (details.reason === "install") {
@@ -133,42 +180,50 @@ chrome.runtime.onInstalled.addListener(function(details) { // TODO "Remove updat
   }
 });
 
-// Listen for commands (keyboard shortcuts) and perform the command's action
-chrome.commands.onCommand.addListener(function(command) {
-  chrome.storage.sync.get(null, function(items) {
-    if (items.shortcuts === "chrome" && (command === "plus" || command === "minus" || command === "next" || command === "prev" || command === "clear")) {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-        var instance = URLP.Background.getInstance(tabs[0].id);
-        if ((command === "plus" || command === "minus" || command === "next" || command === "prev") && (items.quickEnabled || instance.enabled)) {
-          if (!instance && items.quickEnabled) {
-            instance = URLP.Background.buildInstance(undefined, tabs[0], items);
-          }
-          URLP.Background.updateTab(instance, command);
-        } else if (command === "clear" && instance && instance.enabled) {
-          URLP.Background.setInstance(tabs[0].id, undefined);
-        }
-      });
-    } 
-  });
-});
-
 // Listen for requests from chrome.runtime.sendMessage (shortcuts.js)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   var instance;
   switch (request.greeting) {
     case "getInstance":
-      sendResponse({instance: URLP.Background.getInstance(sender.tab.id)});
+      sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
       break;
     case "setInstance":
-      URLP.Background.setInstance(sender.tab.id, request.instance);
+      URLI.Background.setInstance(sender.tab.id, request.instance);
+      break;
+    case "deleteInstance":
+      URLI.Background.deleteInstance(sender.tab.id);
       break;
     case "updateTab":
-      instance = URLP.Background.getInstance(sender.tab.id);
+      instance = URLI.Background.getInstance(sender.tab.id);
       if (!instance && sender.tab && request.items) {
-        instance = URLP.Background.buildInstance(undefined, sender.tab, request.items);
+        instance = URLI.Background.buildInstance(undefined, sender.tab, request.items);
       }
-      URLP.Background.updateTab(instance, request.action);
+      URLI.Background.updateTab(instance, request.action);
+      break;
+    case "closePopup":
+      chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
+      break;
+    default:
       break;
   }
   sendResponse({});
+});
+
+// Listen for commands (Chrome shortcuts) and perform the command's action
+chrome.commands.onCommand.addListener(function(command) {
+  chrome.storage.sync.get(null, function(items) {
+    if (!items.permissionsGranted && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
+      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+        var instance = URLI.Background.getInstance(tabs[0].id);
+        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.chromeQuickEnabled || instance.enabled)) {
+          if (!instance && items.chromeQuickEnabled) {
+            instance = URLI.Background.buildInstance(undefined, tabs[0], items);
+          }
+          URLI.Background.updateTab(instance, command);
+        } else if (command === "clear" && instance && instance.enabled) {
+          URLI.Background.deleteInstance(tabs[0].id);
+        }
+      });
+    }
+  });
 });

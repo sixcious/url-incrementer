@@ -1,11 +1,13 @@
 /**
- * URL Plus UI (User Interface)
+ * URL Incrementer UI (User Interface)
  * 
  * @author Roy Six
  * @namespace
  */
-var URLP = URLP || {};
-URLP.UI = URLP.UI || function () {
+
+var URLI = URLI || {};
+
+URLI.UI = URLI.UI || function () {
 
   /**
    * Generates an alert to display messages.
@@ -30,7 +32,7 @@ URLP.UI = URLP.UI || function () {
     div.appendChild(ul);
     document.body.appendChild(div);
     setTimeout(function () { div.classList.add("overlay-visible"); }, 10);
-    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 3000);
+    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 3600);
   }
 
   /**

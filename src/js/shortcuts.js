@@ -1,12 +1,15 @@
 /**
- * URL Plus Shortcuts
+ * URL Incrementer Shortcuts
  * 
  * @author Roy Six
  * @namespace
  */
-var URLP = URLP || {};
-URLP.Shortcuts = URLP.Shortcuts || function () {
 
+var URLI = URLI || {};
+
+URLI.Shortcuts = URLI.Shortcuts || function () {
+
+  // TODO: Convert KeyEvent.keyCode to KeyEvent.code and MouseEvent.which to MouseEvent.button
   var FLAG_KEY_ALT = 0x1, // 0001
       FLAG_KEY_CTRL = 0x2, // 0010
       FLAG_KEY_SHIFT = 0x4, // 0100
@@ -14,7 +17,15 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
       FLAG_MOUSE_LEFT = 0x1, // 01
       FLAG_MOUSE_MIDDLE = 0x2, // 10
       FLAG_MOUSE_RIGHT = 0X3, // 11
-      items_ = {}; // storage items cache
+      KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
+        "16": "Shift", // Shift
+        "17": "Ctrl", // Ctrl
+        "18": "Alt", // Alt
+        "91": "Meta", // Meta / Left Windows Key
+        "92": "Meta" // Meta / Right Windows Key
+      },
+      items_ = {}, // storage items cache
+      autoTimeout = null; // setTimeout auto function stored in a var
 
   /**
    * Sets the items storage cache.
@@ -25,37 +36,61 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
   function setItems(items) {
     items_ = items;
   }
-  
+
+  /**
+   * Performs the action automatically, e.g. will continue to automatically increment the page. Used by the setTimeout
+   * function, autoTimeout.
+   *
+   * This method is only called if the user specifically sets an auto action in the popup window. This is a tab
+   * instance based method. The action will only stop once the auto times count reaches 0 or if the  user does a clear
+   * (e.g. clicks the x button in the popup or shortcut ) to clear the instance.
+   *
+   * @param action the auto action to perform (e.g. increment)
+   * @public
+   */
+  function autoPerformer(action) {
+    if      (action === "increment") { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment", items: items_}); }
+    else if (action === "decrement") { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement", items: items_}); }
+    else if (action === "next")      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
+    else if (action === "prev")      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
+  }
+
   /**
    * A key event listener for keyboard shortcuts.
    * 
-   * Listens for plus, minus, next, prev, and clear keyboard shortcuts.
+   * Listens for increment, decrement, next, prev, and clear keyboard shortcuts.
    * 
    * @param event the key event
    * @public
    */
   function keyListener(event) {
-    if      (keyPressed(event, items_.keyPlus))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "plus", items: items_}); }
-    else if (keyPressed(event, items_.keyMinus)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "minus", items: items_}); }
-    else if (keyPressed(event, items_.keyNext))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
-    else if (keyPressed(event, items_.keyPrev))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
-    else if (keyPressed(event, items_.keyClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); } if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); } }
+    if      (keyPressed(event, items_.keyIncrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment", items: items_}); }
+    else if (keyPressed(event, items_.keyDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement", items: items_}); }
+    else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
+    else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
+    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"});
+                                                       if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); }
+                                                       if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); }
+                                                       if (URLI.Shortcuts.autoTimeout) { clearTimeout(URLI.Shortcuts.autoTimeout); } }
   }
 
   /**
    * A mouse event listener for mouse button shortcuts.
    * 
-   * Listens for plus, minus, next, prev, and clear mouse button shortcuts.
+   * Listens for increment, decrement, next, prev, and clear mouse button shortcuts.
    * 
    * @param event the mouse button event
    * @public
    */
   function mouseListener(event) {
-    if      (mousePressed(event, items_.mousePlus))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "plus", items: items_}); }
-    else if (mousePressed(event, items_.mouseMinus)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "minus", items: items_}); }
-    else if (mousePressed(event, items_.mouseNext))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
-    else if (mousePressed(event, items_.mousePrev))  { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
-    else if (mousePressed(event, items_.mouseClear)) { chrome.runtime.sendMessage({greeting: "setInstance", instance: undefined}); if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); } if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); } }
+    if      (mousePressed(event, items_.mouseIncrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment", items: items_}); }
+    else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement", items: items_}); }
+    else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
+    else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
+    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"});
+                                                           if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); }
+                                                           if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); }
+                                                           if (URLI.Shortcuts.autoTimeout) { clearTimeout(URLI.Shortcuts.autoTimeout); } }
   }
 
   /**
@@ -68,11 +103,12 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
    * @private
    */
   function keyPressed(event, key) {
-    return (key && key.length !== 0 &&
-      !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
-      !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
-      !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-      !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3) &&
+    return (key && key.length !== 0 && (
+      (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
+        !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+        !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
+        !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
+        !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
       (event.keyCode === key[1])
     );
   }
@@ -94,9 +130,11 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
     );
   }
 
-  // Return Public Functions
+  // Return Public Variables / Functions
   return {
+    autoTimeout: autoTimeout,
     setItems: setItems,
+    autoPerformer: autoPerformer,
     keyListener: keyListener,
     mouseListener: mouseListener
   };
@@ -105,12 +143,27 @@ URLP.Shortcuts = URLP.Shortcuts || function () {
 // Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    URLP.Shortcuts.setItems(items);
-    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && response.instance.enabled))) {
-      document.addEventListener("keyup", URLP.Shortcuts.keyListener);
+    URLI.Shortcuts.setItems(items);
+    // Auto
+    if (response.instance && response.instance.enabled && response.instance.autoAction !== "") {
+      // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
+      // Note: The first time auto is done via chrome.runtime.onMessage.addListener from popup, so it's already been
+      // done once (thus the pre decrement instead of post decrement)
+      if (--response.instance.autoTimes > 0) {
+        chrome.runtime.sendMessage({greeting: "setInstance", instance: response.instance});
+        URLI.Shortcuts.autoTimeout = setTimeout(function() { URLI.Shortcuts.autoPerformer(response.instance.autoAction); }, response.instance.autoSeconds * 1000);
+      } else {
+        chrome.runtime.sendMessage({greeting: "deleteInstance"});
+        chrome.runtime.sendMessage({greeting: "closePopup"});
+      }
     }
+    // Key
+    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && response.instance.enabled))) {
+      document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+    }
+    // Mouse
     if (items.mouseEnabled && (items.mouseQuickEnabled || (response.instance && response.instance.enabled))) {
-      document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
     }
   });
 });
@@ -119,16 +172,22 @@ chrome.storage.sync.get(null, function(items) {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch (request.greeting) {
     case "addKeyListener":
-      document.addEventListener("keyup", URLP.Shortcuts.keyListener);
+      document.addEventListener("keyup", URLI.Shortcuts.keyListener);
       break;
     case "removeKeyListener":
-      document.removeEventListener("keyup", URLP.Shortcuts.keyListener);
+      document.removeEventListener("keyup", URLI.Shortcuts.keyListener);
       break;
     case "addMouseListener":
-      document.addEventListener("mouseup", URLP.Shortcuts.mouseListener);
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
       break;
     case "removeMouseListener":
-      document.removeEventListener("mouseup", URLP.Shortcuts.mouseListener);
+      document.removeEventListener("mouseup", URLI.Shortcuts.mouseListener);
+      break;
+    case "setAutoTimeout":
+      URLI.Shortcuts.autoTimeout = setTimeout(function() { URLI.Shortcuts.autoPerformer(request.instance.autoAction); }, request.instance.autoSeconds * 1000);
+      break;
+    case "clearAutoTimeout":
+      clearTimeout(URLI.Shortcuts.autoTimeout);
       break;
     default:
       break;

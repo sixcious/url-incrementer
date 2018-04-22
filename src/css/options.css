@@ -4,15 +4,21 @@
 
 h3 {
   display: inline;
+  user-select: initial;
 }
 
 section:not(:last-child) {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 div.heading {
   border-bottom: 1px solid #333333;
   padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+div.heading.selection-first {
+  margin-bottom: 22px;
 }
 
 div.table {
@@ -66,8 +72,8 @@ input[type="image"]:focus {
   outline: none;
 }
 
-#formerly-urli-label {
-  font: 11px monospace;
+#urli-label, #urli-thank-you {
+  font: 12px monospace;
 }
 
 /*h3 {

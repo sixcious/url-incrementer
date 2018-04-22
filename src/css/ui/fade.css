@@ -1,4 +1,8 @@
-/* Fade-In/Out Animation CSS TODO: make fade-out-max-height work better */
+/*
+ * Fade CSS
+ * Fade-In/Out Animation CSS
+ * TODO: make fade-out-max-height work better
+ */
 
 @keyframes fade-in {
   from { opacity: 0; transform: scale(0); }

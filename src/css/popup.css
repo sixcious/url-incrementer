@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  background: #EDECEB;
+  background: #F5F5F5;
 }
 
 * {
@@ -66,33 +66,42 @@ select {
 }
 
 textarea {
-  width: 512px;
+  width: 100%;
   color: #777777;
+}
+
+div.table {
+  display: table;
+  width: 100%;
+}
+
+div.row  {
+  display: table-row;
+  padding-bottom: 20px;
+}
+
+div.column {
+  display: table-cell;
+  padding: 10px 10px 0 0;
+}
+
+div.column:not(:last-child) {
+  padding-right: 20px;
+}
+
+div.column > label {
+  display: block;
+}
+
+/*#url {
+  margin-bottom: 10px;
+}*/
+
+select#auto-action-select {
+  width: 135px;
 }
 
 .setup-buttons {
   margin-top: 12px;
   text-align: center;
-}
-
-/*div.table {
-  display: table;
-}*/
-
-div.row  {
-  margin-top: 10px;
-/*  display: table-row;*/
-}
-
-div.column {
-  display: table-cell;
-  padding: 0 10px 10px 0;
-}
-
-div.column:not(:last-child) {
-  padding-right: 50px;
-}
-
-div.column > label {
-  display: block;
 }
