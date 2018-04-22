@@ -25,7 +25,7 @@ body {
 /* Controls CSS */
 
 #controls {
-  width: 82px;
+  width: 88px;
 }
 
 input[type="image"] {
@@ -38,7 +38,7 @@ input[type="image"]:focus {
 }
 
 input[type="image"]:not(:last-child) {
-  margin-right: 2px;
+  margin-right: 4px;
 }
 
 input[type="image"].disabled {
@@ -104,4 +104,8 @@ select#auto-action-select {
 .setup-buttons {
   margin-top: 12px;
   text-align: center;
+}
+
+.setup-buttons > button:not(:last-child) {
+  margin-right: 8px;
 }

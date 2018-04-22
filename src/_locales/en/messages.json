@@ -22,6 +22,7 @@
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
   "accept_button": { "message": "Accept" },
   "cancel_button": { "message": "Cancel" },
+  "options_button": { "message": "Options" },
   "oops_error": { "message": "Oops..." },
   "selection_blank_error": { "message": "Selection can't be blank" },
   "selection_notalphanumeric_error": { "message": "Selection can only contain alphanumeric characters" },
