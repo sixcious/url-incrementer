@@ -6,6 +6,10 @@ Set your own keyboard shortcuts and fine-tune many options, including increment 
 
 Please Note: Next [>] Prev [<] functionality is currently experimental and may not work properly on some sites but will be improved in an upcoming release.
 
+Special Thanks:
+NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus, and everyone who has providing valuable feedback/comments in the reviews and support.
+... and of course YOU for using this extension!
+
 What's New in Version 4.0 (April 24, 2018)
 - New name and look! URL Plus is now URL Incrementer ("URLI") with a new extension icon and more intuitive UI icons
 - New Auto increment/decrement functionality (Thanks to NickMWPrince!)
@@ -23,10 +27,4 @@ What's New in Version 3.3 (July 20, 2015)
 - Next [>] Prev [<] functionality now only works with quick shortcuts and was removed from UI to avoid confusion with Plus [+] Minus [-] Setup
 - Fixed leading zeros issue where it would forget a number originally had a leading zero after Plus [+]'ing it (e.g. 09 -> 10)
 - Fixed an issue where it would forget its URL/Pattern when you go back to Setup after navigating away
-
-Note: The options had to be reset to fix and make all the changes in this update. I'm very sorry for the inconvenience.
-I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated.
-
-Special Thanks:
-NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus, and everyone for providing valuable feedback/comments in the reviews and support.
-And of course YOU for using this extension! :)
+- Note: The options had to be reset to fix and make all the changes in this update. I'm very sorry for the inconvenience. I apologize deeply to anyone who used this extension from 7/1/2015 thru 7/19/2015 (Version 3 thru 3.2). The extension was in a beta state and should have undergone much more testing before being updated.
