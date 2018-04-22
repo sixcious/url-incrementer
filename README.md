@@ -4,7 +4,7 @@ URL Incrementer (URLI) lets you "increment" [+] any part of the URL. You can use
 
 Set your own keyboard shortcuts and fine-tune many options, including increment interval, alphanumeric/base and custom regular expression support. It's a lightweight extension that is similar to URL Flipper for Firefox and it was developed with care to not require any special permissions from you.
 
-Next [>] Prev [<] functionality is currently experimental and may not work properly on some sites but will be improved in an upcoming release.
+Please Note: Next [>] Prev [<] functionality is currently experimental and may not work properly on some sites but will be improved in an upcoming release.
 
 What's New in Version 4.0 (April 24, 2018)
 - New name and look! URL Plus is now URL Incrementer ("URLI") with a new extension icon and more intuitive UI icons
