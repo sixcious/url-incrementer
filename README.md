@@ -1,4 +1,4 @@
-# URL Plus
+# URL Incrementer
 
 URL Plus lets you "plus" [+] any part of the URL and can also try to find the "next" [>] link. You can use it on gallery or thumbnail websites, forums, or any website that keeps its URLs paginated via links or organized sequentially by numbers or letters.
 
