@@ -4,20 +4,20 @@ URL Incrementer (URLI) lets you "increment" [+] any part of the URL. You can use
 
 Set your own keyboard shortcuts and fine-tune many options, including increment interval, alphanumeric/base and custom regular expression support. It's a lightweight extension that is similar to URL Flipper for Firefox and it was developed with care to not require any special permissions from you.
 
-Please Note: Next [>] Prev [<] functionality is currently experimental and may not work properly on some sites but will be improved in an upcoming release.
+Please Note: Next [>] Prev [<] functionality is currently experimental and may not work properly on some sites.
 
 Special Thanks:
 NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus, and everyone who has providing valuable feedback/comments in the reviews and support.
-... and of course YOU for using this extension!
+
+... and of course YOU for using this extension! :)
 
 What's New in Version 4.0 (April 24, 2018)
-- New name and look! URL Plus is now URL Incrementer ("URLI") with a new extension icon and more intuitive UI icons
+- New name and look! "URL Plus" is now "URL Incrementer" (URLI) with a new extension icon and more intuitive UI icons
 - New Auto increment/decrement functionality (Thanks to NickMWPrince!)
 - Icon Feedback option when incrementing/decrementing
-- Touch support for selecting part of a URL (Supports both Touch and Mouse/Pen for devices like Surface Pro)
-- When you click on the extension icon, automatically brings up the Setup panel if the tab instance hasn't been enabled
+- When you click on the extension icon, automatically brings up the Setup panel if the tab instance hasn't been setup yet
 - Changed default keyboard shortcuts from Alt+Ctrl+Shift+? to Alt+Shift+? due to some platforms disabling the former recently (Thanks to Blue!)
-- Internal code changes: better tab instance memory management when clearing an instance (now using JavaScript Map instead of array) and improved internal keyboard shortcuts to support modifier keys (e.g. "Shift" can be used by itself now)
+- Internal code changes: better tab instance memory management (now using JavaScript Map instead of array) and improved internal keyboard shortcuts to support modifier keys (e.g. "Shift" can be used by itself now)
 
 What's New in Version 3.3 (July 20, 2015)
 - Added back internal keyboard and mouse button shortcuts

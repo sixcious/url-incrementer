@@ -51,8 +51,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
   function autoPerformer(action) {
     if      (action === "increment") { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment", items: items_}); }
     else if (action === "decrement") { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement", items: items_}); }
-    else if (action === "next")      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next", items: items_}); }
-    else if (action === "prev")      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev", items: items_}); }
   }
 
   /**

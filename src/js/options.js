@@ -83,7 +83,8 @@ URLI.Options = URLI.Options || function () {
         "221": "]",
         "222": "'"
       },
-      key = [0,0]; // Stores the key event modifiers [0] and key code [1]
+      key = [0,0], // Stores the key event modifiers [0] and key code [1]
+      urliClickCount = 0;
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -149,6 +150,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#links-select"].addEventListener("change", function () { chrome.storage.sync.set({"linksPriority": this.value}); });
     DOM["#same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"sameDomainPolicy": this.checked}); });
+    DOM["#urli-img"].addEventListener("click", function() { URLI.UI.generateAlert([++urliClickCount <= 3 ? urliClickCount + " ..." : chrome.i18n.getMessage("urli_click_message")]);} );
     // Populate values from storage
     chrome.storage.sync.get(null, function(items) {
       DOM["#permissions-disabled"].className = !items.permissionsGranted ? "display-block" : "display-none";

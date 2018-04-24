@@ -155,7 +155,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
         "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
         "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
         "linksPriority": "attributes", "sameDomainPolicy": true,
-        "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [5, 39], "keyPrev": [5, 37], "keyClear": [5, 88],
+        "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
         "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
         "autoAction": "", "autoTimes": 10, "autoSeconds": 5
       });

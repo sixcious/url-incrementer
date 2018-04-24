@@ -5,11 +5,11 @@
     <link type="text/css" rel="stylesheet" href="../css/options.css"/>
     <title>URL Incrementer Options</title>
   </head>
-  <body>
-    <div id="options">
+  <body id="options">
+    <div id="options-sections">
       <section id="permissions-disabled">
         <div class="heading">
-          <img src="../img/font-awesome/lock.png" alt="" width="16" height="16"/>
+          <img src="../img/font-awesome/lock.png" alt="" width="18" height="18"/>
           <h3 id="permissions-disabled-h3" data-i18n="textContent"></h3>
         </div>
         <p id="permissions-disabled-p" data-i18n="textContent"></p>
@@ -19,7 +19,7 @@
       </section>
       <section id="permissions-enabled">
         <div class="heading">
-          <img src="../img/font-awesome/unlock.png" alt="" width="16" height="16"/>
+          <img src="../img/font-awesome/unlock.png" alt="" width="18" height="18"/>
           <h3 id="permissions-enabled-h3" data-i18n="textContent"></h3>
         </div>
         <p id="permissions-enabled-p" data-i18n="textContent"></p>
@@ -29,7 +29,7 @@
       </section>
       <section id="chrome-shortcuts">
         <div class="heading">
-          <img src="../img/options/chrome.png" alt="" width="16" height="16"/>
+          <img src="../img/extras/chrome.png" alt="" width="18" height="18"/>
           <img src="../img/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
           <h3 id="chrome-shortcuts-h3" data-i18n="textContent"></h3>
         </div>
@@ -45,7 +45,7 @@
       </section>
       <section id="internal-shortcuts">
         <div class="heading">
-          <img src="../img/font-awesome/location-arrow.png" alt="" width="16" height="16"/>
+          <img src="../img/font-awesome/mouse-pointer.png" alt="" width="18" height="18"/>
           <img src="../img/font-awesome/keyboard-o.png" alt="" width="18" height="18"/>
           <h3 id="internal-shortcuts-h3" data-i18n="textContent"></h3>
         </div>
@@ -161,10 +161,10 @@
       </section>
       <section id="basic-settings">
         <div class="heading">
-          <img src="../img/font-awesome/check-square.png" alt="" width="18" height="18"/>
+          <img src="../img/font-awesome/check-circle.png" alt="" width="18" height="18"/>
           <h3 id="basic-settings-h3" data-i18n="textContent"></h3>
         </div>
-<!--        <p id="basic-settings-p" data-i18n="textContent"></p>-->
+        <!--        <p id="basic-settings-p" data-i18n="textContent"></p>-->
         <div class="checkbox">
           <label>
             <input id="animations-enable-input" type="checkbox"/>
@@ -180,7 +180,7 @@
       </section>
       <section id="auto-settings">
         <div class="heading">
-          <img src="../img/font-awesome/repeat.png" alt="" width="18" height="18"/>
+          <img src="../img/font-awesome/refresh.png" alt="" width="18" height="18"/>
           <h3 id="auto-settings-h3" data-i18n="textContent"></h3>
         </div>
         <div class="table">
@@ -203,138 +203,138 @@
         </div>
       </section>
       <section id="increment-decrement-settings">
-          <div class="heading selection-first">
-            <img src="../img/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
-            <img src="../img/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
-            <h3 id="increment-decrement-settings-h3" data-i18n="textContent"></h3>
-          </div>
-<!--          <p id="increment-decrement-settings-p" data-i18n="textContent"></p>-->
-          <div class="table">
-            <div class="row">
-              <div class="column">
-                <label id="selection-label" for="selection-select" data-i18n="textContent"></label>
-              </div>
-              <div class="column">
-                <select id="selection-select">
-                  <option id="selection-option-prefixes" value="prefixes" data-i18n="textContent"></option>
-                  <option id="selection-option-lastnumber" value="lastnumber" data-i18n="textContent"></option>
-                  <option id="selection-option-firstnumber" value="firstnumber" data-i18n="textContent"></option>
-                  <option id="selection-option-custom" value="custom" data-i18n="textContent"></option>
-                </select>
-                <div id="selection-custom" class="display-none">
-                  <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
-                  <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=flandre&start=0"></textarea>
-                  <div class="table">
-                    <div class="row">
-                      <div class="column">
-                        <lable id="selection-custom-pattern-label" for="selection-custom-pattern-input" data-i18n="textContent" class="display-block"></lable>
-                        /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+(?!.*\d+)"/>/
-                      </div>
-                      <div class="column">
-                        <label id="selection-custom-flags-label" for="selection-custom-flags-input" data-i18n="textContent" class="display-block"></label>
-                        <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi"/>
-                      </div>
+        <div class="heading selection-first">
+          <img src="../img/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
+          <img src="../img/font-awesome/minus-circle.png" alt="" width="18" height="18"/>
+          <h3 id="increment-decrement-settings-h3" data-i18n="textContent"></h3>
+        </div>
+        <!--          <p id="increment-decrement-settings-p" data-i18n="textContent"></p>-->
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="selection-label" for="selection-select" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <select id="selection-select">
+                <option id="selection-option-prefixes" value="prefixes" data-i18n="textContent"></option>
+                <option id="selection-option-lastnumber" value="lastnumber" data-i18n="textContent"></option>
+                <option id="selection-option-firstnumber" value="firstnumber" data-i18n="textContent"></option>
+                <option id="selection-option-custom" value="custom" data-i18n="textContent"></option>
+              </select>
+              <div id="selection-custom" class="display-none">
+                <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
+                <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=flandre&start=0"></textarea>
+                <div class="table">
+                  <div class="row">
+                    <div class="column">
+                      <lable id="selection-custom-pattern-label" for="selection-custom-pattern-input" data-i18n="textContent" class="display-block"></lable>
+                      /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+(?!.*\d+)"/>/
                     </div>
-                    <div class="row">
-                      <div class="column">
-                        <label id="selection-custom-group-label" for="selection-custom-group-input" data-i18n="textContent" class="display-block"></label>
-                        <input id="selection-custom-group-input" type="number" value="0" min="0"/>
-                      </div>
-                      <div class="column">
-                        <label id="selection-custom-index-label" for="selection-custom-index-input" data-i18n="textContent" class="display-block"></label>
-                        <input id="selection-custom-index-input" type="number" value="0" min="0"/>
-                      </div>
+                    <div class="column">
+                      <label id="selection-custom-flags-label" for="selection-custom-flags-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi"/>
                     </div>
                   </div>
-                  <div>
-                    <button id="selection-custom-test-button" data-i18n="textContent"></button>
-                    <button id="selection-custom-save-button" data-i18n="textContent"></button>
-                    <span id="selection-custom-message-span"></span>
+                  <div class="row">
+                    <div class="column">
+                      <label id="selection-custom-group-label" for="selection-custom-group-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-group-input" type="number" value="0" min="0"/>
+                    </div>
+                    <div class="column">
+                      <label id="selection-custom-index-label" for="selection-custom-index-input" data-i18n="textContent" class="display-block"></label>
+                      <input id="selection-custom-index-input" type="number" value="0" min="0"/>
+                    </div>
                   </div>
-                  (<span id="selection-custom-help-label" data-i18n="textContent"></span> <a href="https://regex101.com" target="_blank">https://regex101.com</a>)
                 </div>
+                <div>
+                  <button id="selection-custom-test-button" data-i18n="textContent"></button>
+                  <button id="selection-custom-save-button" data-i18n="textContent"></button>
+                  <span id="selection-custom-message-span"></span>
+                </div>
+                (<span id="selection-custom-help-label" data-i18n="textContent"></span> <a href="https://regex101.com" target="_blank">https://regex101.com</a>)
               </div>
             </div>
-            <div class="row">
-              <div class="column">
-                <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
-              </div>
-              <div class="column">
-                <input id="interval-input" type="number" min="1"/>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <input id="interval-input" type="number" min="1"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="leading-zeros-label" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="leading-zeros-pad-by-detection-input" type="checkbox"/>
+                  <span id="leading-zeros-pad-by-detection-label" data-i18n="textContent"></span>
+                </label>
               </div>
             </div>
-            <div class="row">
-              <div class="column">
-                <label id="leading-zeros-label" data-i18n="textContent"></label>
-              </div>
-              <div class="column">
-                <div class="checkbox">
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="base-label" for="base-select" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <select id="base-select">
+                <option id="base-option-default" value="10" data-i18n="textContent"></option>
+                <option id="base-option-2" value="2" data-i18n="textContent"></option>
+                <option id="base-option-3" value="3" data-i18n="textContent"></option>
+                <option id="base-option-4" value="4" data-i18n="textContent"></option>
+                <option id="base-option-5" value="5" data-i18n="textContent"></option>
+                <option id="base-option-6" value="6" data-i18n="textContent"></option>
+                <option id="base-option-7" value="7" data-i18n="textContent"></option>
+                <option id="base-option-8" value="8" data-i18n="textContent"></option>
+                <option id="base-option-9" value="9" data-i18n="textContent"></option>
+                <option id="base-option-10" value="10" data-i18n="textContent"></option>
+                <option id="base-option-11" value="11" data-i18n="textContent"></option>
+                <option id="base-option-12" value="12" data-i18n="textContent"></option>
+                <option id="base-option-13" value="13" data-i18n="textContent"></option>
+                <option id="base-option-14" value="14" data-i18n="textContent"></option>
+                <option id="base-option-15" value="15" data-i18n="textContent"></option>
+                <option id="base-option-16" value="16" data-i18n="textContent"></option>
+                <option id="base-option-17" value="17" data-i18n="textContent"></option>
+                <option id="base-option-18" value="18" data-i18n="textContent"></option>
+                <option id="base-option-19" value="19" data-i18n="textContent"></option>
+                <option id="base-option-20" value="20" data-i18n="textContent"></option>
+                <option id="base-option-21" value="21" data-i18n="textContent"></option>
+                <option id="base-option-22" value="22" data-i18n="textContent"></option>
+                <option id="base-option-23" value="23" data-i18n="textContent"></option>
+                <option id="base-option-24" value="24" data-i18n="textContent"></option>
+                <option id="base-option-25" value="25" data-i18n="textContent"></option>
+                <option id="base-option-26" value="26" data-i18n="textContent"></option>
+                <option id="base-option-27" value="27" data-i18n="textContent"></option>
+                <option id="base-option-28" value="28" data-i18n="textContent"></option>
+                <option id="base-option-29" value="29" data-i18n="textContent"></option>
+                <option id="base-option-30" value="30" data-i18n="textContent"></option>
+                <option id="base-option-31" value="31" data-i18n="textContent"></option>
+                <option id="base-option-32" value="32" data-i18n="textContent"></option>
+                <option id="base-option-33" value="33" data-i18n="textContent"></option>
+                <option id="base-option-34" value="34" data-i18n="textContent"></option>
+                <option id="base-option-35" value="35" data-i18n="textContent"></option>
+                <option id="base-option-36" value="36" data-i18n="textContent"></option>
+              </select>
+              <div id="base-case" class="display-none">
+                <div class="radio">
                   <label>
-                    <input id="leading-zeros-pad-by-detection-input" type="checkbox"/>
-                    <span id="leading-zeros-pad-by-detection-label" data-i18n="textContent"></span>
+                    <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
+                    <span id="base-case-lowercase-label" data-i18n="textContent"></span>
+                  </label>
+                </div>
+                <div class="radio">
+                  <label>
+                    <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
+                    <span id="base-case-uppercase-label" data-i18n="textContent"></span>
                   </label>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="column">
-                <label id="base-label" for="base-select" data-i18n="textContent"></label>
-              </div>
-              <div class="column">
-                <select id="base-select">
-                  <option id="base-option-default" value="10" data-i18n="textContent"></option>
-                  <option id="base-option-2" value="2" data-i18n="textContent"></option>
-                  <option id="base-option-3" value="3" data-i18n="textContent"></option>
-                  <option id="base-option-4" value="4" data-i18n="textContent"></option>
-                  <option id="base-option-5" value="5" data-i18n="textContent"></option>
-                  <option id="base-option-6" value="6" data-i18n="textContent"></option>
-                  <option id="base-option-7" value="7" data-i18n="textContent"></option>
-                  <option id="base-option-8" value="8" data-i18n="textContent"></option>
-                  <option id="base-option-9" value="9" data-i18n="textContent"></option>
-                  <option id="base-option-10" value="10" data-i18n="textContent"></option>
-                  <option id="base-option-11" value="11" data-i18n="textContent"></option>
-                  <option id="base-option-12" value="12" data-i18n="textContent"></option>
-                  <option id="base-option-13" value="13" data-i18n="textContent"></option>
-                  <option id="base-option-14" value="14" data-i18n="textContent"></option>
-                  <option id="base-option-15" value="15" data-i18n="textContent"></option>
-                  <option id="base-option-16" value="16" data-i18n="textContent"></option>
-                  <option id="base-option-17" value="17" data-i18n="textContent"></option>
-                  <option id="base-option-18" value="18" data-i18n="textContent"></option>
-                  <option id="base-option-19" value="19" data-i18n="textContent"></option>
-                  <option id="base-option-20" value="20" data-i18n="textContent"></option>
-                  <option id="base-option-21" value="21" data-i18n="textContent"></option>
-                  <option id="base-option-22" value="22" data-i18n="textContent"></option>
-                  <option id="base-option-23" value="23" data-i18n="textContent"></option>
-                  <option id="base-option-24" value="24" data-i18n="textContent"></option>
-                  <option id="base-option-25" value="25" data-i18n="textContent"></option>
-                  <option id="base-option-26" value="26" data-i18n="textContent"></option>
-                  <option id="base-option-27" value="27" data-i18n="textContent"></option>
-                  <option id="base-option-28" value="28" data-i18n="textContent"></option>
-                  <option id="base-option-29" value="29" data-i18n="textContent"></option>
-                  <option id="base-option-30" value="30" data-i18n="textContent"></option>
-                  <option id="base-option-31" value="31" data-i18n="textContent"></option>
-                  <option id="base-option-32" value="32" data-i18n="textContent"></option>
-                  <option id="base-option-33" value="33" data-i18n="textContent"></option>
-                  <option id="base-option-34" value="34" data-i18n="textContent"></option>
-                  <option id="base-option-35" value="35" data-i18n="textContent"></option>
-                  <option id="base-option-36" value="36" data-i18n="textContent"></option>
-                </select>
-                <div id="base-case" class="display-none">
-                  <div class="radio">
-                    <label>
-                      <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
-                      <span id="base-case-lowercase-label" data-i18n="textContent"></span>
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                      <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
-                      <span id="base-case-uppercase-label" data-i18n="textContent"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
+          </div>
         </div>
       </section>
       <section id="next-prev-settings">
@@ -343,7 +343,7 @@
           <img src="../img/font-awesome/chevron-circle-right.png" alt="" width="18" height="18"/>
           <h3 id="next-prev-settings-h3" data-i18n="textContent"></h3>
         </div>
-<!--        <p id="next-prev-settings-p" data-i18n="textContent"></p>-->
+        <!--        <p id="next-prev-settings-p" data-i18n="textContent"></p>-->
         <div class="table">
           <div class="row">
             <div class="column">
@@ -376,18 +376,17 @@
           <img src="../img/font-awesome/info-circle.png" alt="" width="18" height="18"/>
           <h3 id="about-h3" data-i18n="textContent"></h3>
         </div>
+        <p id="feedback-p" data-i18n="textContent"></p>
         <p>
           <a id="website-a" href="http://www.github.com/roysix/url-incrementer" data-i18n="textContent"></a>
         </p>
         <div>
-          <img src="../img/options/urli.png" alt="" width="32" height="32"/>
+          <img id="urli-img" src="../img/extras/urli.png" alt="" width="32" height="32"/>
           <span id="urli-thank-you" data-i18n="textContent"></span>
-        </div>
-        <div>
-          <span id="urli-label" data-i18n="textContent"></span>
         </div>
       </section>
     </div>
+    <script type="text/javascript" src="../js/ui.js"></script>
     <script type="text/javascript" src="../js/options.js"></script>
   </body>
 </html>

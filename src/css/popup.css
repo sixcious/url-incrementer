@@ -18,14 +18,11 @@ body {
   padding: 0;
 }
 
-#popup {
-  margin: 5px;
-}
-
 /* Controls CSS */
 
 #controls {
   width: 88px;
+  margin: 5px;
 }
 
 input[type="image"] {
@@ -46,6 +43,11 @@ input[type="image"].disabled {
 }
 
 /* Setup CSS */
+
+#setup {
+  width: 500px;
+  margin: 12px;
+}
 
 h3, label {
   text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
@@ -72,12 +74,10 @@ textarea {
 
 div.table {
   display: table;
-  width: 100%;
 }
 
 div.row  {
   display: table-row;
-  padding-bottom: 20px;
 }
 
 div.column {
@@ -86,26 +86,28 @@ div.column {
 }
 
 div.column:not(:last-child) {
-  padding-right: 20px;
+  padding-right: 40px;
 }
 
-div.column > label {
+div.column > label, .label-display-block {
   display: block;
 }
 
-/*#url {
-  margin-bottom: 10px;
-}*/
-
-select#auto-action-select {
-  width: 135px;
-}
-
 .setup-buttons {
-  margin-top: 12px;
+  margin-top: 24px;
   text-align: center;
 }
 
 .setup-buttons > button:not(:last-child) {
-  margin-right: 8px;
+  margin-right: 12px;
+}
+
+.setup-buttons #options-button {
+  position: absolute;
+  right: 12px;
+}
+
+.setup-buttons #options-button img {
+  vertical-align: bottom;
+  margin-right: 2px;
 }

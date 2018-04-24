@@ -1,5 +1,6 @@
 /* Options CSS is minimal because Options is set to use Chrome style */
 
+@import url("ui/generate-alert.css");
 @import url("ui/fade.css");
 
 h3 {
@@ -8,7 +9,7 @@ h3 {
 }
 
 section:not(:last-child) {
-  margin-bottom: 36px;
+  margin-bottom: 40px;
 }
 
 div.heading {
@@ -72,12 +73,14 @@ input[type="image"]:focus {
   outline: none;
 }
 
-#urli-label, #urli-thank-you {
+#urli-img {
+  cursor: pointer;
+}
+
+#urli-thank-you {
   font: 12px monospace;
 }
 
-/*h3 {
-  font-weight: bold;
-  text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+#options .overlay {
+  top: 75%;
 }
-*/
