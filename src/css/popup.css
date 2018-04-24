@@ -45,7 +45,7 @@ input[type="image"].disabled {
 /* Setup CSS */
 
 #setup {
-  width: 500px;
+  min-width: 512px;
   margin: 12px;
 }
 
