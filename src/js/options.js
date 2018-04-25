@@ -134,10 +134,11 @@ URLI.Options = URLI.Options || function () {
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
-    DOM["#optional-permissions-request-button"].addEventListener("click", requestPermissions);
-    DOM["#optional-permissions-remove-button"].addEventListener("click", removePermissions);
+    DOM["#optional-permissions-request-button"].addEventListener("click", function() { requestPermissions(true); });
+    DOM["#optional-permissions-remove-button"].addEventListener("click", function() { removePermissions(true); });
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
+    DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
     DOM["#auto-times-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoTimes": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#auto-seconds-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoSeconds": +this.value >= 2 && +this.value <= 100 ? +this.value : 5}); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
@@ -151,7 +152,17 @@ URLI.Options = URLI.Options || function () {
     DOM["#links-select"].addEventListener("change", function () { chrome.storage.sync.set({"linksPriority": this.value}); });
     DOM["#same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"sameDomainPolicy": this.checked}); });
     DOM["#urli-img"].addEventListener("click", function() { URLI.UI.generateAlert([++urliClickCount <= 3 ? urliClickCount + " ..." : chrome.i18n.getMessage("urli_click_message")]);} );
+    DOM["#reset-options-button"].addEventListener("click", resetOptions);
     // Populate values from storage
+    populateValuesFromStorage();
+  }
+
+  /**
+   * Populates the options form values from the extension storage.
+   * 
+   * @private
+   */
+  function populateValuesFromStorage() {
     chrome.storage.sync.get(null, function(items) {
       DOM["#permissions-disabled"].className = !items.permissionsGranted ? "display-block" : "display-none";
       DOM["#permissions-enabled"].className = items.permissionsGranted ? "display-block" : "display-none";
@@ -173,6 +184,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#mouse-clear-select"].value = items.mouseClear;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
+      DOM["#auto-action-select"].value = items.autoAction;
       DOM["#auto-times-input"].value = items.autoTimes;
       DOM["#auto-seconds-input"].value = items.autoSeconds;
       DOM["#selection-select"].value = items.selectionPriority;
@@ -196,23 +208,26 @@ URLI.Options = URLI.Options || function () {
   /**
    * Requests permissions in order to enable and bring up internal shortcuts.
    * 
+   * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
    * @private
    */
-  function requestPermissions() {
+  function requestPermissions(updateDOMAndStorage) {
     chrome.permissions.request({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(granted) {
       if (granted) {
-        chrome.storage.sync.set({"permissionsGranted": true});
-        DOM["#permissions-disabled"].className = "display-none";
-        DOM["#permissions-enabled"].className = "display-block fade-in";
-        DOM["#chrome-shortcuts"].className = "display-none";
-        DOM["#internal-shortcuts"].className = "display-block fade-in";
-        DOM["#auto-settings"].className = "display-block fade-in";
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
             actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
           }]);
         });
+        if (updateDOMAndStorage) {
+          chrome.storage.sync.set({"permissionsGranted": true});
+          DOM["#permissions-disabled"].className = "display-none";
+          DOM["#permissions-enabled"].className = "display-block fade-in";
+          DOM["#chrome-shortcuts"].className = "display-none";
+          DOM["#internal-shortcuts"].className = "display-block fade-in";
+          DOM["#auto-settings"].className = "display-block fade-in";
+        }
       }
     });
   }
@@ -221,14 +236,15 @@ URLI.Options = URLI.Options || function () {
    * Removes permissions that were previously granted and brings back Chrome
    * shortcuts.
    * 
+   * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
    * @private
    */
-  function removePermissions() {
+  function removePermissions(updateDOMAndStorage) {
     if (chrome.declarativeContent) {
       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
     }
     chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {
-      if (removed) {
+      if (removed && updateDOMAndStorage) {
         chrome.storage.sync.set({"permissionsGranted": false});
         DOM["#permissions-enabled"].className = "display-none";
         DOM["#permissions-disabled"].className = "display-block fade-in";
@@ -365,6 +381,24 @@ URLI.Options = URLI.Options || function () {
       DOM["#selection-custom-message-span"].textContent = chrome.i18n.getMessage("selection_custom_save_success");
       chrome.storage.sync.set({"selectionCustom": { url: url, pattern: pattern, flags: flags, group: group, index: index }});
     }
+  }
+
+  /**
+   * Resets the options by clearing the storage and setting it with the default storage values, removing any extra
+   * permissions, and finally re-populating the options input values from storage again.
+   *
+   * @private
+   */
+  function resetOptions() {
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      var SDV = backgroundPage.URLI.Background.getSDV();
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(SDV);
+        removePermissions(false);
+        populateValuesFromStorage();
+        URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
+      });
+    });
   }
 
   // Return Public Functions

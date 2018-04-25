@@ -102,6 +102,8 @@
   "feedback_p": { "message": "Discovered a bug? Have a feature request? Or just feedback to make things better? I'd really, really (yes, really!) appreciate it if you could " },
   "email_a": { "message": "email me."},
   "website_a": { "message": "Website / Source Code (GitHub)" },
+  "reset_options_button" : { "message": "Reset Options" },
+  "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you": { "message": "URLI says \"Thank you\" for using this extension!" },
   "urli_click_message": { "message" : "... That tickles! ^^" },
 
@@ -151,6 +153,10 @@
   "auto_action_option_default": { "message": "(None)" },
   "auto_action_option_increment": { "message": "Increment [+]" },
   "auto_action_option_decrement": { "message": "Decrement [-]" },
+  "auto_action_label_alt": { "message": "Action"},
+  "auto_action_option_default_alt": { "message": "Decide in Setup (Recommended)" },
+  "auto_action_option_increment_alt": { "message": "Preselect Increment [+]" },
+  "auto_action_option_decrement_alt": { "message": "Preselect Decrement [-]" },
   "auto_times_label": { "message": "Times"},
   "auto_seconds_label": { "message": "Seconds" }
 }

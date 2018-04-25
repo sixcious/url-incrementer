@@ -9,7 +9,30 @@ var URLI = URLI || {};
 
 URLI.Background = URLI.Background || function () {
 
+  // SDV: Storage Default Values
+  const SDV = {
+    "permissionsGranted": false,
+    "quickEnabled": true,
+    "animationsEnabled": true,
+    "iconFeedbackEnabled": false,
+    "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
+    "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
+    "linksPriority": "attributes", "sameDomainPolicy": true,
+    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
+    "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
+    "autoAction": "", "autoTimes": 10, "autoSeconds": 5
+  };
+
   var instances = new Map(); // TODO: Use storage and make background an event page
+
+  /**
+   * Gets the storage default values (SDV).
+   *
+   * @returns the storage default values (SDV)
+   */
+  function getSDV() {
+    return SDV;
+  }
 
   /**
    * Gets all the tab instances.
@@ -134,6 +157,7 @@ URLI.Background = URLI.Background || function () {
 
   // Return Public Functions
   return {
+    getSDV: getSDV,
     getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,
@@ -145,33 +169,29 @@ URLI.Background = URLI.Background || function () {
 
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
+  var SDV = URLI.Background.getSDV();
   if (details.reason === "install") {
     chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set({
-        "permissionsGranted": false,
-        "quickEnabled": true,
-        "iconFeedbackEnabled": false,
-        "animationsEnabled": true,
-        "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
-        "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
-        "linksPriority": "attributes", "sameDomainPolicy": true,
-        "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
-        "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
-        "autoAction": "", "autoTimes": 10, "autoSeconds": 5
-      });
+      chrome.storage.sync.set(SDV);
     });
   } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
     chrome.storage.sync.get(null, function(items) {
       chrome.storage.sync.set({"permissionsGranted": items.shortcuts !== "chrome"});
-      chrome.storage.sync.set({"iconFeedbackEnabled": false});
       chrome.storage.sync.set({"keyIncrement": items.keyPlus});
       chrome.storage.sync.set({"keyDecrement": items.keyMinus});
       chrome.storage.sync.set({"mouseIncrement": items.mousePlus});
       chrome.storage.sync.set({"mouseDecrement": items.mouseMinus});
-      chrome.storage.sync.set({"autoAction": ""});
-      chrome.storage.sync.set({"autoTimes": 10});
-      chrome.storage.sync.set({"autoSeconds": 5});
-      chrome.storage.sync.remove(["shortcuts", "quickEnabled", "keyPlus", "keyMinus", "mousePlus", "mouseMinus"]);
+      chrome.storage.sync.set({"iconFeedbackEnabled": SDV.iconFeedbackEnabled});
+      chrome.storage.sync.set({"autoAction": SDV.autoAction});
+      chrome.storage.sync.set({"autoTimes": SDV.autoTimes});
+      chrome.storage.sync.set({"autoSeconds": SDV.autoSeconds});
+      chrome.storage.sync.remove(["shortcuts", "keyPlus", "keyMinus", "mousePlus", "mouseMinus"]);
+    });
+  } else if (details.reason === "update" && chrome.runtime.getManifest().version == 4.0) { // Update Version 4.0 quickEnabled storage mistake
+    chrome.storage.sync.get(null, function(items) {
+      if (items.quickEnabled == undefined) {
+        chrome.storage.sync.set({"quickEnabled": true});
+      }
     });
   }
   if (details.reason === "install") {

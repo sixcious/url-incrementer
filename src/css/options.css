@@ -73,6 +73,10 @@ input[type="image"]:focus {
   outline: none;
 }
 
+#reset-options-div {
+  text-align: right;
+}
+
 #urli-img {
   cursor: pointer;
 }
