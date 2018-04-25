@@ -149,7 +149,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set({
         "permissionsGranted": false,
-        "chromeQuickEnabled": true,
+        "quickEnabled": true,
         "iconFeedbackEnabled": false,
         "animationsEnabled": true,
         "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
@@ -163,7 +163,6 @@ chrome.runtime.onInstalled.addListener(function(details) {
   } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
     chrome.storage.sync.get(null, function(items) {
       chrome.storage.sync.set({"permissionsGranted": items.shortcuts !== "chrome"});
-      chrome.storage.sync.set({"chromeQuickEnabled": items.quickEnabled});
       chrome.storage.sync.set({"iconFeedbackEnabled": false});
       chrome.storage.sync.set({"keyIncrement": items.keyPlus});
       chrome.storage.sync.set({"keyDecrement": items.keyMinus});
@@ -215,8 +214,8 @@ chrome.commands.onCommand.addListener(function(command) {
     if (!items.permissionsGranted && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
       chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
         var instance = URLI.Background.getInstance(tabs[0].id);
-        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.chromeQuickEnabled || instance.enabled)) {
-          if (!instance && items.chromeQuickEnabled) {
+        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || instance.enabled)) {
+          if (!instance && items.quickEnabled) {
             instance = URLI.Background.buildInstance(undefined, tabs[0], items);
           }
           URLI.Background.updateTab(instance, command);

@@ -3,6 +3,10 @@
     "message": "URL Incrementer",
     "description": "Extension name."
   },
+  "short_name": {
+    "message": "URLI",
+    "description": "Extension short name."
+  },
   "description": {
     "message": "Lets you increment [+] or decrement [-] numbers in a URL",
     "description": "Extension description."

@@ -110,7 +110,7 @@ URLI.Options = URLI.Options || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#chrome-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"chromeQuickEnabled": this.checked}); });
+    DOM["#chrome-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
     DOM["#chrome-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
@@ -158,7 +158,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#chrome-shortcuts"].className = !items.permissionsGranted ? "display-block" : "display-none";
       DOM["#internal-shortcuts"].className = items.permissionsGranted ? "display-block" : "display-none";
       DOM["#auto-settings"].className = items.permissionsGranted ? "display-block" : "display-none";
-      DOM["#chrome-shortcuts-quick-enable-input"].checked = items.chromeQuickEnabled;
+      DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
       writeInput(DOM["#key-increment-input"], items.keyIncrement);
