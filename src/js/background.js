@@ -214,7 +214,7 @@ chrome.commands.onCommand.addListener(function(command) {
     if (!items.permissionsGranted && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
       chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
         var instance = URLI.Background.getInstance(tabs[0].id);
-        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || instance.enabled)) {
+        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) {
           if (!instance && items.quickEnabled) {
             instance = URLI.Background.buildInstance(undefined, tabs[0], items);
           }
