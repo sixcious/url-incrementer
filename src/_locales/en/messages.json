@@ -100,7 +100,7 @@
   "same_domain_policy_enable_label": { "message": "Only use links from the same domain of the current page" },
   "about_h3": { "message": "About / Feedback" },
   "feedback_p": { "message": "Discovered a bug? Have a feature request? Or just feedback to make things better? I'd really, really (yes, really!) appreciate it if you could " },
-  "email_a": { "message": "email me!"},
+  "email_a": { "message": "email me."},
   "website_a": { "message": "Website / Source Code (GitHub)" },
   "urli_thank_you": { "message": "URLI says \"Thank you\" for using this extension!" },
   "urli_click_message": { "message" : "... That tickles! ^^" },
