@@ -13,8 +13,9 @@ URLI.Background = URLI.Background || function () {
   const SDV = {
     "permissionsGranted": false,
     "quickEnabled": true,
-    "animationsEnabled": true,
+    "iconColor": "dark",
     "iconFeedbackEnabled": false,
+    "animationsEnabled": true,
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "linksPriority": "attributes", "sameDomainPolicy": true,

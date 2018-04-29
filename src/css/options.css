@@ -86,5 +86,13 @@ input[type="image"]:focus {
 }
 
 #options .overlay {
-  top: 97%;
+  top: initial;
+}
+
+.radio label:not(:last-child) {
+  margin-right: 16px;
+}
+
+.radio label:first-child {
+  margin-right: 32px;
 }

@@ -136,6 +136,9 @@ URLI.Options = URLI.Options || function () {
     DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#optional-permissions-request-button"].addEventListener("click", function() { requestPermissions(true); });
     DOM["#optional-permissions-remove-button"].addEventListener("click", function() { removePermissions(true); });
+    DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
+    DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
+    DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
     DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
@@ -182,6 +185,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#mouse-next-select"].value = items.mouseNext;
       DOM["#mouse-prev-select"].value = items.mousePrev;
       DOM["#mouse-clear-select"].value = items.mouseClear;
+      DOM["#icon-color-radio-" + items.iconColor].checked = true;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
       DOM["#auto-action-select"].value = items.autoAction;
@@ -253,6 +257,22 @@ URLI.Options = URLI.Options || function () {
         DOM["#auto-settings"].className = "display-none";
       }
     });
+  }
+
+  /**
+   * Changes the extension icon color in the browser's toolbar (browserAction).
+   *
+   * @private
+   */
+  function changeIconColor() {
+    chrome.browserAction.setIcon({
+      path : {
+        "16": "/img/icons/" + this.value + "/16.png",
+        "24": "/img/icons/" + this.value + "/24.png",
+        "32": "/img/icons/" + this.value +  "/32.png"
+      }
+    });
+    chrome.storage.sync.set({"iconColor": this.value});
   }
 
   /**
@@ -395,6 +415,7 @@ URLI.Options = URLI.Options || function () {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(SDV);
         removePermissions(false);
+        changeIconColor.call(DOM["#icon-color-radio-dark"]);
         populateValuesFromStorage();
         URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
       });
