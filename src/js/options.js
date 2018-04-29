@@ -269,7 +269,7 @@ URLI.Options = URLI.Options || function () {
       path : {
         "16": "/img/icons/" + this.value + "/16.png",
         "24": "/img/icons/" + this.value + "/24.png",
-        "32": "/img/icons/" + this.value +  "/32.png"
+        "32": "/img/icons/" + this.value + "/32.png"
       }
     });
     chrome.storage.sync.set({"iconColor": this.value});
