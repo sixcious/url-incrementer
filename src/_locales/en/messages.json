@@ -73,6 +73,7 @@
   "icon_feedback_enable_label": { "message": "Enable icon feedback when incrementing or from other actions" },
   "animations_enable_label": { "message": "Enable Hover.css CSS3 Animations in UI" },
   "auto_settings_h3": { "message": "Auto Settings" },
+  "download_settings_h3": { "message": "Download Settings (Experimental)" },
   "increment_decrement_settings_h3": { "message": "Increment Decrement Settings" },
   "selection_option_prefixes": { "message": "Select numbers in the URL with prefixes like =123 and /456" },
   "selection_option_lastnumber": { "message": "Select the last number in the URL" },
@@ -162,5 +163,6 @@
   "auto_action_option_increment_alt": { "message": "Preselect Increment [+]" },
   "auto_action_option_decrement_alt": { "message": "Preselect Decrement [-]" },
   "auto_times_label": { "message": "Times"},
-  "auto_seconds_label": { "message": "Seconds" }
+  "auto_seconds_label": { "message": "Seconds" },
+  "download_xyz_label": { "message": "XYZ" }
 }

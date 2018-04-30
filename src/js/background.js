@@ -22,7 +22,8 @@ URLI.Background = URLI.Background || function () {
     "linksPriority": "attributes", "sameDomainPolicy": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
-    "autoAction": "", "autoTimes": 10, "autoSeconds": 5
+    "autoAction": "", "autoTimes": 10, "autoSeconds": 5,
+	"downloadStrategy": "query", "downloadQuerySelectorAll": "[src*='.jpg'],[href*='.jpg']", "downloadFileLimit": 10
   };
 
   var instances = new Map(); // TODO: Use storage and make background an event page
@@ -92,15 +93,18 @@ URLI.Background = URLI.Background || function () {
       if (!instance) {
         instance = {};
         instance.enabled = false;
-        instance.autoAction = items.autoAction;
-        instance.autoTimes = items.autoTimes;
-        instance.autoSeconds = items.autoSeconds;
         instance.interval = items.interval;
         instance.base = items.base;
         instance.baseCase = items.baseCase;
         instance.linksPriority = items.linksPriority;
         instance.sameDomainPolicy = items.sameDomainPolicy;
-      }
+        instance.autoAction = items.autoAction;
+        instance.autoTimes = items.autoTimes;
+        instance.autoSeconds = items.autoSeconds;
+	    instance.downloadStrategy = items.downloadStrategy;
+	    instance.downloadQuerySelectorAll = items.downloadQuerySelectorAll;
+	    instance.downloadFileLimit = items.downloadFileLimit;
+	  }
       selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
       instance.tabId = tab.id;
       instance.url = tab.url;
@@ -121,6 +125,28 @@ URLI.Background = URLI.Background || function () {
    * @public
    */
   function updateTab(instance, action, caller, callback) {
+    // Icon Feedback
+    chrome.storage.sync.get(null, function(items) {
+      if (items.iconFeedbackEnabled) {
+        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
+      }
+    });
+    // Download?
+    if (instance && instance.enabled && instance.downloadStrategy !== "") {
+      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+		  console.log("instancequeryselectorall=" + instance.downloadQuerySelectorAll);
+        var code = "URLI.Download.download(document, " +  JSON.parse(instance.downloadQuerySelectorAll) + ");";
+        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+          setTimeout(function() { updateTab2(instance, action, caller, callback); }, instance.autoSeconds * 1000);
+          //updateTab2(instance, action, caller, callback);
+        });
+      });
+    } else {
+		updateTab2(instance, action, caller, callback);
+	}
+  }
+  
+  function updateTab2(instance, action, caller, callback) {
     var urlProps;
     switch (action) {
       case "increment":
@@ -148,23 +174,6 @@ URLI.Background = URLI.Background || function () {
          });
        });
        break;
-    }
-    // Icon Feedback
-    chrome.storage.sync.get(null, function(items) {
-      if (items.iconFeedbackEnabled) {
-        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
-      }
-    });
-    // Download?
-    if (true) { // instance.download
-      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-        var code = "URLI.Download.download(document);";
-        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-          if (callback) {
-            callback(instance);
-          }
-        });
-      });
     }
   }
 
