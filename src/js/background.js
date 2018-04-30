@@ -12,6 +12,7 @@ URLI.Background = URLI.Background || function () {
   // SDV: Storage Default Values
   const SDV = {
     "permissionsGranted": false,
+    "shortcutsEnabled": true,
     "quickEnabled": true,
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
@@ -154,6 +155,17 @@ URLI.Background = URLI.Background || function () {
         chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
       }
     });
+    // Download?
+    if (true) { // instance.download
+      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+        var code = "URLI.Download.download(document);";
+        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+          if (callback) {
+            callback(instance);
+          }
+        });
+      });
+    }
   }
 
   // Return Public Functions
@@ -171,9 +183,12 @@ URLI.Background = URLI.Background || function () {
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
   var SDV = URLI.Background.getSDV();
+  // New Installations: Setup storage and open Options Page in a new tab
   if (details.reason === "install") {
     chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(SDV);
+      chrome.storage.sync.set(SDV, function() {
+        chrome.runtime.openOptionsPage();
+      });
     });
   } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
     chrome.storage.sync.get(null, function(items) {
@@ -182,6 +197,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
       chrome.storage.sync.set({"keyDecrement": items.keyMinus});
       chrome.storage.sync.set({"mouseIncrement": items.mousePlus});
       chrome.storage.sync.set({"mouseDecrement": items.mouseMinus});
+      chrome.storage.sync.set({"iconColor": SDV.iconColor});
       chrome.storage.sync.set({"iconFeedbackEnabled": SDV.iconFeedbackEnabled});
       chrome.storage.sync.set({"autoAction": SDV.autoAction});
       chrome.storage.sync.set({"autoTimes": SDV.autoTimes});
@@ -190,13 +206,11 @@ chrome.runtime.onInstalled.addListener(function(details) {
     });
   } else if (details.reason === "update" && chrome.runtime.getManifest().version == 4.0) { // Update Version 4.0 quickEnabled storage mistake
     chrome.storage.sync.get(null, function(items) {
-      if (items.quickEnabled == undefined) {
-        chrome.storage.sync.set({"quickEnabled": true});
-      }
+      chrome.storage.sync.set({"iconColor": SDV.iconColor});
+      // if (items.quickEnabled == undefined) {
+      //   chrome.storage.sync.set({"quickEnabled": true});
+      // }
     });
-  }
-  if (details.reason === "install") {
-    chrome.runtime.openOptionsPage();
   }
 });
 

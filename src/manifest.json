@@ -6,7 +6,7 @@
   "description": "__MSG_description__",
   "icons": { "16": "img/icons/dark/16.png", "48": "img/icons/dark/48.png", "128": "img/icons/dark/128.png" },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": { "16": "img/icons/dark/16.png", "24": "img/icons/dark/24.png", "32": "img/icons/dark/32.png" }, "default_popup": "html/popup.html" },
-  "background": { "scripts": ["js/background.js", "js/increment-decrement.js", "js/next-prev.js"], "persistent": true },
+  "background": { "scripts": ["js/background.js", "js/increment-decrement.js", "js/next-prev.js", "js/download.js"], "persistent": true },
   "commands": { "increment": { "suggested_key": { "default": "Ctrl+Shift+Up"}, "description": "Increment [+]" }, "decrement": { "suggested_key": { "default": "Ctrl+Shift+Down"}, "description": "Decrement [-]" }, "next": { "description": "Next [>]" }, "prev": { "description": "Prev [<]" }, "clear": { "description": "Clear [x]" } },
   "minimum_chrome_version": "55",
   "optional_permissions": ["declarativeContent", "<all_urls>"],

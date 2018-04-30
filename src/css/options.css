@@ -94,5 +94,9 @@ input[type="image"]:focus {
 }
 
 .radio label:first-child {
-  margin-right: 32px;
+  margin-right: 24px;
+}
+
+.radio label > input {
+  margin-right: 3px;
 }
