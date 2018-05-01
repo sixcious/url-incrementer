@@ -97,7 +97,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * 
    * @param event the key event
    * @param key the key to check
-   * @returns true if the key event matches the key, false otherwise
+   * @return true if the key event matches the key, false otherwise
    * @private
    */
   function keyPressed(event, key) {
@@ -117,7 +117,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * 
    * @param event the mouse event
    * @param mouse the mouse button to check
-   * @returns true if the mouse button event matches the mouse, false otherwise
+   * @return true if the mouse button event matches the mouse, false otherwise
    * @private
    */
   function mousePressed(event, mouse) {
@@ -143,7 +143,7 @@ chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLI.Shortcuts.setItems(items);
     // Auto
-    if (response.instance && response.instance.enabled && response.instance.autoAction !== "") {
+    if (response.instance && response.instance.enabled && response.instance.autoEnabled) {
       // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
       // Note: The first time auto is done via chrome.runtime.onMessage.addListener from popup, so it's already been
       // done once (thus the pre decrement instead of post decrement)

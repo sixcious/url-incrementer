@@ -92,29 +92,53 @@
           </div>
         </div>
       </div>
-      <div class="table">
+      <div id="extras" class="table">
         <div class="row">
-          <div id="auto" class="column">
-            <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
-            <select id="auto-action-select">
-              <option id="auto-action-option-default" value="" data-i18n="textContent"></option>
-              <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
-              <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
-            </select>
-          </div>
-          <div id="auto-extras" class="display-none">
-            <div class="column">
-              <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
-              <input id="auto-times-input" type="number" min="1" max="1000"/>
+          <div class="column">
+            <div id="auto" class="display-none">
+              <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
+              <select id="auto-action-select">
+                <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
+                <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
+              </select>
+              <div class="row">
+                <div class="column">
+                  <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
+                  <input id="auto-times-input" type="number" min="1" max="1000"/>
+                </div>
+                <div class="column">
+                  <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
+                  <input id="auto-seconds-input" type="number" min="2" max="100"/>
+                </div>
+              </div>
             </div>
-            <div class="column">
-              <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
-              <input id="auto-seconds-input" type="number" min="2" max="100"/>
+          </div>
+          <div class="column">
+            <div id="download" class="display-none">
+              <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
+              <select id="download-strategy-select">
+                <option id="download-strategy-option-filetypes" value="extensions" data-i18n="textContent"></option>
+                <option id="download-strategy-option-queryselectorall" value="selectors" data-i18n="textContent"></option>
+              </select>
             </div>
           </div>
         </div>
       </div>
       <div class="setup-buttons">
+        <div id="extra-toggles">
+          <div class="checkbox">
+            <label>
+              <span id="auto-label" data-i18n="textContent"></span>
+              <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" />
+              <label class="tgl-btn" for="auto-toggle-input"></label>
+            </label>
+              <label>
+                <span id="download-label" data-i18n="textContent"></span>
+                <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" />
+                <label class="tgl-btn" for="download-toggle-input"></label>
+              </label>
+          </div>
+        </div>
         <button id="accept-button" data-i18n="textContent"></button>
         <button id="cancel-button" data-i18n="textContent"></button>
         <button id="options-button">

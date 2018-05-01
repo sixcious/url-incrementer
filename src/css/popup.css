@@ -4,6 +4,7 @@
 @import url("ui/generate-alert.css");
 @import url("ui/hover.css");
 @import url("ui/fade.css");
+@import url("ui/toggle.css");
 
 html {
   height: auto; /* Needed to override chromium/chrome-shared.css */
@@ -107,7 +108,18 @@ div.column > label, .label-display-block {
   right: 12px;
 }
 
+/*
 .setup-buttons #options-button img {
   vertical-align: bottom;
   margin-right: 2px;
+}*/
+
+.setup-buttons #extra-toggles {
+  position: absolute;
+  left: 12px;
+  bottom: 8px;
+}
+
+.setup-buttons #extra-toggles .checkbox > label:not(:last-child) {
+  margin-right: 8px;
 }

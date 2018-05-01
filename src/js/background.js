@@ -23,7 +23,7 @@ URLI.Background = URLI.Background || function () {
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
     "autoAction": "", "autoTimes": 10, "autoSeconds": 5,
-	"downloadStrategy": "query", "downloadQuerySelectorAll": "[src*='.jpg'],[href*='.jpg']", "downloadFileLimit": 10
+    "downloadStrategy": "", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg'],[href*='.jpg']", "downloadLimit": 10
   };
 
   var instances = new Map(); // TODO: Use storage and make background an event page
@@ -31,7 +31,8 @@ URLI.Background = URLI.Background || function () {
   /**
    * Gets the storage default values (SDV).
    *
-   * @returns the storage default values (SDV)
+   * @return the storage default values (SDV)
+   * @public
    */
   function getSDV() {
     return SDV;
@@ -40,7 +41,8 @@ URLI.Background = URLI.Background || function () {
   /**
    * Gets all the tab instances.
    *
-   * @returns {Map<tabId, instance>} the tab instances
+   * @return {Map<tabId, instance>} the tab instances
+   * @public
    */
   function getInstances() {
     return instances;
@@ -98,13 +100,17 @@ URLI.Background = URLI.Background || function () {
         instance.baseCase = items.baseCase;
         instance.linksPriority = items.linksPriority;
         instance.sameDomainPolicy = items.sameDomainPolicy;
+        instance.autoEnabled = false;
         instance.autoAction = items.autoAction;
         instance.autoTimes = items.autoTimes;
         instance.autoSeconds = items.autoSeconds;
-	    instance.downloadStrategy = items.downloadStrategy;
-	    instance.downloadQuerySelectorAll = items.downloadQuerySelectorAll;
-	    instance.downloadFileLimit = items.downloadFileLimit;
-	  }
+        instance.downloadEnabled = false;
+        instance.downloadStrategy = items.downloadStrategy;
+        instance.downloadTypes = items.downloadTypes;
+        instance.downloadSelector = items.downloadSelector;
+        instance.downloadIncludes = items.downloadIncludes;
+        instance.downloadLimit = items.downloadLimit;
+    }
       selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
       instance.tabId = tab.id;
       instance.url = tab.url;
@@ -134,7 +140,7 @@ URLI.Background = URLI.Background || function () {
     // Download?
     if (instance && instance.enabled && instance.downloadStrategy !== "") {
       chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-		  console.log("instancequeryselectorall=" + instance.downloadQuerySelectorAll);
+      console.log("instancequeryselectorall=" + instance.downloadQuerySelectorAll);
         var code = "URLI.Download.download(document, " +  JSON.parse(instance.downloadQuerySelectorAll) + ");";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
           setTimeout(function() { updateTab2(instance, action, caller, callback); }, instance.autoSeconds * 1000);
@@ -142,8 +148,8 @@ URLI.Background = URLI.Background || function () {
         });
       });
     } else {
-		updateTab2(instance, action, caller, callback);
-	}
+    updateTab2(instance, action, caller, callback);
+  }
   }
   
   function updateTab2(instance, action, caller, callback) {

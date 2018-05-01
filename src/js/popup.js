@@ -49,7 +49,8 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#url-textarea"].addEventListener("touchend", selectURL);
     // DOM["#url-textarea"].addEventListener("select", selectURL); TODO: This causes a nasty bug with trying to use the checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
-    DOM["#auto-action-select"].addEventListener("change", function() { DOM["#auto-extras"].className = this.value !== "" ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -70,11 +71,14 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
           DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
           DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-          DOM["#auto"].className = items_.permissionsGranted ? "column" : "display-none";
-          DOM["#auto-extras"].className = items_.permissionsGranted && instance.autoAction !== "" ? "display-block fade-in" : "display-none";
+          DOM["#extra-toggles"].className = items_.permissionsGranted ? "column" : "display-none";
           DOM["#auto-action-select"].value = instance.autoAction;
           DOM["#auto-times-input"].value = instance.autoTimes;
           DOM["#auto-seconds-input"].value = instance.autoSeconds;
+          DOM["#download-strategy-select"].value = instance.downloadStrategy;
+          // DOM["#download-types"].value = instance.downloadTypes;
+          // DOM["#download-selector-input"].value = instance.downloadSelector;
+          // DOM["#download-limit-input"].value = instance.downloadLimit;
           if (!instance.enabled) {
             toggleView.call(DOM["#setup-input"]);
           }
@@ -258,7 +262,9 @@ URLI.Popup = URLI.Popup || function () {
   function selectURL() {
     DOM["#selection-input"].value = window.getSelection().toString();
     DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
-    DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
+    if (items_.leadingZerosPadByDetection) {
+      DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
+    }
   }
 
   // Return Public Functions

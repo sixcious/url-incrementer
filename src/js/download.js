@@ -12,20 +12,33 @@ URLI.Download = URLI.Download || function () {
   /**
    * TODO
    */
-  function download(document_, querySelectorAll) {
+  function download(document_, selector) {
           // links = doc.getElementsByTagName("img"),
         // srclinks = document_.querySelectorAll("[src]"),
         // hreflinks = document_.querySelectorAll("[href]"),
     console.log("in download...");
-    var links = document_.querySelectorAll(querySelectorAll),
-        link,
-        url,
-        filename,
-        a,
-        i,
-        length;
 
-		
+
+  }
+
+  /**
+   * TODO
+   *
+   * @param document_
+   * @param selector
+   * @private
+   */
+  function downloadLinks(document_, selector) {
+    var links,
+      link,
+      url,
+      filename,
+      a,
+      i,
+      length;
+
+
+    links = document_.querySelectorAll(selector);
     for (i = 0; i < links.length; i++) {
       link = links[i];
       url = link.src ? link.src : link.href ? link.href : "";
@@ -36,8 +49,17 @@ URLI.Download = URLI.Download || function () {
         a.setAttribute("download", filename);
         console.log("a is =" + a);
         a.click();
-       }
-     }
+      }
+    }
+  }
+
+  /**
+   * TODO
+   *
+   * @param document_
+   * @private
+   */
+  function downloadPage(document_) {
     console.log("downloading the page!");
     a = document_.createElement("a");
     a.setAttribute("href", window.location.href);
