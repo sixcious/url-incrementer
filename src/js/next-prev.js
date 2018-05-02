@@ -37,6 +37,7 @@ URLI.NextPrev = URLI.NextPrev || function () {
    *    in a document created from an Ajax XMLHttpRequest response
    *
    * @param doc the document to use based on the callee's context
+   * @param sameDomainPolicyEnabled whether to enforce the same domain policy
    * @return links the links containing the next and prev links (if any)
    * @public
    */

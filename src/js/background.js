@@ -131,56 +131,56 @@ URLI.Background = URLI.Background || function () {
    * @public
    */
   function updateTab(instance, action, caller, callback) {
+    var urlProps,
+        code;
+    switch (action) {
+      case "increment":
+      case "decrement":
+        urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
+        instance.url = urlProps.urlmod;
+        instance.selection = urlProps.selectionmod;
+        chrome.tabs.update(instance.tabId, {url: instance.url});
+        if (instance.enabled) { // Instance is never enabled in quick mode
+          setInstance(instance.tabId, instance);
+        }
+        if (callback) {
+          callback(instance);
+        }
+        break;
+      case "next":
+      case "prev":
+        chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+          code = "URLI.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
+            chrome.tabs.update(instance.tabId, {url: URLI.NextPrev.getURL(instance.linksPriority, action, results[0])});
+            if (callback) {
+              callback(instance);
+            }
+          });
+        });
+        break;
+    }
     // Icon Feedback
     chrome.storage.sync.get(null, function(items) {
       if (items.iconFeedbackEnabled) {
         chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
       }
     });
-    // Download?
-    if (instance && instance.enabled && instance.downloadEnabled) {
-      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-     // console.log("instance.downloadSelector=" + String(instance.downloadSelector));
-        var code = "URLI.Download.download(document, " +  String(instance.downloadSelector) + ");";
-        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-          //setTimeout(function() { updateTab2(instance, action, caller, callback); }, instance.autoSeconds * 1000);
-          updateTab2(instance, action, caller, callback);
-        });
-      });
-    } else {
-    updateTab2(instance, action, caller, callback);
-  }
-  }
-  
-  function updateTab2(instance, action, caller, callback) {
-    var urlProps;
-    switch (action) {
-      case "increment":
-      case "decrement":
-       urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
-       instance.url = urlProps.urlmod;
-       instance.selection = urlProps.selectionmod;
-       chrome.tabs.update(instance.tabId, {url: instance.url});
-       if (instance.enabled) { // Instance is never enabled in quick mode
-         setInstance(instance.tabId, instance);
-       }
-       if (callback) {
-         callback(instance);
-       }
-       break;
-      case "next":
-      case "prev":
-       chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-         var code = "URLI.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
-         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
-          chrome.tabs.update(instance.tabId, {url: URLI.NextPrev.getURL(instance.linksPriority, action, results[0])});
-            if (callback) {
-              callback(instance);
-            }
-         });
-       });
-       break;
-    }
+    // // Download
+    // if (instance && instance.enabled && instance.downloadEnabled) {
+    //   chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+    //     code = "URLI.Download.downloadXYZ(document);";//, " +  JSON.stringify(instance.downloadSelector) + ");";
+    //     console.log("code=" + code);
+    //     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+    //       console.log("results=");
+    //       console.log(results);
+    //       if (callback) {
+    //         console.log("download callback executescript");
+    //         callback(instance);
+    //       }
+    //     });
+    //   });
+    // }
   }
 
   // Return Public Functions

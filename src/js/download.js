@@ -12,12 +12,12 @@ URLI.Download = URLI.Download || function () {
   /**
    * TODO
    */
-  function download(document_, selector) {
+  function downloadXYZ(document_) {
           // links = doc.getElementsByTagName("img"),
         // srclinks = document_.querySelectorAll("[src]"),
         // hreflinks = document_.querySelectorAll("[href]"),
     console.log("in download...");
-    downloadLinks(document_, selector);
+    downloadLinks(document_, "");
 
 
   }
@@ -71,6 +71,6 @@ URLI.Download = URLI.Download || function () {
 
   // Return Public Functions
   return {
-    download: download
+    downloadXYZ: downloadXYZ
   };
 }();

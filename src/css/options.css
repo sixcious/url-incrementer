@@ -73,16 +73,32 @@ input[type="image"]:focus {
   outline: none;
 }
 
-#reset-options-div {
-  text-align: right;
+#about-floats-div {
+  margin-bottom: 8px;
+}
+
+#about-floats-div #name-version-website-div {
+  float: left;
+}
+
+#about-floats-div #reset-options-div {
+  float: right;
+}
+
+
+#about-floats-div .clear-both {
+  clear: both;
 }
 
 #urli-img {
   cursor: pointer;
+  vertical-align: top;
 }
 
 #urli-thank-you {
-  font: 12px monospace;
+  display: block;
+  text-align: right;
+  font-style: italic;
 }
 
 #options .overlay {

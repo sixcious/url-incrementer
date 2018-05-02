@@ -258,15 +258,16 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 .tgl + .tgl-btn {
   width: 2.5em;
   height: 1.25em;
+  background: #AAAAAA;
 }
 .tgl-ios:checked + .tgl-btn {
   background: #4285f4;/*b2cdfa;*//*#FF85A6;*/
 }
 
 .tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
-  width: 61%;
-  height: 166%;
-  top: -30%;
+  width: 63%;
+  height: 175%;
+  top: -38%;
 }
 
 .tgl-ios + .tgl-btn:after {

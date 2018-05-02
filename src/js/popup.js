@@ -49,6 +49,12 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#url-textarea"].addEventListener("touchend", selectURL);
     DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a nasty bug with trying to use the checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#download-strategy-select"].addEventListener("change", function() {
+      DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
+      DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
+      DOM["#download-includes"].className = this.value === "page" ? "display-none" : "display-block fade-in";
+      DOM["#download-limit"].className = this.value === "page" ? "display-none" : "display-block fade-in";
+    });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "column fade-in" : "display-none"; });
     // Initialize popup content

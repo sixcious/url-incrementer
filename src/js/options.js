@@ -160,6 +160,8 @@ URLI.Options = URLI.Options || function () {
     DOM["#same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"sameDomainPolicy": this.checked}); });
     DOM["#urli-img"].addEventListener("click", function() { URLI.UI.generateAlert([++urliClickCount <= 3 ? urliClickCount + " ..." : chrome.i18n.getMessage("urli_click_message")]);} );
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
+    DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
+    DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
     // Populate values from storage
     populateValuesFromStorage();
   }
@@ -176,6 +178,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#chrome-shortcuts"].className = !items.permissionsGranted ? "display-block" : "display-none";
       DOM["#internal-shortcuts"].className = items.permissionsGranted ? "display-block" : "display-none";
       DOM["#auto-settings"].className = items.permissionsGranted ? "display-block" : "display-none";
+      DOM["#download-settings"].className = items.permissionsGranted ? "display-block" : "display-none";
       DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
@@ -240,6 +243,7 @@ URLI.Options = URLI.Options || function () {
           DOM["#chrome-shortcuts"].className = "display-none";
           DOM["#internal-shortcuts"].className = "display-block fade-in";
           DOM["#auto-settings"].className = "display-block fade-in";
+          DOM["#download-settings"].className = "display-block fade-in";
         }
       }
     });
@@ -264,6 +268,7 @@ URLI.Options = URLI.Options || function () {
         DOM["#internal-shortcuts"].className = "display-none";
         DOM["#chrome-shortcuts"].className = "display-block fade-in";
         DOM["#auto-settings"].className = "display-none";
+        DOM["#download-settings"].className = "display-none";
       }
     });
   }
