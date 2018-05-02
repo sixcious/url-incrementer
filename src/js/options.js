@@ -145,7 +145,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#auto-times-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoTimes": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#auto-seconds-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoSeconds": +this.value >= 2 && +this.value <= 100 ? +this.value : 5}); });
     DOM["#download-strategy-select"].addEventListener("change", function () { chrome.storage.sync.set({"downloadStrategy": this.value}); });
-    DOM["#download-queryselectorall-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadQuerySelectorAll": this.value}); });
+    DOM["#download-selector-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadSelector": this.value}); });
     DOM["#download-includes-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadIncludes": this.value }); });
     DOM["#download-limit-input"].addEventListener("change", function () { chrome.storage.sync.set({"downloadLimit": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
@@ -196,6 +196,10 @@ URLI.Options = URLI.Options || function () {
       DOM["#auto-times-input"].value = items.autoTimes;
       DOM["#auto-seconds-input"].value = items.autoSeconds;
       DOM["#download-strategy-select"].value = items.downloadStrategy;
+      //DOM["#download-types-jpg"].checked = items.downloadTypes.jpg;
+      DOM["#download-selector-input"].value = items.downloadSelector;
+      DOM["#download-includes-input"].value = items.downloadIncludes;
+      DOM["#download-limit-input"].value = items.downloadLimit;
       DOM["#selection-select"].value = items.selectionPriority;
       DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block fade-in" : "display-none";
       DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;

@@ -47,10 +47,10 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#url-textarea"].addEventListener("mouseup", selectURL);
     DOM["#url-textarea"].addEventListener("keyup", selectURL);
     DOM["#url-textarea"].addEventListener("touchend", selectURL);
-    // DOM["#url-textarea"].addEventListener("select", selectURL); TODO: This causes a nasty bug with trying to use the checkbox unfortunately
+    DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a nasty bug with trying to use the checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "column fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -72,13 +72,18 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
           DOM["#leading-zeros-input"].checked = instance.leadingZeros;
           DOM["#extra-toggles"].className = items_.permissionsGranted ? "column" : "display-none";
+          DOM["#auto-toggle-input"].checked = items_.permissionsGranted && instance.autoEnabled;
+          DOM["#auto"].className = items_.permissionsGranted && instance.autoEnabled ? "column fade-in" : "display-none";
           DOM["#auto-action-select"].value = instance.autoAction;
           DOM["#auto-times-input"].value = instance.autoTimes;
           DOM["#auto-seconds-input"].value = instance.autoSeconds;
+          DOM["#download-toggle-input"].checked = items_.permissionsGranted && instance.downloadEnabled;
+          DOM["#download"].className = items_.permissionsGranted && instance.downloadEnabled ? "column fade-in" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
-          // DOM["#download-types"].value = instance.downloadTypes;
-          // DOM["#download-selector-input"].value = instance.downloadSelector;
-          // DOM["#download-limit-input"].value = instance.downloadLimit;
+          DOM["#download-types"].value = instance.downloadTypes;
+          DOM["#download-selector-input"].value = instance.downloadSelector;
+          DOM["#download-includes-input"].value = instance.downloadIncludes;
+          DOM["#download-limit-input"].value = instance.downloadLimit;
           if (!instance.enabled) {
             toggleView.call(DOM["#setup-input"]);
           }
@@ -205,9 +210,16 @@ URLI.Popup = URLI.Popup || function () {
         baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
         selectionParsed = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
+        autoEnabled = DOM["#auto-toggle-input"].checked,
         autoAction = DOM["#auto-action-select"].value,
         autoTimes = +DOM["#auto-times-input"].value,
         autoSeconds = +DOM["#auto-seconds-input"].value,
+        downloadEnabled = DOM["#download-toggle-input"].checked,
+        downloadStrategy = DOM["#download-strategy-select"].value,
+//        downloadTypes = DOM["#download-types"].value,
+        downloadSelector = DOM["#download-selector-input"].value,
+        downloadIncludes = DOM["#download-includes-input"].value,
+        downloadLimit = +DOM["#download-limit-input"].value,
         errors = [ // [0] = selection errors and [1] = interval errors
           selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
           url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
@@ -233,9 +245,16 @@ URLI.Popup = URLI.Popup || function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
+        instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
         instance.autoTimes = autoTimes;
         instance.autoSeconds = autoSeconds;
+        instance.downloadEnabled = downloadEnabled;
+        instance.downloadStrategy = downloadStrategy;
+//        instance.downloadTypes = downloadTypes;
+        instance.downloadSelector = downloadSelector;
+        instance.downloadIncludes = downloadIncludes;
+        instance.downloadLimit = downloadLimit;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // If permissions granted, send message to content script:
         if (items_.permissionsGranted && items_.keyEnabled && !items_.quickKeyEnabled) {

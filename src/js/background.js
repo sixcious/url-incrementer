@@ -22,8 +22,8 @@ URLI.Background = URLI.Background || function () {
     "linksPriority": "attributes", "sameDomainPolicy": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
-    "autoAction": "", "autoTimes": 10, "autoSeconds": 5,
-    "downloadStrategy": "", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg'],[href*='.jpg']", "downloadLimit": 10
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5,
+    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg'],[href*='.jpg']", "downloadIncludes": "", "downloadLimit": 10
   };
 
   var instances = new Map(); // TODO: Use storage and make background an event page
@@ -138,13 +138,13 @@ URLI.Background = URLI.Background || function () {
       }
     });
     // Download?
-    if (instance && instance.enabled && instance.downloadStrategy !== "") {
+    if (instance && instance.enabled && instance.downloadEnabled) {
       chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-      console.log("instancequeryselectorall=" + instance.downloadQuerySelectorAll);
-        var code = "URLI.Download.download(document, " +  JSON.parse(instance.downloadQuerySelectorAll) + ");";
+     // console.log("instance.downloadSelector=" + String(instance.downloadSelector));
+        var code = "URLI.Download.download(document, " +  String(instance.downloadSelector) + ");";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-          setTimeout(function() { updateTab2(instance, action, caller, callback); }, instance.autoSeconds * 1000);
-          //updateTab2(instance, action, caller, callback);
+          //setTimeout(function() { updateTab2(instance, action, caller, callback); }, instance.autoSeconds * 1000);
+          updateTab2(instance, action, caller, callback);
         });
       });
     } else {

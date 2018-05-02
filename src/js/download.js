@@ -17,6 +17,7 @@ URLI.Download = URLI.Download || function () {
         // srclinks = document_.querySelectorAll("[src]"),
         // hreflinks = document_.querySelectorAll("[href]"),
     console.log("in download...");
+    downloadLinks(document_, selector);
 
 
   }
