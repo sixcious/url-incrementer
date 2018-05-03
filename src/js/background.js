@@ -131,7 +131,7 @@ URLI.Background = URLI.Background || function () {
    * @param callback the function callback (optional)
    * @public
    */
-  function updateTab(instance, action, caller, callback) {
+  function updateTab2(instance, action, caller, callback) {
     var urlProps,
         code;
     switch (action) {
@@ -184,7 +184,37 @@ URLI.Background = URLI.Background || function () {
     //     });
     //   });
     // }
+
   }
+  function updateTab(instance, action, caller, callback) {
+        if (instance && instance.enabled && instance.downloadEnabled) {
+          chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+          code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
+          //code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
+          console.log("code=" + code);
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+            if (results && results[0]) {
+            console.log("results=" + results);
+           console.log("results[0]" + results[0]);
+           console.log("resuls length" + results[0].length);
+           
+           var urls = results[0];
+           for (var i = 0; i < urls.length; i++ ) {
+                        url = urls[i]; //link.src ? link.src : link.href ? link.href : ""
+             console.log("url=" + url);
+             console.log(chrome);
+             chrome.downloads.download({url: url});
+           }
+           }
+           updateTab2(instance, action, caller, callback);
+         });
+          });
+    }
+     else {
+       updateTab2(instance, action, caller, callback)
+     }
+  }
+  
 
   // Return Public Functions
   return {
@@ -257,24 +287,30 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case "closePopup":
       chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
       break;
+      /*
     case "download":
       instance = request.instance;
-      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-         code = "URLI.Download.download(" + JSON.stringify(instance.downloadSelector) + ");";
+      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", allFrames: true, runAt: "document_end"}, function() {
+         //code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
+         code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
          console.log("code=" + code);
-         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+         chrome.tabs.executeScript(instance.tabId, {code: code, allFrames: true, runAt: "document_end"}, function (results) {
+           if (results && results[0]) {
            console.log("results=" + results);
            console.log("results[0]" + results[0]);
            console.log("resuls length" + results[0].length);
-           var links = results[0];
-           for (var i = 0; i < links.length; i++) {
-             url = link.src ? link.src : link.href ? link.href : ""
+           for (var n = 0; n < results.length; n++) {
+           var urls = results[n];
+           for (var i = 0; i < urls.length; i++) {
+             url = urls[i]; //link.src ? link.src : link.href ? link.href : ""
              console.log("url=" + url);
              chrome.downloads.download({url: url});
            }
+           }
+           }
          });
        });
-      break;
+      break;*/
     default:
       break;
   }

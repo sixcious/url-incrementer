@@ -142,10 +142,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLI.Shortcuts.setItems(items);
-    // Download
-    if (response.instance && response.instance.enabled && response.instance.downloadEnabled) {
-      chrome.runtime.sendMessage({greeting: "download", instance: response.instance});
-    }
     // Auto
     if (response.instance && response.instance.enabled && response.instance.autoEnabled) {
       // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
@@ -196,4 +192,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   sendResponse({});
 });
-

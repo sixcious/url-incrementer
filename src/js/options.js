@@ -230,7 +230,7 @@ URLI.Options = URLI.Options || function () {
    * @private
    */
   function requestPermissions(updateDOMAndStorage) {
-    chrome.permissions.request({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(granted) {
+    chrome.permissions.request({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(granted) {
       if (granted) {
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
           chrome.declarativeContent.onPageChanged.addRules([{
@@ -262,7 +262,7 @@ URLI.Options = URLI.Options || function () {
     if (chrome.declarativeContent) {
       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
     }
-    chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {
+    chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) {
       if (removed && updateDOMAndStorage) {
         chrome.storage.sync.set({"permissionsGranted": false});
         DOM["#permissions-enabled"].className = "display-none";

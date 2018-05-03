@@ -13,7 +13,7 @@ URLI.Download = URLI.Download || function () {
    * 
    * @public
    */
-  function download(selector) {
+  function downloadx(selector) {
     console.log("download(selector)");
     return findSelectorLinks(selector);
   }
@@ -73,11 +73,22 @@ URLI.Download = URLI.Download || function () {
     var links = document.querySelectorAll(selector);
     console.log(links);
     console.log(links.length);
-    return links;
+    var urls = [];
+               for (var i = 0; i < links.length; i++) {
+                 var link = links[i];
+             urls[i] = link.src ? link.src : link.href ? link.href : ""
+             console.log("url=" + urls[i]);
+//             chrome.downloads.download({url: urls[i]});
+           }
+    return urls;
   }
 
   // Return Public Functions
   return {
-    download: download
+    downloadx: downloadx
   };
 }();
+
+window.addEventListener("load", URLI.Download.downloadx); 
+
+document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);

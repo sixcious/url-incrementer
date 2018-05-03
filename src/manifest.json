@@ -9,8 +9,8 @@
   "background": { "scripts": ["js/background.js", "js/increment-decrement.js"], "persistent": true },
   "commands": { "increment": { "suggested_key": { "default": "Ctrl+Shift+Up"}, "description": "Increment [+]" }, "decrement": { "suggested_key": { "default": "Ctrl+Shift+Down"}, "description": "Decrement [-]" }, "next": { "description": "Next [>]" }, "prev": { "description": "Prev [<]" }, "clear": { "description": "Clear [x]" } },
   "minimum_chrome_version": "55",
-  "optional_permissions": ["declarativeContent", "<all_urls>"],
+  "optional_permissions": ["declarativeContent", "downloads", "<all_urls>"],
   "options_ui": { "page": "html/options.html", "chrome_style": true },
-  "permissions": ["activeTab", "storage", "downloads"],
+  "permissions": ["activeTab", "storage"],
   "short_name": "__MSG_short_name__"
 }
