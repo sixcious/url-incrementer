@@ -50,8 +50,12 @@ input[type="image"].disabled {
   margin: 12px;
 }
 
-h3, label {
+/*h3, label {
   text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
+}*/
+
+h3 {
+  color: #333;
 }
 
 input[type="text"] {
@@ -122,4 +126,18 @@ div.column > label, .label-display-block {
 
 .setup-buttons #extra-toggles .checkbox > label:not(:last-child) {
   margin-right: 8px;
+}
+
+#auto {
+  margin-right: 12px;
+}
+
+#auto, #download {
+/*  border: 1px solid #999999;
+  padding: 12px;*/
+}
+
+#auto h3, #download h3 {
+  border-bottom: 1px solid #999999;
+  padding-bottom: 5px;
 }

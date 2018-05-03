@@ -5,14 +5,15 @@
  * @namespace
  */
 
-var URLI = URLI || {};
+const URLI = URLI || {};
 
 URLI.Background = URLI.Background || function () {
 
   // SDV: Storage Default Values
   const SDV = {
-    "permissionsGranted": false,
-    "shortcutsEnabled": true,
+    "internalShortcutsEnabled": false,
+    "autoEnabled": false,
+    "downloadEnabled": false,
     "quickEnabled": true,
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
@@ -23,11 +24,11 @@ URLI.Background = URLI.Background || function () {
     "linksPriority": "attributes", "sameDomainPolicy": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
-    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5,
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": false,
     "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10
   };
 
-  var instances = new Map(); // TODO: Use storage and make background an event page
+  const instances = new Map(); // TODO: Use storage and make background an event page
 
   /**
    * Gets the storage default values (SDV).
@@ -105,6 +106,7 @@ URLI.Background = URLI.Background || function () {
         instance.autoAction = items.autoAction;
         instance.autoTimes = items.autoTimes;
         instance.autoSeconds = items.autoSeconds;
+        instance.autoWait = items.autoWait;
         instance.downloadEnabled = false;
         instance.downloadStrategy = items.downloadStrategy;
         instance.downloadTypes = items.downloadTypes;
@@ -230,41 +232,28 @@ URLI.Background = URLI.Background || function () {
 
 // Listen for installation changes and do storage/extension initialization work
 chrome.runtime.onInstalled.addListener(function(details) {
-  var SDV = URLI.Background.getSDV();
   // New Installations: Setup storage and open Options Page in a new tab
   if (details.reason === "install") {
     chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(SDV, function() {
+      chrome.storage.sync.set(URLI.Background.getSDV(), function() {
         chrome.runtime.openOptionsPage();
       });
     });
-  } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
-    chrome.storage.sync.get(null, function(items) {
-      chrome.storage.sync.set({
-        "permissionsGranted": items.shortcuts !== "chrome",
-        "keyIncrement": items.keyPlus,
-        "keyDecrement": items.keyMinus,
-        "mouseIncrement": items.mousePlus,
-        "mouseDecrement": items.mouseMinus,
-        "iconColor": SDV.iconColor,
-        "iconFeedbackEnabled": SDV.iconFeedbackEnabled,
-        "autoAction": SDV.autoAction,
-        "autoTimes": SDV.autoTimes,
-        "autoSeconds": SDV.autoSeconds
+  }
+  // Update Installations (Version 4.0 and Below): Reset storage and remove all optional permissions
+  if (details.reason === "update") {
+    chrome.storage.sync.clear(function() {
+      chrome.storage.sync.set(URLI.Background.getSDV(), function() {
+        if (chrome.declarativeContent) {
+          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+        }
+        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) { });
       });
-      chrome.storage.sync.remove(["shortcuts", "keyPlus", "keyMinus", "mousePlus", "mouseMinus"]);
-    });
-  } else if (details.reason === "update" && chrome.runtime.getManifest().version == 4.0) { // Update Version 4.0 quickEnabled storage mistake
-    chrome.storage.sync.get(null, function(items) {
-      chrome.storage.sync.set({"iconColor": SDV.iconColor});
-      // if (items.quickEnabled == undefined) {
-      //   chrome.storage.sync.set({"quickEnabled": true});
-      // }
     });
   }
 });
 
-// Listen for requests from chrome.runtime.sendMessage (shortcuts.js)
+// Listen for requests from chrome.runtime.sendMessage (Content Scripts Environment auto.js, shortcuts.js)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   var instance;
   switch (request.greeting) {
@@ -275,6 +264,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       URLI.Background.setInstance(sender.tab.id, request.instance);
       break;
     case "deleteInstance":
+      if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.keyQuickEnabled) {
+          chrome.tabs.sendMessage(sender.tabId, {greeting: "removeKeyListener"});
+      }
+      if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.mouseQuickEnabled) {
+          chrome.tabs.sendMessage(sender.tabId, {greeting: "removeMouseListener"});
+      }
+      if (items_.internalShortcutsEnabled && URLI.Background.getInstance(sender.tab.id).autoEnabled) {
+        chrome.tabs.sendMessage(sender.tabId, {greeting: "clearAutoTimeout"});
+      }
       URLI.Background.deleteInstance(sender.tab.id);
       break;
     case "updateTab":
@@ -287,30 +285,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case "closePopup":
       chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
       break;
-      /*
-    case "download":
-      instance = request.instance;
-      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", allFrames: true, runAt: "document_end"}, function() {
-         //code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
-         code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
-         console.log("code=" + code);
-         chrome.tabs.executeScript(instance.tabId, {code: code, allFrames: true, runAt: "document_end"}, function (results) {
-           if (results && results[0]) {
-           console.log("results=" + results);
-           console.log("results[0]" + results[0]);
-           console.log("resuls length" + results[0].length);
-           for (var n = 0; n < results.length; n++) {
-           var urls = results[n];
-           for (var i = 0; i < urls.length; i++) {
-             url = urls[i]; //link.src ? link.src : link.href ? link.href : ""
-             console.log("url=" + url);
-             chrome.downloads.download({url: url});
-           }
-           }
-           }
-         });
-       });
-      break;*/
     default:
       break;
   }
@@ -320,7 +294,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 // Listen for commands (Chrome shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
   chrome.storage.sync.get(null, function(items) {
-    if (!items.permissionsGranted && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
+    if (!items.internalShortcutsEnabled && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
       chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
         var instance = URLI.Background.getInstance(tabs[0].id);
         if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) {

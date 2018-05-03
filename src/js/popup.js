@@ -34,7 +34,7 @@ URLI.Popup = URLI.Popup || function () {
     // Set i18n (internationalization) text from messages.json
     for (i = 0; i < i18ns.length; i++) {
       el = i18ns[i];
-      el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_'));
+      el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
     DOM["#increment-input"].addEventListener("click", clickIncrement);
@@ -55,7 +55,7 @@ URLI.Popup = URLI.Popup || function () {
       DOM["#download-includes"].className = this.value === "page" ? "display-none" : "display-block fade-in";
       DOM["#download-limit"].className = this.value === "page" ? "display-none" : "display-block fade-in";
     });
-    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "column fade-in" : "display-none"; });
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "column fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
@@ -77,14 +77,14 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
           DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
           DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-          DOM["#extra-toggles"].className = items_.permissionsGranted ? "column" : "display-none";
-          DOM["#auto-toggle-input"].checked = items_.permissionsGranted && instance.autoEnabled;
-          DOM["#auto"].className = items_.permissionsGranted && instance.autoEnabled ? "column fade-in" : "display-none";
+          DOM["#auto-toggle-input"].checked = instance.autoEnabled;
+          DOM["#auto"].className = instance.autoEnabled ? "column fade-in" : "display-none";
           DOM["#auto-action-select"].value = instance.autoAction;
           DOM["#auto-times-input"].value = instance.autoTimes;
           DOM["#auto-seconds-input"].value = instance.autoSeconds;
-          DOM["#download-toggle-input"].checked = items_.permissionsGranted && instance.downloadEnabled;
-          DOM["#download"].className = items_.permissionsGranted && instance.downloadEnabled ? "column fade-in" : "display-none";
+          DOM["#auto-wait-input"].checked = instance.autoWait;
+          DOM["#download-toggle-input"].checked = instance.downloadEnabled;
+          DOM["#download"].className = instance.downloadEnabled ? "column fade-in" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
           DOM["#download-types"].value = instance.downloadTypes;
           DOM["#download-selector-input"].value = instance.downloadSelector;
@@ -146,18 +146,21 @@ URLI.Popup = URLI.Popup || function () {
       if (items_.animationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.deleteInstance(instance.tabId);
-      });
-      if (items_.permissionsGranted && items_.keyEnabled && !items_.keyQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
-      }
-      if (items_.permissionsGranted && items_.mouseEnabled && !items_.mouseQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
-      }
-      if (instance.autoAction !== "") {
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "clearAutoTimeout"});
-      }
+      chrome.runtime.sendMessage({greeting: "deleteInstance", function(response) {
+
+      }});
+      // chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      //   backgroundPage.URLI.Background.deleteInstance(instance.tabId);
+      // });
+      // if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.keyQuickEnabled) {
+      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
+      // }
+      // if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.mouseQuickEnabled) {
+      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+      // }
+      // if (items_.internalShortcutsEnabled && instance.autoEnabled) {
+      //   chrome.tabs.sendMessage(instance.tabId, {greeting: "clearAutoTimeout"});
+      // }
     }
   }
 
@@ -220,6 +223,7 @@ URLI.Popup = URLI.Popup || function () {
         autoAction = DOM["#auto-action-select"].value,
         autoTimes = +DOM["#auto-times-input"].value,
         autoSeconds = +DOM["#auto-seconds-input"].value,
+        autoWait = DOM["#auto-wait-input"].checked,
         downloadEnabled = DOM["#download-toggle-input"].checked,
         downloadStrategy = DOM["#download-strategy-select"].value,
 //        downloadTypes = DOM["#download-types"].value,
@@ -233,9 +237,9 @@ URLI.Popup = URLI.Popup || function () {
           selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
           parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-          interval <= 0 ? chrome.i18n.getMessage("interval_invalid_error") :
-          autoAction !== "" && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") :
-          autoAction !== "" && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") :
+          interval < 1 ? chrome.i18n.getMessage("interval_invalid_error") :
+          autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") :
+          autoEnabled && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") :
           ""
         ];
     // We can tell there was an error if some of the array slots weren't empty
@@ -255,6 +259,7 @@ URLI.Popup = URLI.Popup || function () {
         instance.autoAction = autoAction;
         instance.autoTimes = autoTimes;
         instance.autoSeconds = autoSeconds;
+        instance.autoWait = autoWait;
         instance.downloadEnabled = downloadEnabled;
         instance.downloadStrategy = downloadStrategy;
 //        instance.downloadTypes = downloadTypes;
@@ -271,6 +276,7 @@ URLI.Popup = URLI.Popup || function () {
             "autoAction": autoAction,
             "autoSeconds": autoSeconds,
             "autoTimes": autoTimes,
+            "autoWait": autoWait,
             "downloadStrategy": downloadStrategy,
             "downloadSelector": downloadSelector,
             "downloadIncludes": downloadIncludes,
@@ -278,13 +284,13 @@ URLI.Popup = URLI.Popup || function () {
           });
         }
         // If permissions granted, send message to content script:
-        if (items_.permissionsGranted && items_.keyEnabled && !items_.quickKeyEnabled) {
+        if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.quickKeyEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
-        if (items_.permissionsGranted && items_.mouseEnabled && !items_.quickMouseEnabled) {
+        if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.quickMouseEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
-        if (items_.permissionsGranted && instance.autoAction !== "") {
+        if (items_.autoEnabled && instance.autoAction !== "") {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "setAutoTimeout", instance: instance});
         }
         toggleView.call(DOM["#accept-button"]);

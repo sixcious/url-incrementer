@@ -134,8 +134,11 @@ URLI.Options = URLI.Options || function () {
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
-    DOM["#optional-permissions-request-button"].addEventListener("click", function() { requestPermissions(true); });
-    DOM["#optional-permissions-remove-button"].addEventListener("click", function() { removePermissions(true); });
+    // DOM["#optional-permissions-request-button"].addEventListener("click", function() { requestPermissions(true); });
+    // DOM["#optional-permissions-remove-button"].addEventListener("click", function() { removePermissions(true); });
+    DOM["#enable-internal-shortcuts-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/shortcuts.js"]}, true) });
+    DOM["#enable-auto-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/auto.js"]}, true) });
+    DOM["#enable-download-button"].addEventListener("click", function() { requestPermissions({permissions: ["downloads"]}, undefined, true) });
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
@@ -145,6 +148,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
     DOM["#auto-times-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoTimes": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#auto-seconds-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoSeconds": +this.value >= 2 && +this.value <= 100 ? +this.value : 5}); });
+    DOM["#auto-wait-input"].addEventListener("change", function() { chrome.storage.sync.set({ "autoWait": this.checked}); });
     DOM["#download-strategy-select"].addEventListener("change", function () { chrome.storage.sync.set({"downloadStrategy": this.value}); });
     DOM["#download-selector-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadSelector": this.value}); });
     DOM["#download-includes-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadIncludes": this.value }); });
@@ -176,10 +180,10 @@ URLI.Options = URLI.Options || function () {
     chrome.storage.sync.get(null, function(items) {
       DOM["#permissions-disabled"].className = !items.permissionsGranted ? "display-block" : "display-none";
       DOM["#permissions-enabled"].className = items.permissionsGranted ? "display-block" : "display-none";
-      DOM["#chrome-shortcuts"].className = !items.permissionsGranted ? "display-block" : "display-none";
-      DOM["#internal-shortcuts"].className = items.permissionsGranted ? "display-block" : "display-none";
-      DOM["#auto-settings"].className = items.permissionsGranted ? "display-block" : "display-none";
-      DOM["#download-settings"].className = items.permissionsGranted ? "display-block" : "display-none";
+      DOM["#chrome-shortcuts"].className = !items.internalShortcutsEnabled ? "display-block" : "display-none";
+      DOM["#internal-shortcuts"].className = items.internalShortcutsEnabled ? "display-block" : "display-none";
+      DOM["#auto-settings"].className = items.autoEnabled ? "display-block" : "display-none";
+      DOM["#download-settings"].className = items.downloadEnabled ? "display-block" : "display-none";
       DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
@@ -200,6 +204,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#auto-action-select"].value = items.autoAction;
       DOM["#auto-times-input"].value = items.autoTimes;
       DOM["#auto-seconds-input"].value = items.autoSeconds;
+      DOM["#auto-wait-input"].checked = items.autoWait;
       DOM["#download-strategy-select"].value = items.downloadStrategy;
       //DOM["#download-types-jpg"].checked = items.downloadTypes.jpg;
       DOM["#download-selector-input"].value = items.downloadSelector;
@@ -225,17 +230,19 @@ URLI.Options = URLI.Options || function () {
 
   /**
    * Requests permissions in order to enable and bring up internal shortcuts.
-   * 
+   *
+   * @param request the request, e.g.  {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}
+   * @param script  the js files, e.g. {js: ["js/shortcuts.js", "js/auto.js"]})
    * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
    * @private
    */
-  function requestPermissions(updateDOMAndStorage) {
-    chrome.permissions.request({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(granted) {
+  function requestPermissions(request, script, updateDOMAndStorage) {
+    chrome.permissions.request(request, function(granted) {
       if (granted) {
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
-            actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+            actions: [new chrome.declarativeContent.RequestContentScript(script)]
           }]);
         });
         if (updateDOMAndStorage) {

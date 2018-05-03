@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Lets you increment [+] or decrement [-] numbers in a URL",
+    "message": "Increment [+] or decrement [-] any part of the URL; Supports Auto-Increment and Downloading",
     "description": "Extension description."
   },
   "title": {
@@ -39,6 +39,9 @@
   "auto_seconds_invalid_error": { "message": "If using auto, the seconds must be between 2 and 100" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
+  "enable_internal_shortcuts_button": { "message": "Enable Internal Shortcuts" },
+  "enable_auto_button": { "message": "Enable Auto" },
+  "enable_download_button": { "message": "Enable Downloading" },
   "permissions_disabled_h3": { "message": "Extra Functionality (Currently Disabled)" },
   "permissions_disabled_p": { "message": "Aw, if you would like to enable URLI's extra functions like auto-incrementing, downloading, or internal shortcuts, click the button below to grant URLI with the permissions it needs. URLI does not use or track your data, and you can always remove the permissions later if you want to." },
   "permissions_enabled_h3": { "message": "Extra Functionality (Currently Enabled)" },
@@ -162,6 +165,8 @@
   "auto_action_option_decrement": { "message": "Decrement [-]" },
   "auto_times_label": { "message": "Times"},
   "auto_seconds_label": { "message": "Seconds" },
+  "auto_wait_label": { "message": "Wait" },
+  "auto_wait_descriptive_label": { "message": "Wait until the page has fully loaded before timing"},
   "download_label": { "message": "Download" },
   "download_strategy_label": { "message": "Strategy" },
   "download_strategy_option_types": { "message": "Download these file type(s)" },

@@ -95,78 +95,80 @@
       <div id="extras" class="table">
         <div class="row">
           <div id="auto" class="display-none">
+            <h3 id="auto-label*" data-i18n="textContent"></h3>
             <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
             <select id="auto-action-select">
               <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
               <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
             </select>
-            <div class="row">
-              <div class="column">
-                <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
-                <input id="auto-times-input" type="number" min="1" max="1000"/>
+            <div class="table">
+              <div class="row">
+                <div class="column">
+                  <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
+                  <input id="auto-times-input" type="number" min="1" max="1000"/>
+                </div>
+                <div class="column">
+                  <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
+                  <input id="auto-seconds-input" type="number" min="2" max="100"/>
+                </div>
               </div>
-              <div class="column">
-                <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
-                <input id="auto-seconds-input" type="number" min="2" max="100"/>
+            </div>
+            <div class="table">
+              <div class="row">
+                <div class="column">
+                  <div class="checkbox">
+                    <label>
+                      <input id="auto-wait-input" type="checkbox"/>
+                      <span id="auto-wait-descriptive-label" data-i18n="textContent"></span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div id="download" class="display-none">
-      <div class="row">
-        <div class="column">
-          <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
-        </div>
-        <div class="column">
-          <select id="download-strategy-select">
-            <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
-            <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
-            <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
-          </select>
-          <div id="download-types">
-            <div class="checkbox">
-              <label>
-                <input id="download-types-jpg-input" type="checkbox"/>
-                <span id="download-types-jpg-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="download-types-png-input" type="checkbox"/>
-                <span id="download-types-png-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="download-types-gif-input" type="checkbox"/>
-                <span id="download-types-gif-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="download-types-mp3-input" type="checkbox"/>
-                <span id="download-types-mp3-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="download-types-mp4-input" type="checkbox"/>
-                <span id="download-types-mp4-label" data-i18n="textContent"></span>
-              </label>
+            <h3 id="download-label*" data-i18n="textContent"></h3>
+            <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
+            <select id="download-strategy-select">
+              <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
+              <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
+              <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
+            </select>
+            <div id="download-types">
+              <div class="checkbox">
+                <label>
+                  <input id="download-types-jpg-input" type="checkbox"/>
+                  <span id="download-types-jpg-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="download-types-png-input" type="checkbox"/>
+                  <span id="download-types-png-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="download-types-gif-input" type="checkbox"/>
+                  <span id="download-types-gif-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="download-types-mp3-input" type="checkbox"/>
+                  <span id="download-types-mp3-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="download-types-mp4-input" type="checkbox"/>
+                  <span id="download-types-mp4-label" data-i18n="textContent"></span>
+                </label>
+              </div>
             </div>
-          </div>
-          <div id="download-selector">
-            document.querySelectorAll("&nbsp;<input id="download-selector-input" type="text" placeholder="[src*='.jpg'],[href*='.jpg']"/>&nbsp;")
-          </div>
-        </div>
-      </div>
-      <div id="download-includes" class="row">
-        <div class="column">
-          <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-        </div>
-        <div class="column">
-          <input id="download-includes-input" type="text" placeholder="Optional"/>
-        </div>
-      </div>
-      <div id="download-limit" class="row">
-        <div class="column">
-          <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
-        </div>
-        <div class="column">
-          <input id="download-limit-input" type="number" min="1" max="999"/>
-        </div>
-      </div>
+            <div id="download-selector">
+              document.querySelectorAll("&nbsp;<input id="download-selector-input" type="text" placeholder="[src*='.jpg'],[href*='.jpg']"/>&nbsp;")
+            </div>
+            <div id="download-includes">
+              <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
+              <input id="download-includes-input" type="text" placeholder="Optional"/>
+            </div>
+            <div id="download-limit">
+              <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
+              <input id="download-limit-input" type="number" min="1" max="999"/>
+            </div>
           </div>
         </div>
       </div>
