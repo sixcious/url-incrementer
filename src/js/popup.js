@@ -262,6 +262,21 @@ URLI.Popup = URLI.Popup || function () {
         instance.downloadIncludes = downloadIncludes;
         instance.downloadLimit = downloadLimit;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
+        // If popup can overwrite settings, write to storage
+        if (items_.popupSettingsCanOverwrite) {
+          chrome.storage.sync.set({
+            "interval": interval,
+            "base": base,
+            "baseCase": baseCase,
+            "autoAction": autoAction,
+            "autoSeconds": autoSeconds,
+            "autoTimes": autoTimes,
+            "downloadStrategy": downloadStrategy,
+            "downloadSelector": downloadSelector,
+            "downloadIncludes": downloadIncludes,
+            "downloadLimit": downloadLimit
+          });
+        }
         // If permissions granted, send message to content script:
         if (items_.permissionsGranted && items_.keyEnabled && !items_.quickKeyEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});

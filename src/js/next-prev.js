@@ -8,7 +8,9 @@
 var URLI = URLI || {};
 
 URLI.NextPrev = URLI.NextPrev || function () {
-
+  
+  var urls = {attributes: {}, innerHTML: {}};
+  
   /**
    * Gets the URL by examining the links object based off of the requested
    * priority and direction.
@@ -19,8 +21,9 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @return url the url to use based on the parameters
    * @public
    */
-  function getURL(priority, direction, links) {
-    return links[priority][direction] ? links[priority][direction] : links[priority === "attributes" ? "innerHTML" : "attributes"][direction];
+  function getURL(direction, priority, sameDomainPolicyEnabled) {
+    buildURLs(sameDomainPolicyEnabled);
+    return urls[priority][direction] ? urls[priority][direction] : urls[priority === "attributes" ? "innerHTML" : "attributes"][direction];
   }
 
   /**
@@ -39,17 +42,15 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @param doc the document to use based on the callee's context
    * @param sameDomainPolicyEnabled whether to enforce the same domain policy
    * @return links the links containing the next and prev links (if any)
-   * @public
+   * @private
    */
-  function getLinks(doc, sameDomainPolicyEnabled) {
+  function buildURLs(sameDomainPolicyEnabled) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    var links = {attributes: {}, innerHTML: {}},
-        links_ = doc.getElementsByTagName("link"),
-        anchors = doc.links, // Includes all anchor and area elements
-        origin = doc.location.origin;
-    parseElements(links_, links, sameDomainPolicyEnabled, origin);
-    parseElements(anchors, links, sameDomainPolicyEnabled, origin);
-    return links;
+    var links = document.getElementsByTagName("link"),
+        anchors = document.links, // Includes all anchor and area elements
+        origin = document.location.origin;
+    parseElements(links, sameDomainPolicyEnabled, origin);
+    parseElements(anchors, sameDomainPolicyEnabled, origin);
   }
 
   /**
@@ -60,7 +61,7 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, links, sameDomainPolicyEnabled, origin) {
+  function parseElements(elements, sameDomainPolicyEnabled, origin) {
     var anchorelement,
         element,
         attributes,
@@ -79,12 +80,12 @@ URLI.NextPrev = URLI.NextPrev || function () {
       if (sameDomainPolicyEnabled && ((element.tagName === "A" ? element.origin : anchorelement.origin) !== origin)) {
         continue;
       }
-      parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href, links);
+      parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href);
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
         // TODO: Separate by attribute.nodeName.toLowerCase()
-        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href, links);
+        parseText(attribute.nodeValue.toLowerCase(), "attributes", element.href);
       }
     }
   }
@@ -96,32 +97,30 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @param text the text to parse keywords from
    * @param type the link type: innerHTML or attributes
    * @param href the URL to set this link to
-   * @param links the links object to use
    * @private
    */
-  function parseText(text, type, href, links) {
+  function parseText(text, type, href) {
     if (text.indexOf("next") !== -1) {
-      links[type].next = href;
+      urls[type].next = href;
     } else if (text.indexOf("forward") !== -1) {
-      links[type].forward = href;
+      urls[type].forward = href;
     } else if (text.indexOf("new") !== -1) {
-      links[type].new = href;
+      urls[type].new = href;
     } else if (text.indexOf(">") !== -1) {
-      links[type].gt = href;
+      urls[type].gt = href;
     } else if (text.indexOf("prev") !== -1) {
-      links[type].prev = href;
+      urls[type].prev = href;
     } else if (text.indexOf("back") !== -1) {
-      links[type].back = href;
+      urls[type].back = href;
     } else if (text.indexOf("old") !== -1) {
-      links[type].old = href;
+      urls[type].old = href;
     } else if (text.indexOf("<") !== -1) {
-      links[type].lt = href;
+      urls[type].lt = href;
     }
   }
 
   // Return Public Functions
   return {
-    getURL: getURL,
-    getLinks: getLinks
+    getURL: getURL
   };
 }();

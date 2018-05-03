@@ -10,67 +10,74 @@ var URLI = URLI || {};
 URLI.Download = URLI.Download || function () {
 
   /**
-   * TODO
+   * 
+   * @public
    */
-  function downloadXYZ(document_) {
-          // links = doc.getElementsByTagName("img"),
-        // srclinks = document_.querySelectorAll("[src]"),
-        // hreflinks = document_.querySelectorAll("[href]"),
-    console.log("in download...");
-    downloadLinks(document_, "");
-
-
+  function download(selector) {
+    console.log("download(selector)");
+    return findSelectorLinks(selector);
   }
 
   /**
    * TODO
    *
-   * @param document_
    * @param selector
+   * @param includes
+   * @param limit
    * @private
    */
-  function downloadLinks(document_, selector) {
+  function downloadSelectorLinks(selector, includes, limit) {
     var links,
-      link,
-      url,
-      filename,
-      a,
-      i,
-      length;
-
-
-    links = document_.querySelectorAll(selector);
-    for (i = 0; i < links.length; i++) {
+        link,
+        url,
+        a,
+        i,
+        length;
+    links = document.querySelectorAll(selector);
+    length = limit < links.length ? limit : links.length;
+    console.log("links length = " + links.length);
+    console.log("links in downloadLinks=" + links);
+    for (i = 0; i < length; i++) {
       link = links[i];
       url = link.src ? link.src : link.href ? link.href : "";
-      filename = url.split("/").pop();
-      if (url && filename) {
-        a = document_.createElement("a");
+      if (url) { // && includes && url.includes(includes)) {
+        a = document.createElement("a");
         a.setAttribute("href", url);
-        a.setAttribute("download", filename);
-        console.log("a is =" + a);
+        a.setAttribute("download", "");
+        console.log("about to download!!! a is =" + a);
         a.click();
       }
     }
+    return links;
   }
 
   /**
    * TODO
    *
-   * @param document_
    * @private
    */
-  function downloadPage(document_) {
-    console.log("downloading the page!");
-    a = document_.createElement("a");
+  function downloadPage() {
+    console.log("downloadPage()");
+    var a;
+    a = document.createElement("a");
     a.setAttribute("href", window.location.href);
     a.setAttribute("download", "");
-    console.log("a page is =" + a);
     a.click();
+  }
+
+  /**
+   * TODO
+   */
+  function findSelectorLinks(selector) {
+    console.log("findSelectorLinks()");
+    var links = document.querySelectorAll(selector);
+    console.log(links);
+    console.log(links.length);
+    return links;
   }
 
   // Return Public Functions
   return {
-    downloadXYZ: downloadXYZ
+    download: download
   };
 }();

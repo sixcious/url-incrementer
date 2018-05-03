@@ -17,13 +17,14 @@ URLI.Background = URLI.Background || function () {
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
     "animationsEnabled": true,
+    "popupSettingsCanOverwrite": true,
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "linksPriority": "attributes", "sameDomainPolicy": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5,
-    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg'],[href*='.jpg']", "downloadIncludes": "", "downloadLimit": 10
+    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10
   };
 
   var instances = new Map(); // TODO: Use storage and make background an event page
@@ -150,9 +151,11 @@ URLI.Background = URLI.Background || function () {
       case "next":
       case "prev":
         chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-          code = "URLI.NextPrev.getLinks(document, " + JSON.parse(instance.sameDomainPolicy) + ");";
+          code = "URLI.NextPrev.getURL(" + JSON.stringify(action) + ", " + JSON.stringify(instance.linksPriority) + ", " + JSON.parse(instance.sameDomainPolicy) + ");";
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
-            chrome.tabs.update(instance.tabId, {url: URLI.NextPrev.getURL(instance.linksPriority, action, results[0])});
+            if (results && results[0]) {
+              chrome.tabs.update(instance.tabId, {url: results[0]});
+            }
             if (callback) {
               callback(instance);
             }
@@ -207,16 +210,18 @@ chrome.runtime.onInstalled.addListener(function(details) {
     });
   } else if (details.reason === "update" && chrome.runtime.getManifest().version <= 3.3) { // Update Version 3.3 storage to Version 4 storage
     chrome.storage.sync.get(null, function(items) {
-      chrome.storage.sync.set({"permissionsGranted": items.shortcuts !== "chrome"});
-      chrome.storage.sync.set({"keyIncrement": items.keyPlus});
-      chrome.storage.sync.set({"keyDecrement": items.keyMinus});
-      chrome.storage.sync.set({"mouseIncrement": items.mousePlus});
-      chrome.storage.sync.set({"mouseDecrement": items.mouseMinus});
-      chrome.storage.sync.set({"iconColor": SDV.iconColor});
-      chrome.storage.sync.set({"iconFeedbackEnabled": SDV.iconFeedbackEnabled});
-      chrome.storage.sync.set({"autoAction": SDV.autoAction});
-      chrome.storage.sync.set({"autoTimes": SDV.autoTimes});
-      chrome.storage.sync.set({"autoSeconds": SDV.autoSeconds});
+      chrome.storage.sync.set({
+        "permissionsGranted": items.shortcuts !== "chrome",
+        "keyIncrement": items.keyPlus,
+        "keyDecrement": items.keyMinus,
+        "mouseIncrement": items.mousePlus,
+        "mouseDecrement": items.mouseMinus,
+        "iconColor": SDV.iconColor,
+        "iconFeedbackEnabled": SDV.iconFeedbackEnabled,
+        "autoAction": SDV.autoAction,
+        "autoTimes": SDV.autoTimes,
+        "autoSeconds": SDV.autoSeconds
+      });
       chrome.storage.sync.remove(["shortcuts", "keyPlus", "keyMinus", "mousePlus", "mouseMinus"]);
     });
   } else if (details.reason === "update" && chrome.runtime.getManifest().version == 4.0) { // Update Version 4.0 quickEnabled storage mistake
@@ -251,6 +256,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       break;
     case "closePopup":
       chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
+      break;
+    case "download":
+      instance = request.instance;
+      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+         code = "URLI.Download.download(" + JSON.stringify(instance.downloadSelector) + ");";
+         console.log("code=" + code);
+         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+           console.log("results=" + results);
+           console.log("results[0]" + results[0]);
+           console.log("resuls length" + results[0].length);
+           var links = results[0];
+           for (var i = 0; i < links.length; i++) {
+             url = link.src ? link.src : link.href ? link.href : ""
+             console.log("url=" + url);
+             chrome.downloads.download({url: url});
+           }
+         });
+       });
       break;
     default:
       break;

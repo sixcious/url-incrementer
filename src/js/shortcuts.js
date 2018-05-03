@@ -138,79 +138,13 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
   };
 }();
 
-URLI.Download = URLI.Download || function () {
-
-  /**
-   * TODO
-   *
-   * @public
-   */
-  function download(instance) {
-    // links = doc.getElementsByTagName("img"),
-    // srclinks = document_.querySelectorAll("[src]"),
-    // hreflinks = document_.querySelectorAll("[href]"),
-    console.log("in download... downloadSelecto=" +  instance.downloadSelector);
-    downloadLinks(instance.downloadSelector, instance.downloadIncludes, instance.downloadLimit);
-  }
-
-  /**
-   * TODO
-   *
-   * @param selector
-   * @param includes
-   * @param limit
-   * @private
-   */
-  function downloadLinks(selector, includes, limit) {
-    var links,
-        link,
-        url,
-        a,
-        i,
-        length;
-    links = document.querySelectorAll(selector);
-    length = limit < links.length ? limit : links.length;
-    console.log("links in downloadLinks=" + links);
-    for (i = 0; i < length; i++) {
-      link = links[i];
-      url = link.src ? link.src : link.href ? link.href : "";
-      if (url && includes && url.includes(includes)) {
-        a = document.createElement("a");
-        a.setAttribute("href", url);
-        a.setAttribute("download", "");
-        console.log("about to download!!! a is =" + a);
-        a.click();
-      }
-    }
-  }
-
-  /**
-   * TODO
-   *
-   * @private
-   */
-  function downloadPage() {
-    console.log("downloading the page!");
-    var a;
-    a = document.createElement("a");
-    a.setAttribute("href", window.location.href);
-    a.setAttribute("download", "");
-    a.click();
-  }
-
-  // Return Public Functions
-  return {
-    download: download
-  };
-}();
-
 // Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLI.Shortcuts.setItems(items);
     // Download
     if (response.instance && response.instance.enabled && response.instance.downloadEnabled) {
-      URLI.Download.download(response.instance);
+      chrome.runtime.sendMessage({greeting: "download", instance: response.instance});
     }
     // Auto
     if (response.instance && response.instance.enabled && response.instance.autoEnabled) {
@@ -262,3 +196,4 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   sendResponse({});
 });
+

@@ -141,6 +141,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
+    DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
     DOM["#auto-times-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoTimes": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#auto-seconds-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoSeconds": +this.value >= 2 && +this.value <= 100 ? +this.value : 5}); });
@@ -195,6 +196,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#icon-color-radio-" + items.iconColor].checked = true;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
+      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
       DOM["#auto-action-select"].value = items.autoAction;
       DOM["#auto-times-input"].value = items.autoTimes;
       DOM["#auto-seconds-input"].value = items.autoSeconds;
