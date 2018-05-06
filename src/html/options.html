@@ -7,35 +7,6 @@
   </head>
   <body id="options">
     <div id="options-sections">
-      <section id="permissions-disabled">
-        <div class="heading">
-          <img src="../img/font-awesome/lock.png" alt="" width="18" height="18"/>
-          <h3 id="permissions-disabled-h3" data-i18n="textContent"></h3>
-        </div>
-        <p id="permissions-disabled-p" data-i18n="textContent"></p>
-<!--        <p>
-          <button id="optional-permissions-request-button" data-i18n="textContent"></button>
-        </p>-->
-        <p>
-          <button id="enable-internal-shortcuts-button" data-i18n="textContent"></button>
-        </p>
-        <p>
-          <button id="enable-auto-button" data-i18n="textContent"></button>
-        </p>
-        <p>
-          <button id="enable-download-button" data-i18n="textContent"></button>
-        </p>
-      </section>
-      <section id="permissions-enabled">
-        <div class="heading">
-          <img src="../img/font-awesome/unlock.png" alt="" width="18" height="18"/>
-          <h3 id="permissions-enabled-h3" data-i18n="textContent"></h3>
-        </div>
-        <p id="permissions-enabled-p" data-i18n="textContent"></p>
-        <p>
-          <button id="optional-permissions-remove-button" data-i18n="textContent"></button>
-        </p>
-      </section>
       <section id="chrome-shortcuts">
         <div class="heading">
           <img src="../img/extras/chrome.png" alt="" width="18" height="18"/>
@@ -43,14 +14,16 @@
           <h3 id="chrome-shortcuts-h3" data-i18n="textContent"></h3>
         </div>
         <p id="chrome-shortcuts-p" data-i18n="textContent"></p>
+                <p id="chrome-shortcuts-p2" data-i18n="textContent"></p>
         <div class="checkbox">
           <label>
             <input id="chrome-shortcuts-quick-enable-input" type="checkbox"/>
             <span id="chrome-shortcuts-quick-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
-        <p>
+        <p class="buttons">
           <button id="chrome-shortcuts-button" data-i18n="textContent"></button>
+          <button id="enable-internal-shortcuts-button" data-i18n="textContent"></button>
         </p>
       </section>
       <section id="internal-shortcuts">
@@ -175,39 +148,45 @@
           <img src="../img/font-awesome/refresh.png" alt="" width="18" height="18"/>
           <h3 id="auto-settings-h3" data-i18n="textContent"></h3>
         </div>
-        <div class="table">
-          <div class="row">
-            <div class="column">
-              <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
+        <div id="auto-settings-disabled">
+          <button id="enable-auto-button" data-i18n="textContent"></button>
+        </div>
+        <div id="auto-settings-enabled">
+          <div class="table">
+            <div class="row">
+              <div class="column">
+                <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
+              </div>
+              <div class="column">
+                <select id="auto-action-select">
+                  <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
+                  <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
+                  <option id="auto-action-option-next" value="next" data-i18n="textContent"></option>
+                  <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
+                </select>
+              </div>
             </div>
-            <div class="column">
-              <select id="auto-action-select">
-                <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
-                <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
-              </select>
+            <div class="row">
+              <div class="column">
+                <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
+              </div>
+              <div class="column">
+                <input id="auto-times-input" type="number" min="1" max="1000"/>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
+            <div class="row">
+              <div class="column">
+                <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
+              </div>
+              <div class="column">
+                <input id="auto-seconds-input" type="number" min="2" max="100"/>
+              </div>
             </div>
-            <div class="column">
-              <input id="auto-times-input" type="number" min="1" max="1000"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <input id="auto-seconds-input" type="number" min="2" max="100"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
+            <div class="row">
+              <div class="column">
               <label id="auto-wait-label" data-i18n="textContent"></label>
             </div>
-            <div class="column">
+              <div class="column">
               <div class="checkbox">
                 <label>
                   <input id="auto-wait-input" type="checkbox"/>
@@ -215,7 +194,7 @@
                 </label>
               </div>
             </div>
-
+            </div>
           </div>
         </div>
       </section>
@@ -224,6 +203,10 @@
           <img src="../img/font-awesome/download.png" alt="" width="18" height="18"/>
           <h3 id="download-settings-h3" data-i18n="textContent"></h3>
         </div>
+        <div id="download-settings-disabled">
+          <button id="enable-download-button" data-i18n="textContent"></button>
+        </div>
+        <div id="download-settings-enabled">
         <div class="table">
           <div class="row">
             <div class="column">
@@ -281,13 +264,14 @@
             </div>
           </div>
         </div>
+        </div>
       </section>
       <section id="basic-settings">
         <div class="heading">
           <img src="../img/font-awesome/check-circle.png" alt="" width="18" height="18"/>
           <h3 id="basic-settings-h3" data-i18n="textContent"></h3>
         </div>
-        <div class="radio">
+        <div class="icon-color radio">
           <label id="icon-color-label" data-i18n="textContent"></label>
           <label>
             <input id="icon-color-radio-dark" value="dark" name="icon-color" type="radio"/>
@@ -303,6 +287,11 @@
             <input id="icon-color-radio-rainbow" value="rainbow" name="icon-color" type="radio"/>
             <img src="../img/icons/rainbow/32.png" alt="" width="16" height="16"/>
             <span id="icon-color-label-rainbow" data-i18n="textContent"></span>
+          </label>
+          <label id="icon-color-radio-urli-unlock">
+            <input id="icon-color-radio-urli" value="urli" name="icon-color" type="radio"/>
+            <img src="../img/icons/urli/32.png" alt="" width="16" height="16"/>
+            <span id="icon-color-label-urli" data-i18n="textContent"></span>
           </label>
         </div>
         <div class="checkbox">
@@ -489,6 +478,19 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="column">
+              <label id="next-prev-popup-buttons-label" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="next-prev-popup-buttons-input" type="checkbox"/>
+                  <span id="next-prev-popup-buttons-description-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <section id="about">
@@ -498,8 +500,10 @@
         </div>
         <div id="about-floats-div">
           <div id="name-version-website-div">
-            <span id="manifest-name"></span> <span id="version-span" data-i18n="textContent"></span> <span id="manifest-version"></span>
-            <br/>
+            <div id="manifest-name"></div>
+            <div>
+              <span id="version-span" data-i18n="textContent"></span>&nbsp;<span id="manifest-version">
+            </div>
             <a id="website-a" href="http://www.github.com/roysix/url-incrementer" data-i18n="textContent"></a>
           </div>
           <div id="reset-options-div">
@@ -510,7 +514,7 @@
         <div class="table">
           <div class="row">
             <div class="column">
-              <img id="urli-img" src="../img/extras/urli.png" alt="" width="64" height="64"/>
+              <input id="urli-click-count" type="image" src="../img/extras/urli.png" alt="" width="64" height="64"/>
             </div>
             <div class="column">
               <p>

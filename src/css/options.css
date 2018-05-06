@@ -48,6 +48,27 @@ input[type="image"] {
   vertical-align: middle;
 }
 
+.buttons button:not(:last-child) {
+  margin-right: 40px;
+}
+
+.icon-color.radio {
+  margin-bottom: 12px;
+}
+
+.icon-color.radio label:not(:last-child) {
+  margin-right: 16px;
+}
+
+.icon-color.radio label:first-child {
+  margin-right: 0;
+  display: block;
+}
+
+.icon-color.radio label > input {
+  margin-right: 3px;
+}
+
 #selection-custom {
   margin: 10px 0;
 }
@@ -85,12 +106,11 @@ input[type="image"]:focus {
   float: right;
 }
 
-
 #about-floats-div .clear-both {
   clear: both;
 }
 
-#urli-img {
+#urli-click-count {
   cursor: pointer;
   vertical-align: top;
 }
@@ -103,16 +123,4 @@ input[type="image"]:focus {
 
 #options .overlay {
   top: initial;
-}
-
-.radio label:not(:last-child) {
-  margin-right: 16px;
-}
-
-.radio label:first-child {
-  margin-right: 24px;
-}
-
-.radio label > input {
-  margin-right: 3px;
 }

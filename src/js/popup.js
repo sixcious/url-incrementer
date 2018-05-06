@@ -37,6 +37,8 @@ URLI.Popup = URLI.Popup || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
+    DOM["#next-input"].addEventListener("click", clickNext);
+    DOM["#prev-input"].addEventListener("click", clickPrev);
     DOM["#increment-input"].addEventListener("click", clickIncrement);
     DOM["#decrement-input"].addEventListener("click", clickDecrement);
     DOM["#clear-input"].addEventListener("click", clickClear);
@@ -52,11 +54,11 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#download-strategy-select"].addEventListener("change", function() {
       DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
       DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
-      DOM["#download-includes"].className = this.value === "page" ? "display-none" : "display-block fade-in";
-      DOM["#download-limit"].className = this.value === "page" ? "display-none" : "display-block fade-in";
+      DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
+      DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
     });
-    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "column fade-in" : "display-none"; });
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "column fade-in" : "display-none"; });
+    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -64,9 +66,10 @@ URLI.Popup = URLI.Popup || function () {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
           if (!instance) {
-            instance = backgroundPage.URLI.Background.buildInstance(instance, tabs[0], items_);
+            instance = backgroundPage.URLI.Background.buildInstance(instance, tabs[0], items);
           }
           updateControls();
+          DOM["#next-input"].style = DOM["#prev-input"].style = items_.nextPrevPopupButtons && items.autoEnabled ? "" : "display: none;";
           DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
           DOM["#selection-input"].value = instance.selection;
@@ -135,6 +138,38 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
+   * Updates this tab by performing a next action if a next link is found.
+   * 
+   * @private
+   */
+  function clickNext() {
+    if (items_.animationsEnabled) {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+    }
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      backgroundPage.URLI.Background.updateTab(instance, "next", "popup", function(result) {
+        instance = result;
+      });
+    });
+  }
+
+  /**
+   * Updates this tab by performing a prev action if a prev link is found.
+   * 
+   * @private
+   */
+  function clickPrev() {
+    if (items_.animationsEnabled) {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+    }
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      backgroundPage.URLI.Background.updateTab(instance, "prev", "popup", function(result) {
+        instance = result;
+      });
+    });
+  }
+
+  /**
    * Clears and deletes this tab's instance if it is enabled.
    * 
    * @private
@@ -146,21 +181,9 @@ URLI.Popup = URLI.Popup || function () {
       if (items_.animationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
-      chrome.runtime.sendMessage({greeting: "deleteInstance", function(response) {
-
-      }});
-      // chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      //   backgroundPage.URLI.Background.deleteInstance(instance.tabId);
-      // });
-      // if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.keyQuickEnabled) {
-      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
-      // }
-      // if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.mouseQuickEnabled) {
-      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
-      // }
-      // if (items_.internalShortcutsEnabled && instance.autoEnabled) {
-      //   chrome.tabs.sendMessage(instance.tabId, {greeting: "clearAutoTimeout"});
-      // }
+       chrome.runtime.getBackgroundPage(function(backgroundPage) {
+         backgroundPage.URLI.Background.deleteInstance(instance.tabId);
+      });
     }
   }
 
@@ -237,9 +260,11 @@ URLI.Popup = URLI.Popup || function () {
           selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
           parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-          interval < 1 ? chrome.i18n.getMessage("interval_invalid_error") :
-          autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") :
-          autoEnabled && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") :
+          interval < 1 ? chrome.i18n.getMessage("interval_invalid_error") : "",
+          autoEnabled && !items_.autoEnabled ? chrome.i18n.getMessage("auto_enabled_error") : "",
+          autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
+          autoEnabled && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+          downloadEnabled && !items_.downloadEnabled ? chrome.i18n.getMessage("download_enabled_error") :
           ""
         ];
     // We can tell there was an error if some of the array slots weren't empty

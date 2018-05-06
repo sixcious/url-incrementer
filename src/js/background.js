@@ -5,7 +5,7 @@
  * @namespace
  */
 
-const URLI = URLI || {};
+var URLI = URLI || {};
 
 URLI.Background = URLI.Background || function () {
 
@@ -21,14 +21,15 @@ URLI.Background = URLI.Background || function () {
     "popupSettingsCanOverwrite": true,
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
-    "linksPriority": "attributes", "sameDomainPolicy": true,
-    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [],
+    "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
+    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [5, 88],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
-    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": false,
-    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
+    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10,
+    "urliClickCount": 0
   };
 
-  const instances = new Map(); // TODO: Use storage and make background an event page
+  var instances = new Map(); // The individual tab instances
 
   /**
    * Gets the storage default values (SDV).
@@ -73,13 +74,24 @@ URLI.Background = URLI.Background || function () {
   }
 
   /**
-   * Deletes the tab's instance.
+   * Deletes the tab's instance and does any clean up work like removing listeners.
    *
    * @param tabId the tab id to lookup this instance by
    * @public
    */
   function deleteInstance(tabId) {
-    instances.delete(tabId);
+    chrome.storage.sync.get(null, function(items) {
+      if (items.internalShortcutsEnabled && items.keyEnabled && !items.keyQuickEnabled) {
+        chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
+      }
+      if (items.internalShortcutsEnabled && items.mouseEnabled && !items.mouseQuickEnabled) {
+        chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
+      }
+      if (items.autoEnabled && getInstance(tabId).autoEnabled) {
+        chrome.tabs.sendMessage(tabId, {greeting: "clearAutoTimeout"});
+      }
+      instances.delete(tabId);
+    });
   }
 
   /**
@@ -87,40 +99,37 @@ URLI.Background = URLI.Background || function () {
    * 
    * @param instance the instance, if any, to continue building off of
    * @param tab      the tab properties (id, url) to set this instance with
-   * @param items    the storage items used to build the default instance
+   * @param items    the storage items to help build a default instance
    * @return instance the newly built instance
    * @public
    */
   function buildInstance(instance, tab, items) {
-    var selectionProps;
-    if (tab) {
-      if (!instance) {
-        instance = {};
-        instance.enabled = false;
-        instance.interval = items.interval;
-        instance.base = items.base;
-        instance.baseCase = items.baseCase;
-        instance.linksPriority = items.linksPriority;
-        instance.sameDomainPolicy = items.sameDomainPolicy;
-        instance.autoEnabled = false;
-        instance.autoAction = items.autoAction;
-        instance.autoTimes = items.autoTimes;
-        instance.autoSeconds = items.autoSeconds;
-        instance.autoWait = items.autoWait;
-        instance.downloadEnabled = false;
-        instance.downloadStrategy = items.downloadStrategy;
-        instance.downloadTypes = items.downloadTypes;
-        instance.downloadSelector = items.downloadSelector;
-        instance.downloadIncludes = items.downloadIncludes;
-        instance.downloadLimit = items.downloadLimit;
+    var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+    if (!instance) {
+      instance = {};
+      instance.enabled = false;
+      instance.interval = items.interval;
+      instance.base = items.base;
+      instance.baseCase = items.baseCase;
+      instance.linksPriority = items.linksPriority;
+      instance.sameDomainPolicy = items.sameDomainPolicy;
+      instance.autoEnabled = false;
+      instance.autoAction = items.autoAction;
+      instance.autoTimes = items.autoTimes;
+      instance.autoSeconds = items.autoSeconds;
+      instance.autoWait = items.autoWait;
+      instance.downloadEnabled = false;
+      instance.downloadStrategy = items.downloadStrategy;
+      instance.downloadTypes = items.downloadTypes;
+      instance.downloadSelector = items.downloadSelector;
+      instance.downloadIncludes = items.downloadIncludes;
+      instance.downloadLimit = items.downloadLimit;
     }
-      selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
-      instance.tabId = tab.id;
-      instance.url = tab.url;
-      instance.selection = selectionProps.selection;
-      instance.selectionStart = selectionProps.selectionStart;
-      instance.leadingZeros = items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
-    }
+    instance.tabId = tab.id;
+    instance.url = tab.url;
+    instance.selection = selectionProps.selection;
+    instance.selectionStart = selectionProps.selectionStart;
+    instance.leadingZeros = items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
     return instance;
   }
 
@@ -134,15 +143,23 @@ URLI.Background = URLI.Background || function () {
    * @public
    */
   function updateTab2(instance, action, caller, callback) {
-    var urlProps,
-        code;
+    var urlProps;
+    // Icon Feedback
+    chrome.storage.sync.get(null, function(items) {
+      if (items.iconFeedbackEnabled) {
+        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
+      }
+    });
     switch (action) {
       case "increment":
       case "decrement":
-        urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
-        instance.url = urlProps.urlmod;
-        instance.selection = urlProps.selectionmod;
-        chrome.tabs.update(instance.tabId, {url: instance.url});
+        // If URLI didn't find a selection, don't update the tab
+        if (instance.selection !== "" && instance.selectionStart >= 0) {
+          urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
+          instance.url = urlProps.urlmod;
+          instance.selection = urlProps.selectionmod;
+          chrome.tabs.update(instance.tabId, {url: instance.url});
+        }
         if (instance.enabled) { // Instance is never enabled in quick mode
           setInstance(instance.tabId, instance);
         }
@@ -153,10 +170,11 @@ URLI.Background = URLI.Background || function () {
       case "next":
       case "prev":
         chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-          code = "URLI.NextPrev.getURL(" + JSON.stringify(action) + ", " + JSON.stringify(instance.linksPriority) + ", " + JSON.parse(instance.sameDomainPolicy) + ");";
-          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results){
+          var code = "URLI.NextPrev.getURL(" + JSON.stringify(action) + ", " + JSON.stringify(instance.linksPriority) + ", " + JSON.parse(instance.sameDomainPolicy) + ");";
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
             if (results && results[0]) {
-              chrome.tabs.update(instance.tabId, {url: results[0]});
+              instance.url = results[0];
+              chrome.tabs.update(instance.tabId, {url: instance.url});
             }
             if (callback) {
               callback(instance);
@@ -165,58 +183,35 @@ URLI.Background = URLI.Background || function () {
         });
         break;
     }
-    // Icon Feedback
-    chrome.storage.sync.get(null, function(items) {
-      if (items.iconFeedbackEnabled) {
-        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
-      }
-    });
-    // // Download
-    // if (instance && instance.enabled && instance.downloadEnabled) {
-    //   chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-    //     code = "URLI.Download.downloadXYZ(document);";//, " +  JSON.stringify(instance.downloadSelector) + ");";
-    //     console.log("code=" + code);
-    //     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-    //       console.log("results=");
-    //       console.log(results);
-    //       if (callback) {
-    //         console.log("download callback executescript");
-    //         callback(instance);
-    //       }
-    //     });
-    //   });
-    // }
+  }
 
-  }
   function updateTab(instance, action, caller, callback) {
-        if (instance && instance.enabled && instance.downloadEnabled) {
-          chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-          code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
-          //code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
-          console.log("code=" + code);
-          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-            if (results && results[0]) {
+    if (instance && instance.enabled && instance.downloadEnabled) {
+      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+        code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
+        //code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
+        console.log("code=" + code);
+        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+          if (results && results[0]) {
             console.log("results=" + results);
-           console.log("results[0]" + results[0]);
-           console.log("resuls length" + results[0].length);
-           
-           var urls = results[0];
-           for (var i = 0; i < urls.length; i++ ) {
-                        url = urls[i]; //link.src ? link.src : link.href ? link.href : ""
-             console.log("url=" + url);
-             console.log(chrome);
-             chrome.downloads.download({url: url});
-           }
-           }
-           updateTab2(instance, action, caller, callback);
-         });
-          });
+            console.log("results[0]" + results[0]);
+            console.log("resuls length" + results[0].length);
+            var urls = results[0];
+            for (var i = 0; i < urls.length; i++ ) {
+              var url = urls[i];
+              console.log("url=" + url);
+              console.log(chrome);
+              chrome.downloads.download({url: url});
+            }
+          }
+          updateTab2(instance, action, caller, callback);
+        });
+      });
     }
-     else {
-       updateTab2(instance, action, caller, callback)
-     }
+    else {
+      updateTab2(instance, action, caller, callback)
+    }
   }
-  
 
   // Return Public Functions
   return {
@@ -264,23 +259,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       URLI.Background.setInstance(sender.tab.id, request.instance);
       break;
     case "deleteInstance":
-      if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.keyQuickEnabled) {
-          chrome.tabs.sendMessage(sender.tabId, {greeting: "removeKeyListener"});
-      }
-      if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.mouseQuickEnabled) {
-          chrome.tabs.sendMessage(sender.tabId, {greeting: "removeMouseListener"});
-      }
-      if (items_.internalShortcutsEnabled && URLI.Background.getInstance(sender.tab.id).autoEnabled) {
-        chrome.tabs.sendMessage(sender.tabId, {greeting: "clearAutoTimeout"});
-      }
       URLI.Background.deleteInstance(sender.tab.id);
       break;
     case "updateTab":
-      instance = URLI.Background.getInstance(sender.tab.id);
-      if (!instance && sender.tab && request.items) {
-        instance = URLI.Background.buildInstance(undefined, sender.tab, request.items);
-      }
-      URLI.Background.updateTab(instance, request.action);
+      chrome.storage.sync.get(null, function(items) {
+        instance = URLI.Background.getInstance(sender.tab.id);
+        if (!instance && sender.tab) {
+          instance = URLI.Background.buildInstance(undefined, sender.tab, items);
+        }
+        URLI.Background.updateTab(instance, request.action);
+      });
       break;
     case "closePopup":
       chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
