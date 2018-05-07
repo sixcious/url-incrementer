@@ -9,7 +9,6 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = URLI.Shortcuts || function () {
 
-  // TODO: Convert KeyEvent.keyCode to KeyEvent.code
   var FLAG_KEY_ALT = 0x1, // 0001
       FLAG_KEY_CTRL = 0x2, // 0010
       FLAG_KEY_SHIFT = 0x4, // 0100
@@ -17,12 +16,11 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
       FLAG_MOUSE_LEFT = 0x0, // 00
       FLAG_MOUSE_MIDDLE = 0x1, // 01
       FLAG_MOUSE_RIGHT = 0x2, // 10
-      KEY_MODIFIER_STRING_MAP = { // Map containing key event modifiers, these need to be checked
-        "16": "Shift", // Shift
-        "17": "Ctrl", // Ctrl
-        "18": "Alt", // Alt
-        "91": "Meta", // Meta / Left Windows Key
-        "92": "Meta" // Meta / Right Windows Key
+      KEY_MODIFIER_STRING_MAP = { // Map for key codes that should be checked since they are also event modifiers
+        "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
+        "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
+        "AltLeft":     "Alt",   "AltRight":     "Alt",
+        "MetaLeft":    "Meta",  "MetaRight":    "Meta"
       },
       items_ = {}; // storage items cache
 
@@ -49,9 +47,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (keyPressed(event, items_.keyDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement"}); }
     else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next"}); }
     else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev"}); }
-    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"});
-                                                       if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); }
-                                                       if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); }}
+    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"}); }
   }
 
   /**
@@ -67,18 +63,16 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement"}); }
     else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next"}); }
     else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev"}); }
-    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"});
-                                                           if (!items_.keyQuickEnabled) { document.removeEventListener("keyup", keyListener); }
-                                                           if (!items_.mouseQuickEnabled) { document.removeEventListener("mouseup", mouseListener); }}
+    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"}); }
   }
 
   /**
    * Checks if the key was pressed by comparing the event against the flags 
-   * using bitwise operators and checking if the keyCode matches.
+   * using bitwise operators and checking if the key code matches.
    * 
    * @param event the key event
    * @param key the key to check
-   * @return true if the key event matches the key, false otherwise
+   * @return boolean true if the key event matches the key, false otherwise
    * @private
    */
   function keyPressed(event, key) {
@@ -88,7 +82,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
         !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
         !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
         !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
-      (event.keyCode === key[1])
+      (event.code === key[1])
     );
   }
 
@@ -98,11 +92,11 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * 
    * @param event the mouse event
    * @param mouse the mouse button to check
-   * @return true if the mouse button event matches the mouse, false otherwise
+   * @return boolean true if the mouse button event matches the mouse, false otherwise
    * @private
    */
   function mousePressed(event, mouse) {
-    return (mouse && mouse !== -1 &&
+    return (mouse !== -1 &&
       (event.button === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
       (event.button === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||
       (event.button === FLAG_MOUSE_RIGHT  && mouse === FLAG_MOUSE_RIGHT)

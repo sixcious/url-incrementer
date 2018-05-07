@@ -172,7 +172,7 @@
   "auto_times_label": { "message": "Times"},
   "auto_seconds_label": { "message": "Seconds" },
   "auto_wait_label": { "message": "Wait" },
-  "auto_wait_descriptive_label": { "message": "Wait for the page to fully load"},
+  "auto_wait_descriptive_label": { "message": "Wait for the page to fully load first before timing"},
   "download_label": { "message": "Download" },
   "download_strategy_label": { "message": "Strategy" },
   "download_strategy_option_types": { "message": "Download these file type(s)" },

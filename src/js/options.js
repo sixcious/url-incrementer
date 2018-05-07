@@ -16,74 +16,13 @@ URLI.Options = URLI.Options || function () {
       FLAG_KEY_SHIFT = 0x4, // 0100
       FLAG_KEY_META = 0x8, // 1000
       KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
-        "16": "Shift", // Shift
-        "17": "Ctrl", // Ctrl
-        "18": "Alt", // Alt
-        "91": "Meta", // Meta / Left Windows Key
-        "92": "Meta" // Meta / Right Windows Key
+        "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
+        "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
+        "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
+        "AltLeft":     "Alt",   "AltRight":     "Alt",
+        "MetaLeft":    "Meta",  "MetaRight":    "Meta"
       },
-      KEY_CODE_STRING_MAP = { // Map for key codes that don't have String values
-        "8": "Backspace",
-        "9": "Tab",
-        "12": "Clear",
-        "13": "Enter",
-        "19": "Pause",
-        "20": "Caps Lock",
-        "27": "Esc",
-        "32": "Space",
-        "33": "Page Up",
-        "34": "Page Down",
-        "35": "End",
-        "36": "Home",
-        "37": "Left",
-        "38": "Up",
-        "39": "Right",
-        "40": "Down",
-        "45": "Insert",
-        "46": "Delete",
-        "93": "Menu",
-        "96": "0 (Numpad)",
-        "97": "1 (Numpad)",
-        "98": "2 (Numpad)",
-        "99": "3 (Numpad)",
-        "100": "4 (Numpad)",
-        "101": "5 (Numpad)",
-        "102": "6 (Numpad)",
-        "103": "7 (Numpad)",
-        "104": "8 (Numpad)",
-        "105": "9 (Numpad)",
-        "106": "* (Numpad)",
-        "107": "+ (Numpad)",
-        "109": "- (Numpad)",
-        "110": ". (Numpad)",
-        "111": "/ (Numpad)",
-        "112": "F1",
-        "113": "F2",
-        "114": "F3",
-        "115": "F4",
-        "116": "F5",
-        "117": "F6",
-        "118": "F7",
-        "119": "F8",
-        "120": "F9",
-        "121": "F10",
-        "122": "F11",
-        "123": "F12",
-        "144": "Num Lock",
-        "145": "Scroll Lock",
-        "186": ";",
-        "187": "=",
-        "188": ",",
-        "189": "-",
-        "190": ".",
-        "191": "/",
-        "192": "`",
-        "219": "[",
-        "220": "\\",
-        "221": "]",
-        "222": "'"
-      },
-      key = [0,0]; // Stores the key event modifiers [0] and key code [1]
+      key = [0,""]; // Stores the key event modifiers [0] and key code [1]
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -321,6 +260,7 @@ URLI.Options = URLI.Options || function () {
       var enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
       chrome.storage.sync.set({"keyEnabled": enabled}, function() {
         //DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
+        DOM["#key-label"].style = "color:green;";
       });
     });
   }
@@ -353,7 +293,7 @@ URLI.Options = URLI.Options || function () {
       (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
       (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
       (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-      event.keyCode
+      event.code
     ];
   }
 
@@ -367,17 +307,16 @@ URLI.Options = URLI.Options || function () {
   function writeInput(input, key) {
     // Write the input value based on the key event modifier bits and key code
     // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
-    // Note: If the keyCode is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
+    // Note: If the key code is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
     var text = "",
-        keyPressed = false,
-        keyCodeString = key && key[1] ? KEY_CODE_STRING_MAP[key[1]] : "";
+        keyPressed = false;
     if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
       if ((key[0] & FLAG_KEY_ALT))        {                                    text += "Alt";   keyPressed = true; }
       if ((key[0] & FLAG_KEY_CTRL)  >> 1) { if (keyPressed) { text += " + "; } text += "Ctrl";  keyPressed = true; }
       if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } text += "Shift"; keyPressed = true; }
       if ((key[0] & FLAG_KEY_META)  >> 3) { if (keyPressed) { text += " + "; } text += "Meta";  keyPressed = true; }
-      if (key[1] && !KEY_MODIFIER_STRING_MAP[key[1]]) { if (keyPressed) { text += " + "; } text += keyCodeString ? keyCodeString : String.fromCharCode(key[1]); }
+      if (key[1] && !KEY_MODIFIER_STRING_MAP[key[1]]) { if (keyPressed) { text += " + "; } text += key[1]; }
     }
     input.value = text;
   }

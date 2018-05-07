@@ -23,7 +23,7 @@ URLI.Background = URLI.Background || function () {
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
-    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [5, 88],
+    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
     "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10,

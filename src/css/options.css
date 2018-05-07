@@ -22,6 +22,10 @@ div.heading.selection-first {
   margin-bottom: 22px;
 }
 
+div.heading button {
+  float: right;
+}
+
 div.table {
   display: table;
 }

@@ -1,13 +1,6 @@
 /**
  * URL Incrementer Auto
  * 
- * Performs the action automatically, e.g. will continue to automatically increment the page. Used by the setTimeout
- * function, autoTimeout.
- * 
- * This method is only called if the user specifically sets an auto action in the popup window. This is a tab
- * instance based method. The action will only stop once the auto times count reaches 0 or if the  user does a clear
- * (e.g. clicks the x button in the popup or shortcut ) to clear the instance.
- * 
  * @author Roy Six
  * @namespace
  */
@@ -29,7 +22,9 @@ URLI.Auto = URLI.Auto || function () {
   }
 
   /**
-   * 
+   * Decides whether or not to set the autoTimeout based on the instance's current properties.
+   * Also decides when it is time to delete the instance when the auto times count has reached 0.
+   *
    * @public
    */
   function decideAutoTimeout() {
@@ -54,7 +49,7 @@ URLI.Auto = URLI.Auto || function () {
   }
 
   /**
-   * TODO
+   * Sets the autoTimeout.
    * 
    * @public
    */
