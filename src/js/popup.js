@@ -69,7 +69,8 @@ URLI.Popup = URLI.Popup || function () {
             instance = backgroundPage.URLI.Background.buildInstance(instance, tabs[0], items);
           }
           updateControls();
-          DOM["#next-input"].style = DOM["#prev-input"].style = items_.nextPrevPopupButtons && items.autoEnabled ? "" : "display: none;";
+          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items.popupIconSize + "px; height:" + items.popupIconSize + "px;";
+          DOM["#next-input"].className = DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.autoEnabled ? items_.animationsEnabled ? "hvr-grow" : "" : "display-none";
           DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
           DOM["#selection-input"].value = instance.selection;
@@ -315,7 +316,7 @@ URLI.Popup = URLI.Popup || function () {
         if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.quickMouseEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
-        if (items_.autoEnabled && instance.autoAction !== "") {
+        if (items_.autoEnabled && instance.autoEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "setAutoTimeout", instance: instance});
         }
         toggleView.call(DOM["#accept-button"]);

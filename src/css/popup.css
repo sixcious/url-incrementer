@@ -11,7 +11,8 @@ html {
 }
 
 body {
-/*  background: #F5F5F5;*/
+  color: #333333;
+  background: #FFFFFF;
 }
 
 * {
@@ -19,27 +20,38 @@ body {
   padding: 0;
 }
 
+div.table {
+  display: table;
+}
+
+div.row {
+  display: table-row;
+}
+
+div.column {
+  display: table-cell;
+}
+
 /* Controls CSS */
 
 #controls {
-  width: 88px;
   margin: 5px;
 }
 
-input[type="image"] {
-  display: inline-block;
-  vertical-align: middle;
+#controls input[type="image"] {
+  vertical-align: middle; /* Matches hover.css styling */
+  padding: 6px;
 }
 
-input[type="image"]:focus {
+#controls input[type="image"]:not(:last-child) {
+  margin-right: 10px;
+}
+
+#controls input[type="image"]:focus {
   outline: none;
 }
 
-input[type="image"]:not(:last-child) {
-  margin-right: 4px;
-}
-
-input[type="image"].disabled {
+#controls input[type="image"].disabled {
   opacity: 0.2;
 }
 
@@ -54,90 +66,66 @@ input[type="image"].disabled {
   text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
 }*/
 
-h3 {
+#setup h3 {
   color: #333;
 }
 
-input[type="text"] {
+#setup input[type="text"] {
   width: 152px;
   display: block;
 }
 
-input[type="number"] {
+#setup input[type="number"] {
   width: 52px;
   display: block;
 }
 
-select {
+#setup select {
   display: block;
 }
 
-textarea {
+#setup textarea {
   width: 100%;
   color: #777777;
 }
 
-div.table {
-  display: table;
-}
-
-div.row  {
-  display: table-row;
-}
-
-div.column {
-  display: table-cell;
+#setup div.column {
   padding: 10px 10px 0 0;
 }
 
-div.column:not(:last-child) {
+#setup div.column:not(:last-child) {
   padding-right: 40px;
 }
 
-div.column > label, .label-display-block {
+#setup div.column > label, .label-display-block {
   display: block;
 }
 
-.setup-buttons {
+#setup .setup-buttons {
   margin-top: 24px;
   text-align: center;
 }
 
-.setup-buttons > button:not(:last-child) {
+#setup .setup-buttons > button:not(:last-child) {
   margin-right: 12px;
 }
 
-.setup-buttons #options-button {
+#setup #options-button {
   position: absolute;
   right: 12px;
 }
 
-/*
-.setup-buttons #options-button img {
-  vertical-align: bottom;
-  margin-right: 2px;
-}*/
-
-.setup-buttons #extra-toggles {
+#setup #extra-toggles {
   position: absolute;
   left: 12px;
   bottom: 8px;
 }
 
-.setup-buttons #extra-toggles .checkbox > label:not(:last-child) {
+#setup #extra-toggles .checkbox > label:not(:last-child) {
   margin-right: 8px;
 }
 
-#auto {
-  margin-right: 12px;
-}
-
-#auto, #download {
+#setup #auto, #setup #download {
 /*  border: 1px solid #999999;
   padding: 12px;*/
-}
-
-#auto h3, #download h3 {
-  border-bottom: 1px solid #999999;
-  padding-bottom: 5px;
 }

@@ -141,6 +141,8 @@ URLI.Options = URLI.Options || function () {
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
+    DOM["#popup-icon-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <=24) { chrome.storage.sync.set({"popupIconSize": +this.value});
+      DOM["#popup-icon-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
     DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
@@ -198,6 +200,8 @@ URLI.Options = URLI.Options || function () {
       DOM["#mouse-clear-select"].value = items.mouseClear;
       DOM["#icon-color-radio-" + items.iconColor].checked = true;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
+      DOM["#popup-icon-size-input"].value = items.popupIconSize;
+      DOM["#popup-icon-size-img"].style = "width:" + items.popupIconSize + "px; height:" + items.popupIconSize + "px;"; 
       DOM["#animations-enable-input"].checked = items.animationsEnabled;
       DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
       DOM["#auto-action-select"].value = items.autoAction;
@@ -242,12 +246,13 @@ URLI.Options = URLI.Options || function () {
     chrome.permissions.request(request, function(granted) {
       if (granted) {
         if (script) {
-          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-            chrome.declarativeContent.onPageChanged.addRules([{
-              conditions: [new chrome.declarativeContent.PageStateMatcher()],
-              actions: [new chrome.declarativeContent.RequestContentScript(script)]
-            }]);
-          });
+          chrome.declarativeContent.onPageChanged.addRules([{
+            conditions: [new chrome.declarativeContent.PageStateMatcher()],
+            actions: [new chrome.declarativeContent.RequestContentScript(script)]
+          }]);
+//          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+//
+//          });
         }
         if (updateDOMAndStorage === "internal-shortcuts") {
           chrome.storage.sync.set({"internalShortcutsEnabled": true});
@@ -327,7 +332,7 @@ URLI.Options = URLI.Options || function () {
    */
   function setMouseEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      var enabled = items.mouseIncrement !== 0 || items.mouseDecrement !== 0 || items.mouseNext !== 0 || items.mousePrev !== 0 || items.mouseClear !== 0;
+      var enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
         //DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });

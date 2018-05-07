@@ -7,12 +7,16 @@
   </head>
   <body id="popup">
     <div id="controls" class="display-block fade-in">
-      <input id="prev-input" type="image" src="../img/font-awesome/chevron-left.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/>  
-      <input id="next-input" type="image" src="../img/font-awesome/chevron-right.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/>    
-      <input id="increment-input" type="image" src="../img/font-awesome/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
-      <input id="decrement-input" type="image" src="../img/font-awesome/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
-      <input id="clear-input" type="image" src="../img/font-awesome/times.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/>
-      <input id="setup-input" type="image" src="../img/font-awesome/pencil.png" alt="" width="16" height="16" data-i18n="title"/>
+      <div class="table">
+        <div class="row">
+          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/> </div>
+          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/> </div>
+          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
+          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
+          <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/times.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
+          <div class="column"> <input id="setup-input" type="image" src="../img/font-awesome/pencil.png" alt="" width="16" height="16" data-i18n="title"/> </div>
+        </div>
+      </div>
     </div>
     <div id="setup" class="display-none">
       <h3 id="setup-h3" data-i18n="textContent"></h3>
@@ -101,6 +105,7 @@
           <div class="row">
             <div class="column">
               <label for="auto-action-select">
+                <img src="../img/font-awesome/refresh.png" alt="" width="16" height="16"/>
                 <span id="auto-label*" data-i18n="textContent"></span>
                 <span id="auto-action-label*" data-i18n="textContent"></span>
               </label>

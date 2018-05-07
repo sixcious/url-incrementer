@@ -69,6 +69,10 @@ input[type="image"] {
   margin-right: 3px;
 }
 
+#popup-icon-size-img {
+  vertical-align: top;
+}
+
 #selection-custom {
   margin: 10px 0;
 }

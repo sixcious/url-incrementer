@@ -40,7 +40,8 @@ URLI.Auto = URLI.Auto || function () {
       // performed once (thus the pre decrement instead of post decrement)
       if (--instance.autoTimes > 0) {
         chrome.runtime.sendMessage({greeting: "setInstance", instance: instance});
-        if (instance.autoWait) {
+        // If auto wait is enabled, only add the window load listener if the document hasn't finished loading, or it will never fire 
+        if (instance.autoWait && document.readyState !== "complete") {
           window.addEventListener("load", function() { setAutoTimeout(); });
         } else {
           setAutoTimeout();

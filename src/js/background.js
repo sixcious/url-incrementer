@@ -17,13 +17,14 @@ URLI.Background = URLI.Background || function () {
     "quickEnabled": true,
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
+    "popupIconSize": 20,
     "animationsEnabled": true,
     "popupSettingsCanOverwrite": true,
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, 38], "keyDecrement": [5, 40], "keyNext": [], "keyPrev": [], "keyClear": [5, 88],
-    "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": 0, "mouseDecrement": 0, "mouseNext": 0, "mousePrev": 0, "mouseClear": 0,
+    "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
     "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10,
     "urliClickCount": 0
@@ -81,14 +82,19 @@ URLI.Background = URLI.Background || function () {
    */
   function deleteInstance(tabId) {
     chrome.storage.sync.get(null, function(items) {
+      var instance = getInstance(tabId);
       if (items.internalShortcutsEnabled && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
       }
       if (items.internalShortcutsEnabled && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
       }
-      if (items.autoEnabled && getInstance(tabId).autoEnabled) {
+      if (items.autoEnabled && instance && instance.autoEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "clearAutoTimeout"});
+      }
+      if (items.iconFeedbackEnabled && instance && instance.tabId) {
+        chrome.browserAction.setBadgeText({text: "x", tabId: instance.tabId});
+        setTimeout(function () { chrome.browserAction.setBadgeText({text: "", tabId: instance.tabId}); }, 2000);
       }
       instances.delete(tabId);
     });
