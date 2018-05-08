@@ -204,8 +204,6 @@ URLI.Options = URLI.Options || function () {
           chrome.storage.sync.set({"internalShortcutsEnabled": true});
           DOM["#chrome-shortcuts"].className = "display-none";
           DOM["#internal-shortcuts"].className = "display-block fade-in";
-//          DOM["#internal-shortcuts-enable-button"].className = "display-none";
-//          DOM["#chrome-shortcuts-enable-button"].className = "display-block fade-in";
         } else if (updateDOMAndStorage === "auto") {
           chrome.storage.sync.set({"autoEnabled": true});
           DOM["#auto-settings-disabled"].className = "display-none";
@@ -226,19 +224,17 @@ URLI.Options = URLI.Options || function () {
   /**
    * Removes permissions that were previously granted and brings back Chrome
    * shortcuts.
-   * 
+   *
+   * @param remove what to remove, e.g.  {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}
+   * @param script  the js files, e.g. {js: ["js/shortcuts.js", "js/auto.js"]})
    * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
    * @private
    */
   function removePermissions(remove, script, updateDOMAndStorage) {
-//    if (chrome.declarativeContent) {
-//      chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-//    }
-
     // Script:
     if (chrome.declarativeContent && script) {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        for (var i = 0; i < rules.length; i++) {
+        for (let i = 0; i < rules.length; i++) {
           console.log("found rule:" + rules[i]);
           if (rules[i].actions[0].js[0] === script.js[0]) {
             console.log("match found! about to remove the rule...id=" + rules[i].id);
@@ -255,13 +251,11 @@ URLI.Options = URLI.Options || function () {
         chrome.permissions.remove(remove, function(removed) { if (removed) { console.log("removed!" + removed + " - " + remove); } });
       }
     });
-
+    // UpdateDOMAndStorage
     if (updateDOMAndStorage === "internal-shortcuts") {
       chrome.storage.sync.set({"internalShortcutsEnabled": false});
       DOM["#internal-shortcuts"].className = "display-none";
       DOM["#chrome-shortcuts"].className = "display-block fade-in";
-//      DOM["#chrome-shortcuts-enable-button"].className = "display-none";
-//      DOM["#internal-shortcuts-enable-button"].className = "display-block fade-in";
     } else if (updateDOMAndStorage === "auto") {
       chrome.storage.sync.set({"autoEnabled": false});
       DOM["#auto-settings-enabled"].className = "display-none";
@@ -275,7 +269,6 @@ URLI.Options = URLI.Options || function () {
       DOM["#download-disable-button"].className = "display-none";
       DOM["#download-enable-button"].className = "display-block fade-in";
     }
-
   }
 
   /**

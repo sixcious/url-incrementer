@@ -183,11 +183,11 @@
   "download_strategy_option_types": { "message": "Download these file type(s)" },
   "download_strategy_option_selector": { "message": "Use a custom JavaScript selector" },
   "download_strategy_option_page": { "message": "Download the web page itself" },
-  "download_types_jpg_label": { "message": "jpg" },
+  "download_types_jpeg_label": { "message": "jpeg" },
   "download_types_png_label": { "message": "png" },
   "download_types_gif_label": { "message": "gif" },
   "download_types_mp3_label": { "message": "mp3" },
   "download_types_mp4_label": { "message": "mp4" },
-  "download_includes_label": { "message": "Includes Text" },
+  "download_includes_label": { "message": "Path Restriction?" },
   "download_limit_label": { "message": "Files Limit" }
 }

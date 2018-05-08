@@ -58,7 +58,7 @@ input[type="image"] {
   margin-right: 40px;
 }
 
-.icon-color.radio {
+.icon-color.radio, #popup-icon-size-div {
   margin-bottom: 12px;
 }
 
@@ -73,6 +73,11 @@ input[type="image"] {
 
 .icon-color.radio label > input {
   margin-right: 3px;
+}
+
+#popup-icon-size-label {
+  display: block;
+  margin-bottom: 5px;
 }
 
 #popup-icon-size-img {

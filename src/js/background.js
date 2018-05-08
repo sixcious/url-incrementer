@@ -11,9 +11,6 @@ URLI.Background = URLI.Background || function () {
 
   // SDV: Storage Default Values
   const SDV = {
-    "internalShortcutsEnabled": false,
-    "autoEnabled": false,
-    "downloadEnabled": false,
     "quickEnabled": true,
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
@@ -23,10 +20,11 @@ URLI.Background = URLI.Background || function () {
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
+    "internalShortcutsEnabled": false,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
-    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
-    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='.jpg' i]", "downloadIncludes": "", "downloadLimit": 10,
+    "autoEnabled": false, "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
+    "downloadEnabled": false, "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "", "downloadIncludes": "", "downloadMinSize": 0.0, "downloadMaxSize": 10.0, "downloadLimit": 10,
     "urliClickCount": 0
   };
 
@@ -205,9 +203,17 @@ URLI.Background = URLI.Background || function () {
             var urls = results[0];
             for (var i = 0; i < urls.length; i++ ) {
               var url = urls[i];
-              console.log("url=" + url);
-              console.log(chrome);
-              chrome.downloads.download({url: url});
+              console.log("downloading url=" + url);
+              // chrome.downloads.download({url: url});
+              chrome.downloads.download({url: url}, function(downloadId) {
+                chrome.downloads.search({id: downloadId}, function(results) {
+                  const downloadItem = results ? results[0] : undefined;
+                  console.log(downloadItem);
+                  if (downloadItem && downloadItem.totalBytes < 300 || downloadItem.totalBytes > 500) {
+                    chrome.downloads.cancel(downloadId);
+                  }
+                });
+              });
             }
           }
           updateTab2(instance, action, caller, callback);

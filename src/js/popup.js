@@ -37,19 +37,16 @@ URLI.Popup = URLI.Popup || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#next-input"].addEventListener("click", clickNext);
-    DOM["#prev-input"].addEventListener("click", clickPrev);
     DOM["#increment-input"].addEventListener("click", clickIncrement);
     DOM["#decrement-input"].addEventListener("click", clickDecrement);
     DOM["#clear-input"].addEventListener("click", clickClear);
+    DOM["#next-input"].addEventListener("click", clickNext);
+    DOM["#prev-input"].addEventListener("click", clickPrev);
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
-    DOM["#url-textarea"].addEventListener("mouseup", selectURL);
-    DOM["#url-textarea"].addEventListener("keyup", selectURL);
-    DOM["#url-textarea"].addEventListener("touchend", selectURL);
-    DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a nasty bug with trying to use the checkbox unfortunately
+    DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a minor bug with trying to use the checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#download-strategy-select"].addEventListener("change", function() {
       DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
@@ -140,38 +137,6 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
-   * Updates this tab by performing a next action if a next link is found.
-   * 
-   * @private
-   */
-  function clickNext() {
-    if (items_.animationsEnabled) {
-      URLI.UI.clickHoverCss(this, "hvr-push-click");
-    }
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      backgroundPage.URLI.Background.updateTab(instance, "next", "popup", function(result) {
-        instance = result;
-      });
-    });
-  }
-
-  /**
-   * Updates this tab by performing a prev action if a prev link is found.
-   * 
-   * @private
-   */
-  function clickPrev() {
-    if (items_.animationsEnabled) {
-      URLI.UI.clickHoverCss(this, "hvr-push-click");
-    }
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      backgroundPage.URLI.Background.updateTab(instance, "prev", "popup", function(result) {
-        instance = result;
-      });
-    });
-  }
-
-  /**
    * Clears and deletes this tab's instance if it is enabled.
    * 
    * @private
@@ -187,6 +152,38 @@ URLI.Popup = URLI.Popup || function () {
          backgroundPage.URLI.Background.deleteInstance(instance.tabId);
       });
     }
+  }
+
+  /**
+   * Updates this tab by performing a next action if a next link is found.
+   *
+   * @private
+   */
+  function clickNext() {
+    if (items_.animationsEnabled) {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+    }
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      backgroundPage.URLI.Background.updateTab(instance, "next", "popup", function(result) {
+        instance = result;
+      });
+    });
+  }
+
+  /**
+   * Updates this tab by performing a prev action if a prev link is found.
+   *
+   * @private
+   */
+  function clickPrev() {
+    if (items_.animationsEnabled) {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+    }
+    chrome.runtime.getBackgroundPage(function(backgroundPage) {
+      backgroundPage.URLI.Background.updateTab(instance, "prev", "popup", function(result) {
+        instance = result;
+      });
+    });
   }
 
   /**
@@ -328,7 +325,7 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
-   * Handle URL selection on mouseup and keyup events. Saves the selectionStart
+   * Handle URL selection on select events. Saves the selectionStart
    * to a hidden input and updates the selection input to the selected text and
    * checks the leading zeros checkbox based on leading zeros present.
    * 

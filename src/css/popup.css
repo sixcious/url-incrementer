@@ -70,7 +70,7 @@ div.column {
   color: #333;
 }
 
-#setup input[type="text"] {
+#setup input[type="text"]#selection-input  {
   width: 152px;
   display: block;
 }
@@ -87,6 +87,10 @@ div.column {
 #setup textarea {
   width: 100%;
   color: #777777;
+}
+
+#setup img {
+  vertical-align: bottom;
 }
 
 #setup div.column {
@@ -128,4 +132,16 @@ div.column {
 #setup #auto, #setup #download {
 /*  border: 1px solid #999999;
   padding: 12px;*/
+}
+
+#download-strategy-select {
+  margin-bottom: 8px;
+}
+
+#download-selector-input {
+  width: 90%;
+}
+
+#download-includes-input {
+  width: 104px;
 }
