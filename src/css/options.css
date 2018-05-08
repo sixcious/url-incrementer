@@ -24,6 +24,8 @@ div.heading.selection-first {
 
 div.heading button {
   float: right;
+  position: relative;
+  top: -6px;
 }
 
 div.table {
@@ -82,7 +84,7 @@ input[type="image"] {
 }
 
 #selection-custom-url-textarea {
-  width: 320px;
+  width: 284px;
 }
 
 #selection-custom-pattern-input {

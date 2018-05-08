@@ -31,9 +31,7 @@ URLI.Auto = URLI.Auto || function () {
     // If auto is enabled for this instance ...
     if (instance && instance.enabled && instance.autoEnabled) {
       // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
-      // Note: The first time auto is done via chrome.runtime.onMessage.addListener from the popup, so it's already been
-      // performed once (thus the pre decrement instead of post decrement)
-      if (--instance.autoTimes > 0) {
+      if (instance.autoTimes-- > 0) {
         chrome.runtime.sendMessage({greeting: "setInstance", instance: instance});
         // If auto wait is enabled, only add the window load listener if the document hasn't finished loading, or it will never fire 
         if (instance.autoWait && document.readyState !== "complete") {
@@ -49,17 +47,6 @@ URLI.Auto = URLI.Auto || function () {
   }
 
   /**
-   * Sets the autoTimeout.
-   * 
-   * @public
-   */
-  function setAutoTimeout() {
-    autoTimeout = setTimeout(function () {
-      chrome.runtime.sendMessage({greeting: "updateTab", action: instance.autoAction});
-    }, instance.autoSeconds * 1000);
-  }
-
-  /**
    * Clears the autoTimeout. This is only called when the user manually intervenes
    * and tries clearing the instance (e.g. clicking the popup clear button or via
    * a shortcut command).
@@ -70,11 +57,21 @@ URLI.Auto = URLI.Auto || function () {
     clearTimeout(autoTimeout);
   }
 
+  /**
+   * Sets the autoTimeout.
+   * 
+   * @private
+   */
+  function setAutoTimeout() {
+    autoTimeout = setTimeout(function () {
+      chrome.runtime.sendMessage({greeting: "updateTab", action: instance.autoAction});
+    }, instance.autoSeconds * 1000);
+  }
+
   // Return Public Functions
   return {
     setInstance: setInstance,
     decideAutoTimeout: decideAutoTimeout,
-    setAutoTimeout: setAutoTimeout,
     clearAutoTimeout: clearAutoTimeout
   };
 }();
@@ -90,7 +87,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch (request.greeting) {
     case "setAutoTimeout":
       URLI.Auto.setInstance(request.instance);
-      URLI.Auto.setAutoTimeout();
+      URLI.Auto.decideAutoTimeout();
       break;
     case "clearAutoTimeout":
       URLI.Auto.clearAutoTimeout();

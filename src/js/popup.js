@@ -94,7 +94,8 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
           DOM["#download-limit-input"].value = instance.downloadLimit;
-          if (!instance.enabled) {
+          // Jump straight to Setup if instance isn't enabled or if Next/Prev buttons aren't enabled
+          if (!instance.enabled && !(items_.nextPrevPopupButtons && items_.autoEnabled)) {
             toggleView.call(DOM["#setup-input"]);
           }
         });
@@ -255,13 +256,15 @@ URLI.Popup = URLI.Popup || function () {
         downloadIncludes = DOM["#download-includes-input"].value,
         downloadLimit = +DOM["#download-limit-input"].value,
         errors = [ // [0] = selection errors and [1] = interval errors
+          // [0] = Selection Errors
           selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
           url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
           !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
           selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
           parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-          interval < 1 ? chrome.i18n.getMessage("interval_invalid_error") : "",
+          // [1] Interval Errors
+          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
           autoEnabled && !items_.autoEnabled ? chrome.i18n.getMessage("auto_enabled_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
