@@ -22,7 +22,8 @@ URLI.Options = URLI.Options || function () {
         "AltLeft":     "Alt",   "AltRight":     "Alt",
         "MetaLeft":    "Meta",  "MetaRight":    "Meta"
       },
-      key = [0,""]; // Stores the key event modifiers [0] and key code [1]
+      key = [0,""], // Stores the key event modifiers [0] and key code [1]
+      FACES = ["(｡◕‿◕｡)", "≧☉_☉≦", "(▰˘◡˘▰)", "♥‿♥", "(✿´‿`)", "(─‿‿─)", "(｡◕‿‿◕｡)", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉"];
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -444,10 +445,12 @@ URLI.Options = URLI.Options || function () {
    * @private
    */
   function clickURLI() {
+    var face = "";
     this.value = +this.value + 1;
     chrome.storage.sync.set({ "urliClickCount": +this.value});
     if (+this.value === 10) { DOM["#icon-color-radio-urli-unlock"].style = ""; }
-    URLI.UI.generateAlert([+this.value < 10 ? +this.value + " ..." : +this.value < 20 ? chrome.i18n.getMessage("urli_click_unlock") : chrome.i18n.getMessage("urli_click_tickles")]);
+    face = " " + FACES[Math.floor(Math.random() * FACES.length)];
+    URLI.UI.generateAlert([+this.value < 10 ? +this.value + " ..." : +this.value < 20 ? chrome.i18n.getMessage("urli_click_unlock") : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   // Return Public Functions

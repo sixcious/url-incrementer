@@ -90,9 +90,16 @@ URLI.Background = URLI.Background || function () {
       if (items.autoEnabled && instance && instance.autoEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "clearAutoTimeout"});
       }
-      if (items.iconFeedbackEnabled && instance && instance.tabId) {
-        chrome.browserAction.setBadgeText({text: "x", tabId: instance.tabId});
-        setTimeout(function () { chrome.browserAction.setBadgeText({text: "", tabId: instance.tabId}); }, 2000);
+      if (items.iconFeedbackEnabled) {
+        chrome.browserAction.setBadgeBackgroundColor({color: "#FF0000", tabId: tabId});
+        chrome.browserAction.setBadgeText({text: "x", tabId: tabId});
+        chrome.browserAction.getBadgeBackgroundColor({}, function(result) {
+          console.log("r@@@esult=" + result);
+          setTimeout(function () {
+            chrome.browserAction.setBadgeBackgroundColor({color: result, tabId: tabId});
+            chrome.browserAction.setBadgeText({text: "", tabId: tabId});
+          }, 2000);
+        });
       }
       instances.delete(tabId);
     });
@@ -150,8 +157,10 @@ URLI.Background = URLI.Background || function () {
     var urlProps;
     // Icon Feedback
     chrome.storage.sync.get(null, function(items) {
+      var text = action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".";
       if (items.iconFeedbackEnabled) {
-        chrome.browserAction.setBadgeText({text: action === "increment" ? "+" : action === "decrement" ? "-" : action === "next" ? ">" : action === "prev" ? "<" : ".", tabId: instance.tabId});
+        chrome.browserAction.setBadgeText({text: text, tabId: instance.tabId});
+        setTimeout(function () { chrome.browserAction.setBadgeText({text: "", tabId: instance.tabId}); }, 2000);
       }
     });
     switch (action) {

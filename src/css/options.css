@@ -59,7 +59,7 @@ input[type="image"] {
 }
 
 .icon-color.radio, #popup-icon-size-div {
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .icon-color.radio label:not(:last-child) {
@@ -134,7 +134,7 @@ input[type="image"]:focus {
   display: block;
   text-align: right;
   font-family: cursive;
-  font-style: italic;
+  font-weight: bold;
 }
 
 #options .overlay {

@@ -20,6 +20,10 @@ body {
   padding: 0;
 }
 
+h3 {
+  -webkit-user-select: initial;
+}
+
 div.table {
   display: table;
 }
@@ -130,6 +134,7 @@ div.column {
 }
 
 #setup #auto, #setup #download {
+  margin-top: 8px;
 /*  border: 1px solid #999999;
   padding: 12px;*/
 }

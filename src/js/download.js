@@ -10,10 +10,10 @@ var URLI = URLI || {};
 URLI.Download = URLI.Download || function () {
 
   /**
-   * 
+   *
    * @public
    */
-  function downloadx(selector) {
+  function download(strategy, selector, includes, limit) {
     console.log("download(selector)");
     return findSelectorLinks(selector);
   }
@@ -69,26 +69,21 @@ URLI.Download = URLI.Download || function () {
    * TODO
    */
   function findSelectorLinks(selector) {
-    console.log("findSelectorLinks()");
+    console.log("findSelectorLinks()" + selector);
     var links = document.querySelectorAll(selector);
     console.log(links);
     console.log(links.length);
     var urls = [];
-               for (var i = 0; i < links.length; i++) {
-                 var link = links[i];
-             urls[i] = link.src ? link.src : link.href ? link.href : ""
-             console.log("url=" + urls[i]);
-//             chrome.downloads.download({url: urls[i]});
-           }
+    for (var i = 0; i < links.length; i++) {
+      var link = links[i];
+      urls[i] = link.src ? link.src : link.href ? link.href : ""
+      console.log("url=" + urls[i]);
+    }
     return urls;
   }
 
   // Return Public Functions
   return {
-    downloadx: downloadx
+    download: download
   };
 }();
-
-window.addEventListener("load", URLI.Download.downloadx); 
-
-document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);

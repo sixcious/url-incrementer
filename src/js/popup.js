@@ -264,7 +264,7 @@ URLI.Popup = URLI.Popup || function () {
           interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
           autoEnabled && !items_.autoEnabled ? chrome.i18n.getMessage("auto_enabled_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
-          autoEnabled && (autoSeconds < 2 || autoSeconds > 100) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
           downloadEnabled && !items_.downloadEnabled ? chrome.i18n.getMessage("download_enabled_error") :
           ""
         ];
