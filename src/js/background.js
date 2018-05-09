@@ -209,9 +209,10 @@ URLI.Background = URLI.Background || function () {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
                   console.log(downloadItem);
-                  if (downloadItem && downloadItem.totalBytes < 300 || downloadItem.totalBytes > 500) {
-                    chrome.downloads.cancel(downloadId);
-                  }
+                  //if (downloadItem && (downloadItem.totalBytes < 500 || downloadItem.totalBytes > 5000000)) {
+                    //console.log("Canceling!!!");
+                    //chrome.downloads.cancel(downloadId);
+                 // }
                 });
               });
             }
