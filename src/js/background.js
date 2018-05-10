@@ -11,6 +11,8 @@ URLI.Background = URLI.Background || function () {
 
   // SDV: Storage Default Values
   const SDV = {
+    "autoEnabled": true, "downloadEnabled": false, "internalShortcutsEnabled": false,
+    "allURLsPermissionsGranted": false, "downloadPermissionsGranted": false, "internalShortcutsPermissionsGranted": false,
     "quickEnabled": true,
     "iconColor": "dark",
     "iconFeedbackEnabled": false,
@@ -20,11 +22,10 @@ URLI.Background = URLI.Background || function () {
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
-    "internalShortcutsEnabled": false,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
     "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
-    "autoEnabled": false, "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
-    "downloadEnabled": false, "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "", "downloadIncludes": "", "downloadMinSize": 0.0, "downloadMaxSize": 10.0, "downloadLimit": 10,
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
+    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='jpg' i]", "downloadIncludes": "", "downloadMinBytes": 0.0, "downloadMaxBytes": 10.0, "downloadLimit": 10,
     "urliClickCount": 0
   };
 
@@ -134,6 +135,8 @@ URLI.Background = URLI.Background || function () {
       instance.downloadTypes = items.downloadTypes;
       instance.downloadSelector = items.downloadSelector;
       instance.downloadIncludes = items.downloadIncludes;
+      instance.downloadMinBytes = items.downloadMinBytes;
+      instance.downloadMaxBytes = items.downloadMaxBytes;
       instance.downloadLimit = items.downloadLimit;
     }
     instance.tabId = tab.id;
@@ -201,8 +204,7 @@ URLI.Background = URLI.Background || function () {
   function updateTab(instance, action, caller, callback) {
     if (instance && instance.enabled && instance.downloadEnabled) {
       chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-        code = "URLI.Download.downloadx(" + JSON.stringify(instance.downloadSelector) + ");";
-        //code = "URLI.Download.setProperties(" + JSON.stringify(instance.downloadSelector) + ");";
+        code = "URLI.Download.findDownloadURLs(" + JSON.stringify(instance.downloadSelector) + ");";
         console.log("code=" + code);
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
           if (results && results[0]) {
@@ -213,18 +215,20 @@ URLI.Background = URLI.Background || function () {
             for (var i = 0; i < urls.length; i++ ) {
               var url = urls[i];
               console.log("downloading url=" + url);
-              // chrome.downloads.download({url: url});
               chrome.downloads.download({url: url}, function(downloadId) {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
                   console.log(downloadItem);
-                  //if (downloadItem && (downloadItem.totalBytes < 500 || downloadItem.totalBytes > 5000000)) {
-                    //console.log("Canceling!!!");
-                    //chrome.downloads.cancel(downloadId);
+                  console.log("totalBytes=" + downloadItem.totalBytes);
+                 // if (downloadItem && (downloadItem.totalBytes < 500 || downloadItem.totalBytes > 5000000)) {
+                 //   console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
+                 //   chrome.downloads.cancel(downloadId);
                  // }
                 });
               });
             }
+          } else {
+            console.log("no results");
           }
           updateTab2(instance, action, caller, callback);
         });
@@ -318,4 +322,34 @@ chrome.commands.onCommand.addListener(function(command) {
       });
     }
   });
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  console.log("tabs.onUpdated!");
+  console.log(changeInfo);
+  if (changeInfo.status === "complete") {
+  var instance = URLI.Background.getInstance(tabId);
+    // If auto is enabled for this instance ...
+    if (instance && instance.enabled && instance.autoEnabled) {
+      // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
+      if (instance.autoTimes-- > 0) {
+        URLI.Background.setInstance(tabId, instance);
+        // If auto wait is enabled, only add the window load listener if the document hasn't finished loading, or it will never fire 
+        //if (instance.autoWait && document.readyState !== "complete") {
+       //   window.addEventListener("load", function() { setAutoTimeout(); });
+       // } else {
+       //   setAutoTimeout();
+      //  }
+      
+          instance.autoTimeout = setTimeout(function () {
+              URLI.Background.updateTab(instance, instance.autoAction);
+    }, instance.autoSeconds * 1000);
+      
+      } else {
+        clearTimeout(instance.autoTimeout);
+        URLI.Background.deleteInstance(tabId);
+        chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function(popup) { popup.close(); });
+      }
+    }
+  }
 });

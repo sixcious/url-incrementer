@@ -140,3 +140,19 @@ input[type="image"]:focus {
 #options .overlay {
   top: initial;
 }
+
+.tooltip {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.tooltip:active img {
+  display: none;
+}
+
+.tooltip:active:after {
+  content: attr(title);
+  display: block;
+  margin-top: 16px;
+  font-size: 10px;
+}
