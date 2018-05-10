@@ -66,7 +66,7 @@ URLI.Popup = URLI.Popup || function () {
             instance = backgroundPage.URLI.Background.buildInstance(instance, tabs[0], items);
           }
           updateControls();
-          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items.popupIconSize + "px; height:" + items.popupIconSize + "px;";
+          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items_.popupIconSize + "px; height:" + items_.popupIconSize + "px;";
           DOM["#next-input"].className = DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.autoEnabled ? items_.animationsEnabled ? "hvr-grow" : "" : "display-none";
           DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
@@ -91,8 +91,8 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
           DOM["#download-limit-input"].value = instance.downloadLimit;
-          // Jump straight to Setup if instance isn't enabled or if Next/Prev buttons aren't enabled
-          if (!instance.enabled && !(items_.nextPrevPopupButtons && items_.autoEnabled)) {
+          // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
+          if (!instance.enabled && items_.popupOpenSetup) {
             toggleView.call(DOM["#setup-input"]);
           }
         });
@@ -262,14 +262,17 @@ URLI.Popup = URLI.Popup || function () {
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
           // [1] Interval Errors
           interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-          autoEnabled && !items_.autoEnabled ? chrome.i18n.getMessage("auto_enabled_error") : "",
+          // Auto Errors
+          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.allURLsPermissionsGranted ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+          autoEnabled && downloadEnabled && !items_.downloadPermissionsGranted && !items_.allURLsPermissionsGranted ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
+          // Download Errors
           downloadEnabled && !items_.downloadEnabled ? chrome.i18n.getMessage("download_enabled_error") :
           ""
         ];
     // We can tell there was an error if some of the array slots weren't empty
-    if (errors.some(function(error) { return error !== ""; })) {
+    if (errors.some(error => error !== "")) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
       URLI.UI.generateAlert(errors);
     } else {
@@ -316,8 +319,9 @@ URLI.Popup = URLI.Popup || function () {
         if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.quickMouseEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
-        if (items_.autoEnabled && instance.autoEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "setAutoTimeout", instance: instance});
+        if (instance.autoEnabled) {
+          backgroundPage.URLI.Auto.setAutoTimeout(instance);
+          backgroundPage.URLI.Auto.addAutoListener();
         }
         toggleView.call(DOM["#accept-button"]);
       });

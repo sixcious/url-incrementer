@@ -1,6 +1,6 @@
 /**
  * URL Incrementer Auto
- * 
+ *
  * @author Roy Six
  * @namespace
  */
@@ -9,91 +9,92 @@ var URLI = URLI || {};
 
 URLI.Auto = URLI.Auto || function () {
 
-  var autoTimeout, // the auto setTimeout function stored in a var
-      instance; // the instance containing the auto properties
+  var autoListenerAdded = false;
 
   /**
-   * Sets the instance, which contains the auto properties.
-   * 
-   * @public
-   */
-  function setInstance(instance_) {
-    instance = instance_;
-  }
-
-  /**
-   * Decides whether or not to set the autoTimeout based on the instance's current properties.
-   * Also decides when it is time to delete the instance when the auto times count has reached 0.
+   * Adds the auto listener (only if there isn't already an existing listener).
    *
    * @public
    */
-  function decideAutoTimeout() {
-    // If auto is enabled for this instance ...
-    if (instance && instance.enabled && instance.autoEnabled) {
-      // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
-      if (instance.autoTimes-- > 0) {
-        chrome.runtime.sendMessage({greeting: "setInstance", instance: instance});
-        // If auto wait is enabled, only add the window load listener if the document hasn't finished loading, or it will never fire 
-        if (instance.autoWait && document.readyState !== "complete") {
-          window.addEventListener("load", function() { setAutoTimeout(); });
-        } else {
-          setAutoTimeout();
-        }
-      } else {
-        chrome.runtime.sendMessage({greeting: "deleteInstance"});
-        chrome.runtime.sendMessage({greeting: "closePopup"});
-      }
+  function addAutoListener() {
+    if (!autoListenerAdded) {
+      chrome.tabs.onUpdated.addListener(autoListener);
+      autoListenerAdded = true;
     }
   }
 
   /**
-   * Clears the autoTimeout. This is only called when the user manually intervenes
-   * and tries clearing the instance (e.g. clicking the popup clear button or via
-   * a shortcut command).
-   * 
+   * Removes the auto listener (only if there isn't any other instance that still has auto enabled).
+   *
    * @public
    */
-  function clearAutoTimeout() {
-    clearTimeout(autoTimeout);
+  function removeAutoListener() {
+    if (![...URLI.Background.getInstances().values()].some(instance => instance.autoEnabled)) {
+      chrome.tabs.onUpdated.removeListener(autoListener);
+      autoListenerAdded = false;
+    }
   }
 
   /**
-   * Sets the autoTimeout.
-   * 
+   * Sets the instance's auto timeout, and then updates the tab, performing the auto action.
+   *
+   * @param instance the instance's timeout to set
+   * @public
+   */
+  function setAutoTimeout(instance) {
+    instance.autoTimeout = setTimeout(function () {
+      URLI.Background.updateTab(instance, instance.autoAction);
+    }, instance.autoSeconds * 1000);
+  }
+
+  /**
+   * Clears the instance's auto timeout. This is called when the user manually intervenes
+   * and tries clearing the instance (e.g. clicking the popup UI clear button or via
+   * a shortcut command) or naturally when the autoTimes count reaches 0 and the instance gets deleted.
+   *
+   * @param instance the instance's timeout to clear
+   * @public
+   */
+  function clearAutoTimeout(instance) {
+    clearTimeout(instance.autoTimeout);
+  }
+
+  /**
+   * The chrome.tabs.onUpdated auto listener that fires every time a tab is updated.
+   * Decides whether or not to set the autoTimeout based on the instance's current properties.
+   * Also decides when it is time to delete the instance when the auto times count has reached 0.
+   *
+   * @param tabId      the tab ID
+   * @param changeInfo the status (either complete or loading)
+   * @param tab        the tab object
    * @private
    */
-  function setAutoTimeout() {
-    autoTimeout = setTimeout(function () {
-      chrome.runtime.sendMessage({greeting: "updateTab", action: instance.autoAction});
-    }, instance.autoSeconds * 1000);
+  function autoListener(tabId, changeInfo, tab) {
+    console.log("autoListener is on!");
+    var instance = URLI.Background.getInstance(tabId);
+    // If auto is enabled for this instance ...
+    if (instance && instance.enabled && instance.autoEnabled &&
+       (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading")) {
+      // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
+      // Note: We pre-decrement because the first time Auto is already done via Popup calling setAutoTimeout()
+      if (--instance.autoTimes > 0) {
+        URLI.Background.setInstance(tabId, instance);
+        setAutoTimeout(instance);
+      } else {
+        // Note: deleteInstance will clearAutoTimeout(instance) so we don't have to do it here
+        URLI.Background.deleteInstance(tabId);
+        chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function (popup) {
+          popup.close();
+        });
+      }
+    }
   }
 
   // Return Public Functions
   return {
-    setInstance: setInstance,
-    decideAutoTimeout: decideAutoTimeout,
+    addAutoListener: addAutoListener,
+    removeAutoListener: removeAutoListener,
+    setAutoTimeout: setAutoTimeout,
     clearAutoTimeout: clearAutoTimeout
   };
 }();
-
-// Content Script Start: Get instance and see if auto is enabled
-chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-  URLI.Auto.setInstance(response.instance);
-  URLI.Auto.decideAutoTimeout();
-});
-
-// Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  switch (request.greeting) {
-    case "setAutoTimeout":
-      URLI.Auto.setInstance(request.instance);
-      URLI.Auto.decideAutoTimeout();
-      break;
-    case "clearAutoTimeout":
-      URLI.Auto.clearAutoTimeout();
-      break;
-    default:
-      break;
-  }
-  sendResponse({});
-});

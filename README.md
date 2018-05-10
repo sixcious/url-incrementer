@@ -1,29 +1,29 @@
 # URL Incrementer
 
-URLI ("yur-lee") lets you "increment" [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any website that keeps its URLs organized sequentially by numbers or letters or paginated via links. It's a lightweight extension (under 200KB!) and its core functionality doesn't require any special permissions from you.
+URLI ("yur-lee") lets you "increment" [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It's a lightweight extension (under 200KB!) and its core functionality doesn't require any special permissions from you.
 
 Features:
-- Auto-Incrementing (Requires Extra Permissions)
-- Downloading [Experimental] (Requires Extra Permissions)
+- Auto Incrementing
+- Downloading [Experimental] (Requires Download Permissions)
 - Next [>] Prev [<] [Experimental]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
-- Wayyyy too many options, including increment interval, alphanumeric/base support, and custom regex support
+- Wayyyy too many options, including increment interval, alphanumeric/base support, and even custom regex support
 
 Special Thanks:
-NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus, and everyone who has providing valuable feedback/comments in the reviews and support.
-... and of course YOU for using this extension! :)
+NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus
+... and of course "U" for using this "URLI"! :)
 
 What's New in Version 4.4 (May 14, 2018)
-- New Name: "URL Incrementer" (URLI) with a new extension icon and more intuitive UI icons
-- New Auto-Increment function
+- New Look: New extension icon and more intuitive UI icons
+- New Auto Increment function
 - New Download + Increment function (Experimental)
-- MANY more options added! Change the toolbar icon, adjust the popup icon sizes, get icon feedback when incrementing or other actions, and add Next [>] Prev [<] buttons to Popup UI
+- MANY options added! Change the toolbar icon, adjust the popup icon sizes, get icon feedback when incrementing or other actions, and add Next [>] Prev [<] buttons to Popup UI
 - MANY convenience enhancements! Now saves changes you make in Popup UI, automatically brings up the Popup UI Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support)
-- Permissions Modularized: Internal Shortcuts, Auto, and Download permissions are now separate so you can grant and enable only what you want to 
+- Permissions Modularized: Internal Shortcuts, Download, Enhanced Functionality permissions are now separate so you can grant and enable only what you want to 
 - Improved Internal Shortcuts: Changed KeyboardEvent "keyCode" to "code" and MouseEvent "which" to "button"; can also now support modifier keys as shortcuts (e.g. "Shift" can be used by itself now); Changed default keyboard shortcuts from Alt+Ctrl+Shift+? to Alt+Shift+? due to some platforms disabling the former recently
 - Internal code changes: better tab instance memory management (now using JavaScript Map instead of array) + minor bugfixes
-- Note: The options had to be reset due to the way URLI now modularizes permissions for each function. Very sorry for the inconvenience!
+- Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each function. I'm very sorry for the inconvenience!
 
 What's New in Version 3.3 (July 20, 2015)
 - Added back internal keyboard and mouse button shortcuts

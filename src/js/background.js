@@ -11,7 +11,7 @@ URLI.Background = URLI.Background || function () {
 
   // SDV: Storage Default Values
   const SDV = {
-    "autoEnabled": true, "downloadEnabled": false, "internalShortcutsEnabled": false,
+    "downloadEnabled": false, "internalShortcutsEnabled": false,
     "allURLsPermissionsGranted": false, "downloadPermissionsGranted": false, "internalShortcutsPermissionsGranted": false,
     "quickEnabled": true,
     "iconColor": "dark",
@@ -19,6 +19,7 @@ URLI.Background = URLI.Background || function () {
     "popupIconSize": 20,
     "animationsEnabled": true,
     "popupSettingsCanOverwrite": true,
+    "popupOpenSetup": true,
     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
     "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
@@ -88,19 +89,18 @@ URLI.Background = URLI.Background || function () {
       if (items.internalShortcutsEnabled && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
       }
-      if (items.autoEnabled && instance && instance.autoEnabled) {
-        chrome.tabs.sendMessage(tabId, {greeting: "clearAutoTimeout"});
+      if (instance && instance.autoEnabled) {
+        instance.autoEnabled = false;
+        URLI.Auto.clearAutoTimeout(instance);
+        URLI.Auto.removeAutoListener();
       }
       if (items.iconFeedbackEnabled) {
         chrome.browserAction.setBadgeBackgroundColor({color: "#FF0000", tabId: tabId});
         chrome.browserAction.setBadgeText({text: "x", tabId: tabId});
-        chrome.browserAction.getBadgeBackgroundColor({}, function(result) {
-          console.log("r@@@esult=" + result);
-          setTimeout(function () {
-            chrome.browserAction.setBadgeBackgroundColor({color: result, tabId: tabId});
-            chrome.browserAction.setBadgeText({text: "", tabId: tabId});
-          }, 2000);
-        });
+        setTimeout(function () {
+          chrome.browserAction.setBadgeBackgroundColor({color: [0, 0, 0, 0], tabId: tabId});
+          chrome.browserAction.setBadgeText({text: "", tabId: tabId});
+        }, 2000);
       }
       instances.delete(tabId);
     });
@@ -261,20 +261,20 @@ chrome.runtime.onInstalled.addListener(function(details) {
       });
     });
   }
-  // Update Installations (Version 4.0 and Below): Reset storage and remove all optional permissions
+  // Update Installations (Below Version 4.4): Reset storage and remove all optional permissions
   if (details.reason === "update") {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set(URLI.Background.getSDV(), function() {
         if (chrome.declarativeContent) {
           chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
         }
-        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) { });
+        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
       });
     });
   }
 });
 
-// Listen for requests from chrome.runtime.sendMessage (Content Scripts Environment auto.js, shortcuts.js)
+// Listen for requests from chrome.runtime.sendMessage (Content Scripts Environment)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   var instance;
   switch (request.greeting) {
@@ -295,9 +295,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
         URLI.Background.updateTab(instance, request.action);
       });
-      break;
-    case "closePopup":
-      chrome.extension.getViews({type: "popup", windowId: sender.tab.windowId}).forEach(function(popup) { popup.close(); });
       break;
     default:
       break;
@@ -322,34 +319,4 @@ chrome.commands.onCommand.addListener(function(command) {
       });
     }
   });
-});
-
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  console.log("tabs.onUpdated!");
-  console.log(changeInfo);
-  if (changeInfo.status === "complete") {
-  var instance = URLI.Background.getInstance(tabId);
-    // If auto is enabled for this instance ...
-    if (instance && instance.enabled && instance.autoEnabled) {
-      // Subtract from autoTimes and if it's still greater than 0, continue auto action, else clear the instance
-      if (instance.autoTimes-- > 0) {
-        URLI.Background.setInstance(tabId, instance);
-        // If auto wait is enabled, only add the window load listener if the document hasn't finished loading, or it will never fire 
-        //if (instance.autoWait && document.readyState !== "complete") {
-       //   window.addEventListener("load", function() { setAutoTimeout(); });
-       // } else {
-       //   setAutoTimeout();
-      //  }
-      
-          instance.autoTimeout = setTimeout(function () {
-              URLI.Background.updateTab(instance, instance.autoAction);
-    }, instance.autoSeconds * 1000);
-      
-      } else {
-        clearTimeout(instance.autoTimeout);
-        URLI.Background.deleteInstance(tabId);
-        chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function(popup) { popup.close(); });
-      }
-    }
-  }
 });
