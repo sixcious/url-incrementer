@@ -2,6 +2,10 @@
 
 URLI ("yur-lee") lets you "increment" [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It's a lightweight extension (under 200KB!) and its core functionality doesn't require any special permissions from you.
 
+Q: How do I use it?
+
+A: Click the extension icon to select the part of the URL you want to increment and then press the [+] button or use shortcuts to start incrementing!
+
 Features:
 - Auto Incrementing
 - Downloading [Experimental] (Requires Download Permissions)
