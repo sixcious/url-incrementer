@@ -320,3 +320,10 @@ chrome.commands.onCommand.addListener(function(command) {
     }
   });
 });
+
+// Listen for when tabs are removed and delete their instances if they exist
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  if (URLI.Background.getInstance(tabId)) {
+    URLI.Background.deleteInstance(tabId);
+  }
+});

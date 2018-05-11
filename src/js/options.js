@@ -24,7 +24,7 @@ URLI.Options = URLI.Options || function () {
       },
       key = [0,""], // Stores the key event modifiers [0] and key code [1]
       //FACES = ["(｡◕‿◕｡)", "≧☉_☉≦", "(▰˘◡˘▰)", "♥‿♥", "(✿´‿`)", "(─‿‿─)", "(｡◕‿‿◕｡)", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉"];
-      FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)"];
+      FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)", "(+__X)"];
 
   /**
    * Loads the DOM content needed to display the options page.
