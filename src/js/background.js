@@ -11,22 +11,21 @@ URLI.Background = URLI.Background || function () {
 
   // SDV: Storage Default Values
   const SDV = {
-    "downloadEnabled": false, "internalShortcutsEnabled": false,
-    "allURLsPermissionsGranted": false, "downloadPermissionsGranted": false, "internalShortcutsPermissionsGranted": false,
-    "quickEnabled": true,
-    "iconColor": "dark",
-    "iconFeedbackEnabled": false,
-    "popupIconSize": 20,
-    "animationsEnabled": true,
-    "popupSettingsCanOverwrite": true,
-    "popupOpenSetup": true,
-    "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
-    "selectionCustom": {url: "", pattern: "", flags: "", group: 0, index: 0},
-    "nextPrevPopupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true,
-    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
-    "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
-    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
-    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='jpg' i]", "downloadIncludes": "", "downloadMinBytes": 0.0, "downloadMaxBytes": 10.0, "downloadLimit": 10,
+    "permissions": { "allURLs": false, "internalShortcuts": false, "download": false },
+    "icon":        { "color": "dark", "feedbackEnabled": false },
+    "popup":       { "buttonSize": 24, "animationsEnabled": true, "settingsCanOverwrite": true, "openSetup": true },
+    "nextPrev":    { "popupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true },
+    "auto":        { "action": "increment", "times": 10, "seconds": 5, "wait": true },
+    "download":    { "strategy": "types", "types": ["jpg"], "selector": "[src*='.jpg' i],[href*='jpg' i]", "includes": "", "minBytes": 0.0, "maxBytes": 10.0, "limit": 10 },
+    "shortcuts":   { "quickEnabled": true },
+    "internalShortcuts": {
+      "key":   { "enabled": true, "quickEnabled": true, "increment": [5, "ArrowUp"], "decrement": [5, "ArrowDown"], "next": [], "prev": [], "clear": [5, "KeyX"] },
+      "mouse": { "enabled": false, "quickEnabled": false, "increment": -1, "decrement": -1, "next": -1, "prev": -1, "clear": -1 }
+    },
+    "incrementDecrement": {
+      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
+      "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 }
+    },
     "urliClickCount": 0
   };
 
@@ -118,32 +117,21 @@ URLI.Background = URLI.Background || function () {
   function buildInstance(instance, tab, items) {
     var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     if (!instance) {
-      instance = {};
-      instance.enabled = false;
-      instance.interval = items.interval;
-      instance.base = items.base;
-      instance.baseCase = items.baseCase;
-      instance.linksPriority = items.linksPriority;
-      instance.sameDomainPolicy = items.sameDomainPolicy;
-      instance.autoEnabled = false;
-      instance.autoAction = items.autoAction;
-      instance.autoTimes = items.autoTimes;
-      instance.autoSeconds = items.autoSeconds;
-      instance.autoWait = items.autoWait;
-      instance.downloadEnabled = false;
-      instance.downloadStrategy = items.downloadStrategy;
-      instance.downloadTypes = items.downloadTypes;
-      instance.downloadSelector = items.downloadSelector;
-      instance.downloadIncludes = items.downloadIncludes;
-      instance.downloadMinBytes = items.downloadMinBytes;
-      instance.downloadMaxBytes = items.downloadMaxBytes;
-      instance.downloadLimit = items.downloadLimit;
+      instance = {
+        "enabled": false,
+        "autoEnabled": false,
+        "downloadEnabled": false,
+        "incrementDecrement": items.incrementDecrement,
+        "nextPrev": items.nextPrev,
+        "auto": items.auto,
+        "download": items.download
+      };
     }
     instance.tabId = tab.id;
     instance.url = tab.url;
-    instance.selection = selectionProps.selection;
-    instance.selectionStart = selectionProps.selectionStart;
-    instance.leadingZeros = items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
+    instance.incrementDecrement.selection = selectionProps.selection;
+    instance.incrementDecrement.selectionStart = selectionProps.selectionStart;
+    instance.incrementDecrement.leadingZeros = items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
     return instance;
   }
 
