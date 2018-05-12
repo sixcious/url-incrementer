@@ -1,7 +1,8 @@
 /* Options CSS is minimal because Options is set to use Chrome style */
 
-@import url("ui/generate-alert.css");
 @import url("ui/fade.css");
+@import url("ui/hover.css");
+@import url("ui/generate-alert.css");
 
 h3 {
   display: inline;
@@ -54,12 +55,8 @@ input[type="image"] {
   vertical-align: middle;
 }
 
-.buttons button:not(:last-child) {
-  margin-right: 40px;
-}
-
-.icon-color.radio, #popup-icon-size-div {
-  margin-bottom: 20px;
+.icon-color.radio, #popup-button-size-div {
+  margin-bottom: 24px;
 }
 
 .icon-color.radio label:not(:last-child) {
@@ -75,12 +72,12 @@ input[type="image"] {
   margin-right: 3px;
 }
 
-#popup-icon-size-label {
+#popup-button-size-label {
   display: block;
   margin-bottom: 5px;
 }
 
-#popup-icon-size-img {
+#popup-button-size-img {
   vertical-align: top;
 }
 

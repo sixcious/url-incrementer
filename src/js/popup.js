@@ -63,12 +63,12 @@ URLI.Popup = URLI.Popup || function () {
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
           instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
           if (!instance) {
-            instance = backgroundPage.URLI.Background.buildInstance(instance, tabs[0], items);
+            instance = backgroundPage.URLI.Background.buildInstance(tabs[0], items);
           }
           updateControls();
-          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items_.popupIconSize + "px; height:" + items_.popupIconSize + "px;";
-          DOM["#next-input"].className = DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.autoEnabled ? items_.animationsEnabled ? "hvr-grow" : "" : "display-none";
-          DOM["#setup-input"].className = items_.animationsEnabled ? "hvr-grow" : "";
+          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+          DOM["#next-input"].className = DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.permissionsAllURLs ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+          DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
           DOM["#selection-input"].value = instance.selection;
           DOM["#selection-start-input"].value = instance.selectionStart;
@@ -107,7 +107,7 @@ URLI.Popup = URLI.Popup || function () {
    */
   function clickIncrement() {
     if (instance.enabled) {
-      if (items_.animationsEnabled) {
+      if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -125,7 +125,7 @@ URLI.Popup = URLI.Popup || function () {
    */
   function clickDecrement() {
     if (instance.enabled) {
-      if (items_.animationsEnabled) {
+      if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -145,7 +145,7 @@ URLI.Popup = URLI.Popup || function () {
     if (instance.enabled) {
       instance.enabled = false;
       updateControls();
-      if (items_.animationsEnabled) {
+      if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
        chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -160,7 +160,7 @@ URLI.Popup = URLI.Popup || function () {
    * @private
    */
   function clickNext() {
-    if (items_.animationsEnabled) {
+    if (items_.popupAnimationsEnabled) {
       URLI.UI.clickHoverCss(this, "hvr-push-click");
     }
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -176,7 +176,7 @@ URLI.Popup = URLI.Popup || function () {
    * @private
    */
   function clickPrev() {
-    if (items_.animationsEnabled) {
+    if (items_.popupAnimationsEnabled) {
       URLI.UI.clickHoverCss(this, "hvr-push-click");
     }
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
@@ -219,7 +219,7 @@ URLI.Popup = URLI.Popup || function () {
    * @private
    */
   function updateControls() {
-    var className = instance.enabled ? items_.animationsEnabled ? "hvr-grow"  : "" : "disabled";
+    var className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#increment-input"].className = className;
     DOM["#decrement-input"].className = className;
     DOM["#clear-input"].className = className;
@@ -263,12 +263,12 @@ URLI.Popup = URLI.Popup || function () {
           // [1] Interval Errors
           interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
           // Auto Errors
-          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.allURLsPermissionsGranted ? chrome.i18n.getMessage("auto_next_prev_error") : "",
+          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsAllURLs ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-          autoEnabled && downloadEnabled && !items_.downloadPermissionsGranted && !items_.allURLsPermissionsGranted ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
+          autoEnabled && downloadEnabled && !items_.permissionsDownload && !items_.permissionsAllURLs ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
           // Download Errors
-          downloadEnabled && !items_.downloadEnabled ? chrome.i18n.getMessage("download_enabled_error") :
+          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") :
           ""
         ];
     // We can tell there was an error if some of the array slots weren't empty
@@ -313,10 +313,10 @@ URLI.Popup = URLI.Popup || function () {
           });
         }
         // If permissions granted, send message to content script:
-        if (items_.internalShortcutsEnabled && items_.keyEnabled && !items_.quickKeyEnabled) {
+        if (items_.permissionsInternalShortcuts && items_.keyEnabled && !items_.quickKeyEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
-        if (items_.internalShortcutsEnabled && items_.mouseEnabled && !items_.quickMouseEnabled) {
+        if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.quickMouseEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {

@@ -35,6 +35,10 @@ URLI.UI = URLI.UI || function () {
     setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 3600);
   }
 
+  // TODO
+  function showBalloon(message) {
+  }
+
   /**
    * Applies a Hover.css effect to DOM elements on click events.
    * 
@@ -53,6 +57,7 @@ URLI.UI = URLI.UI || function () {
   // Return Public Functions
   return {
     generateAlert: generateAlert,
+    showBalloon: showBalloon,
     clickHoverCss: clickHoverCss
   };
 }();

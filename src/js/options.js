@@ -85,9 +85,11 @@ URLI.Options = URLI.Options || function () {
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
-    DOM["#popup-icon-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <=24) { chrome.storage.sync.set({"popupIconSize": +this.value});
-      DOM["#popup-icon-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
-    DOM["#animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"animationsEnabled": this.checked}); });
+    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 32) { chrome.storage.sync.set({"popupButtonSize": +this.value});
+      DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
+    DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { URLI.UI.clickHoverCss(this, "hvr-push-click"); } });
+    DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
+      DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
@@ -106,8 +108,8 @@ URLI.Options = URLI.Options || function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#links-select"].addEventListener("change", function () { chrome.storage.sync.set({"linksPriority": this.value}); });
-    DOM["#same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"sameDomainPolicy": this.checked}); });
+    DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
+    DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#urli-click-count"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
@@ -147,11 +149,12 @@ URLI.Options = URLI.Options || function () {
       DOM["#mouse-clear-select"].value = items.mouseClear;
       DOM["#icon-color-radio-" + items.iconColor].checked = true;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
-      DOM["#popup-icon-size-input"].value = items.popupIconSize;
-      DOM["#popup-icon-size-img"].style = "width:" + items.popupIconSize + "px; height:" + items.popupIconSize + "px;"; 
-      DOM["#animations-enable-input"].checked = items.animationsEnabled;
-      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+      DOM["#popup-button-size-input"].value = items.popupButtonSize;
+      DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+      DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : ""
+      DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
       DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
+      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
       DOM["#auto-action-select"].value = items.autoAction;
       DOM["#auto-times-input"].value = items.autoTimes;
       DOM["#auto-seconds-input"].value = items.autoSeconds;
@@ -174,8 +177,8 @@ URLI.Options = URLI.Options || function () {
       DOM["#base-case"].className = items.base > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
       DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
-      DOM["#links-select"].value = items.linksPriority;
-      DOM["#same-domain-policy-enable-input"].checked = items.sameDomainPolicy;
+      DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
+      DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
       DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
       DOM["#urli-click-count"].value = items.urliClickCount;
       DOM["#icon-color-radio-urli-unlock"].style = items.urliClickCount > 10 ? "" : "display: none;";
@@ -397,7 +400,7 @@ URLI.Options = URLI.Options || function () {
       DOM["#selection-custom-url-textarea"].focus();
     } else if (action === "save") {
       DOM["#selection-custom-message-span"].textContent = chrome.i18n.getMessage("selection_custom_save_success");
-      chrome.storage.sync.set({"selectionCustom": { url: url, pattern: pattern, flags: flags, group: group, index: index }});
+      chrome.storage.sync.set({"selectionCustom": { "url": url, "pattern": pattern, "flags": flags, "group": group, "index": index }});
     }
   }
 

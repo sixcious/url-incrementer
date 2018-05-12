@@ -9,23 +9,21 @@ var URLI = URLI || {};
 
 URLI.Background = URLI.Background || function () {
 
-  // SDV: Storage Default Values
+  // SDV: Storage Default Values Note: Storage.sync can only set top-level JSON objects, do not use nested JSON objects
   const SDV = {
-    "permissions": { "allURLs": false, "internalShortcuts": false, "download": false },
-    "icon":        { "color": "dark", "feedbackEnabled": false },
-    "popup":       { "buttonSize": 24, "animationsEnabled": true, "settingsCanOverwrite": true, "openSetup": true },
-    "nextPrev":    { "popupButtons": false, "linksPriority": "attributes", "sameDomainPolicy": true },
-    "auto":        { "action": "increment", "times": 10, "seconds": 5, "wait": true },
-    "download":    { "strategy": "types", "types": ["jpg"], "selector": "[src*='.jpg' i],[href*='jpg' i]", "includes": "", "minBytes": 0.0, "maxBytes": 10.0, "limit": 10 },
-    "shortcuts":   { "quickEnabled": true },
-    "internalShortcuts": {
-      "key":   { "enabled": true, "quickEnabled": true, "increment": [5, "ArrowUp"], "decrement": [5, "ArrowDown"], "next": [], "prev": [], "clear": [5, "KeyX"] },
-      "mouse": { "enabled": false, "quickEnabled": false, "increment": -1, "decrement": -1, "next": -1, "prev": -1, "clear": -1 }
-    },
-    "incrementDecrement": {
+    /* permissions */ "permissionsAllURLs": false, "permissionsInternalShortcuts": false, "permisssionsDownload": false,
+    /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
+    /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
+    /* nextPrev */    "nextPrevPopupButtons": false, "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true,
+    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": ["jpg"], "downloadSelector": "[src*='.jpg' i],[href*='jpg' i]", "downloadIncludes": "", "downloadMinBytes": 0.0, "downloadMaxBytes": 10.0, "downloadLimit": 10,
+    /* shortcuts */   "quickEnabled": true,
+    /* internalShortcuts */
+    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
+    /* incrementDecrement */
       "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
-      "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 }
-    },
+      "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     "urliClickCount": 0
   };
 
@@ -82,10 +80,10 @@ URLI.Background = URLI.Background || function () {
   function deleteInstance(tabId) {
     chrome.storage.sync.get(null, function(items) {
       var instance = getInstance(tabId);
-      if (items.internalShortcutsEnabled && items.keyEnabled && !items.keyQuickEnabled) {
+      if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
       }
-      if (items.internalShortcutsEnabled && items.mouseEnabled && !items.mouseQuickEnabled) {
+      if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
       }
       if (instance && instance.autoEnabled) {
@@ -106,32 +104,26 @@ URLI.Background = URLI.Background || function () {
   }
 
   /**
-   * Builds/Updates an instance with default values.
+   * Builds an instance with default values.
    * 
-   * @param instance the instance, if any, to continue building off of
    * @param tab      the tab properties (id, url) to set this instance with
    * @param items    the storage items to help build a default instance
    * @return instance the newly built instance
    * @public
    */
-  function buildInstance(instance, tab, items) {
-    var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
-    if (!instance) {
-      instance = {
-        "enabled": false,
-        "autoEnabled": false,
-        "downloadEnabled": false,
-        "incrementDecrement": items.incrementDecrement,
-        "nextPrev": items.nextPrev,
-        "auto": items.auto,
-        "download": items.download
-      };
-    }
-    instance.tabId = tab.id;
-    instance.url = tab.url;
-    instance.incrementDecrement.selection = selectionProps.selection;
-    instance.incrementDecrement.selectionStart = selectionProps.selectionStart;
-    instance.incrementDecrement.leadingZeros = items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1;
+  function buildInstance(tab, items) {
+    var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom),
+        instance = {
+        "enabled": false, "autoEnabled": false, "downloadEnabled": false,
+        "tabId": tab.id, "url": tab.url,
+        "selection": selectionProps.selection, "selectionStart": selectionProps.selectionStart,
+        "leadingZeros": items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1,
+        "interval": items.interval,
+        "base": items.base, "baseCase": items.baseCase,
+        "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
+        "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait,
+        "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector, "downloadIncludes": items.downloadIncludes, "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit
+    };
     return instance;
   }
 
@@ -262,15 +254,12 @@ chrome.runtime.onInstalled.addListener(function(details) {
   }
 });
 
-// Listen for requests from chrome.runtime.sendMessage (Content Scripts Environment)
+// Listen for requests from chrome.runtime.sendMessage (Content Scripts)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   var instance;
   switch (request.greeting) {
     case "getInstance":
       sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
-      break;
-    case "setInstance":
-      URLI.Background.setInstance(sender.tab.id, request.instance);
       break;
     case "deleteInstance":
       URLI.Background.deleteInstance(sender.tab.id);
@@ -279,7 +268,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.storage.sync.get(null, function(items) {
         instance = URLI.Background.getInstance(sender.tab.id);
         if (!instance && sender.tab) {
-          instance = URLI.Background.buildInstance(undefined, sender.tab, items);
+          instance = URLI.Background.buildInstance(sender.tab, items);
         }
         URLI.Background.updateTab(instance, request.action);
       });
@@ -292,21 +281,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Listen for commands (Chrome shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  chrome.storage.sync.get(null, function(items) {
-    if (!items.internalShortcutsEnabled && (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear")) {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-        var instance = URLI.Background.getInstance(tabs[0].id);
-        if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) {
-          if (!instance && items.quickEnabled) {
-            instance = URLI.Background.buildInstance(undefined, tabs[0], items);
+  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear") {
+    chrome.storage.sync.get(null, function(items) {
+      if (!items.permissionsInternalShortcuts) {
+        chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+          var instance = URLI.Background.getInstance(tabs[0].id);
+          if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && 
+              (items.shortcuts.quickEnabled || (instance && instance.enabled))) {
+            if (!instance && items.shortcuts.quickEnabled) {
+              instance = URLI.Background.buildInstance(tabs[0], items);
+            }
+            URLI.Background.updateTab(instance, command);
+          } else if (command === "clear" && instance && instance.enabled) {
+            URLI.Background.deleteInstance(tabs[0].id);
           }
-          URLI.Background.updateTab(instance, command);
-        } else if (command === "clear" && instance && instance.enabled) {
-          URLI.Background.deleteInstance(tabs[0].id);
-        }
-      });
-    }
-  });
+        });
+      }
+    });
+  }
 });
 
 // Listen for when tabs are removed and delete their instances if they exist
