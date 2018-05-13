@@ -79,6 +79,7 @@ URLI.Auto = URLI.Auto || function () {
       // Note: We pre-decrement because the first time Auto is already done via Popup calling setAutoTimeout()
       if (--instance.autoTimes > 0) {
         URLI.Background.setInstance(tabId, instance);
+        clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
         setAutoTimeout(instance);
       } else {
         // Note: clearing will clearAutoTimeout(instance) so we don't have to do it here

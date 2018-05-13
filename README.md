@@ -13,7 +13,7 @@ Features:
 - Many Options
 
 Special Thanks:
-NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus ... and "U" of course for using "URLI"! :)
+NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus ... and "U" for using "URLI"! :)
 
 What's New in Version 4.4 (May 14, 2018)
 - New Look: New extension icon and more intuitive UI icons
