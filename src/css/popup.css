@@ -22,6 +22,7 @@ body {
 
 h3 {
   -webkit-user-select: initial;
+  font-size: 1.1em;
 }
 
 div.table {

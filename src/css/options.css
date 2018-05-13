@@ -130,8 +130,7 @@ input[type="image"]:focus {
 #urli-thank-you {
   display: block;
   text-align: right;
-  font-family: cursive;
-  font-weight: bold;
+  font-style: italic;
 }
 
 #options .overlay {

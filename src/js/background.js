@@ -199,7 +199,6 @@ URLI.Background = URLI.Background || function () {
         break;
       case "clear":
         actionPerformed = true;
-        instance.enabled = instance.downloadEnabled = instance.autoEnabled = false; // for popup and auto, we must disable before cleaning up
         chrome.storage.sync.get(null, function(items) {
           if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
             chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
@@ -208,9 +207,12 @@ URLI.Background = URLI.Background || function () {
             chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
           }
           if (instance && instance.autoEnabled) {
+            instance.autoEnabled = false;
             URLI.Auto.clearAutoTimeout(instance);
             URLI.Auto.removeAutoListener();
           }
+           // for callers like popup that still need the instance, disable all states
+          instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
           if (callback) {
             callback(instance);
           }
