@@ -91,6 +91,7 @@ div.column {
 #setup textarea {
   width: 100%;
   color: #777777;
+  word-break: break-all;
 }
 
 #setup img {

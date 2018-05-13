@@ -62,8 +62,7 @@ URLI.Popup = URLI.Popup || function () {
             instance = backgroundPage.URLI.Background.buildInstance(tabs[0], items);
           }
           updateControls();
-          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
-          DOM["#next-input"].className = DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.permissionsAllURLs ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#download-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
           DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
           DOM["#selection-input"].value = instance.selection;
@@ -159,7 +158,9 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = 
     DOM["#clear-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
-    DOM["#download-input"].className = instance.enabled && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
+    DOM["#next-input"].className =
+    DOM["#prev-input"].className = items_.nextPrevPopupButtons && items_.permissionsAllURLs ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#download-input"].className = items_.permissionsDownload ? instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled" : "display-none";
   }
 
   /**
@@ -279,6 +280,7 @@ URLI.Popup = URLI.Popup || function () {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {
+          backgroundPage.URLI.Auto.clearAutoTimeout(instance);
           backgroundPage.URLI.Auto.setAutoTimeout(instance);
           backgroundPage.URLI.Auto.addAutoListener();
         }

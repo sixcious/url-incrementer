@@ -166,7 +166,7 @@ URLI.Background = URLI.Background || function () {
         });
         break;
       case "download":
-        if (instance && instance.enabled && instance.downloadEnabled) {
+        if (instance && instance.downloadEnabled) {
           actionPerformed = true;
           chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
             var code = "URLI.Download.findDownloadURLs(" + 
@@ -199,6 +199,7 @@ URLI.Background = URLI.Background || function () {
         break;
       case "clear":
         actionPerformed = true;
+        instance.enabled = instance.downloadEnabled = instance.autoEnabled = false; // for popup and auto, we must disable before cleaning up
         chrome.storage.sync.get(null, function(items) {
           if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
             chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
@@ -207,11 +208,9 @@ URLI.Background = URLI.Background || function () {
             chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
           }
           if (instance && instance.autoEnabled) {
-            instance.autoEnabled = false;
             URLI.Auto.clearAutoTimeout(instance);
             URLI.Auto.removeAutoListener();
           }
-          instance.enabled = false; // for popup to keep instance in callback
           if (callback) {
             callback(instance);
           }
@@ -259,7 +258,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     });
   }
   // Update Installations (Below Version 4.4): Reset storage and remove all optional permissions
-  if (details.reason === "update") {
+  else if (details.reason === "update") {
     chrome.storage.sync.clear(function() {
       chrome.storage.sync.set(URLI.Background.getSDV(), function() {
         if (chrome.declarativeContent) {
@@ -281,10 +280,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case "performAction":
       chrome.storage.sync.get(null, function(items) {
         instance = URLI.Background.getInstance(sender.tab.id);
-        if (!instance && sender.tab) {
+        if (!instance) {
           instance = URLI.Background.buildInstance(sender.tab, items);
         }
-        URLI.Background.performAction(instance, request.action);
+        URLI.Background.performAction(instance, request.action, "internal-shortcuts");
       });
       break;
     default:
@@ -306,7 +305,7 @@ chrome.commands.onCommand.addListener(function(command) {
             if (!instance && items.quickEnabled) {
               instance = URLI.Background.buildInstance(tabs[0], items);
             }
-            URLI.Background.performAction(instance, command, "shortcuts", function(instance) { console.log("performAction callback working!! instance=" + instance); });
+            URLI.Background.performAction(instance, command, "commands");
           }
         });
       }
@@ -318,6 +317,6 @@ chrome.commands.onCommand.addListener(function(command) {
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
   var instance = URLI.Background.getInstance(tabId);
   if (instance) {
-    URLI.Background.performAction(instance, "clear");
+    URLI.Background.performAction(instance, "clear", "tabs.onRemoved");
   }
 });

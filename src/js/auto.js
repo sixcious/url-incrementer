@@ -73,7 +73,7 @@ URLI.Auto = URLI.Auto || function () {
     console.log("autoListener is on!");
     var instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance ...
-    if (instance && instance.enabled && instance.autoEnabled &&
+    if (instance && instance.autoEnabled &&
        (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading")) {
       // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
       // Note: We pre-decrement because the first time Auto is already done via Popup calling setAutoTimeout()
@@ -82,7 +82,7 @@ URLI.Auto = URLI.Auto || function () {
         clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
         setAutoTimeout(instance);
       } else {
-        // Note: clearing will clearAutoTimeout(instance) so we don't have to do it here
+        // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
         URLI.Background.performAction(instance, "clear", "auto");
         chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function (popup) {
           popup.close();

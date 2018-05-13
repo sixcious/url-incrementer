@@ -21,6 +21,7 @@
   "decrement_input": { "message": "Decrement [-]" },
   "next_input": { "message": "Next [>]" },
   "prev_input": { "message": "Prev [<]" },
+  "download_input": { "message": "Download [DL]" },
   "clear_input": { "message": "Clear [x]" },
   "setup_input": { "message": "URL Setup" },
   "setup_h3": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
@@ -193,5 +194,5 @@
   "download_types_mp4_label": { "message": "mp4" },
   "download_includes_label": { "message": "Includes Path?" },
   "download_limit_label": { "message": "Files Limit" },
-  "download_same_domain_label": { "message": "Only download links that point to the same domain of the current page" }
+  "download_same_domain_label": { "message": "Only download links that point to the same domain of the page's URL" }
 }
