@@ -15,9 +15,9 @@
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="icon-draft.svg"
-   inkscape:export-filename="C:\Users\10\Desktop\128png.png"
-   inkscape:export-xdpi="89.999992"
-   inkscape:export-ydpi="89.999992">
+   inkscape:export-filename="C:\Users\10\Desktop\16.png"
+   inkscape:export-xdpi="11.249999"
+   inkscape:export-ydpi="11.249999">
   <defs
      id="defs4">
     <clipPath
@@ -72,9 +72,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.3969749"
+     inkscape:zoom="3.1091308"
      inkscape:cx="76.857736"
-     inkscape:cy="109.19763"
+     inkscape:cy="72.808973"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -104,7 +104,7 @@
     <g
        id="g4138"
        style="fill:#333333;fill-opacity:1"
-       transform="matrix(2.1434536,0,0,1.6835551,-148.93347,-672.27446)">
+       transform="matrix(2.0700477,0,0,1.6258992,-139.17193,-615.46308)">
       <rect
          transform="rotate(90)"
          style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.00806725"
@@ -147,14 +147,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.30731964px;line-height:0em;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.95768321"
-       x="-165.92393"
-       y="989.90631"
+       x="-166.28793"
+       y="989.33795"
        id="text77"
        transform="scale(0.88360111,1.1317324)"><tspan
          sodipodi:role="line"
          id="tspan75"
-         x="-165.92393"
-         y="989.90631"
+         x="-166.28793"
+         y="989.33795"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:66.40517426px;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:0px;text-anchor:start;fill:#333333;fill-opacity:1;stroke-width:0.95768321">URL</tspan></text>
     <path
        style="opacity:0.66799999;fill:#333333;fill-opacity:1"
@@ -190,14 +190,14 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:66.66666412px;font-family:Scream;-inkscape-font-specification:Scream;fill:#333333;fill-opacity:1">URL</tspan></text>
     <text
        id="text1456"
-       y="1006.1821"
-       x="-1.8832787"
-       style="font-style:normal;font-weight:normal;font-size:44.4981041px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.11245286"
+       y="1003.771"
+       x="-1.8877789"
+       style="font-style:normal;font-weight:normal;font-size:44.60443115px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.11511111"
        xml:space="preserve"
-       transform="scale(0.89891459,1.1124527)"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.26389313px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#333333;fill-opacity:1;stroke-width:1.11245286"
-         y="1006.1821"
-         x="-1.8832787"
+       transform="scale(0.89677174,1.115111)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.41984558px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#333333;fill-opacity:1;stroke-width:1.11511111"
+         y="1003.771"
+         x="-1.8877789"
          id="tspan1454"
          sodipodi:role="line">URL</tspan></text>
   </g>
