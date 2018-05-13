@@ -150,3 +150,7 @@ div.column {
 #download-includes-input {
   width: 104px;
 }
+
+#download-same-domain {
+  margin-top: 16px;
+}

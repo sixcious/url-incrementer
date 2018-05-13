@@ -2,30 +2,28 @@
 
 URLI ("yur-lee") lets you "increment" [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It's a lightweight extension (under 200KB!) and its core functionality doesn't require any special permissions from you.
 
-Q: How do I use it?
-
-A: Click the extension icon to select the part of the URL you want to increment and then press the [+] button or use shortcuts to start incrementing!
+To start using it, just click the extension icon, select the part of the URL you want to increment, and then press the [+] button (or use shortcuts) to start incrementing!
 
 Features:
 - Auto Incrementing
-- Downloading [Experimental] (Requires Download Permissions)
+- Downloading [Experimental] (Requires Extra Permissions)
 - Next [>] Prev [<] [Experimental]
 - Chrome Shortcuts
-- Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
-- Wayyyy too many options, including increment interval, alphanumeric/base support, and even custom regex support
+- Internal Keyboard / Mouse Button Shortcuts (Requires Extra Permissions)
+- Many Options
 
 Special Thanks:
-NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus
-... and of course "U" for using this "URLI"! :)
+NickMWPrince, Blue, Blue Chan, Will, Adam C., Coolio Wolfus ... and "U" of course for using "URLI"! :)
 
 What's New in Version 4.4 (May 14, 2018)
 - New Look: New extension icon and more intuitive UI icons
-- New Auto Increment function
-- New Download + Increment function (Experimental)
+- New Auto Increment function!
+- New Download function! (Experimental)
 - MANY options added! Change the toolbar icon, adjust the popup icon sizes, get icon feedback when incrementing or other actions, and add Next [>] Prev [<] buttons to Popup UI
 - MANY convenience enhancements! Now saves changes you make in Popup UI, automatically brings up the Popup UI Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support)
 - Permissions Modularized: Internal Shortcuts, Download, Enhanced Functionality permissions are now separate so you can grant and enable only what you want to 
-- Improved Internal Shortcuts: Changed KeyboardEvent "keyCode" to "code" and MouseEvent "which" to "button"; can also now support modifier keys as shortcuts (e.g. "Shift" can be used by itself now); Changed default keyboard shortcuts from Alt+Ctrl+Shift+? to Alt+Shift+? due to some platforms disabling the former recently
+- Improved Internal Shortcuts #1: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys as shortcuts (e.g. "Shift" can be used by itself now)
+- Changed default internal keyboard shortcuts from Alt+Ctrl+Shift+? to Alt+Shift+? due to some platforms disabling the former recently
 - Internal code changes: better tab instance memory management (now using JavaScript Map instead of array) + minor bugfixes
 - Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each function. I'm very sorry for the inconvenience!
 

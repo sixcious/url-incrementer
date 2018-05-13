@@ -38,10 +38,10 @@
   "selectionstart_invalid_error": { "message": "Selection position must be from URL" },
   "interval_invalid_error": { "message": "Interval has to be between 1 and Max" },
   "auto_next_prev_error": { "message": "To use Auto with Next [>] Prev [<], please first enable Enhanced in Options to give URLI permissions" },
-  "auto_times_invalid_error": { "message": "If using auto, the times count must be between 1 and 1000" },
-  "auto_seconds_invalid_error": { "message": "If using auto, the seconds must be between 1 and 3600" },
-  "auto_download_enabled_error": { "message": "To Auto and Download simultaneously, please first enable Enhanced in Options to give URLI permissions" },
-  "download_enabled_error": { "message": "Please first enable Downloading in Options to give URLI Downloading permissions" },
+  "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 1000" },
+  "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3600" },
+  "auto_download_enabled_error": { "message": "To Auto and Download, please first enable Enhanced in Options to give URLI permissions" },
+  "download_enabled_error": { "message": "Please first enable Download in Options to give URLI permissions" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
   "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment [+] or perform other actions instantly without having to enter Setup."},
@@ -183,6 +183,7 @@
   "download_label": { "message": "Download" },
   "download_strategy_label": { "message": "Strategy" },
   "download_strategy_option_types": { "message": "Download these file type(s)" },
+  "download_strategy_option_all": { "message": "Download all file types" },
   "download_strategy_option_selector": { "message": "Use a custom JavaScript selector" },
   "download_strategy_option_page": { "message": "Download the web page itself" },
   "download_types_jpeg_label": { "message": "jpeg" },
@@ -190,6 +191,7 @@
   "download_types_gif_label": { "message": "gif" },
   "download_types_mp3_label": { "message": "mp3" },
   "download_types_mp4_label": { "message": "mp4" },
-  "download_includes_label": { "message": "Path Restriction?" },
-  "download_limit_label": { "message": "Files Limit" }
+  "download_includes_label": { "message": "Includes Path?" },
+  "download_limit_label": { "message": "Files Limit" },
+  "download_same_domain_label": { "message": "Only download links that point to the same domain of the current page" }
 }

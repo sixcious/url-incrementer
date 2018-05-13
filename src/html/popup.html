@@ -9,11 +9,12 @@
     <div id="controls" class="display-block fade-in">
       <div class="table">
         <div class="row">
-          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/> </div>
-          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right.png" alt="" width="16" height="16" class="display-none" data-i18n="title"/> </div>
-          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
-          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
-          <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/times.png" alt="" width="16" height="16" class="disabled" data-i18n="title"/> </div>
+          <div class="column"> <input id="download-input" type="image" src="../img/font-awesome/download.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="download"/> </div>
+          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left.png" alt="" width="16" height="16" class="display-none" data-i18n="title" data-action="prev"/> </div>
+          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right.png" alt="" width="16" height="16" class="display-none" data-i18n="title" data-action="next"/> </div>
+          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="increment"/> </div>
+          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="decrement"/> </div>
+          <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/times.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="clear"/> </div>
           <div class="column"> <input id="setup-input" type="image" src="../img/font-awesome/pencil.png" alt="" width="16" height="16" data-i18n="title"/> </div>
         </div>
       </div>
@@ -144,43 +145,52 @@
               </label>
               <select id="download-strategy-select">
                 <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
+                <option id="download-strategy-option-all" value="all" data-i18n="textContent"></option>
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
                 <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
               </select>
               <div id="download-types" class="checkbox">
                 <label>
-                  <input id="download-types-jpg-input" type="checkbox"/>
+                  <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
                   <span id="download-types-jpeg-label" data-i18n="textContent"></span>
                 </label>
                 <label>
-                  <input id="download-types-png-input" type="checkbox"/>
+                  <input id="download-types-png-input" value="png" type="checkbox"/>
                   <span id="download-types-png-label" data-i18n="textContent"></span>
                 </label>
                 <label>
-                  <input id="download-types-gif-input" type="checkbox"/>
+                  <input id="download-types-gif-input" value="gif" type="checkbox"/>
                   <span id="download-types-gif-label" data-i18n="textContent"></span>
                 </label>
                 <label>
-                  <input id="download-types-mp3-input" type="checkbox"/>
+                  <input id="download-types-mp3-input" value="mp3" type="checkbox"/>
                   <span id="download-types-mp3-label" data-i18n="textContent"></span>
                 </label>
                 <label>
-                  <input id="download-types-mp4-input" type="checkbox"/>
+                  <input id="download-types-mp4-input" value="mp4" type="checkbox"/>
                   <span id="download-types-mp4-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div id="download-selector">
-                <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='jpg' i]"/>
+                <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
               </div>
             </div>
             <div id="download-includes" class="column">
               <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-              <input id="download-includes-input" type="text" placeholder="e.g. /img/flandre/"/>
+              <input id="download-includes-input" type="text" placeholder="e.g. /img/large/"/>
             </div>
             <div id="download-limit" class="column">
               <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
               <input id="download-limit-input" type="number" min="1" max="999"/>
             </div>
+          </div>
+        </div>
+        <div id="download-same-domain">
+          <div class="checkbox">
+            <label>
+              <input id="download-same-domain-input" type="checkbox"/>
+              <span id="download-same-domain-label" data-i18n="textContent"></span>
+            </label>
           </div>
         </div>
       </div>

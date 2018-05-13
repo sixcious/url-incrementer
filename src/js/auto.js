@@ -43,7 +43,7 @@ URLI.Auto = URLI.Auto || function () {
    */
   function setAutoTimeout(instance) {
     instance.autoTimeout = setTimeout(function () {
-      URLI.Background.updateTab(instance, instance.autoAction);
+      URLI.Background.performAction(instance, instance.autoAction);
     }, instance.autoSeconds * 1000);
   }
 
@@ -81,8 +81,8 @@ URLI.Auto = URLI.Auto || function () {
         URLI.Background.setInstance(tabId, instance);
         setAutoTimeout(instance);
       } else {
-        // Note: deleteInstance will clearAutoTimeout(instance) so we don't have to do it here
-        URLI.Background.deleteInstance(tabId);
+        // Note: clearing will clearAutoTimeout(instance) so we don't have to do it here
+        URLI.Background.performAction(instance, "clear", "auto");
         chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function (popup) {
           popup.close();
         });

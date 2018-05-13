@@ -37,23 +37,19 @@ URLI.Popup = URLI.Popup || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#increment-input"].addEventListener("click", clickIncrement);
-    DOM["#decrement-input"].addEventListener("click", clickDecrement);
-    DOM["#clear-input"].addEventListener("click", clickClear);
-    DOM["#next-input"].addEventListener("click", clickNext);
-    DOM["#prev-input"].addEventListener("click", clickPrev);
+    DOM["#increment-input"].addEventListener("click", clickActionButton);
+    DOM["#decrement-input"].addEventListener("click", clickActionButton);
+    DOM["#clear-input"].addEventListener("click", clickActionButton);
+    DOM["#next-input"].addEventListener("click", clickActionButton);
+    DOM["#prev-input"].addEventListener("click", clickActionButton);
+    DOM["#download-input"].addEventListener("click", clickActionButton);
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a minor bug with trying to use the checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
-    DOM["#download-strategy-select"].addEventListener("change", function() {
-      DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
-      DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
-      DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
-      DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
-    });
+    DOM["#download-strategy-select"].addEventListener("change", refreshDownloadOptions);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
     // Initialize popup content
@@ -87,101 +83,20 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-toggle-input"].checked = instance.downloadEnabled;
           DOM["#download"].className = instance.downloadEnabled ? "column fade-in" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
-          DOM["#download-types"].value = instance.downloadTypes;
+//          DOM["#download-types"].value = instance.downloadTypes;
+          for (let downloadType of instance.downloadTypes) { if (downloadType && downloadType !== "") {
+            DOM["#download-types-" + downloadType + "-input"].checked = true;
+          } }
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
           DOM["#download-limit-input"].value = instance.downloadLimit;
+          DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
+          refreshDownloadOptions.call(DOM["#download-strategy-select"]);
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
           if (!instance.enabled && items_.popupOpenSetup) {
             toggleView.call(DOM["#setup-input"]);
           }
         });
-      });
-    });
-  }
-
-  /**
-   * Updates this tab by incrementing the URL if the instance is enabled.
-   * 
-   * @private
-   */
-  function clickIncrement() {
-    if (instance.enabled) {
-      if (items_.popupAnimationsEnabled) {
-        URLI.UI.clickHoverCss(this, "hvr-push-click");
-      }
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.updateTab(instance, "increment", "popup", function(result) {
-          instance = result;
-        });
-      });
-    }
-  }
-
-  /**
-   * Updates this tab by decrementing the URL if the instance is enabled.
-   * 
-   * @private
-   */
-  function clickDecrement() {
-    if (instance.enabled) {
-      if (items_.popupAnimationsEnabled) {
-        URLI.UI.clickHoverCss(this, "hvr-push-click");
-      }
-      chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.updateTab(instance, "decrement", "popup", function(result) {
-          instance = result;
-        });
-      });
-    }
-  }
-
-  /**
-   * Clears and deletes this tab's instance if it is enabled.
-   * 
-   * @private
-   */
-  function clickClear() {
-    if (instance.enabled) {
-      instance.enabled = false;
-      updateControls();
-      if (items_.popupAnimationsEnabled) {
-        URLI.UI.clickHoverCss(this, "hvr-push-click");
-      }
-       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-         backgroundPage.URLI.Background.deleteInstance(instance.tabId);
-      });
-    }
-  }
-
-  /**
-   * Updates this tab by performing a next action if a next link is found.
-   *
-   * @private
-   */
-  function clickNext() {
-    if (items_.popupAnimationsEnabled) {
-      URLI.UI.clickHoverCss(this, "hvr-push-click");
-    }
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      backgroundPage.URLI.Background.updateTab(instance, "next", "popup", function(result) {
-        instance = result;
-      });
-    });
-  }
-
-  /**
-   * Updates this tab by performing a prev action if a prev link is found.
-   *
-   * @private
-   */
-  function clickPrev() {
-    if (items_.popupAnimationsEnabled) {
-      URLI.UI.clickHoverCss(this, "hvr-push-click");
-    }
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      backgroundPage.URLI.Background.updateTab(instance, "prev", "popup", function(result) {
-        instance = result;
       });
     });
   }
@@ -214,15 +129,49 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
+   * Performs the action based on the button if the requirements are met (e.g. instance is enabled).
+   * 
+   * @private
+   */
+  function clickActionButton() {
+    var action = this.dataset.action;
+    if (((action === "increment" || action === "decrement" || action === "clear") && instance.enabled) ||
+        (action === "next" || action === "prev") ||
+        (action === "download" && instance.enabled && instance.downloadEnabled)) {
+      if (items_.popupAnimationsEnabled) {
+        URLI.UI.clickHoverCss(this, "hvr-push-click");
+      }
+      chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        backgroundPage.URLI.Background.performAction(instance, action, "popup", function(result) {
+          instance = result;
+          updateControls();
+        });
+      });
+    }
+  }
+
+  /**
    * Updates the control images based on whether the instance is enabled.
    * 
    * @private
    */
   function updateControls() {
-    var className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
-    DOM["#increment-input"].className = className;
-    DOM["#decrement-input"].className = className;
-    DOM["#clear-input"].className = className;
+    DOM["#increment-input"].className = 
+    DOM["#decrement-input"].className = 
+    DOM["#clear-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
+    DOM["#download-input"].className = instance.enabled && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
+  }
+
+  /**
+   * TODO
+   * @private
+   */
+  function refreshDownloadOptions() {
+    DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
+    DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
+    DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "display-block fade-in";
   }
   
   /**
@@ -248,10 +197,17 @@ URLI.Popup = URLI.Popup || function () {
         autoWait = DOM["#auto-wait-input"].checked,
         downloadEnabled = DOM["#download-toggle-input"].checked,
         downloadStrategy = DOM["#download-strategy-select"].value,
-//        downloadTypes = DOM["#download-types"].value,
+        downloadTypes = [
+          DOM["#download-types-jpeg-input"].checked ? DOM["#download-types-jpeg-input"].value : "",
+          DOM["#download-types-png-input"].checked  ? DOM["#download-types-png-input"].value  : "",
+          DOM["#download-types-gif-input"].checked  ? DOM["#download-types-gif-input"].value  : "",
+          DOM["#download-types-mp3-input"].checked  ? DOM["#download-types-mp3-input"].value  : "",
+          DOM["#download-types-mp4-input"].checked  ? DOM["#download-types-mp4-input"].value  : ""
+        ],
         downloadSelector = DOM["#download-selector-input"].value,
         downloadIncludes = DOM["#download-includes-input"].value,
         downloadLimit = +DOM["#download-limit-input"].value,
+        downloadSameDomain = DOM["#download-same-domain-input"].checked,
         errors = [ // [0] = selection errors and [1] = interval errors
           // [0] = Selection Errors
           selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
@@ -291,10 +247,11 @@ URLI.Popup = URLI.Popup || function () {
         instance.autoWait = autoWait;
         instance.downloadEnabled = downloadEnabled;
         instance.downloadStrategy = downloadStrategy;
-//        instance.downloadTypes = downloadTypes;
+        instance.downloadTypes = downloadTypes;
         instance.downloadSelector = downloadSelector;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadLimit = downloadLimit;
+        instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // If popup can overwrite settings, write to storage
         if (items_.popupSettingsCanOverwrite) {
@@ -307,9 +264,11 @@ URLI.Popup = URLI.Popup || function () {
             "autoTimes": autoTimes,
             "autoWait": autoWait,
             "downloadStrategy": downloadStrategy,
+            "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,
             "downloadIncludes": downloadIncludes,
-            "downloadLimit": downloadLimit
+            "downloadLimit": downloadLimit,
+            "downloadSameDomain": downloadSameDomain
           });
         }
         // If permissions granted, send message to content script:

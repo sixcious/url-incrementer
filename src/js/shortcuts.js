@@ -43,11 +43,11 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * @public
    */
   function keyListener(event) {
-    if      (keyPressed(event, items_.keyIncrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment"}); }
-    else if (keyPressed(event, items_.keyDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement"}); }
-    else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next"}); }
-    else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev"}); }
-    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"}); }
+    if      (keyPressed(event, items_.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
+    else if (keyPressed(event, items_.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
+    else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
+    else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
+    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
   }
 
   /**
@@ -59,11 +59,11 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * @public
    */
   function mouseListener(event) {
-    if      (mousePressed(event, items_.mouseIncrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "increment"}); }
-    else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "updateTab", action: "decrement"}); }
-    else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "next"}); }
-    else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "updateTab", action: "prev"}); }
-    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "deleteInstance"}); }
+    if      (mousePressed(event, items_.mouseIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
+    else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
+    else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
+    else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
+    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performACtion", action: "clear"}); }
   }
 
   /**
