@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="icon-v44.svg"
-   inkscape:export-filename="C:\Users\10\Desktop\128.png"
+   sodipodi:docname="icon-draft.svg"
+   inkscape:export-filename="C:\Users\10\Desktop\128png.png"
    inkscape:export-xdpi="89.999992"
    inkscape:export-ydpi="89.999992">
   <defs
@@ -72,9 +72,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="6.2182616"
-     inkscape:cx="97.909835"
-     inkscape:cy="53.332011"
+     inkscape:zoom="4.3969749"
+     inkscape:cx="76.857736"
+     inkscape:cy="109.19763"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -91,7 +91,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -104,22 +104,22 @@
     <g
        id="g4138"
        style="fill:#333333;fill-opacity:1"
-       transform="matrix(1.7687395,0,0,1.4588063,-105.1076,-451.80968)">
+       transform="matrix(2.1434536,0,0,1.6835551,-148.93347,-672.27446)">
       <rect
          transform="rotate(90)"
-         style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+         style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.00806725"
          id="rect3787"
-         width="38.089485"
-         height="16.167177"
-         x="985.98633"
-         y="-125.57218" />
+         width="39.445904"
+         height="13.943085"
+         x="985.35168"
+         y="-122.66923" />
       <rect
-         y="-1013.1146"
-         x="-136.53334"
-         height="16.167177"
-         width="38.089485"
+         y="-1013.8035"
+         x="-132.98038"
+         height="16.905386"
+         width="34.446926"
          id="rect3794"
-         style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+         style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.03728211"
          transform="scale(-1)" />
     </g>
     <text
@@ -146,16 +146,16 @@
          y="1058.6633" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.45816422px;line-height:0em;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:-3.25336242px;word-spacing:0px;text-anchor:start;fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.96145433"
-       x="-1.6377393"
-       y="985.42145"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:38.30731964px;line-height:0em;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#333333;fill-opacity:1;stroke:none;stroke-width:0.95768321"
+       x="-165.92393"
+       y="989.90631"
        id="text77"
-       transform="scale(0.88013533,1.1361889)"><tspan
+       transform="scale(0.88360111,1.1317324)"><tspan
          sodipodi:role="line"
          id="tspan75"
-         x="-1.6377393"
-         y="985.42145"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:64px;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:3px;text-anchor:start;fill:#333333;fill-opacity:1;stroke-width:0.96145433">URL</tspan></text>
+         x="-165.92393"
+         y="989.90631"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:66.40517426px;font-family:Scream;-inkscape-font-specification:'Scream Bold';text-align:start;letter-spacing:0px;text-anchor:start;fill:#333333;fill-opacity:1;stroke-width:0.95768321">URL</tspan></text>
     <path
        style="opacity:0.66799999;fill:#333333;fill-opacity:1"
        id="path839"
@@ -167,5 +167,38 @@
        sodipodi:start="0"
        sodipodi:end="0.81103356"
        d="m -5.7893994,1064.7865 a 1.9297998,0.16081665 0 0 1 -0.6006512,0.1166 l -1.3291486,-0.1166 z" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="187.40157"
+       y="1037.916"
+       id="text861"><tspan
+         sodipodi:role="line"
+         id="tspan859"
+         x="187.40157"
+         y="1074.4092" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="154.07181"
+       y="1118.8281"
+       id="text1452"><tspan
+         sodipodi:role="line"
+         id="tspan1450"
+         x="154.07181"
+         y="1118.8281"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:66.66666412px;font-family:Scream;-inkscape-font-specification:Scream;fill:#333333;fill-opacity:1">URL</tspan></text>
+    <text
+       id="text1456"
+       y="1006.1821"
+       x="-1.8832787"
+       style="font-style:normal;font-weight:normal;font-size:44.4981041px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.11245286"
+       xml:space="preserve"
+       transform="scale(0.89891459,1.1124527)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.26389313px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#333333;fill-opacity:1;stroke-width:1.11245286"
+         y="1006.1821"
+         x="-1.8832787"
+         id="tspan1454"
+         sodipodi:role="line">URL</tspan></text>
   </g>
 </svg>
