@@ -181,7 +181,6 @@ URLI.Options = URLI.Options || function () {
       DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
       DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
       DOM["#urli-click-count"].value = items.urliClickCount;
-      DOM["#icon-color-radio-urli-unlock"].style = items.urliClickCount > 10 ? "" : "display: none;";
     });
   }
 
@@ -436,8 +435,7 @@ URLI.Options = URLI.Options || function () {
     var face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
     this.value = +this.value + 1;
     chrome.storage.sync.set({ "urliClickCount": +this.value});
-    if (+this.value === 10) { DOM["#icon-color-radio-urli-unlock"].style = ""; }
-    URLI.UI.generateAlert([+this.value < 10 ? +this.value + " ..." : +this.value < 15 ? chrome.i18n.getMessage("urli_click_unlock") : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    URLI.UI.generateAlert([+this.value < 10 ? +this.value + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   // Return Public Functions

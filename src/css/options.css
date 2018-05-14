@@ -79,6 +79,7 @@ input[type="image"] {
 
 #popup-button-size-img {
   vertical-align: top;
+  cursor: pointer;
 }
 
 #selection-custom {

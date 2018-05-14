@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="icon-draft.svg"
+   sodipodi:docname="icon-dark.svg"
    inkscape:export-filename="C:\Users\10\Desktop\128.png"
    inkscape:export-xdpi="89.999992"
    inkscape:export-ydpi="89.999992">
@@ -72,7 +72,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.1091308"
+     inkscape:zoom="6.2182616"
      inkscape:cx="76.857736"
      inkscape:cy="72.808973"
      inkscape:document-units="px"
@@ -91,7 +91,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -104,7 +104,7 @@
     <g
        id="g4138"
        style="fill:#333333;fill-opacity:1"
-       transform="matrix(2.0700477,0,0,1.6258992,-139.17193,-615.46308)">
+       transform="matrix(2.2160789,0,0,1.740598,-158.59122,-728.48176)">
       <rect
          transform="rotate(90)"
          style="fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.00806725"
@@ -166,26 +166,15 @@
          x="187.40157"
          y="1074.4092" /></text>
     <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       x="154.07181"
-       y="1118.8281"
-       id="text1452"><tspan
-         sodipodi:role="line"
-         id="tspan1450"
-         x="154.07181"
-         y="1118.8281"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:66.66666412px;font-family:Scream;-inkscape-font-specification:Scream;fill:#333333;fill-opacity:1">URL</tspan></text>
-    <text
        id="text1456"
-       y="1003.771"
-       x="-1.8877789"
-       style="font-style:normal;font-weight:normal;font-size:44.60443115px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.11511111"
+       y="1027.4893"
+       x="-1.8444204"
+       style="font-style:normal;font-weight:normal;font-size:43.57995987px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.08949924"
        xml:space="preserve"
-       transform="scale(0.89677174,1.115111)"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65.41984558px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#333333;fill-opacity:1;stroke-width:1.11511111"
-         y="1003.771"
-         x="-1.8877789"
+       transform="scale(0.91785297,1.0894991)"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.9172821px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#333333;fill-opacity:1;stroke-width:1.08949924"
+         y="1027.4893"
+         x="-1.8444204"
          id="tspan1454"
          sodipodi:role="line">URL</tspan></text>
   </g>
