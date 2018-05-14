@@ -12,7 +12,7 @@ URLI.Background = URLI.Background || function () {
 //TODO: Remove "Enabled"s from keys
   // The storage default values. Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsAllURLs": false, "permissionsInternalShortcuts": false, "permisssionsDownload": false,
+    /* permissions */ "permissionsEnhanced": false, "permissionsInternalShortcuts": false, "permisssionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextPrev */    "nextPrevPopupButtons": false, "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true,
@@ -23,7 +23,7 @@ URLI.Background = URLI.Background || function () {
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
     /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     /* selection */   "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
-    /* fun ^^ */      "urliClickCount": 0
+    /* fun */         "urliClickCount": 0
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -193,6 +193,7 @@ URLI.Background = URLI.Background || function () {
                   });
                 }
               } else { console.log("no results"); }
+              if (callback) { callback(instance); }
             });
           });
         }

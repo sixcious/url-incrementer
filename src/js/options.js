@@ -53,6 +53,9 @@ URLI.Options = URLI.Options || function () {
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/shortcuts.js"]}, "internal-shortcuts") });
     DOM["#chrome-shortcuts-enable-button"].addEventListener("click", function() { removePermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/shortcuts.js"]}, "internal-shortcuts") });
 
+    DOM["#enhanced-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, undefined, "enhanced") });
+    DOM["#enhanced-disable-button"].addEventListener("click", function() { removePermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, undefined, "enhanced") });
+
     DOM["#download-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["downloads"]}, undefined, "download") });
     DOM["#download-disable-button"].addEventListener("click", function() { removePermissions({permissions: ["downloads"]}, undefined, "download") });
 
@@ -132,6 +135,10 @@ URLI.Options = URLI.Options || function () {
       DOM["#download-enable-button"].className = !items.permissionsDownload ? "display-block" : "display-none";
       DOM["#download-settings-enabled"].className = items.permissionsDownload ? "display-block" : "display-none";
       DOM["#download-settings-disabled"].className = !items.permissionsDownload ? "display-block" : "display-none";
+      DOM["#enhanced-disable-button"].className = items.permissionsEnhanced ? "display-block" : "display-none";
+      DOM["#enhanced-enable-button"].className = !items.permissionsEnhanced ? "display-block" : "display-none";
+      DOM["#enhanced-settings-enabled"].className = items.permissionsEnhanced ? "display-block" : "display-none";
+      DOM["#enhanced-settings-disabled"].className = !items.permissionsEnhanced ? "display-block" : "display-none";
       DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
@@ -202,7 +209,7 @@ URLI.Options = URLI.Options || function () {
           }]);
         }
         if (updateDOMAndStorage === "internal-shortcuts") {
-          chrome.storage.sync.set({"permissionsInternalShortcuts ": true});
+          chrome.storage.sync.set({"permissionsInternalShortcuts": true});
           DOM["#chrome-shortcuts"].className = "display-none";
           DOM["#internal-shortcuts"].className = "display-block fade-in";
         } else if (updateDOMAndStorage === "download") {
@@ -211,6 +218,12 @@ URLI.Options = URLI.Options || function () {
           DOM["#download-settings-enabled"].className = "display-block fade-in";
           DOM["#download-enable-button"].className = "display-none";
           DOM["#download-disable-button"].className = "display-block fade-in";
+        } else if (updateDOMAndStorage === "enhanced") {
+          chrome.storage.sync.set({"permissionsEnhanced": true});
+          DOM["#enhanced-settings-disabled"].className = "display-none";
+          DOM["#enhanced-settings-enabled"].className = "display-block fade-in";
+          DOM["#enhanced-enable-button"].className = "display-none";
+          DOM["#enhanced-disable-button"].className = "display-block fade-in";
         }
       }
     });
@@ -241,14 +254,14 @@ URLI.Options = URLI.Options || function () {
     // Remove:
     chrome.storage.sync.get(null, function(items) {
       if (updateDOMAndStorage === "download" ||
-         (updateDOMAndStorage === "internal-shortcuts" && !items.autoEnabled) ||
-         (updateDOMAndStorage === "auto" && !items.permissionsInternalShortcuts )) {
+         (updateDOMAndStorage === "internal-shortcuts" && !items.permissionsEnhanced) ||
+         (updateDOMAndStorage === "enhanced" && !items.permissionsInternalShortcuts )) {
         chrome.permissions.remove(remove, function(removed) { if (removed) { console.log("removed!" + removed + " - " + remove); } });
       }
     });
     // UpdateDOMAndStorage
     if (updateDOMAndStorage === "internal-shortcuts") {
-      chrome.storage.sync.set({"permissionsInternalShortcuts ": false});
+      chrome.storage.sync.set({"permissionsInternalShortcuts": false});
       DOM["#internal-shortcuts"].className = "display-none";
       DOM["#chrome-shortcuts"].className = "display-block fade-in";
     } else if (updateDOMAndStorage === "download") {
@@ -257,6 +270,12 @@ URLI.Options = URLI.Options || function () {
       DOM["#download-settings-disabled"].className = "display-block fade-in";
       DOM["#download-disable-button"].className = "display-none";
       DOM["#download-enable-button"].className = "display-block fade-in";
+    } else if (updateDOMAndStorage === "enhanced") {
+      chrome.storage.sync.set({"permissionsEnhanced": false});
+      DOM["#enhanced-settings-enabled"].className = "display-none";
+      DOM["#enhanced-settings-disabled"].className = "display-block fade-in";
+      DOM["#enhanced-disable-button"].className = "display-none";
+      DOM["#enhanced-enable-button"].className = "display-block fade-in";
     }
   }
 

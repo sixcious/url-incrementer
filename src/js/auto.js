@@ -43,7 +43,13 @@ URLI.Auto = URLI.Auto || function () {
    */
   function setAutoTimeout(instance) {
     instance.autoTimeout = setTimeout(function () {
-      URLI.Background.performAction(instance, instance.autoAction);
+      if (instance.downloadEnabled) {
+        URLI.Background.performAction(instance, "download", "auto", function(instance) {
+          URLI.Background.performAction(instance, instance.autoAction, "auto");
+        });
+      } else {
+        URLI.Background.performAction(instance, instance.autoAction);
+      }
     }, instance.autoSeconds * 1000);
   }
 
