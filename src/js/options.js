@@ -50,15 +50,10 @@ URLI.Options = URLI.Options || function () {
       el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/shortcuts.js"]}, "internal-shortcuts") });
-    DOM["#chrome-shortcuts-enable-button"].addEventListener("click", function() { removePermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, {js: ["js/shortcuts.js"]}, "internal-shortcuts") });
-
-    DOM["#enhanced-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, undefined, "enhanced") });
-    DOM["#enhanced-disable-button"].addEventListener("click", function() { removePermissions({permissions: ["declarativeContent"], origins: ["<all_urls>"]}, undefined, "enhanced") });
-
-    DOM["#download-enable-button"].addEventListener("click", function() { requestPermissions({permissions: ["downloads"]}, undefined, "download") });
-    DOM["#download-disable-button"].addEventListener("click", function() { removePermissions({permissions: ["downloads"]}, undefined, "download") });
-
+    DOM["#enhanced-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhanced", function(granted) { if (granted) { populateValuesFromStorage("enhanced"); } }) });
+    DOM["#enhanced-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhanced", function(removed) { if (removed) { populateValuesFromStorage("enhanced"); } }) });
+    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#chrome-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#chrome-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
     DOM["#chrome-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -118,165 +113,82 @@ URLI.Options = URLI.Options || function () {
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
-    // Populate values from storage
-    populateValuesFromStorage();
+    // Populate all values from storage
+    populateValuesFromStorage("all");
   }
 
   /**
    * Populates the options form values from the extension storage.
-   * 
-   * @private
-   */
-  function populateValuesFromStorage() {
-    chrome.storage.sync.get(null, function(items) {
-      DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? "display-block" : "display-none";
-      DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts  ? "display-block" : "display-none";
-      DOM["#download-disable-button"].className = items.permissionsDownload ? "display-block" : "display-none";
-      DOM["#download-enable-button"].className = !items.permissionsDownload ? "display-block" : "display-none";
-      DOM["#download-settings-enabled"].className = items.permissionsDownload ? "display-block" : "display-none";
-      DOM["#download-settings-disabled"].className = !items.permissionsDownload ? "display-block" : "display-none";
-      DOM["#enhanced-disable-button"].className = items.permissionsEnhanced ? "display-block" : "display-none";
-      DOM["#enhanced-enable-button"].className = !items.permissionsEnhanced ? "display-block" : "display-none";
-      DOM["#enhanced-settings-enabled"].className = items.permissionsEnhanced ? "display-block" : "display-none";
-      DOM["#enhanced-settings-disabled"].className = !items.permissionsEnhanced ? "display-block" : "display-none";
-      DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
-      DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
-      DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
-      DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
-      DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
-      writeInput(DOM["#key-increment-input"], items.keyIncrement);
-      writeInput(DOM["#key-decrement-input"], items.keyDecrement);
-      writeInput(DOM["#key-next-input"], items.keyNext);
-      writeInput(DOM["#key-prev-input"], items.keyPrev);
-      writeInput(DOM["#key-clear-input"], items.keyClear);
-      DOM["#mouse-increment-select"].value = items.mouseIncrement;
-      DOM["#mouse-decrement-select"].value = items.mouseDecrement;
-      DOM["#mouse-next-select"].value = items.mouseNext;
-      DOM["#mouse-prev-select"].value = items.mousePrev;
-      DOM["#mouse-clear-select"].value = items.mouseClear;
-      DOM["#icon-color-radio-" + items.iconColor].checked = true;
-      DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
-      DOM["#popup-button-size-input"].value = items.popupButtonSize;
-      DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-      DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : ""
-      DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
-      DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
-      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-      DOM["#auto-action-select"].value = items.autoAction;
-      DOM["#auto-times-input"].value = items.autoTimes;
-      DOM["#auto-seconds-input"].value = items.autoSeconds;
-      DOM["#auto-wait-input"].checked = items.autoWait;
-      DOM["#download-strategy-select"].value = items.downloadStrategy;
-      //DOM["#download-types-jpg"].checked = items.downloadTypes.jpg;
-      DOM["#download-selector-input"].value = items.downloadSelector;
-      DOM["#download-includes-input"].value = items.downloadIncludes;
-      DOM["#download-limit-input"].value = items.downloadLimit;
-      DOM["#selection-select"].value = items.selectionPriority;
-      DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block fade-in" : "display-none";
-      DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
-      DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
-      DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
-      DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
-      DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
-      DOM["#interval-input"].value = items.interval;
-      DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
-      DOM["#base-select"].value = items.base;
-      DOM["#base-case"].className = items.base > 10 ? "display-block fade-in" : "display-none";
-      DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
-      DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
-      DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
-      DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
-      DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-      DOM["#urli-click-count"].value = items.urliClickCount;
-    });
-  }
-
-  /**
-   * Requests permissions in order to enable and bring up internal shortcuts.
    *
-   * @param request the request, e.g.  {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}
-   * @param script  the js files, e.g. {js: ["js/shortcuts.js"]})
-   * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
+   * @param values which values to populate, e.g. "all" for all or "xyz" for only xyz values (with fade-in effect)
    * @private
    */
-  function requestPermissions(request, script, updateDOMAndStorage) {
-    chrome.permissions.request(request, function(granted) {
-      if (granted) {
-        if (script) {
-          chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher()],
-            actions: [new chrome.declarativeContent.RequestContentScript(script)]
-          }]);
-        }
-        if (updateDOMAndStorage === "internal-shortcuts") {
-          chrome.storage.sync.set({"permissionsInternalShortcuts": true});
-          DOM["#chrome-shortcuts"].className = "display-none";
-          DOM["#internal-shortcuts"].className = "display-block fade-in";
-        } else if (updateDOMAndStorage === "download") {
-          chrome.storage.sync.set({"permissionsDownload": true});
-          DOM["#download-settings-disabled"].className = "display-none";
-          DOM["#download-settings-enabled"].className = "display-block fade-in";
-          DOM["#download-enable-button"].className = "display-none";
-          DOM["#download-disable-button"].className = "display-block fade-in";
-        } else if (updateDOMAndStorage === "enhanced") {
-          chrome.storage.sync.set({"permissionsEnhanced": true});
-          DOM["#enhanced-settings-disabled"].className = "display-none";
-          DOM["#enhanced-settings-enabled"].className = "display-block fade-in";
-          DOM["#enhanced-enable-button"].className = "display-none";
-          DOM["#enhanced-disable-button"].className = "display-block fade-in";
-        }
+  function populateValuesFromStorage(values) {
+    chrome.storage.sync.get(null, function(items) {
+      if (values === "all" || values === "enhanced") {
+        DOM["#enhanced-disable-button"].className = items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-enable-button"].className = !items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-enabled"].className = items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-disabled"].className = !items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#download-settings-enabled"].className = items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#download-settings-disabled"].className = !items.permissionsEnhanced ? values === "enhanced" ? "display-block fade-in" : "display-block" : "display-none";
+      }
+      if (values === "all" || values === "internalShortcuts") {
+        DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+      }
+      if (values === "all") {
+        DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
+        DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
+        DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
+        DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
+        DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
+        writeInput(DOM["#key-increment-input"], items.keyIncrement);
+        writeInput(DOM["#key-decrement-input"], items.keyDecrement);
+        writeInput(DOM["#key-next-input"], items.keyNext);
+        writeInput(DOM["#key-prev-input"], items.keyPrev);
+        writeInput(DOM["#key-clear-input"], items.keyClear);
+        DOM["#mouse-increment-select"].value = items.mouseIncrement;
+        DOM["#mouse-decrement-select"].value = items.mouseDecrement;
+        DOM["#mouse-next-select"].value = items.mouseNext;
+        DOM["#mouse-prev-select"].value = items.mousePrev;
+        DOM["#mouse-clear-select"].value = items.mouseClear;
+        DOM["#icon-color-radio-" + items.iconColor].checked = true;
+        DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
+        DOM["#popup-button-size-input"].value = items.popupButtonSize;
+        DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+        DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+        DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
+        DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
+        DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+        DOM["#auto-action-select"].value = items.autoAction;
+        DOM["#auto-times-input"].value = items.autoTimes;
+        DOM["#auto-seconds-input"].value = items.autoSeconds;
+        DOM["#auto-wait-input"].checked = items.autoWait;
+        DOM["#download-strategy-select"].value = items.downloadStrategy;
+        //DOM["#download-types-jpg"].checked = items.downloadTypes.jpg;
+        DOM["#download-selector-input"].value = items.downloadSelector;
+        DOM["#download-includes-input"].value = items.downloadIncludes;
+        DOM["#download-limit-input"].value = items.downloadLimit;
+        DOM["#selection-select"].value = items.selectionPriority;
+        DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
+        DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
+        DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
+        DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
+        DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
+        DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
+        DOM["#interval-input"].value = items.interval;
+        DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
+        DOM["#base-select"].value = items.base;
+        DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
+        DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
+        DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+        DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
+        DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
+        DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
+        DOM["#urli-click-count"].value = items.urliClickCount;
       }
     });
-  }
-
-  /**
-   * Removes permissions that were previously granted and brings back Chrome
-   * shortcuts.
-   *
-   * @param remove what to remove, e.g.  {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}
-   * @param script  the js files, e.g. {js: ["js/shortcuts.js"]})
-   * @param updateDOMAndStorage boolean indicating if the DOM and Storage should be updated
-   * @private
-   */
-  function removePermissions(remove, script, updateDOMAndStorage) {
-    // Script:
-    if (chrome.declarativeContent && script) {
-      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        for (let i = 0; i < rules.length; i++) {
-          console.log("found rule:" + rules[i]);
-          if (rules[i].actions[0].js[0] === script.js[0]) {
-            console.log("match found! about to remove the rule...id=" + rules[i].id);
-            chrome.declarativeContent.onPageChanged.removeRules([rules[i].id], function() {});
-          }
-        }
-      });
-    }
-    // Remove:
-    chrome.storage.sync.get(null, function(items) {
-      if (updateDOMAndStorage === "download" ||
-         (updateDOMAndStorage === "internal-shortcuts" && !items.permissionsEnhanced) ||
-         (updateDOMAndStorage === "enhanced" && !items.permissionsInternalShortcuts )) {
-        chrome.permissions.remove(remove, function(removed) { if (removed) { console.log("removed!" + removed + " - " + remove); } });
-      }
-    });
-    // UpdateDOMAndStorage
-    if (updateDOMAndStorage === "internal-shortcuts") {
-      chrome.storage.sync.set({"permissionsInternalShortcuts": false});
-      DOM["#internal-shortcuts"].className = "display-none";
-      DOM["#chrome-shortcuts"].className = "display-block fade-in";
-    } else if (updateDOMAndStorage === "download") {
-      chrome.storage.sync.set({"permissionsDownload": false});
-      DOM["#download-settings-enabled"].className = "display-none";
-      DOM["#download-settings-disabled"].className = "display-block fade-in";
-      DOM["#download-disable-button"].className = "display-none";
-      DOM["#download-enable-button"].className = "display-block fade-in";
-    } else if (updateDOMAndStorage === "enhanced") {
-      chrome.storage.sync.set({"permissionsEnhanced": false});
-      DOM["#enhanced-settings-enabled"].className = "display-none";
-      DOM["#enhanced-settings-disabled"].className = "display-block fade-in";
-      DOM["#enhanced-disable-button"].className = "display-none";
-      DOM["#enhanced-enable-button"].className = "display-block fade-in";
-    }
   }
 
   /**
@@ -432,18 +344,14 @@ URLI.Options = URLI.Options || function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          if (chrome.declarativeContent) {
-            chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-          }
-          chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) { if (removed) { } });
+          URLI.Permissions.removeAllPermissions(function(removed) { console.log("removed them all!! mwahaha" + removed); });
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
-          populateValuesFromStorage();
+          populateValuesFromStorage("all");
           URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
         });
       });
     });
   }
-
 
   /**
    * Clicks the URLI input image.
