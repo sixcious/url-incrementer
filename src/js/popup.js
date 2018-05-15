@@ -90,6 +90,8 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
           DOM["#download-limit-input"].value = instance.downloadLimit;
+          DOM["#download-min-bytes-input"].value = instance.downloadMinBytes;
+          DOM["#download-min-bytes-input"].value = instance.downloadMaxBytes;
           DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
           refreshDownloadOptions.call(DOM["#download-strategy-select"]);
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
@@ -174,8 +176,8 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
     DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
     DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-minbytes"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-maxbytes"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-min-bytes"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-max-bytes"].className = this.value === "page" ? "display-none" : "column fade-in";
   }
   
   /**
@@ -211,6 +213,8 @@ URLI.Popup = URLI.Popup || function () {
         downloadSelector = DOM["#download-selector-input"].value,
         downloadIncludes = DOM["#download-includes-input"].value,
         downloadLimit = +DOM["#download-limit-input"].value,
+        downloadMinBytes = +DOM["#download-min-bytes-input"].value,
+        downloadMaxBytes = +DOM["#download-max-bytes-input"].value,
         downloadSameDomain = DOM["#download-same-domain-input"].checked,
         errors = [ // [0] = selection errors and [1] = interval errors
           // [0] = Selection Errors
@@ -254,6 +258,8 @@ URLI.Popup = URLI.Popup || function () {
         instance.downloadSelector = downloadSelector;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadLimit = downloadLimit;
+        instance.downloadMinBytes = downloadMinBytes;
+        instance.downloadMaxBytes = downloadMaxBytes;
         instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // If popup can overwrite settings, write to storage

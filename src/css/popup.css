@@ -167,7 +167,7 @@ div.column {
   vertical-align: bottom;
 }
 
-#download-minbytes input[type="number"], #download-maxbytes input[type="number"] { /* Keep "MB" next to input */
+#download-min-bytes input[type="number"], #download-max-bytes input[type="number"] { /* Keep "MB" next to input */
   display: inline-block;
   margin-right: 1px;
 }

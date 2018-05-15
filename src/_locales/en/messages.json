@@ -194,7 +194,7 @@
   "download_same_domain_label": { "message": "Only download same domain links" },
   "download_includes_label": { "message": "Link Includes Path?" },
   "download_limit_label": { "message": "Files Limit?" },
-  "download_minbytes_label": { "message": "Min File Size?" },
-  "download_maxbytes_label": { "message": "Max File Size?" },
+  "download_min_bytes_label": { "message": "Min File Size?" },
+  "download_max_bytes_label": { "message": "Max File Size?" },
   "download_megabytes_label": { "message": "MB" }
 }
