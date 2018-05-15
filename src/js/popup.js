@@ -82,10 +82,11 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-toggle-input"].checked = instance.downloadEnabled;
           DOM["#download"].className = instance.downloadEnabled ? "column fade-in" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
-//          DOM["#download-types"].value = instance.downloadTypes;
-          for (let downloadType of instance.downloadTypes) { if (downloadType && downloadType !== "") {
-            DOM["#download-types-" + downloadType + "-input"].checked = true;
-          } }
+          for (let downloadType of instance.downloadTypes) {
+            if (downloadType && downloadType !== "") {
+              DOM["#download-types-" + downloadType + "-input"].checked = true;
+            }
+          }
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
           DOM["#download-limit-input"].value = instance.downloadLimit;
@@ -172,7 +173,9 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
     DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
     DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "display-block fade-in";
+    DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-minbytes"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-maxbytes"].className = this.value === "page" ? "display-none" : "column fade-in";
   }
   
   /**
@@ -223,7 +226,6 @@ URLI.Popup = URLI.Popup || function () {
           autoEnabled && (autoAction === "next" || autoAction === "prev") && !(items_.permissionsInternalShortcuts || items_.permissionsDownload) ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-          autoEnabled && downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
           // Download Errors
           downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") :
           ""
@@ -283,6 +285,7 @@ URLI.Popup = URLI.Popup || function () {
           backgroundPage.URLI.Auto.clearAutoTimeout(instance);
           backgroundPage.URLI.Auto.setAutoTimeout(instance);
           backgroundPage.URLI.Auto.addAutoListener();
+          backgroundPage.URLI.Background.setBadge(instance.tabId, "auto", false);
         }
         toggleView.call(DOM["#accept-button"]);
       });

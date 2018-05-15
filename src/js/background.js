@@ -12,12 +12,12 @@ URLI.Background = URLI.Background || function () {
 //TODO: Remove "Enabled"s from keys
   // The storage default values. Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsInternalShortcuts": false, "permisssionsDownload": false,
+    /* permissions */ "permissionsInternalShortcuts": false, "permissionsNextPrevEnhanced": false, "permissionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextPrev */    "nextPrevPopupButtons": false, "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadMinBytes": 0.0, "downloadMaxBytes": 10.0, "downloadLimit": 10, "downloadSameDomain": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": 10, "downloadMinBytes": 0.0, "downloadMaxBytes": 10.0,  "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
@@ -28,12 +28,14 @@ URLI.Background = URLI.Background || function () {
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
-    "increment": { "text": "+",  "backgroundColor": [0,0,0,0] },
-    "decrement": { "text": "-",  "backgroundColor": [0,0,0,0] },
-    "next":      { "text": ">",  "backgroundColor": [0,0,0,0] },
-    "prev":      { "text": "<",  "backgroundColor": [0,0,0,0] },
-    "download":  { "text": "DL", "backgroundColor": [0,0,0,0] },
-    "clear":     { "text": "x",  "backgroundColor": "#FF0000" }
+    "increment": { "text": "+",     "backgroundColor": [0,0,0,0] },
+    "decrement": { "text": "-",     "backgroundColor": [0,0,0,0] },
+    "next":      { "text": ">",     "backgroundColor": [0,0,0,0] },
+    "prev":      { "text": "<",     "backgroundColor": [0,0,0,0] },
+    "download":  { "text": "DL",    "backgroundColor": [0,0,0,0] },
+    "clear":     { "text": "X",     "backgroundColor": "#FF0000" },
+    "auto":      { "text": "AUTO",  "backgroundColor": "#FF6600" },
+    "default":   { "text": "",      "backgroundColor": [0,0,0,0] }
   },
 
   // The individual tab instances. Note: Never save instances due to URLs being a privacy concern
@@ -120,6 +122,24 @@ URLI.Background = URLI.Background || function () {
   }
 
   /**
+   * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time.
+   *
+   * @param tabId     the tab ID to set this badge to
+   * @param badge     the badge key to set from BROWSER_ACTION_BADGES
+   * @param temporary boolean indicating whether the badge should be displayed temporarily
+   */
+  function setBadge(tabId, badge, temporary) {
+    chrome.browserAction.setBadgeText({text: BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
+    chrome.browserAction.setBadgeBackgroundColor({color: BROWSER_ACTION_BADGES[badge].backgroundColor, tabId: tabId});
+    if (temporary) {
+      setTimeout(function () {
+        chrome.browserAction.setBadgeText({text: BROWSER_ACTION_BADGES["default"].text, tabId: tabId});
+        chrome.browserAction.setBadgeBackgroundColor({color: BROWSER_ACTION_BADGES["default"].backgroundColor, tabId: tabId});
+      }, 2000);
+    }
+  }
+
+  /**
    * Performs the instance's action.
    * 
    * @param instance the instance for this tab
@@ -174,7 +194,6 @@ URLI.Background = URLI.Background || function () {
               JSON.stringify(instance.downloadTypes) + ", " +
               JSON.stringify(instance.downloadSelector) + ", " +
               JSON.stringify(instance.downloadIncludes) + ", " +
-              JSON.parse(instance.downloadLimit) + ", " +
               JSON.parse(instance.downloadSameDomain) + ");";
             chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
               if (results && results[0]) {
@@ -215,6 +234,7 @@ URLI.Background = URLI.Background || function () {
             instance.autoEnabled = false;
             URLI.Auto.clearAutoTimeout(instance);
             URLI.Auto.removeAutoListener();
+            setBadge(instance.tabId, "clear", true);
           }
            // for callers like popup that still need the instance, disable all states
           instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
@@ -230,13 +250,8 @@ URLI.Background = URLI.Background || function () {
     // Icon Feedback
     if (actionPerformed) {
       chrome.storage.sync.get(null, function(items) {
-        if (items.iconFeedbackEnabled) {
-          chrome.browserAction.setBadgeText({text: BROWSER_ACTION_BADGES[action].text, tabId: instance.tabId});
-          chrome.browserAction.setBadgeBackgroundColor({color: BROWSER_ACTION_BADGES[action].backgroundColor, tabId: instance.tabId});
-          setTimeout(function () {
-            chrome.browserAction.setBadgeText({text: "", tabId: instance.tabId});
-            chrome.browserAction.setBadgeBackgroundColor({color: [0,0,0,0], tabId: instance.tabId});
-          }, 2000);
+        if (items.iconFeedbackEnabled && !instance.autoEnabled) {
+          setBadge(instance.tabId, action, true);
         }
       });
     }
@@ -250,6 +265,7 @@ URLI.Background = URLI.Background || function () {
     setInstance: setInstance,
     deleteInstance: deleteInstance,
     buildInstance: buildInstance,
+    setBadge: setBadge,
     performAction: performAction
   };
 }();

@@ -143,14 +143,3 @@ input[type="image"]:focus {
   display: inline-block;
   margin-left: 4px;
 }
-
-.tooltip:active img {
-  display: none;
-}
-
-.tooltip:active:after {
-  content: attr(title);
-  display: block;
-  margin-top: 16px;
-  font-size: 10px;
-}

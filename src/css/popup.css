@@ -103,8 +103,8 @@ div.column {
   padding: 10px 10px 0 0;
 }
 
-#setup div.column:not(:last-child) {
-  padding-right: 40px;
+#setup #properties div.column:not(:last-child) {
+  padding-right: 50px;
 }
 
 #setup div.column > label, .label-display-block {
@@ -137,8 +137,18 @@ div.column {
 
 #setup #auto, #setup #download {
   margin-top: 8px;
-/*  border: 1px solid #999999;
-  padding: 12px;*/
+}
+
+#setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+  padding-right: 35px;
+}
+
+#setup #auto #auto-seconds {
+  padding-right: 22px;
+}
+
+#setup #download #download-row-2 div.column {
+  padding-top: 0;
 }
 
 #download-strategy-select {
@@ -153,6 +163,15 @@ div.column {
   width: 104px;
 }
 
-#download-same-domain {
-  margin-top: 16px;
+#auto-wait, #download-same-domain {
+  vertical-align: bottom;
+}
+
+#download-minbytes input[type="number"], #download-maxbytes input[type="number"] { /* Keep "MB" next to input */
+  display: inline-block;
+  margin-right: 1px;
+}
+
+#auto-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: #FF6600;
 }

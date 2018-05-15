@@ -104,7 +104,7 @@
       <div id="auto">
         <div class="table">
           <div class="row">
-            <div class="column">
+            <div id="auto-action" class="column">
               <label for="auto-action-select">
                 <img src="../img/font-awesome/refresh.png" alt="" width="16" height="16"/>
                 <span id="auto-label*" data-i18n="textContent"></span>
@@ -117,21 +117,23 @@
                 <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
               </select>
             </div>
-            <div class="column">
+            <div id="auto-times" class="column">
               <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
               <input id="auto-times-input" type="number" min="1" max="1000"/>
             </div>
-            <div class="column">
+            <div id="auto-seconds" class="column">
               <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
               <input id="auto-seconds-input" type="number" min="1" max="3600"/>
             </div>
+            <div id="auto-wait" class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="auto-wait-input" type="checkbox"/>
+                  <span id="auto-wait-descriptive-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="checkbox">
-          <label>
-            <input id="auto-wait-input" type="checkbox"/>
-            <span id="auto-wait-descriptive-label" data-i18n="textContent"></span>
-          </label>
         </div>
       </div>
       <div id="download">
@@ -183,29 +185,42 @@
               <input id="download-limit-input" type="number" min="1" max="999"/>
             </div>
           </div>
-        </div>
-        <div id="download-same-domain">
-          <div class="checkbox">
-            <label>
-              <input id="download-same-domain-input" type="checkbox"/>
-              <span id="download-same-domain-label" data-i18n="textContent"></span>
-            </label>
+          <div id="download-row-2" class="row">
+            <div id="download-same-domain" class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="download-same-domain-input" type="checkbox"/>
+                  <span id="download-same-domain-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
+            <div id="download-minbytes" class="column">
+              <label id="download-minbytes-label" for="download-minbytes-input" data-i18n="textContent"></label>
+              <input id="download-minbytes-input" type="number" min="1" max="999">
+              <span id="download-megabytes-label*min" data-i18n="textContent"></span>
+            </div>
+            <div id="download-maxbytes" class="column">
+              <label id="download-maxbytes-label" for="download-minbytes-input" data-i18n="textContent"></label>
+              <input id="download-maxbytes-input" type="number" min="1" max="999">
+              <span id="download-megabytes-label*max" data-i18n="textContent"></span>
+            </div>
           </div>
         </div>
+
       </div>
       <div class="setup-buttons">
         <div id="extra-toggles">
           <div class="checkbox">
-            <label>
-              <span id="auto-label" data-i18n="textContent"></span>
+            <label id="auto-toggle">
+              <span id="auto-label*toggle" data-i18n="textContent"></span>
               <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" />
               <label class="tgl-btn" for="auto-toggle-input"></label>
             </label>
-              <label>
-                <span id="download-label" data-i18n="textContent"></span>
-                <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" />
-                <label class="tgl-btn" for="download-toggle-input"></label>
-              </label>
+            <label id="download-toggle">
+              <span id="download-label*toggle" data-i18n="textContent"></span>
+              <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" />
+              <label class="tgl-btn" for="download-toggle-input"></label>
+            </label>
           </div>
         </div>
         <button id="accept-button" data-i18n="textContent"></button>

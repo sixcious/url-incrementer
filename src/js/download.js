@@ -42,7 +42,7 @@ URLI.Download = URLI.Download || function () {
    * TODO
    * @public
    */
-  function findDownloadURLs(strategy, types, selector, path, limit, sameDomainPolicyEnabled) {
+  function findDownloadURLs(strategy, types, selector, path, sameDomainPolicyEnabled) {
     console.log("findDownloadURLs()" + selector);
     var selectorFromTypes = "",
         i;
@@ -55,10 +55,10 @@ URLI.Download = URLI.Download || function () {
             selectorFromTypes += FILE_DESCRIPTORS[types[i]].selector;
           }
         }
-        return findDownloadURLsBySelector(selectorFromTypes, path, limit, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selectorFromTypes, path, sameDomainPolicyEnabled);
         break;
       case "selector":
-        return findDownloadURLsBySelector(selector, path, limit, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled);
         break;
       case "page":
         urls.add(document.location.href);
@@ -70,15 +70,14 @@ URLI.Download = URLI.Download || function () {
     }
   }
   
-  function findDownloadURLsBySelector(selector, path, limit, sameDomainPolicyEnabled) {
+  function findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled) {
     var origin = document.location.origin,
         els = document.querySelectorAll(selector),
         el,
         url,
-        length = els.length,  //= limit && limit < els.length ? limit : els.length,
         i;
     console.log("found " + els.length + " links");
-    for (i = 0; i < length; i++) {
+    for (el of els) {
       el = els[i];
       url = el.src ? el.src : el.href ? el.href : "";
       if (url && isFromSameDomain(sameDomainPolicyEnabled, url, origin) && doesIncludePath(url, path)) {
@@ -106,6 +105,7 @@ URLI.Download = URLI.Download || function () {
   function doesIncludePath(url, path) {
     console.log("checking path and url... path =" + path + " url=" + url);
     if (!path || path === "" || url.includes(path)) {
+      console.log("path matches url!");
       return true;
     } else {
       console.log("found a url that doesn't include the path... :( path=" + path + " , url=" + url);
