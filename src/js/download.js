@@ -42,7 +42,7 @@ URLI.Download = URLI.Download || function () {
    * TODO
    * @public
    */
-  function findDownloadURLs(strategy, types, selector, includes, limit, sameDomainPolicyEnabled) {
+  function findDownloadURLs(strategy, types, selector, path, limit, sameDomainPolicyEnabled) {
     console.log("findDownloadURLs()" + selector);
     var selectorFromTypes = "",
         i;
@@ -55,13 +55,10 @@ URLI.Download = URLI.Download || function () {
             selectorFromTypes += FILE_DESCRIPTORS[types[i]].selector;
           }
         }
-        return findDownloadURLsBySelector(selectorFromTypes, includes, limit, sameDomainPolicyEnabled);
-        break;
-      case "all":
-        return findDownloadURLsBySelector("[src],[href]", includes, limit, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selectorFromTypes, path, limit, sameDomainPolicyEnabled);
         break;
       case "selector":
-        return findDownloadURLsBySelector(selector, includes, limit, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selector, path, limit, sameDomainPolicyEnabled);
         break;
       case "page":
         urls.add(document.location.href);
@@ -73,7 +70,7 @@ URLI.Download = URLI.Download || function () {
     }
   }
   
-  function findDownloadURLsBySelector(selector, includes, limit, sameDomainPolicyEnabled) {
+  function findDownloadURLsBySelector(selector, path, limit, sameDomainPolicyEnabled) {
     var origin = document.location.origin,
         els = document.querySelectorAll(selector),
         el,
@@ -84,7 +81,7 @@ URLI.Download = URLI.Download || function () {
     for (i = 0; i < length; i++) {
       el = els[i];
       url = el.src ? el.src : el.href ? el.href : "";
-      if (isFromSameDomain(sameDomainPolicyEnabled, url, origin)) {
+      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, origin) && doesIncludePath(url, path)) {
         urls.add(url);
       }
     }
@@ -104,6 +101,16 @@ URLI.Download = URLI.Download || function () {
       }
     }
     return sameDomain;
+  }
+  
+  function doesIncludePath(url, path) {
+    console.log("checking path and url... path =" + path + " url=" + url);
+    if (!path || path === "" || url.includes(path)) {
+      return true;
+    } else {
+      console.log("found a url that doesn't include the path... :( path=" + path + " , url=" + url);
+      return false;
+    }
   }
 
   // Return Public Functions

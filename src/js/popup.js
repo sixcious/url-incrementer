@@ -159,7 +159,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#decrement-input"].className = 
     DOM["#clear-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className =
-    DOM["#prev-input"].className = items_.permissionsEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#prev-input"].className = !(items_.permissionsInternalShortcuts || items_.permissionsDownload) && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#download-input"].className = items_.permissionsDownload ? instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled" : "display-none";
   }
 
@@ -220,10 +220,10 @@ URLI.Popup = URLI.Popup || function () {
           // [1] Interval Errors
           interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
           // Auto Errors
-          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsEnhanced ? chrome.i18n.getMessage("auto_next_prev_error") : "",
+          autoEnabled && (autoAction === "next" || autoAction === "prev") && !(items_.permissionsInternalShortcuts || items_.permissionsDownload) ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-          autoEnabled && downloadEnabled && !items_.permissionsEnhanced ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
+          autoEnabled && downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("auto_download_enabled_error") : "",
           // Download Errors
           downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") :
           ""

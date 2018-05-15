@@ -12,7 +12,7 @@ URLI.Background = URLI.Background || function () {
 //TODO: Remove "Enabled"s from keys
   // The storage default values. Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsEnhanced": false, "permissionsInternalShortcuts": false, "permisssionsDownload": false,
+    /* permissions */ "permissionsInternalShortcuts": false, "permisssionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextPrev */    "nextPrevPopupButtons": false, "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true,
@@ -183,12 +183,16 @@ URLI.Background = URLI.Background || function () {
                   chrome.downloads.download({url: url}, function(downloadId) {
                     chrome.downloads.search({id: downloadId}, function(results) {
                       const downloadItem = results ? results[0] : undefined;
-                      console.log(downloadItem);
-                      console.log("totalBytes=" + downloadItem.totalBytes);
-                      // if (downloadItem && (downloadItem.totalBytes < 500 || downloadItem.totalBytes > 5000000)) {
-                      //   console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
-                      //   chrome.downloads.cancel(downloadId);
-                      // }
+                      if (downloadItem) {
+                        console.log(downloadItem);
+                        console.log("totalBytes=" + downloadItem.totalBytes);
+                        if (instance.downloadRestrictSize && downloadItem.totalBytes > 0 && 
+                           (instance.downloadMinBytes ? downloadItem.totalBytes >= instance.downloadMinBytes : false) &&
+                           (instance.downloadMaxBytes ? downloadItem.totalBytes <= instance.downloadMaxBytes : false)) {
+                          console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
+                          chrome.downloads.cancel(downloadId);
+                        }
+                      }
                     });
                   });
                 }

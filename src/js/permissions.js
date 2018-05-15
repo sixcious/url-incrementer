@@ -11,8 +11,8 @@ URLI.Permissions = URLI.Permissions || function () {
 
   // TODO
   const PERMISSIONS = {
-    "enhanced": {
-      "storageKey": "permissionsEnhanced",
+    "download": {
+      "storageKey": "permissionsDownload",
       "request": {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]},
       "requestConflict": {permissions: ["downloads"]}
     },
@@ -70,7 +70,8 @@ URLI.Permissions = URLI.Permissions || function () {
     }
     // Remove:
     chrome.storage.sync.get(null, function(items) {
-      if (permission === "enhanced" && !items.permissionsInternalShortcuts || permission === "internalShortcuts" && !items.permissionsEnhanced) {
+      if (permission === "download" && !items.permissionsInternalShortcuts ||
+          permission === "internalShortcuts" && !items.permissionsDownload) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) { if (removed) { console.log("removed!" + removed + " - " + PERMISSIONS[permission].request); } });
       } else if (PERMISSIONS[permission].requestConflict) {
         chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) { if (removed) { console.log("removed!" + removed + " - " + PERMISSIONS[permission].requestConflict); } });

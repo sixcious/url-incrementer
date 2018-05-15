@@ -1,13 +1,13 @@
 # URL Incrementer
 
-URLI ("yur-lee") lets you "increment" [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It's a lightweight extension (under 200KB!) and its core functionality doesn't require any special permissions from you.
+URLI ("yur-lee") lets you increment [+] any part of the URL. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It's a lightweight extension and its core functionality doesn't require any special permissions from you.
 
-To start using it, just click the extension icon, select the part of the URL you want to increment, and then press the [+] button (or use shortcuts) to start incrementing!
+To start using it, just click the extension icon, select the part of the URL you want to increment or flip, and then press the [+] button (or use shortcuts) to start incrementing!
 
 Features:
 - Auto Incrementing
 - Downloading [Experimental] (Requires Extra Permissions)
-- Next [>] Prev [<] [Experimental]
+- Next [>] Prev [<] [Experimental] (Requires Extra Permissions)
 - Chrome Shortcuts
 - Internal Keyboard / Mouse Button Shortcuts (Requires Extra Permissions)
 - Many Options
@@ -17,6 +17,7 @@ NickMWPrince, Blue, Blue Chan, Will, Adam C, Coolio Wolfus
 ... and "U" for using "URLI"! :)
 
 What's New in Version 4.4 (May 14, 2018)
+- New Name: "URLI" is back: A simple and pure Increment and Decrement extension. Next Prev Support has been offloaded to permissions.
 - New Look: New extension icon and more intuitive UI icons
 - New Auto Increment function
 - New Download function (Experimental)

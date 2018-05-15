@@ -7,25 +7,6 @@
   </head>
   <body id="options">
     <div id="options-sections">
-      <section id="enhanced">
-        <div class="heading">
-          <img src="../img/font-awesome/rocket.png" alt="" width="18" height="18"/>
-          <h3 id="enhanced-h3" data-i18n="textContent"></h3>
-          <button id="enhanced-enable-button" data-i18n="textContent"></button>
-          <button id="enhanced-disable-button" data-i18n="textContent"></button>
-        </div>
-        <div id="enhanced-disabled">
-          <p id="enhanced-disable-p" data-i18n="textContent"></p>
-        </div>
-        <div id="enhanced-enabled">
-          <p id="enhanced-enable-p" data-i18n="textContent"></p>
-        </div>
-        <ul>
-          <li id="enhanced-1-li" data-i18n="textContent"></li>
-          <li id="enhanced-2-li" data-i18n="textContent"></li>
-          <li id="enhanced-3-li" data-i18n="textContent"></li>
-        </ul>
-      </section>
       <section id="chrome-shortcuts">
         <div class="heading">
           <img src="../img/extras/chrome.png" alt="" width="18" height="18"/>
@@ -234,125 +215,6 @@
           </label>
         </div>
       </section>
-      <section id="download-settings">
-        <div class="heading">
-          <img src="../img/font-awesome/download.png" alt="" width="18" height="18"/>
-          <h3 id="download-settings-h3" data-i18n="textContent"></h3>
-        </div>
-        <div id="download-settings-disabled">
-          <p id="download-disable-p" data-i18n="textContent"></p>
-        </div>
-        <div id="download-settings-enabled">
-        <div class="table">
-          <div class="row">
-            <div class="column">
-              <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <select id="download-strategy-select">
-                <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
-                <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
-                <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
-              </select>
-              <div id="download-types" >
-                <div class="checkbox">
-                  <label>
-                    <input id="download-types-jpg-input" type="checkbox"/>
-                    <span id="download-types-jpeg-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-png-input" type="checkbox"/>
-                    <span id="download-types-png-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-gif-input" type="checkbox"/>
-                    <span id="download-types-gif-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-mp3-input" type="checkbox"/>
-                    <span id="download-types-mp3-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-mp4-input" type="checkbox"/>
-                    <span id="download-types-mp4-label" data-i18n="textContent"></span>
-                  </label>
-                </div>
-              </div>
-              <div id="download-selector">
-                <input id="download-selector-input" type="text" placeholder="[src*='.jpg' i],[href*='jpg' i]"/>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <input id="download-includes-input" type="text" placeholder="e.g. /img/flandre/"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <input id="download-limit-input" type="number" min="1" max="1000"/>
-            </div>
-          </div>
-        </div>
-        </div>
-      </section>
-      <section id="auto-settings">
-        <div class="heading">
-          <img src="../img/font-awesome/refresh.png" alt="" width="18" height="18"/>
-          <h3 id="auto-settings-h3" data-i18n="textContent"></h3>
-        </div>
-        <p id="auto-settings-p" data-i18n="textContent"></p>
-        <div class="table">
-          <div class="row">
-            <div class="column">
-              <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <select id="auto-action-select">
-                <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
-                <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
-                <option id="auto-action-option-next" value="next" data-i18n="textContent"></option>
-                <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <input id="auto-times-input" type="number" min="1" max="1000"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <input id="auto-seconds-input" type="number" min="1" max="3600"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="column">
-              <label id="auto-wait-label" data-i18n="textContent"></label>
-            </div>
-            <div class="column">
-              <div class="checkbox">
-                <label>
-                  <input id="auto-wait-input" type="checkbox"/>
-                  <span id="auto-wait-descriptive-label" data-i18n="textContent"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       <section id="increment-decrement-settings">
         <div class="heading selection-first">
           <img src="../img/font-awesome/plus-circle.png" alt="" width="18" height="18"/>
@@ -531,6 +393,127 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+      <section id="auto-settings">
+        <div class="heading">
+          <img src="../img/font-awesome/refresh.png" alt="" width="18" height="18"/>
+          <h3 id="auto-settings-h3" data-i18n="textContent"></h3>
+        </div>
+        <p id="auto-settings-p" data-i18n="textContent"></p>
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <select id="auto-action-select">
+                <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
+                <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
+                <option id="auto-action-option-next" value="next" data-i18n="textContent"></option>
+                <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <input id="auto-times-input" type="number" min="1" max="1000"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <input id="auto-seconds-input" type="number" min="1" max="3600"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="auto-wait-label" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <div class="checkbox">
+                <label>
+                  <input id="auto-wait-input" type="checkbox"/>
+                  <span id="auto-wait-descriptive-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="download-settings">
+        <div class="heading">
+          <img src="../img/font-awesome/download.png" alt="" width="18" height="18"/>
+          <h3 id="download-settings-h3" data-i18n="textContent"></h3>
+          <button id="download-enable-button" data-i18n="textContent"></button>
+          <button id="download-disable-button" data-i18n="textContent"></button>
+        </div>
+        <div id="download-settings-disabled">
+          <p id="download-disable-p" data-i18n="textContent"></p>
+        </div>
+        <div id="download-settings-enabled">
+        <div class="table">
+          <div class="row">
+            <div class="column">
+              <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <select id="download-strategy-select">
+                <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
+                <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
+                <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
+              </select>
+              <div id="download-types" >
+                <div class="checkbox">
+                  <label>
+                    <input id="download-types-jpg-input" type="checkbox"/>
+                    <span id="download-types-jpeg-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-png-input" type="checkbox"/>
+                    <span id="download-types-png-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-gif-input" type="checkbox"/>
+                    <span id="download-types-gif-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-mp3-input" type="checkbox"/>
+                    <span id="download-types-mp3-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-mp4-input" type="checkbox"/>
+                    <span id="download-types-mp4-label" data-i18n="textContent"></span>
+                  </label>
+                </div>
+              </div>
+              <div id="download-selector">
+                <input id="download-selector-input" type="text" placeholder="[src*='.jpg' i],[href*='jpg' i]"/>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <input id="download-includes-input" type="text" placeholder="e.g. /img/flandre/"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
+            </div>
+            <div class="column">
+              <input id="download-limit-input" type="number" min="1" max="1000"/>
+            </div>
+          </div>
+        </div>
         </div>
       </section>
       <section id="about">
