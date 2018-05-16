@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "URL Incremenext",
+    "message": "URL Incremanext",
     "description": "Extension name."
   },
   "short_name": {
@@ -8,11 +8,11 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] a URL or go to the Next [>] Link; Supports Auto-Incrementing and Downloading",
+    "message": "Increment [+] a URL or go to the Next [>] URL; Supports Auto-Incrementing and Downloading",
     "description": "Extension description."
   },
   "title": {
-    "message": "URL Incremenext",
+    "message": "URL Incremanext",
     "description": "Extension title (tool tip) shown when hovered."
   },
 
