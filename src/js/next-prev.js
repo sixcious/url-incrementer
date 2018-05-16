@@ -8,8 +8,21 @@
 var URLI = URLI || {};
 
 URLI.NextPrev = URLI.NextPrev || function () {
-  
-  var urls = {attributes: {}, innerHTML: {}};
+
+  const nextKeywords = ["next", "forward", "new", ">"],
+        prevKeywords = ["prev", "back", "old", "<"],
+        urls = {
+          "next": {
+            "attributes": new Map(),
+            "innerHTML": new Map()
+          },
+          "prev": {
+            "attributes": new Map(),
+            "innerHTML": new Map()
+          }
+        };
+  //
+  // var urls = {attributes: {}, innerHTML: {}};
   
   /**
    * Gets the URL by examining the links object based off of the requested
@@ -23,23 +36,31 @@ URLI.NextPrev = URLI.NextPrev || function () {
    */
   function getURL(direction, priority, sameDomainPolicyEnabled) {
     buildURLs(sameDomainPolicyEnabled);
-    return urls[priority][direction] ? urls[priority][direction] : urls[priority === "attributes" ? "innerHTML" : "attributes"][direction];
+    //return urls[priority][direction] ? urls[priority][direction] : urls[priority === "attributes" ? "innerHTML" : "attributes"][direction];
+    var url = "",
+        keywords = direction === "next" ? nextKeywords : prevKeywords,
+        otherPriority = priority === "attributes" ? "innerHTML" : "attributes";
+    for (let keyword of keywords) {
+      if (urls[direction][priority].has(keyword)) {
+        url = urls[direction][priority].get(keyword);
+        break;
+      }
+    }
+    if (!url) {
+      for (let keyword of keywords) {
+        if (urls[direction][otherPriority].has(keyword)) {
+          url = urls[direction][otherPriority].get(keyword);
+          break;
+        }
+      }
+    }
+    return url;
   }
 
   /**
    * Gets the next and prev links in the document by parsing all link and anchor
    * elements.
    *
-   * Note: the document is passed in as a param to to build the links. The
-   * document varies depending on the context of when this code is run:
-   *
-   * 1: If ran as a content_script (via a call from chrome.tabs.executeScript),
-   *    it will pass in that tab's document natively
-   *
-   * 2: If ran in the background (via a call from background.js), it will pass
-   *    in a document created from an Ajax XMLHttpRequest response
-   *
-   * @param doc the document to use based on the callee's context
    * @param sameDomainPolicyEnabled whether to enforce the same domain policy
    * @return links the links containing the next and prev links (if any)
    * @private
@@ -97,23 +118,34 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @private
    */
   function parseText(text, type, href) {
-    if (text.indexOf("next") !== -1) {
-      urls[type].next = href;
-    } else if (text.indexOf("forward") !== -1) {
-      urls[type].forward = href;
-    } else if (text.indexOf("new") !== -1) {
-      urls[type].new = href;
-    } else if (text.indexOf(">") !== -1) {
-      urls[type].gt = href;
-    } else if (text.indexOf("prev") !== -1) {
-      urls[type].prev = href;
-    } else if (text.indexOf("back") !== -1) {
-      urls[type].back = href;
-    } else if (text.indexOf("old") !== -1) {
-      urls[type].old = href;
-    } else if (text.indexOf("<") !== -1) {
-      urls[type].lt = href;
+    for (let nextKeyword of nextKeywords) {
+      if (text.includes(nextKeyword)) {
+        urls.next[type].set(nextKeyword, href);
+      }
     }
+    for (let prevKeyword of prevKeywords) {
+      if (text.includes(prevKeyword)) {
+        urls.prev[type].set(prevKeyword, href);
+      }
+    }
+
+    // if (text.indexOf("next") !== -1) {
+    //   urls[type].next = href;
+    // } else if (text.indexOf("forward") !== -1) {
+    //   urls[type].forward = href;
+    // } else if (text.indexOf("new") !== -1) {
+    //   urls[type].new = href;
+    // } else if (text.indexOf(">") !== -1) {
+    //   urls[type].gt = href;
+    // } else if (text.indexOf("prev") !== -1) {
+    //   urls[type].prev = href;
+    // } else if (text.indexOf("back") !== -1) {
+    //   urls[type].back = href;
+    // } else if (text.indexOf("old") !== -1) {
+    //   urls[type].old = href;
+    // } else if (text.indexOf("<") !== -1) {
+    //   urls[type].lt = href;
+    // }
   }
 
   // Return Public Functions

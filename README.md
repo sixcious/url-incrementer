@@ -13,18 +13,21 @@ Features:
 - Many Options
 
 What's New in Version 4.4 (May 24, 2018)
-- URLI's biggest update... ever! URLI is now back to its original name and being a simple and pure Increment and Decrement extension
+- URLI's biggest update... ever! URLI is now back to its original name and being a simple and pure Increment and Decrement extension at its core
 - New Look: New extension icons and more intuitive UI icons that match incrementing and decrementing
 - New Auto Increment function
 - New Download function (Experimental)
+- New female extension mascot for Next Prev named URLN ("yur-lin")! =)
 - MANY options added: Change the extension icon, adjust the button size, get icon feedback when incrementing or other actions, and add Next Prev buttons to Popup UI
-- MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup screen if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support)
-- Permissions Separated/Modularized: Internal Shortcuts, Download, and Next Prev permissions are now separate so you can grant and enable only what you want to 
+- MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support!)
+- Improved Increment Decrement Selection algorithm to now look for common terms like "page=" first
+- Improved Next Prev functionality to now have more fallback options for next and prev
 - Improved Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys as shortcuts (e.g. "Shift" can be used by itself now)
+- Permissions Modularized: Internal Shortcuts, Next Prev, and Download permissions are now separate so you can grant and enable only the features you want to
 - Internal code changes: better tab instance memory management (now using JavaScript Map instead of array) + minor bugfixes
 - Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm very sorry for the inconvenience!
 
 Special Thanks:
 NickMWPrince, Blue, Blue Chan, Will, Adam C, Coolio Wolfus
 
-... and "U" for using "URLI"! :)
+... and "U" for using "URLI"!

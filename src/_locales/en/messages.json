@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "URL Incrementer",
+    "message": "URL Incremenext",
     "description": "Extension name."
   },
   "short_name": {
@@ -8,11 +8,11 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] or decrement [-] any part of the URL; Supports Auto-Incrementing and Downloading",
+    "message": "Increment [+] a URL or go to the Next [>] Link; Supports Auto-Incrementing and Downloading",
     "description": "Extension description."
   },
   "title": {
-    "message": "URL Incrementer",
+    "message": "URL Incremenext",
     "description": "Extension title (tool tip) shown when hovered."
   },
 
@@ -104,9 +104,9 @@
   "selection_custom_save_success": { "message": "Saved" },
   "leading_zeros_label": { "message": "Leading Zeros" },
   "leading_zeros_pad_by_detection_label": { "message": "Pad By Detection (Recommended)" },
-  "next_prev_settings_h3": { "message": "Next Prev Settings (Experimental)" },
-  "next_prev_enhanced_enable_button": { "message": "Enable Enhanced" },
-  "next_prev_enhanced_disable_button": { "message": "Disable Enhanced" },
+  "next_prev_settings_h3": { "message": "Next Prev Settings" },
+  "next_prev_enhanced_enable_button": { "message": "Enable Next Prev Enhanced" },
+  "next_prev_enhanced_disable_button": { "message": "Disable Next Prev Enhanced" },
   "next_prev_enhanced_disable_p": { "message": "You can Next Prev via shortcuts, but if you want to use Next Prev with Auto or use buttons, click the Enhanced button to enable (grant permissions)." },
   "next_prev_enhanced_enable_p": { "message": "You can now use Next Prev with Auto, use Next Prev buttons in the UI (in addition to shortcuts)." },
   "next_prev_links_priority_label": { "message": "Links" },
@@ -125,7 +125,7 @@
   "about_h3": { "message": "About" },
   "website_a": { "message": "Website / Source Code (GitHub)" },
   "version_span": { "message": "Version" },
-  "email_a": { "message": "Contact (Bug Reports, Feature Requests)"},
+  "email_a": { "message": "Contact (Report Bugs or Request Features)"},
   "urli_thank_you": { "message": "URLI says Thank You and to have an Incrementful Day!" },
   "urli_click_unlock": { "message" : "... URLI Icon Unlocked!" },
   "urli_click_tickles": { "message" : "... That tickles!" },
@@ -184,6 +184,8 @@
   "auto_seconds_label": { "message": "Seconds" },
   "auto_wait_label": { "message": "Wait" },
   "auto_wait_descriptive_label": { "message": "Wait for page to fully load"},
+  "auto_badge_label": { "message": "Icon" },
+  "auto_badge_descriptive_label": { "message": "Show times left in icon badge" },
   "download_label": { "message": "Download" },
   "download_strategy_label": { "message": "Strategy" },
   "download_strategy_option_types": { "message": "Download these file type(s)" },

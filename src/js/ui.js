@@ -35,15 +35,9 @@ URLI.UI = URLI.UI || function () {
     setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 4000);
   }
 
-  // TODO
-  function showBalloon(message) {
-  }
-
   /**
    * Applies a Hover.css effect to DOM elements on click events.
-   * 
-   * Hover.css is created by Ian Lunn.
-   * 
+   *
    * @param el     the DOM element to apply the effect to
    * @param effect the Hover.css effect (class name) to use
    * @public
@@ -57,7 +51,6 @@ URLI.UI = URLI.UI || function () {
   // Return Public Functions
   return {
     generateAlert: generateAlert,
-    showBalloon: showBalloon,
     clickHoverCss: clickHoverCss
   };
 }();

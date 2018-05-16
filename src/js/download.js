@@ -35,11 +35,17 @@ URLI.Download = URLI.Download || function () {
           "mimeType":   "",
           "selector":   "[src*='.mp4' i],[href*='.mp4' i]"
         },
-      },
-      urls = new Set(); // return value, we use a Set to avoid potential duplicate URLs
+      };
 
   /**
    * TODO
+   *
+   * @param strategy
+   * @param types
+   * @param selector
+   * @param path
+   * @param sameDomainPolicyEnabled
+   * @returns {*}
    * @public
    */
   function findDownloadURLs(strategy, types, selector, path, sameDomainPolicyEnabled) {
@@ -61,24 +67,31 @@ URLI.Download = URLI.Download || function () {
         return findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled);
         break;
       case "page":
-        urls.add(document.location.href);
-        return [...urls];
+        return [document.location.href];
         break;
       default:
-        return [...urls];
+        return [];
         break;
     }
   }
-  
+
+  /**
+   * TODO
+   *
+   * @param selector
+   * @param path
+   * @param sameDomainPolicyEnabled
+   * @returns {*[]}
+   * @private
+   */
   function findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled) {
     var origin = document.location.origin,
         els = document.querySelectorAll(selector),
         el,
-        url,
-        i;
+        urls = new Set(), // return value, we use a Set to avoid potential duplicate URLs
+        url;
     console.log("found " + els.length + " links");
     for (el of els) {
-      el = els[i];
       url = el.src ? el.src : el.href ? el.href : "";
       if (url && isFromSameDomain(sameDomainPolicyEnabled, url, origin) && doesIncludePath(url, path)) {
         urls.add(url);
@@ -89,6 +102,15 @@ URLI.Download = URLI.Download || function () {
     return [...urls];
   }
 
+  /**
+   * TODO
+   *
+   * @param sameDomainPolicyEnabled
+   * @param url
+   * @param origin
+   * @returns {boolean}
+   * @private
+   */
   function isFromSameDomain(sameDomainPolicyEnabled, url, origin) {
     var sameDomain = true,
         urlo;
@@ -101,16 +123,23 @@ URLI.Download = URLI.Download || function () {
     }
     return sameDomain;
   }
-  
+
+  /**
+   * TODO
+   *
+   * @param url
+   * @param path
+   * @returns {boolean}
+   * @private
+   */
   function doesIncludePath(url, path) {
+    var doesInclude = true;
     console.log("checking path and url... path =" + path + " url=" + url);
-    if (!path || path === "" || url.includes(path)) {
-      console.log("path matches url!");
-      return true;
-    } else {
+    if (path && !url.includes(path)) {
       console.log("found a url that doesn't include the path... :( path=" + path + " , url=" + url);
-      return false;
+      doesInclude = false;
     }
+    return doesInclude;
   }
 
   // Return Public Functions

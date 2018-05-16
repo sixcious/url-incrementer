@@ -47,7 +47,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
-    DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a minor bug with trying to use the checkbox unfortunately
+    DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a minor bug with trying to use the leading zeros checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#download-strategy-select"].addEventListener("change", refreshDownloadOptions);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
@@ -69,18 +69,19 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#selection-start-input"].value = instance.selectionStart;
           DOM["#interval-input"].value = instance.interval;
           DOM["#base-select"].value = instance.base;
-          DOM["#base-case"].className = instance.base > 10 ? "display-block fade-in" : "display-none";
+          DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
           DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
           DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
           DOM["#leading-zeros-input"].checked = instance.leadingZeros;
           DOM["#auto-toggle-input"].checked = instance.autoEnabled;
-          DOM["#auto"].className = instance.autoEnabled ? "column fade-in" : "display-none";
+          DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
           DOM["#auto-action-select"].value = instance.autoAction;
           DOM["#auto-times-input"].value = instance.autoTimes;
           DOM["#auto-seconds-input"].value = instance.autoSeconds;
           DOM["#auto-wait-input"].checked = instance.autoWait;
+          DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
           DOM["#download-toggle-input"].checked = instance.downloadEnabled;
-          DOM["#download"].className = instance.downloadEnabled ? "column fade-in" : "display-none";
+          DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
           for (let downloadType of instance.downloadTypes) {
             if (downloadType && downloadType !== "") {
@@ -163,7 +164,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#clear-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#download-input"].className = items_.permissionsDownload ? instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled" : "display-none";
+    DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
   }
 
   /**
@@ -201,6 +202,7 @@ URLI.Popup = URLI.Popup || function () {
         autoTimes = +DOM["#auto-times-input"].value,
         autoSeconds = +DOM["#auto-seconds-input"].value,
         autoWait = DOM["#auto-wait-input"].checked,
+        autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
         downloadEnabled = DOM["#download-toggle-input"].checked,
         downloadStrategy = DOM["#download-strategy-select"].value,
         downloadTypes = [
@@ -252,6 +254,7 @@ URLI.Popup = URLI.Popup || function () {
         instance.autoTimes = autoTimes;
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
+        instance.autoBadge = autoBadge,
         instance.downloadEnabled = downloadEnabled;
         instance.downloadStrategy = downloadStrategy;
         instance.downloadTypes = downloadTypes;
@@ -272,26 +275,26 @@ URLI.Popup = URLI.Popup || function () {
             "autoSeconds": autoSeconds,
             "autoTimes": autoTimes,
             "autoWait": autoWait,
+            "autoBadge": autoBadge,
             "downloadStrategy": downloadStrategy,
             "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,
             "downloadIncludes": downloadIncludes,
             "downloadLimit": downloadLimit,
+            "downloadMinBytes": downloadMinBytes,
+            "downloadMaxBytes": downloadMaxBytes,
             "downloadSameDomain": downloadSameDomain
           });
         }
         // If permissions granted, send message to content script:
-        if (items_.permissionsInternalShortcuts && items_.keyEnabled && !items_.quickKeyEnabled) {
+        if (items_.permissionsInternalShortcuts && items_.keyEnabled && !items_.keyQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
-        if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.quickMouseEnabled) {
+        if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.mouseQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {
-          backgroundPage.URLI.Auto.clearAutoTimeout(instance);
-          backgroundPage.URLI.Auto.setAutoTimeout(instance);
-          backgroundPage.URLI.Auto.addAutoListener();
-          backgroundPage.URLI.Background.setBadge(instance.tabId, "auto", false);
+          backgroundPage.URLI.Background.performAction(instance, "auto", "popup");
         }
         toggleView.call(DOM["#accept-button"]);
       });

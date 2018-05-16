@@ -16,7 +16,7 @@ URLI.Background = URLI.Background || function () {
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextPrev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true,
+    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": 10, "downloadMinBytes": 0, "downloadMaxBytes": 0,  "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
@@ -28,14 +28,15 @@ URLI.Background = URLI.Background || function () {
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
-    "increment": { "text": "+",     "backgroundColor": [0,0,0,0] },
-    "decrement": { "text": "-",     "backgroundColor": [0,0,0,0] },
-    "next":      { "text": ">",     "backgroundColor": [0,0,0,0] },
-    "prev":      { "text": "<",     "backgroundColor": [0,0,0,0] },
-    "download":  { "text": "DL",    "backgroundColor": [0,0,0,0] },
-    "clear":     { "text": "X",     "backgroundColor": "#FF0000" },
-    "auto":      { "text": "AUTO",  "backgroundColor": "#FF6600" },
-    "default":   { "text": "",      "backgroundColor": [0,0,0,0] }
+    "increment": { "text": "+",    "backgroundColor": [0,0,0,0] },
+    "decrement": { "text": "-",    "backgroundColor": [0,0,0,0] },
+    "next":      { "text": ">",    "backgroundColor": [0,0,0,0] },
+    "prev":      { "text": "<",    "backgroundColor": [0,0,0,0] },
+    "download":  { "text": "DL",   "backgroundColor": [0,0,0,0] },
+    "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
+    "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
+    "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
+    "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
   // The individual tab instances. Note: Never save instances due to URLs being a privacy concern
@@ -111,7 +112,7 @@ URLI.Background = URLI.Background || function () {
         "interval": items.interval,
         "base": items.base, "baseCase": items.baseCase,
         "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
-        "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait,
+        "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
         "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,"downloadIncludes": items.downloadIncludes,
         "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit, "downloadSameDomain": items.downloadSameDomain
     };
@@ -129,7 +130,7 @@ URLI.Background = URLI.Background || function () {
    * @param temporary boolean indicating whether the badge should be displayed temporarily
    */
   function setBadge(tabId, badge, temporary) {
-    chrome.browserAction.setBadgeText({text: BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
+    chrome.browserAction.setBadgeText({text: (badge === "autotimes" && getInstance(tabId) ? getInstance(tabId).autoTimes - 1 + " " : "") + BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
     chrome.browserAction.setBadgeBackgroundColor({color: BROWSER_ACTION_BADGES[badge].backgroundColor, tabId: tabId});
     if (temporary) {
       setTimeout(function () {
@@ -220,6 +221,12 @@ URLI.Background = URLI.Background || function () {
             });
           });
         }
+        break;
+      case "auto":
+        URLI.Auto.clearAutoTimeout(instance);
+        URLI.Auto.setAutoTimeout(instance);
+        URLI.Auto.addAutoListener();
+        setBadge(instance.tabId, "auto", false);
         break;
       case "clear":
         actionPerformed = true;

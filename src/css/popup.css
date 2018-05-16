@@ -100,7 +100,7 @@ div.column {
 }
 
 #setup div.column {
-  padding: 10px 10px 0 0;
+  padding-top: 10px;
 }
 
 #setup #properties div.column:not(:last-child) {
@@ -136,7 +136,11 @@ div.column {
 }
 
 #setup #auto, #setup #download {
-  margin-top: 8px;
+  margin-top: 16px;
+}
+
+#setup #auto {
+  border-top: 1px solid #FF6600;
 }
 
 #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
@@ -145,6 +149,18 @@ div.column {
 
 #setup #auto #auto-seconds {
   padding-right: 22px;
+}
+
+#setup #auto #auto-wait-badge {
+  vertical-align: bottom;
+}
+
+#setup #auto #auto-wait-badge .checkbox label {
+  padding: 2px 0;
+}
+
+#setup #download {
+  border-top: 1px solid #4285f4;
 }
 
 #setup #download #download-row-2 div.column {
@@ -174,4 +190,8 @@ div.column {
 
 #auto-toggle-input.tgl-ios:checked + .tgl-btn {
   background: #FF6600;
+}
+
+#download-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: #4285f4;
 }

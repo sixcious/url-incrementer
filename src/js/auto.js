@@ -82,7 +82,7 @@ URLI.Auto = URLI.Auto || function () {
     if (instance && instance.autoEnabled) {
       // Set the "AUTO" Browser Action Badge (this needs to be done each time the tab is updated)
       if (changeInfo.status === "loading") {
-        URLI.Background.setBadge(tabId, "auto", false);
+        URLI.Background.setBadge(tabId, instance.autoBadge === "times" ? "autotimes" : "auto", false);
       }
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
         // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
