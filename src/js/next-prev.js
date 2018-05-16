@@ -62,10 +62,10 @@ URLI.NextPrev = URLI.NextPrev || function () {
    * @private
    */
   function parseElements(elements, sameDomainPolicyEnabled, origin) {
-    var anchorelement,
-        element,
+    var element,
         attributes,
         attribute,
+        urlo,
         i,
         j;
     for (i = 0; i < elements.length; i++) {
@@ -73,11 +73,8 @@ URLI.NextPrev = URLI.NextPrev || function () {
       if (!element.href) {
         continue;
       }
-      if (element.tagName !== "A") {
-        anchorelement = document.createElement("a");
-        anchorelement.href = element.href;
-      }
-      if (sameDomainPolicyEnabled && ((element.tagName === "A" ? element.origin : anchorelement.origin) !== origin)) {
+      urlo = new URL(element.href);
+      if (sameDomainPolicyEnabled && urlo.origin !== origin) {
         continue;
       }
       parseText(element.innerHTML.toLowerCase(), "innerHTML", element.href);

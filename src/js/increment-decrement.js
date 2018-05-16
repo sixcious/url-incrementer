@@ -34,10 +34,12 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    var regexp1 = /(?:=|\/)(\d+)/, // RegExp to find numbers with prefixes (= /)
+    var regexp0 = /(?<=page|pid|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
+        regexp1 = /(?:=|\/)(\d+)/, // RegExp to find numbers with prefixes (= /)
         regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         regexp3 = /((\d+)+?)/, // RegExg to find the first number in the url
         regexp4 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
+        matches0 = regexp0.exec(url),
         matches1 = regexp1.exec(url),
         matches2 = regexp2.exec(url),
         matches3 = regexp3.exec(url),
@@ -45,18 +47,22 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
         customparsed = matches4 && matches4[custom.group];
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
+                            matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
                             {selection: "", selectionStart: -1} :
            preference === "lastnumber" ?
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+                            matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             {selection: "", selectionStart: -1} :
            preference === "firstnumber" ?
                             matches3 ? {selection: matches3[0], selectionStart: matches3.index} :
+                            matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             {selection: "", selectionStart: -1} :
            preference === "custom" && customparsed ? {selection: matches4[custom.group].substring(custom.index), selectionStart: matches4.index + custom.index} :
+                            matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
                             matches1 ? {selection: matches1[1], selectionStart: matches1.index + 1} :
                             matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
                             {selection: "", selectionStart: -1};

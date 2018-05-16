@@ -99,6 +99,8 @@ URLI.Auto = URLI.Auto || function () {
           });
         }
       }
+    } else if (changeInfo.status === "complete") { // Removes any stray auto listeners that may exist
+      removeAutoListener();
     }
   }
 

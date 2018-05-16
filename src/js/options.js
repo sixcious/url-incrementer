@@ -106,6 +106,8 @@ URLI.Options = URLI.Options || function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#next-prev-enhanced-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("nextPrevEnhanced", function(granted) { if (granted) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
+    DOM["#next-prev-enhanced-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("nextPrevEnhanced", function(removed) { if (removed) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
@@ -125,15 +127,21 @@ URLI.Options = URLI.Options || function () {
    */
   function populateValuesFromStorage(values) {
     chrome.storage.sync.get(null, function(items) {
+      if (values === "all" || values === "internalShortcuts") {
+        DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+      }
       if (values === "all" || values === "download") {
         DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-settings-enabled"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-settings-disabled"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
       }
-      if (values === "all" || values === "internalShortcuts") {
-        DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+     if (values === "all" || values === "nextPrevEnhanced") {
+        DOM["#next-prev-enhanced-disable-button"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-enable-button"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-enable"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-disable"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
       }
       if (values === "all") {
         DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
