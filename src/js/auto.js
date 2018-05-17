@@ -7,6 +7,33 @@
 
 var URLI = URLI || {};
 
+URLI.AutoTimer = function (callback, delay) {
+  var timerId, start, remaining = delay, isPaused = false;
+  
+  this.isPaused = function() {
+    return isPaused;
+  }
+
+  this.pause = function() {
+    window.clearTimeout(timerId);
+    remaining -= new Date() - start;
+    isPaused = true;
+  };
+
+  this.resume = function() {
+    start = new Date();
+    window.clearTimeout(timerId);
+    timerId = window.setTimeout(callback, remaining);
+    isPaused = false;
+  };
+
+  this.clear = function() {
+    window.clearTimeout(timerId);
+  }
+
+  this.resume();
+}
+
 URLI.Auto = URLI.Auto || function () {
 
   var autoListenerAdded = false;
@@ -42,7 +69,18 @@ URLI.Auto = URLI.Auto || function () {
    * @public
    */
   function setAutoTimeout(instance) {
+/*
     instance.autoTimeout = setTimeout(function () {
+      if (instance.downloadEnabled) {
+        URLI.Background.performAction(instance, "download", "auto", function(instance) {
+          URLI.Background.performAction(instance, instance.autoAction, "auto");
+        });
+      } else {
+        URLI.Background.performAction(instance, instance.autoAction);
+      }
+    }, instance.autoSeconds * 1000);
+ */
+    instance.autoTimer = new URLI.AutoTimer(function() {
       if (instance.downloadEnabled) {
         URLI.Background.performAction(instance, "download", "auto", function(instance) {
           URLI.Background.performAction(instance, instance.autoAction, "auto");
@@ -62,7 +100,24 @@ URLI.Auto = URLI.Auto || function () {
    * @public
    */
   function clearAutoTimeout(instance) {
-    clearTimeout(instance.autoTimeout);
+    //clearTimeout(instance.autoTimeout);
+    if (instance && instance.autoTimer) {
+      instance.autoTimer.clear();
+    }
+  }
+  
+  function pauseOrResumeAutoTimeout(instance) {
+    if (!instance.autoTimer.isPaused()) {
+      instance.autoTimer.pause();
+      URLI.Background.setBadge(instance.tabId, "autopause", false);
+    } else {
+      instance.autoTimer.resume();
+      if (instance.autoBadge === "times") {
+        URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
+      } else {
+        URLI.Background.setBadge(instance.tabId, "auto", false);
+      }
+    }
   }
 
   /**
@@ -82,7 +137,11 @@ URLI.Auto = URLI.Auto || function () {
     if (instance && instance.autoEnabled) {
       // Set the "AUTO" Browser Action Badge (this needs to be done each time the tab is updated)
       if (changeInfo.status === "loading") {
-        URLI.Background.setBadge(tabId, instance.autoBadge === "times" ? "autotimes" : "auto", false);
+        if (instance.autoBadge === "times") {
+          URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes - 1) + "");
+        } else {
+          URLI.Background.setBadge(tabId, "auto", false);
+        }
       }
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
         // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
@@ -109,6 +168,7 @@ URLI.Auto = URLI.Auto || function () {
     addAutoListener: addAutoListener,
     removeAutoListener: removeAutoListener,
     setAutoTimeout: setAutoTimeout,
+    pauseOrResumeAutoTimeout: pauseOrResumeAutoTimeout,
     clearAutoTimeout: clearAutoTimeout
   };
 }();

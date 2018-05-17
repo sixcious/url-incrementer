@@ -35,6 +35,7 @@ URLI.Background = URLI.Background || function () {
     "download":  { "text": "DL",   "backgroundColor": [0,0,0,0] },
     "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
+    "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
@@ -125,13 +126,15 @@ URLI.Background = URLI.Background || function () {
   /**
    * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time.
    *
-   * @param tabId     the tab ID to set this badge to
-   * @param badge     the badge key to set from BROWSER_ACTION_BADGES
-   * @param temporary boolean indicating whether the badge should be displayed temporarily
+   * @param tabId           the tab ID to set this badge to
+   * @param badge           the badge key to set from BROWSER_ACTION_BADGES
+   * @param temporary       boolean indicating whether the badge should be displayed temporarily
+   * @param text            (optional) the text to use instead of the the badge text
+   * @param backgroundColor (optional) the backgroundColor to use instead of the badge backgroundColor
    */
-  function setBadge(tabId, badge, temporary) {
-    chrome.browserAction.setBadgeText({text: (badge === "autotimes" && getInstance(tabId) ? getInstance(tabId).autoTimes - 1 + " " : "") + BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
-    chrome.browserAction.setBadgeBackgroundColor({color: BROWSER_ACTION_BADGES[badge].backgroundColor, tabId: tabId});
+  function setBadge(tabId, badge, temporary, text, backgroundColor) {
+    chrome.browserAction.setBadgeText({text: text ? text : BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
+    chrome.browserAction.setBadgeBackgroundColor({color: backgroundColor ? backgroundColor : BROWSER_ACTION_BADGES[badge].backgroundColor, tabId: tabId});
     if (temporary) {
       setTimeout(function () {
         chrome.browserAction.setBadgeText({text: BROWSER_ACTION_BADGES["default"].text, tabId: tabId});
@@ -227,6 +230,9 @@ URLI.Background = URLI.Background || function () {
         URLI.Auto.setAutoTimeout(instance);
         URLI.Auto.addAutoListener();
         setBadge(instance.tabId, "auto", false);
+        break;
+      case "autoPauseOrResume":
+        URLI.Auto.pauseOrResumeAutoTimeout(instance);
         break;
       case "clear":
         actionPerformed = true;
@@ -324,11 +330,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Listen for commands (Chrome shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "download" || command === "clear")  {
+  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "download" || command === "autoPauseOrResume" || command === "clear")  {
     chrome.storage.sync.get(null, function(items) {
       if (!items.permissionsInternalShortcuts) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
           var instance = URLI.Background.getInstance(tabs[0].id);
+          if (command === "autoPauseOrResume") {
+            URLI.Background.performAction(instance, command, "commands");
+          }
           if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
               (command === "download" && instance && instance.enabled && instance.downloadEnabled) ||
               (command === "clear" && instance && instance.enabled)) {
