@@ -7,6 +7,8 @@
 
 var URLI = URLI || {};
 
+// The URLI.AutoTimer function is based on code by Tim Down at StackOverflow
+// https://stackoverflow.com/a/3969760
 URLI.AutoTimer = function (callback, delay) {
   var timerId, start, remaining = delay, isPaused = false;
   
