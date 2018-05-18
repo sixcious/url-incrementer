@@ -9,8 +9,8 @@ var URLI = URLI || {};
 
 URLI.NextPrev = function () {
 
-  const nextKeywords = ["next", "forward", ">", "new"],
-        prevKeywords = ["prev", "previous", "back", "<", "old"],
+  const nextKeywords = ["next", "forward", "&gt;", ">", "new"],
+        prevKeywords = ["prev", "previous", "back", "&lt;", "<", "‹", "old"],
         urls = {
           "next": {
             "important": new Map(),
@@ -39,9 +39,7 @@ URLI.NextPrev = function () {
     var url = [],
         keywords = direction === "next" ? nextKeywords : prevKeywords,
         otherPriority = priority === "attributes" ? "innerHTML" : "attributes";
-    console.log(urls);
 
-//  url = traverseResults(direction, "important", keywords);
     url[1] = urls[direction].important.get("relAttribute");
     console.log("1url " + direction + " important.relattribute =" + url);
     //if (url) { return url; }
@@ -98,8 +96,8 @@ URLI.NextPrev = function () {
     var links = document.getElementsByTagName("link"),
         anchors = document.links, // Includes all anchor and area elements
         origin = document.location.origin;
-    parseElements(links, sameDomainPolicyEnabled, origin);
-    parseElements(anchors, sameDomainPolicyEnabled, origin);
+    parseElements(links, origin, sameDomainPolicyEnabled);
+    parseElements(anchors, origin, sameDomainPolicyEnabled);
   }
 
   /**
@@ -110,7 +108,7 @@ URLI.NextPrev = function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, sameDomainPolicyEnabled, origin) {
+  function parseElements(elements, origin, sameDomainPolicyEnabled) {
     var element,
         attributes,
         attribute,
@@ -126,11 +124,11 @@ URLI.NextPrev = function () {
       if (sameDomainPolicyEnabled && urlo.origin !== origin) {
         continue;
       }
-      parseText("innerHTML", element.href, element.innerHTML.toLowerCase(), "");
+      parseText("innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
       attributes = element.attributes;
       for (j = 0; j < attributes.length; j++) {
         attribute = attributes[j];
-        parseText("attributes", element.href, attribute.nodeValue.toLowerCase(), attribute.nodeName.toLowerCase());
+        parseText("attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
       }
     }
   }

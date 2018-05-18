@@ -9,13 +9,14 @@
     <div id="controls" class="display-block fade-in">
       <div class="table">
         <div class="row">
-          <div class="column"> <input id="download-input" type="image" src="../img/font-awesome/download.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="download"/> </div>
-          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left.png" alt="" width="16" height="16" class="display-none" data-i18n="title" data-action="prev"/> </div>
-          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right.png" alt="" width="16" height="16" class="display-none" data-i18n="title" data-action="next"/> </div>
-          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/plus.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="increment"/> </div>
-          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/minus.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="decrement"/> </div>
-          <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/times.png" alt="" width="16" height="16" class="disabled" data-i18n="title" data-action="clear"/> </div>
-          <div class="column"> <input id="setup-input" type="image" src="../img/font-awesome/pencil.png" alt="" width="16" height="16" data-i18n="title"/> </div>
+          <div class="column"> <input id="auto-input" type="image" src="../img/font-awesome/orange/pause-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="auto"/> </div>
+          <div class="column"> <input id="download-input" type="image" src="../img/font-awesome/download.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="download"/> </div>
+          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left-circle.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="prev"/> </div>
+          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right-circle.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="next"/> </div>
+          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/black/plus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="increment"/> </div>
+          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/black/minus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="decrement"/> </div>
+          <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/red/times-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="clear"/> </div>
+          <div class="column"> <input id="setup-input" type="image" src="../img/font-awesome/black/pencil-square.png" alt="" width="24" height="24" data-i18n="title"/> </div>
         </div>
       </div>
     </div>
@@ -105,7 +106,7 @@
         <div class="table">
           <div class="row">
             <div id="auto-action" class="column">
-              <label for="auto-action-select">
+              <label id="auto-action-select-label" for="auto-action-select">
                 <img src="../img/font-awesome/refresh.png" alt="" width="16" height="16"/>
                 <span id="auto-label*" data-i18n="textContent"></span>
                 <span id="auto-action-label*" data-i18n="textContent"></span>
@@ -212,7 +213,7 @@
             </div>
           </div>
         </div>
-
+        <div id="download-experimental-disclaimer" data-i18n="textContent"></div>
       </div>
       <div class="setup-buttons">
         <div id="extra-toggles">

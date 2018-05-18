@@ -195,3 +195,14 @@ div.column {
 #download-toggle-input.tgl-ios:checked + .tgl-btn {
   background: #4285f4;
 }
+
+#download-experimental-disclaimer {
+  margin-top: 8px;
+  font-style: italic;
+}
+/*
+#auto-action-select-label {
+  color: #FF6600;
+  font-weight: bold;
+}
+*/

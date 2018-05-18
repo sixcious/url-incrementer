@@ -124,26 +124,16 @@ input[type="image"]:focus {
   clear: both;
 }
 
-#urli-click-count, #urln-click-count {
+#urli-click-count {
   cursor: pointer;
   vertical-align: top;
-}
-
-#urli-click-count {
   transform: scaleX(-1);
 }
 
 #urli-thank-you {
   font-style: italic;
   width: 100%;
-}
-
-#urli_thank_you_1, #urli_thank_you_3 {
-  text-align: right;
-}
-
-#urli_thank_you_2 {
-  text-align: left;
+  text-transform: uppercase;
 }
 
 #extension-id-div {

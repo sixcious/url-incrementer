@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "URL Incremenex",
+    "message": "URL Increnex",
     "description": "Extension name."
   },
   "short_name": {
@@ -12,7 +12,7 @@
     "description": "Extension description."
   },
   "title": {
-    "message": "URL Incremenex",
+    "message": "URL Increnex",
     "description": "Extension title (tool tip) shown when hovered."
   },
 
@@ -21,6 +21,7 @@
   "decrement_input": { "message": "Decrement [-]" },
   "next_input": { "message": "Next [>]" },
   "prev_input": { "message": "Prev [<]" },
+  "auto_input": { "message": "Auto Pause/Resume" },
   "download_input": { "message": "Download [DL]" },
   "clear_input": { "message": "Clear [x]" },
   "setup_input": { "message": "URL Setup" },
@@ -63,6 +64,8 @@
   "key_next_label": { "message": "Next [>]" },
   "key_prev_label": { "message": "Prev [<]" },
   "key_clear_label": { "message": "Clear [x]" },
+  "key_auto_label": { "message": "Auto Pause" },
+  "key_download_label": { "message": "Download" },
   "key_notset_option": { "message": "(Not set)" },
   "mouse_notset_option": { "message": "(Not set)" },
   "mouse_left_option": { "message": "Left" },
@@ -110,7 +113,7 @@
   "next_prev_enhanced_enable_p": { "message": "You can now use Next Prev with Auto, use Next Prev buttons in the UI (in addition to shortcuts)." },
   "next_prev_links_priority_label": { "message": "Links" },
   "next_prev_links_priority_attributes_option": { "message": "Prefer links with attributes like \"rel=next\"" },
-  "next_prev_links_priority_innerHTML_option": { "message": "Prefer links with words like \"Next\" in them" },
+  "next_prev_links_priority_innerHTML_option": { "message": "Prefer links with inner HTML like \"Next\" in them" },
   "next_prev_domain_label": { "message": "Domain" },
   "next_prev_same_domain_policy_enable_label": { "message": "Only consider same-domain links" },
   "next_prev_popup_buttons_label": { "message": "Buttons" },
@@ -125,14 +128,13 @@
   "website_a": { "message": "Website / Source Code (GitHub)" },
   "version_span": { "message": "Version" },
   "extension_id_label": { "message": "Extension ID: " },
-  "email_a": { "message": "Contact (Please Report Bugs or Request Features)"},
+  "email_a": { "message": "Contact (Report Bugs or Request Features)"},
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
-  "urli_thank_you_1": { "message": "tH4Nk y0u 4 uS1nG 0uR Ext3nS10n! ^^" },
-  "urli_thank_you_2": { "message": "w1sHinG y0u aN 1nCr3m3nTFuL [+]" },
-  "urli_thank_you_3": { "message": "... aNd n3xTFuL [>] dAy!1!1!!" },
-  "urli_click_tickles": { "message" : "... That tickles!" },
-  "urln_click_tickles": { "message" : "... tH4T tiCKL3S!" },
+  "urli_thank_you_1": { "message": "Th4Nk y0u 4 uS1nG uRLi!" },
+  "urli_thank_you_2": { "message": "w1sHinG y0u 4N 1nCrEm3nTFuL [+]" },
+  "urli_thank_you_3": { "message": "... 4Nd n3xTFuL [>] d4y!" },
+  "urli_click_tickles": { "message" : "... tH4T tiCkLeS!" },
 
   "SHARED": { "message": "----- SHARED -----" },
   "selection_label": { "message": "Selection" },
@@ -185,7 +187,7 @@
   "auto_times_label": { "message": "Times"},
   "auto_seconds_label": { "message": "Seconds" },
   "auto_wait_label": { "message": "Wait" },
-  "auto_wait_descriptive_label": { "message": "Wait for page to fully load"},
+  "auto_wait_descriptive_label": { "message": "Wait for the page to fully load"},
   "auto_badge_label": { "message": "Icon" },
   "auto_badge_descriptive_label": { "message": "Show times left in icon badge" },
   "download_label": { "message": "Download" },
@@ -198,10 +200,11 @@
   "download_types_gif_label": { "message": "gif" },
   "download_types_mp3_label": { "message": "mp3" },
   "download_types_mp4_label": { "message": "mp4" },
-  "download_same_domain_label": { "message": "Only download same domain links" },
+  "download_same_domain_label": { "message": "Only download same-domain links" },
   "download_includes_label": { "message": "Link Includes Path?" },
   "download_limit_label": { "message": "Files Limit?" },
   "download_min_bytes_label": { "message": "Min File Size?" },
   "download_max_bytes_label": { "message": "Max File Size?" },
-  "download_megabytes_label": { "message": "MB" }
+  "download_megabytes_label": { "message": "MB" },
+  "download_experimental_disclaimer": { "message": "Note: Download is an experimental feature. Please only download from sites you trust." }
 }

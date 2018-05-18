@@ -19,8 +19,8 @@ URLI.Background = URLI.Background || function () {
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": 10, "downloadMinBytes": 0, "downloadMaxBytes": 0,  "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
-    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [5, "ArrowUp"], "keyDecrement": [5, "ArrowDown"], "keyNext": [], "keyPrev": [], "keyClear": [5, "KeyX"],
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1,
+    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
     /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     /* selection */   "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* fun */         "urliClickCount": 0
@@ -226,13 +226,19 @@ URLI.Background = URLI.Background || function () {
         }
         break;
       case "auto":
+        URLI.Auto.pauseOrResumeAutoTimeout(instance);
+        if (callback) {
+          callback(instance);
+        }
+        break;
+      case "autoStart":
         URLI.Auto.clearAutoTimeout(instance);
         URLI.Auto.setAutoTimeout(instance);
         URLI.Auto.addAutoListener();
         setBadge(instance.tabId, "auto", false);
-        break;
-      case "autoPauseOrResume":
-        URLI.Auto.pauseOrResumeAutoTimeout(instance);
+        if (callback) {
+          callback(instance);
+        }
         break;
       case "clear":
         actionPerformed = true;
@@ -330,14 +336,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Listen for commands (Chrome shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "download" || command === "autoPauseOrResume" || command === "clear")  {
+  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "download" || command === "auto" || command === "clear")  {
     chrome.storage.sync.get(null, function(items) {
       if (!items.permissionsInternalShortcuts) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
           var instance = URLI.Background.getInstance(tabs[0].id);
           if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
               (command === "download" && instance && instance.downloadEnabled) ||
-              (command === "autoPauseOrResume" && instance && instance.autoEnabled) ||
+              (command === "auto" && instance && instance.autoEnabled) ||
               (command === "clear" && instance && instance.enabled)) {
             if (!instance && items.quickEnabled) {
               instance = URLI.Background.buildInstance(tabs[0], items);

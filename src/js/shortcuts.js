@@ -49,6 +49,8 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
     else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
+    else if (keyPressed(event, items_.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
+    else if (keyPressed(event, items_.keyDownload))  { chrome.runtime.sendMessage({greeting: "performAction", action: "download"}); }
   }
 
   /**
@@ -65,6 +67,8 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
     else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performACtion", action: "clear"}); }
+    else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performACtion", action: "auto"}); }
+    else if (mousePressed(event, items_.mouseDownload))  { chrome.runtime.sendMessage({greeting: "performACtion", action: "download"}); }
   }
 
   /**

@@ -62,21 +62,29 @@ URLI.Options = URLI.Options || function () {
     DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
+    DOM["#key-auto-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
+    DOM["#key-download-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-increment-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-decrement-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDecrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}, function() { setKeyEnabled(); }); });
     DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}, function() { setKeyEnabled(); }); });
     DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}, function() { setKeyEnabled(); }); });
+    DOM["#key-auto-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyAuto": key}, function() { setKeyEnabled(); }); });
+    DOM["#key-download-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDownload": key}, function() { setKeyEnabled(); }); });
     DOM["#key-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
     DOM["#key-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDecrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-decrement-input"], []); });
     DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], []); });
     DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPrev": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-prev-input"], []); });
     DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], []); });
+    DOM["#key-auto-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyAuto": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-auto-input"], []); });
+    DOM["#key-download-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDownload": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-download-input"], []); });
     DOM["#mouse-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseIncrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-decrement-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDecrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-auto-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseAuto": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-download-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDownload": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
@@ -134,17 +142,17 @@ URLI.Options = URLI.Options || function () {
         DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
       }
+      if (values === "all" || values === "nextPrevEnhanced") {
+        DOM["#next-prev-enhanced-disable-button"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-enable-button"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-enable"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#next-prev-enhanced-disable"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+      }
       if (values === "all" || values === "download") {
         DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-settings-enabled"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-settings-disabled"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-      }
-     if (values === "all" || values === "nextPrevEnhanced") {
-        DOM["#next-prev-enhanced-disable-button"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-enable-button"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-enable"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-disable"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
       }
       if (values === "all") {
         DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
@@ -157,11 +165,15 @@ URLI.Options = URLI.Options || function () {
         writeInput(DOM["#key-next-input"], items.keyNext);
         writeInput(DOM["#key-prev-input"], items.keyPrev);
         writeInput(DOM["#key-clear-input"], items.keyClear);
+        writeInput(DOM["#key-auto-input"], items.keyAuto);
+        writeInput(DOM["#key-download-input"], items.keyDownload);
         DOM["#mouse-increment-select"].value = items.mouseIncrement;
         DOM["#mouse-decrement-select"].value = items.mouseDecrement;
         DOM["#mouse-next-select"].value = items.mouseNext;
         DOM["#mouse-prev-select"].value = items.mousePrev;
         DOM["#mouse-clear-select"].value = items.mouseClear;
+        DOM["#mouse-auto-select"].value = items.mouseAuto;
+        DOM["#mouse-download-select"].value = items.mouseDownload;
         DOM["#icon-color-radio-" + items.iconColor].checked = true;
         DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
         DOM["#popup-button-size-input"].value = items.popupButtonSize;

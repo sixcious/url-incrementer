@@ -43,6 +43,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#next-input"].addEventListener("click", clickActionButton);
     DOM["#prev-input"].addEventListener("click", clickActionButton);
     DOM["#download-input"].addEventListener("click", clickActionButton);
+    DOM["#auto-input"].addEventListener("click", clickActionButton);
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
@@ -62,7 +63,7 @@ URLI.Popup = URLI.Popup || function () {
             instance = backgroundPage.URLI.Background.buildInstance(tabs[0], items);
           }
           updateControls();
-          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#download-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#download-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
           DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
           DOM["#url-textarea"].value = instance.url;
           DOM["#selection-input"].value = instance.selection;
@@ -140,7 +141,8 @@ URLI.Popup = URLI.Popup || function () {
     var action = this.dataset.action;
     if (((action === "increment" || action === "decrement" || action === "clear") && instance.enabled) ||
         (action === "next" || action === "prev") ||
-        (action === "download" && instance.enabled && instance.downloadEnabled)) {
+        (action === "download" && instance.downloadEnabled) ||
+        (action === "auto" && instance.autoEnabled)) {
       if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
@@ -165,6 +167,8 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#next-input"].className =
     DOM["#prev-input"].className = items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#auto-input"].src = instance.autoEnabled && instance.autoTimer && instance.autoTimer.isPaused() ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
   }
 
   /**
@@ -294,7 +298,7 @@ URLI.Popup = URLI.Popup || function () {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {
-          backgroundPage.URLI.Background.performAction(instance, "auto", "popup");
+          backgroundPage.URLI.Background.performAction(instance, "autoStart", "popup");
         }
         toggleView.call(DOM["#accept-button"]);
       });
