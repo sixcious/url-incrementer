@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-// The URLI.AutoTimer function is based on code by Tim Down at StackOverflow
+// The AutoTimer function is based on code written by Tim Down at StackOverflow
 // https://stackoverflow.com/a/3969760
 URLI.AutoTimer = function (callback, delay) {
   var timerId, start, remaining = delay, isPaused = false;
@@ -36,7 +36,7 @@ URLI.AutoTimer = function (callback, delay) {
   this.resume();
 }
 
-URLI.Auto = URLI.Auto || function () {
+URLI.Auto = function () {
 
   var autoListenerAdded = false;
 
@@ -71,17 +71,6 @@ URLI.Auto = URLI.Auto || function () {
    * @public
    */
   function setAutoTimeout(instance) {
-/*
-    instance.autoTimeout = setTimeout(function () {
-      if (instance.downloadEnabled) {
-        URLI.Background.performAction(instance, "download", "auto", function(instance) {
-          URLI.Background.performAction(instance, instance.autoAction, "auto");
-        });
-      } else {
-        URLI.Background.performAction(instance, instance.autoAction);
-      }
-    }, instance.autoSeconds * 1000);
- */
     instance.autoTimer = new URLI.AutoTimer(function() {
       if (instance.downloadEnabled) {
         URLI.Background.performAction(instance, "download", "auto", function(instance) {
@@ -102,7 +91,6 @@ URLI.Auto = URLI.Auto || function () {
    * @public
    */
   function clearAutoTimeout(instance) {
-    //clearTimeout(instance.autoTimeout);
     if (instance && instance.autoTimer) {
       instance.autoTimer.clear();
     }

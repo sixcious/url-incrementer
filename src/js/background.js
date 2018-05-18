@@ -9,8 +9,8 @@ var URLI = URLI || {};
 
 URLI.Background = URLI.Background || function () {
 
-//TODO: Remove "Enabled"s from keys
-  // The storage default values. Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects
+  // The storage default values
+  // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
   const STORAGE_DEFAULT_VALUES = {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsNextPrevEnhanced": false, "permissionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
@@ -40,7 +40,7 @@ URLI.Background = URLI.Background || function () {
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
-  // The individual tab instances. Note: Never save instances due to URLs being a privacy concern
+  // The individual tab instances. Note: We never save instances due to URLs being a privacy concern
   instances = new Map();
 
   /**
@@ -335,11 +335,9 @@ chrome.commands.onCommand.addListener(function(command) {
       if (!items.permissionsInternalShortcuts) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
           var instance = URLI.Background.getInstance(tabs[0].id);
-          if (command === "autoPauseOrResume") {
-            URLI.Background.performAction(instance, command, "commands");
-          }
           if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
-              (command === "download" && instance && instance.enabled && instance.downloadEnabled) ||
+              (command === "download" && instance && instance.downloadEnabled) ||
+              (command === "autoPauseOrResume" && instance && instance.autoEnabled) ||
               (command === "clear" && instance && instance.enabled)) {
             if (!instance && items.quickEnabled) {
               instance = URLI.Background.buildInstance(tabs[0], items);

@@ -11,7 +11,7 @@
                 "decrement": { "suggested_key": { "default": "Ctrl+Shift+Down"}, "description": "Decrement [-]" },
                 "next": { "description": "Next [>]" },
                 "prev": { "description": "Prev [<]" },
-                "autoPauseOrResume": {"description": "Auto Resume/Pause" },
+                "autoPauseOrResume": {"description": "Auto Pause/Resume" },
                 "download": {"description": "Download [DL]" },
                 "clear": { "suggested_key": { "default": "Ctrl+Shift+X"}, "description": "Clear [x]" } },
   "minimum_chrome_version": "55",

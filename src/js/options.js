@@ -23,8 +23,9 @@ URLI.Options = URLI.Options || function () {
         "MetaLeft":    "Meta",  "MetaRight":    "Meta"
       },
       key = [0,""], // Stores the key event modifiers [0] and key code [1]
-      //FACES = ["(｡◕‿◕｡)", "≧☉_☉≦", "(▰˘◡˘▰)", "♥‿♥", "(✿´‿`)", "(─‿‿─)", "(｡◕‿‿◕｡)", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉"];
+      NEXT_PREVS = ["Next", "Prev", "Forward", "Back", "New", "Old", ">", "<"],
       FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)", "(+__X)"];
+    //FACES = ["(｡◕‿◕｡)", "≧☉_☉≦", "(▰˘◡˘▰)", "♥‿♥", "(✿´‿`)", "(─‿‿─)", "(｡◕‿‿◕｡)", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉"];
 
   /**
    * Loads the DOM content needed to display the options page.

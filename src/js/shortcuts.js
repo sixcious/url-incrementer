@@ -16,7 +16,8 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
       FLAG_MOUSE_LEFT = 0x0, // 00
       FLAG_MOUSE_MIDDLE = 0x1, // 01
       FLAG_MOUSE_RIGHT = 0x2, // 10
-      KEY_MODIFIER_STRING_MAP = { // Map for key codes that should be checked since they are also event modifiers
+      KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
+        "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
         "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
         "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
         "AltLeft":     "Alt",   "AltRight":     "Alt",
