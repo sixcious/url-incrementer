@@ -26,7 +26,7 @@ div.heading.selection-first {
 div.heading button {
   float: right;
   position: relative;
-  top: -6px;
+  top: -8px;
 }
 
 div.table {
@@ -109,7 +109,7 @@ input[type="image"]:focus {
 }
 
 #about-floats-div {
-  margin-bottom: 8px;
+  margin-bottom: 24px;
 }
 
 #about-floats-div #name-version-website-div {
@@ -124,15 +124,31 @@ input[type="image"]:focus {
   clear: both;
 }
 
-#urli-click-count {
+#urli-click-count, #urln-click-count {
   cursor: pointer;
   vertical-align: top;
 }
 
+#urli-click-count {
+  transform: scaleX(-1);
+}
+
 #urli-thank-you {
-  display: block;
-  text-align: right;
   font-style: italic;
+  width: 100%;
+}
+
+#urli_thank_you_1, #urli_thank_you_3 {
+  text-align: right;
+}
+
+#urli_thank_you_2 {
+  text-align: left;
+}
+
+#extension-id-div {
+  font-family: monospace;
+  text-align: right;
 }
 
 #options .overlay {

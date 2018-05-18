@@ -117,6 +117,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
+    DOM["#extension-id"].textContent = chrome.runtime.id;
     // Populate all values from storage
     populateValuesFromStorage("all");
   }
