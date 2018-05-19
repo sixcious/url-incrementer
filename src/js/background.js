@@ -28,15 +28,15 @@ URLI.Background = URLI.Background || function () {
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
-    "increment": { "text": "+",    "backgroundColor": [0,0,0,0] },
-    "decrement": { "text": "-",    "backgroundColor": [0,0,0,0] },
-    "next":      { "text": ">",    "backgroundColor": [0,0,0,0] },
-    "prev":      { "text": "<",    "backgroundColor": [0,0,0,0] },
-    "download":  { "text": "DL",   "backgroundColor": [0,0,0,0] },
+    "increment": { "text": "+",    "backgroundColor": "#1779BA" },
+    "decrement": { "text": "-",    "backgroundColor": "#1779BA" },
+    "next":      { "text": ">",    "backgroundColor": "#05854D" },
+    "prev":      { "text": "<",    "backgroundColor": "#05854D" },
+    "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
     "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
     "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
-    "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
+    "download":  { "text": "DL",   "backgroundColor": "#663399" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -227,15 +227,6 @@ URLI.Background = URLI.Background || function () {
         break;
       case "auto":
         URLI.Auto.pauseOrResumeAutoTimeout(instance);
-        if (callback) {
-          callback(instance);
-        }
-        break;
-      case "autoStart":
-        URLI.Auto.clearAutoTimeout(instance);
-        URLI.Auto.setAutoTimeout(instance);
-        URLI.Auto.addAutoListener();
-        setBadge(instance.tabId, "auto", false);
         if (callback) {
           callback(instance);
         }

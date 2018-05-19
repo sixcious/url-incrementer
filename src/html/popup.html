@@ -9,19 +9,22 @@
     <div id="controls" class="display-block fade-in">
       <div class="table">
         <div class="row">
-          <div class="column"> <input id="auto-input" type="image" src="../img/font-awesome/orange/pause-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="auto"/> </div>
-          <div class="column"> <input id="download-input" type="image" src="../img/font-awesome/download.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="download"/> </div>
-          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/chevron-left-circle.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="prev"/> </div>
-          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/chevron-right-circle.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="next"/> </div>
-          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/black/plus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="increment"/> </div>
-          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/black/minus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="decrement"/> </div>
+          <div class="column"> <input id="auto-input" type="image" src="../img/font-awesome/orange/pause-circle.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="auto"/> </div>
+          <div class="column"> <input id="download-input" type="image" src="../img/font-awesome/purple/cloud-download.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="download"/> </div>
+          <div class="column"> <input id="prev-input" type="image" src="../img/font-awesome/green/chevron-circle-left.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="prev"/> </div>
+          <div class="column"> <input id="next-input" type="image" src="../img/font-awesome/green/chevron-circle-right.png" alt="" width="24" height="24" class="display-none" data-i18n="title" data-action="next"/> </div>
+          <div class="column"> <input id="increment-input" type="image" src="../img/font-awesome/blue/plus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="increment"/> </div>
+          <div class="column"> <input id="decrement-input" type="image" src="../img/font-awesome/blue/minus-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="decrement"/> </div>
           <div class="column"> <input id="clear-input" type="image" src="../img/font-awesome/red/times-circle.png" alt="" width="24" height="24" class="disabled" data-i18n="title" data-action="clear"/> </div>
           <div class="column"> <input id="setup-input" type="image" src="../img/font-awesome/black/pencil-square.png" alt="" width="24" height="24" data-i18n="title"/> </div>
         </div>
       </div>
     </div>
     <div id="setup" class="display-none">
-      <h3 id="setup-h3" data-i18n="textContent"></h3>
+      <h3 id="setup-h3">
+        <img src="../img/font-awesome/black/mouse-pointer.png" alt="" width="16" height="16"/>
+        <span id="setup-h3-label" data-i18n="textContent"></span>
+      </h3>
       <div id="url">
         <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
         <textarea id="url-textarea" readonly="readonly"></textarea>
@@ -103,14 +106,14 @@
         </div>
       </div>
       <div id="auto">
+        <h3 id="auto-h3">
+          <img src="../img/font-awesome/orange/refresh.png" alt="" width="16" height="16"/>
+          <span id="auto-label*h3" data-i18n="textContent"></span>
+        </h3>
         <div class="table">
           <div class="row">
             <div id="auto-action" class="column">
-              <label id="auto-action-select-label" for="auto-action-select">
-                <img src="../img/font-awesome/refresh.png" alt="" width="16" height="16"/>
-                <span id="auto-label*" data-i18n="textContent"></span>
-                <span id="auto-action-label*" data-i18n="textContent"></span>
-              </label>
+              <label id="auto-action-label" for="auto-action-select" data-i18n="textContent"></label>
               <select id="auto-action-select">
                 <option id="auto-action-option-increment" value="increment" data-i18n="textContent"></option>
                 <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
@@ -144,14 +147,14 @@
         </div>
       </div>
       <div id="download">
+        <h3 id="download-h3">
+          <img src="../img/font-awesome/purple/download.png" alt="" width="16" height="16"/>
+          <span id="download-label*h3" data-i18n="textContent"></span>
+        </h3>
         <div class="table">
           <div class="row">
             <div id="download-strategy" class="column">
-              <label for="download-strategy-select">
-                <img src="../img/font-awesome/download.png" alt="" width="16" height="16"/>
-                <span id="download-label*" data-i18n="textContent"></span>
-                <span id="download-strategy-label" data-i18n="textContent"></span>
-              </label>
+              <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
               <select id="download-strategy-select">
                 <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>

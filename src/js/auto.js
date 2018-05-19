@@ -109,6 +109,16 @@ URLI.Auto = function () {
       }
     }
   }
+  
+  function startAutoTimer(instance, callback) {
+    clearAutoTimeout(instance);
+    setAutoTimeout(instance);
+    addAutoListener();
+    URLI.Background.setBadge(instance.tabId, "auto", false);
+    if (callback) {
+      callback(instance);
+    }
+  }
 
   /**
    * The chrome.tabs.onUpdated auto listener that fires every time a tab is updated.
@@ -159,6 +169,7 @@ URLI.Auto = function () {
     removeAutoListener: removeAutoListener,
     setAutoTimeout: setAutoTimeout,
     pauseOrResumeAutoTimeout: pauseOrResumeAutoTimeout,
-    clearAutoTimeout: clearAutoTimeout
+    clearAutoTimeout: clearAutoTimeout,
+    startAutoTimer: startAutoTimer
   };
 }();

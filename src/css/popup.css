@@ -22,7 +22,13 @@ body {
 
 h3 {
   -webkit-user-select: initial;
-  font-size: 1.1em;
+  /*font-size: 1.1em;*/
+}
+
+h3 img {
+  width: 14px;
+  height: 14px;
+  vertical-align: top;
 }
 
 div.table {
@@ -45,7 +51,7 @@ div.column {
 
 #controls input[type="image"] {
   vertical-align: middle; /* Matches hover.css styling */
-  padding: 6px;
+  padding: 8px;
 }
 
 #controls input[type="image"]:not(:last-child) {
@@ -67,12 +73,15 @@ div.column {
   margin: 12px;
 }
 
-/*h3, label {
-  text-shadow: -1px 0 #DDD, 0 1px #DDD, 1px 0 #DDD, 0 -1px #DDD;
-}*/
-
 #setup h3 {
-  color: #333;
+  font-weight: bold;
+  padding-bottom: 3px;
+  margin-bottom: 0.6em;
+}
+
+#setup h3#setup-h3 {
+  color: #333333;
+  border-bottom: 2px solid #333333;
 }
 
 #setup input[type="text"]#selection-input  {
@@ -95,12 +104,14 @@ div.column {
   word-break: break-all;
 }
 
+/*
 #setup img {
   vertical-align: bottom;
 }
+*/
 
 #setup div.column {
-  padding-top: 10px;
+  padding-top: 7px;
 }
 
 #setup #properties div.column:not(:last-child) {
@@ -109,6 +120,7 @@ div.column {
 
 #setup div.column > label, .label-display-block {
   display: block;
+  margin-bottom: 2px;
 }
 
 #setup .setup-buttons {
@@ -139,10 +151,6 @@ div.column {
   margin-top: 16px;
 }
 
-#setup #auto {
-  border-top: 1px solid #FF6600;
-}
-
 #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 35px;
 }
@@ -157,10 +165,6 @@ div.column {
 
 #setup #auto #auto-wait-badge .checkbox label {
   padding: 2px 0;
-}
-
-#setup #download {
-  border-top: 1px solid #4285f4;
 }
 
 #setup #download #download-row-2 div.column {
@@ -193,16 +197,28 @@ div.column {
 }
 
 #download-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: #4285f4;
+  background: /*#4285f4;*/ #663399;
 }
 
 #download-experimental-disclaimer {
   margin-top: 8px;
+  color: #663399;
   font-style: italic;
-}
-/*
-#auto-action-select-label {
-  color: #FF6600;
   font-weight: bold;
 }
-*/
+
+
+#setup h3#auto-h3 {
+  color: #FF6600;;
+  border-bottom: 2px solid #FF6600;
+}
+
+#setup h3#download-h3 {
+  color: #663399;;
+  border-bottom: 2px solid #663399;
+}
+
+
+#setup #auto div.column, #setup #download div.column {
+  padding-top: 3px;
+}

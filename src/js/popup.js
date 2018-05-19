@@ -169,6 +169,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoEnabled && instance.autoTimer && instance.autoTimer.isPaused() ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
+    DOM["#auto-input"].title = instance.autoEnabled && instance.autoTimer && instance.autoTimer.isPaused() ? "Auto Resume" : "Auto Pause";
   }
 
   /**
@@ -298,7 +299,9 @@ URLI.Popup = URLI.Popup || function () {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {
-          backgroundPage.URLI.Background.performAction(instance, "autoStart", "popup");
+          backgroundPage.URLI.Auto.startAutoTimer(instance, function(result) {
+            instance = result;
+          });
         }
         toggleView.call(DOM["#accept-button"]);
       });

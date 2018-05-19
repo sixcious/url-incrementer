@@ -16,9 +16,10 @@ URLI.UI = URLI.UI || function () {
    * by Mike West.
    * 
    * @param messages the messages array to display, line by line
+   * @param callback (optional) the callback function to return execution to
    * @public
    */
-  function generateAlert(messages) {
+  function generateAlert(messages, callback) {
     var div = document.createElement("div"),
         ul = document.createElement("ul"),
         li,
@@ -32,7 +33,7 @@ URLI.UI = URLI.UI || function () {
     div.appendChild(ul);
     document.body.appendChild(div);
     setTimeout(function () { div.classList.add("overlay-visible"); }, 10);
-    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 4000);
+    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
   }
 
   /**
@@ -45,7 +46,7 @@ URLI.UI = URLI.UI || function () {
   function clickHoverCss(el, effect) {
     // Carefully toggle the Hover.css class using setTimeout() to force a delay
     el.classList.remove(effect);
-    setTimeout(function () { el.classList.add(effect); }, 1);
+    setTimeout(function () { el.classList.add(effect); }, 50);
   }
 
   // Return Public Functions

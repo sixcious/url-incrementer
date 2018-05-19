@@ -236,7 +236,7 @@ URLI.Options = URLI.Options || function () {
    */
   function setKeyEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      var enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0;
+      var enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
       chrome.storage.sync.set({"keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
@@ -250,7 +250,7 @@ URLI.Options = URLI.Options || function () {
    */
   function setMouseEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      var enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1;
+      var enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
         DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
