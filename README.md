@@ -6,30 +6,30 @@ To start using URLI right away, just click the extension icon, select the number
 
 Features:
 - Auto Incrementing
-- **Downloading [Experimental] (Requires Extra Permissions)
+- Downloading** [Experimental] (Requires Extra Permissions)
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard & Mouse Button Shortcuts (Requires Extra Permissions)
 - Many Options (Alphanumeric Incrementing, Selection algorithms, Interval, Leading Zeros... and so much more!)
 
-**Download is a new experimental feature. It's been added to URLI so that it could be used with Auto and to help offer you a unique "Auto Incrementer Downloader" function. It is still a little rough around the edges. We ask for your patience as we work hard to get it up to snuff. Thank you very much for understanding!
+**Download is a new "experimental" and OPTIONAL feature starting in Version 5.0. It's been added so that it could be used with Auto and to help offer users a unique "Auto Incrementer Downloader" function. It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 
 What's New in Version 5.0 (May 31, 2018)
 - URLI's biggest update... EVER!
-- New Name: URLI's "full" name was changed from "URL Plus / Incrementer" to "URL Increnex" to give it a unique name. Please don't worry! URLI's core functionality/focus remains the same as always: incrementing.
-- NEW Look: New extension icons and more intuitive, color-coded button icons! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
-- NEW Auto Increment function: Supports Multiple Tabs and has Pause/Resume functionality, Hooray no more manual incrementing! (Unless you still want to!)
-- NEW Download function [Experimental]: Added to URLI specifically so that with Auto, you can now create an "Auto Incrementer Downloader." If you don't want this feature -- please don't worry, the Downloading function is NEVER loaded and executed unless you actually enable it first in the Options and there is no Shortcut for it to prevent "invasiveness"
+- NEW Name: URLI's full name name was changed from "URL Incrementer" to "URL Increnex" to help give it a unique name. Same acronym (URLI), but just a new unique full name. Please do NOT worry! URLI's functionality and focus remains the same as always: Incrementing!
+- NEW Look: New extension icon and more intuitive, color-coded button icons! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
+- NEW Auto Increment function: Supports Multiple Tabs and it also has Pause/Resume functionality! Hooray for no more manual incrementing! (Unless you still want to!)
+- NEW Download function [Experimental]: Added to URLI so that with Auto, we can now offer you an "Auto Incrementer Downloader," combining URLI's sophisticated Auto Incrementing functionality with rudimentary Downloading! =) If you don't need this feature -- no worries! The Downloading function is NEVER loaded into URLI's background memory or executed unless you actually enable it first in the Options and UI. There is also no Shortcut for it to limit its visibility.
 - MANY options added: Change the extension icon, adjust the button size, get icon feedback when incrementing or other actions, and add Next Prev buttons to UI
 - MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support!)
 - IMPROVED Increment Decrement selection algorithm to look for common terms like "page=" first so the number pre-selected by URLI is more likely to be "correct"
 - IMPROVED Next Prev functionality for MUCH better link accuracy (way better DOM parsing, but still a work in progress)
 - IMPROVED Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys as shortcuts (e.g. "Shift" can be used by itself now)
-- IMPROVED Permissions: Internal Shortcuts, Next Prev, and Download permissions are now modularized and separate so you can grant and enable only the features you want to
-- IMPROVED Internal code: better tab instance memory management (now using JavaScript Map instead of array) + minor bugfixes
+- IMPROVED Permissions: Permissions for features (Internal Shortcuts, Next Prev, Download) are now modularized and separate so you can grant and enable only the features you want to
+- IMPROVED Internal code: Better tab instance memory management (now using JavaScript Map instead of array) + numerous minor bugfixes
 - NOTE: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm very sorry for the inconvenience!
 
 Special Thanks:
 NickMWPrince, Blue, Blue Chan, Will, Adam C, Coolio Wolfus
 
-... and "U" for using "URLI"!
+... and "U" for using "URLI"! :)

@@ -247,6 +247,7 @@ URLI.Popup = URLI.Popup || function () {
       URLI.UI.generateAlert(errors);
     } else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        backgroundPage.URLI.Background.performAction(instance, "clear", "popup-clear-before-set", function() {
         instance.enabled = true;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
@@ -304,6 +305,7 @@ URLI.Popup = URLI.Popup || function () {
           });
         }
         toggleView.call(DOM["#accept-button"]);
+        });
       });
     }
   }

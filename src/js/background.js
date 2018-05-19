@@ -235,10 +235,10 @@ URLI.Background = URLI.Background || function () {
         actionPerformed = true;
         chrome.storage.sync.get(null, function(items) {
           if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
-            chrome.tabs.sendMessage(tabId, {greeting: "removeKeyListener"});
+            chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
           }
           if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
-            chrome.tabs.sendMessage(tabId, {greeting: "removeMouseListener"});
+            chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
           }
           if (instance && instance.autoEnabled) {
             instance.autoEnabled = false;
@@ -248,17 +248,17 @@ URLI.Background = URLI.Background || function () {
           }
            // for callers like popup that still need the instance, disable all states
           instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
+          deleteInstance(instance.tabId);
           if (callback) {
             callback(instance);
           }
-          deleteInstance(instance.tabId);
         });
         break;
       default:
         break;
     }
     // Icon Feedback
-    if (actionPerformed) {
+    if (actionPerformed && caller !== "popup-clear-before-set") {
       chrome.storage.sync.get(null, function(items) {
         if (items.iconFeedbackEnabled && !instance.autoEnabled) {
           setBadge(instance.tabId, action, true);

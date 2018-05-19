@@ -109,7 +109,7 @@ input[type="image"]:focus {
 }
 
 #about-floats-div {
-  margin-bottom: 24px;
+  margin-bottom: 17px;
 }
 
 #about-floats-div #name-version-website-div {
@@ -131,13 +131,25 @@ input[type="image"]:focus {
 }
 
 #urli-thank-you {
+  width: 100%;
+}
+
+#urli-thank-you-1, #urli-thank-you-2 {
+  font-family: cursive;
   font-style: italic;
   width: 100%;
-  text-transform: uppercase;
+}
+
+#urli-thank-you-really {
+  font-weight: bold;
+  font-style: italic;
+  text-align: right;
+  margin-top: 10px;
 }
 
 #extension-id-div {
   font-family: monospace;
+  font-style: normal;
   text-align: right;
 }
 
@@ -148,4 +160,38 @@ input[type="image"]:focus {
 .tooltip {
   display: inline-block;
   margin-left: 4px;
+}
+
+/* heading color overrides */
+
+#increment-decrement-settings div.heading {
+  border-bottom-color: #1779BA;
+}
+
+#increment-decrement-settings div.heading h3 {
+  color: #1779BA;
+}
+
+#next-prev-settings div.heading {
+  border-bottom-color: #05854D;
+}
+
+#next-prev-settings div.heading h3 {
+  color: #05854D;
+}
+
+#auto-settings div.heading {
+  border-bottom-color: #FF6600;
+}
+
+#auto-settings div.heading h3 {
+  color: #FF6600;
+}
+
+#download-settings div.heading {
+  border-bottom-color: rebeccapurple;
+}
+
+#download-settings div.heading h3 {
+  color: rebeccapurple;
 }

@@ -128,12 +128,12 @@
   "website_a": { "message": "Website / Source Code (GitHub)" },
   "version_span": { "message": "Version" },
   "extension_id_label": { "message": "Extension ID: " },
-  "email_a": { "message": "Contact (Report Bugs or Request Features)"},
+  "email_a": { "message": "Contact (Report Bugs or Send Feedback)"},
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
-  "urli_thank_you_1": { "message": "Th4Nk y0u 4 uS1nG uRLi!" },
-  "urli_thank_you_2": { "message": "w1sHinG y0u 4N 1nCrEm3nTFuL [+]" },
-  "urli_thank_you_3": { "message": "... 4Nd n3xTFuL [>] d4y!" },
+  "urli_thank_you_1": { "message": "s0RRy, uRLi n0t g00D aT sP34kiNg" },
+  "urli_thank_you_2": { "message": "... buT uRLi w4Nt 2 s4y \"tH4Nk y0u\" 4 uSiNg uRLi" },
+  "urli_thank_you_really": { "message": "Thank you for using URLI" },
   "urli_click_tickles": { "message" : "... tH4T tiCkLeS!" },
 
   "SHARED": { "message": "----- SHARED -----" },
@@ -206,5 +206,6 @@
   "download_min_bytes_label": { "message": "Min File Size?" },
   "download_max_bytes_label": { "message": "Max File Size?" },
   "download_megabytes_label": { "message": "MB" },
+  "download_experimental_h3": { "message": "Download (Experimental)" },
   "download_experimental_disclaimer": { "message": "Note: Download is an experimental feature. Please only use it on sites you trust." }
 }

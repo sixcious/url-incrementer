@@ -26,8 +26,6 @@ h3 {
 }
 
 h3 img {
-  width: 14px;
-  height: 14px;
   vertical-align: top;
 }
 
@@ -75,7 +73,8 @@ div.column {
 
 #setup h3 {
   font-weight: bold;
-  padding-bottom: 3px;
+  font-style: italic;
+  padding-bottom: 2px;
   margin-bottom: 0.6em;
 }
 
@@ -199,6 +198,11 @@ div.column {
 #download-toggle-input.tgl-ios:checked + .tgl-btn {
   background: /*#4285f4;*/ #663399;
 }
+
+/*
+#auto-toggle span, #download-toggle span {
+  font-style: italic;
+}*/
 
 #download-experimental-disclaimer {
   margin-top: 8px;

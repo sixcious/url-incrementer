@@ -66,9 +66,9 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
     else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
     else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
-    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performACtion", action: "clear"}); }
-    else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performACtion", action: "auto"}); }
-    else if (mousePressed(event, items_.mouseDownload))  { chrome.runtime.sendMessage({greeting: "performACtion", action: "download"}); }
+    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
+    else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
+    else if (mousePressed(event, items_.mouseDownload))  { chrome.runtime.sendMessage({greeting: "performAction", action: "download"}); }
   }
 
   /**
