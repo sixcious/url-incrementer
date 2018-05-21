@@ -35,7 +35,7 @@ URLI.Background = URLI.Background || function () {
     "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
     "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
-    "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
+    "autopause": { "text": "PAUSE","backgroundColor": "#FF6600" }, // ❚❚
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
