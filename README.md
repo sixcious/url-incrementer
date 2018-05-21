@@ -6,7 +6,7 @@ To start using URLI right away, just click the extension icon, select the number
 
 Features:
 - Auto Incrementing
-- Downloading** [Experimental] (Requires Extra Permissions)
+- Download Incrementing** [Experimental] (Requires Extra Permissions)
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard & Mouse Button Shortcuts (Requires Extra Permissions)
@@ -19,7 +19,7 @@ What's New in Version 5.0 (May 31, 2018)
 - NEW Name: URLI's full name name was changed from "URL Incrementer" to "URL Increnex" to help give it a unique name. Same acronym (URLI), but just a new unique full name. Please do NOT worry! URLI's functionality and focus remains the same as always: Incrementing!
 - NEW Look: New extension icon and more intuitive, color-coded button icons! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
 - NEW Auto Increment function: Supports Multiple Tabs and it also has Pause/Resume functionality! Hooray for no more manual incrementing! (Unless you still want to!)
-- NEW Download function [Experimental]: Added to URLI so that with Auto, we can now offer you an "Auto Incrementer Downloader," combining URLI's sophisticated Auto Incrementing functionality with rudimentary Downloading! =) If you don't need this feature -- no worries! The Downloading function is NEVER loaded into URLI's background memory or executed unless you actually enable it first in the Options and UI. There is also no Shortcut for it to limit its visibility.
+- NEW Download Increment function [Experimental]: Added to URLI so that with Auto, we can now offer you an "Auto Incrementer Downloader," combining URLI's sophisticated Auto Incrementing functionality with rudimentary Downloading! =) If you don't need this feature -- no worries! The Downloading function is NEVER loaded into URLI's background memory or executed unless you actually enable it first in the Options and UI. There is also no Shortcut for it to limit its visibility.
 - MANY options added: Change the extension icon, adjust the button size, get icon feedback when incrementing or other actions, and add Next Prev buttons to UI
 - MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support!)
 - IMPROVED Increment Decrement selection algorithm to look for common terms like "page=" first so the number pre-selected by URLI is more likely to be "correct"

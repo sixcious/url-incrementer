@@ -99,7 +99,7 @@ URLI.Download = URLI.Download || function () {
     }
     console.log("urls=");
     console.log(urls);
-    return [...urls];
+    return [...urls]; // Convert Set into Array for return value back (Set can't be used)
   }
 
   /**
@@ -140,6 +140,18 @@ URLI.Download = URLI.Download || function () {
       doesInclude = false;
     }
     return doesInclude;
+  }
+  
+  function checkSize(url, callback) {
+    new Promise(resolve => {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.onreadystatechange = () => {
+        resolve(+xhr.getResponseHeader("Content-Length"));
+        xhr.abort();
+      };
+      xhr.send();
+    }).then(console.log);
   }
 
   // Return Public Functions

@@ -134,13 +134,13 @@ input[type="image"]:focus {
   width: 100%;
 }
 
-#urli-thank-you-1, #urli-thank-you-2 {
+#urli-thank-you-1, #urli-thank-you-2, #urli-thank-you-3 {
   font-family: cursive;
   font-style: italic;
   width: 100%;
 }
 
-#urli-thank-you-really {
+#urli-thank-you-wish {
   font-weight: bold;
   font-style: italic;
   text-align: right;

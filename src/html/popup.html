@@ -22,7 +22,7 @@
     </div>
     <div id="setup" class="display-none">
       <h3 id="setup-h3">
-        <img src="../img/font-awesome/black/mouse-pointer.png" alt="" width="14" height="14"/>
+        <img src="../img/font-awesome/black/mouse-pointer.png" alt="" width="12" height="12"/>
         <span id="setup-h3-label" data-i18n="textContent"></span>
       </h3>
       <div id="url">
@@ -107,7 +107,7 @@
       </div>
       <div id="auto">
         <h3 id="auto-h3">
-          <img src="../img/font-awesome/orange/refresh.png" alt="" width="14" height="14"/>
+          <img src="../img/font-awesome/orange/refresh.png" alt="" width="13" height="13"/>
           <span id="auto-label*h3" data-i18n="textContent"></span>
         </h3>
         <div class="table">
@@ -148,7 +148,7 @@
       </div>
       <div id="download">
         <h3 id="download-h3">
-          <img src="../img/font-awesome/purple/cloud-download.png" alt="" width="16" height="16"/>
+          <img src="../img/font-awesome/purple/cloud-download.png" alt="" width="14" height="14"/>
           <span id="download-experimental-h3" data-i18n="textContent"></span>
         </h3>
         <div class="table">
@@ -192,7 +192,7 @@
             </div>
             <div id="download-limit" class="column">
               <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
-              <input id="download-limit-input" type="number" min="1" max="999"/>
+              <input id="download-limit-input" type="number" min="0" max="1000"/>
             </div>
           </div>
           <div id="download-row-2" class="row">
@@ -206,12 +206,12 @@
             </div>
             <div id="download-min-bytes" class="column">
               <label id="download-min-bytes-label" for="download-min-bytes-input" data-i18n="textContent"></label>
-              <input id="download-min-bytes-input" type="number" min="0" max="1000">
+              <input id="download-min-bytes-input" type="number" min="0" max="1000" step="any">
               <span id="download-megabytes-label*min" data-i18n="textContent"></span>
             </div>
             <div id="download-max-bytes" class="column">
               <label id="download-max-bytes-label" for="download-max-bytes-input" data-i18n="textContent"></label>
-              <input id="download-max-bytes-input" type="number" min="0" max="1000">
+              <input id="download-max-bytes-input" type="number" min="0" max="1000" step="any">
               <span id="download-megabytes-label*max" data-i18n="textContent"></span>
             </div>
           </div>
@@ -222,12 +222,14 @@
         <div id="extra-toggles">
           <div class="checkbox">
             <label id="auto-toggle">
-              <span id="auto-label*toggle" data-i18n="textContent"></span>
+              <img id="auto-toggle-img" src="../img/font-awesome/orange/refresh.png" width="12" height="12"/>
+              <span id="auto-toggle-span" data-i18n="textContent"></span>
               <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" />
               <label class="tgl-btn" for="auto-toggle-input"></label>
             </label>
             <label id="download-toggle">
-              <span id="download-label*toggle" data-i18n="textContent"></span>
+              <img id="download-toggle-img" src="../img/font-awesome/purple/cloud-download.png" width="14" height="14"/>
+              <span id="download-toggle-span" data-i18n="textContent"></span>
               <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" />
               <label class="tgl-btn" for="download-toggle-input"></label>
             </label>

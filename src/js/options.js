@@ -24,6 +24,7 @@ URLI.Options = URLI.Options || function () {
       },
       key = [0,""], // Stores the key event modifiers [0] and key code [1]
       NEXT_PREVS = ["Next", "Prev", "Forward", "Back", "New", "Old", ">", "<"],
+      NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
       FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)", "(+__X)"];
     //FACES = ["(｡◕‿◕｡)", "≧☉_☉≦", "(▰˘◡˘▰)", "♥‿♥", "(✿´‿`)", "(─‿‿─)", "(｡◕‿‿◕｡)", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉"];
 
@@ -63,34 +64,30 @@ URLI.Options = URLI.Options || function () {
     DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-auto-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-download-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-increment-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-decrement-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDecrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}, function() { setKeyEnabled(); }); });
     DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}, function() { setKeyEnabled(); }); });
     DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}, function() { setKeyEnabled(); }); });
     DOM["#key-auto-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyAuto": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-download-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDownload": key}, function() { setKeyEnabled(); }); });
     DOM["#key-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
     DOM["#key-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDecrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-decrement-input"], []); });
     DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], []); });
     DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPrev": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-prev-input"], []); });
     DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], []); });
     DOM["#key-auto-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyAuto": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-auto-input"], []); });
-    DOM["#key-download-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDownload": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-download-input"], []); });
     DOM["#mouse-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseIncrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-decrement-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDecrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-clear-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseClear": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-auto-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseAuto": +this.value}, function() { setMouseEnabled(); }); });
-    DOM["#mouse-download-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDownload": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
-    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 32) { chrome.storage.sync.set({"popupButtonSize": +this.value});
+    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { chrome.storage.sync.set({"popupButtonSize": +this.value});
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { URLI.UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
@@ -110,22 +107,12 @@ URLI.Options = URLI.Options || function () {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#auto-action-select"].addEventListener("change", function () { chrome.storage.sync.set({"autoAction": this.value}); });
-    DOM["#auto-times-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoTimes": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
-    DOM["#auto-seconds-input"].addEventListener("change", function () { chrome.storage.sync.set({"autoSeconds": +this.value >= 1 && +this.value <= 3600 ? +this.value : 5}); });
-    DOM["#auto-wait-input"].addEventListener("change", function() { chrome.storage.sync.set({ "autoWait": this.checked}); });
-    DOM["#auto-badge-input"].addEventListener("change", function() { chrome.storage.sync.set({ "autoBadge": this.checked ? "times": ""}); });
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#download-strategy-select"].addEventListener("change", function () { chrome.storage.sync.set({"downloadStrategy": this.value}); });
-    DOM["#download-selector-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadSelector": this.value}); });
-    DOM["#download-includes-input"].addEventListener("input", function () { chrome.storage.sync.set({"downloadIncludes": this.value }); });
-    DOM["#download-limit-input"].addEventListener("change", function () { chrome.storage.sync.set({"downloadLimit": +this.value >= 1 && +this.value <= 1000 ? +this.value : 10}); });
     DOM["#urli-click-count"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
-    DOM["#extension-id"].textContent = chrome.runtime.id;
     // Populate all values from storage
     populateValuesFromStorage("all");
   }
@@ -166,14 +153,12 @@ URLI.Options = URLI.Options || function () {
         writeInput(DOM["#key-prev-input"], items.keyPrev);
         writeInput(DOM["#key-clear-input"], items.keyClear);
         writeInput(DOM["#key-auto-input"], items.keyAuto);
-        writeInput(DOM["#key-download-input"], items.keyDownload);
         DOM["#mouse-increment-select"].value = items.mouseIncrement;
         DOM["#mouse-decrement-select"].value = items.mouseDecrement;
         DOM["#mouse-next-select"].value = items.mouseNext;
         DOM["#mouse-prev-select"].value = items.mousePrev;
         DOM["#mouse-clear-select"].value = items.mouseClear;
         DOM["#mouse-auto-select"].value = items.mouseAuto;
-        DOM["#mouse-download-select"].value = items.mouseDownload;
         DOM["#icon-color-radio-" + items.iconColor].checked = true;
         DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
         DOM["#popup-button-size-input"].value = items.popupButtonSize;
@@ -182,16 +167,6 @@ URLI.Options = URLI.Options || function () {
         DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
         DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
         DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-        DOM["#auto-action-select"].value = items.autoAction;
-        DOM["#auto-times-input"].value = items.autoTimes;
-        DOM["#auto-seconds-input"].value = items.autoSeconds;
-        DOM["#auto-wait-input"].checked = items.autoWait;
-        DOM["#auto-badge-input"].checked = items.autoBadge === "times";
-        DOM["#download-strategy-select"].value = items.downloadStrategy;
-        //DOM["#download-types-jpg"].checked = items.downloadTypes.jpg;
-        DOM["#download-selector-input"].value = items.downloadSelector;
-        DOM["#download-includes-input"].value = items.downloadIncludes;
-        DOM["#download-limit-input"].value = items.downloadLimit;
         DOM["#selection-select"].value = items.selectionPriority;
         DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
         DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -376,7 +351,7 @@ URLI.Options = URLI.Options || function () {
   }
 
   /**
-   * Clicks the URLI input image.
+   * Function that is called when URLI is clicked.
    *
    * @private
    */
@@ -384,7 +359,7 @@ URLI.Options = URLI.Options || function () {
     var face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
     this.value = +this.value + 1;
     chrome.storage.sync.set({ "urliClickCount": +this.value});
-    URLI.UI.generateAlert([+this.value < 10 ? +this.value + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   // Return Public Functions

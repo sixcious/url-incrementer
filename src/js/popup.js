@@ -81,6 +81,7 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#auto-seconds-input"].value = instance.autoSeconds;
           DOM["#auto-wait-input"].checked = instance.autoWait;
           DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
+          DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
           DOM["#download-toggle-input"].checked = instance.downloadEnabled;
           DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
           DOM["#download-strategy-select"].value = instance.downloadStrategy;
@@ -91,9 +92,9 @@ URLI.Popup = URLI.Popup || function () {
           }
           DOM["#download-selector-input"].value = instance.downloadSelector;
           DOM["#download-includes-input"].value = instance.downloadIncludes;
-          DOM["#download-limit-input"].value = instance.downloadLimit;
-          DOM["#download-min-bytes-input"].value = instance.downloadMinBytes;
-          DOM["#download-min-bytes-input"].value = instance.downloadMaxBytes;
+          DOM["#download-limit-input"].value = instance.downloadLimit && instance.downloadLimit > 0 ? instance.downloadLimit : "";
+          DOM["#download-min-bytes-input"].value = instance.downloadMinBytes && instance.downloadMinBytes > 0 ? instance.downloadMinBytes : "";
+          DOM["#download-max-bytes-input"].value = instance.downloadMaxBytes && instance.downloadMaxBytes > 0 ? instance.downloadMaxBytes : "";
           DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
           refreshDownloadOptions.call(DOM["#download-strategy-select"]);
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
@@ -277,6 +278,22 @@ URLI.Popup = URLI.Popup || function () {
             "interval": interval,
             "base": base,
             "baseCase": baseCase,
+            "autoAction": autoAction,
+            "autoSeconds": autoSeconds,
+            "autoTimes": autoTimes,
+            "autoWait": autoWait,
+            "autoBadge": autoBadge,
+            "downloadStrategy": downloadStrategy,
+            "downloadTypes": downloadTypes,
+            "downloadSelector": downloadSelector,
+            "downloadIncludes": downloadIncludes,
+            "downloadLimit": downloadLimit,
+            "downloadMinBytes": downloadMinBytes,
+            "downloadMaxBytes": downloadMaxBytes,
+            "downloadSameDomain": downloadSameDomain
+          });
+        } else {
+          chrome.storage.sync.set({
             "autoAction": autoAction,
             "autoSeconds": autoSeconds,
             "autoTimes": autoTimes,

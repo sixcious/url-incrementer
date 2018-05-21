@@ -14,10 +14,10 @@ URLI.Background = URLI.Background || function () {
   const STORAGE_DEFAULT_VALUES = {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsNextPrevEnhanced": false, "permissionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
-    /* popup */       "popupButtonSize": 24, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
+    /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextPrev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": 10, "downloadMinBytes": 0, "downloadMaxBytes": 0,  "downloadSameDomain": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": null, "downloadMinBytes": null, "downloadMaxBytes": null, "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
@@ -201,7 +201,12 @@ URLI.Background = URLI.Background || function () {
               JSON.parse(instance.downloadSameDomain) + ");";
             chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
               if (results && results[0]) {
-                for (let url of results[0]) {
+                var urls = results[0];
+                if (!isNaN(instance.downloadLimit) && instance.downloadLimit > 0 && instance.downloadLimit < results[0].length) {
+                  urls = results[0].slice(0, instance.downloadLimit);
+                  console.log("limit found and its' lower than results.lenght. instance.downloadLimit=" + instance.downloadLimit + " results.length=" + results[0].length);
+                }
+                for (let url of urls) {
                   console.log("downloading url=" + url);
                   chrome.downloads.download({url: url}, function(downloadId) {
                     chrome.downloads.search({id: downloadId}, function(results) {
@@ -209,11 +214,14 @@ URLI.Background = URLI.Background || function () {
                       if (downloadItem) {
                         console.log(downloadItem);
                         console.log("totalBytes=" + downloadItem.totalBytes);
-                        if (instance.downloadRestrictSize && downloadItem.totalBytes > 0 && 
-                           (instance.downloadMinBytes ? downloadItem.totalBytes >= instance.downloadMinBytes : false) &&
-                           (instance.downloadMaxBytes ? downloadItem.totalBytes <= instance.downloadMaxBytes : false)) {
-                          console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
-                          chrome.downloads.cancel(downloadId);
+                        if (instance.downloadStrategy !== "page") {
+                          if (downloadItem.totalBytes <= 0 ||
+                             (!isNaN(instance.downloadMinBytes) && instance.downloadMinBytes > 0 ? (instance.downloadMinBytes * 1048576) >= downloadItem.totalBytes : false) ||
+                             (!isNaN(instance.downloadMaxBytes) && instance.downloadMaxBytes > 0 ? (instance.downloadMaxBytes * 1048576) <= downloadItem.totalBytes : false)) {
+                            console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
+                            console.log("instance minbytes=" + (instance.downloadMinBytes * 1048576) + " --- maxbytes=" + (instance.downloadMaxBytes * 1048576));
+                            chrome.downloads.cancel(downloadId);
+                          }
                         }
                       }
                     });
