@@ -195,3 +195,9 @@ input[type="image"]:focus {
 #download-settings div.heading h3 {
   color: rebeccapurple;
 }
+
+#download-experimental-disclaimer {
+  color: rebeccapurple;
+  font-style: italic;
+  font-weight: bold;
+}

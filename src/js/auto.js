@@ -133,20 +133,28 @@ URLI.Auto = function () {
   function autoListener(tabId, changeInfo, tab) {
     console.log("autoListener is on!");
     var instance = URLI.Background.getInstance(tabId);
-    // If auto is enabled for this instance ...
+    // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
-      // Set the "AUTO" Browser Action Badge (this needs to be done each time the tab is updated)
+      // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
       if (changeInfo.status === "loading") {
-        if (instance.autoBadge === "times") {
+        if (instance.autoTimer && instance.autoTimer.isPaused()) {
+          URLI.Background.setBadge(tabId, "autopause", false);
+        }
+        else if (instance.autoBadge === "times") {
           URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes - 1) + "");
         } else {
           URLI.Background.setBadge(tabId, "auto", false);
         }
       }
+      
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
+        // If the auto instance was paused but the tab changed, we do not want to consider this an auto action
+        if (instance.autoTimer && instance.autoTimer.isPaused()) {
+          // TODO
+        }
         // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
         // Note: We pre-decrement because the first time Auto is already done via Popup calling setAutoTimeout()
-        if (--instance.autoTimes > 0) {
+        else if (--instance.autoTimes > 0) {
           URLI.Background.setInstance(tabId, instance);
           clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
           setAutoTimeout(instance);
