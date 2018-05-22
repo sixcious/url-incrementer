@@ -111,6 +111,7 @@ URLI.Auto = function () {
     clearAutoTimeout(instance);
     setAutoTimeout(instance);
     addAutoListener();
+    instance.autoPaused = false;
     URLI.Background.setBadge(instance.tabId, "auto", false);
     if (callback) {
       callback(instance);

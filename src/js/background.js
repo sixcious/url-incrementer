@@ -257,6 +257,8 @@ URLI.Background = URLI.Background || function () {
             // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
             if (caller !== "popup-clear-before-set") {
               setBadge(instance.tabId, "clear", true);
+            } else {
+              setBadge(instance.tabId, "default", false);
             }
           }
            // for callers like popup that still need the instance, disable all states
