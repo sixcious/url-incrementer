@@ -95,9 +95,9 @@ URLI.NextPrev = function () {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = document.getElementsByTagName("link"),
         anchors = document.links, // Includes all anchor and area elements
-        origin = document.location.origin;
-    parseElements(links, origin, sameDomainPolicyEnabled);
-    parseElements(anchors, origin, sameDomainPolicyEnabled);
+        hostname = document.location.hostname;
+    parseElements(links, hostname, sameDomainPolicyEnabled);
+    parseElements(anchors, hostname, sameDomainPolicyEnabled);
   }
 
   /**
@@ -108,7 +108,7 @@ URLI.NextPrev = function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, origin, sameDomainPolicyEnabled) {
+  function parseElements(elements, hostname, sameDomainPolicyEnabled) {
     var element,
         attributes,
         attribute,
@@ -121,7 +121,7 @@ URLI.NextPrev = function () {
         continue;
       }
       urlo = new URL(element.href);
-      if (sameDomainPolicyEnabled && urlo.origin !== origin) {
+      if (sameDomainPolicyEnabled && urlo.hostname !== hostname) {
         continue;
       }
       parseText("innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");

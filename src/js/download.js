@@ -85,7 +85,7 @@ URLI.Download = URLI.Download || function () {
    * @private
    */
   function findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled) {
-    var origin = document.location.origin,
+    var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
         el,
         urls = new Set(), // return value, we use a Set to avoid potential duplicate URLs
@@ -93,7 +93,7 @@ URLI.Download = URLI.Download || function () {
     console.log("found " + els.length + " links");
     for (el of els) {
       url = el.src ? el.src : el.href ? el.href : "";
-      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, origin) && doesIncludePath(url, path)) {
+      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) && doesIncludePath(url, path)) {
         urls.add(url);
       }
     }
@@ -107,17 +107,17 @@ URLI.Download = URLI.Download || function () {
    *
    * @param sameDomainPolicyEnabled
    * @param url
-   * @param origin
+   * @param hostname
    * @returns {boolean}
    * @private
    */
-  function isFromSameDomain(sameDomainPolicyEnabled, url, origin) {
+  function isFromSameDomain(sameDomainPolicyEnabled, url, hostname) {
     var sameDomain = true,
         urlo;
     if (sameDomainPolicyEnabled) {
       urlo = new URL(url);
-      if (urlo.origin !== origin) {
-        console.log("found a link that wasn't from the same origin!" + url);
+      if (urlo.hostname !== hostname) {
+        console.log("found a link that wasn't from the samee hostname!" + url);
         sameDomain = false;
       }
     }

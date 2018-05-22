@@ -232,15 +232,23 @@ URLI.Popup = URLI.Popup || function () {
           parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
           // [1] Interval Errors
-          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-          // Auto Errors
+          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : ""
+        ],
+        autoErrors = [ // Auto Errors
           autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsNextPrevEnhanced ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
-          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-          // Download Errors
-          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") :
-          ""
+          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : ""
+        ],
+        downloadErrors = [ // Download Errors
+          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
         ];
+    // Check Auto First:
+    if (autoEnabled && (autoAction === "next" || autoAction === "prev") && !autoErrors.some(error => error !== "")) {
+    }
+    // Download Errors:
+    if (downloadEnabled && !downloadErrors.some(error => error !== "")) {
+      
+    }
     // We can tell there was an error if some of the array slots weren't empty
     if (errors.some(error => error !== "")) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
