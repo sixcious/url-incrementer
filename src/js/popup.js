@@ -169,8 +169,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#prev-input"].className = items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#auto-input"].src = instance.autoEnabled && instance.autoTimer && instance.autoTimer.isPaused() ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
-    DOM["#auto-input"].title = instance.autoEnabled && instance.autoTimer && instance.autoTimer.isPaused() ? "Auto Resume" : "Auto Pause";
+    DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
   }
 
   /**
@@ -342,10 +341,36 @@ URLI.Popup = URLI.Popup || function () {
     }
   }
 
+  /**
+   * TODO
+   * //
+   * @public
+   */
+  function messageListener(request, sender, sendResponse) {
+    switch (request.greeting) {
+      case "updatePopupInstance":
+      console.log("got a updatePopupInstance message");
+      console.log("popup instance tabId=" + instance.tabId);
+      console.log("req instanceTabId=" + request.instance.tabId);
+      console.log("req instance=" + JSON.stringify(request.instance));
+        if (request.instance && request.instance.tabId === instance.tabId) {
+          console.log("HELLO! inside this if statement now...");
+          instance = request.instance;
+          console.log("popup instance now=" + JSON.stringify(request.instance));
+          updateControls();
+        }
+      break;
+    }
+  }
+
   // Return Public Functions
   return {
-    DOMContentLoaded: DOMContentLoaded
+    DOMContentLoaded: DOMContentLoaded,
+    messageListener: messageListener
   };
 }();
 
 document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);
+
+// Listen for requests from chrome.runtime.sendMessage (Background)
+chrome.runtime.onMessage.addListener(URLI.Popup.messageListener);

@@ -35,7 +35,7 @@ URLI.Background = URLI.Background || function () {
     "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
     "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
-    "autopause": { "text": "PAUSE","backgroundColor": "#FF6600" }, // ❚❚
+    "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
@@ -106,16 +106,16 @@ URLI.Background = URLI.Background || function () {
   function buildInstance(tab, items, callback) {
     var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom),
         instance = {
-        "enabled": false, "autoEnabled": false, "downloadEnabled": false,
-        "tabId": tab.id, "url": tab.url,
-        "selection": selectionProps.selection, "selectionStart": selectionProps.selectionStart,
-        "leadingZeros": items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1,
-        "interval": items.interval,
-        "base": items.base, "baseCase": items.baseCase,
-        "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
-        "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
-        "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,"downloadIncludes": items.downloadIncludes,
-        "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit, "downloadSameDomain": items.downloadSameDomain
+          "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+          "tabId": tab.id, "url": tab.url,
+          "selection": selectionProps.selection, "selectionStart": selectionProps.selectionStart,
+          "leadingZeros": items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1,
+          "interval": items.interval,
+          "base": items.base, "baseCase": items.baseCase,
+          "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
+          "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
+          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,"downloadIncludes": items.downloadIncludes,
+          "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit, "downloadSameDomain": items.downloadSameDomain
     };
     if (callback) {
       callback(instance);
@@ -237,6 +237,8 @@ URLI.Background = URLI.Background || function () {
         URLI.Auto.pauseOrResumeAutoTimeout(instance);
         if (callback) {
           callback(instance);
+        } else {
+          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         }
         break;
       case "clear":
@@ -252,13 +254,18 @@ URLI.Background = URLI.Background || function () {
             instance.autoEnabled = false;
             URLI.Auto.clearAutoTimeout(instance);
             URLI.Auto.removeAutoListener();
-            setBadge(instance.tabId, "clear", true);
+            // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
+            if (caller !== "popup-clear-before-set") {
+              setBadge(instance.tabId, "clear", true);
+            }
           }
            // for callers like popup that still need the instance, disable all states
           instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
           deleteInstance(instance.tabId);
           if (callback) {
             callback(instance);
+          } else {
+             chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
           }
         });
         break;

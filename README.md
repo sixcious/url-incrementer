@@ -1,6 +1,6 @@
-# URL Increnex
+# URL Incrementer
 
-URL Increnex lets you "Increment" [+] a URL or go to the "Next" [>] URL. For example, if the URL has a "page=1" in it, this extension will get you to "page=2" quickly and conveniently. Use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It has a ton of features, but is a lightweight extension (under 300KB unzipped!) and its core increment functionality doesn't require any special permissions from you.
+URLI ("yur-lee") URL Incrementer lets you "Increment" [+] a URL or go to the "Next" [>] URL. For example, if the URL has a "page=1" in it, this extension will get you to "page=2" quickly and conveniently. Use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially by numbers or letters or paginated via next prev links. It has a ton of features, but is a lightweight extension (under 300KB unzipped!) and its core increment functionality doesn't require any special permissions from you.
 
 To start using URLI right away, just click the extension icon, select the number in the URL you want to increment, and then press the [+] button or shortcuts to start incrementing!
 

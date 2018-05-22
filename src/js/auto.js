@@ -10,23 +10,17 @@ var URLI = URLI || {};
 // The AutoTimer function is based on code written by Tim Down at StackOverflow
 // https://stackoverflow.com/a/3969760
 URLI.AutoTimer = function (callback, delay) {
-  var timerId, start, remaining = delay, isPaused = false;
-  
-  this.isPaused = function() {
-    return isPaused;
-  }
+  var timerId, start, remaining = delay;
 
   this.pause = function() {
     window.clearTimeout(timerId);
     remaining -= new Date() - start;
-    isPaused = true;
   };
 
   this.resume = function() {
     start = new Date();
     window.clearTimeout(timerId);
     timerId = window.setTimeout(callback, remaining);
-    isPaused = false;
   };
 
   this.clear = function() {
@@ -93,14 +87,17 @@ URLI.Auto = function () {
   function clearAutoTimeout(instance) {
     if (instance && instance.autoTimer) {
       instance.autoTimer.clear();
+      delete instance.autoTimer;
     }
   }
   
   function pauseOrResumeAutoTimeout(instance) {
-    if (!instance.autoTimer.isPaused()) {
+    if (!instance.autoPaused) {
+      instance.autoPaused = true;
       instance.autoTimer.pause();
       URLI.Background.setBadge(instance.tabId, "autopause", false);
     } else {
+      instance.autoPaused = false;
       instance.autoTimer.resume();
       if (instance.autoBadge === "times") {
         URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
@@ -137,7 +134,7 @@ URLI.Auto = function () {
     if (instance && instance.autoEnabled) {
       // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
       if (changeInfo.status === "loading") {
-        if (instance.autoTimer && instance.autoTimer.isPaused()) {
+        if (instance.autoPaused) {
           URLI.Background.setBadge(tabId, "autopause", false);
         }
         else if (instance.autoBadge === "times") {
@@ -149,7 +146,7 @@ URLI.Auto = function () {
       
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
         // If the auto instance was paused but the tab changed, we do not want to consider this an auto action
-        if (instance.autoTimer && instance.autoTimer.isPaused()) {
+        if (instance.autoPaused) {
           // TODO
         }
         // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
@@ -161,9 +158,6 @@ URLI.Auto = function () {
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
           URLI.Background.performAction(instance, "clear", "auto");
-          chrome.extension.getViews({type: "popup", windowId: tab.windowId}).forEach(function (popup) {
-            popup.close();
-          });
         }
       }
     } else if (changeInfo.status === "complete") { // Removes any stray auto listeners that may exist

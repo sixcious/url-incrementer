@@ -1,6 +1,6 @@
 {
   "name": {
-    "message": "URL Increnex",
+    "message": "URL Incrementer",
     "description": "Extension name."
   },
   "short_name": {
@@ -12,7 +12,7 @@
     "description": "Extension description."
   },
   "title": {
-    "message": "URL Increnex",
+    "message": "URL Incrementer",
     "description": "Extension title (tool tip) shown when hovered."
   },
 
