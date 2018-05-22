@@ -140,11 +140,12 @@ input[type="image"]:focus {
   width: 100%;
 }
 
-#urli-thank-you-wish {
+#urli-thank-you {
+  vertical-align: top;
+  padding-top: 14px;
+  font-size: 1.05em;
   font-weight: bold;
   font-style: italic;
-  text-align: right;
-  margin-top: 10px;
 }
 
 #extension-id-div {

@@ -126,6 +126,7 @@
   "download_enable_button": { "message": "Enable Download" },
   "download_disable_button": { "message": "Disable Download" },
   "download_disable_p": { "message": "This isn't just any downloader! Use it with Auto to create an Auto Incrementer Downloader! Click the button to enable (grant permissions)." },
+  "download_enable_p": { "message": "Download is now enabled! Start Downloading n' Incrementing anytime by toggling it in the Popup UI" },
   "about_h3": { "message": "About" },
   "website_a": { "message": "Website / Source Code (GitHub)" },
   "version_span": { "message": "Version" },
@@ -133,9 +134,7 @@
   "email_a": { "message": "Contact (Report Bugs or Send Feedback)"},
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
-  "urli_thank_you_1": { "message": "h3LLo! URLI n0t g00D aT t4lKiNg ..." },
-  "urli_thank_you_2": { "message": "buT URLI w4Nt 2 s4y \"tH4Nk y0u\" 4 uSiNg URLI" },
-  "urli_thank_you_3": { "message": "URLI lOV3 iNcr3m3nTiNG 4 yOu... :)" },
+  "urli_thank_you_using": { "message": "Thank you for using URLI, the URL Incrementer" },
   "urli_thank_you_wish": { "message": "Wishing you an Incrementful Day!" },
   "urli_click_tickles": { "message" : "... tH4T tiCkLeS!" },
 

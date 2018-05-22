@@ -138,8 +138,8 @@ URLI.Options = URLI.Options || function () {
       if (values === "all" || values === "download") {
         DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#download-settings-enabled"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#download-settings-disabled"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
       }
       if (values === "all") {
         DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
