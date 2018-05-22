@@ -12,7 +12,7 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard & Mouse Button Shortcuts (Requires Extra Permissions)
 - Many Options (Alphanumeric Incrementing, Selection algorithms, Interval, Leading Zeros... and so much more)
-- Safe, Open-Source, No Ads, No Bloat, and Requires No permissions for core incrementing/auto-incrementing functionality. How cool is that!
+- Safe, Open-Source, No Ads, No Bloat, and Requires No permissions for core incrementing/auto-incrementing functionality
 
 **Download is an optional and "experimental" feature that's been added to provide you with an "Auto Incrementer Downloader." Combining URLI's Auto-Incrementing capabilities with rudimentary Downloading! It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 

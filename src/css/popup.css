@@ -73,14 +73,14 @@ div.column {
 
 #setup h3 {
   font-weight: bold;
-  font-style: italic;
+/*  font-style: italic;*/
   padding-bottom: 2px;
   margin-bottom: 0.6em;
 }
 
-#setup h3#setup-h3 {
+#setup h3 {
   color: #333333;
-  border-bottom: 2px solid #333333;
+  border-bottom: 1px solid #333333;
 }
 
 #setup input[type="text"]#selection-input  {
@@ -139,11 +139,11 @@ div.column {
 #setup #extra-toggles {
   position: absolute;
   left: 12px;
-  bottom: 8px;
+  bottom: 6px;
 }
 
 #setup #extra-toggles .checkbox > label:not(:last-child) {
-  margin-right: 12px;
+  margin-right: 8px;
 }
 
 #setup #auto, #setup #download {
@@ -200,6 +200,7 @@ div.column {
 }
 
 #auto-toggle span, #download-toggle span {
+  font-size: 1.05em;
   font-weight: bold;
   font-style: italic;
   margin-left: 3px;
@@ -221,19 +222,25 @@ div.column {
 #download-experimental-disclaimer {
   margin-top: 8px;
   color: #663399;
+  font-size: 1.05em;
   font-style: italic;
   font-weight: bold;
 }
 
+#setup h3#setup-h3 {
+  color: #333333;
+  border-bottom-color: #333333;
+}
+
 
 #setup h3#auto-h3 {
-  color: #FF6600;;
-  border-bottom: 2px solid #FF6600;
+  color: #FF6600;
+  border-bottom-color: #FF6600;
 }
 
 #setup h3#download-h3 {
-  color: #663399;;
-  border-bottom: 2px solid #663399;
+  color: #663399;
+  border-bottom-color: #663399;
 }
 
 #setup #auto div.column, #setup #download div.column {
@@ -242,7 +249,16 @@ div.column {
 
 
 #options-button {
+  font-size: 1.05em;
   font-weight: bold;
   font-style: italic;
   text-transform: uppercase;
+  bottom: 10px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+#options-button img {
+  margin-right: -2px;
+  vertical-align: bottom;
 }
