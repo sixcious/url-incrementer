@@ -239,3 +239,10 @@ div.column {
 #setup #auto div.column, #setup #download div.column {
   padding-top: 3px;
 }
+
+
+#options-button {
+  font-weight: bold;
+  font-style: italic;
+  text-transform: uppercase;
+}
