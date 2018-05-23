@@ -34,7 +34,7 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    var regexp0 = /(?<=page|pid|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
+    var regexp0 = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
         regexp1 = /(?:=|\/)(\d+)/, // RegExp to find numbers with prefixes (= /)
         regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         regexp3 = /((\d+)+?)/, // RegExg to find the first number in the url

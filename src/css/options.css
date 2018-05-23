@@ -127,7 +127,7 @@ input[type="image"]:focus {
 #urli-click-count {
   cursor: pointer;
   vertical-align: top;
-  transform: scaleX(-1);
+  /*transform: scaleX(-1);*/
 }
 
 #urli-thank-you {

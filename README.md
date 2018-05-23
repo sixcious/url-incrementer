@@ -16,16 +16,19 @@ Features:
 
 **Download is an optional and "experimental" feature that's been added to provide you with an "Auto Incrementer Downloader." Combining URLI's Auto-Incrementing capabilities with rudimentary Downloading! It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 
+A note from me if you were using URLI prior to 5.0:
+I know change is usually not met with positivity, but I really hope you like this new update. I tried hard to go back to URLI's roots in 5.0 and undo the Version 3.0 issues. If there's anything you don't like please let me know and I'll try my best to fix it in the next version.
+I know this is going to sound cliche, but ... without "U" there is no URLI. Thank you so much for letting URLI occupy a small space on your Chrome browser.
+
 What's New in Version 5.0 (May 31, 2018)
-- URLI's biggest update... EVER!
-- NEW Name: URLI's full name name was changed from "URL Plus"/Incrementer" to "URL Increnex" to help give it a unique name. Same acronym (URLI), but just a new unique full name. Please do NOT worry! URLI's functionality and focus remains the same as always: Incrementing!
-- NEW Look: New extension icon and more intuitive, color-coded buttons! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
+- NAME CHANGE: The extension name was changed from "URL Plus" back to "URL Incrementer" (URLI's original name).
+- NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
 - NEW Auto Increment function: Supports Multiple Tabs and it also has Pause/Resume functionality! Hooray for no more manual incrementing! (Unless you still want to!)
 - NEW "Download n' Increment" function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader," combining URLI's sophisticated Auto Incrementing functionality with rudimentary Downloading! =) This feature is completely optional.
 - MANY options added: Change the extension icon, adjust the button sizes, get icon feedback when incrementing, and add Next Prev buttons to the Popup UI (...only if you want to!)
 - MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support!)
 - IMPROVED Increment Decrement selection algorithm to look for common terms like "page=" first so the number pre-selected by URLI is more likely to be "correct"
-- IMPROVED Next Prev functionality for MUCH better link accuracy (way better DOM parsing, but still a work in progress)
+- IMPROVED Next Prev functionality for MUCH better link accuracy (way better DOM parsing)
 - IMPROVED Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys as shortcuts (e.g. "Shift" can be used by itself now)
 - IMPROVED Permissions: Permissions for features (Internal Shortcuts, Next Prev, Download) are now modularized and separate so you can grant and enable only the features you want to
 - IMPROVED Internal code: Better tab instance memory management (now using JavaScript Map instead of array) + numerous minor bugfixes
