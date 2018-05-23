@@ -132,20 +132,8 @@ input[type="image"]:focus {
 
 #urli-thank-you {
   width: 100%;
-}
-
-#urli-thank-you-1, #urli-thank-you-2, #urli-thank-you-3 {
-  font-family: cursive;
-  font-style: italic;
-  width: 100%;
-}
-
-#urli-thank-you {
   vertical-align: top;
-  padding-top: 14px;
-  font-size: 1.05em;
-  font-weight: bold;
-  font-style: italic;
+  padding-top: 16px;
 }
 
 #extension-id-div {

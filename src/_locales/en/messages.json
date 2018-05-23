@@ -135,7 +135,7 @@
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_using": { "message": "Thank you for using URLI, the URL Incrementer" },
-  "urli_thank_you_wish": { "message": "Wishing you an Incrementful Day!" },
+  "urli_thank_you_wish": { "message": "URLI wants to wish you an Incrementful Day!" },
   "urli_click_tickles": { "message" : "... tH4T tiCkLeS!" },
 
   "SHARED": { "message": "----- SHARED -----" },
