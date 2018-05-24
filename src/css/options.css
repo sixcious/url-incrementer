@@ -190,3 +190,46 @@ input[type="image"]:focus {
   font-style: italic;
   font-weight: bold;
 }
+
+#urli-thank-you-rainbow {
+  font-size: 1.1em;
+}
+
+/*
+Rainbow color pallete by Icon Bunny @ Iconscout
+https://iconscout.com/icon/rainbow-97 */
+#urli-thank-you-thank {
+  border-bottom: 3px solid #42A5F5;
+}
+
+#urli-thank-you-you {
+  border-bottom: 3px solid #EF5350;
+}
+
+#urli-thank-you-very {
+  border-bottom: 3px solid #FFCA28;
+}
+
+#urli-thank-you-much {
+  border-bottom: 3px solid #66BB6A;
+}
+
+
+#rainbow-border {
+  text-align:center;
+  padding-bottom:5px;
+  background: /* gradient can be an image */
+      linear-gradient(
+          to right,
+          rgba(66, 165, 245, 1) 0%,
+          rgba(239, 83, 80, 1) 33%,
+          rgba(255, 202, 40, 1) 66%,
+          rgba(102, 187, 106, 1) 100%
+          /*rgba(102, 51, 153, 1) 100%*/
+      )
+      /*left*/
+      /*bottom*/
+      /*#777*/
+      no-repeat;
+  background-size:100% 5px ;/* if linear-gradient, we need to resize it */
+}
