@@ -344,13 +344,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Listen for commands (Chrome shortcuts) and perform the command's action
 chrome.commands.onCommand.addListener(function(command) {
-  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "download" || command === "auto" || command === "clear")  {
+  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
     chrome.storage.sync.get(null, function(items) {
       if (!items.permissionsInternalShortcuts) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
           var instance = URLI.Background.getInstance(tabs[0].id);
           if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
-              (command === "download" && instance && instance.downloadEnabled) ||
               (command === "auto" && instance && instance.autoEnabled) ||
               (command === "clear" && instance && instance.enabled)) {
             if (!instance && items.quickEnabled) {

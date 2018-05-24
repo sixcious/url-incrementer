@@ -50,7 +50,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
     else if (keyPressed(event, items_.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
-    else if (keyPressed(event, items_.keyDownload))  { chrome.runtime.sendMessage({greeting: "performAction", action: "download"}); }
   }
 
   /**
@@ -68,7 +67,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
     else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
-    else if (mousePressed(event, items_.mouseDownload))  { chrome.runtime.sendMessage({greeting: "performAction", action: "download"}); }
   }
 
   /**
@@ -121,11 +119,11 @@ chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
     URLI.Shortcuts.setItems(items);
     // Key
-    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && response.instance.enabled))) {
+    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);
     }
     // Mouse
-    if (items.mouseEnabled && (items.mouseQuickEnabled || (response.instance && response.instance.enabled))) {
+    if (items.mouseEnabled && (items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
       document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
     }
   });

@@ -107,6 +107,22 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
+   * TODO
+   * //
+   * @public
+   */
+  function messageListener(request, sender, sendResponse) {
+    switch (request.greeting) {
+      case "updatePopupInstance":
+        if (request.instance && request.instance.tabId === instance.tabId) {
+          instance = request.instance;
+          updateControls();
+        }
+      break;
+    }
+  }
+
+  /**
    * Toggles the popup between the controls and setup views.
    * 
    * @private
@@ -114,7 +130,7 @@ URLI.Popup = URLI.Popup || function () {
   function toggleView() {
     switch (this.id) {
       case "setup-input": // Hide controls, show setup
-        DOM["#controls"].className = "fade-out display-none";
+        DOM["#controls"].className = "display-none";
         DOM["#setup"].className = "display-block fade-in";
         DOM["#url-textarea"].value = instance.url;
         DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
@@ -124,7 +140,7 @@ URLI.Popup = URLI.Popup || function () {
         break;
       case "accept-button": // Hide setup, show controls
       case "cancel-button":
-        DOM["#setup"].className = "fade-out display-none";
+        DOM["#setup"].className = "display-none";
         DOM["#controls"].className = "display-block fade-in";
         updateControls(); // Needed to reset hover.css click effect
         break;
@@ -346,28 +362,6 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     if (items_.leadingZerosPadByDetection) {
       DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
-    }
-  }
-
-  /**
-   * TODO
-   * //
-   * @public
-   */
-  function messageListener(request, sender, sendResponse) {
-    switch (request.greeting) {
-      case "updatePopupInstance":
-      console.log("got a updatePopupInstance message");
-      console.log("popup instance tabId=" + instance.tabId);
-      console.log("req instanceTabId=" + request.instance.tabId);
-      console.log("req instance=" + JSON.stringify(request.instance));
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          console.log("HELLO! inside this if statement now...");
-          instance = request.instance;
-          console.log("popup instance now=" + JSON.stringify(request.instance));
-          updateControls();
-        }
-      break;
     }
   }
 

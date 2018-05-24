@@ -8,9 +8,13 @@
 var URLI = URLI || {};
 
 URLI.NextPrev = function () {
+  
+  // direction > keyword > elementType > matchType
+  
 
   const nextKeywords = ["next", "forward", "&gt;", ">", "new"],
         prevKeywords = ["prev", "previous", "back", "&lt;", "<", "‹", "old"],
+        startsWithExcludes = ["new", "old"],
         urls = {
           "next": {
             "important": new Map(),
@@ -156,7 +160,7 @@ URLI.NextPrev = function () {
     for (let nextKeyword of nextKeywords) {
       if (text === nextKeyword) {
         urls.next[type].equals.set(nextKeyword, href);
-      } else if (text.startsWith(nextKeyword)) {
+      } else if (text.startsWith(nextKeyword) && startsWithExcludes.indexOf(nextKeyword) < 0) {
         urls.next[type].startsWith.set(nextKeyword, href);
       } else if (text.includes(nextKeyword)) {
         urls.next[type].includes.set(nextKeyword, href);
@@ -166,7 +170,7 @@ URLI.NextPrev = function () {
     for (let prevKeyword of prevKeywords) {
       if (text === prevKeyword) {
         urls.prev[type].equals.set(prevKeyword, href);
-      } else if (text.startsWith(prevKeyword)) {
+      } else if (text.startsWith(prevKeyword) && startsWithExcludes.indexOf(prevKeyword) < 0) {
         urls.prev[type].startsWith.set(prevKeyword, href);
       } else if (text.includes(prevKeyword)) {
         urls.prev[type].includes.set(prevKeyword, href);
