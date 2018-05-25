@@ -107,7 +107,7 @@ URLI.Options = URLI.Options || function () {
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#urli-click-count"].addEventListener("click", clickURLI);
+    DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
@@ -181,7 +181,6 @@ URLI.Options = URLI.Options || function () {
         DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
         DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
         DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-        DOM["#urli-click-count"].value = items.urliClickCount;
       }
     });
   }
@@ -356,8 +355,10 @@ URLI.Options = URLI.Options || function () {
   function clickURLI() {
     var face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
     this.value = +this.value + 1;
-    chrome.storage.sync.set({ "urliClickCount": +this.value});
-    URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    //chrome.storage.sync.set({ "urliClickCount": +this.value});
+    //this.className = "hvr-push";
+    URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
+    URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
   }
 
   // Return Public Functions

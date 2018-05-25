@@ -23,7 +23,7 @@ URLI.Background = URLI.Background || function () {
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
     /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
     /* selection */   "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
-    /* fun */         "urliClickCount": 0
+    /* fun */         "urli": 0
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -215,9 +215,10 @@ URLI.Background = URLI.Background || function () {
                         console.log(downloadItem);
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
-                          if (downloadItem.totalBytes <= 0 ||
-                             (!isNaN(instance.downloadMinBytes) && instance.downloadMinBytes > 0 ? (instance.downloadMinBytes * 1048576) >= downloadItem.totalBytes : false) ||
-                             (!isNaN(instance.downloadMaxBytes) && instance.downloadMaxBytes > 0 ? (instance.downloadMaxBytes * 1048576) <= downloadItem.totalBytes : false)) {
+                          if (downloadItem.totalBytes > 0 && (
+                              (!isNaN(instance.downloadMinBytes) && instance.downloadMinBytes > 0 ? (instance.downloadMinBytes * 1048576) >= downloadItem.totalBytes : false) ||
+                              (!isNaN(instance.downloadMaxBytes) && instance.downloadMaxBytes > 0 ? (instance.downloadMaxBytes * 1048576) <= downloadItem.totalBytes : false)
+                            )) {
                             console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
                             console.log("instance minbytes=" + (instance.downloadMinBytes * 1048576) + " --- maxbytes=" + (instance.downloadMaxBytes * 1048576));
                             chrome.downloads.cancel(downloadId);
