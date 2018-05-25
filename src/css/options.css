@@ -133,7 +133,7 @@ input[type="image"]:focus {
 #urli-thank-you {
   width: 100%;
   vertical-align: top;
-  padding-top: 16px;
+  padding-top: 2px;
 }
 
 #extension-id-div {
@@ -193,43 +193,28 @@ input[type="image"]:focus {
 
 #urli-thank-you-rainbow {
   font-size: 1.1em;
+  margin-bottom: 8px;
 }
 
-/*
-Rainbow color pallete by Icon Bunny @ Iconscout
-https://iconscout.com/icon/rainbow-97 */
+#urli-thank-you-rainbow span {
+  padding: 0 2px;
+}
+
+/* Derived from Rainbow color pallete by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
 #urli-thank-you-thank {
-  border-bottom: 3px solid #42A5F5;
+  border-bottom: 3px solid #44A5F5;
 }
 
 #urli-thank-you-you {
-  border-bottom: 3px solid #EF5350;
+  border-bottom: 3px solid #EE5555;
 }
 
 #urli-thank-you-very {
-  border-bottom: 3px solid #FFCA28;
+  border-bottom: 3px solid #FFCC22;
 }
 
 #urli-thank-you-much {
-  border-bottom: 3px solid #66BB6A;
+  border-bottom: 3px solid #66BB6B;
 }
 
-
-#rainbow-border {
-  text-align:center;
-  padding-bottom:5px;
-  background: /* gradient can be an image */
-      linear-gradient(
-          to right,
-          rgba(66, 165, 245, 1) 0%,
-          rgba(239, 83, 80, 1) 33%,
-          rgba(255, 202, 40, 1) 66%,
-          rgba(102, 187, 106, 1) 100%
-          /*rgba(102, 51, 153, 1) 100%*/
-      )
-      /*left*/
-      /*bottom*/
-      /*#777*/
-      no-repeat;
-  background-size:100% 5px ;/* if linear-gradient, we need to resize it */
-}
+/* orange #F77C00 */

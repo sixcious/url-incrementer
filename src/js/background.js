@@ -15,7 +15,7 @@ URLI.Background = URLI.Background || function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsNextPrevEnhanced": false, "permissionsDownload": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
-    /* nextPrev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
+    /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": null, "downloadMinBytes": null, "downloadMaxBytes": null, "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
@@ -255,10 +255,12 @@ URLI.Background = URLI.Background || function () {
             URLI.Auto.clearAutoTimeout(instance);
             URLI.Auto.removeAutoListener();
             // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
-            if (caller !== "popup-clear-before-set") {
-              setBadge(instance.tabId, "clear", true);
-            } else {
-              setBadge(instance.tabId, "default", false);
+            if (caller !== "tabRemovedListener") {
+              if (caller !== "popupClearBeforeSet") {
+                setBadge(instance.tabId, "clear", true);
+              } else {
+                setBadge(instance.tabId, "default", false);
+              }
             }
           }
            // for callers like popup that still need the instance, disable all states
@@ -275,12 +277,94 @@ URLI.Background = URLI.Background || function () {
         break;
     }
     // Icon Feedback
-    if (actionPerformed && caller !== "popup-clear-before-set") {
+    if (actionPerformed && !(caller === "popupClearBeforeSet" || caller === "tabRemovedListener" || instance.autoEnabled)) {
       chrome.storage.sync.get(null, function(items) {
-        if (items.iconFeedbackEnabled && !instance.autoEnabled) {
+        if (items.iconFeedbackEnabled) {
           setBadge(instance.tabId, action, true);
         }
       });
+    }
+  }
+
+  /**
+   * Listen for installation changes and do storage/extension initialization work.
+   */
+  function installedListener(details) {
+    // New Installations: Setup storage and open Options Page in a new tab
+    if (details.reason === "install") {
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.runtime.openOptionsPage();
+        });
+      });
+    }
+    // Update Installations (Below Version 4.4): Reset storage and remove all optional permissions
+    else if (details.reason === "update") {
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          if (chrome.declarativeContent) {
+            chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+          }
+          chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
+        });
+      });
+    }
+  }
+
+  /**
+   * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
+   */
+  function messageListener(request, sender, sendResponse) {
+    var instance;
+    switch (request.greeting) {
+      case "getInstance":
+        sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
+        break;
+      case "performAction":
+        chrome.storage.sync.get(null, function(items) {
+          instance = getInstance(sender.tab.id);
+          if (!instance) {
+            instance = buildInstance(sender.tab, items);
+          }
+          performAction(instance, request.action, "internal-shortcuts");
+        });
+        break;
+      default:
+        break;
+    }
+    sendResponse({});
+  }
+
+  /**
+   * Listen for commands (Browser Extension shortcuts) and perform the command's action.
+   */
+  function commandListener(command) {
+    if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
+      chrome.storage.sync.get(null, function(items) {
+        if (!items.permissionsInternalShortcuts) {
+          chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+            var instance = getInstance(tabs[0].id);
+            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
+                (command === "auto" && instance && instance.autoEnabled) ||
+                (command === "clear" && instance && (instance.enabled || instance.autoEnabled) || instance.downloadEnabled)) {
+              if (!instance && items.quickEnabled) {
+                instance = buildInstance(tabs[0], items);
+              }
+              performAction(instance, command, "commands");
+            }
+          });
+        }
+      });
+    }
+  }
+
+  /**
+   * Listen for when tabs are removed and clear the instances if they exist.
+   */
+  function tabRemovedListener(tabId, removeInfo) {
+    var instance = URLI.Background.getInstance(tabId);
+    if (instance) {
+      performAction(instance, "clear", "tabRemovedListener");
     }
   }
 
@@ -293,80 +377,16 @@ URLI.Background = URLI.Background || function () {
     deleteInstance: deleteInstance,
     buildInstance: buildInstance,
     setBadge: setBadge,
-    performAction: performAction
+    performAction: performAction,
+    installedListener: installedListener,
+    messageListener: messageListener,
+    commandListener: commandListener,
+    tabRemovedListener: tabRemovedListener
   };
 }();
 
-// Listen for installation changes and do storage/extension initialization work
-chrome.runtime.onInstalled.addListener(function(details) {
-  // New Installations: Setup storage and open Options Page in a new tab
-  if (details.reason === "install") {
-    chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(URLI.Background.getSDV(), function() {
-        chrome.runtime.openOptionsPage();
-      });
-    });
-  }
-  // Update Installations (Below Version 4.4): Reset storage and remove all optional permissions
-  else if (details.reason === "update") {
-    chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(URLI.Background.getSDV(), function() {
-        if (chrome.declarativeContent) {
-          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-        }
-        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
-      });
-    });
-  }
-});
-
-// Listen for requests from chrome.runtime.sendMessage (Content Scripts)
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  var instance;
-  switch (request.greeting) {
-    case "getInstance":
-      sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
-      break;
-    case "performAction":
-      chrome.storage.sync.get(null, function(items) {
-        instance = URLI.Background.getInstance(sender.tab.id);
-        if (!instance) {
-          instance = URLI.Background.buildInstance(sender.tab, items);
-        }
-        URLI.Background.performAction(instance, request.action, "internal-shortcuts");
-      });
-      break;
-    default:
-      break;
-  }
-  sendResponse({});
-});
-
-// Listen for commands (Chrome shortcuts) and perform the command's action
-chrome.commands.onCommand.addListener(function(command) {
-  if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
-    chrome.storage.sync.get(null, function(items) {
-      if (!items.permissionsInternalShortcuts) {
-        chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-          var instance = URLI.Background.getInstance(tabs[0].id);
-          if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
-              (command === "auto" && instance && instance.autoEnabled) ||
-              (command === "clear" && instance && instance.enabled)) {
-            if (!instance && items.quickEnabled) {
-              instance = URLI.Background.buildInstance(tabs[0], items);
-            }
-            URLI.Background.performAction(instance, command, "commands");
-          }
-        });
-      }
-    });
-  }
-});
-
-// Listen for when tabs are removed and clear the instances if they exist
-chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-  var instance = URLI.Background.getInstance(tabId);
-  if (instance) {
-    URLI.Background.performAction(instance, "clear", "tabs.onRemoved");
-  }
-});
+// Background Listeners
+chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
+chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
+chrome.commands.onCommand.addListener(URLI.Background.commandListener);
+chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);

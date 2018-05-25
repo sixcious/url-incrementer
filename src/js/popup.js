@@ -98,7 +98,7 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
           refreshDownloadOptions.call(DOM["#download-strategy-select"]);
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-          if (!instance.enabled && items_.popupOpenSetup) {
+          if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
             toggleView.call(DOM["#setup-input"]);
           }
         });
@@ -107,8 +107,8 @@ URLI.Popup = URLI.Popup || function () {
   }
 
   /**
-   * TODO
-   * //
+   * Listen for requests from chrome.runtime.sendMessage (Background)
+   * 
    * @public
    */
   function messageListener(request, sender, sendResponse) {
@@ -156,10 +156,11 @@ URLI.Popup = URLI.Popup || function () {
    */
   function clickActionButton() {
     var action = this.dataset.action;
-    if (((action === "increment" || action === "decrement" || action === "clear") && instance.enabled) ||
+    if (((action === "increment" || action === "decrement") && instance.enabled) ||
         (action === "next" || action === "prev") ||
-        (action === "download" && instance.downloadEnabled) ||
-        (action === "auto" && instance.autoEnabled)) {
+        (action === "clear" && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+        (action === "auto" && instance.autoEnabled) ||
+        (action === "download" && instance.downloadEnabled)) {
       if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
@@ -179,13 +180,13 @@ URLI.Popup = URLI.Popup || function () {
    */
   function updateControls() {
     DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = 
-    DOM["#clear-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
+    DOM["#decrement-input"].className =  instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
+    DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
   }
 
   /**
@@ -239,6 +240,7 @@ URLI.Popup = URLI.Popup || function () {
         downloadMinBytes = +DOM["#download-min-bytes-input"].value,
         downloadMaxBytes = +DOM["#download-max-bytes-input"].value,
         downloadSameDomain = DOM["#download-same-domain-input"].checked,
+        // Increment Decrement Errors
         errors = [ // [0] = selection errors and [1] = interval errors
           // [0] = Selection Errors
           selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
@@ -257,22 +259,55 @@ URLI.Popup = URLI.Popup || function () {
         ],
         downloadErrors = [ // Download Errors
           downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
-        ];
-    // Check Auto First:
-    if (autoEnabled && (autoAction === "next" || autoAction === "prev") && !autoErrors.some(error => error !== "")) {
+        ],
+        errorsExist = errors.some(error => error !== ""),
+        autoErrorsExist = autoErrors.some(error => error !== ""),
+        downloadErrorsExist = downloadErrors.some(error => error !== ""),
+        enabled = !errorsExist && autoEnabled ? (autoAction !== "next" && autoAction !== "prev") : !errorsExist,
+        validated = false;
+        
+/*
+1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
+2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
+3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
+4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
+5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
+6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
+*/
+
+   validated = !autoEnabled && !downloadEnabled ?
+                 !errorsExist :
+               autoEnabled ? 
+                 autoAction === "increment" || autoAction === "decrement" ?
+                   !downloadEnabled ?
+                     !errorsExist && !autoErrorsExist : 
+                     !errorsExist && !autoErrorsExist && !downloadErrorsExist :
+                 //autoAction === "next" || autoAction === "prev"
+                   !downloadEnabled ?
+                     !autoErrorsExist :
+                     !autoErrorsExist && !downloadErrorsExist :
+                 downloadEnabled && !autoEnabled && !downloadErrorsExist;
+                 
+    if (!validated) {
+      if (downloadErrorsExist) {
+      downloadErrors.unshift(chrome.i18n.getMessage("oops_error"));
+      URLI.UI.generateAlert(downloadErrors);
+      } else if (autoErrorsExist) {
+        autoErrors.unshift(chrome.i18n.getMessage("oops_error"));
+        URLI.UI.generateAlert(autoErrors);
+      } else if (errorsExist) {
+        errors.unshift(chrome.i18n.getMessage("oops_error"));
+        URLI.UI.generateAlert(errors);
+      } else {
+        URLI.UI.generateAlert([chrome.i18n.getMessage("oops_error")]);
+      }
     }
-    // Download Errors:
-    if (downloadEnabled && !downloadErrors.some(error => error !== "")) {
-      
-    }
+
     // We can tell there was an error if some of the array slots weren't empty
-    if (errors.some(error => error !== "")) {
-      errors.unshift(chrome.i18n.getMessage("oops_error"));
-      URLI.UI.generateAlert(errors);
-    } else {
+    else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.performAction(instance, "clear", "popup-clear-before-set", function() {
-        instance.enabled = true;
+        backgroundPage.URLI.Background.performAction(instance, "clear", "popupClearBeforeSet", function() {
+        instance.enabled = enabled;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
         instance.interval = interval;
@@ -372,7 +407,6 @@ URLI.Popup = URLI.Popup || function () {
   };
 }();
 
+// Popup Listeners
 document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);
-
-// Listen for requests from chrome.runtime.sendMessage (Background)
 chrome.runtime.onMessage.addListener(URLI.Popup.messageListener);

@@ -92,17 +92,19 @@ URLI.Auto = function () {
   }
   
   function pauseOrResumeAutoTimeout(instance) {
-    if (!instance.autoPaused) {
-      instance.autoPaused = true;
-      instance.autoTimer.pause();
-      URLI.Background.setBadge(instance.tabId, "autopause", false);
-    } else {
-      instance.autoPaused = false;
-      instance.autoTimer.resume();
-      if (instance.autoBadge === "times") {
-        URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
+    if (instance && instance.autoEnabled) {
+      if (!instance.autoPaused) {
+        instance.autoPaused = true;
+        instance.autoTimer.pause();
+        URLI.Background.setBadge(instance.tabId, "autopause", false);
       } else {
-        URLI.Background.setBadge(instance.tabId, "auto", false);
+        instance.autoPaused = false;
+        instance.autoTimer.resume();
+        if (instance.autoBadge === "times") {
+          URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
+        } else {
+          URLI.Background.setBadge(instance.tabId, "auto", false);
+        }
       }
     }
   }
