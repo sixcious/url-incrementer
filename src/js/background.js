@@ -113,7 +113,7 @@ URLI.Background = URLI.Background || function () {
           "interval": items.interval,
           "base": items.base, "baseCase": items.baseCase,
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
-          "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
+          "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
           "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,"downloadIncludes": items.downloadIncludes,
           "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit, "downloadSameDomain": items.downloadSameDomain
     };
@@ -155,6 +155,23 @@ URLI.Background = URLI.Background || function () {
   function performAction(instance, action, caller, callback) {
     var actionPerformed = false,
         urlProps;
+        
+    // Get the most recent instance from Background in case auto has been paused
+    if (instance.autoEnabled) {
+      instance = getInstance(instance.tabId);
+    }
+
+    // Handle autoTimes
+    if (instance.autoEnabled && !instance.autoPaused) {
+      if (instance.autoAction === action) {
+        instance.autoTimes--;
+      } else if ((instance.autoTimes < instance.autoTimesOriginal) &&
+        ((instance.autoAction === "increment" || instance.autoAction === "decrement") && (action === "increment" || action === "decrement")) ||
+        ((instance.autoAction === "next" || instance.autoAction === "prev") && (action === "next" || action === "prev"))) {
+        instance.autoTimes++;
+      }
+    }
+        
     switch (action) {
       case "increment":
       case "decrement":
@@ -181,7 +198,7 @@ URLI.Background = URLI.Background || function () {
               instance.url = results[0];
               chrome.tabs.update(instance.tabId, {url: instance.url});
             }
-            if (instance.autoEnabled) {
+            if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
               setInstance(instance.tabId, instance);
             }
             chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
@@ -268,6 +285,7 @@ URLI.Background = URLI.Background || function () {
               }
             }
           }
+           deleteInstance(instance.tabId);
            // for callers like popup that still need the instance, disable all states
           instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
           instance.autoTimes = items.autoTimes;
@@ -276,7 +294,7 @@ URLI.Background = URLI.Background || function () {
           } else {
              chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
           }
-          deleteInstance(instance.tabId);
+
         });
         break;
       default:

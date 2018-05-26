@@ -349,6 +349,7 @@ URLI.Popup = URLI.Popup || function () {
         instance.leadingZeros = leadingZeros;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
+        instance.autoTimesOriginal = autoTimes;
         instance.autoTimes = autoTimes;
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
@@ -363,6 +364,8 @@ URLI.Popup = URLI.Popup || function () {
         instance.downloadMaxBytes = downloadMaxBytes;
         instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
+        console.log("is there an instance in background after the popup clears it?");
+        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
         // If popup can overwrite settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({

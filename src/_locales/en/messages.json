@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] a URL or go to the Next [>] URL; Supports Auto-Incrementing and Downloading",
+    "message": "Increment [+] a URL or go to the Next [>] URL; Supports Auto- and Download-Incrementing",
     "description": "Extension description."
   },
   "title": {
@@ -80,9 +80,8 @@
   "chrome_shortcuts_h3": { "message": "Chrome Shortcuts" },
   "chrome_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "chrome_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
-  "chrome_shortcuts_p": { "message": "URLI is currently set to use Chrome Shortcuts." },
+  "chrome_shortcuts_p": { "message": "URLI is currently set to use Chrome Shortcuts. Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts instead to fix that. Click the topright button to enable (grant permissions)." },
   "chrome_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
-  "chrome_shortcuts_p2": { "message": "Note: Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts. Click the topright button to enable (grant permissions)." },
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
   "internal_shortcuts_p": { "message": "URLI is currently set to use its internal shortcuts. Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. Left/Middle/Right Mouse Buttons can also be set as shortcuts."},
