@@ -152,6 +152,20 @@ div.column {
   margin-top: 16px;
 }
 
+#auto-eta, #download-experimental {
+  font-size: 0.8em;
+  font-weight: bold;
+  font-style: italic;
+  color: #FF6600;
+  position: absolute;
+  right: 12px;
+  margin-top: -10px;
+}
+
+#download-experimental {
+  color: rebeccapurple;
+}
+
 #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 35px;
 }

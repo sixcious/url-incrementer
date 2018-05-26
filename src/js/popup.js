@@ -11,7 +11,14 @@ URLI.Popup = URLI.Popup || function () {
 
   var instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
-      DOM = {}; // Map to cache DOM elements: key=id, value=element
+      DOM = {}, // Map to cache DOM elements: key=id, value=element
+      AUTO_ETA_I18NS = {
+        "day": chrome.i18n.getMessage("auto_eta_day"),
+        "hour": chrome.i18n.getMessage("auto_eta_hour"), "hours": chrome.i18n.getMessage("auto_eta_hours"),
+        "minute": chrome.i18n.getMessage("auto_eta_minute"), "minutes": chrome.i18n.getMessage("auto_eta_minutes"),
+        "second": chrome.i18n.getMessage("auto_eta_second"), "seconds": chrome.i18n.getMessage("auto_eta_seconds"),
+        "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
+       };
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -50,6 +57,8 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // TODO: This causes a minor bug with trying to use the leading zeros checkbox unfortunately
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
+    DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
     DOM["#download-strategy-select"].addEventListener("change", refreshDownloadOptions);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
@@ -65,38 +74,7 @@ URLI.Popup = URLI.Popup || function () {
           updateControls();
           DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#download-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
           DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
-          DOM["#url-textarea"].value = instance.url;
-          DOM["#selection-input"].value = instance.selection;
-          DOM["#selection-start-input"].value = instance.selectionStart;
-          DOM["#interval-input"].value = instance.interval;
-          DOM["#base-select"].value = instance.base;
-          DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
-          DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
-          DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
-          DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-          DOM["#auto-toggle-input"].checked = instance.autoEnabled;
-          DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
-          DOM["#auto-action-select"].value = instance.autoAction;
-          DOM["#auto-times-input"].value = instance.autoTimes;
-          DOM["#auto-seconds-input"].value = instance.autoSeconds;
-          DOM["#auto-wait-input"].checked = instance.autoWait;
-          DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
-          DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
-          DOM["#download-toggle-input"].checked = instance.downloadEnabled;
-          DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
-          DOM["#download-strategy-select"].value = instance.downloadStrategy;
-          for (let downloadType of instance.downloadTypes) {
-            if (downloadType && downloadType !== "") {
-              DOM["#download-types-" + downloadType + "-input"].checked = true;
-            }
-          }
-          DOM["#download-selector-input"].value = instance.downloadSelector;
-          DOM["#download-includes-input"].value = instance.downloadIncludes;
-          DOM["#download-limit-input"].value = instance.downloadLimit && instance.downloadLimit > 0 ? instance.downloadLimit : "";
-          DOM["#download-min-bytes-input"].value = instance.downloadMinBytes && instance.downloadMinBytes > 0 ? instance.downloadMinBytes : "";
-          DOM["#download-max-bytes-input"].value = instance.downloadMaxBytes && instance.downloadMaxBytes > 0 ? instance.downloadMaxBytes : "";
-          DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
-          refreshDownloadOptions.call(DOM["#download-strategy-select"]);
+          updateSetup();
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
           if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
             toggleView.call(DOM["#setup-input"]);
@@ -117,6 +95,7 @@ URLI.Popup = URLI.Popup || function () {
         if (request.instance && request.instance.tabId === instance.tabId) {
           instance = request.instance;
           updateControls();
+          updateSetup();
         }
       break;
     }
@@ -165,7 +144,7 @@ URLI.Popup = URLI.Popup || function () {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.performAction(instance, action, "popup", function(result) {
+        backgroundPage.URLI.Background.performAction(instance, action, "popupClickActionButton", function(result) {
           instance = result;
           updateControls();
         });
@@ -182,11 +161,64 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className =  instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className =
-    DOM["#prev-input"].className = items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#prev-input"].className = (items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+  }
+  
+  function updateSetup() {
+    DOM["#url-textarea"].value = instance.url;
+    DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+    DOM["#url-textarea"].focus();
+    DOM["#selection-input"].value = instance.selection;
+    DOM["#selection-start-input"].value = instance.selectionStart;
+    DOM["#interval-input"].value = instance.interval;
+    DOM["#base-select"].value = instance.base;
+    DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
+    DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
+    DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
+    DOM["#leading-zeros-input"].checked = instance.leadingZeros;
+    DOM["#auto-toggle-input"].checked = instance.autoEnabled;
+    DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
+    DOM["#auto-action-select"].value = instance.autoAction;
+    DOM["#auto-times-input"].value = instance.autoTimes;
+    DOM["#auto-seconds-input"].value = instance.autoSeconds;
+    DOM["#auto-wait-input"].checked = instance.autoWait;
+    DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
+    updateAutoETA();
+    DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
+    DOM["#download-toggle-input"].checked = instance.downloadEnabled;
+    DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
+    DOM["#download-strategy-select"].value = instance.downloadStrategy;
+    for (let downloadType of instance.downloadTypes) {
+      if (downloadType && downloadType !== "") {
+        DOM["#download-types-" + downloadType + "-input"].checked = true;
+      }
+    }
+    DOM["#download-selector-input"].value = instance.downloadSelector;
+    DOM["#download-includes-input"].value = instance.downloadIncludes;
+    DOM["#download-limit-input"].value = instance.downloadLimit && instance.downloadLimit > 0 ? instance.downloadLimit : "";
+    DOM["#download-min-bytes-input"].value = instance.downloadMinBytes && instance.downloadMinBytes > 0 ? instance.downloadMinBytes : "";
+    DOM["#download-max-bytes-input"].value = instance.downloadMaxBytes && instance.downloadMaxBytes > 0 ? instance.downloadMaxBytes : "";
+    DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
+    refreshDownloadOptions.call(DOM["#download-strategy-select"]);
+  }
+  
+  function updateAutoETA() {
+    var itimes = +DOM["#auto-times-input"].value,
+        iseconds = +DOM["#auto-seconds-input"].value,
+        time = itimes * iseconds,
+        hours = ~~ (time / 3600),
+        minutes = ~~ ((time % 3600) / 60),
+        seconds = time % 60,
+        fhours = hours ? hours + (hours === 1 ? AUTO_ETA_I18NS.hour : AUTO_ETA_I18NS.hours) : "",
+        fminutes = minutes ? minutes + (minutes === 1 ? AUTO_ETA_I18NS.minute : AUTO_ETA_I18NS.minutes) : "",
+        fseconds = seconds ? seconds + (seconds === 1 ? AUTO_ETA_I18NS.second : AUTO_ETA_I18NS.seconds) : "";
+    DOM["#auto-eta-value"].textContent = itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ? instance.autoEnabled ? AUTO_ETA_I18NS.done : AUTO_ETA_I18NS.tbd : 
+                                         time > 86400 ? AUTO_ETA_I18NS.day : 
+                                         fhours + fminutes + fseconds;
   }
 
   /**
@@ -255,7 +287,8 @@ URLI.Popup = URLI.Popup || function () {
         autoErrors = [ // Auto Errors
           autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsNextPrevEnhanced ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
-          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : ""
+          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+          autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : ""
         ],
         downloadErrors = [ // Download Errors
           downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
@@ -331,32 +364,24 @@ URLI.Popup = URLI.Popup || function () {
         instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // If popup can overwrite settings, write to storage
-        if (items_.popupSettingsCanOverwrite) {
+        if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({
             "interval": interval,
             "base": base,
-            "baseCase": baseCase,
-            "autoAction": autoAction,
-            "autoSeconds": autoSeconds,
-            "autoTimes": autoTimes,
-            "autoWait": autoWait,
-            "autoBadge": autoBadge,
-            "downloadStrategy": downloadStrategy,
-            "downloadTypes": downloadTypes,
-            "downloadSelector": downloadSelector,
-            "downloadIncludes": downloadIncludes,
-            "downloadLimit": downloadLimit,
-            "downloadMinBytes": downloadMinBytes,
-            "downloadMaxBytes": downloadMaxBytes,
-            "downloadSameDomain": downloadSameDomain
+            "baseCase": baseCase
           });
-        } else {
+        }
+        if (instance.autoEnabled) {
           chrome.storage.sync.set({
             "autoAction": autoAction,
             "autoSeconds": autoSeconds,
             "autoTimes": autoTimes,
             "autoWait": autoWait,
-            "autoBadge": autoBadge,
+            "autoBadge": autoBadge
+          });
+        }
+        if (instance.downloadEnabled) {
+          chrome.storage.sync.set({
             "downloadStrategy": downloadStrategy,
             "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,

@@ -32,6 +32,8 @@ URLI.AutoTimer = function (callback, delay) {
 
 URLI.Auto = function () {
 
+  const autoTimers = new Map();
+  
   var autoListenerAdded = false;
 
   /**
@@ -52,7 +54,7 @@ URLI.Auto = function () {
    * @public
    */
   function removeAutoListener() {
-    if (![...URLI.Background.getInstances().values()].some(instance => instance.autoEnabled)) {
+    if (![...URLI.Background.getInstances().values()].some(instance => instance && instance.autoEnabled)) {
       chrome.tabs.onUpdated.removeListener(autoListener);
       autoListenerAdded = false;
     }
@@ -65,7 +67,7 @@ URLI.Auto = function () {
    * @public
    */
   function setAutoTimeout(instance) {
-    instance.autoTimer = new URLI.AutoTimer(function() {
+    var autoTimer = new URLI.AutoTimer(function() {
       if (instance.downloadEnabled) {
         URLI.Background.performAction(instance, "download", "auto", function(instance) {
           URLI.Background.performAction(instance, instance.autoAction, "auto");
@@ -74,6 +76,9 @@ URLI.Auto = function () {
         URLI.Background.performAction(instance, instance.autoAction);
       }
     }, instance.autoSeconds * 1000);
+    autoTimers.set(instance.tabId, autoTimer);
+    instance.autoTimes--;
+    URLI.Background.setInstance(instance.tabId, instance);
   }
 
   /**
@@ -85,27 +90,31 @@ URLI.Auto = function () {
    * @public
    */
   function clearAutoTimeout(instance) {
-    if (instance && instance.autoTimer) {
-      instance.autoTimer.clear();
-      delete instance.autoTimer;
+    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    if (autoTimer) {
+      autoTimer.clear();
+      autoTimers.delete(instance.tabId);
     }
   }
   
   function pauseOrResumeAutoTimeout(instance) {
-    if (instance && instance.autoEnabled) {
+    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    if (autoTimer) {
       if (!instance.autoPaused) {
         instance.autoPaused = true;
-        instance.autoTimer.pause();
+        autoTimer.pause();
         URLI.Background.setBadge(instance.tabId, "autopause", false);
       } else {
         instance.autoPaused = false;
-        instance.autoTimer.resume();
+        autoTimer.resume();
         if (instance.autoBadge === "times") {
           URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
         } else {
           URLI.Background.setBadge(instance.tabId, "auto", false);
         }
       }
+      URLI.Background.setInstance(instance.tabId, instance); // update instance.autoPaused boolean state
+      autoTimers.set(instance.tabId, autoTimer); // necessary?
     }
   }
   
@@ -141,7 +150,7 @@ URLI.Auto = function () {
           URLI.Background.setBadge(tabId, "autopause", false);
         }
         else if (instance.autoBadge === "times") {
-          URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes - 1) + "");
+          URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes) + "");
         } else {
           URLI.Background.setBadge(tabId, "auto", false);
         }
@@ -153,9 +162,9 @@ URLI.Auto = function () {
           // TODO
         }
         // Subtract from autoTimes and if it's still greater than 0, set the auto timeout, else delete the instance
-        // Note: We pre-decrement because the first time Auto is already done via Popup calling setAutoTimeout()
-        else if (--instance.autoTimes > 0) {
-          URLI.Background.setInstance(tabId, instance);
+        // Note: Reember, the first time Auto is already done via Popup calling setAutoTimeout()
+        else if (instance.autoTimes > 0) {
+          //URLI.Background.setInstance(tabId, instance);
           clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
           setAutoTimeout(instance);
         } else {

@@ -169,9 +169,7 @@ URLI.Background = URLI.Background || function () {
         if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
           setInstance(instance.tabId, instance);
         }
-        if (callback) {
-          callback(instance);
-        }
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         break;
       case "next":
       case "prev":
@@ -183,9 +181,10 @@ URLI.Background = URLI.Background || function () {
               instance.url = results[0];
               chrome.tabs.update(instance.tabId, {url: instance.url});
             }
-            if (callback) {
-              callback(instance);
+            if (instance.autoEnabled) {
+              setInstance(instance.tabId, instance);
             }
+            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
           });
         });
         break;
@@ -235,12 +234,17 @@ URLI.Background = URLI.Background || function () {
         }
         break;
       case "auto":
+      console.log("in auto action in background.js");
+      console.log("caller=" + caller + " instance.autoPaused=" + instance.autoPaused);
+      console.log(instance);
+      //instance = getInstance(instance.tabId); // popup...bad data?
         URLI.Auto.pauseOrResumeAutoTimeout(instance);
         if (callback) {
           callback(instance);
         } else {
-          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         }
+        
         break;
       case "clear":
         actionPerformed = true;
@@ -266,12 +270,13 @@ URLI.Background = URLI.Background || function () {
           }
            // for callers like popup that still need the instance, disable all states
           instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
-          deleteInstance(instance.tabId);
+          instance.autoTimes = items.autoTimes;
           if (callback) {
             callback(instance);
           } else {
              chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
           }
+          deleteInstance(instance.tabId);
         });
         break;
       default:
@@ -347,11 +352,11 @@ URLI.Background = URLI.Background || function () {
             var instance = getInstance(tabs[0].id);
             if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
                 (command === "auto" && instance && instance.autoEnabled) ||
-                (command === "clear" && instance && (instance.enabled || instance.autoEnabled) || instance.downloadEnabled)) {
+                (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
               if (!instance && items.quickEnabled) {
                 instance = buildInstance(tabs[0], items);
               }
-              performAction(instance, command, "commands");
+              performAction(instance, command, "command");
             }
           });
         }
