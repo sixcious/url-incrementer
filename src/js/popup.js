@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Popup = URLI.Popup || function () {
+URLI.Popup = function () {
 
   var instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
@@ -175,6 +175,7 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
     DOM["#interval-input"].value = instance.interval;
+    DOM["#error-skip-input"].value = instance.errorSkip;
     DOM["#base-select"].value = instance.base;
     DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
@@ -193,15 +194,15 @@ URLI.Popup = URLI.Popup || function () {
     DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
     DOM["#download-strategy-select"].value = instance.downloadStrategy;
     for (let downloadType of instance.downloadTypes) {
-      if (downloadType && downloadType !== "") {
+      if (downloadType && downloadType !== "" && DOM["#download-types-" + downloadType + "-input"]) {
         DOM["#download-types-" + downloadType + "-input"].checked = true;
       }
     }
     DOM["#download-selector-input"].value = instance.downloadSelector;
     DOM["#download-includes-input"].value = instance.downloadIncludes;
-    DOM["#download-limit-input"].value = instance.downloadLimit && instance.downloadLimit > 0 ? instance.downloadLimit : "";
-    DOM["#download-min-bytes-input"].value = instance.downloadMinBytes && instance.downloadMinBytes > 0 ? instance.downloadMinBytes : "";
-    DOM["#download-max-bytes-input"].value = instance.downloadMaxBytes && instance.downloadMaxBytes > 0 ? instance.downloadMaxBytes : "";
+    DOM["#download-excludes-input"].value = instance.downloadExcludes;
+    DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
+    DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
     refreshDownloadOptions.call(DOM["#download-strategy-select"]);
   }
@@ -228,11 +229,11 @@ URLI.Popup = URLI.Popup || function () {
   function refreshDownloadOptions() {
     DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
     DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
-    DOM["#download-includes"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-limit"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-min-bytes"].className = this.value === "page" ? "display-none" : "column fade-in";
-    DOM["#download-max-bytes"].className = this.value === "page" ? "display-none" : "column fade-in";
+    DOM["#download-same-domain"].className =
+    DOM["#download-includes"].className =
+    DOM["#download-excludes"].className =
+    DOM["#download-min-mb"].className =
+    DOM["#download-max-mb"].className = this.value === "page" ? "display-none" : "column fade-in";
   }
   
   /**
@@ -251,6 +252,7 @@ URLI.Popup = URLI.Popup || function () {
         baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
         selectionParsed = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
+        errorSkip = +DOM["#error-skip-input"].value,
         autoEnabled = DOM["#auto-toggle-input"].checked,
         autoAction = DOM["#auto-action-select"].value,
         autoTimes = +DOM["#auto-times-input"].value,
@@ -267,11 +269,11 @@ URLI.Popup = URLI.Popup || function () {
           DOM["#download-types-mp4-input"].checked  ? DOM["#download-types-mp4-input"].value  : ""
         ],
         downloadSelector = DOM["#download-selector-input"].value,
-        downloadIncludes = DOM["#download-includes-input"].value,
-        downloadLimit = +DOM["#download-limit-input"].value,
-        downloadMinBytes = +DOM["#download-min-bytes-input"].value,
-        downloadMaxBytes = +DOM["#download-max-bytes-input"].value,
         downloadSameDomain = DOM["#download-same-domain-input"].checked,
+        downloadIncludes = DOM["#download-includes-input"].value,
+        downloadExcludes = DOM["#download-excludes-input"].value,
+        downloadMinMB = +DOM["#download-min-mb-input"].value,
+        downloadMaxMB = +DOM["#download-max-mb-input"].value,
         // Increment Decrement Errors
         errors = [ // [0] = selection errors and [1] = interval errors
           // [0] = Selection Errors
@@ -282,7 +284,9 @@ URLI.Popup = URLI.Popup || function () {
           parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
           isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
           // [1] Interval Errors
-          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : ""
+          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+          // [2] Error Skip Errors
+          errorSkip < 0 || errorSkip > 10 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
         ],
         autoErrors = [ // Auto Errors
           autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsNextPrevEnhanced ? chrome.i18n.getMessage("auto_next_prev_error") : "",
@@ -347,6 +351,7 @@ URLI.Popup = URLI.Popup || function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
+        instance.errorSkip = errorSkip;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
         instance.autoTimesOriginal = autoTimes;
@@ -359,9 +364,9 @@ URLI.Popup = URLI.Popup || function () {
         instance.downloadTypes = downloadTypes;
         instance.downloadSelector = downloadSelector;
         instance.downloadIncludes = downloadIncludes;
-        instance.downloadLimit = downloadLimit;
-        instance.downloadMinBytes = downloadMinBytes;
-        instance.downloadMaxBytes = downloadMaxBytes;
+        instance.downloadExcludes = downloadExcludes;
+        instance.downloadMinMB = downloadMinMB;
+        instance.downloadMaxMB = downloadMaxMB;
         instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         console.log("is there an instance in background after the popup clears it?");
@@ -371,7 +376,8 @@ URLI.Popup = URLI.Popup || function () {
           chrome.storage.sync.set({
             "interval": interval,
             "base": base,
-            "baseCase": baseCase
+            "baseCase": baseCase,
+            "errorSkip": errorSkip
           });
         }
         if (instance.autoEnabled) {
@@ -388,11 +394,11 @@ URLI.Popup = URLI.Popup || function () {
             "downloadStrategy": downloadStrategy,
             "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,
+            "downloadSameDomain": downloadSameDomain,
             "downloadIncludes": downloadIncludes,
-            "downloadLimit": downloadLimit,
-            "downloadMinBytes": downloadMinBytes,
-            "downloadMaxBytes": downloadMaxBytes,
-            "downloadSameDomain": downloadSameDomain
+            "downloadExcludes": downloadExcludes,
+            "downloadMinMB": downloadMinMB,
+            "downloadMaxMB": downloadMaxMB
           });
         }
         // If permissions granted, send message to content script:

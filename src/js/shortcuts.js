@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Shortcuts = URLI.Shortcuts || function () {
+URLI.Shortcuts = function () {
 
   var FLAG_KEY_ALT = 0x1, // 0001
       FLAG_KEY_CTRL = 0x2, // 0010

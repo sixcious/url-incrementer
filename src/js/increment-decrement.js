@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
+URLI.IncrementDecrement = function () {
 
   /**
    * Finds a selection in the url to increment or decrement depending on the preference.
@@ -72,6 +72,7 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
    * Modifies the URL by either incrementing or decrementing the specified
    * selection.
    *
+   * @param action         the action to perform (increment or decrement)
    * @param url            the URL that will be modified
    * @param selection      the selected part in the URL to modify
    * @param selectionStart the starting index of the selection in the URL
@@ -79,17 +80,16 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
    * @param base           the base to use (the supported base range is 2-36)
    * @param baseCase       the case to use for letters (lowercase or uppercase)
    * @param leadingZeros   if true, pad with leading zeros, false don't pad
-   * @param operation      the mathematical operation to perform (increment or decrement)
    * @return JSON object {urlmod: modified url, selectionmod: modified selection}
    * @public
    */
-  function modifyURL(url, selection, selectionStart, interval, base, baseCase, leadingZeros, operation) {
+  function modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros) {
     var urlmod,
         selectionmod,
         selectionint = parseInt(selection, base); // parseInt base range is 2-36
     // Increment or decrement the selection; if decrement is negative, set to 0 (low bound)
-    selectionmod = operation === "increment" ? (selectionint + interval).toString(base) :
-                   operation === "decrement" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
+    selectionmod = action === "increment" ? (selectionint + interval).toString(base) :
+                   action === "decrement" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                    "";
     if (leadingZeros && selection.length > selectionmod.length) { // Leading 0s
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
@@ -102,9 +102,41 @@ URLI.IncrementDecrement = URLI.IncrementDecrement || function () {
     return {urlmod: urlmod, selectionmod: selectionmod};
   }
 
+  /**
+   * TODO
+   */
+  function modifyURLAndSkipErrors(action, instance, url, selection, selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes) {
+    var origin = document.location.origin,
+        urlOrigin = new URL(url).origin,
+        urlProps = modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros);
+    console.log("errorSkip=" + errorSkip);
+    if (origin === urlOrigin && errorSkip > 0 && errorCodes && errorCodes.length > 0) {
+      console.log("in the IF!!");
+      fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
+        console.log("response.status=" + response.status);
+        console.log("errorCodes=" + errorCodes);
+          if (response && response.status &&
+              ((errorCodes.includes("404") && response.status === 404) ||
+              (errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
+              (errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
+              (errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
+            console.log("response.status was in errorCodes! attempting to skip this URL"); 
+            modifyURLAndSkipErrors(action, urlProps.urlmod, urlProps.selectionmod, selectionStart, interval, base, baseCase, leadingZeros, errorSkip -1, errorCodes);
+          } else {
+            console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
+            chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "urlProps": urlProps});
+          }
+        });
+    } else {
+      console.log("the if check failed, most likely we have exhausted the errorSkip attempts and are just going to send a message to background to updatetab to this URL");
+      chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "urlProps": urlProps});
+    }
+  }
+
   // Return Public Functions
   return {
     findSelection: findSelection,
-    modifyURL: modifyURL
+    modifyURL: modifyURL,
+    modifyURLAndSkipErrors: modifyURLAndSkipErrors
   };
 }();

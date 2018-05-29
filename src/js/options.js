@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Options = URLI.Options || function () {
+URLI.Options = function () {
 
   var DOM = {}, // Map to cache DOM elements: key=id, value=element
       FLAG_KEY_NONE = 0x0, // 0000
@@ -100,6 +100,11 @@ URLI.Options = URLI.Options || function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 10) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
+    DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#next-prev-enhanced-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("nextPrevEnhanced", function(granted) { if (granted) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
     DOM["#next-prev-enhanced-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("nextPrevEnhanced", function(removed) { if (removed) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
@@ -178,6 +183,12 @@ URLI.Options = URLI.Options || function () {
         DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
         DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
         DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+        DOM["#error-skip-input"].value = items.errorSkip;
+        for (let errorCode of items.errorCodes) {
+          if (errorCode && errorCode !== "" && DOM["#error-codes-" + errorCode + "-input"]) {
+            DOM["#error-codes-" + errorCode + "-input"].checked = true;
+          }
+        }
         DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
         DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
         DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
@@ -269,6 +280,15 @@ URLI.Options = URLI.Options || function () {
       if (key[1] && !KEY_MODIFIER_STRING_MAP[key[1]]) { if (keyPressed) { text += " + "; } text += key[1]; }
     }
     input.value = text;
+  }
+
+  function updateErrorCodes() {
+    chrome.storage.sync.set({"errorCodes":
+      [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
+       DOM["#error-codes-3XX-input"].checked ? DOM["#error-codes-3XX-input"].value : "",
+       DOM["#error-codes-4XX-input"].checked ? DOM["#error-codes-4XX-input"].value : "",
+       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : ""]
+    });
   }
 
   /**

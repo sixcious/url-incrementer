@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Permissions = URLI.Permissions || function () {
+URLI.Permissions = function () {
 
   // TODO
   const PERMISSIONS = {

@@ -86,7 +86,7 @@ div.column {
 }
 
 #setup input[type="text"]#selection-input  {
-  width: 152px;
+  width: 140px;
   display: block;
 }
 
@@ -116,7 +116,7 @@ div.column {
 }
 
 #setup #properties div.column:not(:last-child) {
-  padding-right: 50px;
+  padding-right: 30px;
 }
 
 #setup div.column > label, .label-display-block {
@@ -167,11 +167,7 @@ div.column {
 }
 
 #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
-  padding-right: 35px;
-}
-
-#setup #auto #auto-seconds {
-  padding-right: 22px;
+  padding-right: 30px;
 }
 
 #setup #auto #auto-wait-badge {
@@ -202,7 +198,7 @@ div.column {
   vertical-align: bottom;
 }
 
-#download-min-bytes input[type="number"], #download-max-bytes input[type="number"] { /* Keep "MB" next to input */
+#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
   display: inline-block;
   margin-right: 1px;
 }

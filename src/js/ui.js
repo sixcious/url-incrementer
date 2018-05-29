@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.UI = URLI.UI || function () {
+URLI.UI = function () {
 
   /**
    * Generates an alert to display messages.

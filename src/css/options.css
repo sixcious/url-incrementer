@@ -220,3 +220,20 @@ input[type="image"]:focus {
 */
 
 /* orange #F77C00 */
+
+
+#error-skip.column {
+  padding-bottom: 0;
+}
+
+#error-skip-checkboxes div.column {
+  padding: 4px 4px 4px 0;
+}
+
+#error-skip-checkboxes label {
+  padding: 0;
+}
+
+#error-skip-description-p {
+  margin-bottom: 2em;
+}

@@ -7,34 +7,16 @@
 
 var URLI = URLI || {};
 
-URLI.Download = URLI.Download || function () {
+URLI.Download = function () {
 
-  var FILE_DESCRIPTORS = {
-        "jpeg": {
-          "extensions": ["jpg", "jpeg"],
-          "mimeType":   "image/jpeg",
-          "selector":   "[src*='.jpg' i],[href*='.jpg' i],[src*='.jpeg' i],[href*='.jpeg' i]"
-        },
-        "png": {
-          "extensions": ["png"],
-          "mimeType":   "",
-          "selector":   "[src*='.png' i],[href*='.png' i]"
-        },
-        "gif": {
-          "extensions": ["gif"],
-          "mimeType":   "",
-          "selector":   "[src*='.gif' i],[href*='.gif' i]"
-        },
-        "mp3": {
-          "extensions": ["mp3"],
-          "mimeType":   "",
-          "selector":   "[src*='.mp3' i],[href*='.mp3' i]"
-        },
-        "mp4": {
-          "extensions": ["mp4"],
-          "mimeType":   "",
-          "selector":   "[src*='.mp4' i],[href*='.mp4' i]"
-        },
+  var FILE_TYPE_SELECTORS = {
+        "jpeg": "[src*='.jpg' i],[href*='.jpg' i],[src*='.jpeg' i],[href*='.jpeg' i]",
+        "png":  "[src*='.png' i],[href*='.png' i]",
+        "gif":  "[src*='.gif' i],[href*='.gif' i]",
+        "webm": "[src*='.webm' i],[href*='.webm' i]",
+        "mp3":  "[src*='.mp3' i],[href*='.mp3' i]",
+        "mp4":  "[src*='.mp4' i],[href*='.mp4' i]",
+        "zip":  "[src*='.zip' i],[href*='.zip' i]"
       };
 
   /**
@@ -43,12 +25,12 @@ URLI.Download = URLI.Download || function () {
    * @param strategy
    * @param types
    * @param selector
-   * @param path
+   * @param includes
    * @param sameDomainPolicyEnabled
    * @returns {*}
    * @public
    */
-  function findDownloadURLs(strategy, types, selector, path, sameDomainPolicyEnabled) {
+  function findDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled) {
     console.log("findDownloadURLs()" + selector);
     var selectorFromTypes = "",
         i;
@@ -56,15 +38,15 @@ URLI.Download = URLI.Download || function () {
       case "types":
         for (i = 0; i < types.length; i++) {
           console.log("in for... types[i]=" + types[i]);
-          if (types[i] && FILE_DESCRIPTORS[types[i]]) {
+          if (types[i] && FILE_TYPE_SELECTORS[types[i]]) {
             selectorFromTypes += selectorFromTypes !== "" ? "," : "";
-            selectorFromTypes += FILE_DESCRIPTORS[types[i]].selector;
+            selectorFromTypes += FILE_TYPE_SELECTORS[types[i]];
           }
         }
-        return findDownloadURLsBySelector(selectorFromTypes, path, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selectorFromTypes, includes, excludes, sameDomainPolicyEnabled);
         break;
       case "selector":
-        return findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selector, includes, excludes, sameDomainPolicyEnabled);
         break;
       case "page":
         return [document.location.href];
@@ -79,12 +61,12 @@ URLI.Download = URLI.Download || function () {
    * TODO
    *
    * @param selector
-   * @param path
+   * @param includes
    * @param sameDomainPolicyEnabled
    * @returns {*[]}
    * @private
    */
-  function findDownloadURLsBySelector(selector, path, sameDomainPolicyEnabled) {
+  function findDownloadURLsBySelector(selector, includes, excludes, sameDomainPolicyEnabled) {
     var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
         el,
@@ -93,7 +75,7 @@ URLI.Download = URLI.Download || function () {
     console.log("found " + els.length + " links");
     for (el of els) {
       url = el.src ? el.src : el.href ? el.href : "";
-      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) && doesIncludePath(url, path)) {
+      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) && doesInclude(url, includes) && doesExclude(url, excludes)) {
         urls.add(url);
       }
     }
@@ -128,30 +110,36 @@ URLI.Download = URLI.Download || function () {
    * TODO
    *
    * @param url
-   * @param path
+   * @param includes
    * @returns {boolean}
    * @private
    */
-  function doesIncludePath(url, path) {
+  function doesInclude(url, includes) {
     var doesInclude = true;
-    console.log("checking path and url... path =" + path + " url=" + url);
-    if (path && !url.includes(path)) {
-      console.log("found a url that doesn't include the path... :( path=" + path + " , url=" + url);
+    console.log("checking includes and url... includes =" + includes + " url=" + url);
+    if (includes && !url.includes(includes)) {
+      console.log("found a url that doesn't include the includes... :( includes=" + includes + " , url=" + url);
       doesInclude = false;
     }
     return doesInclude;
   }
   
-  function checkSize(url, callback) {
-    new Promise(resolve => {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", url, true);
-      xhr.onreadystatechange = () => {
-        resolve(+xhr.getResponseHeader("Content-Length"));
-        xhr.abort();
-      };
-      xhr.send();
-    }).then(console.log);
+    /**
+   * TODO
+   *
+   * @param url
+   * @param excludes
+   * @returns {boolean}
+   * @private
+   */
+  function doesExclude(url, excludes) {
+    var doesExclude = true;
+    console.log("checking excludes and url... excludes =" + excludes + " url=" + url);
+    if (excludes && url.includes(excludes)) {
+      console.log("found a url that doesn't exclude the excludes... :( excludes=" + excludes + " , url=" + url);
+      doesExclude = false;
+    }
+    return doesExclude;
   }
 
   // Return Public Functions

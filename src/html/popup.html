@@ -47,6 +47,10 @@
               <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
               <input id="interval-input" type="number" min="1"/>
             </div>
+            <div id="error-skip" class="column">
+              <label id="error-skip-label" for="error-skip-input" data-i18n="textContent"></label>
+              <input id="error-skip-input" type="number" min="0" max="10"/>
+            </div>
             <div id="base" class="column">
               <label id="base-label" for="base-select" data-i18n="textContent"></label>
               <select id="base-select">
@@ -182,6 +186,11 @@
                   <input id="download-types-gif-input" value="gif" type="checkbox"/>
                   <span id="download-types-gif-label" data-i18n="textContent"></span>
                 </label>
+                <br/>
+                <label>
+                  <input id="download-types-webm-input" value="webm" type="checkbox"/>
+                  <span id="download-types-webm-label" data-i18n="textContent"></span>
+                </label>
                 <label>
                   <input id="download-types-mp3-input" value="mp3" type="checkbox"/>
                   <span id="download-types-mp3-label" data-i18n="textContent"></span>
@@ -189,6 +198,10 @@
                 <label>
                   <input id="download-types-mp4-input" value="mp4" type="checkbox"/>
                   <span id="download-types-mp4-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="download-types-zip-input" value="zip" type="checkbox"/>
+                  <span id="download-types-zip-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div id="download-selector">
@@ -199,9 +212,9 @@
               <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
               <input id="download-includes-input" type="text" placeholder="e.g. /img/large/"/>
             </div>
-            <div id="download-limit" class="column">
-              <label id="download-limit-label" for="download-limit-input" data-i18n="textContent"></label>
-              <input id="download-limit-input" type="number" min="0" max="1000"/>
+            <div id="download-excludes" class="column">
+              <label id="download-excludes-label" for="download-excludes-input" data-i18n="textContent"></label>
+              <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/"/>
             </div>
           </div>
           <div id="download-row-2" class="row">
@@ -213,14 +226,14 @@
                 </label>
               </div>
             </div>
-            <div id="download-min-bytes" class="column">
-              <label id="download-min-bytes-label" for="download-min-bytes-input" data-i18n="textContent"></label>
-              <input id="download-min-bytes-input" type="number" min="0" max="1000" step="any">
+            <div id="download-min-mb" class="column">
+              <label id="download-min-mb-label" for="download-min-mb-input" data-i18n="textContent"></label>
+              <input id="download-min-mb-input" type="number" min="0" max="1000" step="any">
               <span id="download-megabytes-label*min" data-i18n="textContent"></span>
             </div>
-            <div id="download-max-bytes" class="column">
-              <label id="download-max-bytes-label" for="download-max-bytes-input" data-i18n="textContent"></label>
-              <input id="download-max-bytes-input" type="number" min="0" max="1000" step="any">
+            <div id="download-max-mb" class="column">
+              <label id="download-max-mb-label" for="download-max-mb-input" data-i18n="textContent"></label>
+              <input id="download-max-mb-input" type="number" min="0" max="1000" step="any">
               <span id="download-megabytes-label*max" data-i18n="textContent"></span>
             </div>
           </div>

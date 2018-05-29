@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Background = URLI.Background || function () {
+URLI.Background = function () {
 
   // The storage default values
   // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
@@ -17,11 +17,11 @@ URLI.Background = URLI.Background || function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadLimit": null, "downloadMinBytes": null, "downloadMaxBytes": null, "downloadSameDomain": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadExcludes": "", "downloadMinMB": null, "downloadMaxMB": null, "downloadSameDomain": true,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
-    /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase",
+    /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""],
     /* selection */   "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* fun */         "urli": 0
   },
@@ -112,10 +112,12 @@ URLI.Background = URLI.Background || function () {
           "leadingZeros": items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1,
           "interval": items.interval,
           "base": items.base, "baseCase": items.baseCase,
+          "errorSkip": items.errorSkip, "errorCodes": items.errorCodes,
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
-          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,"downloadIncludes": items.downloadIncludes,
-          "downloadMinBytes": items.downloadMinBytes, "downloadMaxBytes": items.downloadMaxBytes, "downloadLimit": items.downloadLimit, "downloadSameDomain": items.downloadSameDomain
+          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,
+          "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
+          "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB, "downloadSameDomain": items.downloadSameDomain
     };
     if (callback) {
       callback(instance);
@@ -155,6 +157,11 @@ URLI.Background = URLI.Background || function () {
   function performAction(instance, action, caller, callback) {
     var actionPerformed = false,
         urlProps;
+
+    // Reject the action if the instance doesn't exist        
+    if (!instance) {
+      return;
+    }
         
     // Get the most recent instance from Background in case auto has been paused
     if (instance.autoEnabled) {
@@ -178,15 +185,36 @@ URLI.Background = URLI.Background || function () {
         // If URLI didn't find a selection, don't update the tab
         if (instance.selection !== "" && instance.selectionStart >= 0) {
           actionPerformed = true;
-          urlProps = URLI.IncrementDecrement.modifyURL(instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros, action);
-          instance.url = urlProps.urlmod;
-          instance.selection = urlProps.selectionmod;
-          chrome.tabs.update(instance.tabId, {url: instance.url});
+          if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && !(caller === "popupClickActionButton" || caller === "auto")) {
+            chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
+              var code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" + 
+                JSON.stringify(action) + ", " +
+                JSON.stringify(instance) + ", " +
+                JSON.stringify(instance.url) + ", " +
+                JSON.stringify(instance.selection) + ", " +
+                JSON.stringify(instance.selectionStart) + ", " +
+                JSON.parse(instance.interval) + ", " +
+                JSON.parse(instance.base) + ", " +
+                JSON.stringify(instance.baseCase) + ", " +
+                JSON.parse(instance.leadingZeros) + ", " +
+                JSON.parse(instance.errorSkip) + ", " +
+                JSON.stringify(instance.errorCodes) + ");";
+              chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"}, function(results) {
+                console.log("results=");
+                console.log(results);
+              });
+            });
+          } else {
+            urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+            instance.url = urlProps.urlmod;
+            instance.selection = urlProps.selectionmod;
+            chrome.tabs.update(instance.tabId, {url: instance.url});
+            if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+              setInstance(instance.tabId, instance);
+            }
+            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+          }
         }
-        if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-          setInstance(instance.tabId, instance);
-        }
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         break;
       case "next":
       case "prev":
@@ -214,14 +242,11 @@ URLI.Background = URLI.Background || function () {
               JSON.stringify(instance.downloadTypes) + ", " +
               JSON.stringify(instance.downloadSelector) + ", " +
               JSON.stringify(instance.downloadIncludes) + ", " +
+              JSON.stringify(instance.downloadExcludes) + ", " +
               JSON.parse(instance.downloadSameDomain) + ");";
             chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
               if (results && results[0]) {
                 var urls = results[0];
-                if (!isNaN(instance.downloadLimit) && instance.downloadLimit > 0 && instance.downloadLimit < results[0].length) {
-                  urls = results[0].slice(0, instance.downloadLimit);
-                  console.log("limit found and its' lower than results.lenght. instance.downloadLimit=" + instance.downloadLimit + " results.length=" + results[0].length);
-                }
                 for (let url of urls) {
                   console.log("downloading url=" + url);
                   chrome.downloads.download({url: url}, function(downloadId) {
@@ -232,11 +257,11 @@ URLI.Background = URLI.Background || function () {
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
                           if (downloadItem.totalBytes > 0 && (
-                              (!isNaN(instance.downloadMinBytes) && instance.downloadMinBytes > 0 ? (instance.downloadMinBytes * 1048576) >= downloadItem.totalBytes : false) ||
-                              (!isNaN(instance.downloadMaxBytes) && instance.downloadMaxBytes > 0 ? (instance.downloadMaxBytes * 1048576) <= downloadItem.totalBytes : false)
+                              (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) >= downloadItem.totalBytes : false) ||
+                              (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) <= downloadItem.totalBytes : false)
                             )) {
                             console.log("Canceling!!! because totalbytes is " + downloadItem.totalBytes);
-                            console.log("instance minbytes=" + (instance.downloadMinBytes * 1048576) + " --- maxbytes=" + (instance.downloadMaxBytes * 1048576));
+                            console.log("instance min bytes=" + (instance.downloadMinMB * 1048576) + " --- max bytes=" + (instance.downloadMaxMB * 1048576));
                             chrome.downloads.cancel(downloadId);
                           }
                         }
@@ -322,7 +347,7 @@ URLI.Background = URLI.Background || function () {
         });
       });
     }
-    // Update Installations (Below Version 4.4): Reset storage and remove all optional permissions
+    // Update Installations (Below Version 5.0): Reset storage and remove all optional permissions
     else if (details.reason === "update") {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
@@ -347,11 +372,25 @@ URLI.Background = URLI.Background || function () {
       case "performAction":
         chrome.storage.sync.get(null, function(items) {
           instance = getInstance(sender.tab.id);
-          if (!instance) {
+          if (!instance && request.action !== "auto") {
             instance = buildInstance(sender.tab, items);
           }
-          performAction(instance, request.action, "internal-shortcuts");
+          if (instance) {
+            performAction(instance, request.action, "internal-shortcuts");
+          }
         });
+        break;
+      case "incrementDecrementSkipErrors":
+        instance = getInstance(sender.tab.id);
+        if (instance && request.urlProps) {
+            instance.url = request.urlProps.urlmod;
+            instance.selection = request.urlProps.selectionmod;
+            chrome.tabs.update(instance.tabId, {url: instance.url});
+            if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+              setInstance(instance.tabId, instance);
+            }
+            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+        }
         break;
       default:
         break;
