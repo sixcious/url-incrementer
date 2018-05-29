@@ -184,11 +184,10 @@ URLI.Options = function () {
         DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
         DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
         DOM["#error-skip-input"].value = items.errorSkip;
-        for (let errorCode of items.errorCodes) {
-          if (errorCode && errorCode !== "" && DOM["#error-codes-" + errorCode + "-input"]) {
-            DOM["#error-codes-" + errorCode + "-input"].checked = true;
-          }
-        }
+        DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
+        DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
+        DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
+        DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
         DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
         DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
         DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
