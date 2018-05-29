@@ -85,9 +85,15 @@ div.column {
   border-bottom: 1px solid #333333;
 }
 
+/*
 #setup input[type="text"]#selection-input  {
   width: 140px;
   display: block;
+}
+*/
+
+#leading-zeros-pad-label { /* Make font size smaller to fit inside constrained width of Selection */
+  font-size: 0.9em;
 }
 
 #setup input[type="number"] {

@@ -16,14 +16,14 @@ URLI.Permissions = function () {
       "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]},
       "script": {js: ["js/shortcuts.js"]}
     },
-    "nextPrevEnhanced": {
-      "storageKey": "permissionsNextPrevEnhanced",
-      "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]}
-    },
     "download": {
       "storageKey": "permissionsDownload",
       "request": {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]},
       "requestConflict": {permissions: ["downloads"]}
+    },
+    "enhancedMode": {
+      "storageKey": "permissionsEnhancedMode",
+      "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]}
     }
   };
 
@@ -74,9 +74,9 @@ URLI.Permissions = function () {
     }
     // Remove:
     chrome.storage.sync.get(null, function(items) {
-      if ((permission === "internalShortcuts" && !items.permissionsNextPrevEnhanced && !items.permissionsDownload) ||
-          (permission === "nextPrevEnhanced" && !items.permissionsInternalShortcuts && !items.permissionsDownload) ||
-          (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsNextPrevEnhanced)) {
+      if ((permission === "internalShortcuts" && !items.permissionsEnhancedMode && !items.permissionsDownload) ||
+          (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
+          (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) { if (removed) { console.log("PERMISSIONS no conflicts :) phew, removed!" + removed + " - " + PERMISSIONS[permission].request); } });
       } else if (PERMISSIONS[permission].requestConflict) {
         chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) { if (removed) { console.log("PERMISSION CONFLICT ENCOUNTERED!!!! removed!" + removed + " - " + PERMISSIONS[permission].requestConflict); } });

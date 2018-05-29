@@ -191,6 +191,14 @@ input[type="image"]:focus {
   font-weight: bold;
 }
 
+/*#enhanced-mode div.heading {
+  border-bottom-color: #FFCC22;
+}
+
+#enhanced-mode div.heading h3 {
+  color: #FFCC22;
+}*/
+
 #urli-thank-you-rainbow {
   font-size: 1.1em;
   margin-bottom: 8px;

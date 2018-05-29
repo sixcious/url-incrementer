@@ -12,7 +12,7 @@ URLI.Background = function () {
   // The storage default values
   // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsInternalShortcuts": false, "permissionsNextPrevEnhanced": false, "permissionsDownload": false,
+    /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -37,6 +37,7 @@ URLI.Background = function () {
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
     "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
+    "skip":      { "text": "",     "backgroundColor": "#FFCC22" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -106,7 +107,7 @@ URLI.Background = function () {
   function buildInstance(tab, items, callback) {
     var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom),
         instance = {
-          "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+          "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
           "tabId": tab.id, "url": tab.url,
           "selection": selectionProps.selection, "selectionStart": selectionProps.selectionStart,
           "leadingZeros": items.leadingZerosPadByDetection && selectionProps.selection.charAt(0) === '0' && selectionProps.selection.length > 1,
@@ -185,7 +186,7 @@ URLI.Background = function () {
         // If URLI didn't find a selection, don't update the tab
         if (instance.selection !== "" && instance.selectionStart >= 0) {
           actionPerformed = true;
-          if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && !(caller === "popupClickActionButton" || caller === "auto")) {
+          if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
             chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
               var code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" + 
                 JSON.stringify(action) + ", " +
@@ -199,10 +200,8 @@ URLI.Background = function () {
                 JSON.parse(instance.leadingZeros) + ", " +
                 JSON.parse(instance.errorSkip) + ", " +
                 JSON.stringify(instance.errorCodes) + ");";
-              chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"}, function(results) {
-                console.log("results=");
-                console.log(results);
-              });
+              // No callback because this will be executing async code and then sending a message back to the background
+              chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
             });
           } else {
             urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
@@ -385,11 +384,22 @@ URLI.Background = function () {
         if (instance && request.urlProps) {
             instance.url = request.urlProps.urlmod;
             instance.selection = request.urlProps.selectionmod;
-            chrome.tabs.update(instance.tabId, {url: instance.url});
+            chrome.tabs.update(instance.tabId, {url: instance.url}, function(tab) {
+            });
             if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
               setInstance(instance.tabId, instance);
             }
             chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+        }
+        break;
+      case "setBadgeSkipErrors":
+        instance = getInstance(sender.tab.id);
+        console.log("setBadgeSkipErrors!!");
+        console.log("urlprops should have errrocode...");
+        console.log(request.errorCode);
+        if (request.errorCode && !instance.autoEnabled) {
+          console.log("setting badge!");
+          setBadge(sender.tab.id, "skip", true, request.errorCode + "");
         }
         break;
       default:

@@ -105,8 +105,8 @@ URLI.Options = function () {
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#next-prev-enhanced-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("nextPrevEnhanced", function(granted) { if (granted) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
-    DOM["#next-prev-enhanced-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("nextPrevEnhanced", function(removed) { if (removed) { populateValuesFromStorage("nextPrevEnhanced"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
@@ -132,11 +132,11 @@ URLI.Options = function () {
         DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
       }
-      if (values === "all" || values === "nextPrevEnhanced") {
-        DOM["#next-prev-enhanced-disable-button"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-enable-button"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-enable"].className = items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#next-prev-enhanced-disable"].className = !items.permissionsNextPrevEnhanced ? values === "nextPrevEnhanced" ? "display-block fade-in" : "display-block" : "display-none";
+      if (values === "all" || values === "enhancedMode") {
+        DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
       }
       if (values === "all" || values === "download") {
         DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";

@@ -105,10 +105,12 @@ URLI.IncrementDecrement = function () {
   /**
    * TODO
    */
-  function modifyURLAndSkipErrors(action, instance, url, selection, selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes) {
+  function modifyURLAndSkipErrors(action, instance, url, selection, selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodeEncountered) {
     var origin = document.location.origin,
         urlOrigin = new URL(url).origin,
         urlProps = modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros);
+    console.log("instance=");
+    console.log(instance);
     console.log("errorSkip=" + errorSkip);
     if (origin === urlOrigin && errorSkip > 0 && errorCodes && errorCodes.length > 0) {
       console.log("in the IF!!");
@@ -120,8 +122,12 @@ URLI.IncrementDecrement = function () {
               (errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
               (errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
               (errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
+            //setBadgeSkipErrors, only send message the first time an errorCode is encountered
+            if (!errorCodeEncountered) {
+              chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status});
+            }
             console.log("response.status was in errorCodes! attempting to skip this URL"); 
-            modifyURLAndSkipErrors(action, urlProps.urlmod, urlProps.selectionmod, selectionStart, interval, base, baseCase, leadingZeros, errorSkip -1, errorCodes);
+            modifyURLAndSkipErrors(action, instance, urlProps.urlmod, urlProps.selectionmod, selectionStart, interval, base, baseCase, leadingZeros, errorSkip -1, errorCodes, true);
           } else {
             console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
             chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "urlProps": urlProps});

@@ -161,7 +161,7 @@ URLI.Popup = function () {
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className =  instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : "disabled";
     DOM["#next-input"].className =
-    DOM["#prev-input"].className = (items_.permissionsNextPrevEnhanced && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
@@ -289,13 +289,15 @@ URLI.Popup = function () {
           errorSkip < 0 || errorSkip > 10 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
         ],
         autoErrors = [ // Auto Errors
-          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsNextPrevEnhanced ? chrome.i18n.getMessage("auto_next_prev_error") : "",
+          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
           autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : ""
         ],
         downloadErrors = [ // Download Errors
-          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
+          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : "",
+          // TODO: downloadEnabled && downloadStrategy === "types" &&  downloadTypes.includes(""),
+          // TODO: downloadEnabled && downloadStrategy === "selector" && document.querySelectorAll(JSON.stringify(selector)) ? "" : ""
         ],
         errorsExist = errors.some(error => error !== ""),
         autoErrorsExist = autoErrors.some(error => error !== ""),
