@@ -38,7 +38,7 @@ URLI.Shortcuts = function () {
   /**
    * A key event listener for keyboard shortcuts.
    * 
-   * Listens for increment, decrement, next, prev, and clear keyboard shortcuts.
+   * Listens for increment, decrement, next, prev, clear, and auto keyboard shortcuts.
    * 
    * @param event the key event
    * @public
@@ -55,7 +55,7 @@ URLI.Shortcuts = function () {
   /**
    * A mouse event listener for mouse button shortcuts.
    * 
-   * Listens for increment, decrement, next, prev, and clear mouse button shortcuts.
+   * Listens for increment, decrement, next, prev, clear, and auto mouse button shortcuts.
    * 
    * @param event the mouse button event
    * @public

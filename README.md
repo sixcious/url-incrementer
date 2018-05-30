@@ -1,8 +1,6 @@
 # URL Incrementer
 
-URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it, URLI can get you to "page=2" quickly and conveniently. You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially. It has a ton of features, but it is a lightweight extension (under 300KB unzipped!) and its core increment functionality doesn't require any special permissions from you.
-
-To start using URLI right away, click the extension icon and select the number in the URL you want to increment. You can then either toggle on AUTO if you want to let URLI Auto-Increment for you or just hit Accept and increment yourself by pressing the [+] button or using Shortcuts. Tip!: URLI can also increment without needing to click the icon via shortcuts, just make sure "Quick Shortcuts" is checked in the Options.
+URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it, URLI can get you to "page=2" quickly and conveniently. You can start your own web page slideshows with URLI's Auto-Incrementer, or download a series of pages using its unique Download Incrementer (experimental)! You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially.
 
 Features:
 - Auto Incrementing
@@ -11,7 +9,7 @@ Features:
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
-- Many Options (Alphanumeric Incrementing, Selection algorithms, Interval, Leading Zeros, Error Skipping... and so much more)
+- So Many Options (Alphanumeric Incrementing, Selection algorithms, Interval, Leading Zeros, Error Skipping... and so much more)
 - Safe, Open Source, Lightweight (Under 300KB!), NO Ads, NO Bloat, and Requires NO permissions for most functionality
 
 **Download Incrementing is a completely optional and "experimental" feature that is intended to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Increment Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
@@ -23,7 +21,7 @@ I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to us
 If you only use URLI for shortcuts, no worries, nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version. I know this is going to sound cliche, but ... without "U" there is no URLI.
 Thank you (x Infinity) for letting URLI play a small part in your Chrome experience. :)
 
-What's New in Version 5.0 (May 31, 2018)
+What's New in Version 5.0 (June 5, 2018)
 - NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
 - NEW Auto Increment function: Supports Multiple Tabs at the same time and it also has Pause/Resume functionality. No permissions needed. Create your own webpage slideshows on YOUR terms!
 - NEW Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." This feature is completely optional (opt-in) and requires your permissions to enable it.
@@ -40,4 +38,4 @@ What's New in Version 5.0 (May 31, 2018)
 Special Thanks:
 NickMWPrince, Blue, Blue Chan, Will, Adam C, Coolio Wolfus
 
-... AND "U" for using URLI !
+... AND "U" for using URLI!

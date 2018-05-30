@@ -144,7 +144,7 @@
   "error_skip_what": { "message": "What's Error Skipping?" },
   "error_skip_description_p": { "message": "URLI can check if the next URL will return an HTTP error code (like 404) and increment again, skipping it up to 10 times. Set it to 0 to disable it. Note that using this with Auto or UI Buttons requires Enhanced Mode." },
   "next_prev_settings_h3": { "message": "Next Prev Settings" },
-  "next_prev_settings_p": { "message": "Some URLs may not be incrementable, so URLI can look for Next Prev links. To use Next Prev with Auto, enable Enhanced Mode below." },
+  "next_prev_settings_p": { "message": "Some URLs may not have numbers, so URLI can increment using Next Prev links on the page. To use Next Prev with Auto, enable Enhanced Mode below." },
   "next_prev_links_priority_label": { "message": "Links" },
   "next_prev_links_priority_attributes_option": { "message": "Prefer links with attributes like \"rel=next\"" },
   "next_prev_links_priority_innerHTML_option": { "message": "Prefer links with inner HTML like \"Next\" in them" },

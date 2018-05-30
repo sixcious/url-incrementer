@@ -266,7 +266,9 @@ URLI.Popup = function () {
           DOM["#download-types-png-input"].checked  ? DOM["#download-types-png-input"].value  : "",
           DOM["#download-types-gif-input"].checked  ? DOM["#download-types-gif-input"].value  : "",
           DOM["#download-types-mp3-input"].checked  ? DOM["#download-types-mp3-input"].value  : "",
-          DOM["#download-types-mp4-input"].checked  ? DOM["#download-types-mp4-input"].value  : ""
+          DOM["#download-types-mp4-input"].checked  ? DOM["#download-types-mp4-input"].value  : "",
+          DOM["#download-types-webm-input"].checked  ? DOM["#download-types-webm-input"].value  : "",
+          DOM["#download-types-zip-input"].checked  ? DOM["#download-types-zip-input"].value  : ""
         ],
         downloadSelector = DOM["#download-selector-input"].value,
         downloadSameDomain = DOM["#download-same-domain-input"].checked,
