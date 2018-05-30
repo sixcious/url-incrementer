@@ -185,6 +185,13 @@ input[type="image"]:focus {
   color: rebeccapurple;
 }
 
+#download-experimental {
+  color: rebeccapurple;
+  font-size: 0.9em;
+  display: inline-block;
+  margin-left: 6px;
+}
+
 #download-experimental-disclaimer {
   color: rebeccapurple;
   font-style: italic;
