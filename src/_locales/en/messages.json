@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] a URL or go to the Next [>] URL; Supports Auto- and Download-Incrementing",
+    "message": "Increment [+] a URL; Supports Auto-Incrementing and Download-Incrementing",
     "description": "Extension description."
   },
   "title": {
@@ -73,7 +73,7 @@
   "selectionstart_invalid_error": { "message": "Selection position must be from URL" },
   "interval_invalid_error": { "message": "Interval has to be between 1 and Max" },
   "error_skip_invalid_error": { "message": "Error Skip has to be between 0 and 10" },
-  "auto_next_prev_error": { "message": "To use Next [>] Prev [<] with Auto, please first enable Next Prev Enhanced in Options to give URLI permissions" },
+  "auto_next_prev_error": { "message": "To use Next [>] Prev [<] with Auto, please first enable Enhanced Mode in Options to give URLI permissions" },
   "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 1000" },
   "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3600" },
   "auto_eta_toohigh_error": { "message": "Auto ETA needs to be less than 1 Day" },
@@ -84,7 +84,8 @@
   "chrome_shortcuts_h3": { "message": "Chrome Shortcuts" },
   "chrome_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "chrome_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
-  "chrome_shortcuts_p": { "message": "URLI is currently set to use Chrome Shortcuts. Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts instead to fix that. Click the topright button to enable (grant permissions)." },
+  "chrome_shortcuts_p1": { "message": "URLI is currently set to use Chrome Shortcuts." },
+  "chrome_shortcuts_p2": { "message": "Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts instead to use any key you want!" },
   "chrome_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
@@ -140,7 +141,8 @@
   "selection_custom_save_success": { "message": "Saved" },
   "leading_zeros_label": { "message": "Leading Zeros" },
   "leading_zeros_pad_by_detection_label": { "message": "Pad By Detection (Recommended)" },
-  "error_skip_description_p": { "message": "URLI can check if the next URL will return an HTTP error code (like 404) and increment again, skipping it up to 10 times. Auto/Buttons requires Enhanced." },
+  "error_skip_what": { "message": "What's Error Skipping?" },
+  "error_skip_description_p": { "message": "URLI can check if the next URL will return an HTTP error code (like 404) and increment again, skipping it up to 10 times. Set it to 0 to disable it. Note that using this with Auto or UI Buttons requires Enhanced Mode." },
   "next_prev_settings_h3": { "message": "Next Prev Settings" },
   "next_prev_settings_p": { "message": "Some URLs may not be incrementable, so URLI can look for Next Prev links. To use Next Prev with Auto, enable Enhanced Mode below." },
   "next_prev_links_priority_label": { "message": "Links" },

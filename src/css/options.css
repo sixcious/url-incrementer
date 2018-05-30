@@ -252,3 +252,7 @@ input[type="image"]:focus {
 #error-skip-description-p {
   margin-bottom: 2em;
 }
+
+.note {
+/*  font-size: 0.9em;*/
+}
