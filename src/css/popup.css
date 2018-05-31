@@ -143,10 +143,20 @@ div.column {
   margin-right: 12px;
 }
 
-#setup #options-button {
+#options-button {
   position: absolute;
-  right: 12px;
+  right: 16px;
+  bottom: 12px;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
 }
+
+#options-button img {
+  margin-right: -2px;
+  vertical-align: bottom;
+}
+
 
 #setup #extra-toggles {
   position: absolute;
@@ -267,22 +277,6 @@ div.column {
 
 #setup #auto div.column, #setup #download div.column {
   padding-top: 3px;
-}
-
-
-#options-button {
-  font-size: 1.05em;
-  font-weight: bold;
-  font-style: italic;
-  text-transform: uppercase;
-  bottom: 10px;
-  cursor: pointer;
-  padding: 4px;
-}
-
-#options-button img {
-  margin-right: -2px;
-  vertical-align: bottom;
 }
 
 #download-types label {
