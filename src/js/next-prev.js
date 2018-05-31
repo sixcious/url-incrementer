@@ -8,24 +8,19 @@
 var URLI = URLI || {};
 
 URLI.NextPrev = function () {
-  
-  // direction > keyword > elementType > matchType
-  
 
-  const nextKeywords = ["next", "forward", "&gt;", ">", "new"],
-        prevKeywords = ["prev", "previous", "back", "&lt;", "<", "‹", "old"],
-        startsWithExcludes = ["new", "old"],
+        // Keywords are ordered in priority.
+        // startsWithExcludes helps better prioritize some keywords (e.g. we prefer includes of "prev" over startsWith of "back")
+  const keywords = {
+          "next": ["next", "forward", "&gt;", ">", "new"],
+          "prev": ["prev", "previous", "back", "&lt;", "<", "‹", "old"],
+          "startsWithExcludes": ["new", "old", "back"]
+        },
+        // urls store important, attributes, and innerHTML links that were found
         urls = {
-          "next": {
-            "important": new Map(),
-            "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
-            "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
-          },
-          "prev": {
-            "important": new Map(),
-            "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
-            "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
-          }
+          "important": new Map(),
+          "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
+          "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
         };
 
   /**
@@ -39,30 +34,29 @@ URLI.NextPrev = function () {
    * @public
    */
   function getURL(direction, priority, sameDomainPolicyEnabled) {
-    buildURLs(sameDomainPolicyEnabled);
+    buildURLs(direction, sameDomainPolicyEnabled);
     var url = [],
-        keywords = direction === "next" ? nextKeywords : prevKeywords,
         otherPriority = priority === "attributes" ? "innerHTML" : "attributes";
 
-    url[1] = urls[direction].important.get("relAttribute");
+    url[1] = urls.important.get("relAttribute");
     console.log("1url " + direction + " important.relattribute =" + url);
     //if (url) { return url; }
-    url[2] = traverseResults(direction, priority, "equals", keywords);
+    url[2] = traverseResults(priority, "equals", keywords[direction]);
         console.log("2url " + direction + priority + "equals=" + url);
    // if (url) { return url; }
-    url[3] = traverseResults(direction, otherPriority, "equals", keywords);
+    url[3] = traverseResults(otherPriority, "equals", keywords[direction]);
         console.log("3url " + direction + otherPriority + "equals=" + url);
    // if (url) { return url; }
-    url[4] = traverseResults(direction, priority, "startsWith", keywords);
+    url[4] = traverseResults(priority, "startsWith", keywords[direction]);
         console.log("4url=" + direction + priority + "startsWith=" + url);
    // if (url) { return url; }
-       url[5] = traverseResults(direction, priority, "includes", keywords);
+       url[5] = traverseResults(priority, "includes", keywords[direction]);
         console.log("6url=" + direction + priority + "includes=" + url);
    // if (url) { return url; }
-    url[6] = traverseResults(direction, otherPriority, "startsWith", keywords);
+    url[6] = traverseResults(otherPriority, "startsWith", keywords[direction]);
         console.log("5url=" + direction + otherPriority + "startsWith=" + url);
    // if (url) { return url; }
-    url[7] = traverseResults(direction, otherPriority, "includes", keywords);
+    url[7] = traverseResults(otherPriority, "includes", keywords[direction]);
         console.log("7url=" + direction + otherPriority + "includes=" + url);
  //   if (url) { return url; }    
  
@@ -76,11 +70,11 @@ URLI.NextPrev = function () {
   /**
    * TODO
    */
-  function traverseResults(direction, priority, subpriority, keywords) {
+  function traverseResults(priority, subpriority, keywords) {
     var url = undefined;
     for (let keyword of keywords) {
-      if (urls[direction][priority][subpriority].has(keyword)) {
-        url = urls[direction][priority][subpriority].get(keyword);
+      if (urls[priority][subpriority].has(keyword)) {
+        url = urls[priority][subpriority].get(keyword);
         break;
       }
     }
@@ -95,13 +89,13 @@ URLI.NextPrev = function () {
    * @return links the links containing the next and prev links (if any)
    * @private
    */
-  function buildURLs(sameDomainPolicyEnabled) {
+  function buildURLs(direction, sameDomainPolicyEnabled) {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = document.getElementsByTagName("link"),
         anchors = document.links, // Includes all anchor and area elements
         hostname = document.location.hostname;
-    parseElements(links, hostname, sameDomainPolicyEnabled);
-    parseElements(anchors, hostname, sameDomainPolicyEnabled);
+    parseElements(direction, links, hostname, sameDomainPolicyEnabled);
+    parseElements(direction, anchors, hostname, sameDomainPolicyEnabled);
   }
 
   /**
@@ -112,27 +106,23 @@ URLI.NextPrev = function () {
    * @param links    the links object to use
    * @private
    */
-  function parseElements(elements, hostname, sameDomainPolicyEnabled) {
-    var element,
-        attributes,
-        attribute,
-        urlo,
-        i,
-        j;
-    for (i = 0; i < elements.length; i++) {
-      element = elements[i];
+  function parseElements(direction, elements, hostname, sameDomainPolicyEnabled) {
+    var url;
+    for (let element of elements) {
       if (!element.href) {
         continue;
       }
-      urlo = new URL(element.href);
-      if (sameDomainPolicyEnabled && urlo.hostname !== hostname) {
+      try {
+        url = new URL(element.href);
+        if (sameDomainPolicyEnabled && url.hostname !== hostname) {
+          continue;
+        }
+      } catch (e) {
         continue;
       }
-      parseText("innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
-      attributes = element.attributes;
-      for (j = 0; j < attributes.length; j++) {
-        attribute = attributes[j];
-        parseText("attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
+      parseText(direction, "innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
+      for (attribute of element.attributes) {
+        parseText(direction, "attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
       }
     }
   }
@@ -147,33 +137,19 @@ URLI.NextPrev = function () {
    * @param attributeNodeName attribute's node name if it's needed
    * @private
    */
-  function parseText(type, href, text, attributeNodeName) {
-    // Important Priority:
-    if (type === "attributes" && attributeNodeName === "rel") {
-      if (text === "next") {
-        urls.next.important.set("relAttribute", href);
-      } else if (text === "prev") {
-        urls.prev.important.set("relAttribute", href);
-      }
+  function parseText(direction, type, href, text, attributeNodeName) {
+    // Important Priority (e.g. rel="next" or rel="prev"):
+    if (type === "attributes" && attributeNodeName === "rel" && direction === text) {
+      urls.important.set("relAttribute", href);
     }
-    // Attributes & innerHTML Next:
-    for (let nextKeyword of nextKeywords) {
-      if (text === nextKeyword) {
-        urls.next[type].equals.set(nextKeyword, href);
-      } else if (text.startsWith(nextKeyword) && startsWithExcludes.indexOf(nextKeyword) < 0) {
-        urls.next[type].startsWith.set(nextKeyword, href);
-      } else if (text.includes(nextKeyword)) {
-        urls.next[type].includes.set(nextKeyword, href);
-      }
-    }
-    // Attributes & innerHTML Prev:
-    for (let prevKeyword of prevKeywords) {
-      if (text === prevKeyword) {
-        urls.prev[type].equals.set(prevKeyword, href);
-      } else if (text.startsWith(prevKeyword) && startsWithExcludes.indexOf(prevKeyword) < 0) {
-        urls.prev[type].startsWith.set(prevKeyword, href);
-      } else if (text.includes(prevKeyword)) {
-        urls.prev[type].includes.set(prevKeyword, href);
+    // Attributes & innerHTML:
+    for (let keyword of keywords[direction]) {
+      if (text === keyword) {
+        urls[type].equals.set(keyword, href);
+      } else if (text.startsWith(keyword) && keywords.startsWithExcludes.indexOf(keyword) < 0) {
+        urls[type].startsWith.set(keyword, href);
+      } else if (text.includes(keyword)) {
+        urls[type].includes.set(keyword, href);
       }
     }
   }
