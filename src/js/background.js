@@ -251,10 +251,18 @@ URLI.Background = function () {
                   chrome.downloads.download({url: url}, function(downloadId) {
                     chrome.downloads.search({id: downloadId}, function(results) {
                       const downloadItem = results ? results[0] : undefined;
+                      const MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "video/webm", "audio/mpeg", "audio/mp3", "video/mp4", "application/zip"];
                       if (downloadItem) {
                         console.log(downloadItem);
+                        console.log("mime=" + downloadItem.mime);
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
+                          if (true && instance.downloadStrategy === "types") {
+                            if (!MIME_TYPES.includes(downloadItem.mime)) {
+                              console.log("Cancelking@@@ because download mime isnt in mmime types, it is=" + downloadItem.mime);
+                              chrome.downloads.cancel(downloadId);
+                            }
+                          }
                           if (downloadItem.totalBytes > 0 && (
                               (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) >= downloadItem.totalBytes : false) ||
                               (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) <= downloadItem.totalBytes : false)
