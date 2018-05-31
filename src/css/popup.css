@@ -284,3 +284,7 @@ div.column {
   margin-right: -2px;
   vertical-align: bottom;
 }
+
+#download-types label {
+  margin-right: 4px;
+}

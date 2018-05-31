@@ -59,6 +59,7 @@
   "download_types_wmv_label": { "message": "wmv" },
   "download_types_zip_label": { "message": "zip" },
   "download_same_domain_label": { "message": "Only download same-domain links" },
+  "download_enforce_mime_label": { "message": "Ensure mime matches type" },
   "download_includes_label": { "message": "Links Include Path?" },
   "download_excludes_label": { "message": "Links Exclude Path?" },
   "download_min_mb_label": { "message": "Min File Size?" },

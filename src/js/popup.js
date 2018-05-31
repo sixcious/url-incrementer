@@ -199,11 +199,12 @@ URLI.Popup = function () {
       }
     }
     DOM["#download-selector-input"].value = instance.downloadSelector;
+    DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
+    DOM["#download-enforce-mime-input"].checked = instance.downloadEnforceMime;
     DOM["#download-includes-input"].value = instance.downloadIncludes;
     DOM["#download-excludes-input"].value = instance.downloadExcludes;
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
     refreshDownloadOptions.call(DOM["#download-strategy-select"]);
   }
   
@@ -227,7 +228,8 @@ URLI.Popup = function () {
    * @private
    */
   function refreshDownloadOptions() {
-    DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
+    DOM["#download-types"].className =
+    DOM["#download-enforce-mime"].className = this.value === "types" ? "display-block fade-in" : "display-none";
     DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
     DOM["#download-same-domain"].className =
     DOM["#download-includes"].className =
@@ -272,6 +274,7 @@ URLI.Popup = function () {
         ],
         downloadSelector = DOM["#download-selector-input"].value,
         downloadSameDomain = DOM["#download-same-domain-input"].checked,
+        downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
         downloadIncludes = DOM["#download-includes-input"].value,
         downloadExcludes = DOM["#download-excludes-input"].value,
         downloadMinMB = +DOM["#download-min-mb-input"].value,
@@ -367,11 +370,12 @@ URLI.Popup = function () {
         instance.downloadStrategy = downloadStrategy;
         instance.downloadTypes = downloadTypes;
         instance.downloadSelector = downloadSelector;
+        instance.downloadSameDomain = downloadSameDomain;
+        instance.downloadEnforceMime = downloadEnforceMime;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
-        instance.downloadSameDomain = downloadSameDomain;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         console.log("is there an instance in background after the popup clears it?");
         console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
@@ -399,6 +403,7 @@ URLI.Popup = function () {
             "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,
             "downloadSameDomain": downloadSameDomain,
+            "downloadEnforceMime": downloadSameDomain,
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,

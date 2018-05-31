@@ -105,37 +105,39 @@ URLI.IncrementDecrement = function () {
   /**
    * TODO
    */
-  function modifyURLAndSkipErrors(action, instance, url, selection, selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodeEncountered) {
+  function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
     var origin = document.location.origin,
-        urlOrigin = new URL(url).origin,
-        urlProps = modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros);
+        urlOrigin = new URL(instance.url).origin,
+        urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+    instance.url = urlProps.urlmod;
+    instance.selection = urlProps.selectionmod;
     console.log("instance=");
     console.log(instance);
-    console.log("errorSkip=" + errorSkip);
-    if (origin === urlOrigin && errorSkip > 0 && errorCodes && errorCodes.length > 0) {
+    console.log("errorSkipReamining=" + errorSkipRemaining);
+    if (origin === urlOrigin && errorSkipRemaining > 0 && instance.errorCodes && instance.errorCodes.length > 0) {
       console.log("in the IF!!");
       fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
         console.log("response.status=" + response.status);
-        console.log("errorCodes=" + errorCodes);
+        console.log("errorCodes=" + instance.errorCodes);
           if (response && response.status &&
-              ((errorCodes.includes("404") && response.status === 404) ||
-              (errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
-              (errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
-              (errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
+              ((instance.errorCodes.includes("404") && response.status === 404) ||
+              (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
+              (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
+              (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
             //setBadgeSkipErrors, only send message the first time an errorCode is encountered
             if (!errorCodeEncountered) {
-              chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status});
+              chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
             }
-            console.log("response.status was in errorCodes! attempting to skip this URL"); 
-            modifyURLAndSkipErrors(action, instance, urlProps.urlmod, urlProps.selectionmod, selectionStart, interval, base, baseCase, leadingZeros, errorSkip -1, errorCodes, true);
+            console.log("response.status was in errorCodes! attempting to skip this URL");
+            modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
           } else {
             console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
-            chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "urlProps": urlProps});
+            chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
           }
         });
     } else {
       console.log("the if check failed, most likely we have exhausted the errorSkip attempts and are just going to send a message to background to updatetab to this URL");
-      chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "urlProps": urlProps});
+      chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
     }
   }
 

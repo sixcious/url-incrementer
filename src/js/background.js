@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": "", "downloadExcludes": "", "downloadMinMB": null, "downloadMaxMB": null, "downloadSameDomain": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadSameDomain": true, "downloadEnforceMime": true, "downloadIncludes": "", "downloadExcludes": "", "downloadMinMB": null, "downloadMaxMB": null,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
@@ -117,8 +117,9 @@ URLI.Background = function () {
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
           "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,
+          "downloadSameDomain": items.downloadSameDomain, "downloadEnforceMime": items.downloadEnforceMime,
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
-          "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB, "downloadSameDomain": items.downloadSameDomain
+          "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB
     };
     if (callback) {
       callback(instance);
@@ -187,23 +188,17 @@ URLI.Background = function () {
         if (instance.selection !== "" && instance.selectionStart >= 0) {
           actionPerformed = true;
           if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
+            console.log("doing error skipping");
             chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
               var code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" + 
                 JSON.stringify(action) + ", " +
                 JSON.stringify(instance) + ", " +
-                JSON.stringify(instance.url) + ", " +
-                JSON.stringify(instance.selection) + ", " +
-                JSON.stringify(instance.selectionStart) + ", " +
-                JSON.parse(instance.interval) + ", " +
-                JSON.parse(instance.base) + ", " +
-                JSON.stringify(instance.baseCase) + ", " +
-                JSON.parse(instance.leadingZeros) + ", " +
-                JSON.parse(instance.errorSkip) + ", " +
-                JSON.stringify(instance.errorCodes) + ");";
+                JSON.parse(instance.errorSkip) + ");";
               // No callback because this will be executing async code and then sending a message back to the background
               chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
             });
           } else {
+            console.log("NOT  doing error skipping");
             urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
             instance.url = urlProps.urlmod;
             instance.selection = urlProps.selectionmod;
@@ -257,7 +252,7 @@ URLI.Background = function () {
                         console.log("mime=" + downloadItem.mime);
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
-                          if (true && instance.downloadStrategy === "types") {
+                          if (instance.downloadEnforceMime && instance.downloadStrategy === "types") {
                             if (!MIME_TYPES.includes(downloadItem.mime)) {
                               console.log("Cancelking@@@ because download mime isnt in mmime types, it is=" + downloadItem.mime);
                               chrome.downloads.cancel(downloadId);
@@ -388,24 +383,21 @@ URLI.Background = function () {
         });
         break;
       case "incrementDecrementSkipErrors":
-        instance = getInstance(sender.tab.id);
-        if (instance && request.urlProps) {
-            instance.url = request.urlProps.urlmod;
-            instance.selection = request.urlProps.selectionmod;
-            chrome.tabs.update(instance.tabId, {url: instance.url}, function(tab) {
-            });
-            if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-              setInstance(instance.tabId, instance);
+        //instance = getInstance(sender.tab.id);
+        if (request.instance) {
+            chrome.tabs.update(request.instance.tabId, {url: request.instance.url});
+            if (request.instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+              setInstance(request.instance.tabId, request.instance);
             }
-            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
         }
         break;
       case "setBadgeSkipErrors":
-        instance = getInstance(sender.tab.id);
+        //instance = getInstance(sender.tab.id);
         console.log("setBadgeSkipErrors!!");
         console.log("urlprops should have errrocode...");
         console.log(request.errorCode);
-        if (request.errorCode && !instance.autoEnabled) {
+        if (request.errorCode && request.instance && !request.instance.autoEnabled) {
           console.log("setting badge!");
           setBadge(sender.tab.id, "skip", true, request.errorCode + "");
         }
