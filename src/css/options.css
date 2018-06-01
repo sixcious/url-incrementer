@@ -194,8 +194,6 @@ input[type="image"]:focus {
 
 #download-experimental-disclaimer {
   color: rebeccapurple;
-  font-style: italic;
-  font-weight: bold;
 }
 
 /*#enhanced-mode div.heading {
@@ -255,4 +253,15 @@ input[type="image"]:focus {
 
 .note {
 /*  font-size: 0.9em;*/
+}
+
+.rainbow-underline:after {
+  content: '';
+  display: block;
+  margin-top: 2px;
+  height: 2px;
+  background: linear-gradient(
+      to right,
+      #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
+  );
 }

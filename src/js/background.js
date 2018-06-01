@@ -37,7 +37,7 @@ URLI.Background = function () {
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
     "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":      { "text": "",     "backgroundColor": "#FFCC22" },
+    "skip":      { "text": "",     "backgroundColor": "#000000" }, //"#FFCC22" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -104,7 +104,7 @@ URLI.Background = function () {
    * @return instance the newly built instance
    * @public
    */
-  function buildInstance(tab, items, callback) {
+  function buildInstance(tab, items) {
     var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom),
         instance = {
           "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
@@ -121,9 +121,6 @@ URLI.Background = function () {
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
           "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB
     };
-    if (callback) {
-      callback(instance);
-    }
     return instance;
   }
 

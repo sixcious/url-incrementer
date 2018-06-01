@@ -17,7 +17,7 @@ h3, :-webkit-any(.checkbox, .radio) label input ~ span {
 
 :-webkit-any(.checkbox, .radio) label input ~ span{
   -webkit-margin-start: 0.3em;
-  font-size: 0.95em;
+  /*font-size: 0.95em;*/
 }
 
 /* Native elements styles */

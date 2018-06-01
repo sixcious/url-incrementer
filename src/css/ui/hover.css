@@ -248,16 +248,3 @@
 
 
 
-.rainbow-underline:after, .rainbow-underline-hover:hover:after {
-  content: '';
-  /* position: absolute;*/
-  bottom: 0;
-  left: 0;
-  /*  width: 100%;*/
-  display: block;
-  height: 2px;
-  background: linear-gradient(
-      to right,
-      #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
-  );
-}

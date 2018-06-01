@@ -10,25 +10,26 @@ var URLI = URLI || {};
 // The AutoTimer function is based on code written by Tim Down at StackOverflow
 // https://stackoverflow.com/a/3969760
 URLI.AutoTimer = function (callback, delay) {
+
   var timerId, start, remaining = delay;
 
   this.pause = function() {
     window.clearTimeout(timerId);
-    remaining -= new Date() - start;
+    remaining -= Date.now() - start;
   };
 
   this.resume = function() {
-    start = new Date();
+    start = Date.now();
     window.clearTimeout(timerId);
     timerId = window.setTimeout(callback, remaining);
   };
 
   this.clear = function() {
     window.clearTimeout(timerId);
-  }
+  };
 
   this.resume();
-}
+};
 
 URLI.Auto = function () {
 
