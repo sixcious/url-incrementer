@@ -15,6 +15,11 @@ h3, :-webkit-any(.checkbox, .radio) label input ~ span {
   -webkit-user-select: initial;
 }
 
+:-webkit-any(.checkbox, .radio) label input ~ span{
+  -webkit-margin-start: 0.3em;
+  font-size: 0.95em;
+}
+
 /* Native elements styles */
 
 body {
@@ -92,9 +97,7 @@ div.column {
 }
 */
 
-#leading-zeros-pad-label { /* Make font size smaller to fit inside constrained width of Selection */
-  font-size: 0.9em;
-}
+
 
 #setup input[type="number"] {
   width: 52px;
@@ -109,9 +112,9 @@ div.column {
   width: 100%;
   color: #777777;
   word-break: break-all;
-  max-width: 520px;
+  max-width: 512px;
   max-height: 90px;
-  min-width: 520px;
+  min-width: 512px;
   min-height: 41px;
 }
 
@@ -125,8 +128,12 @@ div.column {
   padding-top: 7px;
 }
 
+#properties {
+  margin-bottom: 16px;
+}
+
 #setup #properties div.column:not(:last-child) {
-  padding-right: 30px;
+  padding-right: 27px;
 }
 
 #setup div.column > label, .label-display-block {
@@ -135,7 +142,6 @@ div.column {
 }
 
 #setup .setup-buttons {
-  margin-top: 24px;
   text-align: center;
 }
 
@@ -157,7 +163,6 @@ div.column {
   vertical-align: bottom;
 }
 
-
 #setup #extra-toggles {
   position: absolute;
   left: 12px;
@@ -169,7 +174,7 @@ div.column {
 }
 
 #setup #auto, #setup #download {
-  margin-top: 16px;
+  margin-bottom: 24px;
 }
 
 #auto-eta, #download-experimental {
@@ -254,9 +259,8 @@ div.column {
 #download-experimental-disclaimer {
   margin-top: 8px;
   color: #663399;
-  font-size: 1.05em;
   font-style: italic;
-  font-weight: bold;
+
 }
 
 #setup h3#setup-h3 {
