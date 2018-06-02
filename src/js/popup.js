@@ -62,6 +62,9 @@ URLI.Popup = function () {
     DOM["#download-strategy-select"].addEventListener("change", refreshDownloadOptions);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#download-preview-button"].addEventListener("click", toggleView);
+    DOM["#download-preview-update-button"].addEventListener("click", previewDownload);
+    DOM["#download-preview-back-button"].addEventListener("click", toggleView);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -122,6 +125,23 @@ URLI.Popup = function () {
         DOM["#setup"].className = "display-none";
         DOM["#controls"].className = "display-block fade-in";
         updateControls(); // Needed to reset hover.css click effect
+        break;
+      case "download-preview-button":
+        DOM["#increment-decrement"].className = "display-none";
+        DOM["#setup-buttons"].className = "display-none";
+        DOM["#auto"].className = "display-none";
+        DOM["#download-preview-button"].className = "display-none";
+        DOM["#download-preview-update-button"].className = "display-block fade-in";
+        DOM["#download-preview"].className = "display-block fade-in";
+        previewDownload();
+        break;
+      case "download-preview-back-button":
+        DOM["#increment-decrement"].className = "display-block fade-in";
+        DOM["#setup-buttons"].className = "display-block fade-in";
+        DOM["#auto"].className =  DOM["#auto-toggle-input"].checked ? "display-block fade-in" : "display-none";
+        DOM["#download-preview-update-button"].className = "display-none";
+        DOM["#download-preview-button"].className = "display-block fade-in";
+        DOM["#download-preview"].className = "display-none";
         break;
       default:
         break;
@@ -199,10 +219,10 @@ URLI.Popup = function () {
       }
     }
     DOM["#download-selector-input"].value = instance.downloadSelector;
-    DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
-    DOM["#download-enforce-mime-input"].checked = instance.downloadEnforceMime;
-    DOM["#download-includes-input"].value = instance.downloadIncludes;
-    DOM["#download-excludes-input"].value = instance.downloadExcludes;
+    //DOM["#download-same-domain-input"].checked = instance.downloadSameDomain;
+    //DOM["#download-enforce-mime-input"].checked = instance.downloadEnforceMime;
+    DOM["#download-includes-input"].value = instance.downloadIncludes ? instance.downloadIncludes.join(",") : "";
+    DOM["#download-excludes-input"].value = instance.downloadExcludes ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     refreshDownloadOptions.call(DOM["#download-strategy-select"]);
@@ -229,13 +249,54 @@ URLI.Popup = function () {
    */
   function refreshDownloadOptions() {
     DOM["#download-types"].className =
-    DOM["#download-enforce-mime"].className = this.value === "types" ? "display-block fade-in" : "display-none";
-    DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
-    DOM["#download-same-domain"].className =
-    DOM["#download-includes"].className =
-    DOM["#download-excludes"].className =
-    DOM["#download-min-mb"].className =
-    DOM["#download-max-mb"].className = this.value === "page" ? "display-none" : "column fade-in";
+    //DOM["#download-enforce-mime"].className = 
+    DOM["#download-tips-types-div"].className = this.value === "types" ? "display-block fade-in" : "display-none";
+    DOM["#download-selector"].className = 
+    DOM["#download-tips-selector-div"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
+    DOM["#download-tips-page-div"].className = this.value === "page" ? "display-block fade-in" : "display-none";
+    //DOM["#download-same-domain"].className = this.value === "page" ? "display-none" : "display-block fade-in";
+    DOM["#download-optional"].className = this.value === "page" ? "display-none" : "column fade-in";
+  }
+  
+  function previewDownload() {
+    DOM["#download-preview-list"].innerHTML = "Updating preview ...";
+    var downloadStrategy = DOM["#download-strategy-select"].value,
+        downloadTypes = [
+          DOM["#download-types-jpeg-input"].checked ? DOM["#download-types-jpeg-input"].value : "",
+          DOM["#download-types-png-input"].checked  ? DOM["#download-types-png-input"].value  : "",
+          DOM["#download-types-gif-input"].checked  ? DOM["#download-types-gif-input"].value  : "",
+          DOM["#download-types-mp3-input"].checked  ? DOM["#download-types-mp3-input"].value  : "",
+          DOM["#download-types-mp4-input"].checked  ? DOM["#download-types-mp4-input"].value  : "",
+          DOM["#download-types-webm-input"].checked  ? DOM["#download-types-webm-input"].value  : "",
+          DOM["#download-types-zip-input"].checked  ? DOM["#download-types-zip-input"].value  : ""
+        ],
+        downloadSelector = DOM["#download-selector-input"].value,
+        //downloadSameDomain = DOM["#download-same-domain-input"].checked,
+        //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
+        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",") : [],
+        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [];
+
+        chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+      var code = "URLI.Download.previewDownloadURLs(" + 
+        JSON.stringify(downloadStrategy) + ", " +
+        JSON.stringify(downloadTypes) + ", " +
+        JSON.stringify(downloadSelector) + ", " +
+        JSON.stringify(downloadIncludes) + ", " +
+        JSON.stringify(downloadExcludes) + ", " +
+        JSON.parse(false) + ");";
+      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+        if (results && results[0] && results[0].good && results[0].good.length > 0) {
+          var urls = "Downloading " + results[0].good.length + " URLs<br/><br/>", i = 1;
+          urls += "<table><thead><tr><th>#</th><th>URL</th></tr></thead><tbody>";
+          for (url of results[0].good) {
+            urls += "<tr><td>" + (i++) + "</td><td>" + url  + "</td></tr>";
+          }
+          urls += "</tbody></table>";
+          DOM["#download-preview-list"].innerHTML = urls;
+        } else { DOM["#download-preview-list"].innerHTML = "NO RESULTS, sad panda :(";
+        }
+      });
+        });
   }
   
   /**
@@ -273,10 +334,10 @@ URLI.Popup = function () {
           DOM["#download-types-zip-input"].checked  ? DOM["#download-types-zip-input"].value  : ""
         ],
         downloadSelector = DOM["#download-selector-input"].value,
-        downloadSameDomain = DOM["#download-same-domain-input"].checked,
-        downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
-        downloadIncludes = DOM["#download-includes-input"].value,
-        downloadExcludes = DOM["#download-excludes-input"].value,
+        //downloadSameDomain = DOM["#download-same-domain-input"].checked,
+        //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
+        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",") : [],
+        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [];
         downloadMinMB = +DOM["#download-min-mb-input"].value,
         downloadMaxMB = +DOM["#download-max-mb-input"].value,
         // Increment Decrement Errors
@@ -370,8 +431,8 @@ URLI.Popup = function () {
         instance.downloadStrategy = downloadStrategy;
         instance.downloadTypes = downloadTypes;
         instance.downloadSelector = downloadSelector;
-        instance.downloadSameDomain = downloadSameDomain;
-        instance.downloadEnforceMime = downloadEnforceMime;
+        //instance.downloadSameDomain = downloadSameDomain;
+        //instance.downloadEnforceMime = downloadEnforceMime;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
@@ -402,8 +463,8 @@ URLI.Popup = function () {
             "downloadStrategy": downloadStrategy,
             "downloadTypes": downloadTypes,
             "downloadSelector": downloadSelector,
-            "downloadSameDomain": downloadSameDomain,
-            "downloadEnforceMime": downloadSameDomain,
+            //"downloadSameDomain": downloadSameDomain,
+            //"downloadEnforceMime": downloadSameDomain,
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,

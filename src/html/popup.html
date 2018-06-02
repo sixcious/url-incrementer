@@ -21,88 +21,90 @@
       </div>
     </div>
     <div id="setup" class="display-none">
-      <h3 id="setup-h3">
-        <img src="../img/font-awesome/black/mouse-pointer.png" alt="" width="12" height="12"/>
-        <span id="setup-h3-label" data-i18n="textContent"></span>
-      </h3>
-      <div id="url">
-        <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
-        <textarea id="url-textarea" readonly="readonly"></textarea>
-      </div>
-      <div id="properties">
-        <div class="table">
-          <div class="row">
-            <div id="selection" class="column">
-              <label id="selection-label" for="selection-input" data-i18n="textContent"></label>
-              <input id="selection-input" type="text" readonly="readonly"/>
-              <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
-              <div class="checkbox">
-                <label>
-                  <input id="leading-zeros-input" type="checkbox"/>
-                  <span id="leading-zeros-pad-label" data-i18n="textContent"></span>
-                </label>
-              </div>
-            </div>
-            <div id="interval" class="column">
-              <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
-              <input id="interval-input" type="number" min="1"/>
-            </div>
-            <div id="error-skip" class="column">
-              <label id="error-skip-label" for="error-skip-input" data-i18n="textContent"></label>
-              <input id="error-skip-input" type="number" min="0" max="10"/>
-            </div>
-            <div id="base" class="column">
-              <label id="base-label" for="base-select" data-i18n="textContent"></label>
-              <select id="base-select">
-                <option id="base-option-default" value="10" data-i18n="textContent"></option>
-                <option id="base-option-2" value="2" data-i18n="textContent"></option>
-                <option id="base-option-3" value="3" data-i18n="textContent"></option>
-                <option id="base-option-4" value="4" data-i18n="textContent"></option>
-                <option id="base-option-5" value="5" data-i18n="textContent"></option>
-                <option id="base-option-6" value="6" data-i18n="textContent"></option>
-                <option id="base-option-7" value="7" data-i18n="textContent"></option>
-                <option id="base-option-8" value="8" data-i18n="textContent"></option>
-                <option id="base-option-9" value="9" data-i18n="textContent"></option>
-                <option id="base-option-10" value="10" data-i18n="textContent"></option>
-                <option id="base-option-11" value="11" data-i18n="textContent"></option>
-                <option id="base-option-12" value="12" data-i18n="textContent"></option>
-                <option id="base-option-13" value="13" data-i18n="textContent"></option>
-                <option id="base-option-14" value="14" data-i18n="textContent"></option>
-                <option id="base-option-15" value="15" data-i18n="textContent"></option>
-                <option id="base-option-16" value="16" data-i18n="textContent"></option>
-                <option id="base-option-17" value="17" data-i18n="textContent"></option>
-                <option id="base-option-18" value="18" data-i18n="textContent"></option>
-                <option id="base-option-19" value="19" data-i18n="textContent"></option>
-                <option id="base-option-20" value="20" data-i18n="textContent"></option>
-                <option id="base-option-21" value="21" data-i18n="textContent"></option>
-                <option id="base-option-22" value="22" data-i18n="textContent"></option>
-                <option id="base-option-23" value="23" data-i18n="textContent"></option>
-                <option id="base-option-24" value="24" data-i18n="textContent"></option>
-                <option id="base-option-25" value="25" data-i18n="textContent"></option>
-                <option id="base-option-26" value="26" data-i18n="textContent"></option>
-                <option id="base-option-27" value="27" data-i18n="textContent"></option>
-                <option id="base-option-28" value="28" data-i18n="textContent"></option>
-                <option id="base-option-29" value="29" data-i18n="textContent"></option>
-                <option id="base-option-30" value="30" data-i18n="textContent"></option>
-                <option id="base-option-31" value="31" data-i18n="textContent"></option>
-                <option id="base-option-32" value="32" data-i18n="textContent"></option>
-                <option id="base-option-33" value="33" data-i18n="textContent"></option>
-                <option id="base-option-34" value="34" data-i18n="textContent"></option>
-                <option id="base-option-35" value="35" data-i18n="textContent"></option>
-                <option id="base-option-36" value="36" data-i18n="textContent"></option>
-              </select>
-              <div id="base-case" class="display-none">
-                <div class="radio">
+      <div id="increment-decrement">
+        <h3 id="setup-h3">
+          <img src="../img/font-awesome/black/mouse-pointer.png" alt="" width="12" height="12"/>
+          <span id="setup-h3-label" data-i18n="textContent"></span>
+        </h3>
+        <div id="url">
+          <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
+          <textarea id="url-textarea" readonly="readonly"></textarea>
+        </div>
+        <div id="properties">
+          <div class="table">
+            <div class="row">
+              <div id="selection" class="column">
+                <label id="selection-label" for="selection-input" data-i18n="textContent"></label>
+                <input id="selection-input" type="text" readonly="readonly"/>
+                <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
+                <div class="checkbox">
                   <label>
-                    <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
-                    <span id="base-case-lowercase-label" data-i18n="textContent"></span>
+                    <input id="leading-zeros-input" type="checkbox"/>
+                    <span id="leading-zeros-pad-label" data-i18n="textContent"></span>
                   </label>
                 </div>
-                <div class="radio">
-                  <label>
-                    <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
-                    <span id="base-case-uppercase-label" data-i18n="textContent"></span>
-                  </label>
+              </div>
+              <div id="interval" class="column">
+                <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
+                <input id="interval-input" type="number" min="1"/>
+              </div>
+              <div id="error-skip" class="column">
+                <label id="error-skip-label" for="error-skip-input" data-i18n="textContent"></label>
+                <input id="error-skip-input" type="number" min="0" max="10"/>
+              </div>
+              <div id="base" class="column">
+                <label id="base-label" for="base-select" data-i18n="textContent"></label>
+                <select id="base-select">
+                  <option id="base-option-default" value="10" data-i18n="textContent"></option>
+                  <option id="base-option-2" value="2" data-i18n="textContent"></option>
+                  <option id="base-option-3" value="3" data-i18n="textContent"></option>
+                  <option id="base-option-4" value="4" data-i18n="textContent"></option>
+                  <option id="base-option-5" value="5" data-i18n="textContent"></option>
+                  <option id="base-option-6" value="6" data-i18n="textContent"></option>
+                  <option id="base-option-7" value="7" data-i18n="textContent"></option>
+                  <option id="base-option-8" value="8" data-i18n="textContent"></option>
+                  <option id="base-option-9" value="9" data-i18n="textContent"></option>
+                  <option id="base-option-10" value="10" data-i18n="textContent"></option>
+                  <option id="base-option-11" value="11" data-i18n="textContent"></option>
+                  <option id="base-option-12" value="12" data-i18n="textContent"></option>
+                  <option id="base-option-13" value="13" data-i18n="textContent"></option>
+                  <option id="base-option-14" value="14" data-i18n="textContent"></option>
+                  <option id="base-option-15" value="15" data-i18n="textContent"></option>
+                  <option id="base-option-16" value="16" data-i18n="textContent"></option>
+                  <option id="base-option-17" value="17" data-i18n="textContent"></option>
+                  <option id="base-option-18" value="18" data-i18n="textContent"></option>
+                  <option id="base-option-19" value="19" data-i18n="textContent"></option>
+                  <option id="base-option-20" value="20" data-i18n="textContent"></option>
+                  <option id="base-option-21" value="21" data-i18n="textContent"></option>
+                  <option id="base-option-22" value="22" data-i18n="textContent"></option>
+                  <option id="base-option-23" value="23" data-i18n="textContent"></option>
+                  <option id="base-option-24" value="24" data-i18n="textContent"></option>
+                  <option id="base-option-25" value="25" data-i18n="textContent"></option>
+                  <option id="base-option-26" value="26" data-i18n="textContent"></option>
+                  <option id="base-option-27" value="27" data-i18n="textContent"></option>
+                  <option id="base-option-28" value="28" data-i18n="textContent"></option>
+                  <option id="base-option-29" value="29" data-i18n="textContent"></option>
+                  <option id="base-option-30" value="30" data-i18n="textContent"></option>
+                  <option id="base-option-31" value="31" data-i18n="textContent"></option>
+                  <option id="base-option-32" value="32" data-i18n="textContent"></option>
+                  <option id="base-option-33" value="33" data-i18n="textContent"></option>
+                  <option id="base-option-34" value="34" data-i18n="textContent"></option>
+                  <option id="base-option-35" value="35" data-i18n="textContent"></option>
+                  <option id="base-option-36" value="36" data-i18n="textContent"></option>
+                </select>
+                <div id="base-case" class="display-none">
+                  <div class="radio">
+                    <label>
+                      <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
+                      <span id="base-case-lowercase-label" data-i18n="textContent"></span>
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
+                      <span id="base-case-uppercase-label" data-i18n="textContent"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,52 +175,43 @@
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
                 <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
               </select>
-              <div id="download-types" class="checkbox">
-                <label>
-                  <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
-                  <span id="download-types-jpeg-label" data-i18n="textContent"></span>
-                </label>
-                <label>
-                  <input id="download-types-png-input" value="png" type="checkbox"/>
-                  <span id="download-types-png-label" data-i18n="textContent"></span>
-                </label>
-                <label>
-                  <input id="download-types-gif-input" value="gif" type="checkbox"/>
-                  <span id="download-types-gif-label" data-i18n="textContent"></span>
-                </label>
-                <label>
-                  <input id="download-types-webm-input" value="webm" type="checkbox"/>
-                  <span id="download-types-webm-label" data-i18n="textContent"></span>
-                </label>
-                <br/>
-                <label>
-                  <input id="download-types-mp3-input" value="mp3" type="checkbox"/>
-                  <span id="download-types-mp3-label" data-i18n="textContent"></span>
-                </label>
-                <label>
-                  <input id="download-types-mp4-input" value="mp4" type="checkbox"/>
-                  <span id="download-types-mp4-label" data-i18n="textContent"></span>
-                </label>
-                <label>
-                  <input id="download-types-zip-input" value="zip" type="checkbox"/>
-                  <span id="download-types-zip-label" data-i18n="textContent"></span>
-                </label>
+              <div id="download-types-selector">
+                <div id="download-types" class="checkbox">
+                  <label>
+                    <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
+                    <span id="download-types-jpeg-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-png-input" value="png" type="checkbox"/>
+                    <span id="download-types-png-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-gif-input" value="gif" type="checkbox"/>
+                    <span id="download-types-gif-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-webm-input" value="webm" type="checkbox"/>
+                    <span id="download-types-webm-label" data-i18n="textContent"></span>
+                  </label>
+                  <br/>
+                  <label>
+                    <input id="download-types-mp3-input" value="mp3" type="checkbox"/>
+                    <span id="download-types-mp3-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-mp4-input" value="mp4" type="checkbox"/>
+                    <span id="download-types-mp4-label" data-i18n="textContent"></span>
+                  </label>
+                  <label>
+                    <input id="download-types-zip-input" value="zip" type="checkbox"/>
+                    <span id="download-types-zip-label" data-i18n="textContent"></span>
+                  </label>
+                </div>
+                <div id="download-selector">
+                  <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
+                </div>
               </div>
-              <div id="download-selector">
-                <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
-              </div>
-            </div>
-            <div id="download-includes" class="column">
-              <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-              <input id="download-includes-input" type="text" placeholder="e.g. /img/large/"/>
-            </div>
-            <div id="download-excludes" class="column">
-              <label id="download-excludes-label" for="download-excludes-input" data-i18n="textContent"></label>
-              <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/"/>
-            </div>
-          </div>
-          <div id="download-row-2" class="row">
-            <div class="column">
+              <!--
               <div id="download-enforce-mime" class="checkbox">
                 <label>
                   <input id="download-enforce-mime-input" type="checkbox"/>
@@ -231,22 +224,58 @@
                   <span id="download-same-domain-label" data-i18n="textContent"></span>
                 </label>
               </div>
+              -->
+              <button id="download-preview-button" data-i18n="textContent"></button>
+              <button id="download-preview-update-button" class="display-none" data-i18n="textContent"></button>
             </div>
-            <div id="download-min-mb" class="column">
-              <label id="download-min-mb-label" for="download-min-mb-input" data-i18n="textContent"></label>
-              <input id="download-min-mb-input" type="number" min="0" max="1000" step="any">
-              <span id="download-megabytes-label*min" data-i18n="textContent"></span>
-            </div>
-            <div id="download-max-mb" class="column">
-              <label id="download-max-mb-label" for="download-max-mb-input" data-i18n="textContent"></label>
-              <input id="download-max-mb-input" type="number" min="0" max="1000" step="any">
-              <span id="download-megabytes-label*max" data-i18n="textContent"></span>
+            <div id="download-optional" class="column">
+              <div id="download-optional-label" data-i18n="textContent"></div>
+              <div class="row">
+                <div id="download-includes" class="column">
+                  <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
+                  <input id="download-includes-input" type="text" placeholder="e.g. /img/large/"/>
+                </div>
+                <div id="download-excludes" class="column">
+                  <label id="download-excludes-label" for="download-excludes-input" data-i18n="textContent"></label>
+                  <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/"/>
+                </div>
+              </div>
+              <div class="row two">
+                <div id="download-min-mb" class="column">
+                  <label id="download-min-mb-label" for="download-min-mb-input" data-i18n="textContent"></label>
+                  <input id="download-min-mb-input" type="number" min="0" max="9999" step="any">
+                  <span id="download-megabytes-label*min" data-i18n="textContent"></span>
+                </div>
+                <div id="download-max-mb" class="column">
+                  <label id="download-max-mb-label" for="download-max-mb-input" data-i18n="textContent"></label>
+                  <input id="download-max-mb-input" type="number" min="0" max="9999" step="any">
+                  <span id="download-megabytes-label*max" data-i18n="textContent"></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div id="download-experimental-disclaimer" data-i18n="textContent"></div>
+        <div id="download-tips-types-div">
+          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
+          <span id="download-tips-types" data-i18n="textContent"></span>
+        </div>
+        <div id="download-tips-selector-div">
+          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
+          <span id="download-tips-selector" data-i18n="textContent"></span>
+        </div>
+        <div id="download-tips-page-div">
+          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
+          <span id="download-tips-page" data-i18n="textContent"></span>
+        </div>
+        <div id="download-preview" class="display-none">
+          <div id="download-preview-label" data-i18n="textContent"></div>
+          <div id="download-preview-list"></div>
+          <div id="download-preview-buttons">
+            <button id="download-preview-back-button" data-i18n="textContent"></button>
+          </div>
+        </div>
       </div>
-      <div class="setup-buttons">
+      <div id="setup-buttons">
         <div id="extra-toggles">
           <div class="checkbox">
             <label id="auto-toggle">

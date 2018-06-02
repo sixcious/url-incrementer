@@ -32,10 +32,6 @@ body {
   padding: 0;
 }
 
-h3 img {
-  vertical-align: bottom;
-}
-
 div.table {
   display: table;
 }
@@ -118,11 +114,11 @@ div.column {
   min-height: 41px;
 }
 
-/*
+
 #setup img {
   vertical-align: bottom;
 }
-*/
+
 
 #setup div.column {
   padding-top: 7px;
@@ -141,11 +137,11 @@ div.column {
   margin-bottom: 2px;
 }
 
-#setup .setup-buttons {
+#setup #setup-buttons, #download-preview-buttons {
   text-align: center;
 }
 
-#setup .setup-buttons > button:not(:last-child) {
+#setup #setup-buttons > button:not(:last-child), #download-preview-buttons > button:not(:last-child) {
   margin-right: 12px;
 }
 
@@ -160,7 +156,6 @@ div.column {
 
 #options-button img {
   margin-right: -2px;
-  vertical-align: bottom;
 }
 
 #setup #extra-toggles {
@@ -203,8 +198,8 @@ div.column {
   padding: 2px 0;
 }
 
-#setup #download #download-row-2 div.column {
-  padding-top: 0;
+#setup div.row.two div.column {
+  padding-top: 12px;
 }
 
 #download-strategy-select {
@@ -215,12 +210,8 @@ div.column {
   width: 90%;
 }
 
-#download-includes-input {
-  width: 104px;
-}
-
-#auto-wait, #download-same-domain {
-  vertical-align: bottom;
+#download-includes-input, #download-excludes-input {
+  width: 110px;
 }
 
 #download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
@@ -256,11 +247,10 @@ div.column {
   font-style: italic;
 }*/
 
-#download-experimental-disclaimer {
-  margin-top: 8px;
-  color: #663399;
+#download-tips-types-div, #download-tips-selector-div, #download-tips-page-div {
+  margin-top: 12px;
+  color: rebeccapurple;
   font-style: italic;
-
 }
 
 #setup h3#setup-h3 {
@@ -277,12 +267,56 @@ div.column {
 #setup h3#download-h3 {
   color: #663399;
   border-bottom-color: #663399;
+  margin: 0;
 }
 
-#setup #auto div.column, #setup #download div.column {
+#auto div.column, #download div.column {
   padding-top: 3px;
+}
+
+#download-types-selector {
+  height: 100%;
+  min-height: 43px;
 }
 
 #download-types label {
   margin-right: 4px;
 }
+
+div.column#download-strategy {  
+  padding-top: 8px;
+}
+
+div.column#download-optional {
+  border-left: 1px solid rebeccapurple;
+  padding-left: 12px;
+}
+
+#download-strategy-label {
+  color: rebeccapurple;
+  font-weight: bold;
+}
+
+#download-optional-label {
+  color: rebeccapurple;
+  font-weight: bold;
+  text-align: center;
+}
+
+#download-preview {
+  margin-top: 16px;
+}
+
+#download-preview-label, #download-preview-list > table > thead > tr > th {
+  color: rebeccapurple;
+  font-weight: bold;
+}
+
+#download-preview-list {
+  max-width: 500px;
+  max-height: 240px;
+  overflow: auto;
+  word-break: break-all;
+  margin-bottom: 24px;
+}
+

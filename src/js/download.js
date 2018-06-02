@@ -19,6 +19,19 @@ URLI.Download = function () {
         "zip":  "[src*='.zip' i],[href*='.zip' i]"
       };
 
+  function previewDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled) {
+    var good = findDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled);
+    var els = document.querySelectorAll("[src],[href]"),
+        bads = new Set(),
+        url;
+    for (el of els) {
+      url = el.src ? el.src : el.href ? el.href : "";
+      bads.add(url);
+    }
+    let bad = new Set(good.filter(x => !bads.has(x)));
+    return { "good": good, "bad": [...bads] }
+  }
+
   /**
    * TODO
    *
@@ -69,13 +82,13 @@ URLI.Download = function () {
   function findDownloadURLsBySelector(selector, includes, excludes, sameDomainPolicyEnabled) {
     var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
-        el,
         urls = new Set(), // return value, we use a Set to avoid potential duplicate URLs
         url;
     console.log("found " + els.length + " links");
     for (el of els) {
       url = el.src ? el.src : el.href ? el.href : "";
-      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) && doesInclude(url, includes) && doesExclude(url, excludes)) {
+      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) &&
+          doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
         urls.add(url);
       }
     }
@@ -114,36 +127,24 @@ URLI.Download = function () {
    * @returns {boolean}
    * @private
    */
-  function doesInclude(url, includes) {
-    var doesInclude = true;
-    console.log("checking includes and url... includes =" + includes + " url=" + url);
-    if (includes && !url.includes(includes)) {
-      console.log("found a url that doesn't include the includes... :( includes=" + includes + " , url=" + url);
-      doesInclude = false;
+  function doesIncludeOrExclude(url, terms, doesInclude) {
+    var does = true;
+    console.log("checking terms and url... terms =" + terms + " url=" + url);
+    if (terms && terms.length > 0) {
+      for (let term of terms) {
+        if (term && doesInclude ? !url.includes(term) : url.includes(term)) {
+          console.log("found a url that doesn't include or exclude the term.. :( terms=" + terms + " , url=" + url);
+          does = false;
+          break;
+        }
+      }
     }
-    return doesInclude;
-  }
-  
-    /**
-   * TODO
-   *
-   * @param url
-   * @param excludes
-   * @returns {boolean}
-   * @private
-   */
-  function doesExclude(url, excludes) {
-    var doesExclude = true;
-    console.log("checking excludes and url... excludes =" + excludes + " url=" + url);
-    if (excludes && url.includes(excludes)) {
-      console.log("found a url that doesn't exclude the excludes... :( excludes=" + excludes + " , url=" + url);
-      doesExclude = false;
-    }
-    return doesExclude;
+    return does;
   }
 
   // Return Public Functions
   return {
+    previewDownloadURLs: previewDownloadURLs,
     findDownloadURLs: findDownloadURLs
   };
 }();
