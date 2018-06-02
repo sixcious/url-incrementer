@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadSameDomain": true, "downloadEnforceMime": true, "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreviewCompressed": true, "downloadPreviewAllURLs": false,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
@@ -117,7 +117,7 @@ URLI.Background = function () {
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
           "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,
-          "downloadSameDomain": items.downloadSameDomain, "downloadEnforceMime": items.downloadEnforceMime,
+          //"downloadSameDomain": items.downloadSameDomain, "downloadEnforceMime": items.downloadEnforceMime,
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
           "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB
     };
@@ -233,8 +233,7 @@ URLI.Background = function () {
               JSON.stringify(instance.downloadTypes) + ", " +
               JSON.stringify(instance.downloadSelector) + ", " +
               JSON.stringify(instance.downloadIncludes) + ", " +
-              JSON.stringify(instance.downloadExcludes) + ", " +
-              JSON.parse(instance.downloadSameDomain) + ");";
+              JSON.stringify(instance.downloadExcludes) + ");"
             chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
               if (results && results[0]) {
                 var urls = results[0];

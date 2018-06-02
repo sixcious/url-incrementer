@@ -69,6 +69,8 @@
   "download_preview_update_button": { "message": "Update Download Preview" },
   "download_preview_back_button": { "message": "Back" },
   "download_preview_label": { "message": "Preview" },
+  "download_preview_compressed_label": { "message": "Compressed View" },
+  "download_preview_all_label": { "message": "Show All URLs Found" },
   "download_tips_types": { "message": "Tip: Right-click and inspect the links. If the link doesn't contain the extension (e.g. .jpg), URLI won't find it. For less restrictions, uncheck same-domain and mime matches type." },
   "download_tips_selector": { "message": "Tip: Use this for all other file types. It uses document.querySelectorAll(\"\"). Right-click on the page > Inspect to open Developer Tools and you can test it out on the Console." },
   "download_tips_page": { "message": "Tip: Remember, unless the URL of the web page points directly to a file (e.g. https://www.example.com/001.jpg), this will only download the .html of the web page." },  

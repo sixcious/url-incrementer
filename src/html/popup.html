@@ -229,7 +229,10 @@
               <button id="download-preview-update-button" class="display-none" data-i18n="textContent"></button>
             </div>
             <div id="download-optional" class="column">
-              <div id="download-optional-label" data-i18n="textContent"></div>
+              <div id="download-optional-label-div">
+                <img src="../img/font-awesome/purple/tint.png" alt="" width="12" height="12"/>
+                <span id="download-optional-label" data-i18n="textContent"></span>
+              </div>
               <div class="row">
                 <div id="download-includes" class="column">
                   <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
@@ -269,7 +272,17 @@
         </div>
         <div id="download-preview" class="display-none">
           <div id="download-preview-label" data-i18n="textContent"></div>
-          <div id="download-preview-list"></div>
+          <div class="checkbox">
+            <label>
+              <input id="download-preview-all-input" type="checkbox"/>
+              <span id="download-preview-all-label" data-i18n="textContent"></span>
+            </label>
+            <label>
+              <input id="download-preview-compressed-input" type="checkbox"/>
+              <span id="download-preview-compressed-label" data-i18n="textContent"></span>
+            </label>
+          </div>
+          <div id="download-preview-table-div"></div>
           <div id="download-preview-buttons">
             <button id="download-preview-back-button" data-i18n="textContent"></button>
           </div>

@@ -19,8 +19,8 @@ URLI.Download = function () {
         "zip":  "[src*='.zip' i],[href*='.zip' i]"
       };
 
-  function previewDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled) {
-    var good = findDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled);
+  function previewDownloadURLs(strategy, types, selector, includes, excludes) {
+    var good = findDownloadURLs(strategy, types, selector, includes, excludes);
     var els = document.querySelectorAll("[src],[href]"),
         bads = new Set(),
         url;
@@ -43,7 +43,7 @@ URLI.Download = function () {
    * @returns {*}
    * @public
    */
-  function findDownloadURLs(strategy, types, selector, includes, excludes, sameDomainPolicyEnabled) {
+  function findDownloadURLs(strategy, types, selector, includes, excludes) {
     console.log("findDownloadURLs()" + selector);
     var selectorFromTypes = "",
         i;
@@ -56,10 +56,10 @@ URLI.Download = function () {
             selectorFromTypes += FILE_TYPE_SELECTORS[types[i]];
           }
         }
-        return findDownloadURLsBySelector(selectorFromTypes, includes, excludes, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selectorFromTypes, includes, excludes);
         break;
       case "selector":
-        return findDownloadURLsBySelector(selector, includes, excludes, sameDomainPolicyEnabled);
+        return findDownloadURLsBySelector(selector, includes, excludes);
         break;
       case "page":
         return [document.location.href];
@@ -79,7 +79,7 @@ URLI.Download = function () {
    * @returns {*[]}
    * @private
    */
-  function findDownloadURLsBySelector(selector, includes, excludes, sameDomainPolicyEnabled) {
+  function findDownloadURLsBySelector(selector, includes, excludes) {
     var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
         urls = new Set(), // return value, we use a Set to avoid potential duplicate URLs
@@ -87,8 +87,7 @@ URLI.Download = function () {
     console.log("found " + els.length + " links");
     for (el of els) {
       url = el.src ? el.src : el.href ? el.href : "";
-      if (url && isFromSameDomain(sameDomainPolicyEnabled, url, hostname) &&
-          doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+      if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
         urls.add(url);
       }
     }

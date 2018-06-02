@@ -65,6 +65,7 @@ URLI.Popup = function () {
     DOM["#download-preview-button"].addEventListener("click", toggleView);
     DOM["#download-preview-update-button"].addEventListener("click", previewDownload);
     DOM["#download-preview-back-button"].addEventListener("click", toggleView);
+    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: no-wrap;" });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -142,6 +143,11 @@ URLI.Popup = function () {
         DOM["#download-preview-update-button"].className = "display-none";
         DOM["#download-preview-button"].className = "display-block fade-in";
         DOM["#download-preview"].className = "display-none";
+        DOM["#url-textarea"].value = instance.url;
+        DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+        DOM["#url-textarea"].focus();
+        DOM["#selection-input"].value = instance.selection;
+        DOM["#selection-start-input"].value = instance.selectionStart;
         break;
       default:
         break;
@@ -225,6 +231,9 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
+    DOM["#download-preview-compressed-input"].checked = items_.downloadPreviewCompressed;
+    DOM["#download-preview-all-input"].checked = items_.downloadPreviewAll;
+    DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: no-wrap;";
     refreshDownloadOptions.call(DOM["#download-strategy-select"]);
   }
   
@@ -259,7 +268,7 @@ URLI.Popup = function () {
   }
   
   function previewDownload() {
-    DOM["#download-preview-list"].innerHTML = "Updating preview ...";
+    DOM["#download-preview-table-div"].innerHTML = "Updating preview ...";
     var downloadStrategy = DOM["#download-strategy-select"].value,
         downloadTypes = [
           DOM["#download-types-jpeg-input"].checked ? DOM["#download-types-jpeg-input"].value : "",
@@ -282,8 +291,8 @@ URLI.Popup = function () {
         JSON.stringify(downloadTypes) + ", " +
         JSON.stringify(downloadSelector) + ", " +
         JSON.stringify(downloadIncludes) + ", " +
-        JSON.stringify(downloadExcludes) + ", " +
-        JSON.parse(false) + ");";
+        JSON.stringify(downloadExcludes) + ");"
+       // JSON.parse(false) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
         if (results && results[0] && results[0].good && results[0].good.length > 0) {
           var urls = "Downloading " + results[0].good.length + " URLs<br/><br/>", i = 1;
@@ -292,8 +301,8 @@ URLI.Popup = function () {
             urls += "<tr><td>" + (i++) + "</td><td>" + url  + "</td></tr>";
           }
           urls += "</tbody></table>";
-          DOM["#download-preview-list"].innerHTML = urls;
-        } else { DOM["#download-preview-list"].innerHTML = "NO RESULTS, sad panda :(";
+          DOM["#download-preview-table-div"].innerHTML = urls;
+        } else { DOM["#download-preview-table-div"].innerHTML = "NO RESULTS, sad panda :(";
         }
       });
         });
@@ -340,6 +349,8 @@ URLI.Popup = function () {
         downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [];
         downloadMinMB = +DOM["#download-min-mb-input"].value,
         downloadMaxMB = +DOM["#download-max-mb-input"].value,
+        downloadPreviewCompressed = DOM["#download-preview-compressed-input"].checked,
+        downloadPreviewAll = DOM["#download-preview-all-input"].checked,
         // Increment Decrement Errors
         errors = [ // [0] = selection errors and [1] = interval errors
           // [0] = Selection Errors
@@ -468,7 +479,9 @@ URLI.Popup = function () {
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,
-            "downloadMaxMB": downloadMaxMB
+            "downloadMaxMB": downloadMaxMB,
+            "downloadPreviewCompressed": downloadPreviewCompressed,
+            "downloadPreviewAll": downloadPreviewAll
           });
         }
         // If permissions granted, send message to content script:
