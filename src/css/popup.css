@@ -211,7 +211,7 @@ div.column {
 }
 
 #download-includes-input, #download-excludes-input {
-  width: 110px;
+  width: 108px;
 }
 
 #download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
@@ -276,7 +276,7 @@ div.column {
 
 #download-types-selector {
   height: 100%;
-  min-height: 43px;
+  min-height: 50px;
 }
 
 #download-types label {
@@ -290,17 +290,22 @@ div.column#download-strategy {
 div.column#download-optional {
   border-left: 1px solid rebeccapurple;
   padding-left: 12px;
+  width: 50%;
 }
 
+/*
 #download-strategy-label {
   color: rebeccapurple;
   font-weight: bold;
-}
+}*/
 
 #download-optional-label {
   color: rebeccapurple;
   font-weight: bold;
   text-align: center;
+  border-bottom: 1px solid rebeccapurple;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 #download-preview {

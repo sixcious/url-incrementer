@@ -1,6 +1,6 @@
 # URL Incrementer
 
-URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it, URLI can get you to "page=2" quickly and conveniently. You can start your own web page slideshows with URLI's Auto-Incrementer, or download a series of pages using its unique Download Incrementer (experimental)! You can use it on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially.
+URLI ("yur-lee") increments URLs. If the URL has a "page=1" in it, URLI can get you to "page=2" quickly and conveniently. Use shortcuts or the UI Buttons to increment, or say "Good-Bye!" to manual incrementing and start your own web page slideshows with URLI's Auto-Incrementer! You can even download n' increment a series of pages using the Download Incrementer (experimental)! You can use URLI on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially.
 
 Features:
 - Auto Incrementing
@@ -9,10 +9,10 @@ Features:
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
-- So Many Options (Alphanumeric Incrementing, Selection algorithms, Interval, Leading Zeros, Error Skipping... and so much more)
+- So Many Options (Alphanumeric Incrementing, Selection algorithms, Intervals, Leading Zeros, Error Skipping... and so much more)
 - Safe, Open Source, Lightweight (Under 300KB!), NO Ads, NO Bloat, and Requires NO permissions for most functionality
 
-**Download Incrementing is a completely optional and "experimental" feature that is intended to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Increment Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
+**Download Incrementing is a completely optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 
 URLI 5.0 and a personal apology ...
 
