@@ -356,6 +356,7 @@ table thead tr th {
   /*padding: 0.5rem 0.625rem 0.625rem;*/
   font-weight: bold;
   text-align: left;
+  min-width: 24px;
 }
 
 table thead th, table tbody th, table tbody td {

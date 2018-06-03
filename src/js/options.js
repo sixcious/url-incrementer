@@ -23,8 +23,7 @@ URLI.Options = function () {
         "MetaLeft":    "Meta",  "MetaRight":    "Meta"
       },
       key = [0,""], // Stores the key's event modifiers [0] and code [1]
-      //NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
-    NUMBERS = ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN"],
+      NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
       FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)", "(+__X)"];
 
   /**

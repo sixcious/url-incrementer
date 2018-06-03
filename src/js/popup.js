@@ -65,7 +65,7 @@ URLI.Popup = function () {
     DOM["#download-preview-button"].addEventListener("click", toggleView);
     DOM["#download-preview-update-button"].addEventListener("click", previewDownload);
     DOM["#download-preview-back-button"].addEventListener("click", toggleView);
-    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: no-wrap;" });
+    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" });
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -233,7 +233,7 @@ URLI.Popup = function () {
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     DOM["#download-preview-compressed-input"].checked = items_.downloadPreviewCompressed;
     DOM["#download-preview-all-input"].checked = items_.downloadPreviewAll;
-    DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: no-wrap;";
+    DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     refreshDownloadOptions.call(DOM["#download-strategy-select"]);
   }
   
@@ -294,11 +294,15 @@ URLI.Popup = function () {
         JSON.stringify(downloadExcludes) + ");"
        // JSON.parse(false) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-        if (results && results[0] && results[0].good && results[0].good.length > 0) {
-          var urls = "Downloading " + results[0].good.length + " URLs<br/><br/>", i = 1;
-          urls += "<table><thead><tr><th>#</th><th>URL</th></tr></thead><tbody>";
+        if (results && results[0]) {
+          var urls = "Set to download " + results[0].good.length + " out of " + (results[0].good.length + results[0].bad.length) + " URLs found on this page<br/><br/>", i = 1;
+          urls += "<table><thead><tr><th>&nbsp;</th><th>#</th><th>URL</th></tr></thead><tbody>";
           for (url of results[0].good) {
-            urls += "<tr><td>" + (i++) + "</td><td>" + url  + "</td></tr>";
+            urls += "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + url  + "</td></tr>";
+          }
+          //urls += "</tbody><tbody id=\"tbody-bad\">";
+          for (url of results[0].bad) {
+            urls += "<tr><td><img src=\"../img/font-awesome/red/times-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + url  + "</td></tr>";
           }
           urls += "</tbody></table>";
           DOM["#download-preview-table-div"].innerHTML = urls;
