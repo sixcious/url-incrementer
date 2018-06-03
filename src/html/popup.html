@@ -169,14 +169,20 @@
         <div class="table">
           <div class="row">
             <div id="download-strategy" class="column">
+              <div id="download-strategy-help" title="">
+                <img src="../img/font-awesome/purple/question-circle.png" alt="" width="12" height="12"/>
+                <span id="download-strategy-help-label" data-i18n="textContent"></span>
+              </div>
               <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
               <select id="download-strategy-select">
                 <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
+                <option id="download-strategy-option-tags" value="tags" data-i18n="textContent"></option>
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
                 <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
               </select>
               <div id="download-types-selector">
                 <div id="download-types" class="checkbox">
+                <!--
                   <label>
                     <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
                     <span id="download-types-jpeg-label" data-i18n="textContent"></span>
@@ -206,6 +212,9 @@
                     <input id="download-types-zip-input" value="zip" type="checkbox"/>
                     <span id="download-types-zip-label" data-i18n="textContent"></span>
                   </label>
+                  -->
+                </div>
+                <div id="download-tags" class="checkbox">
                 </div>
                 <div id="download-selector">
                   <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
@@ -225,8 +234,6 @@
                 </label>
               </div>
               -->
-              <button id="download-preview-button" data-i18n="textContent"></button>
-              <button id="download-preview-update-button" class="display-none" data-i18n="textContent"></button>
             </div>
             <div id="download-optional" class="column">
               <div id="download-optional-label-div">
@@ -258,34 +265,25 @@
             </div>
           </div>
         </div>
-        <div id="download-tips-types-div">
-          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
-          <span id="download-tips-types" data-i18n="textContent"></span>
-        </div>
-        <div id="download-tips-selector-div">
-          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
-          <span id="download-tips-selector" data-i18n="textContent"></span>
-        </div>
-        <div id="download-tips-page-div">
-          <img src="../img/font-awesome/purple/info-circle.png" alt="" width="14" height="14"/>
-          <span id="download-tips-page" data-i18n="textContent"></span>
-        </div>
-        <div id="download-preview" class="display-none">
-          <div id="download-preview-label" data-i18n="textContent"></div>
-          <div class="checkbox">
-            <label>
-              <input id="download-preview-all-input" type="checkbox"/>
-              <span id="download-preview-all-label" data-i18n="textContent"></span>
-            </label>
-            <label>
-              <input id="download-preview-compressed-input" type="checkbox"/>
-              <span id="download-preview-compressed-label" data-i18n="textContent"></span>
-            </label>
+        <div id="download-preview">
+          <div id="download-preview-heading">
+            <div id="download-preview-set"></div>
+            <div id="download-preview-button" class="hvr-skew-forward">
+              <img src="../img/font-awesome/purple/flash.png" alt="" width="14" height="14"/>
+              <span id="download-preview-button-span" data-i18n="textContent"></span>
+            </div>
+            <div class="checkbox">
+  <!--            <label>
+                <input id="download-preview-all-input" type="checkbox"/>
+                <span id="download-preview-all-label" data-i18n="textContent"></span>
+              </label>-->
+              <label>
+                <input id="download-preview-compressed-input" type="checkbox"/>
+                <span id="download-preview-compressed-label" data-i18n="textContent"></span>
+              </label>
+            </div>
           </div>
           <div id="download-preview-table-div"></div>
-          <div id="download-preview-buttons">
-            <button id="download-preview-back-button" data-i18n="textContent"></button>
-          </div>
         </div>
       </div>
       <div id="setup-buttons">
@@ -294,13 +292,13 @@
             <label id="auto-toggle">
               <img id="auto-toggle-img" src="../img/font-awesome/orange/refresh.png" width="14" height="14"/>
               <span id="auto-toggle-span" data-i18n="textContent"></span>
-              <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" />
+              <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" value="0"/>
               <label class="tgl-btn" for="auto-toggle-input"></label>
             </label>
             <label id="download-toggle">
               <img id="download-toggle-img" src="../img/font-awesome/purple/cloud-download.png" width="16" height="16"/>
               <span id="download-toggle-span" data-i18n="textContent"></span>
-              <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" />
+              <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" value="0"/>
               <label class="tgl-btn" for="download-toggle-input"></label>
             </label>
           </div>

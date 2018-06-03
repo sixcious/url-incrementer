@@ -7,8 +7,12 @@
 
 var URLI = URLI || {};
 
-// The AutoTimer function is based on code written by Tim Down at StackOverflow
-// https://stackoverflow.com/a/3969760
+/**
+ * The AutoTimer that contains the internal setTimeout with pause and resume capabilities.
+ * 
+ * The function is based on code written by Tim Down @ stackoverflow.com
+ * @see https://stackoverflow.com/a/3969760
+ */
 URLI.AutoTimer = function (callback, delay) {
 
   var timerId, start, remaining = delay;

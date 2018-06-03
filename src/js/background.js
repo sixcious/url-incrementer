@@ -231,15 +231,16 @@ URLI.Background = function () {
             var code = "URLI.Download.findDownloadURLs(" + 
               JSON.stringify(instance.downloadStrategy) + ", " +
               JSON.stringify(instance.downloadTypes) + ", " +
+              JSON.stringify(instance.downloadTags) + ", " +
               JSON.stringify(instance.downloadSelector) + ", " +
               JSON.stringify(instance.downloadIncludes) + ", " +
               JSON.stringify(instance.downloadExcludes) + ");"
             chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
               if (results && results[0]) {
-                var urls = results[0];
-                for (let url of urls) {
-                  console.log("downloading url=" + url);
-                  chrome.downloads.download({url: url}, function(downloadId) {
+                var downloads = results[0];
+                for (let download of downloads) {
+                  console.log("downloading url=" + download.url);
+                  chrome.downloads.download({url: download.url}, function(downloadId) {
                     chrome.downloads.search({id: downloadId}, function(results) {
                       const downloadItem = results ? results[0] : undefined;
                       const MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "video/webm", "audio/mpeg", "audio/mp3", "video/mp4", "application/zip"];

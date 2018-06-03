@@ -137,18 +137,20 @@ div.column {
   margin-bottom: 2px;
 }
 
-#setup #setup-buttons, #download-preview-buttons {
+#setup #setup-buttons {
   text-align: center;
+  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
+  height: auto;
 }
 
-#setup #setup-buttons > button:not(:last-child), #download-preview-buttons > button:not(:last-child) {
+#setup #setup-buttons > button:not(:last-child) {
   margin-right: 12px;
 }
 
 #options-button {
   position: absolute;
-  right: 16px;
-  bottom: 12px;
+  right: 4px;
+  bottom: 3px;
   font-size: 1.05em;
   font-weight: bold;
   cursor: pointer;
@@ -160,8 +162,8 @@ div.column {
 
 #setup #extra-toggles {
   position: absolute;
-  left: 12px;
-  bottom: 6px;
+  left: 0px;
+  bottom: -6px;
 }
 
 #setup #extra-toggles .checkbox > label:not(:last-child) {
@@ -224,7 +226,7 @@ div.column {
 }
 
 #download-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: /*#4285f4;*/ #663399;
+  background: /*#4285f4;*/ rebeccapurple;
 }
 
 #auto-toggle span, #download-toggle span {
@@ -265,8 +267,8 @@ div.column {
 }
 
 #setup h3#download-h3 {
-  color: #663399;
-  border-bottom-color: #663399;
+  color: rebeccapurple;
+  border-bottom-color: rebeccapurple;
   margin: 0;
 }
 
@@ -279,18 +281,27 @@ div.column {
   min-height: 43px;
 }
 
-#download-types label {
-  margin-right: 4px;
+#download-types label, #download-tags label {
+  display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+#download-types label span, #download-tags label span {
+  padding-left: 3px;
 }
 
 div.column#download-strategy {  
   padding-top: 8px;
+  width: 50%;
+  position: relative; /* for position absolute help */
 }
 
 div.column#download-optional {
   border-left: 1px solid rebeccapurple;
   padding-left: 12px;
   width: 50%;
+  position: relative; /* for position absolute help */
 }
 
 /*
@@ -307,19 +318,32 @@ div.column#download-optional {
   padding-bottom: 2px;
   margin-bottom: 4px;*/
 }
-
+/*
 #download-preview {
   margin-top: 16px;
 }
+*/
 
-/*
-#download-preview-label, #download-preview-list > table > thead > tr > th {
+
+#download-strategy-label, #download-preview-button-span {
   color: rebeccapurple;
   font-weight: bold;
-}*/
+}
 
-#download-preview-list {
+#download-preview-heading {
+  margin-top: 6px;
+}
 
+#download-preview-button {
+  margin-right: 12px;
+}
+
+#download-preview-heading div.checkbox {
+  vertical-align: middle;
+}
+
+#download-preview-heading div {
+  display: inline-block;
 }
 
 
@@ -329,8 +353,8 @@ table {
   border-radius: 0;
   margin-bottom: 1rem;
   
-  max-width: 500px;
-  max-height: 240px;
+  max-width: 512px;
+  max-height: 200px;
   
   display: block;
   overflow: auto;
@@ -385,3 +409,14 @@ table tbody tr {
 
 table tbody tr td {
 }
+
+#download-strategy-help {
+  color: rebeccapurple;
+  font-weight: bold;
+  font-size: 0.9em;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+
+
