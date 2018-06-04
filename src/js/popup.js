@@ -365,14 +365,14 @@ instance.downloadExtensionsAll = results[0].allExtensions;
                     <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
                     <span id="download-types-jpeg-label" data-i18n="textContent"></span>
                   </label>*/
-          var table = "<table><thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>Ext</th><th>Tag</th><th>URL</th></tr></thead><tbody>";
+          var table = "<table><thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>Ext</th><th>Tag</th><th>URL</th></tr></thead><tbody>";
           var i = 1;
           for (download of results[0].good) {
-            table += "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.url  + "</td></tr>";
+            table += "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.url  + "</td></tr>";
           }
           //urls += "</tbody><tbody id=\"tbody-bad\">";
           for (download of results[0].bad) {
-            table += "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" +  download.url  + "</td></tr>";
+            table += "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" +  download.url  + "</td></tr>";
           }
           table += "</tbody></table>";
           DOM["#download-preview-table-div"].innerHTML = table;
@@ -380,6 +380,18 @@ instance.downloadExtensionsAll = results[0].allExtensions;
         }
       });
         });
+  }
+  
+  function downloadPreviewThumb(download) {
+    var html = "";
+    if (download) {
+      if (download.tag === "img" || download.ext === "jpg" || download.ext === "jpeg" || download.ext === "png" || download.ext === "gif") {
+        html = "<img src=\"" + download.url + "\" alt=\"\" width=\"24\"/>";
+      } else if (download.tag === "video" || download.ext === "webm" || download.ext === "mp4") {
+        html = "<video src=\"" + download.url + "\" width=\"24\"/>";
+      }
+    }
+    return html;
   }
   
   /**
