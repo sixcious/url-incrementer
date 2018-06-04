@@ -100,10 +100,10 @@ if (strategy === "page") {
             selectorFromTypes += FILE_TYPE_SELECTORS[types[i]];
           }
           */
-        for (let extension of extensions) {
-          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[src*='." + extension + "' i],[href*='." + extension + "' i]";
-        }
-        console.log("extension selectorbuilder=" + selectorbuilder);
+//        for (let extension of extensions) {
+//          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[src*='." + extension + "' i],[href*='." + extension + "' i]";
+//        }
+//        console.log("extension selectorbuilder=" + selectorbuilder);
         return findDownloadURLsBySelector(strategy, extensions, tags, "[src],[href]", includes, excludes);
         break;
       case "tags":
@@ -152,13 +152,12 @@ if (strategy === "page") {
           ext = "";
         }
         // Special Restriction (Extensions)
-
-        if (strategy === "types" && !extensions.includes(ext)) {
+        if (strategy === "types" && (!extensions.includes(ext) || ext === "")) {
           continue;
         }
         tag = el.tagName ? el.tagName.toLowerCase() : "";
         // Special Restriction (Tags)
-        if (strategy === "tags" && !tags.includes(tag)) {
+        if (strategy === "tags" && (!tags.includes(tag) || tag === "")) {
           continue;
         }
         downloads.set(url + "", {"url": url, "ext": ext, "tag": tag});

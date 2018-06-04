@@ -276,6 +276,12 @@ div.column {
   padding-top: 3px;
 }
 
+/* Download */
+
+#download-setup.table {
+  width: 100%;
+}
+
 #download-strategy-sub-options {
   height: 100%;
   min-height: 60px;
