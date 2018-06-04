@@ -146,7 +146,7 @@ input[type="image"]:focus {
   top: initial;
 }
 
-.tooltip {
+.tooltip img {
   display: inline-block;
   margin-left: 4px;
 }

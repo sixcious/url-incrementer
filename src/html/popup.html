@@ -180,42 +180,11 @@
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
                 <option id="download_strategy_option_page" value="page" data-i18n="textContent"></option>
               </select>
-              <div id="download-types-selector">
-                <div id="download-types" class="checkbox">
-                <!--
-                  <label>
-                    <input id="download-types-jpeg-input" value="jpeg" type="checkbox"/>
-                    <span id="download-types-jpeg-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-png-input" value="png" type="checkbox"/>
-                    <span id="download-types-png-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-gif-input" value="gif" type="checkbox"/>
-                    <span id="download-types-gif-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-webm-input" value="webm" type="checkbox"/>
-                    <span id="download-types-webm-label" data-i18n="textContent"></span>
-                  </label>
-                  <br/>
-                  <label>
-                    <input id="download-types-mp3-input" value="mp3" type="checkbox"/>
-                    <span id="download-types-mp3-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-mp4-input" value="mp4" type="checkbox"/>
-                    <span id="download-types-mp4-label" data-i18n="textContent"></span>
-                  </label>
-                  <label>
-                    <input id="download-types-zip-input" value="zip" type="checkbox"/>
-                    <span id="download-types-zip-label" data-i18n="textContent"></span>
-                  </label>
-                  -->
-                </div>
-                <div id="download-tags" class="checkbox">
-                </div>
+              <div id="download-strategy-sub-options">
+                <input id="download-types-generated" type="hidden" value=""/>
+                <input id="download-tags-generated" type="hidden" value=""/>
+                <div id="download-types" class="checkbox"></div>
+                <div id="download-tags" class="checkbox"></div>
                 <div id="download-selector">
                   <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
                 </div>
@@ -267,9 +236,8 @@
         </div>
         <div id="download-preview">
           <div id="download-preview-heading">
-            <div id="download-preview-set"></div>
             <div id="download-preview-button" class="hvr-skew-forward">
-              <img src="../img/font-awesome/purple/flash.png" alt="" width="14" height="14"/>
+              <img src="../img/font-awesome/purple/repeat.png" alt="" width="14" height="14"/>
               <span id="download-preview-button-span" data-i18n="textContent"></span>
             </div>
             <div class="checkbox">
@@ -282,6 +250,7 @@
                 <span id="download-preview-compressed-label" data-i18n="textContent"></span>
               </label>
             </div>
+            <div id="download-preview-set"></div>
           </div>
           <div id="download-preview-table-div"></div>
         </div>

@@ -222,7 +222,7 @@
   -webkit-transition-property: transform;
   transition-property: transform;
 }
-.hvr-skew:hover, .hvr-skew:focus, .hvr-skew:active {
+.hvr-skew:hover/*, .hvr-skew:focus, .hvr-skew:active*/ {
   -webkit-transform: skew(-10deg);
   transform: skew(-10deg);
 }
@@ -241,7 +241,7 @@
   -webkit-transform-origin: 0 100%;
   transform-origin: 0 100%;
 }
-.hvr-skew-forward:hover, .hvr-skew-forward:focus, .hvr-skew-forward:active {
+.hvr-skew-forward:hover/*, .hvr-skew-forward:focus, .hvr-skew-forward:active*/ {
   -webkit-transform: skew(-10deg);
   transform: skew(-10deg);
 }

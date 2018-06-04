@@ -276,9 +276,9 @@ div.column {
   padding-top: 3px;
 }
 
-#download-types-selector {
+#download-strategy-sub-options {
   height: 100%;
-  min-height: 43px;
+  min-height: 60px;
 }
 
 #download-types label, #download-tags label {
