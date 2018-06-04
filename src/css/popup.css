@@ -335,6 +335,7 @@ div.column#download-optional {
 }
 
 #download-preview-button {
+  cursor: pointer;
   margin-right: 12px;
 }
 
@@ -345,7 +346,11 @@ div.column#download-optional {
 #download-preview-heading div {
   display: inline-block;
 }
+/*
 
+#download-preview-table-div {
+  min-height: 200px;
+}*/
 
 table {
   border-collapse: collapse;

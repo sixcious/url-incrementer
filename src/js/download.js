@@ -32,7 +32,7 @@ URLI.Download = function () {
     }
     console.log("trying for bad...");
         try {
-          bad = findDownloadURLsBySelector("[src],[href]");
+          bad = findDownloadURLs("all", "", "", "[src],[href]");
     } catch (e) {
       console.log(e);
     }
@@ -65,6 +65,10 @@ var uniqueResultTwo = bad.filter(function(obj) {
     });
 });
 
+if (strategy === "page") {
+  uniqueResultTwo = [];
+}
+
     return { "good": good, "bad": uniqueResultTwo, "allExtensions": allExtensions, "allTags": allTags }
   }
 
@@ -84,6 +88,9 @@ var uniqueResultTwo = bad.filter(function(obj) {
     var selectorbuilder = "",
         i;
     switch (strategy) {
+      case "all":
+        return findDownloadURLsBySelector(strategy, extensions, tags, "[src],[href]", includes, excludes);
+        break;
       case "types":
       /*
         for (i = 0; i < types.length; i++) {
@@ -97,7 +104,7 @@ var uniqueResultTwo = bad.filter(function(obj) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[src*='." + extension + "' i],[href*='." + extension + "' i]";
         }
         console.log("extension selectorbuilder=" + selectorbuilder);
-        return findDownloadURLsBySelector(selectorbuilder, includes, excludes);
+        return findDownloadURLsBySelector(strategy, extensions, tags, "[src],[href]", includes, excludes);
         break;
       case "tags":
         //return findDownloadURLsBySelector img, video,
@@ -105,13 +112,13 @@ var uniqueResultTwo = bad.filter(function(obj) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
         }
         console.log("tags selectorbuilder=" + selectorbuilder);
-        return findDownloadURLsBySelector(selectorbuilder, includes, excludes);
+        return findDownloadURLsBySelector(strategy, extensions, tags, selectorbuilder, includes, excludes);
         break;
       case "selector":
-        return findDownloadURLsBySelector(selector, includes, excludes);
+        return findDownloadURLsBySelector(strategy, extensions, tags, selector, includes, excludes);
         break;
       case "page":
-        return [{ "href": document.location.href, "ext": "", "tag": ""}];
+        return [{ "url": document.location.href, "ext": "", "tag": ""}];
         break;
       default:
         return [];
@@ -128,7 +135,7 @@ var uniqueResultTwo = bad.filter(function(obj) {
    * @returns {*[]}
    * @private
    */
-  function findDownloadURLsBySelector(selector, includes, excludes) {
+  function findDownloadURLsBySelector(strategy, extensions, tags, selector, includes, excludes) {
     var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
         downloads = new Map(), // return value, we use a Set to avoid potential duplicate URLs
@@ -139,17 +146,26 @@ var uniqueResultTwo = bad.filter(function(obj) {
     for (el of els) {
       url = el.src ? el.src : el.href ? el.href : "";
       if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-        console.log("adding url!");
+     //   console.log("adding url!");
         ext = findExt(url);
         if (!isValidExt(ext)) {
           ext = "";
         }
+        // Special Restriction (Extensions)
+
+        if (strategy === "types" && !extensions.includes(ext)) {
+          continue;
+        }
         tag = el.tagName ? el.tagName.toLowerCase() : "";
+        // Special Restriction (Tags)
+        if (strategy === "tags" && !tags.includes(tag)) {
+          continue;
+        }
         downloads.set(url + "", {"url": url, "ext": ext, "tag": tag});
       }
     }
-    console.log("downloadsFound=");
-    console.log(downloads);
+   // console.log("downloadsFound=");
+   // console.log(downloads);
     return [...downloads.values()]; // Convert Set into Array for return value back (Set can't be used)
   }
   
@@ -169,9 +185,13 @@ var uniqueResultTwo = bad.filter(function(obj) {
   // Regex to find file extension from URL by SteeBono @ stackoverflow.com
   // https://stackoverflow.com/a/42841283
   function findExt(url) {
-    var regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
+    var urlquestion = url && url.length > 0 ? url.substring(0, url.indexOf("?")) : undefined,
+        urlhash = url && url.length > 0 && !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,  
+    //urlo = new URL(url),
+        regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
+//regex = /.+(\.\w{3})\?*.*/,
         group = 1,
-        match = regex.exec(url),
+        match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : ""),
         ext = "";
     if (match && match[group]) {
       ext = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
@@ -209,7 +229,7 @@ var uniqueResultTwo = bad.filter(function(obj) {
     if (sameDomainPolicyEnabled) {
       urlo = new URL(url);
       if (urlo.hostname !== hostname) {
-        console.log("found a link that wasn't from the samee hostname!" + url);
+     //   console.log("found a link that wasn't from the samee hostname!" + url);
         sameDomain = false;
       }
     }
@@ -226,11 +246,11 @@ var uniqueResultTwo = bad.filter(function(obj) {
    */
   function doesIncludeOrExclude(url, terms, doesInclude) {
     var does = true;
-    console.log("checking terms and url... terms =" + terms + " url=" + url);
+   // console.log("checking terms and url... terms =" + terms + " url=" + url);
     if (terms && terms.length > 0) {
       for (let term of terms) {
         if (term && doesInclude ? !url.includes(term) : url.includes(term)) {
-          console.log("found a url that doesn't include or exclude the term.. :( terms=" + terms + " , url=" + url);
+     //     console.log("found a url that doesn't include or exclude the term.. :( terms=" + terms + " , url=" + url);
           does = false;
           break;
         }
