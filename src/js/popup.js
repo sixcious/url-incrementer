@@ -281,21 +281,23 @@ URLI.Popup = function () {
         //downloadSameDomain = DOM["#download-same-domain-input"].checked,
         //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
     chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-      var code = "URLI.Download.previewDownloadURLs(" + 
+      const code = "URLI.Download.previewDownloadURLs(" +
         JSON.stringify(downloadStrategy) + ", " +
         JSON.stringify(downloadTypes) + ", " +
         JSON.stringify(downloadTags) + ", " +
         JSON.stringify(downloadSelector) + ", " +
         JSON.stringify(downloadIncludes) + ", " +
-        JSON.stringify(downloadExcludes) + ");"
+        JSON.stringify(downloadExcludes) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
         if (results && results[0]) {
           var downloadPreviewSet = "",
               checkboxExtensions = "",
               checkboxTags = "",
               table = "",
-              i = 1;
-          downloadPreviewSet = "Set to download " + results[0].good.length + " out of " + (results[0].good.length + results[0].bad.length) + " URLs";
+              i = 1,
+              goodLength = results[0].good.length,
+              totalLength = results[0].good.length + results[0].bad.length;
+          downloadPreviewSet = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">Set to download " + results[0].good.length + " out of " + (results[0].good.length + results[0].bad.length) + " URLs</span>";
           for (let extension of results[0].allExtensions) {
             checkboxExtensions +=
               "<label>" +
@@ -322,6 +324,10 @@ URLI.Popup = function () {
           DOM["#download-types"].innerHTML = checkboxExtensions;
           DOM["#download-tags"].innerHTML = checkboxTags;
           DOM["#download-preview-table-div"].innerHTML = table;
+          // Need to now update the hidden inputs again in case they contain values NOT in the page's current selections
+          // e.g. If the instance/storage had extension "jpg" saved and there is no jpg on this page, this removes it
+          translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");
+          translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");
         } else {
           DOM["#download-preview-table-div"].innerHTML = "NO RESULTS, sad panda :(";
         }

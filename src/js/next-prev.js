@@ -29,7 +29,7 @@ URLI.NextPrev = function () {
    * @param direction  the direction to go: next or prev
    * @param priority   the link priority to use: attributes or innerHTML
    * @param sameDomain whether to enforce the same domain policy
-   * @return url the next or prev url
+   * @return {string} the next or prev url
    * @public
    */
   function findNextPrevURL(direction, priority, sameDomain) {
@@ -126,14 +126,14 @@ URLI.NextPrev = function () {
    * link. Adds the link to the urls map if a match is found.
    * 
    * @param direction the direction to go: next or prev
-   * @param type      innerHTML or attributes
+   * @param type      the type of element text: attributes or innerHTML
    * @param href      the URL to set this link to
-   * @param text      the text to parse keywords from
+   * @param text      the element's text to parse keywords from
    * @param attribute attribute's node name if it's needed
    * @private
    */
   function parseText(direction, type, href, text, attribute) {
-    // Iterate keywords and build out urls maps
+    // Iterate over this direction's keywords and build out the urls object's maps
     for (let keyword of keywords[direction]) {
       if (type === "attributes" && attribute === "rel" && text === keyword) { // important e.g. rel="next" or rel="prev"
         urls.important.relAttribute.set(keyword, href);

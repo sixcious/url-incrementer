@@ -187,7 +187,7 @@ URLI.Background = function () {
           if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
             console.log("doing error skipping");
             chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
-              var code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" + 
+              const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
                 JSON.stringify(action) + ", " +
                 JSON.stringify(instance) + ", " +
                 JSON.parse(instance.errorSkip) + ");";
@@ -211,7 +211,7 @@ URLI.Background = function () {
       case "prev":
         actionPerformed = true;
         chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-          var code = "URLI.NextPrev.findNextPrevURL(" + 
+          const code = "URLI.NextPrev.findNextPrevURL(" +
             JSON.stringify(action) + ", " + 
             JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
             JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
@@ -231,7 +231,7 @@ URLI.Background = function () {
         if (instance && instance.downloadEnabled) {
           actionPerformed = true;
           chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-            var code = "URLI.Download.findDownloadURLs(" + 
+            const code = "URLI.Download.findDownloadURLs(" +
               JSON.stringify(instance.downloadStrategy) + ", " +
               JSON.stringify(instance.downloadTypes) + ", " +
               JSON.stringify(instance.downloadTags) + ", " +
@@ -246,14 +246,14 @@ URLI.Background = function () {
                   chrome.downloads.download({url: download.url}, function(downloadId) {
                     chrome.downloads.search({id: downloadId}, function(results) {
                       const downloadItem = results ? results[0] : undefined;
-                      const MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "video/webm", "audio/mpeg", "audio/mp3", "video/mp4", "application/zip"];
+
                       if (downloadItem) {
                         console.log(downloadItem);
                         console.log("mime=" + downloadItem.mime);
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
                           if (instance.downloadEnforceMime && instance.downloadStrategy === "types") {
-                            if (!MIME_TYPES.includes(downloadItem.mime)) {
+                            if (download.mime !== downloadItem.mime) {
                               console.log("Cancelking@@@ because download mime isnt in mmime types, it is=" + downloadItem.mime);
                               chrome.downloads.cancel(downloadId);
                             }

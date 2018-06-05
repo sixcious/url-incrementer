@@ -184,8 +184,8 @@ URLI.Auto = function () {
     addAutoListener: addAutoListener,
     removeAutoListener: removeAutoListener,
     setAutoTimeout: setAutoTimeout,
-    pauseOrResumeAutoTimeout: pauseOrResumeAutoTimeout,
     clearAutoTimeout: clearAutoTimeout,
+    pauseOrResumeAutoTimeout: pauseOrResumeAutoTimeout,
     startAutoTimer: startAutoTimer
   };
 }();

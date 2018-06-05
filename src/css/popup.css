@@ -317,9 +317,9 @@ div.column#download-optional {
 }*/
 
 #download-optional-label-div {
-  color: rebeccapurple;
+/*  color: rebeccapurple;
   font-weight: bold;
-  text-align: center;
+  text-align: center;*/
 /*  border-bottom: 1px solid rebeccapurple;
   padding-bottom: 2px;
   margin-bottom: 4px;*/
@@ -332,8 +332,8 @@ div.column#download-optional {
 
 
 #download-strategy-label, #download-preview-button-span {
-  color: rebeccapurple;
-  font-weight: bold;
+/*  color: rebeccapurple;
+  font-weight: bold;*/
 }
 
 #download-preview-heading {
@@ -352,6 +352,14 @@ div.column#download-optional {
 #download-preview-heading div {
   display: inline-block;
 }
+
+#download-preview-set {
+  font-weight: bold;
+  vertical-align: sub;
+  margin-left: 2em;
+}
+
+
 /*
 
 #download-preview-table-div {
@@ -422,7 +430,7 @@ table tbody tr td {
 }
 
 #download-strategy-help {
-  color: rebeccapurple;
+/*  color: rebeccapurple;*/
   font-weight: bold;
   font-size: 0.9em;
   position: absolute;
