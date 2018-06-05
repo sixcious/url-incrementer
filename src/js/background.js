@@ -116,7 +116,7 @@ URLI.Background = function () {
           "errorSkip": items.errorSkip, "errorCodes": items.errorCodes,
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
-          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadSelector": items.downloadSelector,
+          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadTags": items.downloadTags, "downloadSelector": items.downloadSelector,
           //"downloadSameDomain": items.downloadSameDomain, "downloadEnforceMime": items.downloadEnforceMime,
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
           "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB
@@ -211,7 +211,10 @@ URLI.Background = function () {
       case "prev":
         actionPerformed = true;
         chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
-          var code = "URLI.NextPrev.getURL(" + JSON.stringify(action) + ", " + JSON.stringify(instance.nextPrevLinksPriority) + ", " + JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
+          var code = "URLI.NextPrev.findNextPrevURL(" + 
+            JSON.stringify(action) + ", " + 
+            JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
+            JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
             if (results && results[0]) {
               instance.url = results[0];

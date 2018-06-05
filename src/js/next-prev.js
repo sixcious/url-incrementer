@@ -9,72 +9,65 @@ var URLI = URLI || {};
 
 URLI.NextPrev = function () {
 
-        // Keywords are ordered in priority.
-        // startsWithExcludes helps better prioritize some keywords (e.g. we prefer includes of "prev" over startsWith of "back")
+        // Keywords are ordered in priority
+        // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
   const keywords = {
           "next": ["next", "forward", "&gt;", ">", "new"],
-          "prev": ["prev", "previous", "back", "&lt;", "<", "‹", "old"],
+          "prev": ["prev", "previous", "&lt;", "<", "‹", "back", "old"],
           "startsWithExcludes": ["new", "old", "back"]
         },
         // urls store important, attributes, and innerHTML links that were found
         urls = {
-          "important": new Map(),
+          "important":  { "relAttribute": new Map() },
           "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
           "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
         };
 
   /**
-   * Gets the URL by examining the links object based off of the requested
-   * priority and direction.
+   * Finds the next or prev URL.
    *
-   * @param priority  the link priority to use: attributes or innerHTML
-   * @param direction the direction to go: next or prev
-   * @param links     the links object to use
-   * @return url the url to use based on the parameters
+   * @param direction  the direction to go: next or prev
+   * @param priority   the link priority to use: attributes or innerHTML
+   * @param sameDomain whether to enforce the same domain policy
+   * @return url the next or prev url
    * @public
    */
-  function getURL(direction, priority, sameDomainPolicyEnabled) {
-    buildURLs(direction, sameDomainPolicyEnabled);
-    var url = [],
-        otherPriority = priority === "attributes" ? "innerHTML" : "attributes";
-
-    url[1] = urls.important.get("relAttribute");
-    console.log("1url " + direction + " important.relattribute =" + url);
-    //if (url) { return url; }
-    url[2] = traverseResults(priority, "equals", keywords[direction]);
-        console.log("2url " + direction + priority + "equals=" + url);
-   // if (url) { return url; }
-    url[3] = traverseResults(otherPriority, "equals", keywords[direction]);
-        console.log("3url " + direction + otherPriority + "equals=" + url);
-   // if (url) { return url; }
-    url[4] = traverseResults(priority, "startsWith", keywords[direction]);
-        console.log("4url=" + direction + priority + "startsWith=" + url);
-   // if (url) { return url; }
-       url[5] = traverseResults(priority, "includes", keywords[direction]);
-        console.log("6url=" + direction + priority + "includes=" + url);
-   // if (url) { return url; }
-    url[6] = traverseResults(otherPriority, "startsWith", keywords[direction]);
-        console.log("5url=" + direction + otherPriority + "startsWith=" + url);
-   // if (url) { return url; }
-    url[7] = traverseResults(otherPriority, "includes", keywords[direction]);
-        console.log("7url=" + direction + otherPriority + "includes=" + url);
- //   if (url) { return url; }    
- 
- console.log(url);
- for (var i = 0;i < url.length; i++) {
-   if (url[i]) { return url[i] }
- }
+  function findNextPrevURL(direction, priority, sameDomain) {
+    var url,
+        priority2 = priority === "attributes" ? "innerHTML" : "attributes",
+        algorithms = [
+          { "priority": "important", "subpriority": "relAttribute" },
+          { "priority": priority,    "subpriority": "equals"       },
+          { "priority": priority2,   "subpriority": "equals"       },
+          { "priority": priority,    "subpriority": "startsWith"   },
+          { "priority": priority,    "subpriority": "includes"     },
+          { "priority": priority2,   "subpriority": "startsWith"   },
+          { "priority": priority2,   "subpriority": "includes"     }
+        ];
+    buildURLs(direction, sameDomain);    
+    for (let algorithm of algorithms) {
+      url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
+      if (url) { return url; }
+    }
     return "";
   }
 
   /**
-   * TODO
+   * Traverses the urls results object to see if a URL was found.
+   * e.g. urls[attributes][equals][nextKeyword]
+   *
+   * @param priority    the link priority to use: attributes or innerHTML
+   * @param subpriority the sub priority to use: equals, startsWith, includes
+   * @param keywords    the ordered list of keywords sorted in priority
+   * @return url the url (if found)
+   * @private
    */
   function traverseResults(priority, subpriority, keywords) {
     var url = undefined;
     for (let keyword of keywords) {
       if (urls[priority][subpriority].has(keyword)) {
         url = urls[priority][subpriority].get(keyword);
+        console.log(priority + " - " + subpriority + " - " + keyword + " - " + url);
         break;
       }
     }
@@ -82,39 +75,40 @@ URLI.NextPrev = function () {
   }
 
   /**
-   * Gets the next and prev links in the document by parsing all link and anchor
-   * elements.
-   *
-   * @param sameDomainPolicyEnabled whether to enforce the same domain policy
-   * @return links the links containing the next and prev links (if any)
+   * Builds the urls results object by parsing all link and anchor elements.
+   * 
+   * @param direction  the direction to go: next or prev
+   * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function buildURLs(direction, sameDomainPolicyEnabled) {
+  function buildURLs(direction, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = document.getElementsByTagName("link"),
         anchors = document.links, // Includes all anchor and area elements
         hostname = document.location.hostname;
-    parseElements(direction, links, hostname, sameDomainPolicyEnabled);
-    parseElements(direction, anchors, hostname, sameDomainPolicyEnabled);
+    parseElements(direction, links, hostname, sameDomain);
+    parseElements(direction, anchors, hostname, sameDomain);
   }
 
   /**
    * Parses the elements by examining if their attributes or innerHTML contain
    * next or prev keywords in them.
    *
-   * @param elements the DOM elements to parse
-   * @param links    the links object to use
+   * @param direction  the direction to go: next or prev
+   * @param elements   the DOM elements to parse: links or anchors
+   * @param hostname   the document's hostname used to verify if URLs are in the same domain
+   * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function parseElements(direction, elements, hostname, sameDomainPolicyEnabled) {
+  function parseElements(direction, elements, hostname, sameDomain) {
     var url;
     for (let element of elements) {
       if (!element.href) {
         continue;
       }
-      try {
+      try { // Check if URL is in same domain if enabled, wrap in try/catch in case of exceptions with URL object
         url = new URL(element.href);
-        if (sameDomainPolicyEnabled && url.hostname !== hostname) {
+        if (sameDomain && url.hostname !== hostname) {
           continue;
         }
       } catch (e) {
@@ -129,24 +123,23 @@ URLI.NextPrev = function () {
 
   /**
    * Parses an element's text for keywords that might indicate a next or prev
-   * links. Adds values to the urls Maps if a match is found.
-   *
-   * @param type the link type: innerHTML or attributes
-   * @param href the URL to set this link to
-   * @param text the text to parse keywords from
-   * @param attributeNodeName attribute's node name if it's needed
+   * link. Adds the link to the urls map if a match is found.
+   * 
+   * @param direction the direction to go: next or prev
+   * @param type      innerHTML or attributes
+   * @param href      the URL to set this link to
+   * @param text      the text to parse keywords from
+   * @param attribute attribute's node name if it's needed
    * @private
    */
-  function parseText(direction, type, href, text, attributeNodeName) {
-    // Important Priority (e.g. rel="next" or rel="prev"):
-    if (type === "attributes" && attributeNodeName === "rel" && direction === text) {
-      urls.important.set("relAttribute", href);
-    }
-    // Attributes & innerHTML:
+  function parseText(direction, type, href, text, attribute) {
+    // Iterate keywords and build out urls maps
     for (let keyword of keywords[direction]) {
-      if (text === keyword) {
+      if (type === "attributes" && attribute === "rel" && text === keyword) { // important e.g. rel="next" or rel="prev"
+        urls.important.relAttribute.set(keyword, href);
+      } else if (text === keyword) {
         urls[type].equals.set(keyword, href);
-      } else if (text.startsWith(keyword) && keywords.startsWithExcludes.indexOf(keyword) < 0) {
+      } else if (text.startsWith(keyword) && keywords.startsWithExcludes.indexOf(keyword) < 0) { // startsWithExcludes
         urls[type].startsWith.set(keyword, href);
       } else if (text.includes(keyword)) {
         urls[type].includes.set(keyword, href);
@@ -156,6 +149,6 @@ URLI.NextPrev = function () {
 
   // Return Public Functions
   return {
-    getURL: getURL
+    findNextPrevURL: findNextPrevURL
   };
 }();
