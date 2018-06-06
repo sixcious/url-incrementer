@@ -21,7 +21,7 @@ I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to us
 If you only use URLI for shortcuts, no worries, nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version. I know this is going to sound cliche, but ... without "U" there is no URLI.
 Thank you (x Infinity) for letting URLI play a small part in your Chrome experience. :)
 
-What's New in Version 5.0 (June 5, 2018)
+What's New in Version 5.0 (6/12/18)
 - NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! (Blue for Increment/Decrement, Green for Next/Prev, Red for Clear, Orange for Auto, and Purple for Download)
 - NEW Auto Increment function: Supports Multiple Tabs at the same time and it also has Pause/Resume functionality. No permissions needed. Create your own webpage slideshows on YOUR terms!
 - NEW Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." This feature is completely optional (opt-in) and requires your permissions to enable it.

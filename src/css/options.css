@@ -124,11 +124,6 @@ input[type="image"]:focus {
   clear: both;
 }
 
-#urli-click-count {
-  cursor: pointer;
-  vertical-align: top;
-  /*transform: scaleX(-1);*/
-}
 
 #urli-thank-you {
   width: 100%;
@@ -136,15 +131,9 @@ input[type="image"]:focus {
   padding-top: 2px;
 }
 
-#extension-id-div {
-  font-family: monospace;
-  font-style: normal;
-  text-align: right;
-}
 
-#options .overlay {
-  top: initial;
-}
+
+
 
 .tooltip img {
   display: inline-block;
@@ -153,56 +142,67 @@ input[type="image"]:focus {
 
 /* heading color overrides */
 
+
 #increment-decrement-settings div.heading {
   border-bottom-color: #1779BA;
-}
-
-#increment-decrement-settings div.heading h3 {
-  color: #1779BA;
 }
 
 #next-prev-settings div.heading {
   border-bottom-color: #05854D;
 }
 
-#next-prev-settings div.heading h3 {
-  color: #05854D;
-}
-
 #auto-settings div.heading {
   border-bottom-color: #FF6600;
-}
-
-#auto-settings div.heading h3 {
-  color: #FF6600;
 }
 
 #download-settings div.heading {
   border-bottom-color: rebeccapurple;
 }
 
+#enhanced-mode div.heading {
+  border-bottom-color: #FFCC22;
+}
+
+/*#increment-decrement-settings div.heading h3 {
+  color: #1779BA;
+}
+
+
+
+
+#next-prev-settings div.heading h3 {
+  color: #05854D;
+}
+
+
+
+#auto-settings div.heading h3 {
+  color: #FF6600;
+}
+
+
 #download-settings div.heading h3 {
   color: rebeccapurple;
 }
 
+
+
+#enhanced-mode div.heading h3 {
+  color: #EEBB22;
+}*/
+
+
 #download-experimental {
-  color: rebeccapurple;
+/*  color: rebeccapurple;*/
   font-size: 0.9em;
   display: inline-block;
   margin-left: 6px;
 }
 
-#download-experimental-disclaimer {
+/*#download-experimental-disclaimer {
   color: rebeccapurple;
-}
-
-/*#enhanced-mode div.heading {
-  border-bottom-color: #FFCC22;
-}
-
-#enhanced-mode div.heading h3 {
-  color: #FFCC22;
 }*/
+
 
 #urli-thank-you-rainbow {
   font-size: 1.1em;
@@ -264,4 +264,19 @@ input[type="image"]:focus {
       to right,
       #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
   );
+}
+
+#attributions-label {
+/*  text-decoration: underline;
+  margin-bottom: 4px;*/
+}
+
+#attributions-content {
+  font-size: 0.75em;
+  font-style: italic;
+}
+
+#options .overlay {
+  position: relative; /* keeps the overlay positioned at the bottom of the options popup */
+  top: -60px; /* initial */
 }

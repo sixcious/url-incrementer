@@ -66,7 +66,7 @@ URLI.Auto = function () {
   }
 
   /**
-   * Sets the instance's auto timeout, and then updates the tab, performing the auto action.
+   * Sets the instance's auto timeout and then performs the auto action after the time has elapsed.
    *
    * @param instance the instance's timeout to set
    * @public

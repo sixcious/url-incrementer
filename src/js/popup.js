@@ -234,8 +234,10 @@ URLI.Popup = function () {
   }
 
   /**
-   * Updates the Auto ETA time everytime the seconds or times is updated by the user or when the instance is updated.
+   * Updates the Auto ETA time every time the seconds or times is updated by the user or when the instance is updated.
    *
+   * Calculating the hours/minutes/seconds is based on code written by Vishal @ stackoverflow.com
+   * @see https://stackoverflow.com/a/11486026/988713
    * @private
    */
   function updateAutoETA() {

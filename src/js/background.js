@@ -402,7 +402,7 @@ URLI.Background = function () {
         break;
       case "incrementDecrementSkipErrors":
         if (request.instance) {
-          performAction(instance, "incrementDecrementSkipErrors", "increment-decrement.js");
+          performAction(request.instance, "incrementDecrementSkipErrors", "increment-decrement.js");
         }
         break;
       case "setBadgeSkipErrors":
