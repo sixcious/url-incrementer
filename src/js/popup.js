@@ -12,7 +12,7 @@ URLI.Popup = function () {
   var instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       DOM = {}, // Map to cache DOM elements: key=id, value=element
-      AUTO_ETA_I18NS = {
+      AUTO_ETA_I18NS = { // AUTO ETA messages cache
         "day": chrome.i18n.getMessage("auto_eta_day"),
         "hour": chrome.i18n.getMessage("auto_eta_hour"), "hours": chrome.i18n.getMessage("auto_eta_hours"),
         "minute": chrome.i18n.getMessage("auto_eta_minute"), "minutes": chrome.i18n.getMessage("auto_eta_minutes"),
@@ -57,15 +57,17 @@ URLI.Popup = function () {
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL);
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
-    DOM["#download-strategy-select"].addEventListener("change", changeDownloadStrategy);
-    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked && +this.value < 1) { this.value = 1; updateDownloadPreview(); }  });
-    DOM["#download-preview-button"].addEventListener("click", updateDownloadPreview);
-    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" });
-    DOM["#download-types"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");});
-    DOM["#download-tags"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");});
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreview(); } });
+    DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
+    DOM["#download-types"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated"); updateDownloadPreview(); });
+    DOM["#download-tags"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); updateDownloadPreview(); });
+    DOM["#download-selector-input"].addEventListener("focusout", updateDownloadPreview);
+    DOM["#download-includes-input"].addEventListener("focusout", updateDownloadPreview);
+    DOM["#download-excludes-input"].addEventListener("focusout", updateDownloadPreview);
+    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -101,7 +103,15 @@ URLI.Popup = function () {
           updateControls();
           updateSetup();
         }
-      break;
+        break;
+      case "updatePopupDownloadPreview":
+        if (request.instance && request.instance.tabId == instance.tabId) {
+          console.log("received a message to updateDownloadPreview");
+          updateDownloadPreview();
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -218,8 +228,7 @@ URLI.Popup = function () {
     //DOM["#download-enforce-mime-input"].checked = instance.downloadEnforceMime;
     //DOM["#download-preview-all-input"].checked = items_.downloadPreviewAll;
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
-    if (DOM["#download-toggle-input"].checked && +DOM["#download-toggle-input"].value < 1) {
-      DOM["#download-toggle-input"].value = 1;
+    if (DOM["#download-toggle-input"].checked) {
       updateDownloadPreview();
     }
   }
@@ -272,6 +281,9 @@ URLI.Popup = function () {
    * @private
    */
   function updateDownloadPreview() {
+    console.log("updateDownloadPreview()");
+//    translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");
+//    translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");
     var downloadStrategy = DOM["#download-strategy-select"].value,
         downloadTypes = DOM["#download-types-generated"].value.split(","),
         downloadTags = DOM["#download-tags-generated"].value.split(","),
@@ -290,14 +302,14 @@ URLI.Popup = function () {
         JSON.stringify(downloadExcludes) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
         if (results && results[0]) {
-          var downloadPreviewSet = "",
+          var downloadPreviewHeadingTitle = "",
               checkboxExtensions = "",
               checkboxTags = "",
               table = "",
               i = 1,
               goodLength = results[0].good.length,
               totalLength = results[0].good.length + results[0].bad.length;
-          downloadPreviewSet = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">Set to download " + results[0].good.length + " out of " + (results[0].good.length + results[0].bad.length) + " URLs</span>";
+          downloadPreviewHeadingTitle = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">Set to download " + results[0].good.length + " out of " + (results[0].good.length + results[0].bad.length) + " URLs</span>";
           for (let extension of results[0].allExtensions) {
             checkboxExtensions +=
               "<label>" +
@@ -312,7 +324,10 @@ URLI.Popup = function () {
                 "<span>" + tag + "<\/span>" +
               "<\/label>";
           }
-          table = "<table><thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>Ext</th><th>Tag</th><th>URL</th></tr></thead><tbody>";
+          table = "<table>" + 
+                    "<colgroup>" + 
+                      "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 60%;\"></colgroup>" + 
+                    "<thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>Ext</th><th>Tag</th><th>URL</th></tr></thead><tbody>";
           for (let download of results[0].good) {
             table += "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.url  + "</td></tr>";
           }
@@ -320,12 +335,14 @@ URLI.Popup = function () {
             table += "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" +  download.url  + "</td></tr>";
           }
           table += "</tbody></table>";
-          DOM["#download-preview-set"].innerHTML = downloadPreviewSet;
+          DOM["#download-preview-heading-title"].innerHTML = downloadPreviewHeadingTitle;
           DOM["#download-types"].innerHTML = checkboxExtensions;
           DOM["#download-tags"].innerHTML = checkboxTags;
           DOM["#download-preview-table-div"].innerHTML = table;
           // Need to now update the hidden inputs again in case they contain values NOT in the page's current selections
           // e.g. If the instance/storage had extension "jpg" saved and there is no jpg on this page, this removes it
+          translateHiddenInputToCheckboxValues("#download-types input", "#download-types-generated");
+          translateHiddenInputToCheckboxValues("#download-tags input", "#download-tags-generated");
           translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");
           translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");
         } else {
@@ -346,9 +363,9 @@ URLI.Popup = function () {
     var html = "";
     if (download) {
       if (download.tag === "img" || download.ext === "jpg" || download.ext === "jpeg" || download.ext === "png" || download.ext === "gif") {
-        html = "<img src=\"" + download.url + "\" alt=\"\" width=\"24\"/>";
+        html = "<img src=\"" + download.url + "\" alt=\"\" width=\"32\"/>";
       } else if (download.tag === "video" || download.ext === "webm" || download.ext === "mp4") {
-        html = "<video src=\"" + download.url + "\" width=\"24\"/>";
+        html = "<video src=\"" + download.url + "\" width=\"32\"/>";
       }
     }
     return html;
@@ -376,7 +393,7 @@ URLI.Popup = function () {
     var inputs = document.querySelectorAll(selectorInputs),
         generated = DOM[generatedId].split(",");
     for (let input of inputs) {
-      if (generated.includes(input.value)) {
+      if (generated.includes(input.value) || (instance.downloadEnabled && (selectorInputs.includes("download-types") ? instance.downloadTypes.includes(input.value) : instance.downloadTags.includes(input.value)))) {
         input.checked = true;
       }
     }
@@ -516,8 +533,8 @@ URLI.Popup = function () {
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
-        console.log("is there an instance in background after the popup clears it?");
-        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
+//        console.log("is there an instance in background after the popup clears it?");
+//        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
         // If popup can overwrite settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({

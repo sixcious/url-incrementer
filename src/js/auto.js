@@ -143,6 +143,10 @@ URLI.Auto = function () {
    * @private
    */
   function autoListener(tabId, changeInfo, tab) {
+    // We only care about loading and complete statuses
+    if (changeInfo.status !== "loading" && changeInfo.status !== "complete") {
+      return;
+    }
     console.log("autoListener is on!");
     var instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance
@@ -158,7 +162,10 @@ URLI.Auto = function () {
           URLI.Background.setBadge(tabId, "auto", false);
         }
       }
-      
+      // If download enabled send a message to the popup to update the download preview (if it's open)
+      if (changeInfo.status === "complete" && instance.downloadEnabled) {
+        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+      }
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
         // If the auto instance was paused but the tab changed, we do not want to consider this an auto action
         if (instance.autoPaused) {

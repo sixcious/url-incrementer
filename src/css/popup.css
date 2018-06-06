@@ -214,6 +214,12 @@ div.column {
 
 #download-includes-input, #download-excludes-input {
   width: 108px;
+  font-weight: bold;
+  color: #E6003E;
+}
+
+#download-includes-input {
+  
 }
 
 #download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
@@ -337,26 +343,25 @@ div.column#download-optional {
 }
 
 #download-preview-heading {
-  margin-top: 6px;
+  position: relative; /* for the position absolute checkboxes on the right */
+  margin: 6px 0;
 }
 
+/*
 #download-preview-button {
   cursor: pointer;
   margin-right: 12px;
+}*/
+
+#download-preview-heading .download-preview-heading-checkboxes {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
-#download-preview-heading div.checkbox {
-  vertical-align: middle;
-}
 
-#download-preview-heading div {
-  display: inline-block;
-}
-
-#download-preview-set {
+#download-preview-heading-title {
   font-weight: bold;
-  vertical-align: sub;
-  margin-left: 2em;
 }
 
 
@@ -399,7 +404,7 @@ table thead tr th {
   /*padding: 0.5rem 0.625rem 0.625rem;*/
   font-weight: bold;
   text-align: left;
-  min-width: 24px;
+ /* min-width: 24px;*/
 }
 
 table thead th, table tbody th, table tbody td {

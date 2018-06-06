@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreviewCompressed": true, "downloadPreviewAllURLs": false,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadTags": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadEnforceMime": true, "downloadPreviewCompressed": true,
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
@@ -41,7 +41,8 @@ URLI.Background = function () {
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
-  // The individual tab instances. Note: We never save instances due to URLs being a privacy concern
+  // The individual tab instances in Background memory
+  // Note: We NEVER save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
   /**
@@ -117,9 +118,9 @@ URLI.Background = function () {
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
           "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadTags": items.downloadTags, "downloadSelector": items.downloadSelector,
-          //"downloadSameDomain": items.downloadSameDomain, "downloadEnforceMime": items.downloadEnforceMime,
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
-          "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB
+          "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
+          "downloadEnforceMime": items.downloadEnforceMime
     };
     return instance;
   }
@@ -132,6 +133,7 @@ URLI.Background = function () {
    * @param temporary       boolean indicating whether the badge should be displayed temporarily
    * @param text            (optional) the text to use instead of the the badge text
    * @param backgroundColor (optional) the backgroundColor to use instead of the badge backgroundColor
+   * @public
    */
   function setBadge(tabId, badge, temporary, text, backgroundColor) {
     chrome.browserAction.setBadgeText({text: text ? text : BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
@@ -177,7 +179,12 @@ URLI.Background = function () {
         instance.autoTimes++;
       }
     }
-        
+    
+    // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
+    if (instance && instance.downloadEnabled && !instance.autoEnabled && (["increment", "decrement", "next", "prev"].includes(action))) {
+      chrome.tabs.onUpdated.addListener(tabUpdatedListener);
+    }
+
     switch (action) {
       case "increment":
       case "decrement":
@@ -206,6 +213,13 @@ URLI.Background = function () {
             chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
           }
         }
+        break;
+      case "incrementDecrementSkipErrors":
+        chrome.tabs.update(instance.tabId, {url: instance.url});
+        if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+          setInstance(instance.tabId, instance);
+        }
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         break;
       case "next":
       case "prev":
@@ -249,12 +263,12 @@ URLI.Background = function () {
 
                       if (downloadItem) {
                         console.log(downloadItem);
-                        console.log("mime=" + downloadItem.mime);
+                        console.log("downloadMime=" + download.mime + " downloadItem.mime=" + downloadItem.mime);
                         console.log("totalBytes=" + downloadItem.totalBytes);
                         if (instance.downloadStrategy !== "page") {
-                          if (instance.downloadEnforceMime && instance.downloadStrategy === "types") {
-                            if (download.mime !== downloadItem.mime) {
-                              console.log("Cancelking@@@ because download mime isnt in mmime types, it is=" + downloadItem.mime);
+                          if (instance.downloadEnforceMime) {
+                            if (download.mime && downloadItem.mime && download.mime.toLowerCase() !== downloadItem.mime.toLowerCase()) {
+                              console.log("Cancelking@@@ because mime isn't equal! downloadMime=" + download.mime + " downloadItem.mime=" + downloadItem.mime);
                               chrome.downloads.cancel(downloadId);
                             }
                           }
@@ -339,6 +353,8 @@ URLI.Background = function () {
 
   /**
    * Listen for installation changes and do storage/extension initialization work.
+   *
+   * @public
    */
   function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
@@ -364,6 +380,8 @@ URLI.Background = function () {
 
   /**
    * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
+   * 
+   * @public
    */
   function messageListener(request, sender, sendResponse) {
     var instance;
@@ -378,18 +396,13 @@ URLI.Background = function () {
             instance = buildInstance(sender.tab, items);
           }
           if (instance) {
-            performAction(instance, request.action, "internal-shortcuts");
+            performAction(instance, request.action, "shortcuts.js");
           }
         });
         break;
       case "incrementDecrementSkipErrors":
-        //instance = getInstance(sender.tab.id);
         if (request.instance) {
-            chrome.tabs.update(request.instance.tabId, {url: request.instance.url});
-            if (request.instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-              setInstance(request.instance.tabId, request.instance);
-            }
-            chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
+          performAction(instance, "incrementDecrementSkipErrors", "increment-decrement.js");
         }
         break;
       case "setBadgeSkipErrors":
@@ -410,20 +423,24 @@ URLI.Background = function () {
 
   /**
    * Listen for commands (Browser Extension shortcuts) and perform the command's action.
+   * 
+   * @public
    */
   function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
       chrome.storage.sync.get(null, function(items) {
         if (!items.permissionsInternalShortcuts) {
           chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-            var instance = getInstance(tabs[0].id);
-            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
-                (command === "auto" && instance && instance.autoEnabled) ||
-                (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
-              if (!instance && items.quickEnabled) {
-                instance = buildInstance(tabs[0], items);
+            if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
+              var instance = getInstance(tabs[0].id);
+              if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
+                  (command === "auto" && instance && instance.autoEnabled) ||
+                  (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
+                if (!instance && items.quickEnabled) {
+                  instance = buildInstance(tabs[0], items);
+                }
+                performAction(instance, command, "command");
               }
-              performAction(instance, command, "command");
             }
           });
         }
@@ -433,11 +450,34 @@ URLI.Background = function () {
 
   /**
    * Listen for when tabs are removed and clear the instances if they exist.
+   * 
+   * @public
    */
   function tabRemovedListener(tabId, removeInfo) {
     var instance = URLI.Background.getInstance(tabId);
     if (instance) {
       performAction(instance, "clear", "tabRemovedListener");
+    }
+  }
+
+  /**
+   * The chrome.tabs.onUpdated listener that is temporarily added (then removed) for certain events.
+   *
+   * @param tabId      the tab ID
+   * @param changeInfo the status (either complete or loading)
+   * @param tab        the tab object
+   * @private
+   */
+  function tabUpdatedListener(tabId, changeInfo, tab) {
+    console.log("background download tabUpdatedListener");
+    if (changeInfo.status === "complete") {
+      var instance = URLI.Background.getInstance(tabId);
+      // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
+      if (instance && instance.downloadEnabled && !instance.autoEnabled) {
+        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+      }
+      console.log("background download tabUpdatedListener REMOVED?");
+      chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
     }
   }
 

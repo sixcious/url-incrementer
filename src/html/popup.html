@@ -189,20 +189,6 @@
                   <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
                 </div>
               </div>
-              <!--
-              <div id="download-enforce-mime" class="checkbox">
-                <label>
-                  <input id="download-enforce-mime-input" type="checkbox"/>
-                  <span id="download-enforce-mime-label" data-i18n="textContent"></span>
-                </label>
-              </div>
-              <div id="download-same-domain" class="checkbox">
-                <label>
-                  <input id="download-same-domain-input" type="checkbox"/>
-                  <span id="download-same-domain-label" data-i18n="textContent"></span>
-                </label>
-              </div>
-              -->
             </div>
             <div id="download-optional" class="column">
               <div id="download-optional-label-div">
@@ -231,25 +217,24 @@
                   <span id="download-megabytes-label*max" data-i18n="textContent"></span>
                 </div>
               </div>
+              <div id="download-enforce-mime" class="checkbox">
+                <label>
+                  <input id="download-enforce-mime-input" type="checkbox"/>
+                  <span id="download-enforce-mime-label" data-i18n="textContent"></span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
         <div id="download-preview">
           <div id="download-preview-heading">
-            <div id="download-preview-button">
-              <button id="download-preview-button-span" data-i18n="textContent"></button>
-            </div>
-            <div class="checkbox">
-  <!--            <label>
-                <input id="download-preview-all-input" type="checkbox"/>
-                <span id="download-preview-all-label" data-i18n="textContent"></span>
-              </label>-->
+            <div id="download-preview-heading-title"></div>
+            <div class="download-preview-heading-checkboxes">
               <label>
                 <input id="download-preview-compressed-input" type="checkbox"/>
                 <span id="download-preview-compressed-label" data-i18n="textContent"></span>
               </label>
             </div>
-            <div id="download-preview-set"></div>
           </div>
           <div id="download-preview-table-div"></div>
         </div>
