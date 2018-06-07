@@ -291,12 +291,12 @@ URLI.Background = function () {
           });
         }
         break;
-      case "auto":
+      case "auto": // the auto action is always pause or resume
       console.log("in auto action in background.js");
       console.log("caller=" + caller + " instance.autoPaused=" + instance.autoPaused);
       console.log(instance);
-      //instance = getInstance(instance.tabId); // popup...bad data?
-        URLI.Auto.pauseOrResumeAutoTimeout(instance);
+        URLI.Auto.pauseOrResumeAutoTimer(instance);
+        instance = getInstance(instance.tabId); // Get the updated pause or resume state set by auto
         if (callback) {
           callback(instance);
         } else {
@@ -314,22 +314,12 @@ URLI.Background = function () {
             chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
           }
           if (instance && instance.autoEnabled) {
-            instance.autoEnabled = false;
-            URLI.Auto.clearAutoTimeout(instance);
-            URLI.Auto.removeAutoListener();
-            // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
-            if (caller !== "tabRemovedListener") {
-              if (caller !== "popupClearBeforeSet") {
-                setBadge(instance.tabId, "clear", true);
-              } else {
-                setBadge(instance.tabId, "default", false);
-              }
-            }
+            URLI.Auto.stopAutoTimer(instance, caller);
           }
-           deleteInstance(instance.tabId);
-           // for callers like popup that still need the instance, disable all states
-          instance.enabled = instance.downloadEnabled = instance.autoEnabled = false;
-          instance.autoTimes = items.autoTimes;
+          deleteInstance(instance.tabId);
+          // for callers like popup that still need the instance, disable all states and reset autoTimes
+          instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
+          instance.autoTimes = instance.autoTimesOriginal;
           if (callback) {
             callback(instance);
           } else {

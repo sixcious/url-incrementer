@@ -271,9 +271,13 @@ input[type="image"]:focus {
   margin-bottom: 4px;*/
 }
 
-#attributions-content {
+#attributions-content, #attributions-you {
   font-size: 0.75em;
   font-style: italic;
+}
+
+#attributions-you {
+  font-weight: bold;
 }
 
 #copyleft {
@@ -283,5 +287,5 @@ input[type="image"]:focus {
 
 
 #options .overlay {
-  top: 86%; /* initial */
+  top: 82%; /* initial */
 }

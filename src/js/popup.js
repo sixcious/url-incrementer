@@ -105,7 +105,7 @@ URLI.Popup = function () {
         }
         break;
       case "updatePopupDownloadPreview":
-        if (request.instance && request.instance.tabId == instance.tabId) {
+        if (request.instance && request.instance.tabId === instance.tabId) {
           console.log("received a message to updateDownloadPreview");
           updateDownloadPreview();
         }
@@ -158,10 +158,7 @@ URLI.Popup = function () {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Background.performAction(instance, action, "popupClickActionButton", function(result) {
-          instance = result;
-          updateControls();
-        });
+        backgroundPage.URLI.Background.performAction(instance, action, "popupClickActionButton");
       });
     }
   }
@@ -390,7 +387,7 @@ URLI.Popup = function () {
     DOM[generatedId].value = generated;
   }
 
-  // TODO OTher way!
+  // TODO OTher way! is this needed?
   function translateHiddenInputToCheckboxValues(generatedId, selectorInputs) {
     var inputs = document.querySelectorAll(selectorInputs),
         generated = DOM[generatedId].value.split(",");
@@ -428,7 +425,7 @@ URLI.Popup = function () {
         downloadStrategy = DOM["#download-strategy-select"].value,
         downloadSelector = DOM["#download-selector-input"].value,
         //downloadSameDomain = DOM["#download-same-domain-input"].checked,
-        //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
+        downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
         downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",") : [],
         downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [],
         downloadMinMB = +DOM["#download-min-mb-input"].value,
@@ -518,22 +515,22 @@ URLI.Popup = function () {
         instance.errorSkip = errorSkip;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
-        instance.autoTimesOriginal = autoTimes;
         instance.autoTimes = autoTimes;
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
-        instance.autoBadge = autoBadge,
+        instance.autoBadge = autoBadge;
+        instance.autoPaused = false; // always starts auto un-paused
+        instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes
         instance.downloadEnabled = downloadEnabled;
         instance.downloadStrategy = downloadStrategy;
         instance.downloadTypes = downloadTypes;
         instance.downloadTags = downloadTags;
         instance.downloadSelector = downloadSelector;
-        //instance.downloadSameDomain = downloadSameDomain;
-        //instance.downloadEnforceMime = downloadEnforceMime;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
+        instance.downloadEnforceMime = downloadEnforceMime;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
 //        console.log("is there an instance in background after the popup clears it?");
 //        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
@@ -561,14 +558,12 @@ URLI.Popup = function () {
             "downloadTypes": downloadTypes,
             "downloadTags": downloadTags,
             "downloadSelector": downloadSelector,
-            //"downloadSameDomain": downloadSameDomain,
-            //"downloadEnforceMime": downloadSameDomain,
+            "downloadEnforceMime": downloadEnforceMime,
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,
             "downloadMaxMB": downloadMaxMB,
-            "downloadPreviewCompressed": downloadPreviewCompressed,
-//            "downloadPreviewAll": downloadPreviewAll
+            "downloadPreviewCompressed": downloadPreviewCompressed
           });
         }
         // If permissions granted, send message to content script:
@@ -579,9 +574,7 @@ URLI.Popup = function () {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         if (instance.autoEnabled) {
-          backgroundPage.URLI.Auto.startAutoTimer(instance, function(result) {
-            instance = result;
-          });
+          backgroundPage.URLI.Auto.startAutoTimer(instance);
         }
         toggleView.call(DOM["#accept-button"]);
         });

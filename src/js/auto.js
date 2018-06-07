@@ -7,69 +7,81 @@
 
 var URLI = URLI || {};
 
-/**
- * The AutoTimer that contains the internal setTimeout with pause and resume capabilities.
- * 
- * The function is based on code written by Tim Down @ stackoverflow.com
- * @see https://stackoverflow.com/a/3969760
- */
-URLI.AutoTimer = function (callback, delay) {
-
-  var timerId, start, remaining = delay;
-
-  this.pause = function() {
-    window.clearTimeout(timerId);
-    remaining -= Date.now() - start;
-  };
-
-  this.resume = function() {
-    start = Date.now();
-    window.clearTimeout(timerId);
-    timerId = window.setTimeout(callback, remaining);
-  };
-
-  this.clear = function() {
-    window.clearTimeout(timerId);
-  };
-
-  this.resume();
-};
-
 URLI.Auto = function () {
 
+  // The instance auto timers in Background memory
+  // Note: We have a separate map to store all the instances' auto timers instead of storing each auto timer in the
+  // instance itself because the AutoTimer is a function and can't be JSON parsed/stringified
   const autoTimers = new Map();
-  
+
+  // A boolean flag indicating if we have added the tabs.on.updated autoListener (to prevent adding multiple listeners)
   var autoListenerAdded = false;
 
   /**
-   * Adds the auto listener (only if there isn't one already).
+   * Starts the auto timer for the instance by doing all the necessary start-up work (convenience method).
    *
+   * @param instance the instance to start an auto timer for
    * @public
    */
-  function addAutoListener() {
-    if (!autoListenerAdded) {
-      chrome.tabs.onUpdated.addListener(autoListener);
-      autoListenerAdded = true;
+  function startAutoTimer(instance) {
+    clearAutoTimeout(instance);
+    setAutoTimeout(instance);
+    addAutoListener();
+    URLI.Background.setBadge(instance.tabId, "auto", false);
+  }
+
+  /**
+   * Stops the auto timer for the instance by doing all the necessary stopping work (convenience method).
+   *
+   * @param instance the instance's auto timer to stop
+   * @param caller   the caller asking to stop the auto timer (to determine how to set the badge)
+   * @public
+   */
+  function stopAutoTimer(instance, caller) {
+    clearAutoTimeout(instance);
+    removeAutoListener();
+    // Don't need to set the badge if the tab is being removed
+    if (caller !== "tabRemovedListener") {
+      // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
+      if (caller !== "popupClearBeforeSet") {
+        URLI.Background.setBadge(instance.tabId, "clear", true);
+      } else {
+        URLI.Background.setBadge(instance.tabId, "default", false);
+      }
     }
   }
 
   /**
-   * Removes the auto listener (only if there isn't any other instance that still has auto enabled).
+   * Pauses or resumes the instance's auto timer. If the instance is paused, it resumes or vice versa.
    *
+   * @param instance the instance's auto timer to pause or resume
    * @public
    */
-  function removeAutoListener() {
-    if (![...URLI.Background.getInstances().values()].some(instance => instance && instance.autoEnabled)) {
-      chrome.tabs.onUpdated.removeListener(autoListener);
-      autoListenerAdded = false;
+  function pauseOrResumeAutoTimer(instance) {
+    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    if (autoTimer) {
+      if (!instance.autoPaused) {
+        instance.autoPaused = true;
+        autoTimer.pause();
+        URLI.Background.setBadge(instance.tabId, "autopause", false);
+      } else {
+        instance.autoPaused = false;
+        autoTimer.resume();
+        if (instance.autoBadge === "times") {
+          URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
+        } else {
+          URLI.Background.setBadge(instance.tabId, "auto", false);
+        }
+      }
+      URLI.Background.setInstance(instance.tabId, instance); // necessary: update instance.autoPaused boolean state
+      autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
     }
   }
-
   /**
    * Sets the instance's auto timeout and then performs the auto action after the time has elapsed.
    *
    * @param instance the instance's timeout to set
-   * @public
+   * @private
    */
   function setAutoTimeout(instance) {
     var autoTimer = new URLI.AutoTimer(function() {
@@ -90,7 +102,7 @@ URLI.Auto = function () {
    * a shortcut command) or naturally when the autoTimes count reaches 0 and the instance gets deleted.
    *
    * @param instance the instance's timeout to clear
-   * @public
+   * @private
    */
   function clearAutoTimeout(instance) {
     var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
@@ -99,36 +111,29 @@ URLI.Auto = function () {
       autoTimers.delete(instance.tabId);
     }
   }
-  
-  function pauseOrResumeAutoTimeout(instance) {
-    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
-    if (autoTimer) {
-      if (!instance.autoPaused) {
-        instance.autoPaused = true;
-        autoTimer.pause();
-        URLI.Background.setBadge(instance.tabId, "autopause", false);
-      } else {
-        instance.autoPaused = false;
-        autoTimer.resume();
-        if (instance.autoBadge === "times") {
-          URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
-        } else {
-          URLI.Background.setBadge(instance.tabId, "auto", false);
-        }
-      }
-      URLI.Background.setInstance(instance.tabId, instance); // necessary? update instance.autoPaused boolean state
-      autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
+
+
+  /**
+   * Adds the auto listener (only if there isn't one already).
+   *
+   * @private
+   */
+  function addAutoListener() {
+    if (!autoListenerAdded) {
+      chrome.tabs.onUpdated.addListener(autoListener);
+      autoListenerAdded = true;
     }
   }
-  
-  function startAutoTimer(instance, callback) {
-    clearAutoTimeout(instance);
-    setAutoTimeout(instance);
-    addAutoListener();
-    instance.autoPaused = false;
-    URLI.Background.setBadge(instance.tabId, "auto", false);
-    if (callback) {
-      callback(instance);
+
+  /**
+   * Removes the auto listener (only if there isn't any other instance that still has auto enabled).
+   *
+   * @private
+   */
+  function removeAutoListener() {
+    if (![...URLI.Background.getInstances().values()].some(instance => instance && instance.autoEnabled)) {
+      chrome.tabs.onUpdated.removeListener(autoListener);
+      autoListenerAdded = false;
     }
   }
 
@@ -188,11 +193,38 @@ URLI.Auto = function () {
 
   // Return Public Functions
   return {
-    addAutoListener: addAutoListener,
-    removeAutoListener: removeAutoListener,
-    setAutoTimeout: setAutoTimeout,
-    clearAutoTimeout: clearAutoTimeout,
-    pauseOrResumeAutoTimeout: pauseOrResumeAutoTimeout,
-    startAutoTimer: startAutoTimer
+    startAutoTimer: startAutoTimer,
+    stopAutoTimer: stopAutoTimer,
+    pauseOrResumeAutoTimer: pauseOrResumeAutoTimer
   };
 }();
+
+/**
+ * The AutoTimer that contains the internal setTimeout with pause and resume capabilities.
+ * This function is based on code written by Tim Down @ stackoverflow.com.
+ *
+ * @param callback the function callback
+ * @param delay    the delay for the timeout
+ * @see https://stackoverflow.com/a/3969760
+ */
+URLI.AutoTimer = function (callback, delay) {
+
+  var timerId, start, remaining = delay;
+
+  this.pause = function() {
+    window.clearTimeout(timerId);
+    remaining -= Date.now() - start;
+  };
+
+  this.resume = function() {
+    start = Date.now();
+    window.clearTimeout(timerId);
+    timerId = window.setTimeout(callback, remaining);
+  };
+
+  this.clear = function() {
+    window.clearTimeout(timerId);
+  };
+
+  this.resume();
+};
