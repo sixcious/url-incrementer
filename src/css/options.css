@@ -276,7 +276,12 @@ input[type="image"]:focus {
   font-style: italic;
 }
 
+#copyleft {
+  font-size: 0.75em;
+  text-align: right;
+}
+
+
 #options .overlay {
-  position: relative; /* keeps the overlay positioned at the bottom of the options popup */
-  top: -60px; /* initial */
+  top: 86%; /* initial */
 }

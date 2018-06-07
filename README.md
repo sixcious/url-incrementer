@@ -1,5 +1,10 @@
 # URL Incrementer
 
+![URL Incrementer](src/img/icons/dark/128.png?raw=true "URL Incrementer")
+
+Extension Mascot / Incrementer Robot:
+![URLI](src/img/extras/urli.png?raw=true "URLI")
+
 URLI ("yur-lee") increments URLs. If the URL has a "page=1" in it, URLI can get you to "page=2" quickly and conveniently. Use shortcuts or the UI Buttons to increment, or say "Good-Bye!" to manual incrementing and start your own web page slideshows with URLI's Auto-Incrementer! You can even download n' increment a series of pages using the Download Incrementer (experimental)! You can use URLI on gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially.
 
 Features:

@@ -343,10 +343,10 @@ URLI.Popup = function () {
           DOM["#download-preview-table-div"].innerHTML = table;
           // Need to now update the hidden inputs again in case they contain values NOT in the page's current selections
           // e.g. If the instance/storage had extension "jpg" saved and there is no jpg on this page, this removes it
-          translateHiddenInputToCheckboxValues("#download-types input", "#download-types-generated");
-          translateHiddenInputToCheckboxValues("#download-tags input", "#download-tags-generated");
-          translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");
-          translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");
+          //translateHiddenInputToCheckboxValues("#download-types-generated", "#download-types input");
+          //translateHiddenInputToCheckboxValues("#download-tags-generated", "#download-tags input");
+          //translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated");
+          //translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated");
         } else {
           DOM["#download-preview-table-div"].innerHTML = "NO RESULTS, sad panda :(";
         }
@@ -393,7 +393,7 @@ URLI.Popup = function () {
   // TODO OTher way!
   function translateHiddenInputToCheckboxValues(generatedId, selectorInputs) {
     var inputs = document.querySelectorAll(selectorInputs),
-        generated = DOM[generatedId].split(",");
+        generated = DOM[generatedId].value.split(",");
     for (let input of inputs) {
       if (generated.includes(input.value) || (instance.downloadEnabled && (selectorInputs.includes("download-types") ? instance.downloadTypes.includes(input.value) : instance.downloadTags.includes(input.value)))) {
         input.checked = true;
