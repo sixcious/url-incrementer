@@ -97,7 +97,9 @@ if (strategy === "page") {
         results = findDownloadURLsBySelector(strategy, extensions, tags, selector, includes, excludes);
         break;
       case "page":
-        results = [{ "url": document.location.href, "ext": "", "tag": ""}];
+        var url = document.location.href,
+            ext = findExt(url);
+        results = [{ "url": url, "ext": isValidExt(ext) ? ext : "", "tag": ""}];
         break;
       default:
         results = [];

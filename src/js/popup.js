@@ -364,7 +364,7 @@ URLI.Popup = function () {
   function downloadPreviewThumb(download) {
     var html = "";
     if (download) {
-      if (download.tag === "img" || download.ext === "jpg" || download.ext === "jpeg" || download.ext === "png" || download.ext === "gif") {
+      if (download.tag === "img" || download.ext === "jpg" || download.ext === "jpeg" || download.ext === "png" || download.ext === "gif" || download.ext === "svg") {
         html = "<img src=\"" + download.url + "\" alt=\"\" width=\"32\"/>";
       } else if (download.tag === "video" || download.ext === "webm" || download.ext === "mp4") {
         html = "<video src=\"" + download.url + "\" width=\"32\"/>";

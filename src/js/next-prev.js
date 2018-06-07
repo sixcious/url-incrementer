@@ -12,9 +12,9 @@ URLI.NextPrev = function () {
         // Keywords are ordered in priority
         // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
   const keywords = {
-          "next": ["next", "forward", "&gt;", ">", "次", "new"],
-          "prev": ["prev", "previous", "&lt;", "<", "‹", "前", "back", "old"],
-          "startsWithExcludes": ["new", "old", "back"]
+          "next": ["next", "forward", "次", "&gt;", ">", "new"],
+          "prev": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "old"],
+          "startsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"]
         },
         // urls store important, attributes, and innerHTML links that were found
         urls = {
