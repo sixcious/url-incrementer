@@ -286,6 +286,7 @@ div.column {
 
 #download-setup.table {
   width: 100%;
+  border-bottom: 1px solid rebeccapurple;
 }
 
 #download-strategy-sub-options {

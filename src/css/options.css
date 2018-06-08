@@ -278,14 +278,16 @@ input[type="image"]:focus {
 
 #attributions-you {
   font-weight: bold;
+  text-align: right;
 }
 
 #copyleft {
   font-size: 0.75em;
   text-align: right;
+  margin-top: 8px;
 }
 
 
 #options .overlay {
-  top: 82%; /* initial */
+  top: 81%; /* initial */
 }

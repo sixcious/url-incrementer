@@ -61,12 +61,12 @@ URLI.Auto = function () {
     var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       if (!instance.autoPaused) {
-        instance.autoPaused = true;
         autoTimer.pause();
+        instance.autoPaused = true;
         URLI.Background.setBadge(instance.tabId, "autopause", false);
       } else {
-        instance.autoPaused = false;
         autoTimer.resume();
+        instance.autoPaused = false;
         if (instance.autoBadge === "times") {
           URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
         } else {
@@ -86,11 +86,11 @@ URLI.Auto = function () {
   function setAutoTimeout(instance) {
     var autoTimer = new URLI.AutoTimer(function() {
       if (instance.downloadEnabled) {
-        URLI.Background.performAction(instance, "download", "auto", function(instance) {
-          URLI.Background.performAction(instance, instance.autoAction, "auto");
+        URLI.Action.performAction(instance, "download", "auto", function(instance) {
+          URLI.Action.performAction(instance, instance.autoAction, "auto");
         });
       } else {
-        URLI.Background.performAction(instance, instance.autoAction, "auto");
+        URLI.Action.performAction(instance, instance.autoAction, "auto");
       }
     }, instance.autoSeconds * 1000);
     autoTimers.set(instance.tabId, autoTimer);
@@ -167,12 +167,12 @@ URLI.Auto = function () {
           URLI.Background.setBadge(tabId, "auto", false);
         }
       }
-      // If download enabled send a message to the popup to update the download preview (if it's open)
+      // If download enabled, send a message to the popup to update the download preview (if it's open)
       if (changeInfo.status === "complete" && instance.downloadEnabled) {
         chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
       }
+     // If the auto instance was paused, this is a no-op. Otherwise, we set the new timeout or clear if times has been exhausted
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
-        // If the auto instance was paused but the tab changed, we do not want to consider this an auto action
         if (instance.autoPaused) {
           // TODO
         }
@@ -183,10 +183,10 @@ URLI.Auto = function () {
           setAutoTimeout(instance);
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
-          URLI.Background.performAction(instance, "clear", "auto");
+          URLI.Action.performAction(instance, "clear", "auto");
         }
       }
-    } else if (changeInfo.status === "complete") { // Removes any stray auto listeners that may exist
+    } else if (changeInfo.status === "complete") { // Removes any stray auto listeners that may possibly exist
       removeAutoListener();
     }
   }
