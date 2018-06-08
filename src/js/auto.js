@@ -58,6 +58,8 @@ URLI.Auto = function () {
    * @public
    */
   function pauseOrResumeAutoTimer(instance) {
+    console.log("pauseOrResumeAutoTimer... here are the autoTimers");
+    console.log(autoTimers);
     var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       if (!instance.autoPaused) {
@@ -81,6 +83,7 @@ URLI.Auto = function () {
    * Sets the instance's auto timeout and then performs the auto action after the time has elapsed.
    *
    * @param instance the instance's timeout to set
+   * @param wait     whether the timeout should wait before starting (edge case)
    * @private
    */
   function setAutoTimeout(instance) {
@@ -94,6 +97,16 @@ URLI.Auto = function () {
       }
     }, instance.autoSeconds * 1000);
     autoTimers.set(instance.tabId, autoTimer);
+  }
+
+  function setAutoWait(instance, wait) {
+    console.log("setAutoWait:" + instance + " wait=" + wait);
+    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    if (autoTimer) {
+      console.log("found autoTimer, setting wait now...");
+      autoTimer.setWait(wait);
+      autoTimers.set(instance.tabId, autoTimer);
+    }
   }
 
   /**
@@ -156,8 +169,13 @@ URLI.Auto = function () {
     var instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
-      // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
+      // Loading:
       if (changeInfo.status === "loading") {
+        // TODO
+        if (instance.autoWait) {
+          setAutoWait(instance, true);
+        }
+        // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
         if (instance.autoPaused) {
           URLI.Background.setBadge(tabId, "autopause", false);
         }
@@ -167,12 +185,21 @@ URLI.Auto = function () {
           URLI.Background.setBadge(tabId, "auto", false);
         }
       }
-      // If download enabled, send a message to the popup to update the download preview (if it's open)
-      if (changeInfo.status === "complete" && instance.downloadEnabled) {
-        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+      // Complete:
+      if (changeInfo.status === "complete") {
+        // If download enabled, send a message to the popup to update the download preview (if it's open)
+        if (instance.downloadEnabled) {
+          chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+        }
+        // TODO:
+        if (instance.autoPaused && instance.autoTimes <= 0) {
+          URLI.Action.performAction(instance, "clear", "auto");
+        }
       }
-     // If the auto instance was paused, this is a no-op. Otherwise, we set the new timeout or clear if times has been exhausted
+      // AutoWait:
       if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
+        setAutoWait(instance, false); // Now ready
+        // If the auto instance was paused, this is a no-op. Otherwise, we set the new timeout or clear if times has been exhausted
         if (instance.autoPaused) {
           // TODO
         }
@@ -181,6 +208,7 @@ URLI.Auto = function () {
         else if (instance.autoTimes > 0) {
           clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
           setAutoTimeout(instance);
+
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
           URLI.Action.performAction(instance, "clear", "auto");
@@ -209,22 +237,41 @@ URLI.Auto = function () {
  */
 URLI.AutoTimer = function (callback, delay) {
 
-  var timerId, start, remaining = delay;
+  var timerId, start, remaining = delay, wait = false;
 
   this.pause = function() {
     window.clearTimeout(timerId);
+    //let proposedRemaining = remaining - (Date.now() - start);
+    //remaining = proposedRemaining >= 0 ? proposedRemaining : remaining;
+    //remaining -= new Date() - start;
     remaining -= Date.now() - start;
+    remaining = remaining < 0 ? delay : remaining;
+    console.log("AutoTimer.pause():");
+    console.log("timerId=" + timerId + "start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait + "\n\n"); //" proposedRemaining=" + proposedRemaining + "\n\n");
   };
 
   this.resume = function() {
     start = Date.now();
+    //start = new Date();
     window.clearTimeout(timerId);
-    timerId = window.setTimeout(callback, remaining);
+    timerId = wait ? timerId : window.setTimeout(callback, remaining);
+    console.log("AutoTimer.resume():");
+    console.log("timerId=" + timerId + "start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait + "\n\n");
   };
 
   this.clear = function() {
     window.clearTimeout(timerId);
   };
+
+  this.setWait = function(wait_) {
+    wait = wait_;
+  };
+
+  // this.start = function() {
+  //   start = Date.now();
+  //   window.clearTimeout(timerId);
+  //   timerId = window.setTimeout(callback, remaining);
+  // };
 
   this.resume();
 };

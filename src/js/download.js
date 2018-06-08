@@ -10,7 +10,6 @@ var URLI = URLI || {};
 URLI.Download = function () {
 
   // TODO
-  //const MIME_TYPES = ["image/jpeg", "image/png", "image/gif", "video/webm", "audio/mpeg", "audio/mp3", "video/mp4", "application/zip"];
   const EXT_MIME_TYPES = {
     "jpg":  "image/jpeg",
     "jpeg": "image/jpeg",
@@ -24,7 +23,7 @@ URLI.Download = function () {
 
   function previewDownloadURLs(strategy, extensions, tags, selector, includes, excludes) {
     var good = [],
-        bad = [],
+        allURLs = [],
         allExtensions = [],
         allTags = [];
     console.log("trying for good...");
@@ -33,11 +32,11 @@ URLI.Download = function () {
     } catch (e) {
       console.log(e);
     }
-    console.log("trying for bad...");
+    console.log("trying for allURLs...");
         try {
-          bad = findDownloadURLs("all", "", "", "[src],[href]");
-          allExtensions = findExts(bad);
-          allTags = findTags(bad);
+          allURLs = findDownloadURLs("all", "", "", "[src],[href]");
+          allExtensions = findExts(allURLs);
+          allTags = findTags(allURLs);
     } catch (e) {
       console.log(e);
     }
@@ -46,7 +45,7 @@ URLI.Download = function () {
 
     console.log("bad.length=" + bad.length);
     //Find values that are in result2 but not in result1
-var uniqueResultTwo = bad.filter(function(obj) {
+var uniqueResultTwo = allURLs.filter(function(obj) {
     return !good.some(function(obj2) {
         return obj.url === obj2.url;
     });
@@ -147,32 +146,25 @@ if (strategy === "page") {
         downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "mime": mime ? mime : ""});
       }
     }
-   // console.log("downloadsFound=");
-   // console.log(downloads);
-    return [...downloads.values()]; // Convert Set into Array for return value back (Set can't be used)
+    return [...downloads.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
   }
   
   function findExts(urls) {
-    var ext,
-        extset = new Set(),
-        extarr = [];
+    const extensions = new Set();
     for (let url of urls) {
       if (url.ext) {
-        extset.add(url.ext);
+        extensions.add(url.ext);
       }
     }
-    extarr = [...extset].sort();
-    return extarr;
+    return [...extensions].sort();
   }
 
   // Regex to find file extension from URL by SteeBono @ stackoverflow.com
   // https://stackoverflow.com/a/42841283
   function findExt(url) {
     var urlquestion = url && url.length > 0 ? url.substring(0, url.indexOf("?")) : undefined,
-        urlhash = url && url.length > 0 && !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,  
-    //urlo = new URL(url),
+        urlhash = !urlquestion && url && url.length > 0 ? url.substring(0, url.indexOf("#")) : undefined,
         regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
-//regex = /.+(\.\w{3})\?*.*/,
         group = 1,
         match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : ""),
         ext = "";
@@ -181,59 +173,41 @@ if (strategy === "page") {
     }
     return ext;
   }
-  
-  function isValidExt(ext) {
-    // Arbitrary rules: Extensions must be alphanumeric and under 8 characters
-    return ext && ext.trim() !== "" && /^[a-z0-9]+$/i.test(ext) && ext.length <= 8;
-  }
-  
-  function findTags(items) {
-    var tagset = new Set(),
-        tagarr = [];
-    for (let item of items) {
-      tagset.add(item.tag);
-    }
-    tagarr = [...tagset].sort();
-    return tagarr;
+
+  // Arbitrary rules: Extensions must be alphanumeric and under 8 characters
+  function isValidExt(extension) {
+    return extension && extension.trim() !== "" && /^[a-z0-9]+$/i.test(extension) && extension.length <= 8;
   }
 
   /**
    * TODO
    *
-   * @param sameDomainPolicyEnabled
-   * @param url
-   * @param hostname
-   * @returns {boolean}
+   * @param items
+   * @returns {*[]}
    * @private
    */
-  function isFromSameDomain(sameDomainPolicyEnabled, url, hostname) {
-    var sameDomain = true,
-        urlo;
-    if (sameDomainPolicyEnabled) {
-      urlo = new URL(url);
-      if (urlo.hostname !== hostname) {
-     //   console.log("found a link that wasn't from the samee hostname!" + url);
-        sameDomain = false;
-      }
+  function findTags(items) {
+    const tags = new Set();
+    for (let item of items) {
+      tags.add(item.tag);
     }
-    return sameDomain;
+    return [...tags].sort();
   }
 
   /**
-   * TODO
+   * Determines if the URL includes or excludes the terms.
    *
-   * @param url
-   * @param includes
-   * @returns {boolean}
+   * @param url         the url to check against
+   * @param terms       the terms to check
+   * @param doesInclude boolean indicating if this is an includes or excludes check
+   * @returns {boolean} true if the url includes or excludes the terms
    * @private
    */
   function doesIncludeOrExclude(url, terms, doesInclude) {
-    var does = true;
-   // console.log("checking terms and url... terms =" + terms + " url=" + url);
+    let does = true;
     if (terms && terms.length > 0) {
       for (let term of terms) {
         if (term && doesInclude ? !url.includes(term) : url.includes(term)) {
-     //     console.log("found a url that doesn't include or exclude the term.. :( terms=" + terms + " , url=" + url);
           does = false;
           break;
         }

@@ -197,7 +197,11 @@ URLI.Background = function () {
         break;
       case "incrementDecrementSkipErrors":
         if (request.instance) {
-          URLI.Action.performAction(request.instance, "incrementDecrementSkipErrors", "increment-decrement.js");
+          chrome.tabs.update(request.instance.tabId, {url: request.instance.url});
+          if (request.instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+            URLI.Background.setInstance(request.instance.tabId, request.instance);
+          }
+          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
         }
         break;
       case "setBadgeSkipErrors":

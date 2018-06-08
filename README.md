@@ -15,7 +15,7 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - So Many Options (Alphanumeric Incrementing, Selection algorithms, Intervals, Leading Zeros, Error Skipping... and so much more)
-- Safe, Open Source, Lightweight (Under 300KB!), NO Ads, NO Bloat, and Requires NO permissions for most functionality
+- Safe, Open Source, Lightweight (Under 300KB!), No Ads, No Bloat, and Requires no permissions for most functionality
 
 **Download Incrementing is a completely optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 
@@ -37,7 +37,7 @@ What's New in Version 5.0 (6/12/18)
 - IMPROVED Next Prev functionality by a 1000% for MUCH better link accuracy
 - IMPROVED Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys by themselves as shortcuts (e.g. not that you should, but the Shift key can be used by itself now)
 - IMPROVED Permissions: Permissions for features (Internal Shortcuts, Download, Enhanced) are now modularized and separated so you can grant and enable only the features you want to
-- IMPROVED Internal code: Better tab instance memory management (now using JavaScript Map instead of array) + numerous minor bugfixes
+- IMPROVED Internal code: Better tab instance memory management (now using JavaScript Map instead of array and deleting cleared tab instances from memory) + numerous minor bugfixes
 - NOTE: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
 
 Special Thanks:
