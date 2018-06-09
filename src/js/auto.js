@@ -58,8 +58,6 @@ URLI.Auto = function () {
    * @public
    */
   function pauseOrResumeAutoTimer(instance) {
-    console.log("pauseOrResumeAutoTimer... here are the autoTimers");
-    console.log(autoTimers);
     var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       if (!instance.autoPaused) {
@@ -79,11 +77,11 @@ URLI.Auto = function () {
       autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
     }
   }
+
   /**
    * Sets the instance's auto timeout and then performs the auto action after the time has elapsed.
    *
    * @param instance the instance's timeout to set
-   * @param wait     whether the timeout should wait before starting (edge case)
    * @private
    */
   function setAutoTimeout(instance) {
@@ -99,20 +97,8 @@ URLI.Auto = function () {
     autoTimers.set(instance.tabId, autoTimer);
   }
 
-  function setAutoWait(instance, wait) {
-    console.log("setAutoWait:" + instance + " wait=" + wait);
-    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
-    if (autoTimer) {
-      console.log("found autoTimer, setting wait now...");
-      autoTimer.setWait(wait);
-      autoTimers.set(instance.tabId, autoTimer);
-    }
-  }
-
   /**
-   * Clears the instance's auto timeout. This is called when the user manually intervenes
-   * and tries clearing the instance (e.g. clicking the popup UI clear button or via
-   * a shortcut command) or naturally when the autoTimes count reaches 0 and the instance gets deleted.
+   * Clears the instance's auto timeout and deletes the auto timer from the map.
    *
    * @param instance the instance's timeout to clear
    * @private
@@ -125,6 +111,20 @@ URLI.Auto = function () {
     }
   }
 
+  /**
+   * Sets the instance's auto timer wait. TODO Explain
+   *
+   * @param instance the instance's timeout to clear
+   * @param wait     boolean indicating whether the timer should wait (true) or not wait (false)
+   * @private
+   */
+  function setAutoWait(instance, wait) {
+    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    if (autoTimer) {
+      autoTimer.setWait(wait);
+      autoTimers.set(instance.tabId, autoTimer);
+    }
+  }
 
   /**
    * Adds the auto listener (only if there isn't one already).
@@ -161,8 +161,11 @@ URLI.Auto = function () {
    * @private
    */
   function autoListener(tabId, changeInfo, tab) {
+    // Cache loading and complete for maybe a small performance gain since we need to check multiple times?
+    const loading = changeInfo.status === "loading",
+          complete = changeInfo.status === "complete";
     // We only care about loading and complete statuses
-    if (changeInfo.status !== "loading" && changeInfo.status !== "complete") {
+    if (!loading && !complete) {
       return;
     }
     console.log("autoListener is on!");
@@ -170,8 +173,8 @@ URLI.Auto = function () {
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
       // Loading:
-      if (changeInfo.status === "loading") {
-        // TODO
+      if (loading) {
+        // TODO Not yet ready
         if (instance.autoWait) {
           setAutoWait(instance, true);
         }
@@ -184,37 +187,35 @@ URLI.Auto = function () {
         } else {
           URLI.Background.setBadge(tabId, "auto", false);
         }
-      }
-      // Complete:
-      if (changeInfo.status === "complete") {
-        // If download enabled, send a message to the popup to update the download preview (if it's open)
+        // If download enabled, send a message to the popup to update the download preview (if it's open) even though we send it at loading, this script runs at document_end
         if (instance.downloadEnabled) {
           chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
         }
-        // TODO:
-        if (instance.autoPaused && instance.autoTimes <= 0) {
-          URLI.Action.performAction(instance, "clear", "auto");
-        }
       }
-      // AutoWait:
-      if (instance.autoWait ? changeInfo.status === "complete" : changeInfo.status === "loading") {
-        setAutoWait(instance, false); // Now ready
-        // If the auto instance was paused, this is a no-op. Otherwise, we set the new timeout or clear if times has been exhausted
+      // AutoWait (Complete or Loading) :
+      if (instance.autoWait ? complete : loading) {
+        // TODO Now Ready
+        if (instance.autoWait) {
+          setAutoWait(instance, false);
+        }
+        // If the auto instance was paused, this is almost considered a no-op
         if (instance.autoPaused) {
-          // TODO
+          // TODO:
+          if (instance.autoTimes <= 0) {
+            URLI.Action.performAction(instance, "clear", "auto");
+          }
         }
         // If autoTimes is still greater than 0, set the auto timeout, else clear the instance
         // Note: Remember, the first time Auto is already done via Popup calling setAutoTimeout()
         else if (instance.autoTimes > 0) {
           clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
           setAutoTimeout(instance);
-
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
           URLI.Action.performAction(instance, "clear", "auto");
         }
       }
-    } else if (changeInfo.status === "complete") { // Removes any stray auto listeners that may possibly exist
+    } else if (complete) { // Removes any stray auto listeners that may possibly exist
       removeAutoListener();
     }
   }
@@ -229,6 +230,9 @@ URLI.Auto = function () {
 
 /**
  * The AutoTimer that contains the internal setTimeout with pause and resume capabilities.
+ * It also contains a "wait" state to keep it from setting a timeout before the page has fully loaded,
+ * if the user checked the "Wait for the page to fully load" checkbox.
+ * 
  * This function is based on code written by Tim Down @ stackoverflow.com.
  *
  * @param callback the function callback
@@ -241,18 +245,14 @@ URLI.AutoTimer = function (callback, delay) {
 
   this.pause = function() {
     window.clearTimeout(timerId);
-    //let proposedRemaining = remaining - (Date.now() - start);
-    //remaining = proposedRemaining >= 0 ? proposedRemaining : remaining;
-    //remaining -= new Date() - start;
     remaining -= Date.now() - start;
-    remaining = remaining < 0 ? delay : remaining;
+    remaining = remaining < 0 || wait ? delay : remaining;
     console.log("AutoTimer.pause():");
     console.log("timerId=" + timerId + "start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait + "\n\n"); //" proposedRemaining=" + proposedRemaining + "\n\n");
   };
 
   this.resume = function() {
     start = Date.now();
-    //start = new Date();
     window.clearTimeout(timerId);
     timerId = wait ? timerId : window.setTimeout(callback, remaining);
     console.log("AutoTimer.resume():");
@@ -266,12 +266,6 @@ URLI.AutoTimer = function (callback, delay) {
   this.setWait = function(wait_) {
     wait = wait_;
   };
-
-  // this.start = function() {
-  //   start = Date.now();
-  //   window.clearTimeout(timerId);
-  //   timerId = window.setTimeout(callback, remaining);
-  // };
 
   this.resume();
 };

@@ -23,8 +23,10 @@ URLI.Popup = function () {
         "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
         "urls": chrome.i18n.getMessage("download_preview_urls"), "noresults": chrome.i18n.getMessage("download_preview_noresults"),
         "ext": chrome.i18n.getMessage("download_preview_table_ext"), "tag": chrome.i18n.getMessage("download_preview_table_tag"),
-        "url": chrome.i18n.getMessage("download_preview_table_url")
-      }
+        "attribute": chrome.i18n.getMessage("download_preview_table_attribute"), "url": chrome.i18n.getMessage("download_preview_table_url")
+      },
+      downloadPreviewAlls = { "allURLs": [], "allExts": [], "allTags": [] },
+      timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -66,13 +68,14 @@ URLI.Popup = function () {
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreview(); } });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { if (+this.value > 0) { updateDownloadPreview(); } else { this.value = 1; updateDownloadPreviewCompletely(); } } });
     DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
     DOM["#download-types"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated"); updateDownloadPreview(); });
     DOM["#download-tags"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); updateDownloadPreview(); });
-    DOM["#download-selector-input"].addEventListener("focusout", updateDownloadPreview);
-    DOM["#download-includes-input"].addEventListener("focusout", updateDownloadPreview);
-    DOM["#download-excludes-input"].addEventListener("focusout", updateDownloadPreview);
+    DOM["#download-attributes"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-attributes input", "#download-attributes-generated"); updateDownloadPreview(); });
+    DOM["#download-selector-input"].addEventListener("input", inputUpdateDownloadPreview);
+    DOM["#download-includes-input"].addEventListener("input", inputUpdateDownloadPreview);
+    DOM["#download-excludes-input"].addEventListener("input", inputUpdateDownloadPreview);
     DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
@@ -113,7 +116,7 @@ URLI.Popup = function () {
       case "updatePopupDownloadPreview":
         if (request.instance && request.instance.tabId === instance.tabId) {
           console.log("received a message to updateDownloadPreview");
-          updateDownloadPreview();
+          updateDownloadPreviewCompletely();
         }
         break;
       default:
@@ -220,17 +223,34 @@ URLI.Popup = function () {
     DOM["#download-strategy-select"].value = instance.downloadStrategy;
     DOM["#download-types-generated"].value = instance.downloadTypes && Array.isArray(instance.downloadTypes) ? instance.downloadTypes.join(",") : "";
     DOM["#download-tags-generated"].value = instance.downloadTags && Array.isArray(instance.downloadTags) ? instance.downloadTags.join(",") : "";
+    DOM["#download-attributes-generated"].value = instance.downloadAttributes && Array.isArray(instance.downloadAttributes) ? instance.downloadAttributes.join(",") : "";
     DOM["#download-selector-input"].value = instance.downloadSelector;
     DOM["#download-includes-input"].value = instance.downloadIncludes && Array.isArray(instance.downloadIncludes) ? instance.downloadIncludes.join(",") : "";
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    DOM["#download-enforce-mime-input"].checked = items_.downloadEnforceMime;
+    //DOM["#download-enforce-mime-input"].checked = items_.downloadEnforceMime;
     DOM["#download-preview-compressed-input"].checked = items_.downloadPreviewCompressed;
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     if (DOM["#download-toggle-input"].checked) {
-      updateDownloadPreview();
+      DOM["#download-toggle-input"].value = 1;
+      updateDownloadPreviewCompletely();
+    }
+  }
+
+  /**
+   * Handle URL selection on select events. Saves the selectionStart
+   * to a hidden input and updates the selection input to the selected text and
+   * checks the leading zeros checkbox based on leading zeros present.
+   * 
+   * @private
+   */
+  function selectURL() {
+    DOM["#selection-input"].value = window.getSelection().toString();
+    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
+    if (items_.leadingZerosPadByDetection) {
+      DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
     }
   }
 
@@ -265,19 +285,33 @@ URLI.Popup = function () {
   function changeDownloadStrategy() {
     DOM["#download-types"].className = this.value === "types" ? "display-block fade-in" : "display-none";
     DOM["#download-tags"].className = this.value === "tags" ? "display-block fade-in" : "display-none";
+    DOM["#download-attributes"].className = this.value === "attributes" ? "display-block fade-in" : "display-none";
     DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
     DOM["#download-strategy-help"].title =
       this.value === "types" ? chrome.i18n.getMessage("download_help_types_title") :
       this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_title") :
+      this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_title") :
       this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_title") :
       this.value === "page" ? chrome.i18n.getMessage("download_help_page_title") : "";
     DOM["#download-strategy-help-label"].textContent = 
       this.value === "types" ? chrome.i18n.getMessage("download_help_types_label") :
       this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_label") :
+      this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_label") :
       this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_label") :
       this.value === "page" ? chrome.i18n.getMessage("download_help_page_label") : "";
   }
 
+  function updateDownloadPreviewCompletely() {
+    chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+      const code = "URLI.Download.previewDownloadURLs();"
+      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+        if (results && results[0]) {
+          downloadPreviewAlls = results[0];
+          updateDownloadPreview();
+        }
+      });
+    });
+  }
   /**
    * TODO TODO TODO TODO TODO TODO
    *
@@ -288,66 +322,89 @@ URLI.Popup = function () {
     var downloadStrategy = DOM["#download-strategy-select"].value,
         downloadTypes = DOM["#download-types-generated"].value.split(","),
         downloadTags = DOM["#download-tags-generated"].value.split(","),
+        downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
         downloadSelector = DOM["#download-selector-input"].value,
-        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",") : [],
-        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [];
-    chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-      const code = "URLI.Download.previewDownloadURLs(" +
+        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
+    //chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+      const code = "URLI.Download.findDownloadURLs(" +
         JSON.stringify(downloadStrategy) + ", " +
         JSON.stringify(downloadTypes) + ", " +
         JSON.stringify(downloadTags) + ", " +
+        JSON.stringify(downloadAttributes) + ", " +
         JSON.stringify(downloadSelector) + ", " +
         JSON.stringify(downloadIncludes) + ", " +
         JSON.stringify(downloadExcludes) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
         if (results && results[0]) {
+            // Finding the difference of two arrays of objects code by kaspermoerch https://stackoverflow.com/a/21988249
+var
+good = results[0],
+bad = downloadPreviewAlls.allURLs.filter(function(obj) {
+    return !good.some(function(obj2) {
+        return obj.url === obj2.url;
+    });
+});
+
+if (downloadStrategy === "page") {
+  bad = [];
+}
           var downloadPreviewHeadingTitle = "",
               checkboxExtensions = "",
               checkboxTags = "",
+              checkboxAttributes = "",
               table = "",
               i = 1,
-              goodLength = results[0].good.length,
-              totalLength = results[0].good.length + results[0].bad.length;
+              goodLength = good.length,
+              totalLength = good.length + bad.length;
           downloadPreviewHeadingTitle = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">" + DOWNLOAD_PREVIEW_I18NS.set + goodLength + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls + "</span>";
-          for (let extension of results[0].allExtensions) {
+          DOM["#download-preview-heading-title"].innerHTML = downloadPreviewHeadingTitle;
+          for (let extension of downloadPreviewAlls.allExtensions) {
             checkboxExtensions +=
               "<label>" +
                 "<input value=\"" + extension + "\" type=\"checkbox\"" + (downloadTypes && downloadTypes.includes(extension) ? "checked=\"checked\"" : "") +  "\/>" +
                 "<span>" + extension + "<\/span>" +
               "<\/label>";
           }
-          for (let tag of results[0].allTags) {
+          DOM["#download-types"].innerHTML = checkboxExtensions;
+          for (let tag of downloadPreviewAlls.allTags) {
             checkboxTags +=
               "<label>" +
                 "<input value=\"" + tag + "\" type=\"checkbox\"" + (downloadTags && downloadTags.includes(tag) ? "checked=\"checked\"" : "") +  "\/>" +
                 "<span>" + tag + "<\/span>" +
               "<\/label>";
           }
+          DOM["#download-tags"].innerHTML = checkboxTags;
+          for (let attribute of downloadPreviewAlls.allAttributes) {
+            checkboxAttributes +=
+              "<label>" +
+                "<input value=\"" + attribute + "\" type=\"checkbox\"" + (downloadAttributes && downloadAttributes.includes(attribute) ? "checked=\"checked\"" : "") +  "\/>" +
+                "<span>" + attribute + "<\/span>" +
+              "<\/label>";
+          }
+          DOM["#download-attributes"].innerHTML = checkboxAttributes;
           table = "<table>" + 
                     "<colgroup>" + 
-                      "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 60%;\">" +
+                      "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 51%;\">" +
                     "</colgroup>" + 
                     "<thead>" +
-                      "<tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
+                      "<tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
                     "</thead>" +
                     "<tbody>";
-          for (let download of results[0].good) {
-            table +=  "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.url  + "</td></tr>";
+          for (let download of good) {
+            table +=  "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.attribute + "</td><td>" + download.url  + "</td></tr>";
           }
-          for (let download of results[0].bad) {
-            table +=  "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" +  download.url  + "</td></tr>";
+          for (let download of bad) {
+            table +=  "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.attribute + "</td><td>" + download.url  + "</td></tr>";
           }
           table +=  "</tbody>" +
                   "</table>";
-          DOM["#download-preview-heading-title"].innerHTML = downloadPreviewHeadingTitle;
-          DOM["#download-types"].innerHTML = checkboxExtensions;
-          DOM["#download-tags"].innerHTML = checkboxTags;
           DOM["#download-preview-table-div"].innerHTML = table;
         } else {
           DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
         }
       });
-    });
+    //});
   }
 
   /**
@@ -367,6 +424,12 @@ URLI.Popup = function () {
       }
     }
     return html;
+  }
+
+  function inputUpdateDownloadPreview() {
+    console.log("inputUpdateDownloadPreview...");
+    clearTimeout(timeout);
+    timeout = setTimeout(updateDownloadPreview, 1000);
   }
 
   /**
@@ -391,12 +454,13 @@ URLI.Popup = function () {
     var inputs = document.querySelectorAll(selectorInputs),
         generated = DOM[generatedId].value.split(",");
     for (let input of inputs) {
-      if (generated.includes(input.value) || (instance.downloadEnabled && (selectorInputs.includes("download-types") ? instance.downloadTypes.includes(input.value) : instance.downloadTags.includes(input.value)))) {
+      if (generated.includes(input.value) ||
+         (instance.downloadEnabled && (selectorInputs.includes("download-types") ? instance.downloadTypes.includes(input.value) : selectorInputs.includes("download-tags") ? instance.downloadTags.includes(input.value) : instance.downloadAttributes.includes(input.value)))) {
         input.checked = true;
       }
     }
   }
-  
+
   /**
    * Sets up the instance in increment decrement mode. First validates user input for any
    * errors, then saves and enables the instance, then toggles the view back to
@@ -423,16 +487,17 @@ URLI.Popup = function () {
         downloadEnabled = DOM["#download-toggle-input"].checked,
         downloadStrategy = DOM["#download-strategy-select"].value,
         downloadSelector = DOM["#download-selector-input"].value,
-        //downloadSameDomain = DOM["#download-same-domain-input"].checked,
-        downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
-        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",") : [],
-        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",") : [],
+        //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
+        // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
+        // https://stackoverflow.com/a/16701357
+        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
         downloadMinMB = +DOM["#download-min-mb-input"].value,
         downloadMaxMB = +DOM["#download-max-mb-input"].value,
         downloadPreviewCompressed = DOM["#download-preview-compressed-input"].checked,
-        //downloadPreviewAll = DOM["#download-preview-all-input"].checked,
         downloadTypes = DOM["#download-types-generated"].value.split(","),
         downloadTags = DOM["#download-tags-generated"].value.split(","),
+        downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
 
         // Increment Decrement Errors
         errors = [ // [0] = selection errors and [1] = interval errors
@@ -526,12 +591,13 @@ URLI.Popup = function () {
         instance.downloadStrategy = downloadStrategy;
         instance.downloadTypes = downloadTypes;
         instance.downloadTags = downloadTags;
+        instance.downloadAttributes = downloadAttributes;
         instance.downloadSelector = downloadSelector;
         instance.downloadIncludes = downloadIncludes;
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
-        instance.downloadEnforceMime = downloadEnforceMime;
+        //instance.downloadEnforceMime = downloadEnforceMime;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
 //        console.log("is there an instance in background after the popup clears it?");
 //        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
@@ -558,8 +624,9 @@ URLI.Popup = function () {
             "downloadStrategy": downloadStrategy,
             "downloadTypes": downloadTypes,
             "downloadTags": downloadTags,
+            "downloadAttributes": downloadAttributes,
             "downloadSelector": downloadSelector,
-            "downloadEnforceMime": downloadEnforceMime,
+            //"downloadEnforceMime": downloadEnforceMime,
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,
@@ -580,21 +647,6 @@ URLI.Popup = function () {
         toggleView.call(DOM["#accept-button"]);
         });
       });
-    }
-  }
-
-  /**
-   * Handle URL selection on select events. Saves the selectionStart
-   * to a hidden input and updates the selection input to the selected text and
-   * checks the leading zeros checkbox based on leading zeros present.
-   * 
-   * @private
-   */
-  function selectURL() {
-    DOM["#selection-input"].value = window.getSelection().toString();
-    DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
-    if (items_.leadingZerosPadByDetection) {
-      DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
     }
   }
 

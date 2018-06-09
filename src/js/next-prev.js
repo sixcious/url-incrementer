@@ -84,7 +84,7 @@ URLI.NextPrev = function () {
   function buildURLs(direction, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
     var links = document.getElementsByTagName("link"),
-        anchors = document.links, // Includes all anchor and area elements
+        anchors = document.links, // document.links includes all anchor and area elements
         hostname = document.location.hostname;
     parseElements(direction, links, hostname, sameDomain);
     parseElements(direction, anchors, hostname, sameDomain);

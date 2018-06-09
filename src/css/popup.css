@@ -210,12 +210,17 @@ div.column {
 
 #download-selector-input {
   width: 90%;
+  margin-top: 4px;
+}
+
+#download-selector-link {
+  margin-top: 12px;
 }
 
 #download-includes-input, #download-excludes-input {
   width: 108px;
-  font-weight: bold;
-  color: #E6003E;
+/*  font-weight: bold;
+  color: #E6003E;*/
 }
 
 #download-includes-input {
@@ -294,18 +299,19 @@ div.column {
   min-height: 60px;
 }
 
-#download-types label, #download-tags label {
+#download-types label, #download-tags label, #download-attributes label {
   display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
   margin-right: 8px;
   margin-bottom: 4px;
 }
 
-#download-types label span, #download-tags label span {
+#download-types label span, #download-tags label span, #download-attributes label span {
   padding-left: 3px;
 }
 
-div.column#download-strategy {  
+div.column#download-strategy, div.column#download-optional {  
   padding-top: 8px;
+  padding-bottom: 12px;
   width: 50%;
   position: relative; /* for position absolute help */
 }
@@ -313,8 +319,6 @@ div.column#download-strategy {
 div.column#download-optional {
   border-left: 1px solid rebeccapurple;
   padding-left: 12px;
-  width: 50%;
-  position: relative; /* for position absolute help */
 }
 
 /*
@@ -324,6 +328,8 @@ div.column#download-optional {
 }*/
 
 #download-optional-label-div {
+  font-weight: bold;
+  font-style: italic;
 /*  color: rebeccapurple;
   font-weight: bold;
   text-align: center;*/
@@ -435,7 +441,7 @@ table tbody tr {
 table tbody tr td {
 }
 
-#download-strategy-help {
+#download-strategy-help, #download-optional-help {
 /*  color: rebeccapurple;*/
   font-weight: bold;
   font-size: 0.9em;

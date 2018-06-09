@@ -9,6 +9,9 @@ var URLI = URLI || {};
 
 URLI.Download = function () {
 
+// https://stackoverflow.com/a/2725168 
+  const URL_ATTRIBUTES = ["src", "href", "poster", "codebase", "cite", "action", "background", "longdesc", "usemap", "formaction", "icon"];
+
   // TODO
   const EXT_MIME_TYPES = {
     "jpg":  "image/jpeg",
@@ -21,41 +24,12 @@ URLI.Download = function () {
     "zip":  "application/zip"
   };
 
-  function previewDownloadURLs(strategy, extensions, tags, selector, includes, excludes) {
-    var good = [],
-        allURLs = [],
-        allExtensions = [],
-        allTags = [];
-    console.log("trying for good...");
-    try {
-      good = findDownloadURLs(strategy, extensions, tags, selector, includes, excludes);
-    } catch (e) {
-      console.log(e);
-    }
-    console.log("trying for allURLs...");
-        try {
-          allURLs = findDownloadURLs("all", "", "", "[src],[href]");
-          allExtensions = findExts(allURLs);
-          allTags = findTags(allURLs);
-    } catch (e) {
-      console.log(e);
-    }
-
-
-
-    console.log("bad.length=" + bad.length);
-    //Find values that are in result2 but not in result1
-var uniqueResultTwo = allURLs.filter(function(obj) {
-    return !good.some(function(obj2) {
-        return obj.url === obj2.url;
-    });
-});
-
-if (strategy === "page") {
-  uniqueResultTwo = [];
-}
-
-    return { "good": good, "bad": uniqueResultTwo, "allExtensions": allExtensions, "allTags": allTags }
+  function previewDownloadURLs() {
+    var  allURLs = findDownloadURLs("all");
+         allExtensions = findProperties(allURLs, "ext");
+         allTags = findProperties(allURLs, "tag"),
+         allAttributes = findProperties(allURLs, "attribute");
+    return { "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
   }
 
   /**
@@ -70,39 +44,48 @@ if (strategy === "page") {
    * @returns {*}
    * @public
    */
-  function findDownloadURLs(strategy, extensions, tags, selector, includes, excludes) {
+  function findDownloadURLs(strategy, extensions, tags, attributes, selector, includes, excludes) {
     console.log("findDownloadURLs()" + selector);
     var results = [],
         selectorbuilder = "";
+    try {
     switch (strategy) {
       case "all":
-        results = findDownloadURLsBySelector(strategy, extensions, tags, "[src],[href]", includes, excludes);
-        break;
       case "types":
-//        for (let extension of extensions) {
-//          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[src*='." + extension + "' i],[href*='." + extension + "' i]";
-//        }
-//        console.log("extension selectorbuilder=" + selectorbuilder);
-        results = findDownloadURLsBySelector(strategy, extensions, tags, "[src],[href]", includes, excludes);
+        for (let urlattribute of URL_ATTRIBUTES) {
+          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
+        }
+        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
         break;
       case "tags":
         for (let tag of tags) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
         }
         console.log("tags selectorbuilder=" + selectorbuilder);
-        results = findDownloadURLsBySelector(strategy, extensions, tags, selectorbuilder, includes, excludes);
+        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
+        break;
+      case "attributes":
+        for (let attribute of attributes) {
+          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + attribute + "]";
+        }
+        console.log("tags selectorbuilder=" + selectorbuilder);
+        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
         break;
       case "selector":
-        results = findDownloadURLsBySelector(strategy, extensions, tags, selector, includes, excludes);
+        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes);
         break;
       case "page":
         var url = document.location.href,
             ext = findExt(url);
-        results = [{ "url": url, "ext": isValidExt(ext) ? ext : "", "tag": ""}];
+        results = [{ "url": url, "ext": isValidExt(ext) ? ext : "", "tag": "", "attribute": ""}];
         break;
       default:
         results = [];
         break;
+    }
+    } catch (e) {
+      console.log(e);
+      results = [];
     }
     return results;
   }
@@ -116,17 +99,26 @@ if (strategy === "page") {
    * @returns {*[]}
    * @private
    */
-  function findDownloadURLsBySelector(strategy, extensions, tags, selector, includes, excludes) {
+  function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
+    console.log("selector=" + selector);
     var hostname = document.location.hostname,
         els = document.querySelectorAll(selector),
         downloads = new Map(), // return value, we use a Set to avoid potential duplicate URLs
         url = "",
         ext = "",
+        attribute = "",
         tag = "",
         mime = "";
     console.log("found " + els.length + " links");
     for (el of els) {
-      url = el.src ? el.src : el.href ? el.href : "";
+      //url = el.src ? el.src : el.href ? el.href : el.poster ? el.poster  "";
+      for (urlattribute of URL_ATTRIBUTES) {
+        if (el[urlattribute]) {
+          url = el[urlattribute];
+          attribute = urlattribute;
+          break;
+        }
+      }
       if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
      //   console.log("adding url!");
         ext = findExt(url);
@@ -142,22 +134,18 @@ if (strategy === "page") {
         if (strategy === "tags" && (!tags.includes(tag) || tag === "")) {
           continue;
         }
+        // Special Restriction (Attributes)
+        if (strategy === "attributes" && (!attributes.includes(attribute) || attribute === "")) {
+          continue;
+        }
         mime = EXT_MIME_TYPES[ext];
-        downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "mime": mime ? mime : ""});
+        downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "attribute": attribute, "mime": mime ? mime : ""});
       }
     }
     return [...downloads.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
   }
   
-  function findExts(urls) {
-    const extensions = new Set();
-    for (let url of urls) {
-      if (url.ext) {
-        extensions.add(url.ext);
-      }
-    }
-    return [...extensions].sort();
-  }
+
 
   // Regex to find file extension from URL by SteeBono @ stackoverflow.com
   // https://stackoverflow.com/a/42841283
@@ -179,19 +167,17 @@ if (strategy === "page") {
     return extension && extension.trim() !== "" && /^[a-z0-9]+$/i.test(extension) && extension.length <= 8;
   }
 
-  /**
-   * TODO
-   *
-   * @param items
-   * @returns {*[]}
-   * @private
-   */
-  function findTags(items) {
-    const tags = new Set();
-    for (let item of items) {
-      tags.add(item.tag);
+
+  function findProperties(items, property) {
+    const properties = new Set();
+    if (items) {
+      for (let item of items) {
+        if (item && item[property]) {
+          properties.add(item[property]);
+        }
+      }
     }
-    return [...tags].sort();
+    return [...properties].sort();
   }
 
   /**

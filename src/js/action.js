@@ -36,8 +36,8 @@ URLI.Action = function () {
           instance.autoTimes++;
         }
       }
-      // Race condition: If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
-      if (instance.autoTimes < 0 /*TODO: || instance.autoPaused && instance.autoTimes === 0*/) {
+      // Rare race condition: If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
+      if (instance.autoTimes < 0) { //|| instance.autoPaused && instance.autoTimes === 0) {
         console.log("performAction autoTimes < 0 rare case... bug?");
         actionPerformed = clear(instance, action, caller, callback);
         return;
@@ -178,6 +178,7 @@ URLI.Action = function () {
           JSON.stringify(instance.downloadStrategy) + ", " +
           JSON.stringify(instance.downloadTypes) + ", " +
           JSON.stringify(instance.downloadTags) + ", " +
+          JSON.stringify(instance.downloadAttributes) + ", " +
           JSON.stringify(instance.downloadSelector) + ", " +
           JSON.stringify(instance.downloadIncludes) + ", " +
           JSON.stringify(instance.downloadExcludes) + ");"

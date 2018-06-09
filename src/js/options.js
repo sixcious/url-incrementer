@@ -24,7 +24,7 @@ URLI.Options = function () {
       },
       key = [0,""], // Stores the key's event modifiers [0] and code [1]
       NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
-      FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(─__─)", "(+__X)"];
+      FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -281,6 +281,11 @@ URLI.Options = function () {
     input.value = text;
   }
 
+  /**
+   * Updates the error codes for error skip by examining if each checkbox is checked (on change event).
+   *
+   * @private
+   */
   function updateErrorCodes() {
     chrome.storage.sync.set({"errorCodes":
       [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
@@ -357,7 +362,7 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          URLI.Permissions.removeAllPermissions(function(removed) { console.log("removed them all!! mwahaha" + removed); });
+          URLI.Permissions.removeAllPermissions();
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
           populateValuesFromStorage("all");
           URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
@@ -374,8 +379,6 @@ URLI.Options = function () {
   function clickURLI() {
     var face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
     this.value = +this.value + 1;
-    //chrome.storage.sync.set({ "urliClickCount": +this.value});
-    //this.className = "hvr-push";
     URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
     URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
   }
