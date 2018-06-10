@@ -77,7 +77,7 @@ URLI.Popup = function () {
     DOM["#download-includes-input"].addEventListener("input", inputUpdateDownloadPreview);
     DOM["#download-excludes-input"].addEventListener("input", inputUpdateDownloadPreview);
 //    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
-    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes.call(this); }); 
+    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes(this); }); 
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -461,17 +461,17 @@ if (downloadStrategy === "page") {
     }
   }
   
-  function updateDownloadPreviewCheckboxes() {
+  function updateDownloadPreviewCheckboxes(checkbox) {
         console.log("updateDownloadPreviewCheckboxes()!");
-    console.log("this.value=" + this.value);
-    console.log("this.checked=" + this.checked);
+    console.log("this.value=" + checkbox.value);
+    console.log("this.checked=" + checkbox.checked);
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
-    if (this.value === "compressed") {
-      DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
+    if (checkbox.value === "compressed") {
+      DOM["#download-preview-table-div"].style = checkbox.checked ? "white-space: normal;" : "white-space: nowrap;"
     } else {
-      let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
+      let elements = document.querySelectorAll("#download-preview-table-div table ." + checkbox.value );
       for (element of elements) {
-        element.className = this.checked ? "display-block" : "display-none";
+        element.className = checkbox.checked ? "display-block" : "display-none";
       }
     }
   }
