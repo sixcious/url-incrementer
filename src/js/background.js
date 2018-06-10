@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "ext", "tag", "atr", "compressed"],
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "ext", "tag", "compressed"],
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,

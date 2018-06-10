@@ -441,6 +441,14 @@ table tbody tr {
 table tbody tr td {
 }
 
+table th.check, td.check { min-width: 24px; }
+table th.count, td.count { min-width: 24px; }
+table th.thumb, td.thumb { min-width: 24px; }
+table th.ext, td.ext { min-width: 24px; }
+table th.tag, td.tag { min-width: 24px; }
+table th.atr, td.atr { min-width: 24px; }
+table th.url, td.url { min-width: 24px; }
+
 #download-strategy-help, #download-optional-help {
 /*  color: rebeccapurple;*/
   font-weight: bold;

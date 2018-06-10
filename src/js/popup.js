@@ -22,8 +22,8 @@ URLI.Popup = function () {
       DOWNLOAD_PREVIEW_I18NS = {
         "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
         "urls": chrome.i18n.getMessage("download_preview_urls"), "noresults": chrome.i18n.getMessage("download_preview_noresults"),
-        "ext": chrome.i18n.getMessage("download_preview_table_ext"), "tag": chrome.i18n.getMessage("download_preview_table_tag"),
-        "attribute": chrome.i18n.getMessage("download_preview_table_attribute"), "url": chrome.i18n.getMessage("download_preview_table_url")
+        "ext": chrome.i18n.getMessage("download_preview_ext_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
+        "atr": chrome.i18n.getMessage("download_preview_atr_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
       },
       downloadPreviewAlls = { "allURLs": [], "allExts": [], "allTags": [] },
       timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
@@ -77,7 +77,12 @@ URLI.Popup = function () {
     DOM["#download-includes-input"].addEventListener("input", inputUpdateDownloadPreview);
     DOM["#download-excludes-input"].addEventListener("input", inputUpdateDownloadPreview);
 //    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
-    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes(this); }); 
+//    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes(this); }); 
+    DOM["#download-preview-thumb-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-ext-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-atr-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -230,7 +235,11 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    DOM["#download-preview-compressed-input"].checked = items_.downloadPreviewCompressed;
+    DOM["#download-preview-thumb-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("thumb");
+    DOM["#download-preview-ext-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("ext");
+    DOM["#download-preview-tag-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("tag");
+    DOM["#download-preview-atr-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("atr");
+    DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     if (DOM["#download-toggle-input"].checked) {
@@ -384,22 +393,28 @@ if (downloadStrategy === "page") {
           }
           DOM["#download-attributes"].innerHTML = checkboxAttributes;
           table = "<table>" + 
-                    "<colgroup>" + 
-                      "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 51%;\">" +
-                    "</colgroup>" + 
+                    //"<colgroup>" + 
+                    //  "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 51%;\">" +
+                    //"</colgroup>" + 
                     "<thead>" +
-                      "<tr><th class=\"check\">&nbsp;</th><th class=\"count\">&nbsp;</th><th class=\"thumb\">&nbsp;</th><th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th><th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
+                      "<tr><th class=\"check\">&nbsp;</th><th class=\"count\">&nbsp;</th><th class=\"thumb\">&nbsp;</th><th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.atr + "</th><th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
                     "</thead>" +
                     "<tbody>";
           for (let download of good) {
             table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
           }
           for (let download of bad) {
-            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
+            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
           }
           table +=  "</tbody>" +
                   "</table>";
           DOM["#download-preview-table-div"].innerHTML = table;
+//          updateDownloadPreviewCheckboxes();
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-ext-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-atr-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
         } else {
           DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
         }
@@ -461,17 +476,17 @@ if (downloadStrategy === "page") {
     }
   }
   
-  function updateDownloadPreviewCheckboxes(checkbox) {
+  function updateDownloadPreviewCheckboxes() {
         console.log("updateDownloadPreviewCheckboxes()!");
-    console.log("this.value=" + checkbox.value);
-    console.log("this.checked=" + checkbox.checked);
+    console.log("this.value=" + this.value);
+    console.log("this.checked=" + this.checked);
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
-    if (checkbox.value === "compressed") {
-      DOM["#download-preview-table-div"].style = checkbox.checked ? "white-space: normal;" : "white-space: nowrap;"
+    if (this.value === "compressed") {
+      DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
     } else {
-      let elements = document.querySelectorAll("#download-preview-table-div table ." + checkbox.value );
+      let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
       for (element of elements) {
-        element.className = checkbox.checked ? "display-block" : "display-none";
+        element.style.display = this.checked ? "table-cell" : "none";
       }
     }
   }
@@ -508,7 +523,7 @@ if (downloadStrategy === "page") {
         downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
         downloadMinMB = +DOM["#download-min-mb-input"].value,
         downloadMaxMB = +DOM["#download-max-mb-input"].value,
-        downloadPreviewCompressed = DOM["#download-preview-compressed-input"].checked,
+        downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(","),
         downloadTypes = DOM["#download-types-generated"].value.split(","),
         downloadTags = DOM["#download-tags-generated"].value.split(","),
         downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
@@ -611,6 +626,7 @@ if (downloadStrategy === "page") {
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
+        instance.downloadPreview = downloadPreview;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
 //        console.log("is there an instance in background after the popup clears it?");
 //        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
