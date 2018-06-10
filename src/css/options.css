@@ -163,33 +163,35 @@ input[type="image"]:focus {
   border-bottom-color: #FFCC22;
 }
 
-/*#increment-decrement-settings div.heading h3 {
+
+
+
+
+
+#increment-decrement-settings div.heading h3 {
   color: #1779BA;
 }
-
-
-
 
 #next-prev-settings div.heading h3 {
   color: #05854D;
 }
 
-
-
 #auto-settings div.heading h3 {
   color: #FF6600;
 }
-
 
 #download-settings div.heading h3 {
   color: rebeccapurple;
 }
 
-
-
 #enhanced-mode div.heading h3 {
   color: #EEBB22;
-}*/
+}
+
+
+
+
+
 
 
 #download-experimental {
@@ -213,26 +215,9 @@ input[type="image"]:focus {
   padding: 0 2px;
 }
 
-/* Derived from Rainbow color pallete by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
-/*
-#urli-thank-you-thank {
-  border-bottom: 3px solid #44A5F5;
-}
 
-#urli-thank-you-you {
-  border-bottom: 3px solid #EE5555;
-}
 
-#urli-thank-you-very {
-  border-bottom: 3px solid #FFCC22;
-}
 
-#urli-thank-you-much {
-  border-bottom: 3px solid #66BB6B;
-}
-*/
-
-/* orange #F77C00 */
 
 
 #error-skip.column {
@@ -255,6 +240,8 @@ input[type="image"]:focus {
 /*  font-size: 0.9em;*/
 }
 
+/* Derived from Rainbow color pallete by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
+/* orange #F77C00 */
 .rainbow-underline:after {
   content: '';
   display: block;

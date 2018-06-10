@@ -14,10 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="icon-rainbow.svg"
-   inkscape:export-filename="C:\Users\10\Desktop\16.png"
-   inkscape:export-xdpi="11.249999"
-   inkscape:export-ydpi="11.249999">
+   sodipodi:docname="icon-urlicolor.svg"
+   inkscape:export-filename="C:\Users\10\Desktop\128.png"
+   inkscape:export-xdpi="89.999992"
+   inkscape:export-ydpi="89.999992">
   <defs
      id="defs4">
     <clipPath
@@ -72,8 +72,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.1984875"
-     inkscape:cx="-99.874412"
+     inkscape:zoom="6.2182616"
+     inkscape:cx="50.72503"
      inkscape:cy="72.808973"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -91,7 +91,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -103,11 +103,11 @@
      style="display:inline;opacity:1">
     <g
        id="g4138"
-       style="fill:#66bb6b;fill-opacity:1"
+       style="fill:#000028;fill-opacity:1"
        transform="matrix(2.2160789,0,0,1.740598,-158.59122,-728.48176)">
       <rect
          transform="rotate(90)"
-         style="fill:#66bb6b;fill-opacity:1;stroke:none;stroke-width:1.00806725"
+         style="fill:#000028;fill-opacity:1;stroke:none;stroke-width:1.00806725"
          id="rect3787"
          width="39.445904"
          height="13.943085"
@@ -119,7 +119,7 @@
          height="16.905386"
          width="34.446926"
          id="rect3794"
-         style="fill:#66bb6b;fill-opacity:1;stroke:none;stroke-width:1.03728211"
+         style="fill:#000028;fill-opacity:1;stroke:none;stroke-width:1.03728211"
          transform="scale(-1)" />
     </g>
     <text
@@ -172,56 +172,10 @@
        style="font-style:normal;font-weight:normal;font-size:43.57995987px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.08949924"
        xml:space="preserve"
        transform="scale(0.91785297,1.0894991)"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.9172821px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#cccccc;fill-opacity:1;stroke-width:1.08949924"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.9172821px;font-family:Scream;-inkscape-font-specification:Scream;letter-spacing:0px;fill:#000028;fill-opacity:1;stroke-width:1.08949924"
          y="1027.4893"
          x="-1.8444204"
          id="tspan1454"
-         sodipodi:role="line"><tspan
-           style="fill:#44a5f5;fill-opacity:1"
-           id="tspan1458">U</tspan><tspan
-           style="fill:#ee5555;fill-opacity:1"
-           id="tspan1460">R</tspan><tspan
-           style="fill:#ffcc22;fill-opacity:1"
-           id="tspan1462">L</tspan></tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       x="172.07382"
-       y="1112.2274"
-       id="text839"><tspan
-         sodipodi:role="line"
-         id="tspan837"
-         x="172.07382"
-         y="1148.7206" /></text>
-    <flowRoot
-       xml:space="preserve"
-       id="flowRoot836"
-       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
-         id="flowRegion838"><rect
-           id="rect840"
-           width="114.1694"
-           height="83.239044"
-           x="32.749786"
-           y="-6.7469831" /></flowRegion><flowPara
-         id="flowPara842" /></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot844"
-       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
-         id="flowRegion846"><rect
-           id="rect848"
-           width="161.9295"
-           height="97.339645"
-           x="9.0971632"
-           y="-21.757303" /></flowRegion><flowPara
-         id="flowPara850" /></flowRoot>    <flowRoot
-       xml:space="preserve"
-       id="flowRoot4555"
-       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
-         id="flowRegion4557"><rect
-           id="rect4559"
-           width="124.63114"
-           height="97.339645"
-           x="35.024078"
-           y="-21.302444" /></flowRegion><flowPara
-         id="flowPara4561"></flowPara></flowRoot>  </g>
+         sodipodi:role="line">URL</tspan></text>
+  </g>
 </svg>

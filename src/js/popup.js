@@ -76,7 +76,8 @@ URLI.Popup = function () {
     DOM["#download-selector-input"].addEventListener("input", inputUpdateDownloadPreview);
     DOM["#download-includes-input"].addEventListener("input", inputUpdateDownloadPreview);
     DOM["#download-excludes-input"].addEventListener("input", inputUpdateDownloadPreview);
-    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
+//    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
+    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes.call(this); }); 
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
@@ -229,7 +230,6 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    //DOM["#download-enforce-mime-input"].checked = items_.downloadEnforceMime;
     DOM["#download-preview-compressed-input"].checked = items_.downloadPreviewCompressed;
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
@@ -388,14 +388,14 @@ if (downloadStrategy === "page") {
                       "<col style=\"width: 5%;\"><col style=\"width: 7%;\"><col style=\"width: 10%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 9%;\"><col style=\"width: 51%;\">" +
                     "</colgroup>" + 
                     "<thead>" +
-                      "<tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th><th>" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
+                      "<tr><th class=\"check\">&nbsp;</th><th class=\"count\">&nbsp;</th><th class=\"thumb\">&nbsp;</th><th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th><th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
                     "</thead>" +
                     "<tbody>";
           for (let download of good) {
-            table +=  "<tr><td><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.attribute + "</td><td>" + download.url  + "</td></tr>";
+            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
           }
           for (let download of bad) {
-            table +=  "<tr><td><img src=\"../img/font-awesome/black/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td>" + (i++) + "</td><td>" + downloadPreviewThumb(download) + "</td><td>" + download.ext + "</td><td>" + download.tag + "</td><td>" + download.attribute + "</td><td>" + download.url  + "</td></tr>";
+            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
           }
           table +=  "</tbody>" +
                   "</table>";
@@ -460,6 +460,21 @@ if (downloadStrategy === "page") {
       }
     }
   }
+  
+  function updateDownloadPreviewCheckboxes() {
+        console.log("updateDownloadPreviewCheckboxes()!");
+    console.log("this.value=" + this.value);
+    console.log("this.checked=" + this.checked);
+    translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
+    if (this.value === "compressed") {
+      DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
+    } else {
+      let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
+      for (element of elements) {
+        element.className = this.checked ? "display-block" : "display-none";
+      }
+    }
+  }
 
   /**
    * Sets up the instance in increment decrement mode. First validates user input for any
@@ -487,7 +502,6 @@ if (downloadStrategy === "page") {
         downloadEnabled = DOM["#download-toggle-input"].checked,
         downloadStrategy = DOM["#download-strategy-select"].value,
         downloadSelector = DOM["#download-selector-input"].value,
-        //downloadEnforceMime = DOM["#download-enforce-mime-input"].checked,
         // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
         // https://stackoverflow.com/a/16701357
         downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
@@ -597,7 +611,6 @@ if (downloadStrategy === "page") {
         instance.downloadExcludes = downloadExcludes;
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
-        //instance.downloadEnforceMime = downloadEnforceMime;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
 //        console.log("is there an instance in background after the popup clears it?");
 //        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
@@ -626,12 +639,11 @@ if (downloadStrategy === "page") {
             "downloadTags": downloadTags,
             "downloadAttributes": downloadAttributes,
             "downloadSelector": downloadSelector,
-            //"downloadEnforceMime": downloadEnforceMime,
             "downloadIncludes": downloadIncludes,
             "downloadExcludes": downloadExcludes,
             "downloadMinMB": downloadMinMB,
             "downloadMaxMB": downloadMaxMB,
-            "downloadPreviewCompressed": downloadPreviewCompressed
+            "downloadPreview": downloadPreview
           });
         }
         // If permissions granted, send message to content script:

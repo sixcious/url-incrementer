@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadTags": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadEnforceMime": true, "downloadPreviewCompressed": true,
+    /* download */    "downloadStrategy": "types", "downloadTypes": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "ext", "tag", "atr", "compressed"],
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
@@ -37,7 +37,7 @@ URLI.Background = function () {
     "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
     "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":      { "text": "",     "backgroundColor": "#000000" }, //"#FFCC22" },
+    "skip":      { "text": "",     "backgroundColor": "#000028" }, //"#FFCC22" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -117,10 +117,10 @@ URLI.Background = function () {
           "errorSkip": items.errorSkip, "errorCodes": items.errorCodes,
           "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
           "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
-          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadTags": items.downloadTags, "downloadSelector": items.downloadSelector,
+          "downloadStrategy": items.downloadStrategy, "downloadTypes": items.downloadTypes, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
           "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
           "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
-          "downloadEnforceMime": items.downloadEnforceMime
+          "downloadPreview": items.downloadPreview
     };
     return instance;
   }
