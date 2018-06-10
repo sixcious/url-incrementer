@@ -188,6 +188,10 @@ input[type="image"]:focus {
   color: #EEBB22;
 }
 
+#download-experimental {
+  color: rebeccapurple;
+}
+
 
 
 
@@ -265,7 +269,7 @@ input[type="image"]:focus {
 
 #attributions-you {
   font-weight: bold;
-  text-align: right;
+  text-align: center;
 }
 
 #copyleft {

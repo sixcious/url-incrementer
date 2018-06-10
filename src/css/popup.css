@@ -360,12 +360,13 @@ div.column#download-optional {
   margin-right: 12px;
 }*/
 
-#download-preview-heading .download-preview-heading-checkboxes {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+#download-preview-heading #download-preview-checkboxes {
+  text-align: right;
 }
 
+#download-preview-checkboxes label {
+  margin-left: 4px;
+}
 
 #download-preview-heading-title {
   font-weight: bold;
@@ -441,13 +442,13 @@ table tbody tr {
 table tbody tr td {
 }
 
-table th.check, td.check { min-width: 24px; }
+table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
-table th.thumb, td.thumb { min-width: 24px; }
-table th.ext, td.ext { min-width: 24px; }
-table th.tag, td.tag { min-width: 24px; }
-table th.atr, td.atr { min-width: 24px; }
-table th.url, td.url { min-width: 24px; }
+table th.thumb, td.thumb { min-width: 32px; }
+table th.ext, td.ext { min-width: 32px; }
+table th.tag, td.tag { min-width: 32px; }
+table th.atr, td.atr { min-width: 32px; }
+table th.url, td.url { min-width: 24x; }
 
 #download-strategy-help, #download-optional-help {
 /*  color: rebeccapurple;*/

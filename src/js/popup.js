@@ -68,7 +68,7 @@ URLI.Popup = function () {
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { if (+this.value > 0) { updateDownloadPreview(); } else { this.value = 1; updateDownloadPreviewCompletely(); } } });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
     DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
     DOM["#download-types"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-types input", "#download-types-generated"); updateDownloadPreview(); });
     DOM["#download-tags"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); updateDownloadPreview(); });
@@ -235,15 +235,14 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    DOM["#download-preview-thumb-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("thumb");
-    DOM["#download-preview-ext-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("ext");
-    DOM["#download-preview-tag-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("tag");
-    DOM["#download-preview-atr-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("atr");
+    DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
+    DOM["#download-preview-ext-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("ext");
+    DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
+    DOM["#download-preview-atr-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("atr");
     DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     if (DOM["#download-toggle-input"].checked) {
-      DOM["#download-toggle-input"].value = 1;
       updateDownloadPreviewCompletely();
     }
   }
@@ -430,11 +429,13 @@ if (downloadStrategy === "page") {
    * @private
    */
   function downloadPreviewThumb(download) {
-    var html = "";
+    var IMG_EXT = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
+        VIDEO_EXT = ["mp4", "webm"],
+        html = "";
     if (download) {
-      if (download.tag === "img" || download.ext === "jpg" || download.ext === "jpeg" || download.ext === "png" || download.ext === "gif" || download.ext === "svg") {
+      if (download.tag === "img" || IMG_EXT.includes(download.ext)) {
         html = "<img src=\"" + download.url + "\" alt=\"\" width=\"32\"/>";
-      } else if (download.tag === "video" || download.ext === "webm" || download.ext === "mp4") {
+      } else if (download.tag === "video" || VIDEO_EXT.includes(download.ext)) {
         html = "<video src=\"" + download.url + "\" width=\"32\"/>";
       }
     }
