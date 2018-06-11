@@ -176,7 +176,7 @@ URLI.Action = function () {
       chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
         const code = "URLI.Download.findDownloadURLs(" +
           JSON.stringify(instance.downloadStrategy) + ", " +
-          JSON.stringify(instance.downloadTypes) + ", " +
+          JSON.stringify(instance.downloadExtensions) + ", " +
           JSON.stringify(instance.downloadTags) + ", " +
           JSON.stringify(instance.downloadAttributes) + ", " +
           JSON.stringify(instance.downloadSelector) + ", " +
@@ -190,21 +190,10 @@ URLI.Action = function () {
               chrome.downloads.download({url: download.url}, function(downloadId) {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
-
                   if (downloadItem) {
                     console.log(downloadItem);
-                    console.log("downloadMime=" + download.mime + " downloadItem.mime=" + downloadItem.mime);
                     console.log("totalBytes=" + downloadItem.totalBytes);
                     if (instance.downloadStrategy !== "page") {
-                      if (instance.downloadEnforceMime) {
-                        console.log("download -- enforcing mime!");
-                        if (download.mime && downloadItem.mime && download.mime.toLowerCase() !== downloadItem.mime.toLowerCase()) {
-                          console.log("Cancelking@@@ because mime isn't equal! downloadMime=" + download.mime + " downloadItem.mime=" + downloadItem.mime);
-                          chrome.downloads.cancel(downloadId);
-                        } else {
-                          console.log("Checked the mimes and they are EQUAL... phew!");
-                        }
-                      }
                       if (downloadItem.totalBytes > 0 && (
                           (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) >= downloadItem.totalBytes : false) ||
                           (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) <= downloadItem.totalBytes : false)
@@ -218,8 +207,12 @@ URLI.Action = function () {
                 });
               });
             }
-          } else { console.log("no results"); }
-          if (callback) { callback(instance); }
+          } else {
+            console.log("no results");
+          }
+          if (callback) {
+            callback(instance);
+          }
         });
       });
     }

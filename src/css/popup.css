@@ -11,6 +11,7 @@ html {
   height: auto;
 }
 
+/* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
 h3, :-webkit-any(.checkbox, .radio) label input ~ span {
   -webkit-user-select: initial;
 }
@@ -260,7 +261,7 @@ div.column {
   font-style: italic;
 }*/
 
-#download-tips-types-div, #download-tips-selector-div, #download-tips-page-div {
+#download-tips-extensions-div, #download-tips-selector-div, #download-tips-page-div {
   margin-top: 12px;
   color: rebeccapurple;
   font-style: italic;
@@ -299,13 +300,13 @@ div.column {
   min-height: 60px;
 }
 
-#download-types label, #download-tags label, #download-attributes label {
+#download-extensions label, #download-tags label, #download-attributes label {
   display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
   margin-right: 8px;
   margin-bottom: 4px;
 }
 
-#download-types label span, #download-tags label span, #download-attributes label span {
+#download-extensions label span, #download-tags label span, #download-attributes label span {
   padding-left: 3px;
 }
 
@@ -364,9 +365,15 @@ div.column#download-optional {
   text-align: right;
 }
 
-#download-preview-checkboxes label {
-  margin-left: 4px;
+#download-preview-checkboxes label:not(:last-child) {
+  margin-right: 8px;
 }
+
+/*
+#download-preview-checkboxes label:last-child {
+  margin-left: 8px;
+}
+*/
 
 #download-preview-heading-title {
   font-weight: bold;
@@ -444,7 +451,7 @@ table tbody tr td {
 
 table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
-table th.thumb, td.thumb { min-width: 32px; }
+table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
 table th.ext, td.ext { min-width: 32px; }
 table th.tag, td.tag { min-width: 32px; }
 table th.atr, td.atr { min-width: 32px; }
@@ -459,4 +466,9 @@ table th.url, td.url { min-width: 24x; }
   top: 4px;
 }
 
-
+/* cloud-download ireregular padding overrides */
+#controls input[type="image"]#download-input {
+  /*margin-bottom: -2px;*/
+  padding: 4px;
+  padding-left: 8px;
+}

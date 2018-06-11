@@ -51,7 +51,7 @@ URLI.Download = function () {
     try {
     switch (strategy) {
       case "all":
-      case "types":
+      case "extensions":
         for (let urlattribute of URL_ATTRIBUTES) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
         }
@@ -120,13 +120,15 @@ URLI.Download = function () {
         }
       }
       if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+        
      //   console.log("adding url!");
         ext = findExt(url);
         if (!isValidExt(ext)) {
           ext = "";
         }
+
         // Special Restriction (Extensions)
-        if (strategy === "types" && (!extensions.includes(ext) || ext === "")) {
+        if (strategy === "extensions" && (!extensions.includes(ext) || ext === "")) {
           continue;
         }
         tag = el.tagName ? el.tagName.toLowerCase() : "";
@@ -150,14 +152,19 @@ URLI.Download = function () {
   // Regex to find file extension from URL by SteeBono @ stackoverflow.com
   // https://stackoverflow.com/a/42841283
   function findExt(url) {
-    var urlquestion = url && url.length > 0 ? url.substring(0, url.indexOf("?")) : undefined,
-        urlhash = !urlquestion && url && url.length > 0 ? url.substring(0, url.indexOf("#")) : undefined,
+    var urlquestion,
+        urlhash,
         regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
         group = 1,
-        match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : ""),
+        match,
         ext = "";
-    if (match && match[group]) {
-      ext = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
+    if (url && url.length > 0) {
+      urlquestion = url.substring(0, url.indexOf("?"));
+      urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined;
+      match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
+      if (match && match[group]) {
+        ext = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
+      }
     }
     return ext;
   }

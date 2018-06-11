@@ -175,17 +175,17 @@
               </div>
               <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
               <select id="download-strategy-select">
-                <option id="download-strategy-option-types" value="types" data-i18n="textContent"></option>
+                <option id="download-strategy-option-extensions" value="extensions" data-i18n="textContent"></option>
                 <option id="download-strategy-option-tags" value="tags" data-i18n="textContent"></option>
                 <option id="download-strategy-option-attributes" value="attributes" data-i18n="textContent"></option>
                 <option id="download-strategy-option-selector" value="selector" data-i18n="textContent"></option>
                 <option id="download-strategy-option-page" value="page" data-i18n="textContent"></option>
               </select>
               <div id="download-strategy-sub-options">
-                <input id="download-types-generated" type="hidden" value=""/>
+                <input id="download-extensions-generated" type="hidden" value=""/>
                 <input id="download-tags-generated" type="hidden" value=""/>
                 <input id="download-attributes-generated" type="hidden" value=""/>
-                <div id="download-types" class="checkbox"></div>
+                <div id="download-extensions" class="checkbox"></div>
                 <div id="download-tags" class="checkbox"></div>
                 <div id="download-attributes" class="checkbox"></div>
                 <div id="download-selector">
@@ -206,11 +206,11 @@
               <div class="row">
                 <div id="download-includes" class="column">
                   <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-                  <input id="download-includes-input" type="text" placeholder="e.g. /img/large/"/>
+                  <input id="download-includes-input" type="text" placeholder="e.g. /img/large/" spellcheck="false"/>
                 </div>
                 <div id="download-excludes" class="column">
                   <label id="download-excludes-label" for="download-excludes-input" data-i18n="textContent"></label>
-                  <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/"/>
+                  <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                 </div>
               </div>
               <div class="row two">
@@ -232,7 +232,7 @@
           <input id="download-preview-checkboxes-generated" type="hidden" value=""/>
           <div id="download-preview-heading">
             <div id="download-preview-heading-title"></div>
-            <div id="download-preview-checkboxes">
+            <div id="download-preview-checkboxes" class="checkbox">
               <label>
                 <input id="download-preview-thumb-input" value="thumb" type="checkbox"/>
                 <span id="download-preview-thumb-label" data-i18n="textContent"></span>
