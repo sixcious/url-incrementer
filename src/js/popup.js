@@ -95,8 +95,8 @@ URLI.Popup = function () {
           }
           updateControls();
           DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
-          const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 2 : items_.popupButtonSize <= 44 ? 3 : 4;
-          DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; margin-bottom:-" + downloadPaddingAdjustment + "px;";
+          const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8;
+          DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
           DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
           updateSetup();
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items

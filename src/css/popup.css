@@ -18,7 +18,6 @@ h3, :-webkit-any(.checkbox, .radio) label input ~ span {
 
 :-webkit-any(.checkbox, .radio) label input ~ span{
   -webkit-margin-start: 0.3em;
-  /*font-size: 0.95em;*/
 }
 
 /* Native elements styles */
@@ -468,7 +467,9 @@ table th.url, td.url { min-width: 24x; }
 
 /* cloud-download ireregular padding overrides */
 #controls input[type="image"]#download-input {
-  /*margin-bottom: -2px;*/
-  padding: 4px;
-  padding-left: 8px;
+  padding: 4px 8px;
+}
+
+#setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
+  margin-bottom: -2px;
 }
