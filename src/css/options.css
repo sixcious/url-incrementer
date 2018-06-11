@@ -205,6 +205,15 @@ input[type="image"]:focus {
   margin-left: 6px;
 }
 
+/* download img alignment adjustments */
+#download-cloud-download {
+  margin-bottom: -1px;
+}
+
+#download-experimental-flask {
+  margin-bottom: 1px;
+}
+
 /*#download-experimental-disclaimer {
   color: rebeccapurple;
 }*/

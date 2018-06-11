@@ -15,14 +15,13 @@ URLI.Background = function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
+    /* shortcuts */   "quickEnabled": true,
+    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"],
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
+    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "ext", "tag", "compressed"],
-    /* shortcuts */   "quickEnabled": true,
-    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [3, "ArrowUp"], "keyDecrement": [3, "ArrowDown"], "keyNext": [3, "ArrowRight"], "keyPrev": [3, "ArrowLeft"], "keyClear": [3, "KeyX"], "keyAuto": [3, "KeyA"], "keyDownload": [],
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1, "mouseDownload": -1,
-    /* increment */   "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""],
-    /* selection */   "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* fun */         "urli": 0
   },
 
@@ -205,9 +204,7 @@ URLI.Background = function () {
         }
         break;
       case "setBadgeSkipErrors":
-        //instance = getInstance(sender.tab.id);
         console.log("setBadgeSkipErrors!!");
-        console.log("urlprops should have errrocode...");
         console.log(request.errorCode);
         if (request.errorCode && request.instance && !request.instance.autoEnabled) {
           console.log("setting badge!");
@@ -275,7 +272,6 @@ URLI.Background = function () {
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {
         chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
       }
-      console.log("background download tabUpdatedListener REMOVED?");
       chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
     }
   }

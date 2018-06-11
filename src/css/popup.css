@@ -473,3 +473,7 @@ table th.url, td.url { min-width: 24x; }
 #setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
   margin-bottom: -2px;
 }
+
+#setup #download-toggle {
+  vertical-align: bottom;
+}
