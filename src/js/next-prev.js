@@ -33,20 +33,19 @@ URLI.NextPrev = function () {
    * @public
    */
   function findNextPrevURL(direction, priority, sameDomain) {
-    var url,
-        priority2 = priority === "attributes" ? "innerHTML" : "attributes",
-        algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
-          { "priority": "important", "subpriority": "relAttribute" },
-          { "priority": priority,    "subpriority": "equals"       },
-          { "priority": priority2,   "subpriority": "equals"       },
-          { "priority": priority,    "subpriority": "startsWith"   },
-          { "priority": priority2,   "subpriority": "startsWith"   },
-          { "priority": priority,    "subpriority": "includes"     },
-          { "priority": priority2,   "subpriority": "includes"     }
-        ];
+    const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
+          algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
+            { "priority": "important", "subpriority": "relAttribute" },
+            { "priority": priority,    "subpriority": "equals"       },
+            { "priority": priority2,   "subpriority": "equals"       },
+            { "priority": priority,    "subpriority": "startsWith"   },
+            { "priority": priority2,   "subpriority": "startsWith"   },
+            { "priority": priority,    "subpriority": "includes"     },
+            { "priority": priority2,   "subpriority": "includes"     }
+          ];
     buildURLs(direction, sameDomain);    
     for (let algorithm of algorithms) {
-      url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
+      const url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
       if (url) { return url; }
     }
     return "";
@@ -63,7 +62,7 @@ URLI.NextPrev = function () {
    * @private
    */
   function traverseResults(priority, subpriority, keywords) {
-    var url = undefined;
+    let url = "";
     for (let keyword of keywords) {
       if (urls[priority][subpriority].has(keyword)) {
         url = urls[priority][subpriority].get(keyword);
@@ -83,9 +82,9 @@ URLI.NextPrev = function () {
    */
   function buildURLs(direction, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    var links = document.getElementsByTagName("link"),
-        anchors = document.links, // document.links includes all anchor and area elements
-        hostname = document.location.hostname;
+    const links = document.getElementsByTagName("link"),
+          anchors = document.links, // document.links includes all anchor and area elements
+          hostname = document.location.hostname;
     parseElements(direction, links, hostname, sameDomain);
     parseElements(direction, anchors, hostname, sameDomain);
   }
@@ -101,13 +100,12 @@ URLI.NextPrev = function () {
    * @private
    */
   function parseElements(direction, elements, hostname, sameDomain) {
-    var url;
     for (let element of elements) {
       if (!element.href) {
         continue;
       }
       try { // Check if URL is in same domain if enabled, wrap in try/catch in case of exceptions with URL object
-        url = new URL(element.href);
+        const url = new URL(element.href);
         if (sameDomain && url.hostname !== hostname) {
           continue;
         }
@@ -115,7 +113,7 @@ URLI.NextPrev = function () {
         continue;
       }
       parseText(direction, "innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
-      for (attribute of element.attributes) {
+      for (let attribute of element.attributes) {
         parseText(direction, "attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
       }
     }

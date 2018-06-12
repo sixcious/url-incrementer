@@ -20,7 +20,7 @@ URLI.UI = function () {
    * @public
    */
   function generateAlert(messages, callback) {
-    var div = document.createElement("div"),
+    let div = document.createElement("div"),
         ul = document.createElement("ul"),
         li,
         i;

@@ -34,7 +34,7 @@ URLI.IncrementDecrement = function () {
    */
   function findSelection(url, preference, custom) {
     var regexp0 = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
-        regexp1 = /(?:=|\/)(\d+)/, // RegExp to find numbers with prefixes (= /)
+        regexp1 = /(?:[=\/])(\d+)/, // RegExp to find numbers with prefixes (= /)
         regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
         regexp3 = /((\d+)+?)/, // RegExg to find the first number in the url
         regexp4 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
@@ -83,7 +83,7 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros) {
-    var urlmod,
+    let urlmod,
         selectionmod,
         selectionint = parseInt(selection, base); // parseInt base range is 2-36
     // Increment or decrement the selection; if decrement is negative, set to 0 (low bound)
@@ -112,9 +112,9 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
-    var origin = document.location.origin,
-        urlOrigin = new URL(instance.url).origin,
-        urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+    const origin = document.location.origin,
+          urlOrigin = new URL(instance.url).origin,
+          urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS

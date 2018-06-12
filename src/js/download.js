@@ -19,8 +19,8 @@ URLI.Download = function () {
    * @public
    */
   function previewDownloadURLs() {
-    var  allURLs = findDownloadURLs("all");
-         allExtensions = findProperties(allURLs, "ext");
+    var  allURLs = findDownloadURLs("all"),
+         allExtensions = findProperties(allURLs, "ext"),
          allTags = findProperties(allURLs, "tag"),
          allAttributes = findProperties(allURLs, "attribute");
     return { "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
@@ -100,38 +100,36 @@ URLI.Download = function () {
    */
   function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
     console.log("selector=" + selector);
-    var hostname = document.location.hostname,
-        els = document.querySelectorAll(selector),
+    var els = document.querySelectorAll(selector),
         downloads = new Map(), // return value, we use a Map to avoid potential duplicate URLs
         url = "",
         ext = "",
         attribute = "",
         tag = "";
     console.log("found " + els.length + " links");
-    for (el of els) {
-      for (urlattribute of URL_ATTRIBUTES) {
+    for (let el of els) {
+      for (let urlattribute of URL_ATTRIBUTES) {
         if (el[urlattribute]) {
           url = el[urlattribute];
           attribute = urlattribute;
-          break;
+          if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+            ext = findExt(url);
+            // Special Restriction (Extensions)
+            if (strategy === "extensions" && (!ext || !extensions.includes(ext))) {
+              continue;
+            }
+            tag = el.tagName ? el.tagName.toLowerCase() : "";
+            // Special Restriction (Tags)
+            if (strategy === "tags" && (!tag || !tags.includes(tag))) {
+              continue;
+            }
+            // Special Restriction (Attributes)
+            if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
+              continue;
+            }
+            downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "attribute": attribute});
+          }
         }
-      }
-      if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-        ext = findExt(url);
-        // Special Restriction (Extensions)
-        if (strategy === "extensions" && (!ext || !extensions.includes(ext))) {
-          continue;
-        }
-        tag = el.tagName ? el.tagName.toLowerCase() : "";
-        // Special Restriction (Tags)
-        if (strategy === "tags" && (!tag || !tags.includes(tag))) {
-          continue;
-        }
-        // Special Restriction (Attributes)
-        if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
-          continue;
-        }
-        downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "attribute": attribute});
       }
     }
     return [...downloads.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)

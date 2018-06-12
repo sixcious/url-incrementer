@@ -378,6 +378,13 @@ div.column#download-optional {
   font-weight: bold;
 }
 
+#download-preview-heading-title .success {
+  color: #05854D;
+}
+
+#download-preview-heading-title .error {
+  color: #E6003E;
+}
 
 /*
 
@@ -454,7 +461,8 @@ table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb
 table th.ext, td.ext { min-width: 32px; }
 table th.tag, td.tag { min-width: 32px; }
 table th.atr, td.atr { min-width: 32px; }
-table th.url, td.url { min-width: 24x; }
+table th.url, td.url { min-width: 32px; }
+table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
 
 #download-strategy-help, #download-optional-help {
 /*  color: rebeccapurple;*/

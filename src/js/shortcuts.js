@@ -9,21 +9,21 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = function () {
 
-  var FLAG_KEY_ALT = 0x1, // 0001
-      FLAG_KEY_CTRL = 0x2, // 0010
-      FLAG_KEY_SHIFT = 0x4, // 0100
-      FLAG_KEY_META = 0x8, // 1000
-      FLAG_MOUSE_LEFT = 0x0, // 00
-      FLAG_MOUSE_MIDDLE = 0x1, // 01
-      FLAG_MOUSE_RIGHT = 0x2, // 10
-      KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
-        "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
-        "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
-        "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
-        "AltLeft":     "Alt",   "AltRight":     "Alt",
-        "MetaLeft":    "Meta",  "MetaRight":    "Meta"
-      },
-      items_ = {}; // storage items cache
+  const FLAG_KEY_ALT = 0x1, // 0001
+        FLAG_KEY_CTRL = 0x2, // 0010
+        FLAG_KEY_SHIFT = 0x4, // 0100
+        FLAG_KEY_META = 0x8, // 1000
+        FLAG_MOUSE_LEFT = 0x0, // 00
+        FLAG_MOUSE_MIDDLE = 0x1, // 01
+        FLAG_MOUSE_RIGHT = 0x2, // 10
+        KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
+          "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
+          "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
+          "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
+          "AltLeft":     "Alt",   "AltRight":     "Alt",
+          "MetaLeft":    "Meta",  "MetaRight":    "Meta"
+        };
+  let items_ = {}; // storage items cache
 
   /**
    * Sets the items storage cache.

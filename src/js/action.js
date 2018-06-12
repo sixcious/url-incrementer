@@ -229,10 +229,10 @@ URLI.Action = function () {
           JSON.stringify(instance.downloadAttributes) + ", " +
           JSON.stringify(instance.downloadSelector) + ", " +
           JSON.stringify(instance.downloadIncludes) + ", " +
-          JSON.stringify(instance.downloadExcludes) + ");"
+          JSON.stringify(instance.downloadExcludes) + ");";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
           if (results && results[0]) {
-            var downloads = results[0];
+            const downloads = results[0];
             for (let download of downloads) {
               console.log("downloading url=" + download.url);
               chrome.downloads.download({url: download.url}, function(downloadId) {

@@ -105,8 +105,8 @@ URLI.Background = function () {
    * @public
    */
   function buildInstance(tab, items) {
-    var selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom),
-        instance = {
+    const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+    return {
           "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
           "tabId": tab.id, "url": tab.url,
           "selection": selectionProps.selection, "selectionStart": selectionProps.selectionStart,
@@ -121,7 +121,6 @@ URLI.Background = function () {
           "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
           "downloadPreview": items.downloadPreview
     };
-    return instance;
   }
 
   /**
@@ -182,14 +181,13 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    var instance;
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
         break;
       case "performAction":
         chrome.storage.sync.get(null, function(items) {
-          instance = getInstance(sender.tab.id);
+          let instance = getInstance(sender.tab.id);
           if (!instance && request.action !== "auto") {
             instance = buildInstance(sender.tab, items);
           }
@@ -230,7 +228,7 @@ URLI.Background = function () {
         if (!items.permissionsInternalShortcuts) {
           chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
             if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
-              var instance = getInstance(tabs[0].id);
+              let instance = getInstance(tabs[0].id);
               if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
                   (command === "auto" && instance && instance.autoEnabled) ||
                   (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
@@ -254,7 +252,7 @@ URLI.Background = function () {
    * @public
    */
   function tabRemovedListener(tabId, removeInfo) {
-    var instance = URLI.Background.getInstance(tabId);
+    const instance = URLI.Background.getInstance(tabId);
     if (instance) {
       URLI.Action.performAction(instance, "clear", "tabRemovedListener");
     }
@@ -271,7 +269,7 @@ URLI.Background = function () {
   function tabUpdatedListener(tabId, changeInfo, tab) {
     console.log("background download tabUpdatedListener");
     if (changeInfo.status === "complete") {
-      var instance = URLI.Background.getInstance(tabId);
+      const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {
         chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});

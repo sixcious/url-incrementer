@@ -15,7 +15,7 @@ URLI.Auto = function () {
   const autoTimers = new Map();
 
   // A boolean flag indicating if we have added the tabs.on.updated autoListener (to prevent adding multiple listeners)
-  var autoListenerAdded = false;
+  let autoListenerAdded = false;
 
   /**
    * Starts the auto timer for the instance by doing all the necessary start-up work (convenience method).
@@ -58,7 +58,7 @@ URLI.Auto = function () {
    * @public
    */
   function pauseOrResumeAutoTimer(instance) {
-    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    const autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       if (!instance.autoPaused) {
         autoTimer.pause();
@@ -85,7 +85,7 @@ URLI.Auto = function () {
    * @private
    */
   function setAutoTimeout(instance) {
-    var autoTimer = new URLI.AutoTimer(function() {
+    const autoTimer = new URLI.AutoTimer(function() {
       if (instance.downloadEnabled) {
         URLI.Action.performAction(instance, "download", "auto", function(instance) {
           URLI.Action.performAction(instance, instance.autoAction, "auto");
@@ -104,7 +104,7 @@ URLI.Auto = function () {
    * @private
    */
   function clearAutoTimeout(instance) {
-    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    const autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       autoTimer.clear();
       autoTimers.delete(instance.tabId);
@@ -112,14 +112,15 @@ URLI.Auto = function () {
   }
 
   /**
-   * Sets the instance's auto timer wait. TODO Explain
+   * Sets the instance's auto timer wait state. This is used when the option "Wait for the page to fully load" is
+   * checked. During the small window when the tab is still loading, this will not let pause/resume restart the timer.
    *
    * @param instance the instance's timeout to clear
    * @param wait     boolean indicating whether the timer should wait (true) or not wait (false)
    * @private
    */
   function setAutoWait(instance, wait) {
-    var autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
+    const autoTimer = instance ? autoTimers.get(instance.tabId) : undefined;
     if (autoTimer) {
       autoTimer.setWait(wait);
       autoTimers.set(instance.tabId, autoTimer);
@@ -169,7 +170,7 @@ URLI.Auto = function () {
       return;
     }
     console.log("autoListener is on!");
-    var instance = URLI.Background.getInstance(tabId);
+    const instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
       // Loading:
@@ -241,7 +242,7 @@ URLI.Auto = function () {
  */
 URLI.AutoTimer = function (callback, delay) {
 
-  var timerId, start, remaining = delay, wait = false;
+  let timerId, start, remaining = delay, wait = false;
 
   this.pause = function() {
     window.clearTimeout(timerId);
