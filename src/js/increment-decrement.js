@@ -13,9 +13,8 @@ URLI.IncrementDecrement = function () {
    * Finds a selection in the url to increment or decrement depending on the preference.
    *
    * "Prefixes" Preference:
-   * Looks for common prefixes that come before numbers, such as
-   * = (equals) and / (slash). Example URLs with prefixes (= and /):
-   *
+   * Looks for terms and common prefixes that come before numbers, such as
+   * page=, pid=, p=, next=, =, and /. Example URLs with prefixes (= and /):
    * http://www.google.com?page=1234
    * http://www.google.com/1234
    *
@@ -103,7 +102,14 @@ URLI.IncrementDecrement = function () {
   }
 
   /**
-   * TODO
+   * Modifies the URL by either incrementing or decrementing the specified
+   * selection and performs error skipping.
+   *
+   * @param action               the action to perform (increment or decrement)
+   * @param instance             the instance containing the URL properties
+   * @param errorSkipRemaining   the number of times left to skip while performing this action
+   * @param errorCodeEncountered whether or not an error code has been encountered yet while performing this action
+   * @public
    */
   function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
     var origin = document.location.origin,
@@ -111,30 +117,26 @@ URLI.IncrementDecrement = function () {
         urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
-    console.log("instance=");
-    console.log(instance);
-    console.log("errorSkipReamining=" + errorSkipRemaining);
+    // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (origin === urlOrigin && errorSkipRemaining > 0 && instance.errorCodes && instance.errorCodes.length > 0) {
-      console.log("in the IF!!");
       fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
-        console.log("response.status=" + response.status);
-        console.log("errorCodes=" + instance.errorCodes);
-          if (response && response.status &&
-              ((instance.errorCodes.includes("404") && response.status === 404) ||
-              (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
-              (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
-              (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
-            //setBadgeSkipErrors, only send message the first time an errorCode is encountered
-            if (!errorCodeEncountered) {
-              chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
-            }
-            console.log("response.status was in errorCodes! attempting to skip this URL");
-            modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
-          } else {
-            console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
-            chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
+        if (response && response.status &&
+            ((instance.errorCodes.includes("404") && response.status === 404) ||
+            (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
+            (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
+            (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
+          // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
+          if (!errorCodeEncountered) {
+            chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
           }
-        });
+          // Resursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncoutnered to true
+          console.log("response.status was in errorCodes! attempting to skip this URL");
+          modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
+        } else {
+          console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
+          chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
+        }
+      });
     } else {
       console.log("the if check failed, most likely we have exhausted the errorSkip attempts and are just going to send a message to background to updatetab to this URL");
       chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});

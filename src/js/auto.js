@@ -174,7 +174,7 @@ URLI.Auto = function () {
     if (instance && instance.autoEnabled) {
       // Loading:
       if (loading) {
-        // TODO Not yet ready
+        // If autoWait is on, we set the wait boolean to true in case the user tries to pause/resume (e.g. start) the timeout while the tab is loading
         if (instance.autoWait) {
           setAutoWait(instance, true);
         }
@@ -194,13 +194,13 @@ URLI.Auto = function () {
       }
       // AutoWait (Complete or Loading) :
       if (instance.autoWait ? complete : loading) {
-        // TODO Now Ready
+        // If autoWait is on, we now set the wait boolean to false indicating a pause/resume (e.g. start) can start the timeout
         if (instance.autoWait) {
           setAutoWait(instance, false);
         }
         // If the auto instance was paused, this is almost considered a no-op
         if (instance.autoPaused) {
-          // TODO:
+          // Clear the instance if auto is paused but the times count is at 0 or less (TODO: is this really needed, we need to treat paused differently?)
           if (instance.autoTimes <= 0) {
             URLI.Action.performAction(instance, "clear", "auto");
           }

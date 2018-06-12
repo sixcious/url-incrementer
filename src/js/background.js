@@ -41,7 +41,7 @@ URLI.Background = function () {
   },
 
   // The individual tab instances in Background memory
-  // Note: We NEVER save instances in storage due to URLs being a privacy concern
+  // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
   /**
@@ -125,7 +125,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time.
+   * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time. Note that when the tab is updated, the browser removes the badge.
    *
    * @param tabId           the tab ID to set this badge to
    * @param badge           the badge key to set from BROWSER_ACTION_BADGES
@@ -147,7 +147,8 @@ URLI.Background = function () {
 
   /**
    * Listen for installation changes and do storage/extension initialization work.
-   *
+   * 
+   * @param details the installation details
    * @public
    */
   function installedListener(details) {
@@ -175,6 +176,9 @@ URLI.Background = function () {
   /**
    * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
    * 
+   * @param request      the request containing properties to parse (e.g. greeting message)
+   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
   function messageListener(request, sender, sendResponse) {
@@ -204,10 +208,7 @@ URLI.Background = function () {
         }
         break;
       case "setBadgeSkipErrors":
-        console.log("setBadgeSkipErrors!!");
-        console.log(request.errorCode);
         if (request.errorCode && request.instance && !request.instance.autoEnabled) {
-          console.log("setting badge!");
           setBadge(sender.tab.id, "skip", true, request.errorCode + "");
         }
         break;
@@ -220,6 +221,7 @@ URLI.Background = function () {
   /**
    * Listen for commands (Browser Extension shortcuts) and perform the command's action.
    * 
+   * @param command the shortcut command that was performed
    * @public
    */
   function commandListener(command) {
@@ -247,6 +249,8 @@ URLI.Background = function () {
   /**
    * Listen for when tabs are removed and clear the instances if they exist.
    * 
+   * @param tabId      the tab ID
+   * @param removeInfo information about how the tab is being removed (e.g. window closed)
    * @public
    */
   function tabRemovedListener(tabId, removeInfo) {

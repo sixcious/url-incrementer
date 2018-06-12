@@ -9,7 +9,8 @@ var URLI = URLI || {};
 
 URLI.Permissions = function () {
 
-  // TODO
+  // This object contains all of the extension's optional permissions. Each permission contains:
+  // 1) What storage keys to set, 2) The permission request, 3) The permission conflict to use instead if a conflict exists with another permission (optional), and  4) The script (optional)
   const PERMISSIONS = {
     "internalShortcuts": {
       "storageKey": "permissionsInternalShortcuts",
@@ -28,10 +29,12 @@ URLI.Permissions = function () {
   };
 
   /**
-   * TODO
+   * Requests a single permission.
+   * If granted and a script needs to be added, adds a declarative content rule.
+   * Then updates the permission key value in storage.
    *
-   * @param permission TODO
-   * @param callback   TODO
+   * @param permission the permission to request (a string in PERMISSIONS)
+   * @param callback   the callback function to return execution to
    * @public
    */
   function requestPermissions(permission, callback) {
@@ -51,22 +54,22 @@ URLI.Permissions = function () {
   }
 
   /**
-   * TODO
+   * Removes a single permission.
+   * If necessary, removes the script and declarative content rule. Then checks to see if a conflict exists
+   * with another permission that might share this permission. If a conflict exists, the permission is not removed.
+   * Then updates the permission key value in storage.
    *
-   * @param permission TODO
-   * @param callback   TODO
+   * @param permission the permission to remove (a string in PERMISSIONS)
+   * @param callback   the callback function to return execution to 
    * @public
    */
   function removePermissions(permission, callback) {
     // Script:
-    console.log("permission= (followed later by .and then [])" + permission);
     console.log(PERMISSIONS[permission].script);
     if (chrome.declarativeContent && PERMISSIONS[permission].script) {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         for (let i = 0; i < rules.length; i++) {
-          console.log("found rule:" + rules[i]);
           if (rules[i].actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-            console.log("match found! about to remove the rule...id=" + rules[i].id);
             chrome.declarativeContent.onPageChanged.removeRules([rules[i].id], function() {});
           }
         }
@@ -77,9 +80,9 @@ URLI.Permissions = function () {
       if ((permission === "internalShortcuts" && !items.permissionsEnhancedMode && !items.permissionsDownload) ||
           (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
-        chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) { if (removed) { console.log("PERMISSIONS no conflicts :) phew, removed!" + removed + " - " + PERMISSIONS[permission].request); } });
+        chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) { if (removed) { } });
       } else if (PERMISSIONS[permission].requestConflict) {
-        chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) { if (removed) { console.log("PERMISSION CONFLICT ENCOUNTERED!!!! removed!" + removed + " - " + PERMISSIONS[permission].requestConflict); } });
+        chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) { if (removed) { } });
       }
     });
     chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: false}, function() {
@@ -87,6 +90,12 @@ URLI.Permissions = function () {
     });
   }
 
+  /**
+   * Removes all the extension's optional permissions.
+   *
+   * @param callback the callback function to return execution to
+   * @public
+   */
   function removeAllPermissions(callback) {
     if (chrome.declarativeContent) {
       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});

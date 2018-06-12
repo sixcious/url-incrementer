@@ -9,19 +9,19 @@ var URLI = URLI || {};
 
 URLI.NextPrev = function () {
 
-        // Keywords are ordered in priority
-        // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
+  // Keywords are ordered in priority
+  // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
   const keywords = {
-          "next": ["next", "forward", "次", "&gt;", ">", "new"],
-          "prev": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "old"],
-          "startsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"]
-        },
-        // urls store important, attributes, and innerHTML links that were found
-        urls = {
-          "important":  { "relAttribute": new Map() },
-          "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
-          "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
-        };
+    "next": ["next", "forward", "次", "&gt;", ">", "new"],
+    "prev": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "old"],
+    "startsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"]
+  },
+  // urls store important, attributes, and innerHTML links that were found
+  urls = {
+    "important":  { "relAttribute": new Map() },
+    "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
+    "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
+  };
 
   /**
    * Finds the next or prev URL.
@@ -35,7 +35,7 @@ URLI.NextPrev = function () {
   function findNextPrevURL(direction, priority, sameDomain) {
     var url,
         priority2 = priority === "attributes" ? "innerHTML" : "attributes",
-        algorithms = [
+        algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
           { "priority": "important", "subpriority": "relAttribute" },
           { "priority": priority,    "subpriority": "equals"       },
           { "priority": priority2,   "subpriority": "equals"       },
@@ -59,7 +59,7 @@ URLI.NextPrev = function () {
    * @param priority    the link priority to use: attributes or innerHTML
    * @param subpriority the sub priority to use: equals, startsWith, includes
    * @param keywords    the ordered list of keywords sorted in priority
-   * @return url the url (if found)
+   * @return {string} the url (if found)
    * @private
    */
   function traverseResults(priority, subpriority, keywords) {

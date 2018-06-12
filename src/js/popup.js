@@ -20,11 +20,11 @@ URLI.Popup = function () {
         "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
        },
       DOWNLOAD_PREVIEW_I18NS = {
+        "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"), 
         "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
-        "urls": chrome.i18n.getMessage("download_preview_urls"), "noresults": chrome.i18n.getMessage("download_preview_noresults"),
-        "thumb": chrome.i18n.getMessage("download_preview_thumb_label"), "ext": chrome.i18n.getMessage("download_preview_ext_label"), 
-        "tag": chrome.i18n.getMessage("download_preview_tag_label"), "atr": chrome.i18n.getMessage("download_preview_atr_label"),
-        "url": chrome.i18n.getMessage("download_preview_url_label")
+        "urls": chrome.i18n.getMessage("download_preview_urls"), "thumb": chrome.i18n.getMessage("download_preview_thumb_label"),
+        "ext": chrome.i18n.getMessage("download_preview_ext_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
+        "atr": chrome.i18n.getMessage("download_preview_atr_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
       },
       downloadPreviewAlls = { "allURLs": [], "allExts": [], "allTags": [] },
       timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
@@ -77,8 +77,6 @@ URLI.Popup = function () {
     DOM["#download-selector-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-selector-label"], "font-weight: bold; color: rebeccapurple"); });
     DOM["#download-includes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-includes-label"], "font-weight: bold; color: #05854D"); });
     DOM["#download-excludes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-excludes-label"], "font-weight: bold; color: #E6003E"); });
-//    DOM["#download-preview-compressed-input"].addEventListener("change", function() { DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;" }); 
-//    DOM["#download-preview-checkboxes"].addEventListener("change", function () { updateDownloadPreviewCheckboxes(this); }); 
     DOM["#download-preview-thumb-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-ext-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
@@ -98,6 +96,7 @@ URLI.Popup = function () {
           const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8;
           DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
           DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
+          DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
           updateSetup();
           // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
           if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
@@ -238,11 +237,14 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
+    console.log("instance.downloadPreview");
+    console.log(instance.downloadPreview);
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-ext-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("ext");
     DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
     DOM["#download-preview-atr-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("atr");
     DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
+    translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     updateInputLabelStyle(DOM["#download-selector-input"], DOM["#download-selector-label"], "font-weight: bold; color: rebeccapurple");
@@ -326,6 +328,7 @@ URLI.Popup = function () {
       });
     });
   }
+
   /**
    * TODO TODO TODO TODO TODO TODO
    *

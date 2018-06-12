@@ -21,7 +21,6 @@ URLI.Action = function () {
   function performAction(instance, action, caller, callback) {
     console.log("performAction instance=" + instance + ", action=" + action + ", caller=" + caller);
     let actionPerformed = false;
-
     // Handle AUTO
     if (instance.autoEnabled) {
       // Get the most recent instance from Background in case auto has been paused
@@ -36,14 +35,13 @@ URLI.Action = function () {
           instance.autoTimes++;
         }
       }
-      // Rare race condition: If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
-      if (instance.autoTimes < 0) { //|| instance.autoPaused && instance.autoTimes === 0) {
-        console.log("performAction autoTimes < 0 rare case... bug?");
+      // Prevents a rare race condition:
+      // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
+      if (instance.autoTimes < 0) {
         actionPerformed = clear(instance, action, caller, callback);
         return;
       }
     }
-
     // Handle DOWNLOAD
     if (instance.downloadEnabled) {
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
@@ -51,7 +49,7 @@ URLI.Action = function () {
         chrome.tabs.onUpdated.addListener(URLI.Background.tabUpdatedListener);
       }
     }
-
+    // Perform Action
     switch (action) {
       case "increment":
       case "decrement":
@@ -64,7 +62,7 @@ URLI.Action = function () {
       case "clear":
         actionPerformed = clear(instance, action, caller, callback);
         break;
-      case "auto": // the auto action is always pause or resume
+      case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
         break;
       case "download":
@@ -73,9 +71,25 @@ URLI.Action = function () {
       default:
         break;
     }
-    iconFeedback(instance, action, caller, callback, actionPerformed);
+    // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
+    if (actionPerformed && !(instance.autoEnabled || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
+      chrome.storage.sync.get(null, function(items) {
+        if (items.iconFeedbackEnabled) {
+          URLI.Background.setBadge(instance.tabId, action, true);
+        }
+      });
+    }
   }
 
+  /**
+   * Performs an increment or decrement action. Also handles error skipping.
+   * 
+   * @param instance the instance for this tab
+   * @param action   the action (increment or decrement)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
   function incrementDecrement(instance, action, caller, callback) {
     let actionPerformed = false,
         urlProps;
@@ -84,7 +98,6 @@ URLI.Action = function () {
       actionPerformed = true;
       // Handle Error Skipping:
       if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
-        console.log("doing error skipping");
         chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
           const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
             JSON.stringify(action) + ", " +
@@ -94,7 +107,6 @@ URLI.Action = function () {
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
         });
       } else {
-        console.log("NOT  doing error skipping");
         urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
         instance.url = urlProps.urlmod;
         instance.selection = urlProps.selectionmod;
@@ -107,7 +119,16 @@ URLI.Action = function () {
     }
     return actionPerformed;
   }
-  
+
+  /**
+   * Performs a next or prev action.
+   * 
+   * @param instance the instance for this tab
+   * @param action   the action (e.g. next or prev)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
   function nextPrev(instance, action, caller, callback) {
     let actionPerformed = true;
     chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
@@ -128,7 +149,16 @@ URLI.Action = function () {
     });
     return actionPerformed;
   }
-  
+
+  /**
+   * Performs a clear action.
+   * 
+   * @param instance the instance for this tab
+   * @param action   the action (clear)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
   function clear(instance, action, caller, callback) {
     let actionPerformed = true;
     chrome.storage.sync.get(null, function(items) {
@@ -153,7 +183,16 @@ URLI.Action = function () {
     });
     return actionPerformed;
   }
-  
+
+  /**
+   * Performs an auto action (pause or resume only).
+   * 
+   * @param instance the instance for this tab
+   * @param action   the action (auto pause/resume)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
   function auto(instance, action, caller, callback) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
@@ -168,7 +207,16 @@ URLI.Action = function () {
     }
     return actionPerformed;
   }
-  
+
+  /**
+   * Performs a download action.
+   * 
+   * @param instance the instance for this tab
+   * @param action   the action (download)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
   function download(instance, action, caller, callback) {
     let actionPerformed = false;
     if (instance.downloadEnabled) {
@@ -207,8 +255,6 @@ URLI.Action = function () {
                 });
               });
             }
-          } else {
-            console.log("no results");
           }
           if (callback) {
             callback(instance);
@@ -217,17 +263,6 @@ URLI.Action = function () {
       });
     }
     return actionPerformed;
-  }
-
-  function iconFeedback(instance, action, caller, callback, actionPerformed) {
-    // Icon Feedback
-    if (actionPerformed && !(instance.autoEnabled || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
-      chrome.storage.sync.get(null, function(items) {
-        if (items.iconFeedbackEnabled) {
-          URLI.Background.setBadge(instance.tabId, action, true);
-        }
-      });
-    }
   }
 
   // Return Public Functions

@@ -266,8 +266,8 @@ URLI.Options = function () {
    */
   function writeInput(input, key) {
     // Write the input value based on the key event modifier bits and key code
-    // using KEY_CODE_STRING_MAP for special cases or String.fromCharCode()
-    // Note: If the key code is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
+    // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
+    // Note2: If the key code is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
     var text = "",
         keyPressed = false;
     if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
@@ -372,12 +372,12 @@ URLI.Options = function () {
   }
 
   /**
-   * Function that is called when URLI is clicked.
+   * Function that is called when our favorite URL Incrementer is clicked!
    *
    * @private
    */
   function clickURLI() {
-    var face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
+    const face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
     this.value = +this.value + 1;
     URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
     URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
