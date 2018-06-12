@@ -15,7 +15,7 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - So Many Options (Alphanumeric Incrementing, Selection algorithms, Intervals, Leading Zeros, Error Skipping... and so much more)
-- Safe, Open Source, Lightweight (Under 300KB!), No Ads, No Bloat, and Requires no permissions for most functionality
+- Safe, Open Source, Lightweight (Under 400KB unpacked!), No Ads, No Bloat, and Requires no permissions for most functionality
 
 **Download Incrementing is a completely optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
 

@@ -110,6 +110,9 @@ URLI.Popup = function () {
   /**
    * Listen for requests from chrome.runtime.sendMessage (Background)
    * 
+   * @param request      the request containing properties to parse (e.g. greeting message)
+   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
   function messageListener(request, sender, sendResponse) {
@@ -130,6 +133,7 @@ URLI.Popup = function () {
       default:
         break;
     }
+    sendResponse({});
   }
 
   /**
@@ -237,8 +241,6 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
-    console.log("instance.downloadPreview");
-    console.log(instance.downloadPreview);
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-ext-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("ext");
     DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
@@ -317,6 +319,11 @@ URLI.Popup = function () {
       this.value === "page" ? chrome.i18n.getMessage("download_help_page_label") : "";
   }
 
+  /**
+   * TODO TODO TODO TODO TODO TODO
+   *
+   * @private
+   */
   function updateDownloadPreviewCompletely() {
     chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
       const code = "URLI.Download.previewDownloadURLs();"
@@ -343,8 +350,7 @@ URLI.Popup = function () {
         downloadSelector = DOM["#download-selector-input"].value,
         downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
         downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
-    //chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-      const code = "URLI.Download.findDownloadURLs(" +
+    const code = "URLI.Download.findDownloadURLs(" +
         JSON.stringify(downloadStrategy) + ", " +
         JSON.stringify(downloadExtensions) + ", " +
         JSON.stringify(downloadTags) + ", " +
@@ -352,79 +358,77 @@ URLI.Popup = function () {
         JSON.stringify(downloadSelector) + ", " +
         JSON.stringify(downloadIncludes) + ", " +
         JSON.stringify(downloadExcludes) + ");";
-      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-        if (results && results[0]) {
-            // Finding the difference of two arrays of objects code by kaspermoerch https://stackoverflow.com/a/21988249
-var
-good = results[0],
+    chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+      if (results && results[0]) {
+        // Finding the difference of two arrays of objects code by kaspermoerch https://stackoverflow.com/a/21988249
+var good = results[0],
 bad = downloadPreviewAlls.allURLs.filter(function(obj) {
-    return !good.some(function(obj2) {
-        return obj.url === obj2.url;
-    });
+  return !good.some(function(obj2) {
+      return obj.url === obj2.url;
+  });
 });
 
 if (downloadStrategy === "page") {
-  bad = [];
+bad = [];
 }
-          var downloadPreviewHeadingTitle = "",
-              checkboxExtensions = "",
-              checkboxTags = "",
-              checkboxAttributes = "",
-              table = "",
-              i = 1,
-              goodLength = good.length,
-              totalLength = good.length + bad.length;
-          downloadPreviewHeadingTitle = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">" + DOWNLOAD_PREVIEW_I18NS.set + goodLength + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls + "</span>";
-          DOM["#download-preview-heading-title"].innerHTML = downloadPreviewHeadingTitle;
-          for (let extension of downloadPreviewAlls.allExtensions) {
-            checkboxExtensions +=
-              "<label>" +
-                "<input value=\"" + extension + "\" type=\"checkbox\"" + (downloadExtensions && downloadExtensions.includes(extension) ? "checked=\"checked\"" : "") +  "\/>" +
-                "<span>" + extension + "<\/span>" +
-              "<\/label>";
-          }
-          DOM["#download-extensions"].innerHTML = checkboxExtensions;
-          for (let tag of downloadPreviewAlls.allTags) {
-            checkboxTags +=
-              "<label>" +
-                "<input value=\"" + tag + "\" type=\"checkbox\"" + (downloadTags && downloadTags.includes(tag) ? "checked=\"checked\"" : "") +  "\/>" +
-                "<span>" + tag + "<\/span>" +
-              "<\/label>";
-          }
-          DOM["#download-tags"].innerHTML = checkboxTags;
-          for (let attribute of downloadPreviewAlls.allAttributes) {
-            checkboxAttributes +=
-              "<label>" +
-                "<input value=\"" + attribute + "\" type=\"checkbox\"" + (downloadAttributes && downloadAttributes.includes(attribute) ? "checked=\"checked\"" : "") +  "\/>" +
-                "<span>" + attribute + "<\/span>" +
-              "<\/label>";
-          }
-          DOM["#download-attributes"].innerHTML = checkboxAttributes;
-          table = "<table>" + 
-                    "<thead>" +
-                      "<tr><th class=\"check\">&nbsp;</th><th class=\"count\">&nbsp;</th><th class=\"thumb\">" + DOWNLOAD_PREVIEW_I18NS.thumb + "</th><th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.atr + "</th><th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
-                    "</thead>" +
-                    "<tbody>";
-          for (let download of good) {
-            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
-          }
-          for (let download of bad) {
-            table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
-          }
-          table +=  "</tbody>" +
-                  "</table>";
-          DOM["#download-preview-table-div"].innerHTML = table;
-//          updateDownloadPreviewCheckboxes();
-          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
-          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-ext-input"]);
-          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
-          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-atr-input"]);
-          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
-        } else {
-          DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
+
+        var downloadPreviewHeadingTitle = "",
+            checkboxExtensions = "",
+            checkboxTags = "",
+            checkboxAttributes = "",
+            table = "",
+            i = 1,
+            goodLength = good.length,
+            totalLength = good.length + bad.length;
+        downloadPreviewHeadingTitle = "<span style=\"color: " + (goodLength > 0 ? "#05854D" : "#E6003E") + "\">" + DOWNLOAD_PREVIEW_I18NS.set + goodLength + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls + "</span>";
+        DOM["#download-preview-heading-title"].innerHTML = downloadPreviewHeadingTitle;
+        for (let extension of downloadPreviewAlls.allExtensions) {
+          checkboxExtensions +=
+            "<label>" +
+              "<input value=\"" + extension + "\" type=\"checkbox\"" + (downloadExtensions && downloadExtensions.includes(extension) ? "checked=\"checked\"" : "") +  "\/>" +
+              "<span>" + extension + "<\/span>" +
+            "<\/label>";
         }
-      });
-    //});
+        DOM["#download-extensions"].innerHTML = checkboxExtensions;
+        for (let tag of downloadPreviewAlls.allTags) {
+          checkboxTags +=
+            "<label>" +
+              "<input value=\"" + tag + "\" type=\"checkbox\"" + (downloadTags && downloadTags.includes(tag) ? "checked=\"checked\"" : "") +  "\/>" +
+              "<span>" + tag + "<\/span>" +
+            "<\/label>";
+        }
+        DOM["#download-tags"].innerHTML = checkboxTags;
+        for (let attribute of downloadPreviewAlls.allAttributes) {
+          checkboxAttributes +=
+            "<label>" +
+              "<input value=\"" + attribute + "\" type=\"checkbox\"" + (downloadAttributes && downloadAttributes.includes(attribute) ? "checked=\"checked\"" : "") +  "\/>" +
+              "<span>" + attribute + "<\/span>" +
+            "<\/label>";
+        }
+        DOM["#download-attributes"].innerHTML = checkboxAttributes;
+        table = "<table>" + 
+                  "<thead>" +
+                    "<tr><th class=\"check\">&nbsp;</th><th class=\"count\">&nbsp;</th><th class=\"thumb\">" + DOWNLOAD_PREVIEW_I18NS.thumb + "</th><th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th><th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th><th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.atr + "</th><th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th></tr>" +
+                  "</thead>" +
+                  "<tbody>";
+        for (let download of good) {
+          table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
+        }
+        for (let download of bad) {
+          table +=  "<tr><td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" style=\"opacity: 0.1;\"/></td><td class=\"count\">" + (i++) + "</td><td class=\"thumb\">" + downloadPreviewThumb(download) + "</td><td class=\"ext\">" + download.ext + "</td><td class=\"tag\">" + download.tag + "</td><td class=\"atr\">" + download.attribute + "</td><td class=\"url\">" + download.url  + "</td></tr>";
+        }
+        table +=  "</tbody>" +
+                "</table>";
+        DOM["#download-preview-table-div"].innerHTML = table;
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-ext-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-atr-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
+      } else {
+        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
+      }
+    });
   }
 
   /**
@@ -639,9 +643,7 @@ if (downloadStrategy === "page") {
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
-//        console.log("is there an instance in background after the popup clears it?");
-//        console.log(backgroundPage.URLI.Background.getInstance(instance.tabId));
-        // If popup can overwrite settings, write to storage
+        // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({
             "interval": interval,
