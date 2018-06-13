@@ -118,7 +118,7 @@ URLI.Shortcuts = function () {
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
+    //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
     URLI.Shortcuts.setItems(items);
     // Key
     if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
@@ -133,7 +133,7 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
+  //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);

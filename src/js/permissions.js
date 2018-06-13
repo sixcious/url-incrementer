@@ -69,7 +69,7 @@ URLI.Permissions = function () {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         for (let i = 0; i < rules.length; i++) {
           if (rules[i].actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-            console.log("URLI DEBUG: removePermissions() Removing rule " + rules[i]);
+            //console.log("URLI DEBUG: removePermissions() Removing rule " + rules[i]);
             chrome.declarativeContent.onPageChanged.removeRules([rules[i].id], function() {});
           }
         }

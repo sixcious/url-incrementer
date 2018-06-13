@@ -19,7 +19,7 @@ URLI.Action = function () {
    * @public
    */
   function performAction(instance, action, caller, callback) {
-    console.log("URLI DEBUG: performAction() instance=" + instance + ", action=" + action + ", caller=" + caller);
+    //console.log("URLI DEBUG: performAction() instance=" + instance + ", action=" + action + ", caller=" + caller);
     let actionPerformed = false;
     // Handle AUTO
     if (instance.autoEnabled) {
@@ -97,7 +97,7 @@ URLI.Action = function () {
       actionPerformed = true;
       // Handle Error Skipping:
       if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
-        console.log("URLI DEBUG: incrementDecrement() Performing error skipping...");
+        //console.log("URLI DEBUG: incrementDecrement() Performing error skipping...");
         chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
           const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
             JSON.stringify(action) + ", " +
@@ -236,7 +236,7 @@ URLI.Action = function () {
           if (results && results[0]) {
             const downloads = results[0];
             for (let download of downloads) {
-              console.log("URLI DEBUG: download() downloading url=" + download.url);
+              //console.log("URLI DEBUG: download() downloading url=" + download.url);
               chrome.downloads.download({url: download.url}, function(downloadId) {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
@@ -246,7 +246,7 @@ URLI.Action = function () {
                           (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) >= downloadItem.totalBytes : false) ||
                           (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) <= downloadItem.totalBytes : false)
                         )) {
-                        console.log("URLI DEBUG: download() Canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
+                        //console.log("URLI DEBUG: download() Canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
                         chrome.downloads.cancel(downloadId);
                       }
                     }
