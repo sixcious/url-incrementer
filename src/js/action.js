@@ -91,8 +91,7 @@ URLI.Action = function () {
    * @private
    */
   function incrementDecrement(instance, action, caller, callback) {
-    let actionPerformed = false,
-        urlProps;
+    let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
@@ -108,7 +107,7 @@ URLI.Action = function () {
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
         });
       } else {
-        urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+        let urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
         instance.url = urlProps.urlmod;
         instance.selection = urlProps.selectionmod;
         chrome.tabs.update(instance.tabId, {url: instance.url});
@@ -162,26 +161,28 @@ URLI.Action = function () {
    */
   function clear(instance, action, caller, callback) {
     let actionPerformed = true;
-    chrome.storage.sync.get(null, function(items) {
-      if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
-      }
-      if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
-      }
-      if (instance.autoEnabled) {
-        URLI.Auto.stopAutoTimer(instance, caller);
-      }
-      URLI.Background.deleteInstance(instance.tabId);
-      // for callers like popup that still need the instance, disable all states and reset autoTimes
-      instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
-      instance.autoTimes = instance.autoTimesOriginal;
-      if (callback) {
-        callback(instance);
-      } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
-      }
-    });
+    URLI.Background.deleteInstance(instance.tabId);
+    if (caller !== "popupClearBeforeSet") { // Don't remove key/mouse listeners if popup clear before set
+      chrome.storage.sync.get(null, function (items) {
+        if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
+        }
+        if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+        }
+      });
+    }
+    if (instance.autoEnabled) {
+      URLI.Auto.stopAutoTimer(instance, caller);
+    }
+    // for callers like popup that still need the instance, disable all states and reset autoTimes
+    instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
+    instance.autoTimes = instance.autoTimesOriginal;
+    if (callback) {
+      callback(instance);
+    } else {
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+    }
     return actionPerformed;
   }
 

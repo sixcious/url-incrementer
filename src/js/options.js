@@ -25,7 +25,7 @@ URLI.Options = function () {
         NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
-  let key = [0,""]; // Reusable variable to stores the key's event modifiers [0] and code [1]
+  let key = [0,""]; // Reusable key to stores the key's event modifiers [0] and code [1]
 
   /**
    * Loads the DOM content needed to display the options page.

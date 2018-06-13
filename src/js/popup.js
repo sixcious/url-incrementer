@@ -720,14 +720,14 @@ URLI.Popup = function () {
             "downloadPreview": downloadPreview
           });
         }
-        // If permissions granted, send message to content script:
+        // If permissions granted, send message to content script
         if (items_.permissionsInternalShortcuts && items_.keyEnabled && !items_.keyQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
         if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.mouseQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
-        if (instance.autoEnabled) {
+        if (instance.autoEnabled) { // Ask Auto to start auto timer
           backgroundPage.URLI.Auto.startAutoTimer(instance);
         }
         toggleView.call(DOM["#accept-button"]);

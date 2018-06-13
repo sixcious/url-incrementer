@@ -194,10 +194,10 @@
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
-  "urli_click_malfunctioning": { "message" : "i'M m4lfUnCt10n1Ng!" },
+  "urli_click_malfunctioning": { "message" : "I AM MALFUNCTIONING" },
   "attributions_label": { "message": "Credits & Attributions" },
   "attributions_content": { "message": "NickMWPrince & A Google User (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Blue / Blue Chan / Will / Adam C (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Table Styles), Mike West (Dialogs), Tim Down (AUTO Pause/Resume), Vishal (AUTO ETA), SteeBono (URLs > File Extensions), Daniel DiPaolo (URL Attributes), kaspermoerch (Differences of Arrays), user1106925 (Array Filters), Icon Bunny (Rainbow color palette), ..." },
-  "attributions_you": { "message": "... but most of all you for using URLI" },
+  "attributions_you": { "message": "... but most of all you for using URLI!" },
 
   "SHARED": { "message": "----- SHARED -----" },
   "selection_label": { "message": "Selection" },
