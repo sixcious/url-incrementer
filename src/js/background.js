@@ -159,12 +159,12 @@ URLI.Background = function () {
         });
       });
     }
-    // Update Installations (Below Version 5.0): Reset storage and remove all optional permissions
+    // Update Installations (Below Version 5.0): Reset storage and re-save old increment values
     else if (details.reason === "update") {
-      // Reset storage and re-save old increment values
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
             chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+              // Re-save old version's increment values:
               chrome.storage.sync.set({
                 "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
                 "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
@@ -176,11 +176,6 @@ URLI.Background = function () {
             });
         });
       });
-      // Remove all permissions:
-      if (chrome.declarativeContent && chrome.declarativeContent.onPageChanged && chrome.permissions) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
-      }
     }
   }
 
