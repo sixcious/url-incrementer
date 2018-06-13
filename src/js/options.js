@@ -9,22 +9,23 @@ var URLI = URLI || {};
 
 URLI.Options = function () {
 
-  var DOM = {}, // Map to cache DOM elements: key=id, value=element
-      FLAG_KEY_NONE = 0x0, // 0000
-      FLAG_KEY_ALT = 0x1, // 0001
-      FLAG_KEY_CTRL = 0x2, // 0010
-      FLAG_KEY_SHIFT = 0x4, // 0100
-      FLAG_KEY_META = 0x8, // 1000
-      KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
-        "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
-        "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
-        "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
-        "AltLeft":     "Alt",   "AltRight":     "Alt",
-        "MetaLeft":    "Meta",  "MetaRight":    "Meta"
-      },
-      key = [0,""], // Stores the key's event modifiers [0] and code [1]
-      NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
-      FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
+  const DOM = {}, // Map to cache DOM elements: key=id, value=element
+        FLAG_KEY_NONE = 0x0, // 0000
+        FLAG_KEY_ALT = 0x1, // 0001
+        FLAG_KEY_CTRL = 0x2, // 0010
+        FLAG_KEY_SHIFT = 0x4, // 0100
+        FLAG_KEY_META = 0x8, // 1000
+        KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
+          "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
+          "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
+          "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
+          "AltLeft":     "Alt",   "AltRight":     "Alt",
+          "MetaLeft":    "Meta",  "MetaRight":    "Meta"
+        },
+        NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
+        FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
+
+  let key = [0,""]; // Reusable variable to stores the key's event modifiers [0] and code [1]
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -35,19 +36,15 @@ URLI.Options = function () {
    * @public
    */
   function DOMContentLoaded() {
-    var ids = document.querySelectorAll("[id]"),
-        i18ns = document.querySelectorAll("[data-i18n]"),
-        el,
-        i;
+    const ids = document.querySelectorAll("[id]"),
+          i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
-    for (i = 0; i < ids.length; i++) {
-      el = ids[i];
-      DOM["#" + el.id] = el;
+    for (let element of ids) {
+      DOM["#" + element.id] = element;
     }
     // Set i18n (internationalization) text from messages.json
-    for (i = 0; i < i18ns.length; i++) {
-      el = i18ns[i];
-      el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
+    for (let element of i18ns) {
+      element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
@@ -218,7 +215,7 @@ URLI.Options = function () {
    */
   function setKeyEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      var enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
+      const enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
       chrome.storage.sync.set({"keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
@@ -232,7 +229,7 @@ URLI.Options = function () {
    */
   function setMouseEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      var enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
+      const enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
         DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
@@ -268,7 +265,7 @@ URLI.Options = function () {
     // Write the input value based on the key event modifier bits and key code
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
     // Note2: If the key code is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
-    var text = "",
+    let text = "",
         keyPressed = false;
     if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
@@ -303,12 +300,12 @@ URLI.Options = function () {
    * @private
    */
   function customSelection(action) {
-    var url = DOM["#selection-custom-url-textarea"].value,
-        pattern = DOM["#selection-custom-pattern-input"].value,
-        flags = DOM["#selection-custom-flags-input"].value,
-        group = +DOM["#selection-custom-group-input"].value,
-        index = +DOM["#selection-custom-index-input"].value,
-        regexp,
+    const url = DOM["#selection-custom-url-textarea"].value,
+          pattern = DOM["#selection-custom-pattern-input"].value,
+          flags = DOM["#selection-custom-flags-input"].value,
+          group = +DOM["#selection-custom-group-input"].value,
+          index = +DOM["#selection-custom-index-input"].value;
+    let regexp,
         matches,
         selection,
         selectionStart;
@@ -362,6 +359,7 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
+          console.log("URLI DEBUG: resetOptions() Removing permissions...");
           URLI.Permissions.removeAllPermissions();
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
           populateValuesFromStorage("all");
@@ -377,7 +375,7 @@ URLI.Options = function () {
    * @private
    */
   function clickURLI() {
-    const face = " " + FACES[Math.floor(Math.random() * FACES.length)];;
+    const face = " " + FACES[Math.floor(Math.random() * FACES.length)];
     this.value = +this.value + 1;
     URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
     URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);

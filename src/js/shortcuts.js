@@ -23,6 +23,7 @@ URLI.Shortcuts = function () {
           "AltLeft":     "Alt",   "AltRight":     "Alt",
           "MetaLeft":    "Meta",  "MetaRight":    "Meta"
         };
+
   let items_ = {}; // storage items cache
 
   /**

@@ -55,6 +55,21 @@ input[type="image"] {
   vertical-align: middle;
 }
 
+input[type="image"]:focus {
+  outline: none;
+}
+
+.key-input {
+  width: 180px;
+}
+
+.tooltip img {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* icon and popup */
+
 .icon-color.radio, #popup-button-size-div {
   margin-bottom: 24px;
 }
@@ -82,6 +97,26 @@ input[type="image"] {
   cursor: pointer;
 }
 
+/* error-skip */
+
+#error-skip.column {
+  padding-bottom: 0;
+}
+
+#error-skip-checkboxes div.column {
+  padding: 4px 4px 4px 0;
+}
+
+#error-skip-checkboxes label {
+  padding: 0;
+}
+
+#error-skip-description-p {
+  margin-bottom: 2em;
+}
+
+/* selection-custom  */
+
 #selection-custom {
   margin: 10px 0;
 }
@@ -100,13 +135,23 @@ input[type="image"] {
   width: 52px;
 }
 
-.key-input {
-  width: 180px;
+/* download (experimental and img alignment for cloud and flask */
+
+#download-experimental {
+  font-size: 0.9em;
+  display: inline-block;
+  margin-left: 6px;
 }
 
-input[type="image"]:focus {
-  outline: none;
+#download-cloud-download {
+  margin-bottom: -1px;
 }
+
+#download-experimental-flask {
+  margin-bottom: 1px;
+}
+
+/* about */
 
 #about-floats-div {
   margin-bottom: 17px;
@@ -124,6 +169,7 @@ input[type="image"]:focus {
   clear: both;
 }
 
+/* urli-thank-you */
 
 #urli-thank-you {
   width: 100%;
@@ -131,17 +177,38 @@ input[type="image"]:focus {
   padding-top: 2px;
 }
 
-
-
-
-
-.tooltip img {
-  display: inline-block;
-  margin-left: 4px;
+#urli-thank-you-rainbow {
+  font-size: 1.1em;
+  margin-bottom: 8px;
 }
 
-/* heading color overrides */
+#urli-thank-you-rainbow span {
+  padding: 0 2px;
+}
 
+#urli-thank-you-wish {
+  font-style: italic;
+}
+
+/* attributions  */
+
+#attributions-content, #attributions-you {
+  font-size: 0.75em;
+  font-style: italic;
+}
+
+#attributions-you {
+  font-weight: bold;
+  text-align: center;
+}
+
+#copyleft {
+  font-size: 0.75em;
+  text-align: right;
+  margin-top: 8px;
+}
+
+/* heading border-bottom-color overrides */
 
 #increment-decrement-settings div.heading {
   border-bottom-color: #1779BA;
@@ -163,10 +230,7 @@ input[type="image"]:focus {
   border-bottom-color: #FFCC22;
 }
 
-
-
-
-
+/* heading h3 color overrides */
 
 #increment-decrement-settings div.heading h3 {
   color: #1779BA;
@@ -180,7 +244,7 @@ input[type="image"]:focus {
   color: #FF6600;
 }
 
-#download-settings div.heading h3 {
+#download-settings div.heading h3, #download-experimental {
   color: rebeccapurple;
 }
 
@@ -188,110 +252,19 @@ input[type="image"]:focus {
   color: #EEBB22;
 }
 
-#download-experimental {
-  color: rebeccapurple;
-}
-
-
-
-
-
-
-
-#download-experimental {
-/*  color: rebeccapurple;*/
-  font-size: 0.9em;
-  display: inline-block;
-  margin-left: 6px;
-}
-
-/* download img alignment adjustments */
-#download-cloud-download {
-  margin-bottom: -1px;
-}
-
-#download-experimental-flask {
-  margin-bottom: 1px;
-}
-
-/*#download-experimental-disclaimer {
-  color: rebeccapurple;
-}*/
-
-
-#urli-thank-you-rainbow {
-  font-size: 1.1em;
-  margin-bottom: 8px;
-}
-
-#urli-thank-you-rainbow span {
-  padding: 0 2px;
-}
-
-#urli-thank-you-wish {
-  font-style: italic;
-}
-
-
-
-
-
-
-#error-skip.column {
-  padding-bottom: 0;
-}
-
-#error-skip-checkboxes div.column {
-  padding: 4px 4px 4px 0;
-}
-
-#error-skip-checkboxes label {
-  padding: 0;
-}
-
-#error-skip-description-p {
-  margin-bottom: 2em;
-}
-
-.note {
-/*  font-size: 0.9em;*/
-}
-
-/* Derived from Rainbow color pallete by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
-/* orange #F77C00 */
+/* Colors derived from Rainbow color palette by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
 .rainbow-underline:after {
   content: '';
   display: block;
   margin-top: 2px;
   height: 2px;
   background: linear-gradient(
-      to right,
-      #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
+          to right,
+          #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
   );
 }
 
-#attributions-label {
-/*  text-decoration: underline;
-  margin-bottom: 4px;*/
-}
-
-#attributions-content, #attributions-you {
-  font-size: 0.75em;
-  font-style: italic;
-}
-
-#attributions-you {
-  font-weight: bold;
-  text-align: center;
-}
-
-#copyleft {
-  font-size: 0.75em;
-  text-align: right;
-  margin-top: 8px;
-}
-
-
+/* Overrides generateAlert overlay styling so alert is displayed in gap space */
 #options .overlay {
   top: 79%; /* initial */
 }

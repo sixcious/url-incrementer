@@ -76,24 +76,15 @@ div.column {
 
 #setup h3 {
   font-weight: bold;
-/*  font-style: italic;*/
+  /* font-style: italic;*/
   padding-bottom: 4px;
   margin-bottom: 0.6em;
 }
 
-#setup h3 {//
+#setup h3 {
   color: #333333;
   border-bottom: 1px solid #333333;
 }
-
-/*
-#setup input[type="text"]#selection-input  {
-  width: 140px;
-  display: block;
-}
-*/
-
-
 
 #setup input[type="number"] {
   width: 52px;
@@ -114,11 +105,9 @@ div.column {
   min-height: 41px;
 }
 
-
 #setup img {
   vertical-align: bottom;
 }
-
 
 #setup div.column {
   padding-top: 7px;
@@ -162,7 +151,7 @@ div.column {
 
 #setup #extra-toggles {
   position: absolute;
-  left: 0px;
+  left: 0;
   bottom: -6px;
 }
 
@@ -178,10 +167,13 @@ div.column {
   font-size: 0.8em;
   font-weight: bold;
   font-style: italic;
-  color: #FF6600;
   position: absolute;
   right: 12px;
   margin-top: -10px;
+}
+
+#auto-eta {
+  color: #FF6600;
 }
 
 #download-experimental {
@@ -204,40 +196,12 @@ div.column {
   padding-top: 12px;
 }
 
-#download-strategy-select {
-  margin-bottom: 8px;
-}
-
-#download-selector-input {
-  width: 90%;
-  margin-top: 4px;
-}
-
-#download-selector-link {
-  margin-top: 12px;
-}
-
-#download-includes-input, #download-excludes-input {
-  width: 108px;
-/*  font-weight: bold;
-  color: #E6003E;*/
-}
-
-#download-includes-input {
-  
-}
-
-#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
-  display: inline-block;
-  margin-right: 1px;
-}
-
 #auto-toggle-input.tgl-ios:checked + .tgl-btn {
   background: #FF6600;
 }
 
 #download-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: /*#4285f4;*/ rebeccapurple;
+  background: rebeccapurple;
 }
 
 #auto-toggle span, #download-toggle span {
@@ -255,22 +219,23 @@ div.column {
   color: rebeccapurple;
 }
 
-/*
-#auto-toggle span, #download-toggle span {
-  font-style: italic;
-}*/
+/* cloud-download ireregular padding overrides */
+#controls input[type="image"]#download-input {
+  padding: 4px 8px;
+}
 
-#download-tips-extensions-div, #download-tips-selector-div, #download-tips-page-div {
-  margin-top: 12px;
-  color: rebeccapurple;
-  font-style: italic;
+#setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
+  margin-bottom: -2px;
+}
+
+#setup #download-toggle {
+  vertical-align: bottom;
 }
 
 #setup h3#setup-h3 {
   color: #333333;
   border-bottom-color: #333333;
 }
-
 
 #setup h3#auto-h3 {
   color: #FF6600;
@@ -287,11 +252,36 @@ div.column {
   padding-top: 3px;
 }
 
-/* Download */
+/* download-setup (download-strategy and download-optional columns) */
 
 #download-setup.table {
   width: 100%;
   border-bottom: 1px solid rebeccapurple;
+}
+
+div.column#download-strategy, div.column#download-optional {  
+  padding-top: 8px;
+  padding-bottom: 12px;
+  width: 50%;
+  position: relative; /* for position absolute help */
+}
+
+#download-strategy-help, #download-optional-help {
+  font-weight: bold;
+  font-size: 0.9em;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+}
+
+div.column#download-optional {
+  border-left: 1px solid rebeccapurple;
+  padding-left: 12px;
+}
+
+#download-optional-label-div {
+  font-weight: bold;
+  font-style: italic;
 }
 
 #download-strategy-sub-options {
@@ -309,70 +299,29 @@ div.column {
   padding-left: 3px;
 }
 
-div.column#download-strategy, div.column#download-optional {  
-  padding-top: 8px;
-  padding-bottom: 12px;
-  width: 50%;
-  position: relative; /* for position absolute help */
+#download-strategy-select {
+  margin-bottom: 8px;
 }
 
-div.column#download-optional {
-  border-left: 1px solid rebeccapurple;
-  padding-left: 12px;
+#download-selector-input {
+  width: 90%;
+  margin-top: 4px;
 }
 
-/*
-#download-strategy-label {
-  color: rebeccapurple;
-  font-weight: bold;
-}*/
-
-#download-optional-label-div {
-  font-weight: bold;
-  font-style: italic;
-/*  color: rebeccapurple;
-  font-weight: bold;
-  text-align: center;*/
-/*  border-bottom: 1px solid rebeccapurple;
-  padding-bottom: 2px;
-  margin-bottom: 4px;*/
+#download-includes-input, #download-excludes-input {
+  width: 108px;
 }
-/*
-#download-preview {
-  margin-top: 16px;
-}
-*/
 
-
-#download-strategy-label, #download-preview-button-span {
-/*  color: rebeccapurple;
-  font-weight: bold;*/
+#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
+  display: inline-block;
+  margin-right: 1px;
 }
+
+/* download-preview-heading and download-preview-checkboxes */
 
 #download-preview-heading {
-  position: relative; /* for the position absolute checkboxes on the right */
   margin: 6px 0;
 }
-
-/*
-#download-preview-button {
-  cursor: pointer;
-  margin-right: 12px;
-}*/
-
-#download-preview-heading #download-preview-checkboxes {
-  text-align: right;
-}
-
-#download-preview-checkboxes label:not(:last-child) {
-  margin-right: 8px;
-}
-
-/*
-#download-preview-checkboxes label:last-child {
-  margin-left: 8px;
-}
-*/
 
 #download-preview-heading-title {
   font-weight: bold;
@@ -386,25 +335,25 @@ div.column#download-optional {
   color: #E6003E;
 }
 
-/*
+#download-preview-checkboxes {
+  text-align: right;
+}
 
-#download-preview-table-div {
-  min-height: 200px;
-}*/
+#download-preview-checkboxes label:not(:last-child) {
+  margin-right: 8px;
+}
+
+/* ZURB Foundation table styling inspired/derived */
 
 table {
   border-collapse: collapse;
-  /*width: 100%;*/
   border-radius: 0;
   margin-bottom: 1rem;
-  
   max-width: 512px;
   max-height: 200px;
-  
   display: block;
   overflow: auto;
   word-break: break-all;
-  /*white-space: nowrap;*/ /* dynamically set by checkbox in outer div as this table is generated by JS after DOM is created */
 }
 
 table thead, table tbody {
@@ -422,66 +371,34 @@ table thead tr {
 }
 
 table thead tr th {
-  /*padding: 0.5rem 0.625rem 0.625rem;*/
   font-weight: bold;
   text-align: left;
- /* min-width: 24px;*/
 }
 
 table thead th, table tbody th, table tbody td {
-  /*padding: 0.5rem 0.625rem 0.625rem;*/
   padding: 0.25rem 0.312rem 0.312rem;
 }
 
 table tbody tr:nth-child(even) {
-    border-bottom: 0;
-    background-color: #f1f1f1;
+  border-bottom: 0;
+  background-color: #f1f1f1;
 }
 
 table tr:nth-of-type(even):hover {
-    background-color: #ececec;
+  background-color: #ececec;
 }
 
 table tbody tr:hover {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
-table tbody {
-}
-
-table tbody tr {
-}
-
-table tbody tr td {
-}
+/* table download-preview specific class styles */
 
 table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
 table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
-table th.ext, td.ext { min-width: 32px; }
+table th.extension, td.extension { min-width: 32px; }
 table th.tag, td.tag { min-width: 32px; }
-table th.atr, td.atr { min-width: 32px; }
+table th.attribute, td.attribute { min-width: 32px; }
 table th.url, td.url { min-width: 32px; }
 table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
-
-#download-strategy-help, #download-optional-help {
-/*  color: rebeccapurple;*/
-  font-weight: bold;
-  font-size: 0.9em;
-  position: absolute;
-  right: 8px;
-  top: 4px;
-}
-
-/* cloud-download ireregular padding overrides */
-#controls input[type="image"]#download-input {
-  padding: 4px 8px;
-}
-
-#setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
-  margin-bottom: -2px;
-}
-
-#setup #download-toggle {
-  vertical-align: bottom;
-}

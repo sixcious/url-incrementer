@@ -9,39 +9,41 @@ var URLI = URLI || {};
 
 URLI.Download = function () {
 
-  // A list of all attributes that can contain URLs @see https://stackoverflow.com/a/2725168 
+  // A list of all attributes that can contain URLs
+  // @see https://stackoverflow.com/a/2725168
   const URL_ATTRIBUTES = ["src", "href", "poster", "codebase", "cite", "action", "background", "longdesc", "usemap", "formaction", "icon"];
 
   /**
-   * TODO
+   * Finds all URLs, extensions, tags, and attributes on the page to build a download preview.
    *
    * @returns {*} results, the array of all URLs items, all extensions, all tags, and all attributes
    * @public
    */
   function previewDownloadURLs() {
-    var  allURLs = findDownloadURLs("all"),
-         allExtensions = findProperties(allURLs, "ext"),
-         allTags = findProperties(allURLs, "tag"),
-         allAttributes = findProperties(allURLs, "attribute");
+    const  allURLs = findDownloadURLs("all"),
+           allExtensions = findProperties(allURLs, "extension"),
+           allTags = findProperties(allURLs, "tag"),
+           allAttributes = findProperties(allURLs, "attribute");
     return { "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
   }
 
   /**
-   * TODO
+   * Finds all URLs by a specific strategy. Strategies can be "all", "extensions", "tags", "attributes", "selector",
+   * or "page". This is the controller method that hands off the work to a lower-level method that actually parses
+   * the elements using the selector.
    *
    * @param strategy   the download strategy to employ
-   * @param extensions the file extensions to check for
-   * @param tags       the HTML tags (e.g. <img>) to check for
-   * @param attributes the HTML tag attributes (e.g. src, href) to check for
-   * @param selector   (optional) the CSS selectors to use in querySelectorAll()
+   * @param extensions (optional) if strategy is extensions: the file extensions to check for
+   * @param tags       (optional) if strategy is tags: the HTML tags (e.g. <img>) to check for
+   * @param attributes (optional) if strategy is attributes: the HTML tag attributes (e.g. src, href) to check for
+   * @param selector   (optional) if strategy is selector: the CSS selectors to use in querySelectorAll()
    * @param includes   (optional) the array of Strings that must be included in the URLs
    * @param excludes   (optional) the array of Strings that must be excluded from the URLs
    * @returns {*} results, the array of results
    * @public
    */
   function findDownloadURLs(strategy, extensions, tags, attributes, selector, includes, excludes) {
-    console.log("findDownloadURLs()" + selector);
-    var results = [],
+    let results = [],
         selectorbuilder = "";
     try {
       switch (strategy) {
@@ -56,69 +58,67 @@ URLI.Download = function () {
           for (let tag of tags) {
             selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
           }
-          console.log("tags selectorbuilder=" + selectorbuilder);
           results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
           break;
         case "attributes":
           for (let attribute of attributes) {
             selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + attribute + "]";
           }
-          console.log("tags selectorbuilder=" + selectorbuilder);
           results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
           break;
         case "selector":
           results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes);
           break;
         case "page":
-          var url = document.location.href,
-              ext = findExt(url);
-          results = [{ "url": url, "ext": ext, "tag": "", "attribute": ""}];
+          const url = document.location.href,
+                extension = findExtension(url);
+          results = [{ "url": url, "extension": extension, "tag": "", "attribute": ""}];
           break;
         default:
           results = [];
           break;
       }
     } catch (e) {
-      console.log(e);
+      console.log("URLI DEBUG: findDownloadURLs() Exception Caught:" + e);
       results = [];
     }
     return results;
   }
 
   /**
-   * TODO
+   * Finds all URLs that match the specified strategy and applicable parameters. Performs a query on the page's elements
+   * and checks each element to see if it passes the strategy's rules.
    *
    * @param strategy   the download strategy to employ
-   * @param extensions the file extensions to check for
-   * @param tags       the HTML tags (e.g. <img>) to check for
-   * @param attributes the HTML tag attributes (e.g. src, href) to check for
-   * @param selector   (optional) the CSS selectors to use in querySelectorAll()
+   * @param extensions (optional) if strategy is extensions: the file extensions to check for
+   * @param tags       (optional) if strategy is tags: the HTML tags (e.g. <img>) to check for
+   * @param attributes (optional) if strategy is attributes: the HTML tag attributes (e.g. src, href) to check for
+   * @param selector   (optional) if strategy is selector: the CSS selectors to use in querySelectorAll()
    * @param includes   (optional) the array of Strings that must be included in the URLs
    * @param excludes   (optional) the array of Strings that must be excluded from the URLs
    * @returns {*} results, the array of results
    * @private
    */
   function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
-    console.log("selector=" + selector);
-    var els = document.querySelectorAll(selector),
-        downloads = new Map(), // return value, we use a Map to avoid potential duplicate URLs
-        url = "",
-        ext = "",
+    const items = new Map(), // return value, we use a Map to avoid potential duplicate URLs
+          elements = document.querySelectorAll(selector);
+    let url = "",
+        extension = "",
         attribute = "",
         tag = "";
-    console.log("found " + els.length + " links");
-    for (let el of els) {
+    console.log("URLI DEBUG: findDownloadURLsBySelector() Found " + elements.length + " elements links");
+    for (let element of elements) {
       for (let urlattribute of URL_ATTRIBUTES) {
-        if (el[urlattribute]) {
-          url = el[urlattribute];
+        if (element[urlattribute]) {
+          url = element[urlattribute];
           attribute = urlattribute;
           if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-            ext = findExt(url);
+            extension = findExtension(url);
             // Special Restriction (Extensions)
-            if (strategy === "extensions" && (!ext || !extensions.includes(ext))) {
+            if (strategy === "extensions" && (!extension || !extensions.includes(extension))) {
               continue;
             }
-            tag = el.tagName ? el.tagName.toLowerCase() : "";
+            tag = element.tagName ? element.tagName.toLowerCase() : "";
             // Special Restriction (Tags)
             if (strategy === "tags" && (!tag || !tags.includes(tag))) {
               continue;
@@ -127,19 +127,19 @@ URLI.Download = function () {
             if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
               continue;
             }
-            downloads.set(url + "", {"url": url, "ext": ext, "tag": tag, "attribute": attribute});
+            items.set(url + "", {"url": url, "extension": extension, "tag": tag, "attribute": attribute});
           }
         }
       }
     }
-    return [...downloads.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
+    return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
   }
 
   /**
    * Finds all the unique properties (extensions, tags, or attributes) from the collection of items.
    *
    * @param items    the items to check
-   * @param property the property to check (e.g. "ext", "tag", "attribute")
+   * @param property the property to check (e.g. "extension", "tag", "attribute")
    * @returns {Array} the unique properties sorted
    * @private
    */
@@ -186,25 +186,22 @@ URLI.Download = function () {
    * @see https://stackoverflow.com/a/42841283
    * @private
    */
-  function findExt(url) {
-    var urlquestion,
-        urlhash,
-        regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
-        group = 1,
-        match,
-        ext = "";
+  function findExtension(url) {
+    let extension = "";
     if (url && url.length > 0) {
-      urlquestion = url.substring(0, url.indexOf("?"));
-      urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined;
-      match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
+      const regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
+            group = 1,
+            urlquestion = url.substring(0, url.indexOf("?")),
+            urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,
+            match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
       if (match && match[group]) {
-        ext = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
-        if (!isValidExt(ext)) { // If extension is not valid, throw it out
-          ext = "";
+        extension = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
+        if (!isValidExtension(extension)) { // If extension is not valid, throw it out
+          extension = "";
         }
       }
     }
-    return ext;
+    return extension;
   }
 
   /**
@@ -215,7 +212,7 @@ URLI.Download = function () {
    * @returns {boolean} true if the extension is valid, false if not
    * @private
    */
-  function isValidExt(extension) {
+  function isValidExtension(extension) {
     return extension && extension.trim() !== "" && /^[a-z0-9]+$/i.test(extension) && extension.length <= 8;
   }
 

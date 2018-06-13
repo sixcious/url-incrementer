@@ -33,17 +33,17 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    var regexp0 = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
-        regexp1 = /(?:[=\/])(\d+)/, // RegExp to find numbers with prefixes (= /)
-        regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-        regexp3 = /((\d+)+?)/, // RegExg to find the first number in the url
-        regexp4 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
-        matches0 = regexp0.exec(url),
-        matches1 = regexp1.exec(url),
-        matches2 = regexp2.exec(url),
-        matches3 = regexp3.exec(url),
-        matches4 = regexp4 ? regexp4.exec(url) : undefined,
-        customparsed = matches4 && matches4[custom.group];
+    const regexp0 = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
+          regexp1 = /(?:[=\/])(\d+)/, // RegExp to find numbers with prefixes (= /)
+          regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+          regexp3 = /((\d+)+?)/, // RegExg to find the first number in the url
+          regexp4 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
+          matches0 = regexp0.exec(url),
+          matches1 = regexp1.exec(url),
+          matches2 = regexp2.exec(url),
+          matches3 = regexp3.exec(url),
+          matches4 = regexp4 ? regexp4.exec(url) : undefined,
+          customparsed = matches4 && matches4[custom.group];
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
                             matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
@@ -125,20 +125,20 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
+          console.log("URLI DEBUG: modifyURLAndSkipErrors() Attempting to skip this URL because response.status was in errorCodes");
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
             chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
           }
-          // Resursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncoutnered to true
-          console.log("response.status was in errorCodes! attempting to skip this URL");
+          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncoutnered to true
           modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
         } else {
-          console.log("response.status was NOT in errorCodes. we are going to send a message to background to updateTab to this URL");
+          console.log("URLI DEBUG: modifyURLAndSkipErrors() Not attempting to skip this URL because response.status was not in errorCodes. Aborting and updating tab");
           chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
         }
       });
     } else {
-      console.log("the if check failed, most likely we have exhausted the errorSkip attempts and are just going to send a message to background to updatetab to this URL");
+      console.log("URLI DEBUG: modifyURLAndSkipErrors() " + (origin !== urlOrigin ? "The instance's URL origin does not match this page's URL origin" : "We have exhausted the errorSkip attempts"));
       chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
     }
   }

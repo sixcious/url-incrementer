@@ -162,6 +162,7 @@ URLI.Auto = function () {
    * @private
    */
   function autoListener(tabId, changeInfo, tab) {
+    console.log("URLI DEBUG: autoListener() The chrome.tabs.onUpdated auto listener is on!");
     // Cache loading and complete for maybe a small performance gain since we need to check multiple times?
     const loading = changeInfo.status === "loading",
           complete = changeInfo.status === "complete";
@@ -169,7 +170,6 @@ URLI.Auto = function () {
     if (!loading && !complete) {
       return;
     }
-    console.log("autoListener is on!");
     const instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
@@ -248,16 +248,14 @@ URLI.AutoTimer = function (callback, delay) {
     window.clearTimeout(timerId);
     remaining -= Date.now() - start;
     remaining = remaining < 0 || wait ? delay : remaining;
-    console.log("AutoTimer.pause():");
-    console.log("timerId=" + timerId + "start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait + "\n\n"); //" proposedRemaining=" + proposedRemaining + "\n\n");
+    console.log("URLI DEBUG: URlI.AutoTimer.pause() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.resume = function() {
     start = Date.now();
     window.clearTimeout(timerId);
     timerId = wait ? timerId : window.setTimeout(callback, remaining);
-    console.log("AutoTimer.resume():");
-    console.log("timerId=" + timerId + "start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait + "\n\n");
+    console.log("URLI DEBUG: URLI.AutoTimer.resume() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.clear = function() {

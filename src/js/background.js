@@ -21,7 +21,7 @@ URLI.Background = function () {
     /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "ext", "tag", "compressed"],
+    /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* fun */         "urli": 0
   },
 
@@ -161,14 +161,21 @@ URLI.Background = function () {
     }
     // Update Installations (Below Version 5.0): Reset storage and remove all optional permissions
     else if (details.reason === "update") {
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          if (chrome.declarativeContent) {
-            chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-          }
-          chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
+      // Reset storage
+      chrome.storage.sync.get(null, function(olditems) {
+        chrome.storage.sync.clear(function() {
+            chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+              if (olditems && olditems.selectionCustom) {
+                chrome.storage.sync.set({ "selectionCustom": olditems.selectionCustom});
+              }
+            });
         });
       });
+      // Remove all permissions:
+      if (chrome.declarativeContent) {
+          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+      }
+      chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
     }
   }
 
@@ -181,6 +188,7 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
+    console.log("URLI DEBUG: messageListener() request=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
@@ -267,8 +275,8 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    console.log("background download tabUpdatedListener");
-    if (changeInfo.status === "complete") {
+    console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
+    if (changeInfo.status === "loading") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {

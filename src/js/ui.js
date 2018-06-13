@@ -22,12 +22,11 @@ URLI.UI = function () {
   function generateAlert(messages, callback) {
     let div = document.createElement("div"),
         ul = document.createElement("ul"),
-        li,
-        i;
+        li;
     div.classList.add("overlay");
-    for (i = 0; i < messages.length; i++) {
+    for (let message of messages) {
       li = document.createElement("li");
-      li.appendChild(document.createTextNode(messages[i]));
+      li.appendChild(document.createTextNode(message));
       ul.appendChild(li);
     }
     div.appendChild(ul);

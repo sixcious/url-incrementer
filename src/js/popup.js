@@ -9,23 +9,24 @@ var URLI = URLI || {};
 
 URLI.Popup = function () {
 
-  var instance = {}, // Tab instance cache
+  const DOM = {}, // Map to cache DOM elements: key=id, value=element
+        AUTO_ETA_I18NS = { // AUTO ETA messages cache
+          "day": chrome.i18n.getMessage("auto_eta_day"),
+          "hour": chrome.i18n.getMessage("auto_eta_hour"), "hours": chrome.i18n.getMessage("auto_eta_hours"),
+          "minute": chrome.i18n.getMessage("auto_eta_minute"), "minutes": chrome.i18n.getMessage("auto_eta_minutes"),
+          "second": chrome.i18n.getMessage("auto_eta_second"), "seconds": chrome.i18n.getMessage("auto_eta_seconds"),
+          "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
+         },
+        DOWNLOAD_PREVIEW_I18NS = { // DOWNLOAD PREVIEW messages cache
+          "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"),
+          "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
+          "urls": chrome.i18n.getMessage("download_preview_urls"), "thumb": chrome.i18n.getMessage("download_preview_thumb_label"),
+          "extension": chrome.i18n.getMessage("download_preview_extension_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
+          "attribute": chrome.i18n.getMessage("download_preview_attribute_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
+        };
+
+  let instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
-      DOM = {}, // Map to cache DOM elements: key=id, value=element
-      AUTO_ETA_I18NS = { // AUTO ETA messages cache
-        "day": chrome.i18n.getMessage("auto_eta_day"),
-        "hour": chrome.i18n.getMessage("auto_eta_hour"), "hours": chrome.i18n.getMessage("auto_eta_hours"),
-        "minute": chrome.i18n.getMessage("auto_eta_minute"), "minutes": chrome.i18n.getMessage("auto_eta_minutes"),
-        "second": chrome.i18n.getMessage("auto_eta_second"), "seconds": chrome.i18n.getMessage("auto_eta_seconds"),
-        "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
-       },
-      DOWNLOAD_PREVIEW_I18NS = { // DOWNLOAD PREVIEW messages cache
-        "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"), 
-        "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
-        "urls": chrome.i18n.getMessage("download_preview_urls"), "thumb": chrome.i18n.getMessage("download_preview_thumb_label"),
-        "ext": chrome.i18n.getMessage("download_preview_ext_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
-        "atr": chrome.i18n.getMessage("download_preview_atr_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
-      },
       downloadPreviewAlls = { "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
       timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
 
@@ -38,19 +39,15 @@ URLI.Popup = function () {
    * @public
    */
   function DOMContentLoaded() {
-    var ids = document.querySelectorAll("[id]"),
-        i18ns = document.querySelectorAll("[data-i18n]"),
-        el,
-        i;
+    const ids = document.querySelectorAll("[id]"),
+          i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
-    for (i = 0; i < ids.length; i++) {
-      el = ids[i];
-      DOM["#" + el.id] = el;
+    for (let element of ids) {
+      DOM["#" + element.id] = element;
     }
     // Set i18n (internationalization) text from messages.json
-    for (i = 0; i < i18ns.length; i++) {
-      el = i18ns[i];
-      el[el.dataset.i18n] = chrome.i18n.getMessage(el.id.replace(/-/g, '_').replace(/\*.*/, ''));
+    for (let element of i18ns) {
+      element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
     DOM["#increment-input"].addEventListener("click", clickActionButton);
@@ -78,9 +75,9 @@ URLI.Popup = function () {
     DOM["#download-includes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-includes-label"], "font-weight: bold; color: #05854D"); });
     DOM["#download-excludes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-excludes-label"], "font-weight: bold; color: #E6003E"); });
     DOM["#download-preview-thumb-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-ext-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-extension-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-atr-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
@@ -242,9 +239,9 @@ URLI.Popup = function () {
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
-    DOM["#download-preview-ext-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("ext");
+    DOM["#download-preview-extension-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("extension");
     DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
-    DOM["#download-preview-atr-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("atr");
+    DOM["#download-preview-attribute-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("attribute");
     DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
     DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
@@ -280,15 +277,15 @@ URLI.Popup = function () {
    * @private
    */
   function updateAutoETA() {
-    var itimes = +DOM["#auto-times-input"].value,
-        iseconds = +DOM["#auto-seconds-input"].value,
-        time = itimes * iseconds,
-        hours = ~~ (time / 3600),
-        minutes = ~~ ((time % 3600) / 60),
-        seconds = time % 60,
-        fhours = hours ? hours + (hours === 1 ? AUTO_ETA_I18NS.hour : AUTO_ETA_I18NS.hours) : "",
-        fminutes = minutes ? minutes + (minutes === 1 ? AUTO_ETA_I18NS.minute : AUTO_ETA_I18NS.minutes) : "",
-        fseconds = seconds ? seconds + (seconds === 1 ? AUTO_ETA_I18NS.second : AUTO_ETA_I18NS.seconds) : "";
+    const itimes = +DOM["#auto-times-input"].value,
+          iseconds = +DOM["#auto-seconds-input"].value,
+          time = itimes * iseconds,
+          hours = ~~ (time / 3600),
+          minutes = ~~ ((time % 3600) / 60),
+          seconds = time % 60,
+          fhours = hours ? hours + (hours === 1 ? AUTO_ETA_I18NS.hour : AUTO_ETA_I18NS.hours) : "",
+          fminutes = minutes ? minutes + (minutes === 1 ? AUTO_ETA_I18NS.minute : AUTO_ETA_I18NS.minutes) : "",
+          fseconds = seconds ? seconds + (seconds === 1 ? AUTO_ETA_I18NS.second : AUTO_ETA_I18NS.seconds) : "";
     DOM["#auto-eta-value"].textContent =
       itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
       instance.autoEnabled ? AUTO_ETA_I18NS.done : AUTO_ETA_I18NS.tbd :
@@ -417,9 +414,9 @@ URLI.Popup = function () {
                 "<th class=\"check\">&nbsp;</th>" +
                 "<th class=\"count\">&nbsp;</th>" +
                 "<th class=\"thumb\">" + DOWNLOAD_PREVIEW_I18NS.thumb + "</th>" +
-                "<th class=\"ext\">" + DOWNLOAD_PREVIEW_I18NS.ext + "</th>" +
+                "<th class=\"extension\">" + DOWNLOAD_PREVIEW_I18NS.extension + "</th>" +
                 "<th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th>" +
-                "<th class=\"atr\">" + DOWNLOAD_PREVIEW_I18NS.atr + "</th>" +
+                "<th class=\"attribute\">" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th>" +
                 "<th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th>" +
               "</tr>" +
             "</thead>" +
@@ -433,11 +430,11 @@ URLI.Popup = function () {
         }
         table +=  "</tbody>" + "</table>";
         DOM["#download-preview-table-div"].innerHTML = table;
-        // TODO:
+        // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-ext-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-extension-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-atr-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
       } else {
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
@@ -460,9 +457,9 @@ URLI.Popup = function () {
         "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td>" +
         "<td class=\"count\">" + (count) + "</td>" +
         "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
-        "<td class=\"ext\">" + item.ext + "</td>" +
+        "<td class=\"extension\">" + item.extension + "</td>" +
         "<td class=\"tag\">" + item.tag + "</td>" +
-        "<td class=\"atr\">" + item.attribute + "</td>" +
+        "<td class=\"attribute\">" + item.attribute + "</td>" +
         "<td class=\"url\">" + item.url  + "</td>" +
       "</tr>";
   }
@@ -475,13 +472,13 @@ URLI.Popup = function () {
    * @private
    */
   function buildDownloadPreviewThumb(item) {
-    const IMG_EXT = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
-          VIDEO_EXT = ["mp4", "webm"];
+    const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
+          VIDEO_EXTENSIONS = ["mp4", "webm"];
     let html = "";
     if (item) {
-      if (item.tag === "img" || IMG_EXT.includes(item.ext)) {
+      if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
         html = "<img src=\"" + item.url + "\" alt=\"\"/>";
-      } else if (item.tag === "video" || VIDEO_EXT.includes(item.ext)) {
+      } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
         html = "<video src=\"" + item.url + "\"/>";
       }
     }
@@ -489,25 +486,27 @@ URLI.Popup = function () {
   }
 
   /**
-   * TODO
+   * This function is called as the user is typing in a download preview input (e.g. includes/excludes).
+   * We don't want to update the downloadPreview immediately as it's an expensive procedure, so we set a timeout delay.
    *
-   * @param input
-   * @param label
-   * @param style
+   * @param input the text input (which will be updated later)
+   * @param label the label for the input (which will be updated)
+   * @param style the style to set the input and label
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    console.log("inputUpdateDownloadPreview...");
+    console.log("URLI DEBUG: inputUpdateDownloadPreview() About to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
 
   /**
-   * TODO
+   * Updates the input and label styling together. It's used for the download preview text inputs to make
+   * them more "noticeable" when the user has something typed in.
    *
-   * @param input
-   * @param label
-   * @param style
+   * @param input the text input
+   * @param label the label for the input
+   * @param style the style to set the input and label
    * @private
    */
   function updateInputLabelStyle(input, label, style) {
@@ -515,15 +514,16 @@ URLI.Popup = function () {
   }
 
   /**
-   * TODO
-   * "#download-extensions input" "#download-tags input"
-   * "#download-extensions-generated" "#download-tags-generated"
+   * Translates checkbox values into a hidden input string which will be used later. This is used by the download
+   * property checkboxes that are dynamically built (e.g. downloadExtensions).
    *
+   * @param selectorInputs the CSS selector that queries for the checkbox inputs
+   * @param generatedId the hidden input's ID, which will store the generated value of the checkboxes
    * @private
    */
   function translateCheckboxValuesToHiddenInput(selectorInputs, generatedId) {
-    var inputs = document.querySelectorAll(selectorInputs),
-        generated = "";
+    const inputs = document.querySelectorAll(selectorInputs);
+    let generated = "";
     for (let input of inputs) {
       if (input.checked) {
         generated += (generated !== "" ? "," : "") + input.value;
@@ -532,18 +532,12 @@ URLI.Popup = function () {
     DOM[generatedId].value = generated;
   }
 
-  // TODO OTher way! is this needed?
-  function translateHiddenInputToCheckboxValues(generatedId, selectorInputs) {
-    var inputs = document.querySelectorAll(selectorInputs),
-        generated = DOM[generatedId].value.split(",");
-    for (let input of inputs) {
-      if (generated.includes(input.value) ||
-         (instance.downloadEnabled && (selectorInputs.includes("download-extensions") ? instance.downloadExtensions.includes(input.value) : selectorInputs.includes("download-tags") ? instance.downloadTags.includes(input.value) : instance.downloadAttributes.includes(input.value)))) {
-        input.checked = true;
-      }
-    }
-  }
-  
+  /**
+   * Called each time the download preview table checkboxes are changed. Translates the checkbox values into a hidden
+   * input and then updates the table's styling accordingly.
+   *
+   * @private
+   */
   function updateDownloadPreviewCheckboxes() {
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
     if (this.value === "compressed") {
@@ -564,7 +558,7 @@ URLI.Popup = function () {
    * @private
    */
   function setup() {
-    var url = DOM["#url-textarea"].value,
+    const url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,
         interval = +DOM["#interval-input"].value,
@@ -607,7 +601,8 @@ URLI.Popup = function () {
           // [2] Error Skip Errors
           errorSkip < 0 || errorSkip > 10 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
         ],
-        autoErrors = [ // Auto Errors
+        // Auto Errors
+        autoErrors = [
           autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
           autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
           autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
@@ -615,24 +610,23 @@ URLI.Popup = function () {
           autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
           autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : ""
         ],
-        downloadErrors = [ // Download Errors
-          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : "",
-          // TODO: downloadEnabled && downloadStrategy === "extensions" &&  downloadExtensions.includes(""),
-          // TODO: downloadEnabled && downloadStrategy === "selector" && document.querySelectorAll(JSON.stringify(selector)) ? "" : ""
+        // Download Errors
+        downloadErrors = [
+          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
         ],
         errorsExist = errors.some(error => error !== ""),
         autoErrorsExist = autoErrors.some(error => error !== ""),
         downloadErrorsExist = downloadErrors.some(error => error !== ""),
         enabled = !errorsExist && autoEnabled ? (autoAction !== "next" && autoAction !== "prev") : !errorsExist,
         
-/*
-1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
-2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
-3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
-4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
-5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
-6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
-*/
+        /* Validates Rules:
+        1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
+        2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
+        3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
+        4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
+        5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
+        6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
+        */
         validated = !autoEnabled && !downloadEnabled ?
                  !errorsExist :
                autoEnabled ? 
@@ -645,7 +639,8 @@ URLI.Popup = function () {
                      !autoErrorsExist :
                      !autoErrorsExist && !downloadErrorsExist :
                  downloadEnabled && !autoEnabled && !downloadErrorsExist;
-                 
+
+    // Generate alerts if not validated
     if (!validated) {
       if (downloadErrorsExist) {
       downloadErrors.unshift(chrome.i18n.getMessage("oops_error"));
@@ -661,7 +656,7 @@ URLI.Popup = function () {
       }
     }
 
-    // We can tell there was an error if some of the array slots weren't empty
+    // Else good to go!
     else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLI.Action.performAction(instance, "clear", "popupClearBeforeSet", function() {

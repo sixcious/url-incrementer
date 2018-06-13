@@ -66,7 +66,7 @@ URLI.NextPrev = function () {
     for (let keyword of keywords) {
       if (urls[priority][subpriority].has(keyword)) {
         url = urls[priority][subpriority].get(keyword);
-        console.log(priority + " - " + subpriority + " - " + keyword + " - " + url);
+        console.log("URLI DEBUG: traverseResults() NextPrev Link was found:" +  priority + " - " + subpriority + " - " + keyword + " - " + url);
         break;
       }
     }
