@@ -161,21 +161,26 @@ URLI.Background = function () {
     }
     // Update Installations (Below Version 5.0): Reset storage and remove all optional permissions
     else if (details.reason === "update") {
-      // Reset storage
+      // Reset storage and re-save old increment values
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
             chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-              if (olditems && olditems.selectionCustom) {
-                chrome.storage.sync.set({ "selectionCustom": olditems.selectionCustom});
-              }
+              chrome.storage.sync.set({
+                "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
+                "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
+                "leadingZerosPadByDetection": olditems && olditems.leadingZerosPadByDetection ? olditems.leadingZerosPadByDetection : STORAGE_DEFAULT_VALUES.leadingZerosPadByDetection,
+                "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
+                "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
+                "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom,
+              });
             });
         });
       });
       // Remove all permissions:
-      if (chrome.declarativeContent) {
-          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+      if (chrome.declarativeContent && chrome.declarativeContent.onPageChanged && chrome.permissions) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+        chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
       }
-      chrome.permissions.remove({ permissions: ["declarativeContent"], origins: ["<all_urls>"]}, function(removed) {});
     }
   }
 

@@ -126,6 +126,10 @@ div.column {
   margin-bottom: 2px;
 }
 
+#setup #leading-zeros-pad-label {
+  font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
+}
+
 #setup #setup-buttons {
   text-align: center;
   position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
@@ -217,6 +221,10 @@ div.column {
 
 #download-toggle span {
   color: rebeccapurple;
+}
+
+#auto-toggle-img {
+  margin-bottom: -1px;
 }
 
 /* cloud-download ireregular padding overrides */
@@ -397,8 +405,8 @@ table tbody tr:hover {
 table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
 table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
-table th.extension, td.extension { min-width: 32px; }
-table th.tag, td.tag { min-width: 32px; }
-table th.attribute, td.attribute { min-width: 32px; }
-table th.url, td.url { min-width: 32px; }
+table th.extension, td.extension { min-width: 34px; }
+table th.tag, td.tag { min-width: 34px; }
+table th.attribute, td.attribute { min-width: 34px; }
+table th.url, td.url { min-width: 34px; }
 table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
