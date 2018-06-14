@@ -159,7 +159,7 @@ URLI.Background = function () {
         });
       });
     }
-    // Update Installations (Below Version 5.0): Reset storage and re-save old increment values
+    // Update Installations: Reset storage and re-save old increment values and remove all permissions for a clean slate
     else if (details.reason === "update") {
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
@@ -176,6 +176,10 @@ URLI.Background = function () {
             });
         });
       });
+      if (chrome.declarativeContent) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined);
+      }
+      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
     }
   }
 

@@ -21,16 +21,19 @@ Features:
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Error Skipping... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
-**Download Incrementing is a completely optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, so I ask for your patience as I work hard to get it up to snuff. Thank you very much for understanding!
+**Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-URLI 5.0 and a personal apology to all users...
+URLI 5.0 and a personal apology to you ...
 
-If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You all deserve a better extension. The only reason Version 5 exists is because of you! I tried hard to go back to URLI's roots in 5.0.
+First, if you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you! I tried to go back to URLI's roots in 5.0.
 I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to use as that version out of the box, while still adding as much incrementing functionality I could.
-If you only use URLI for shortcuts, no worries! Nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version.
-This is the only extension I ever made, so it's important to me 100% that you all are happy with it. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience! :)
+Also, URLI the original extension mascot, is now back for good. If you only use URLI for shortcuts, no worries! Nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version.
+This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how thankful I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's New in Version 5.0 (6/12/18)
+What's New in Version 5.1 (6/14/18)
+- BUG FIX: Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
+
+What's New in Version 5.0 (6/13/18)
 - NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! Icons are 2x AA compatible. And URLI, the extension mascot from 1.0 / 2.0 is back in a prominent role!
 - NEW Auto Increment function: Supports Multiple Tabs at the same time and it also has Pause/Resume functionality. No permissions needed. Create your own webpage slideshows on YOUR terms!
 - NEW Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." Has a preview table with loads of options and filters! This feature is completely optional (opt-in) and requires your permissions to enable it.
@@ -45,6 +48,6 @@ What's New in Version 5.0 (6/12/18)
 - NOTE: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
 
 Special Thanks:
-NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Incrementing), Blue / Blue Chan / Will / Adam C (Feedback)
+Nick MW Prince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Concept), Blue / Will / Adam C (Feedback)
 
 ... and most of all you for using URLI!

@@ -38,6 +38,7 @@ URLI.Action = function () {
       // Prevents a rare race condition:
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
+        //console.log("URLI DEBUG: Auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
         actionPerformed = clear(instance, action, caller, callback);
         return;
       }
