@@ -5,11 +5,11 @@
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
 
-URLI ("yur-lee") increments URLs. If the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can
-get you to "page=2" quickly and conveniently. Use shortcuts or the UI Buttons to increment, or toggle on AUTO to
-auto-increment and start a webpage slideshow! Download n' Increment a series of pages, or combine with AUTO for a 
-unique Auto Incrementer Downloader (experimental feature)! You can use URLI on gallery or thumbnail websites,
-forums, or any site that keeps its URLs organized sequentially.
+URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page,
+URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the buttons to increment. Or toggle on
+AUTO to auto-increment and start a webpage slideshow! Download a series of pages as you increment using AUTO for a
+unique Auto Incrementer Downloader (experimental feature)! You can use URLI on image gallery or thumbnail websites,
+forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
 - Auto Incrementing
@@ -39,7 +39,7 @@ What's New in Version 5.0 (6/13/18)
 - NEW Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." Has a preview table with loads of options and filters! This feature is completely optional (opt-in) and requires your permissions to enable it.
 - NEW Error Skipping feature: URLI can now check if the next URL will return an HTTP error code (like 404 Page Not Found) and increment again, skipping it (up to 10 times). Supports 404, 3XX Redirects, 4XX Client Errors, and 5XX Server Errors.
 - MANY options added: Change the extension icon to match your toolbar theme, adjust the button sizes (up to 64px!), get icon feedback when incrementing, and add Next Prev buttons to the Popup UI (...only if you want to!)
-- MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, and better support for selecting the part of the URL (now includes touch support for tablet devices!)
+- MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, better support for selecting the part of the URL (now includes touch support for tablet devices!), and a new Reset Options Button has been added
 - IMPROVED Increment Decrement selection algorithm to first look for common URL parameters like "page=" so the number pre-selected by URLI is more likely to be "correct"
 - IMPROVED Next Prev functionality by a 1000% for MUCH better link accuracy
 - IMPROVED Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys by themselves as shortcuts (e.g. not that you should, but the Shift key can be used by itself now)
