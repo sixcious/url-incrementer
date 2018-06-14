@@ -45,6 +45,6 @@ What's New in Version 5.0 (6/12/18)
 - NOTE: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
 
 Special Thanks:
-NickMWPrince and A Google User (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Blue / Blue Chan / Will / Adam C (Feedback)
+NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Incrementing), Blue / Blue Chan / Will / Adam C (Feedback)
 
 ... and most of all you for using URLI!
