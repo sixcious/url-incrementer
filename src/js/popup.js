@@ -577,7 +577,7 @@ URLI.Popup = function () {
         downloadStrategy = DOM["#download-strategy-select"].value,
         downloadSelector = DOM["#download-selector-input"].value,
         // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
-        // https://stackoverflow.com/a/16701357
+        // by user1106925 @see https://stackoverflow.com/a/16701357
         downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
         downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
         downloadMinMB = +DOM["#download-min-mb-input"].value,
