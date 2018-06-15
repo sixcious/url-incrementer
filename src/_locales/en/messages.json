@@ -94,7 +94,6 @@
   "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 1000" },
   "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3600" },
   "auto_eta_toohigh_error": { "message": "Auto ETA needs to be less than 1 Day" },
-  "auto_download_wait_error": { "message": "When using Auto with Download, \"Wait for the page to fully load\" must be checked" },
   "auto_download_seconds_error": { "message": "When using Auto with Download, seconds must be at least 5" },
   "download_enabled_error": { "message": "Please first enable Download in Options to give URLI permissions" },
 
@@ -246,5 +245,6 @@
   "error_codes_3XX_label": { "message": "3XX Redirects" },
   "error_codes_4XX_label": { "message": "4XX Client Errors" },
   "error_codes_5XX_label": { "message": "5XX Server Errors" },
-  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Please only use it for small and simple downloading tasks while incrementing." }
+  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Please only use it for small and simple downloading tasks while incrementing." },
+  "download_permissions_disclaimer": { "message": "Important: Sometimes there may be a small bug where the Download Permissions don't all get added, so please close this Options Popup and view the Extensions Detail page to check to make sure URLI has the two Permissions: \"Read and change all your data on the websites you visit\" and \"Manage your downloads\". If it is missing either one, please re-open the Options and disable and re-enable Download again and it should fix it. Apologies for the inconvenience!" }
 }
