@@ -80,6 +80,7 @@ URLI.Shortcuts = function () {
    * @private
    */
   function keyPressed(event, key) {
+    console.log("URLI DEBUG: shortcuts.js keyPressed() event.altKey=" + event.altKey + ", event.ctrlKey=" + event.ctrlKey + ", event.shiftKey=" + event.shiftKey + ", event.metaKey=" + event.metaKey + ", event.code=" + event.code + ", key=" + key + "event.code === key[1]" + (event.code === key[1]));
     return (key && key.length !== 0 && (
       (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
         !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
@@ -88,6 +89,13 @@ URLI.Shortcuts = function () {
         !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
       (event.code === key[1])
     );
+    // return (key && key.length !== 0 &&
+    //   !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+    //   !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
+    //   !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
+    //   !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3) &&
+    //   (event.code === key[1])
+    // );
   }
 
   /**
@@ -100,6 +108,7 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, mouse) {
+    console.log("URLI DEBUG: shortcuts.js mousePressed() event=" + event + ", mouse=" + mouse);
     return (mouse !== -1 &&
       (event.button === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
       (event.button === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||

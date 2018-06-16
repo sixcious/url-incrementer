@@ -276,6 +276,15 @@ URLI.Options = function () {
       if (key[1] && !KEY_MODIFIER_STRING_MAP[key[1]]) { if (keyPressed) { text += " + "; } text += key[1]; }
     }
     input.value = text;
+    //shortcuts.js:
+      // return (key && key.length !== 0 && (
+      //         (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
+      //         !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+      //         !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
+      //         !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
+      //         !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
+      //     (event.code === key[1])
+      // );
   }
 
   /**
