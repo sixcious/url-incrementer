@@ -9,20 +9,20 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = function () {
 
-  const FLAG_KEY_ALT = 0x1, // 0001
+  const FLAG_KEY_NONE = 0x0, // 0000
+        FLAG_KEY_ALT = 0x1, // 0001
         FLAG_KEY_CTRL = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META = 0x8, // 1000
         FLAG_MOUSE_LEFT = 0x0, // 00
         FLAG_MOUSE_MIDDLE = 0x1, // 01
         FLAG_MOUSE_RIGHT = 0x2, // 10
-        KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
-          "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
-          "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
-          "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
-          "AltLeft":     "Alt",   "AltRight":     "Alt",
-          "MetaLeft":    "Meta",  "MetaRight":    "Meta"
-        };
+        KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
+          "Alt", "AltLeft", "AltRight",
+          "Control", "ControlLeft", "ControlRight",
+          "Shift", "ShiftLeft", "ShiftRight",
+          "Meta", "MetaLeft", "MetaRight"
+        ];
 
   let items_ = {}; // storage items cache
 
@@ -37,7 +37,7 @@ URLI.Shortcuts = function () {
   }
 
   /**
-   * A key event listener for keyboard shortcuts.
+   * A key up event listener for keyboard shortcuts.
    * 
    * Listens for increment, decrement, next, prev, clear, and auto keyboard shortcuts.
    * 
@@ -54,7 +54,7 @@ URLI.Shortcuts = function () {
   }
 
   /**
-   * A mouse event listener for mouse button shortcuts.
+   * A mouse up event listener for mouse button shortcuts.
    * 
    * Listens for increment, decrement, next, prev, clear, and auto mouse button shortcuts.
    * 
@@ -71,31 +71,24 @@ URLI.Shortcuts = function () {
   }
 
   /**
-   * Checks if the key was pressed by comparing the event against the flags 
-   * using bitwise operators and checking if the key code matches.
+   * Checks if the key was pressed by first converting the event into a key [] and then
+   * comparing the key against the specified actionKey.
    * 
    * @param event the key event
-   * @param key the key to check
-   * @return boolean true if the key event matches the key, false otherwise
+   * @param actionKey the action key to check (e.g. increment shortcut key)
+   * @return boolean true if the key event matches the action key, false otherwise
    * @private
    */
-  function keyPressed(event, key) {
-    console.log("URLI DEBUG: shortcuts.js keyPressed() event.altKey=" + event.altKey + ", event.ctrlKey=" + event.ctrlKey + ", event.shiftKey=" + event.shiftKey + ", event.metaKey=" + event.metaKey + ", event.code=" + event.code + ", key=" + key + "event.code === key[1]" + (event.code === key[1]));
-    return (key && key.length !== 0 && (
-      (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
-        !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
-        !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
-        !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-        !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
-      (event.code === key[1])
-    );
-    // return (key && key.length !== 0 &&
-    //   !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
-    //   !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
-    //   !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-    //   !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3) &&
-    //   (event.code === key[1])
-    // );
+  function keyPressed(event, actionKey) {
+      const key = [
+          (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+          (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+          (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+          (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
+          event.code
+      ];
+    //console.log("URLI DEBUG: shortcuts.js keyPressed() event key=" + key + ", actionKey=" + actionKey);
+    return key && actionKey && ((key[0] === actionKey[0] || KEY_MODIFIER_CODE_ARRAY.includes(key[1])) && key[1] === actionKey[1]);
   }
 
   /**
@@ -103,16 +96,16 @@ URLI.Shortcuts = function () {
    * flags.
    * 
    * @param event the mouse event
-   * @param mouse the mouse button to check
-   * @return boolean true if the mouse button event matches the mouse, false otherwise
+   * @param actionMouse the action mouse button to check (e.g. increment shortcut mouse button)
+   * @return boolean true if the mouse button event matches the action mouse button, false otherwise
    * @private
    */
-  function mousePressed(event, mouse) {
-    console.log("URLI DEBUG: shortcuts.js mousePressed() event=" + event + ", mouse=" + mouse);
-    return (mouse !== -1 &&
-      (event.button === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
-      (event.button === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||
-      (event.button === FLAG_MOUSE_RIGHT  && mouse === FLAG_MOUSE_RIGHT)
+  function mousePressed(event, actionMouse) {
+    //console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", mouse=" + mouse);
+    return (actionMouse !== -1 &&
+      (event.button === FLAG_MOUSE_LEFT   && actionMouse === FLAG_MOUSE_LEFT) ||
+      (event.button === FLAG_MOUSE_MIDDLE && actionMouse === FLAG_MOUSE_MIDDLE) ||
+      (event.button === FLAG_MOUSE_RIGHT  && actionMouse === FLAG_MOUSE_RIGHT)
     );
   }
 
