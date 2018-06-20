@@ -242,14 +242,12 @@ URLI.Action = function () {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
                   if (downloadItem) {
-                    if (instance.downloadStrategy !== "page") {
-                      if (downloadItem.totalBytes > 0 && (
-                          (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) >= downloadItem.totalBytes : false) ||
-                          (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) <= downloadItem.totalBytes : false)
-                        )) {
-                        //console.log("URLI DEBUG: download() Canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
-                        chrome.downloads.cancel(downloadId);
-                      }
+                    if (downloadItem.totalBytes > 0 && (
+                        (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) > downloadItem.totalBytes : false) ||
+                        (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) < downloadItem.totalBytes : false)
+                      )) {
+                      //console.log("URLI DEBUG: download() Canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
+                      chrome.downloads.cancel(downloadId);
                     }
                   }
                 });
