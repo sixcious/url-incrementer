@@ -192,7 +192,7 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    //console.log("URLI DEBUG: messageListener() request=" + request + " sender=" + sender);
+    console.log("URLI DEBUG: messageListener() request=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
@@ -279,7 +279,7 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    //console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
+    console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
     if (changeInfo.status === "loading") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)

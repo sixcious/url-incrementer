@@ -87,7 +87,7 @@ URLI.Shortcuts = function () {
           (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
           event.code
       ];
-    //console.log("URLI DEBUG: shortcuts.js keyPressed() event key=" + key + ", actionKey=" + actionKey);
+    console.log("URLI DEBUG: shortcuts.js keyPressed() event key=" + key + ", actionKey=" + actionKey);
     return key && actionKey && ((key[0] === actionKey[0] || KEY_MODIFIER_CODE_ARRAY.includes(key[1])) && key[1] === actionKey[1]);
   }
 
@@ -101,7 +101,7 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, actionMouse) {
-    //console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", mouse=" + mouse);
+    console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", mouse=" + mouse);
     return (actionMouse !== -1 &&
       (event.button === FLAG_MOUSE_LEFT   && actionMouse === FLAG_MOUSE_LEFT) ||
       (event.button === FLAG_MOUSE_MIDDLE && actionMouse === FLAG_MOUSE_MIDDLE) ||
@@ -120,7 +120,7 @@ URLI.Shortcuts = function () {
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
+    console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
     URLI.Shortcuts.setItems(items);
     // Key
     if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
@@ -135,7 +135,7 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
+  console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);

@@ -244,7 +244,6 @@ URLI.Popup = function () {
     DOM["#download-preview-attribute-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("attribute");
     DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
-    DOM["#download-preview-table-div"].style = items_.downloadPreviewCompressed ? "white-space: normal;" : "white-space: nowrap;";
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     updateInputLabelStyle(DOM["#download-selector-input"], DOM["#download-selector-label"], "font-weight: bold; color: rebeccapurple");
     updateInputLabelStyle(DOM["#download-includes-input"], DOM["#download-includes-label"], "font-weight: bold; color: #05854D");
@@ -495,7 +494,7 @@ URLI.Popup = function () {
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    //console.log("URLI DEBUG: inputUpdateDownloadPreview() About to clearTimeout and setTimeout");
+    console.log("URLI DEBUG: inputUpdateDownloadPreview() About to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
@@ -720,14 +719,15 @@ URLI.Popup = function () {
             "downloadPreview": downloadPreview
           });
         }
-        // If permissions granted, send message to content script
+        // If internal shortcuts permissions granted, send message to shortcuts content script to add key/mouse listeners:
         if (items_.permissionsInternalShortcuts && items_.keyEnabled && !items_.keyQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
         if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.mouseQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
-        if (instance.autoEnabled) { // Ask Auto to start auto timer
+        // If auto is enabled, ask Auto to start auto timer
+        if (instance.autoEnabled) {
           backgroundPage.URLI.Auto.startAutoTimer(instance);
         }
         toggleView.call(DOM["#accept-button"]);

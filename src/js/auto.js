@@ -162,7 +162,7 @@ URLI.Auto = function () {
    * @private
    */
   function autoListener(tabId, changeInfo, tab) {
-    //console.log("URLI DEBUG: autoListener() The chrome.tabs.onUpdated auto listener is on!");
+    console.log("URLI DEBUG: autoListener() The chrome.tabs.onUpdated auto listener is on!");
     // Cache loading and complete for maybe a small performance gain since we need to check multiple times?
     const loading = changeInfo.status === "loading",
           complete = changeInfo.status === "complete";
@@ -173,7 +173,7 @@ URLI.Auto = function () {
     const instance = URLI.Background.getInstance(tabId);
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
-      // Loading:
+      // Loading Only:
       if (loading) {
         // If autoWait is on, we set the wait boolean to true in case the user tries to pause/resume (e.g. start) the timeout while the tab is loading
         if (instance.autoWait) {
@@ -188,7 +188,11 @@ URLI.Auto = function () {
         } else {
           URLI.Background.setBadge(tabId, "auto", false);
         }
-        // If download enabled, send a message to the popup to update the download preview (if it's open) even though we send it at loading, this script runs at document_end
+      }
+      // Complete Only:
+      if (complete) {
+        // If download enabled, send a message to the popup to update the download preview (if it's open)
+        // Note: Do NOT send this message at Loading because it doesn't refresh properly sometimes (even though the download script runs at document_end)
         if (instance.downloadEnabled) {
           chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
         }
@@ -248,14 +252,14 @@ URLI.AutoTimer = function (callback, delay) {
     window.clearTimeout(timerId);
     remaining -= Date.now() - start;
     remaining = remaining < 0 || wait ? delay : remaining;
-    //console.log("URLI DEBUG: URlI.AutoTimer.pause() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    console.log("URLI DEBUG: URlI.AutoTimer.pause() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.resume = function() {
     start = Date.now();
     window.clearTimeout(timerId);
     timerId = wait ? timerId : window.setTimeout(callback, remaining);
-    //console.log("URLI DEBUG: URLI.AutoTimer.resume() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    console.log("URLI DEBUG: URLI.AutoTimer.resume() timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.clear = function() {
