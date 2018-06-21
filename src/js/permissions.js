@@ -19,12 +19,12 @@ URLI.Permissions = function () {
     },
     "download": {
       "storageKey": "permissionsDownload",
-      "request": {permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]},
+      "request": {permissions: ["downloads"], origins: ["<all_urls>"]},
       "requestConflict": {permissions: ["downloads"]}
     },
     "enhancedMode": {
       "storageKey": "permissionsEnhancedMode",
-      "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]}
+      "request": {origins: ["<all_urls>"]}
     }
   };
 
@@ -40,6 +40,7 @@ URLI.Permissions = function () {
   function requestPermissions(permission, callback) {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
+        chrome.permissions.request(PERMISSIONS[permission].request); // Download....
         if (PERMISSIONS[permission].script) {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
@@ -67,10 +68,10 @@ URLI.Permissions = function () {
     // Script:
     if (chrome.declarativeContent && PERMISSIONS[permission].script) {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        for (let i = 0; i < rules.length; i++) {
-          if (rules[i].actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-            console.log("URLI DEBUG: removePermissions() Removing rule " + rules[i]);
-            chrome.declarativeContent.onPageChanged.removeRules([rules[i].id], function() {});
+        for (let rule of rules) {
+          if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
+            console.log("URLI DEBUG: removePermissions() Removing rule " + rule);
+            chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
           }
         }
       });
