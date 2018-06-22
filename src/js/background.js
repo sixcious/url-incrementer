@@ -153,29 +153,41 @@ URLI.Background = function () {
   function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
     if (details.reason === "install") {
+      console.log("URLI DEBUG: installedListener() new install");
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.runtime.openOptionsPage();
         });
       });
     }
-    // Update Installations: Reset storage and re-save old increment values and remove all permissions for a clean slate
-    else if (details.reason === "update") {
+    // Update Installations Version 5.1: Remove declarativeContent if internal shortcuts not enabled (this was erroneously set for download and enhanced mode):
+    else if (details.reason === "update" && details.previousVersion === "5.1") {
+      console.log("URLI DEBUG: installedListener() update previousVersion=" + details.previousVersion);
+      chrome.storage.sync.get(null, function(olditems) {
+        if (olditems && !olditems.permissionsInternalShortcuts) {
+          chrome.permissions.remove({ permissions: ["declarativeContent"]});
+        }
+      });
+    }
+    // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
+    else if (details.reason === "update" && details.previousVersion <= "5.0") {
+      console.log("URLI DEBUG: installedListener() update previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
-            chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-              // Re-save old version's increment values:
-              chrome.storage.sync.set({
-                "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
-                "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
-                "leadingZerosPadByDetection": olditems && olditems.leadingZerosPadByDetection ? olditems.leadingZerosPadByDetection : STORAGE_DEFAULT_VALUES.leadingZerosPadByDetection,
-                "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
-                "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
-                "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom,
-              });
+          chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+            // Re-save old version's increment values:
+            chrome.storage.sync.set({
+              "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
+              "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
+              "leadingZerosPadByDetection": olditems && olditems.leadingZerosPadByDetection ? olditems.leadingZerosPadByDetection : STORAGE_DEFAULT_VALUES.leadingZerosPadByDetection,
+              "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
+              "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
+              "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom,
             });
+          });
         });
       });
+      // Remove all permissions:
       if (chrome.declarativeContent) {
         chrome.declarativeContent.onPageChanged.removeRules(undefined);
       }

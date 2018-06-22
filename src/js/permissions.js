@@ -57,7 +57,7 @@ URLI.Permissions = function () {
         });
         // Request the permission a second time...
         // This is due to a bug that happens when origins <all_urls> had been previously granted and then removed and a
-        // NEW permission (e.g. Download) is asked to be granted. The bug is that it forgets to also grant <all_urls> with the new permission
+        // NEW permission (e.g. Download) is asked to be granted. The bug is that it forgets to also grant origins <all_urls> with the new permission
         chrome.permissions.request(PERMISSIONS[permission].request);
       } else {
         if (callback) {

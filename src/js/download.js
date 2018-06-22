@@ -106,7 +106,7 @@ URLI.Download = function () {
         extension = "",
         attribute = "",
         tag = "";
-    console.log("URLI DEBUG: findDownloadURLsBySelector() Found " + elements.length + " elements links");
+    console.log("URLI DEBUG: findDownloadURLsBySelector() Found " + elements.length + " element(s)");
     for (let element of elements) {
       for (let urlattribute of URL_ATTRIBUTES) {
         if (element[urlattribute]) {
