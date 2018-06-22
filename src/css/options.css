@@ -68,10 +68,6 @@ input[type="image"]:focus {
   margin-left: 4px;
 }
 
-.note {
-  font-size: 0.9em;
-}
-
 /* icon and popup */
 
 .icon-color.radio, #popup-button-size-div {

@@ -15,6 +15,7 @@ URLI.Permissions = function () {
     "internalShortcuts": {
       "storageKey": "permissionsInternalShortcuts",
       "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]},
+      "requestConflict": {permissions: ["declarativeContent"]},
       "script": {js: ["js/shortcuts.js"]}
     },
     "download": {
@@ -90,7 +91,8 @@ URLI.Permissions = function () {
     }
     // Remove:
     chrome.storage.sync.get(null, function(items) {
-      if ((permission === "internalShortcuts" && !items.permissionsEnhancedMode && !items.permissionsDownload) ||
+      // Check for conflicts if another permission is enabled; if conflict, then only remove the request's conflict (not the original request)
+      if ((permission === "internalShortcuts" && !items.permissionsDownload && !items.permissionsEnhancedMode) ||
           (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
