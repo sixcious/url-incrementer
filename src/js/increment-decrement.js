@@ -47,23 +47,23 @@ URLI.IncrementDecrement = function () {
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
               matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0], selectionStart: matches1.index + 1} :
+              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
               matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
               {selection: "", selectionStart: -1} :
            preference === "lastnumber" ?
               matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
               matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0], selectionStart: matches1.index + 1} :
+              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "firstnumber" ?
               matches3 ? {selection: matches3[0], selectionStart: matches3.index} :
               matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0], selectionStart: matches1.index + 1} :
+              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "custom" ?
               matches4 && matches4[custom.group] ? {selection: matches4[custom.group].substring(custom.index), selectionStart: matches4.index + custom.index} :
               matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0], selectionStart: matches1.index + 1} :
+              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
               matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
               {selection: "", selectionStart: -1} :
           {selection: "", selectionStart: -1};

@@ -40,17 +40,29 @@ URLI.Permissions = function () {
   function requestPermissions(permission, callback) {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
-        chrome.permissions.request(PERMISSIONS[permission].request); // Download....
+        console.log("URLI DEBUG: requestPermissions() successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
         if (PERMISSIONS[permission].script) {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
             actions: [new chrome.declarativeContent.RequestContentScript(PERMISSIONS[permission].script)]
-          }]);
+          }], function(rules) {
+            console.log("URLI DEBUG: requestPermissions() successfully added declarativeContent rules:" + rules);
+          });
         }
         chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
-          if (callback) { callback(true); }
+          if (callback) {
+            callback(true);
+          }
         });
-      } else { if (callback) { callback(false); } }
+        // Request the permission a second time...
+        // This is due to a bug that happens when origins <all_urls> had been previously granted and then removed and a
+        // NEW permission (e.g. Download) is asked to be granted. The bug is that it forgets to also grant <all_urls> with the new permission
+        chrome.permissions.request(PERMISSIONS[permission].request);
+      } else {
+        if (callback) {
+          callback(false);
+        }
+      }
     });
   }
 
@@ -81,13 +93,23 @@ URLI.Permissions = function () {
       if ((permission === "internalShortcuts" && !items.permissionsEnhancedMode && !items.permissionsDownload) ||
           (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
-        chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) { if (removed) { } });
+        chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
+          if (removed) {
+            console.log("URLI DEBUG: requestPermissions() successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+          }
+        });
       } else if (PERMISSIONS[permission].requestConflict) {
-        chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) { if (removed) { } });
+        chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) {
+          if (removed) {
+            console.log("URLI DEBUG: removePermissions() conflict encountered, successfully removed permission request conflict:" + PERMISSIONS[permission].requestConflict.permissions + ", origins:" + PERMISSIONS[permission].requestConflict.origins);
+          }
+        });
       }
     });
     chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: false}, function() {
-      if (callback) { callback(true); }
+      if (callback) {
+        callback(true);
+      }
     });
   }
 
@@ -101,7 +123,14 @@ URLI.Permissions = function () {
     if (chrome.declarativeContent) {
       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
     }
-    chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) { if (removed) { if (callback) { callback(true); } } });
+    chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) {
+      if (removed) {
+        console.log("URLI DEBUG: removeAllPermissions() all permissions successfully removed!");
+        if (callback) {
+          callback(true);
+        }
+      }
+    });
   }
 
   // Return Public Functions
