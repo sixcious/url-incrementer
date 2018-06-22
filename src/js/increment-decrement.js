@@ -33,38 +33,40 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    const regexp0 = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms and prefixes
-          regexp1 = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /)
-          regexp2 = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-          regexp3 = /\d+/, // RegExg to find the first number in the url
-          regexp4 = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined,
-          matches0 = regexp0.exec(url),
-          matches1 = regexp1.exec(url),
-          matches2 = regexp2.exec(url),
-          matches3 = regexp3.exec(url),
-          matches4 = regexp4 ? regexp4.exec(url) : undefined;
-    console.log("URLI DEBUG: findSelection() matches: 0=" + matches0 + ", 1=" + matches1 + ", 2=" + matches2 + ", 3=" + matches3 + ", 4=" + matches4);
+    // Regular Expressions:
+    const reter = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms like "page="
+          repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
+          relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+          refir = /\d+/, // RegExg to find the first number in the url
+          recus = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined, // RegExp Custom (if set by user)
+    // Matches:
+          mater = reter.exec(url),
+          mapre = repre.exec(url),
+          malas = relas.exec(url),
+          mafir = refir.exec(url),
+          macus = recus ? recus.exec(url) : undefined;
+    console.log("URLI DEBUG: findSelection() matches: ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
-              matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
-              matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+              mater ? {selection: mater[1], selectionStart: mater.index + 1} :
+              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
+              malas ? {selection: malas[0], selectionStart: malas.index} :
               {selection: "", selectionStart: -1} :
            preference === "lastnumber" ?
-              matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
-              matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
+              malas ? {selection: malas[0], selectionStart: malas.index} :
+              mater ? {selection: mater[1], selectionStart: mater.index + 1} :
+              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "firstnumber" ?
-              matches3 ? {selection: matches3[0], selectionStart: matches3.index} :
-              matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
+              mafir ? {selection: mafir[0], selectionStart: mafir.index} :
+              mater ? {selection: mater[1], selectionStart: mater.index + 1} :
+              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "custom" ?
-              matches4 && matches4[custom.group] ? {selection: matches4[custom.group].substring(custom.index), selectionStart: matches4.index + custom.index} :
-              matches0 ? {selection: matches0[1], selectionStart: matches0.index + 1} :
-              matches1 ? {selection: matches1[0].substring(1), selectionStart: matches1.index + 1} :
-              matches2 ? {selection: matches2[0], selectionStart: matches2.index} :
+              macus && macus[custom.group] ? {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index} :
+              mater ? {selection: mater[1], selectionStart: mater.index + 1} :
+              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
+              malas ? {selection: malas[0], selectionStart: malas.index} :
               {selection: "", selectionStart: -1} :
           {selection: "", selectionStart: -1};
   }
