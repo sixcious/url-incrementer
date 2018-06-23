@@ -80,13 +80,21 @@ URLI.Shortcuts = function () {
    * @private
    */
   function keyPressed(event, actionKey) {
-      const key = [
-          (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-          (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
-          (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-          (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-          event.code
-      ];
+    // Old code: return (key && key.length !== 0 && (
+    //         (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
+    //         !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+    //         !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
+    //         !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
+    //         !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
+    //     (event.code === key[1])
+    // );
+    const key = [
+      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
+      event.code
+    ];
     console.log("URLI DEBUG: shortcuts.js keyPressed() event key=" + key + ", actionKey=" + actionKey);
     return key && actionKey && ((key[0] === actionKey[0] || KEY_MODIFIER_CODE_ARRAY.includes(key[1])) && key[1] === actionKey[1]);
   }

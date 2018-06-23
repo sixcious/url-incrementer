@@ -712,10 +712,6 @@ URLI.Popup = function () {
             "downloadTags": downloadTags,
             "downloadAttributes": downloadAttributes,
             "downloadSelector": downloadSelector,
-            "downloadIncludes": downloadIncludes,
-            "downloadExcludes": downloadExcludes,
-            "downloadMinMB": downloadMinMB,
-            "downloadMaxMB": downloadMaxMB,
             "downloadPreview": downloadPreview
           });
         }

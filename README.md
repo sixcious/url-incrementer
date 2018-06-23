@@ -21,14 +21,15 @@ Features:
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Error Skipping... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
-**Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
+** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 URLI 5.0 and a personal apology to you ...
 
-First, if you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you! I tried to go back to URLI's roots in 5.0.
+If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you! I tried to go back to URLI's roots in 5.0.
 I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to use as that version out of the box, while still adding as much incrementing functionality I could.
 Also, URLI the original extension mascot, is now back for good. If you only use URLI for shortcuts, no worries! Nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version.
-This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how thankful I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+
+This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 What's New in Version 5.1 (6/14/18)
 - BUG FIX: Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
