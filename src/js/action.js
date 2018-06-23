@@ -161,7 +161,11 @@ URLI.Action = function () {
    * @private
    */
   function clear(instance, action, caller, callback) {
-    let actionPerformed = true;
+    let actionPerformed = false;
+    // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
+    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
+      actionPerformed = true;
+    }
     URLI.Background.deleteInstance(instance.tabId);
     if (caller !== "popupClearBeforeSet") { // Don't remove key/mouse listeners if popup clear before set
       chrome.storage.sync.get(null, function (items) {

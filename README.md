@@ -1,6 +1,6 @@
 # URL Incrementer
 
-![URL Incrementer](src/img/icons/dark/128.png?raw=true "URL Incrementer")
+![URL Incrementer](_assets/img/darku/128.png?raw=true "URL Incrementer")
 
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
