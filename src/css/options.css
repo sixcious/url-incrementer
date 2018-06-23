@@ -139,6 +139,7 @@ input[type="image"]:focus {
 
 #download-experimental {
   font-size: 0.9em;
+  font-style: italic;
   display: inline-block;
   margin-left: 6px;
 }

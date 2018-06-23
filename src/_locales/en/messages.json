@@ -245,6 +245,6 @@
   "error_codes_3XX_label": { "message": "3XX Redirects" },
   "error_codes_4XX_label": { "message": "4XX Client Errors" },
   "error_codes_5XX_label": { "message": "5XX Server Errors" },
-  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Please only use it for small and simple downloading tasks while incrementing." },
+  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Like... Early BETA experimental! Please only use it for small and simple downloading tasks while incrementing." },
   "download_permissions_disclaimer": { "message": "Important: Please close this Options Popup and view the Extensions Detail page to make sure URLI has the two Permissions: \"Read and change all your data on the websites you visit\" and \"Manage your downloads.\" If either is missing, please disable and re-enable Download." }
 }
