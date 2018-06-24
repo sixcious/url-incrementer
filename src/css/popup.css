@@ -99,9 +99,9 @@ div.column {
   width: 100%;
   color: #777777;
   word-break: break-all;
-  max-width: 522px;
+  max-width: 512px;
   max-height: 90px;
-  min-width: 522px;
+  min-width: 512px;
   min-height: 41px;
 }
 
