@@ -4,6 +4,10 @@
 @import url("ui/hover.css");
 @import url("ui/generate-alert.css");
 
+body {
+  min-width: 415px;
+}
+
 h3 {
   display: inline;
   user-select: initial;
