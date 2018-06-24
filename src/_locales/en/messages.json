@@ -67,7 +67,7 @@
   "download_preview_attribute_label": { "message": "Atr" },
   "download_preview_url_label": { "message": "URL" },
   "download_preview_compressed_label": { "message": "Compressed View" },
-  "download_preview_blocked": { "message": "Sorry, please wait ... scanning this page is either taking a really long time or URLI is not allowed to check for downloads on this page." },
+  "download_preview_blocked": { "message": "Sorry, please wait a few more seconds ... scanning this page for URLs is either taking a really long time or URLI is not allowed to check for downloads on this page (e.g. chrome:// pages). Please try disabling and re-enabling Download again in the Options to make sure URLI has <all_urls> permissions." },
   "download_preview_noresults": { "message": "Sorry, no results were found." },
   "download_help_extensions_label": { "message": "File Extensions Help" },
   "download_help_tags_label": { "message": "Tags Help" },

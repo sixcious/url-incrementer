@@ -27,7 +27,7 @@ Also, URLI the original extension mascot, is now back for good. If you only use 
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's New in Version 5.2 (6/22/2018)
+What's New in Version 5.2 (6/25/2018)
 - IMPROVED: Increment Decrement selection algorithm to find the last prefix = or / instead of the first prefix = or / (the last one is more often than not the one we usually want to increment!)
 - IMPROVED: For new users only: Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
 - IMPROVED: No longer saving Download includes, excludes, min, and max MB since these are very situational filters
