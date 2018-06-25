@@ -80,13 +80,11 @@ URLI.Shortcuts = function () {
    */
   function keyPressed(event, key) {
     console.log("URLI DEBUG: shortcuts.js keyPressed() event.code=" + event.code + ", actionKey=" + key);
-    return (key && key.length !== 0 &&
-      (event.code === key[1]) && (
-      (key[0] && KEY_MODIFIER_CODE_ARRAY.includes(key[1])) || (
+    return (key && key.length !== 0 && (event.code === key[1]) && (
        !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
        !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
        !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3)))
+       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))
     );
   }
 
