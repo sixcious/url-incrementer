@@ -15,12 +15,11 @@ URLI.Options = function () {
         FLAG_KEY_CTRL = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META = 0x8, // 1000
-        KEY_MODIFIER_STRING_MAP = { // Map for key codes that shouldn't be written since they are event modifiers
-          "Shift": "Shift", "Control": "Ctrl", "Alt": "Alt", "Meta": "Meta",
-          "ShiftLeft":   "Shift", "ShiftRight":   "Shift",
-          "ControlLeft": "Ctrl",  "ControlRight": "Ctrl",
-          "AltLeft":     "Alt",   "AltRight":     "Alt",
-          "MetaLeft":    "Meta",  "MetaRight":    "Meta"
+        KEY_MODIFIER_CODE_ARRAY = { // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
+          "alt": ["Alt", "AltLeft", "AltRight"],
+          "ctrl": ["Control", "ControlLeft", "ControlRight"],
+          "shift": ["Shift", "ShiftLeft", "ShiftRight"],
+          "meta": ["Meta", "MetaLeft", "MetaRight"]
         },
         NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
@@ -266,14 +265,15 @@ URLI.Options = function () {
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
     // Note2: If the key code is in the KEY_MODIFIER_STRING_MAP (e.g. Alt, Ctrl), it is not written a second time
     let text = "",
-        keyPressed = false;
+        keyPressed = false,
+        keyModifierPressed = false;
     if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
-      if ((key[0] & FLAG_KEY_ALT))        {                                    text += "Alt";   keyPressed = true; }
-      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { if (keyPressed) { text += " + "; } text += "Ctrl";  keyPressed = true; }
-      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } text += "Shift"; keyPressed = true; }
-      if ((key[0] & FLAG_KEY_META)  >> 3) { if (keyPressed) { text += " + "; } text += "Meta";  keyPressed = true; }
-      if (key[1] && !KEY_MODIFIER_STRING_MAP[key[1]]) { if (keyPressed) { text += " + "; } text += key[1]; }
+      if ((key[0] & FLAG_KEY_ALT))        {                                    if (KEY_MODIFIER_CODE_ARRAY.alt.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Alt"; }  keyPressed = true; }
+      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.ctrl.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Ctrl"; }  keyPressed = true; }
+      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.shift.includes(key[1])) { text += key[1]; keyModifierPRessed = true; } else { text += "Shift"; } keyPressed = true; }
+      if ((key[0] & FLAG_KEY_META)  >> 3) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.meta.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Meta"; }  keyPressed = true; }
+      if (!keyModifierPressed) { if (keyPressed) { text += " + "; } text += key[1]; }
     }
     input.value = text;
   }
