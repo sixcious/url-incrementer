@@ -271,7 +271,7 @@ URLI.Options = function () {
     else {
       if ((key[0] & FLAG_KEY_ALT))        {                                    if (KEY_MODIFIER_CODE_ARRAY.alt.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Alt"; }  keyPressed = true; }
       if ((key[0] & FLAG_KEY_CTRL)  >> 1) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.ctrl.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Ctrl"; }  keyPressed = true; }
-      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.shift.includes(key[1])) { text += key[1]; keyModifierPRessed = true; } else { text += "Shift"; } keyPressed = true; }
+      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.shift.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Shift"; } keyPressed = true; }
       if ((key[0] & FLAG_KEY_META)  >> 3) { if (keyPressed) { text += " + "; } if (KEY_MODIFIER_CODE_ARRAY.meta.includes(key[1])) { text += key[1]; keyModifierPressed = true; } else { text += "Meta"; }  keyPressed = true; }
       if (!keyModifierPressed) { if (keyPressed) { text += " + "; } text += key[1]; }
     }

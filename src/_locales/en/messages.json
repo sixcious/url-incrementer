@@ -160,7 +160,7 @@
   "leading_zeros_label": { "message": "Leading Zeros" },
   "leading_zeros_pad_by_detection_label": { "message": "Pad By Detection (Recommended)" },
   "error_skip_what": { "message": "What's Error Skipping?" },
-  "error_skip_description_p": { "message": "URLI can check if the next URL will return an HTTP error code (like 404) and increment again, skipping it up to 10 times. Set it to 0 to disable it. Note that using this with Auto or UI Buttons requires Enhanced Mode." },
+  "error_skip_description_p": { "message": "URLI can check if the next URL will return an HTTP error code (like 404) and increment again, skipping it up to 10 times. Set it to 0 to disable it. Note: Error Skipping with Auto or UI Buttons requires Enhanced Mode." },
   "next_prev_settings_h3": { "message": "Next Prev Settings" },
   "next_prev_settings_p": { "message": "Some URLs may not have numbers, so URLI can increment using Next Prev links on the page. To use Next Prev with Auto, enable Enhanced Mode below." },
   "next_prev_links_priority_label": { "message": "Links" },
@@ -245,5 +245,5 @@
   "error_codes_3XX_label": { "message": "3XX Redirects" },
   "error_codes_4XX_label": { "message": "4XX Client Errors" },
   "error_codes_5XX_label": { "message": "5XX Server Errors" },
-  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Like in... BETA! Please only use it for small and simple downloading tasks while incrementing." }
+  "download_experimental_disclaimer": { "message": "Remember: Download is still an experimental feature! Please only use it for small and simple downloading tasks while incrementing." }
 }
