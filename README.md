@@ -30,8 +30,8 @@ This is the only extension I ever made, so it's important to me 100% that you ar
 What's New in Version 5.2 (6/25/2018)
 - IMPROVED: Increment Decrement selection algorithm to find the last prefix = or / instead of the first prefix = or / (the last one is more often than not the one we usually want to increment!)
 - IMPROVED: For new users only: Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
-- IMPROVED: No longer saving Download includes, excludes, min, and max MB since these are very situational filters
-- BUG FIX: When Download & Auto are both enabled, changed the download preview to only update in the popup when the tab has loaded completely instead of when it is still loading (there was some issues with when it was still loading)
+- IMPROVED: No longer saving Download optional filters: includes, excludes, min, and max MB since these are very situational filters that vary from site to site
+- BUG FIX: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the updated tab URL
 - CHROME BUG FIX: More permissions bug fixes: There was a bug with the permissions that happened in very rare circumstances. If you encountered any issues with downloading only working "once" or with the Internal Shortcuts not working at all, please try disabling and re-enabling it again in the Options and the issue should be resolved so that it works properly (Apologies for the inconvenience, this time it was a bug with the Chrome/Chromium permissions, not URLI!)
 
 What's New in Version 5.1 (6/14/18)

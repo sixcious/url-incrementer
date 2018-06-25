@@ -9,8 +9,7 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = function () {
 
-  const FLAG_KEY_NONE = 0x0, // 0000
-        FLAG_KEY_ALT = 0x1, // 0001
+  const FLAG_KEY_ALT = 0x1, // 0001
         FLAG_KEY_CTRL = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META = 0x8, // 1000
@@ -71,49 +70,40 @@ URLI.Shortcuts = function () {
   }
 
   /**
-   * Checks if the key was pressed by first converting the event into a key [] and then
-   * comparing the key against the specified actionKey.
+   * Checks if the key was pressed by comparing the event against the flags
+   * using bitwise operators and checking if the key code matches.
    * 
    * @param event the key event
-   * @param actionKey the action key to check (e.g. increment shortcut key)
+   * @param key the action key to check (e.g. increment shortcut key)
    * @return boolean true if the key event matches the action key, false otherwise
    * @private
    */
-  function keyPressed(event, actionKey) {
-    // Old code: return (key && key.length !== 0 && (
-    //         (key[0] && KEY_MODIFIER_STRING_MAP[key[1]]) || (
-    //         !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
-    //         !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
-    //         !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-    //         !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
-    //     (event.code === key[1])
-    // );
-    const key = [
-      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
-      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-      event.code
-    ];
-    console.log("URLI DEBUG: shortcuts.js keyPressed() event key=" + key + ", actionKey=" + actionKey);
-    return key && actionKey && ((key[0] === actionKey[0] || KEY_MODIFIER_CODE_ARRAY.includes(key[1])) && key[1] === actionKey[1]);
+  function keyPressed(event, key) {
+    console.log("URLI DEBUG: shortcuts.js keyPressed() event.code=" + event.code + ", actionKey=" + key);
+    return (key && key.length !== 0 && (
+      (key[0] && KEY_MODIFIER_CODE_ARRAY.includes(key[1])) || (
+       !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+       !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
+       !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
+       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))) &&
+      (event.code === key[1])
+    );
   }
 
   /**
-   * Checks if the mouse button was pressed by comparing the event against the
-   * flags.
+   * Checks if the mouse button was pressed by comparing the event against the flags.
    * 
    * @param event the mouse event
-   * @param actionMouse the action mouse button to check (e.g. increment shortcut mouse button)
+   * @param mouse the action mouse button to check (e.g. increment shortcut mouse button)
    * @return boolean true if the mouse button event matches the action mouse button, false otherwise
    * @private
    */
-  function mousePressed(event, actionMouse) {
-    console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", mouse=" + mouse);
-    return (actionMouse !== -1 &&
-      (event.button === FLAG_MOUSE_LEFT   && actionMouse === FLAG_MOUSE_LEFT) ||
-      (event.button === FLAG_MOUSE_MIDDLE && actionMouse === FLAG_MOUSE_MIDDLE) ||
-      (event.button === FLAG_MOUSE_RIGHT  && actionMouse === FLAG_MOUSE_RIGHT)
+  function mousePressed(event, mouse) {
+    console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", actionMouse=" + mouse);
+    return (mouse !== -1 &&
+      (event.button === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
+      (event.button === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||
+      (event.button === FLAG_MOUSE_RIGHT  && mouse === FLAG_MOUSE_RIGHT)
     );
   }
 
