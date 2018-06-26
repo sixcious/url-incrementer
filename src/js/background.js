@@ -153,7 +153,7 @@ URLI.Background = function () {
   function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
     if (details.reason === "install") {
-      console.log("URLI DEBUG: installedListener() new install");
+      //console.log("URLI DEBUG: installedListener() new install");
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.runtime.openOptionsPage();
@@ -162,7 +162,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.1: Remove declarativeContent if internal shortcuts not enabled (this was erroneously set for download and enhanced mode):
     else if (details.reason === "update" && details.previousVersion === "5.1") {
-      console.log("URLI DEBUG: installedListener() update previousVersion=" + details.previousVersion);
+      //console.log("URLI DEBUG: installedListener() update previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         if (olditems && !olditems.permissionsInternalShortcuts) {
           chrome.permissions.remove({ permissions: ["declarativeContent"]});
@@ -175,7 +175,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
     else if (details.reason === "update" && details.previousVersion <= "5.0") {
-      console.log("URLI DEBUG: installedListener() update previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
+      //console.log("URLI DEBUG: installedListener() update previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
           chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
@@ -208,7 +208,7 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    console.log("URLI DEBUG: messageListener() request=" + request + " sender=" + sender);
+    //console.log("URLI DEBUG: messageListener() request=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
@@ -295,7 +295,7 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
+    //console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
     if (changeInfo.status === "loading") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)

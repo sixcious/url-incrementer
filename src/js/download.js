@@ -79,7 +79,7 @@ URLI.Download = function () {
           break;
       }
     } catch (e) {
-      console.log("URLI DEBUG: findDownloadURLs() Exception Caught:" + e);
+      //console.log("URLI DEBUG: findDownloadURLs() Exception Caught:" + e);
       results = [];
     }
     return results;
@@ -106,7 +106,7 @@ URLI.Download = function () {
         extension = "",
         attribute = "",
         tag = "";
-    console.log("URLI DEBUG: findDownloadURLsBySelector() Found " + elements.length + " element(s)");
+    //console.log("URLI DEBUG: findDownloadURLsBySelector() Found " + elements.length + " element(s)");
     for (let element of elements) {
       for (let urlattribute of URL_ATTRIBUTES) {
         if (element[urlattribute]) {

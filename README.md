@@ -28,14 +28,16 @@ Also, URLI the original extension mascot, is now back for good. If you only use 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 What's New in Version 5.2 (6/25/2018)
-- IMPROVED: Increment Decrement selection algorithm to find the last prefix = or / instead of the first prefix = or / (the last one is more often than not the one we usually want to increment!)
-- IMPROVED: For new users only: Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
-- IMPROVED: No longer saving Download optional filters: includes, excludes, min, and max MB since these are very situational filters that vary from site to site
-- BUG FIX: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the updated tab URL
-- CHROME BUG FIX: More permissions bug fixes: There was a bug with the permissions that happened in very rare circumstances. If you encountered any issues with downloading only working "once" or with the Internal Shortcuts not working at all, please try disabling and re-enabling it again in the Options and the issue should be resolved so that it works properly (Apologies for the inconvenience, this time it was a bug with the Chrome/Chromium permissions, not URLI!)
+- Improved increment decrement prefixes selection to find the last prefix = or / instead of the first one = or /
+- Increased Error Skip max value to 20 times
+- Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
+- Internal Shortcuts modifier keys by themselves can no longer be used as shortcuts (e.g. only assigning the Shift key) since this causes a lot of headaches with keeping track of weird modifier-only combo shortcuts (e.g. assigning just Ctrl + Shift) and how KeyboardEvent.code differentiates between left and right modifiers (e.g. AltLeft and AltRight)
+- No longer saving Download optional filters: includes, excludes, min, and max MB since these are very situational filters that vary from site to site
+- Bug Fix: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the updated tab URL
+- More permissions bug fixes: There was a bug with the permissions that happened in rare circumstances. If you encountered any issues with downloading only working "once" or with the Internal Shortcuts not working at all, please try disabling and re-enabling it again in the Options and the issue should be resolved so that it works properly (Apologies for the inconvenience, this time it was a bug with the Chrome/Chromium permissions, not URLI!)
 
 What's New in Version 5.1 (6/14/18)
-- BUG FIX: Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
+- Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
 
 What's New in Version 5.0 (6/13/18)
 - NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! Icons are 2x AA compatible. And URLI, the extension mascot from 1.0 / 2.0 is back in a prominent role!

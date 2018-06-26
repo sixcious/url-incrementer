@@ -10,11 +10,11 @@ var URLI = URLI || {};
 URLI.Options = function () {
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
-        FLAG_KEY_NONE = 0x0, // 0000
-        FLAG_KEY_ALT = 0x1, // 0001
-        FLAG_KEY_CTRL = 0x2, // 0010
+        FLAG_KEY_NONE  = 0x0, // 0000
+        FLAG_KEY_ALT   = 0x1, // 0001
+        FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
-        FLAG_KEY_META = 0x8, // 1000
+        FLAG_KEY_META  = 0x8, // 1000
         KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
           "Alt", "AltLeft", "AltRight",
           "Control", "ControlLeft", "ControlRight",
@@ -96,7 +96,7 @@ URLI.Options = function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 10) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
+    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 20) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
@@ -197,6 +197,7 @@ URLI.Options = function () {
    * @private
    */
   function changeIconColor() {
+    // Possible values may be: dark, light, rainbow, or urli
     chrome.browserAction.setIcon({
       path : {
         "16": "/img/icons/" + this.value + "/16.png",
@@ -243,7 +244,7 @@ URLI.Options = function () {
    * @private
    */
   function setKey(event) {
-    // Set key [0] as the event modifiers OR'd together and [1] as the key code
+    // Set key [0] as the event modifiers OR'd together and [1] as the event key code
     key = [
       (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
       (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
@@ -263,16 +264,15 @@ URLI.Options = function () {
   function writeInput(input, key) {
     // Write the input value based on the key event modifier bits and key code
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
-    // Note2: If the key code is in the KEY_MODIFIER_CODE_MAP (e.g. Alt, Ctrl), it is not written a second time
-    let text = "",
-      keyPressed = false;
+    // Note2: If the key code is in the KEY_MODIFIER_CODE_ARRAY (e.g. Alt, Ctrl), it is not written a second time
+    let text = "";
     if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
-      if ((key[0] & FLAG_KEY_ALT))        {                                    text += "Alt";   keyPressed = true; }
-      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { if (keyPressed) { text += " + "; } text += "Ctrl";  keyPressed = true; }
-      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { if (keyPressed) { text += " + "; } text += "Shift"; keyPressed = true; }
-      if ((key[0] & FLAG_KEY_META)  >> 3) { if (keyPressed) { text += " + "; } text += "Meta";  keyPressed = true; }
-      if (key[1] && !KEY_MODIFIER_CODE_ARRAY.includes(key[1])) { if (keyPressed) { text += " + "; } text += key[1]; }
+      if ((key[0] & FLAG_KEY_ALT))        { text += "Alt + ";   }
+      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl + ";  }
+      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { text += "Shift + "; }
+      if ((key[0] & FLAG_KEY_META)  >> 3) { text += "Meta + ";  }
+      if (key[1] && !KEY_MODIFIER_CODE_ARRAY.includes(key[1])) { text += key[1]; }
     }
     input.value = text;
   }
@@ -357,7 +357,7 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          console.log("URLI DEBUG: resetOptions() Removing permissions...");
+          //console.log("URLI DEBUG: resetOptions() Removing permissions...");
           URLI.Permissions.removeAllPermissions();
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
           populateValuesFromStorage("all");

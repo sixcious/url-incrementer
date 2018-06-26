@@ -9,19 +9,10 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = function () {
 
-  const FLAG_KEY_ALT = 0x1, // 0001
-        FLAG_KEY_CTRL = 0x2, // 0010
+  const FLAG_KEY_ALT   = 0x1, // 0001
+        FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
-        FLAG_KEY_META = 0x8, // 1000
-        FLAG_MOUSE_LEFT = 0x0, // 00
-        FLAG_MOUSE_MIDDLE = 0x1, // 01
-        FLAG_MOUSE_RIGHT = 0x2, // 10
-        KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
-          "Alt", "AltLeft", "AltRight",
-          "Control", "ControlLeft", "ControlRight",
-          "Shift", "ShiftLeft", "ShiftRight",
-          "Meta", "MetaLeft", "MetaRight"
-        ];
+        FLAG_KEY_META  = 0x8; // 1000
 
   let items_ = {}; // storage items cache
 
@@ -79,17 +70,16 @@ URLI.Shortcuts = function () {
    * @private
    */
   function keyPressed(event, key) {
-    console.log("URLI DEBUG: shortcuts.js keyPressed() event.code=" + event.code + ", actionKey=" + key);
-    return (key && key.length !== 0 && (event.code === key[1]) && (
-       !(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
+    //console.log("URLI DEBUG: URLI.Shortcuts keyPressed() event.code=" + event.code + ", actionKey=" + key);
+    return key && key.length !== 0 && event.code === key[1] &&
+      (!(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
        !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
        !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3))
-    );
+       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3));
   }
 
   /**
-   * Checks if the mouse button was pressed by comparing the event against the flags.
+   * Checks if the mouse button was pressed.
    * 
    * @param event the mouse event
    * @param mouse the action mouse button to check (e.g. increment shortcut mouse button)
@@ -97,12 +87,8 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    console.log("URLI DEBUG: shortcuts.js mousePressed() event.button=" + event.button + ", actionMouse=" + mouse);
-    return (mouse !== -1 &&
-      (event.button === FLAG_MOUSE_LEFT   && mouse === FLAG_MOUSE_LEFT) ||
-      (event.button === FLAG_MOUSE_MIDDLE && mouse === FLAG_MOUSE_MIDDLE) ||
-      (event.button === FLAG_MOUSE_RIGHT  && mouse === FLAG_MOUSE_RIGHT)
-    );
+    //console.log("URLI DEBUG: URLI.Shortcuts mousePressed() event.button=" + event.button + ", actionMouse=" + mouse);
+    return event.button === mouse;
   }
 
   // Return Public Functions
@@ -116,7 +102,7 @@ URLI.Shortcuts = function () {
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
+    //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.sendMessage() response.instance=" + response.instance);
     URLI.Shortcuts.setItems(items);
     // Key
     if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
@@ -131,7 +117,7 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
+  //console.log("URLI DEBUG: URLI.Shortcuts.chrome.runtime.onMessage() request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);

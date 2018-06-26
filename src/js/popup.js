@@ -494,7 +494,7 @@ URLI.Popup = function () {
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    console.log("URLI DEBUG: inputUpdateDownloadPreview() About to clearTimeout and setTimeout");
+    //console.log("URLI DEBUG: inputUpdateDownloadPreview() About to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
@@ -598,7 +598,7 @@ URLI.Popup = function () {
           // [1] Interval Errors
           interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
           // [2] Error Skip Errors
-          errorSkip < 0 || errorSkip > 10 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+          errorSkip < 0 || errorSkip > 20 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
         ],
         // Auto Errors
         autoErrors = [

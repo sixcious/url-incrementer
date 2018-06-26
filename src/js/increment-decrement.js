@@ -45,7 +45,7 @@ URLI.IncrementDecrement = function () {
           malas = relas.exec(url),
           mafir = refir.exec(url),
           macus = recus ? recus.exec(url) : undefined;
-    console.log("URLI DEBUG: findSelection() matches: ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
+    //console.log("URLI DEBUG: findSelection() matches: ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
               mater ? {selection: mater[1], selectionStart: mater.index + 1} :
@@ -129,7 +129,7 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status < 400) ||
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status < 500) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status < 600))) {
-          console.log("URLI DEBUG: modifyURLAndSkipErrors() Attempting to skip this URL because response.status was in errorCodes");
+          //console.log("URLI DEBUG: modifyURLAndSkipErrors() Attempting to skip this URL because response.status was in errorCodes");
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
             chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
@@ -137,12 +137,12 @@ URLI.IncrementDecrement = function () {
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncoutnered to true
           modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
         } else {
-          console.log("URLI DEBUG: modifyURLAndSkipErrors() Not attempting to skip this URL because response.status was not in errorCodes. Aborting and updating tab");
+          //console.log("URLI DEBUG: modifyURLAndSkipErrors() Not attempting to skip this URL because response.status was not in errorCodes. Aborting and updating tab");
           chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
         }
       });
     } else {
-      console.log("URLI DEBUG: modifyURLAndSkipErrors() " + (origin !== urlOrigin ? "The instance's URL origin does not match this page's URL origin" : "We have exhausted the errorSkip attempts"));
+      //console.log("URLI DEBUG: modifyURLAndSkipErrors() " + (origin !== urlOrigin ? "The instance's URL origin does not match this page's URL origin" : "We have exhausted the errorSkip attempts"));
       chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
     }
   }
