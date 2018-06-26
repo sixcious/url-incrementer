@@ -107,6 +107,10 @@ input[type="image"]:focus {
   padding-bottom: 0;
 }
 
+#error-skip-checkboxes {
+  margin-top: 8px;
+}
+
 #error-skip-checkboxes div.column {
   padding: 4px 4px 4px 0;
 }
@@ -115,8 +119,12 @@ input[type="image"]:focus {
   padding: 0;
 }
 
-#error-skip-description-p {
-  margin-bottom: 2em;
+#error-skip-description {
+  display: inline;
+  border-bottom: 1px dotted #333;
+  margin-left: 4px;
+  padding-bottom: 2px;
+  font-style: italic;
 }
 
 /* selection-custom  */
