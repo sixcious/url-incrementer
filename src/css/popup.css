@@ -280,6 +280,8 @@ div.column#download-strategy, div.column#download-optional {
   position: absolute;
   right: 8px;
   top: 4px;
+  border-bottom: 1px dotted #333333;
+  padding-bottom: 1px;
 }
 
 div.column#download-optional {

@@ -296,7 +296,7 @@ URLI.Background = function () {
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
     //console.log("URLI DEBUG: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
-    if (changeInfo.status === "loading") {
+    if (changeInfo.status === "complete") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {

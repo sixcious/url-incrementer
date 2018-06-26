@@ -17,7 +17,7 @@ Features:
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Error Skipping... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
-** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader." It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
+** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (batch downloader)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 URLI 5.0 and a personal apology to you ...
 
@@ -27,8 +27,8 @@ Also, URLI the original extension mascot, is now back for good. If you only use 
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's New in Version 5.2 (6/25/2018)
-- Improved increment decrement prefixes selection to find the last prefix = or / instead of the first one = or /
+What's New in Version 5.2 (6/26/2018)
+- Improved increment decrement prefixes selection to find the last = / instead of the first = /
 - Increased Error Skip max value to 20 times
 - Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
 - Internal Shortcuts modifier keys by themselves can no longer be used as shortcuts (e.g. only assigning the Shift key) since this causes a lot of headaches with keeping track of weird modifier-only combo shortcuts (e.g. assigning just Ctrl + Shift) and how KeyboardEvent.code differentiates between left and right modifiers (e.g. AltLeft and AltRight)
