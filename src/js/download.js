@@ -11,7 +11,7 @@ URLI.Download = function () {
 
   // A list of all attributes that can contain URLs
   // @see https://stackoverflow.com/a/2725168
-  const URL_ATTRIBUTES = ["src", "href", "poster", "codebase", "cite", "action", "background", "longdesc", "usemap", "formaction", "icon"];
+  const URL_ATTRIBUTES = ["href", "src", "action", "poster", "codebase", "cite", "background", "longdesc", "usemap", "classid", "data", "manifest", "formaction", "icon"];
 
   /**
    * Finds all URLs, extensions, tags, and attributes on the page to build a download preview.
@@ -111,7 +111,6 @@ URLI.Download = function () {
       for (let urlattribute of URL_ATTRIBUTES) {
         if (element[urlattribute]) {
           url = element[urlattribute];
-          attribute = urlattribute;
           if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
             extension = findExtension(url);
             // Special Restriction (Extensions)
@@ -123,6 +122,7 @@ URLI.Download = function () {
             if (strategy === "tags" && (!tag || !tags.includes(tag))) {
               continue;
             }
+            attribute = urlattribute;
             // Special Restriction (Attributes)
             if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
               continue;
