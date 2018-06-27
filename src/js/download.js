@@ -14,17 +14,19 @@ URLI.Download = function () {
   const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap"];
 
   /**
-   * Finds all URLs, extensions, tags, and attributes on the page to build a download preview.
+   * Finds the current page URL and all URLs, extensions, tags, and attributes on the page to build a
+   * download preview.
    *
    * @returns {*} results, the array of all URLs items, all extensions, all tags, and all attributes
    * @public
    */
   function previewDownloadURLs() {
-    const  allURLs = findDownloadURLs("all"),
+    const  pageURL = findPageURL(),
+           allURLs = findDownloadURLs("all"),
            allExtensions = findProperties(allURLs, "extension"),
            allTags = findProperties(allURLs, "tag"),
            allAttributes = findProperties(allURLs, "attribute");
-    return { "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
+    return { "pageURL": pageURL, "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
   }
 
   /**
@@ -70,9 +72,7 @@ URLI.Download = function () {
           results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes);
           break;
         case "page":
-          const url = document.location.href,
-                extension = findExtension(url);
-          results = [{ "url": url, "extension": extension, "tag": "", "attribute": ""}];
+          results = findPageURL(includes, excludes);
           break;
         default:
           results = [];
@@ -133,6 +133,24 @@ URLI.Download = function () {
       }
     }
     return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
+  }
+
+  /**
+   * Finds the current web page's URL.
+   *
+   * @param includes (optional) the array of Strings that must be included in the URL
+   * @param excludes (optional) the array of Strings that must be excluded from the URL
+   * @returns {*} results, the array of results
+   * @private
+   */
+  function findPageURL(includes, excludes) {
+    const url = document.location.href,
+      extension = findExtension(url);
+    if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+      return [{"url": url, "extension": extension, "tag": "", "attribute": ""}];
+    } else {
+      return [];
+    }
   }
 
   /**

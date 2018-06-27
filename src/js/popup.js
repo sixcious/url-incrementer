@@ -391,9 +391,9 @@ URLI.Popup = function () {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
         // @see https://stackoverflow.com/a/21988249
-        const selecteds = results[0],
-              unselecteds = downloadStrategy === "page" ? [] :
-                downloadPreviewAlls.allURLs.filter(function(obj) {
+        const alls = downloadStrategy !== "page" ? downloadPreviewAlls.allURLs : downloadPreviewAlls.pageURL,
+              selecteds = results[0],
+              unselecteds = alls.filter(function(obj) {
                 return !selecteds.some(function(obj2) {
                   return obj.url === obj2.url;
                 });
