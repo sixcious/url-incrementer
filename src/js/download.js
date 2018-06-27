@@ -9,9 +9,9 @@ var URLI = URLI || {};
 
 URLI.Download = function () {
 
-  // A list of all attributes that can contain URLs
+  // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
   // @see https://stackoverflow.com/a/2725168
-  const URL_ATTRIBUTES = ["href", "src", "action", "poster", "codebase", "cite", "background", "longdesc", "usemap", "classid", "data", "manifest", "formaction", "icon"];
+  const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap"];
 
   /**
    * Finds all URLs, extensions, tags, and attributes on the page to build a download preview.

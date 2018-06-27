@@ -557,6 +557,12 @@ URLI.Popup = function () {
    * @private
    */
   function setup() {
+    // This if covers a rare case: In case the user tries accepting and the previously selected property is not currently in the checkbox values and they did not make any changes to the checkboxes to update the values, this ensures it updates to exactly what's currently checked in the checkboxes
+    if (DOM["#download-toggle-input"].checked) {
+      if (DOM["#download-strategy-select"].value === "extensions") { translateCheckboxValuesToHiddenInput("#download-extensions input", "#download-extensions-generated"); }
+      if (DOM["#download-strategy-select"].value === "tags") {       translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); }
+      if (DOM["#download-strategy-select"].value === "attributes") { translateCheckboxValuesToHiddenInput("#download-attributes input", "#download-attributes-generated"); }
+    }
     const url = DOM["#url-textarea"].value,
         selection = DOM["#selection-input"].value,
         selectionStart = +DOM["#selection-start-input"].value,
