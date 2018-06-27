@@ -97,7 +97,7 @@ URLI.Permissions = function () {
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
           if (removed) {
-            //console.log("URLI DEBUG: requestPermissions() successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+            //console.log("URLI DEBUG: removePermissions() successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
           }
         });
       } else if (PERMISSIONS[permission].requestConflict) {

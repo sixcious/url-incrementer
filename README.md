@@ -19,7 +19,7 @@ Features:
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (batch downloader)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-URLI 5.0 and a personal apology to you ...
+URLI 5 and a personal apology to you ...
 
 If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you! I tried to go back to URLI's roots in 5.0.
 I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to use as that version out of the box, while still adding as much incrementing functionality I could.
@@ -27,31 +27,30 @@ Also, URLI the original extension mascot, is now back for good. If you only use 
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's New in Version 5.2 (6/26/2018)
-- Improved increment decrement prefixes selection to find the last = / instead of the first = /
-- Increased Error Skip max value to 20 times
-- Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl
-- Internal Shortcuts modifier keys by themselves can no longer be used as shortcuts (e.g. only assigning the Shift key) since this causes a lot of headaches with keeping track of weird modifier-only combo shortcuts (e.g. assigning just Ctrl + Shift) and how KeyboardEvent.code differentiates between left and right modifiers (e.g. AltLeft and AltRight)
-- No longer saving Download optional filters: includes, excludes, min, and max MB since these are very situational filters that vary from site to site
-- Bug Fix: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the updated tab URL
+What's New in Version 5.2 (6/28/2018)
+- Improved increment decrement prefixes selection to find the last = or / instead of the first = or / (the last one is usually the one we want to increment!)
+- Increased Error Skip max value to 100 times, but also added warning about using high values ("Too Many Requests")
+- Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl (sorry for the awkward defaults!)
+- Internal Shortcuts are back to how they worked; modifier keys by themselves can no longer be used as shortcuts (Apologies, but hopefully no one was doing this anyway!)
+- Bug Fix: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the next URL
 - More permissions bug fixes: There was a bug with the permissions that happened in rare circumstances. If you encountered any issues with downloading only working "once" or with the Internal Shortcuts not working at all, please try disabling and re-enabling it again in the Options and the issue should be resolved so that it works properly (Apologies for the inconvenience, this time it was a bug with the Chrome/Chromium permissions, not URLI!)
 
 What's New in Version 5.1 (6/14/18)
-- Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
+- Bug Fix: Fixed a permissions bug that affected you if you had Internal Shortcuts enabled in Version 4. The permissions and options are now reset when you update to 5.1 to ensure a clean slate! (Sorry for the inconvenience!)
 
 What's New in Version 5.0 (6/13/18)
-- NEW Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! Icons are 2x AA compatible. And URLI, the extension mascot from 1.0 / 2.0 is back in a prominent role!
-- NEW Auto Increment function: Supports Multiple Tabs at the same time and it also has Pause/Resume functionality. No permissions needed. Create your own webpage slideshows on YOUR terms!
-- NEW Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." Has a preview table with loads of options and filters! This feature is completely optional (opt-in) and requires your permissions to enable it.
-- NEW Error Skipping feature: URLI can now check if the next URL will return an HTTP error code (like 404 Page Not Found) and increment again, skipping it (up to 10 times). Supports 404, 3XX Redirects, 4XX Client Errors, and 5XX Server Errors.
-- MANY options added: Change the extension icon to match your toolbar theme, adjust the button sizes (up to 64px!), get icon feedback when incrementing, and add Next Prev buttons to the Popup UI (...only if you want to!)
-- MANY convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, better support for selecting the part of the URL (now includes touch support for tablet devices!), and a new Reset Options Button has been added
-- IMPROVED Increment Decrement selection algorithm to first look for common URL parameters like "page=" so the number pre-selected by URLI is more likely to be "correct"
-- IMPROVED Next Prev functionality by a 1000% for MUCH better link accuracy
-- IMPROVED Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys by themselves as shortcuts (e.g. not that you should, but the Shift key can be used by itself now)
-- IMPROVED Permissions: Permissions for features (Internal Shortcuts, Download, Enhanced) are now modularized and separated so you can grant and enable only the features you want to
-- IMPROVED Internal code: Better tab instance memory management + numerous minor bugfixes
-- NOTE: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
+- New Look: New extension icon and more intuitive, color-coded circle buttons that match URLI's early versions! Icons are 2x AA compatible. And URLI, the extension mascot from 1.0 / 2.0 is back in a prominent role!
+- New Auto Increment function: Supports Multiple Tabs at the same time and it also has Pause/Resume functionality. No permissions needed. Create your own webpage slideshows on YOUR terms!
+- New Download Increment function [Experimental]: Added to URLI so that with Auto, you can have your own "Auto Incrementer Downloader." Has a preview table with loads of options and filters! This feature is completely optional (opt-in) and requires your permissions to enable it.
+- New Error Skipping feature: URLI can now check if the next URL will return an HTTP error code (like 404 Page Not Found) and increment again, skipping it (up to 10 times). Supports 404, 3XX Redirects, 4XX Client Errors, and 5XX Server Errors.
+- Many options added: Change the extension icon to match your toolbar theme, adjust the button sizes (up to 64px!), get icon feedback when incrementing, and add Next Prev buttons to the Popup UI (...only if you want to!)
+- Many convenience enhancements: Now saves changes you make in Popup UI, automatically brings up the Setup panel if the URL hasn't been setup, better support for selecting the part of the URL (now includes touch support for tablet devices!), and a new Reset Options Button has been added
+- Improved Increment Decrement selection algorithm to first look for common URL parameters like "page=" so the number pre-selected by URLI is more likely to be "correct"
+- Improved Next Prev functionality by a 1000% for MUCH better link accuracy
+- Improved Internal Shortcuts: Updated KeyboardEvent: "keyCode" to "code" and MouseEvent: "which" to "button" and also now supports modifier keys by themselves as shortcuts (e.g. not that you should, but the Shift key can be used by itself now)
+- Improved Permissions: Permissions for features (Internal Shortcuts, Download, Enhanced) are now modularized and separated so you can grant and enable only the features you want to
+- Improved Internal code: Better tab instance memory management + numerous minor bugfixes
+- Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
 
 Special Thanks:
 NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Concept), Blue / Will / Adam C (Feedback)

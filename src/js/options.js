@@ -96,7 +96,7 @@ URLI.Options = function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 20) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
+    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);

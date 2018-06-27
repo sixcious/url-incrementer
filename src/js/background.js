@@ -167,10 +167,6 @@ URLI.Background = function () {
         if (olditems && !olditems.permissionsInternalShortcuts) {
           chrome.permissions.remove({ permissions: ["declarativeContent"]});
         }
-        // Reset download filters in storage to empty/null values so they are no longer being used anymore:
-        chrome.storage.sync.set({
-          "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null
-        });
       });
     }
     // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
