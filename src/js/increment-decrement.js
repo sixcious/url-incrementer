@@ -34,7 +34,7 @@ URLI.IncrementDecrement = function () {
    */
   function findSelection(url, preference, custom) {
     // Regular Expressions:
-    const reter = /(?<=page|pid|p|next)=(\d+)/, // RegExp to find numbers with more common terms like "page="
+    const reter = /(?<=page|pid|p|next|id)=(\d+)/, // RegExp to find numbers with more common terms like "page="
           repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
           relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
           refir = /\d+/, // RegExg to find the first number in the url
