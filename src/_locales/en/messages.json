@@ -137,7 +137,7 @@
   "popup_settings_can_overwrite_label": { "message": "Allow Popup UI settings to overwrite these settings" },
   "increment_decrement_settings_h3": { "message": "Increment Decrement Settings" },
   "increment_decrement_settings_p": { "message": "Change the way URLI pre-selects the number to increment and other options. You can set a couple of these options in the Popup UI too." },
-  "selection_option_prefixes": { "message": "Select numbers in the URL with prefixes like =123 and /456" },
+  "selection_option_prefixes": { "message": "Select numbers in the URL with prefixes like page=1" },
   "selection_option_lastnumber": { "message": "Select the last number in the URL" },
   "selection_option_firstnumber": { "message": "Select the first number in the URL" },
   "selection_option_custom": { "message": "Use a custom JavaScript regular expression" },

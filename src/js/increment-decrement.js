@@ -34,36 +34,42 @@ URLI.IncrementDecrement = function () {
    */
   function findSelection(url, preference, custom) {
     // Regular Expressions:
-    const reter = /(?<=page|pid|p|next|id)=(\d+)/, // RegExp to find numbers with more common terms like "page="
+    const repag = /(?<=page)=(\d+)/, // RegExp to find a number with "page="
+          reter = /(?<=pid|p|next|id)=(\d+)/, // RegExp to find numbers with common terms like "id="
           repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
           relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
           refir = /\d+/, // RegExg to find the first number in the url
           recus = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined, // RegExp Custom (if set by user)
     // Matches:
+          mapag = repag.exec(url),
           mater = reter.exec(url),
           mapre = repre.exec(url),
           malas = relas.exec(url),
           mafir = refir.exec(url),
           macus = recus ? recus.exec(url) : undefined;
-    //console.log("URLI DEBUG: findSelection() matches: ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
+    //console.log("URLI DEBUG: findSelection() matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
+              mapag ? {selection: mapag[1], selectionStart: mapag.index + 1} :
               mater ? {selection: mater[1], selectionStart: mater.index + 1} :
               mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               malas ? {selection: malas[0], selectionStart: malas.index} :
               {selection: "", selectionStart: -1} :
            preference === "lastnumber" ?
               malas ? {selection: malas[0], selectionStart: malas.index} :
+              mapag ? {selection: mapag[1], selectionStart: mapag.index + 1} :
               mater ? {selection: mater[1], selectionStart: mater.index + 1} :
               mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "firstnumber" ?
               mafir ? {selection: mafir[0], selectionStart: mafir.index} :
+              mapag ? {selection: mapag[1], selectionStart: mapag.index + 1} :
               mater ? {selection: mater[1], selectionStart: mater.index + 1} :
               mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               {selection: "", selectionStart: -1} :
            preference === "custom" ?
               macus && macus[custom.group] ? {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index} :
+              mapag ? {selection: mapag[1], selectionStart: mapag.index + 1} :
               mater ? {selection: mater[1], selectionStart: mater.index + 1} :
               mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
               malas ? {selection: malas[0], selectionStart: malas.index} :
