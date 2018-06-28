@@ -126,14 +126,14 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
-      console.log("URLI DEBUG: incrementDecrementSkipErrors() Performing error skipping...");
+      //console.log("URLI DEBUG: incrementDecrementSkipErrors() Performing error skipping...");
       chrome.tabs.executeScript(instance.tabId, {
         file: "js/increment-decrement.js",
         runAt: "document_start"
       }, function () {
         // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
         if (chrome.runtime.lastError) {
-          console.log("URLI DEBUG: incrementDecrementSkipErrors() chrome.runtime.lastError:" + chrome.runtime.lastError.message);
+          //console.log("URLI DEBUG: incrementDecrementSkipErrors() chrome.runtime.lastError:" + chrome.runtime.lastError.message);
           return incrementDecrement(instance, action, caller, callback);
         }
         const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
