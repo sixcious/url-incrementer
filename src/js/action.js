@@ -87,7 +87,7 @@ URLI.Action = function () {
   }
 
   /**
-   * Performs an increment or decrement action. Also handles error skipping.
+   * Performs an increment or decrement action.
    * 
    * @param instance the instance for this tab
    * @param action   the action (increment or decrement)
@@ -113,7 +113,7 @@ URLI.Action = function () {
   }
 
   /**
-   * Performs an increment or decrement action while skipping errors.
+   * Performs an increment or decrement action while also skipping errors.
    *
    * @param instance the instance for this tab
    * @param action   the action (increment or decrement)
