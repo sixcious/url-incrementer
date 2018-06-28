@@ -145,7 +145,7 @@ URLI.Download = function () {
    */
   function findPageURL(includes, excludes) {
     const url = document.location.href,
-      extension = findExtension(url);
+          extension = findExtension(url);
     if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
       return [{"url": url, "extension": extension, "tag": "", "attribute": ""}];
     } else {

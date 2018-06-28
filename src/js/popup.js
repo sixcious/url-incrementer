@@ -27,7 +27,7 @@ URLI.Popup = function () {
 
   let instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
-      downloadPreviewAlls = { "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
+      downloadPreviewAlls = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
       timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
 
   /**

@@ -54,7 +54,11 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
-        actionPerformed = incrementDecrement(instance, action, caller, callback);
+        if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
+          actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
+        } else {
+          actionPerformed = incrementDecrement(instance, action, caller, callback);
+        }
         break;
       case "next":
       case "prev":
@@ -96,27 +100,49 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
-      // Handle Error Skipping:
-      if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
-        //console.log("URLI DEBUG: incrementDecrement() Performing error skipping...");
-        chrome.tabs.executeScript(instance.tabId, {file: "js/increment-decrement.js", runAt: "document_start"}, function() {
-          const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
-            JSON.stringify(action) + ", " +
-            JSON.stringify(instance) + ", " +
-            JSON.parse(instance.errorSkip) + ");";
-          // No callback because this will be executing async code and then sending a message back to the background
-          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-        });
-      } else {
-        let urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
-        instance.url = urlProps.urlmod;
-        instance.selection = urlProps.selectionmod;
-        chrome.tabs.update(instance.tabId, {url: instance.url});
-        if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-          URLI.Background.setInstance(instance.tabId, instance);
-        }
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      let urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      instance.url = urlProps.urlmod;
+      instance.selection = urlProps.selectionmod;
+      chrome.tabs.update(instance.tabId, {url: instance.url});
+      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+        URLI.Background.setInstance(instance.tabId, instance);
       }
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+    }
+    return actionPerformed;
+  }
+
+  /**
+   * Performs an increment or decrement action while skipping errors.
+   *
+   * @param instance the instance for this tab
+   * @param action   the action (increment or decrement)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
+  function incrementDecrementSkipErrors(instance, action, caller, callback) {
+    let actionPerformed = false;
+    // If URLI didn't find a selection, we can't increment or decrement
+    if (instance.selection !== "" && instance.selectionStart >= 0) {
+      actionPerformed = true;
+      console.log("URLI DEBUG: incrementDecrementSkipErrors() Performing error skipping...");
+      chrome.tabs.executeScript(instance.tabId, {
+        file: "js/increment-decrement.js",
+        runAt: "document_start"
+      }, function () {
+        // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+        if (chrome.runtime.lastError) {
+          console.log("URLI DEBUG: incrementDecrementSkipErrors() chrome.runtime.lastError:" + chrome.runtime.lastError.message);
+          return incrementDecrement(instance, action, caller, callback);
+        }
+        const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
+          JSON.stringify(action) + ", " +
+          JSON.stringify(instance) + ", " +
+          JSON.parse(instance.errorSkip) + ");";
+        // No callback because this will be executing async code and then sending a message back to the background
+        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+      });
     }
     return actionPerformed;
   }
