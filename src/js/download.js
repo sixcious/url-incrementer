@@ -10,8 +10,8 @@ var URLI = URLI || {};
 URLI.Download = function () {
 
   // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
-  // @see https://stackoverflow.com/a/2725168
-  const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap"];
+  // List derived from Daniel DiPaolo @ stackoverflow.com @see https://stackoverflow.com/a/2725168
+  const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap", "style"];
 
   /**
    * Finds the current page URL and all URLs, extensions, tags, and attributes on the page to build a
@@ -110,7 +110,11 @@ URLI.Download = function () {
     for (let element of elements) {
       for (let urlattribute of URL_ATTRIBUTES) {
         if (element[urlattribute]) {
-          url = element[urlattribute];
+          if (urlattribute === "style") {
+            url = extractURLFromStyle(element.style);
+          } else {
+            url = element[urlattribute];
+          }
           if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
             extension = findExtension(url);
             // Special Restriction (Extensions)
@@ -232,6 +236,36 @@ URLI.Download = function () {
    */
   function isValidExtension(extension) {
     return extension && extension.trim() !== "" && /^[a-z0-9]+$/i.test(extension) && extension.length <= 8;
+  }
+
+  /**
+   * Finds the URL from a CSS style.
+   * Regex to find the URL from a CSS style is by Alex Z @ stackoverflow.com
+   * Style properties that can have URLs is by Chad Scira et all @ stackoverflow.com
+   *
+   * @param style the CSS style
+   * @returns {string} the URL extracted from the style, if it exists
+   * @see https://stackoverflow.com/a/34166861
+   * @see https://stackoverflow.com/q/24730939
+   * @private
+   */
+  function extractURLFromStyle(style) {
+    let url = "";
+    if (style) {
+      const URL_STYLE_PROPERTIES =  ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
+            regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
+      for (let property of URL_STYLE_PROPERTIES) {
+        if (style[property]) {
+          const match = regex.exec(style[property]);
+          url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
+          if (url) {
+            //console.log("URLI DEBUG: URLI.Download.extractURLFromStyle() with style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
+            break;
+          }
+        }
+      }
+    }
+    return url;
   }
 
   // Return Public Functions
