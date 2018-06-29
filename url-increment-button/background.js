@@ -9,8 +9,7 @@ var URLIncrementButton = URLIncrementButton || {};
 
 URLIncrementButton.Background = function () {
   
-  const EXTENSION_ID = chrome.runtime.id,
-        URLI_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
+  const URLI_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
   
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to
@@ -21,7 +20,7 @@ URLIncrementButton.Background = function () {
    */
   function clickListener(tab) {
     //console.log("URLIncrementButton DEBUG: clickListener() tab.id=" + tab.id);
-    chrome.runtime.sendMessage(URLI_EXTENSION_ID, {"extensionId": EXTENSION_ID, "greeting": "performAction", "action": "increment", "tab": tab});
+    chrome.runtime.sendMessage(URLI_EXTENSION_ID, {"greeting": "performAction", "action": "increment", "tab": tab});
   }
 
   // Return Public Functions

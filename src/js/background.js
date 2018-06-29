@@ -241,7 +241,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Listen for external requests from external extensions: Increment and Decrement Buttons for URLI.
+   * Listen for external requests from external extensions: Increment Button and Decrement Button for URLI.
    *
    * @param request      the request containing properties to parse (e.g. greeting message)
    * @param sender       the sender who sent this message, with an identifying tabId
@@ -249,17 +249,15 @@ URLI.Background = function () {
    * @public
    */
   function messageExternalListener(request, sender, sendResponse) {
-    console.log("URLI DEBUG: messageExternalListener() request=" + request + " sender=" + sender);
-    const INCREMENT_BUTTON_EXTENSION_ID = "ooghmefnpfgimneadpaebkkbmdkbajdb",
-          DECREMENT_BUTTON_EXTENSION_ID = "lopoilhoadekogbaoakhkgmbmdlfmjjd";
+    //console.log("URLI DEBUG: messageExternalListener() request.action=" + request.action + " sender.id=" + sender.id);
+    const INCREMENT_BUTTON_EXTENSION_ID = "obmoblbenipafbppnhkjpecfmahjibio",
+          DECREMENT_BUTTON_EXTENSION_ID = "hpcdhobbbapkkjlninoiaablcanlmbga";
     if (sender && (sender.id === INCREMENT_BUTTON_EXTENSION_ID || sender.id === DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
           chrome.storage.sync.get(null, function(items) {
-            //let instance = getInstance(sender.tab.id);
             let instance = getInstance(request.tab.id);
             if (!instance && request.action !== "auto") {
-              //instance = buildInstance(sender.tab, items);
               instance = buildInstance(request.tab, items);
             }
             if (instance) {

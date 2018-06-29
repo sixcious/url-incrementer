@@ -5,7 +5,7 @@
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
 
-URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the buttons to increment. Or toggle on AUTO to auto-increment and start a webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can use URLI on image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
+URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
 - Auto Incrementing
@@ -14,6 +14,7 @@ Features:
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
+- "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Error Skipping... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
@@ -27,12 +28,14 @@ Also, URLI the original extension mascot, is now back for good. If you only use 
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's New in Version 5.2 (6/28/2018)
+What's New in Version 5.2 (6/30/2018)
+- New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!
 - Improved increment decrement prefixes selection to find the last = or / instead of the first = or / (the last one is usually the one we want to increment!)
-- Increased Error Skip max value to 100 times, but also added warning about using high values ("Too Many Requests")
+- Increased Error Skip max value from 10 to 100 times, but also added warning about using high values ("Too Many Requests")
 - Internal Shortcuts now have easier to press default modifiers Ctrl+Shift (like Chrome Shortcuts) instead of Alt+Ctrl (sorry for the awkward defaults!)
-- Internal Shortcuts are back to how they worked; modifier keys by themselves can no longer be used as shortcuts (Apologies, but hopefully no one was doing this anyway!)
-- Bug Fix: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure the preview is accurate for the next URL
+- Internal Shortcuts modifier keys by themselves can no longer be used as shortcuts due to unforeseen complexities that arise in modifier-only combinations (Apologies, but hopefully no one was doing this anyway!)
+- Download Preview can now find URLs in style properties like background-image
+- Bug Fix: When Download and Auto are both enabled and the Popup UI is still open, changed the download preview to only update when the tab has loaded completely to ensure no issues when the preview updates for the next URL
 - More permissions bug fixes: There was a bug with the permissions that happened in rare circumstances. If you encountered any issues with downloading only working "once" or with the Internal Shortcuts not working at all, please try disabling and re-enabling it again in the Options and the issue should be resolved so that it works properly (Apologies for the inconvenience, this time it was a bug with the Chrome/Chromium permissions, not URLI!)
 
 What's New in Version 5.1 (6/14/18)
