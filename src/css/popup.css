@@ -360,7 +360,7 @@ table {
   border-radius: 0;
   margin-bottom: 1rem;
   max-width: 512px;
-  max-height: 200px;
+  max-height: 256px;
   display: block;
   overflow: auto;
   word-break: break-all;

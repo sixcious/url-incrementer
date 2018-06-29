@@ -195,7 +195,7 @@
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_malfunctioning": { "message" : "i'M m4lfUnCt10n1Ng!" },
   "attributions_label": { "message": "Special Thanks" },
-  "attributions_content": { "message": "NickMWPrince & Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C. (Alphanumeric Idea), Blue / Will / Adam C (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), regex101.com (Regex Test), httpstat.us (Error Skip Test), Mike West (Dialogs), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
+  "attributions_content": { "message": "NickMWPrince & Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C. (Alphanumeric Idea), Blue / Will / Adam C (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skip Test), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
   "attributions_you": { "message": "... but most of all you for using URLI!" },
 
   "SHARED": { "message": "----- SHARED -----" },

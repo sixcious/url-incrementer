@@ -282,5 +282,5 @@ input[type="image"]:focus {
 
 /* Overrides generateAlert overlay styling so alert is displayed in gap space */
 #options .overlay {
-  top: 79%; /* initial */
+  top: 82%; /* initial */
 }
