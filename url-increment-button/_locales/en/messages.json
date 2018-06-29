@@ -1,0 +1,18 @@
+{
+  "name": {
+    "message": "Increment Button for URL Incrementer",
+    "description": "Extension name."
+  },
+  "short_name": {
+    "message": "Increment Button for URLI",
+    "description": "Extension short name."
+  },
+  "description": {
+    "message": "Increment [+] Button for your toolbar. Note: Requires URL Incrementer Extension 5.2 or higher to be installed.",
+    "description": "Extension description."
+  },
+  "title": {
+    "message": "Increment [+] the URL",
+    "description": "Extension title (tool tip) shown when hovered."
+  }
+}

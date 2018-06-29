@@ -241,6 +241,40 @@ URLI.Background = function () {
   }
 
   /**
+   * Listen for external requests from external extensions: Increment and Decrement Buttons for URLI.
+   *
+   * @param request      the request containing properties to parse (e.g. greeting message)
+   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
+   * @public
+   */
+  function messageExternalListener(request, sender, sendResponse) {
+    console.log("URLI DEBUG: messageExternalListener() request=" + request + " sender=" + sender);
+    const INCREMENT_BUTTON_EXTENSION_ID = "ooghmefnpfgimneadpaebkkbmdkbajdb",
+          DECREMENT_BUTTON_EXTENSION_ID = "lopoilhoadekogbaoakhkgmbmdlfmjjd";
+    if (sender && (sender.id === INCREMENT_BUTTON_EXTENSION_ID || sender.id === DECREMENT_BUTTON_EXTENSION_ID)) {
+      switch (request.greeting) {
+        case "performAction":
+          chrome.storage.sync.get(null, function(items) {
+            //let instance = getInstance(sender.tab.id);
+            let instance = getInstance(request.tab.id);
+            if (!instance && request.action !== "auto") {
+              //instance = buildInstance(sender.tab, items);
+              instance = buildInstance(request.tab, items);
+            }
+            if (instance) {
+              URLI.Action.performAction(instance, request.action, "external-extension");
+            }
+          });
+          break;
+        default:
+          break;
+      }
+      sendResponse({});
+    }
+  }
+
+  /**
    * Listen for commands (Browser Extension shortcuts) and perform the command's action.
    * 
    * @param command the shortcut command that was performed
@@ -313,6 +347,7 @@ URLI.Background = function () {
     setBadge: setBadge,
     installedListener: installedListener,
     messageListener: messageListener,
+    messageExternalListener: messageExternalListener,
     commandListener: commandListener,
     tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener
@@ -322,5 +357,6 @@ URLI.Background = function () {
 // Background Listeners
 chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
+chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
