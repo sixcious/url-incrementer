@@ -24,7 +24,7 @@ URLI 5 and a personal apology to you ...
 
 If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
 
-This is the only extension I ever made, so it's important to me 100% that you are satisfied with it. If there's anything you don't like in 5, please let me know and I'll fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like in 5, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 What's New in Version 5.2 (6/30/2018)
 - New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!

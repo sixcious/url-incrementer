@@ -134,8 +134,13 @@ input[type="image"]:focus {
 }
 
 #selection-custom-url-textarea {
-  width: 284px;
+  width: 100%;
+  color: #777777;
   word-break: break-all;
+  max-width: 300px;
+  max-height: 90px;
+  min-width: 300px;
+  min-height: 41px;
 }
 
 #selection-custom-pattern-input {
@@ -203,14 +208,14 @@ input[type="image"]:focus {
   font-style: italic;
 }
 
-/* attributions  */
+/* special thanks */
 
-#attributions-content, #attributions-you {
+#special-thanks-content, #special-thanks-you {
   font-size: 0.75em;
   font-style: italic;
 }
 
-#attributions-you {
+#special-thanks-you {
   font-weight: bold;
   text-align: center;
 }
