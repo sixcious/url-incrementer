@@ -250,8 +250,8 @@ URLI.Background = function () {
    */
   function messageExternalListener(request, sender, sendResponse) {
     //console.log("URLI DEBUG: messageExternalListener() request.action=" + request.action + " sender.id=" + sender.id);
-    const INCREMENT_BUTTON_EXTENSION_ID = "obmoblbenipafbppnhkjpecfmahjibio",
-          DECREMENT_BUTTON_EXTENSION_ID = "hpcdhobbbapkkjlninoiaablcanlmbga";
+    const INCREMENT_BUTTON_EXTENSION_ID = "hnbfhmpnaoodkecholneedhgfifgedff",
+          DECREMENT_BUTTON_EXTENSION_ID = "klibhpjfhgnkogppbcapampmommfhalg";
     if (sender && (sender.id === INCREMENT_BUTTON_EXTENSION_ID || sender.id === DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
@@ -260,7 +260,7 @@ URLI.Background = function () {
             if (!instance && request.action !== "auto") {
               instance = buildInstance(request.tab, items);
             }
-            if (instance) {
+            if (instance && (request.action === "increment" || request.action === "decrement")) {
               URLI.Action.performAction(instance, request.action, "external-extension");
             }
           });
