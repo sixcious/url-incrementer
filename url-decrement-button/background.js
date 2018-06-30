@@ -9,7 +9,7 @@ var URLDecrementButton = URLDecrementButton || {};
 
 URLDecrementButton.Background = function () {
 
-  const URL_INCREMENTER_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
+  const URL_INCREMENTER_EXTENSION_ID = "hjgllnccfndbjbedlecgdedlikohgbko";
 
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to
@@ -19,7 +19,7 @@ URLDecrementButton.Background = function () {
    * @public
    */
   function clickListener(tab) {
-    //console.log("URLDecrementButton DEBUG: clickListener() tab.id=" + tab.id);
+    //console.log("URLDecrementButton.Background: clickListener(tab) about to send message with tab.id=" + tab.id);
     chrome.runtime.sendMessage(URL_INCREMENTER_EXTENSION_ID, {"greeting": "performAction", "action": "decrement", "tab": tab});
   }
 

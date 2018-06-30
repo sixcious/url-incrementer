@@ -9,7 +9,7 @@ var URLIncrementButton = URLIncrementButton || {};
 
 URLIncrementButton.Background = function () {
 
-  const URL_INCREMENTER_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
+  const URL_INCREMENTER_EXTENSION_ID = "hjgllnccfndbjbedlecgdedlikohgbko";
   
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to
@@ -19,7 +19,7 @@ URLIncrementButton.Background = function () {
    * @public
    */
   function clickListener(tab) {
-    //console.log("URLIncrementButton DEBUG: clickListener() tab.id=" + tab.id);
+    //console.log("URLIncrementButton.Background: clickListener(tab) about to send message with tab.id=" + tab.id);
     chrome.runtime.sendMessage(URL_INCREMENTER_EXTENSION_ID, {"greeting": "performAction", "action": "increment", "tab": tab});
   }
 
