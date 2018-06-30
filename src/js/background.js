@@ -167,6 +167,16 @@ URLI.Background = function () {
         if (olditems && !olditems.permissionsInternalShortcuts) {
           chrome.permissions.remove({ permissions: ["declarativeContent"]});
         }
+        // Possibly needed every time the user updates the extension to re-set the icon color:
+        if (olditems && ["dark", "light", "rainbow", "urli"].includes(olditems.iconColor)) {
+          chrome.browserAction.setIcon({
+            path : {
+              "16": "/img/icons/" + olditems.iconColor + "/16.png",
+              "24": "/img/icons/" + olditems.iconColor + "/24.png",
+              "32": "/img/icons/" + olditems.iconColor + "/32.png"
+            }
+          });
+        }
       });
     }
     // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
@@ -250,9 +260,9 @@ URLI.Background = function () {
    */
   function messageExternalListener(request, sender, sendResponse) {
     //console.log("URLI DEBUG: messageExternalListener() request.action=" + request.action + " sender.id=" + sender.id);
-    const INCREMENT_BUTTON_EXTENSION_ID = "hnbfhmpnaoodkecholneedhgfifgedff",
-          DECREMENT_BUTTON_EXTENSION_ID = "klibhpjfhgnkogppbcapampmommfhalg";
-    if (sender && (sender.id === INCREMENT_BUTTON_EXTENSION_ID || sender.id === DECREMENT_BUTTON_EXTENSION_ID)) {
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "obmoblbenipafbppnhkjpecfmahjibio",
+          URL_DECREMENT_BUTTON_EXTENSION_ID = "hpcdhobbbapkkjlninoiaablcanlmbga";
+    if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
           chrome.storage.sync.get(null, function(items) {

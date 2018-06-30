@@ -5,7 +5,7 @@
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
 
-URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can also install the super convenient "1-Click" Increment Decrement Button extensions for your toolbar as well. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
+URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
 - Auto Incrementing
@@ -22,11 +22,9 @@ Features:
 
 URLI 5 and a personal apology to you ...
 
-If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you! I tried to go back to URLI's roots in 5.0.
-I re-installed Version 2 and tried to make sure 5.0 was as simple and easy to use as that version out of the box, while still adding as much incrementing functionality I could.
-Also, URLI the original extension mascot, is now back for good. If you only use URLI for shortcuts, no worries! Nothing has changed in that regard! The only thing is that the options had to be reset so you might need to re-set a few things (I really apologize for that). If there's anything you don't like in 5.0, please let me know and I'll try my hardest to fix it in the next version.
+If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
 
-This is the only extension I ever made, so it's important to me 100% that you are happy with it. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the only extension I ever made, so it's important to me 100% that you are satisfied with it. If there's anything you don't like in 5, please let me know and I'll fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 What's New in Version 5.2 (6/30/2018)
 - New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!
