@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "1-Click URL Decrement [-] Button for your toolbar. Requires URL Incrementer Extension 5.2 or higher. Consumes 0 Chrome memory when inactive.",
+    "message": "1-Click URL Decrement [-] Button for your toolbar. Requires URL Incrementer Extension. Consumes 0 Chrome memory when inactive.",
     "description": "Extension description."
   },
   "title": {
