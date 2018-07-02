@@ -9,17 +9,17 @@ var URLDecrementButton = URLDecrementButton || {};
 
 URLDecrementButton.Background = function () {
 
-  const URL_INCREMENTER_EXTENSION_ID = "hjgllnccfndbjbedlecgdedlikohgbko";
+  const URL_INCREMENTER_EXTENSION_ID = "bdocjbdeifhehdhogbfjghciijeckkbj";
 
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to
-   * URL Incrementer to perform an action.
+   * URL Incrementer to perform an action. Must have activeTab permission to send tab with tab.url.
    * 
-   * @param tab the tab that this click happened
+   * @param tab the tab in which this click occurred
    * @public
    */
   function clickListener(tab) {
-    //console.log("URLDecrementButton.Background: clickListener(tab) about to send message with tab.id=" + tab.id);
+    //console.log("URLDecrementButton.Background.clickListener() - about to send message with tab.id=" + tab.id);
     chrome.runtime.sendMessage(URL_INCREMENTER_EXTENSION_ID, {"greeting": "performAction", "action": "decrement", "tab": tab});
   }
 

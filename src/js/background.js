@@ -153,7 +153,7 @@ URLI.Background = function () {
   function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
     if (details.reason === "install") {
-      //console.log("URLI.Background: installedListener() new install");
+      //console.log("URLI.Background.installedListener() - new install");
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.runtime.openOptionsPage();
@@ -162,7 +162,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.1: Remove declarativeContent if internal shortcuts not enabled (this was erroneously set for download and enhanced mode):
     else if (details.reason === "update" && details.previousVersion === "5.1") {
-      //console.log("URLI.Background: installedListener() update previousVersion=" + details.previousVersion);
+      //console.log("URLI.Background.installedListener() - update previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         if (olditems && !olditems.permissionsInternalShortcuts) {
           chrome.permissions.remove({ permissions: ["declarativeContent"]});
@@ -181,7 +181,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
     else if (details.reason === "update" && details.previousVersion <= "5.0") {
-      //console.log("URLI.Background: installedListener() update previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
+      //console.log("URLI.Background.installedListener() - update previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
           chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
@@ -214,7 +214,7 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    //console.log("URLI.Background: messageListener() request=" + request + " sender=" + sender);
+    //console.log("URLI.Background.messageListener() - request=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
@@ -259,9 +259,9 @@ URLI.Background = function () {
    * @public
    */
   function messageExternalListener(request, sender, sendResponse) {
-    //console.log("URLI.Background: messageExternalListener() request.action=" + request.action + " sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
-          URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
+    //console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "pcnnadmamobmpbkkkjhhbfbiaedfkpjg",
+          URL_DECREMENT_BUTTON_EXTENSION_ID = "jnhdglfipfjfbjihdimpmfpikbaelnpo";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
@@ -271,7 +271,7 @@ URLI.Background = function () {
               instance = buildInstance(request.tab, items);
             }
             if (instance && (request.action === "increment" || request.action === "decrement")) {
-              URLI.Action.performAction(instance, request.action, "external-extension");
+              URLI.Action.performAction(instance, request.action, "externalExtension");
             }
           });
           break;
@@ -333,7 +333,7 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    //console.log("URLI.Background: tabUpdatedListener() The background chrome.tabs.onUpdated listener for download preview is on!");
+    //console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated download preview listener is on!");
     if (changeInfo.status === "complete") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)

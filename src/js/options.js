@@ -357,7 +357,7 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          //console.log("URLI.Options: resetOptions() Removing permissions...");
+          //console.log("URLI.Options.resetOptions() - removing all permissions...");
           URLI.Permissions.removeAllPermissions();
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
           populateValuesFromStorage("all");

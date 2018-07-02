@@ -19,7 +19,7 @@ URLI.Action = function () {
    * @public
    */
   function performAction(instance, action, caller, callback) {
-    //console.log("URLI.Action: performAction() instance=" + instance + ", action=" + action + ", caller=" + caller);
+    //console.log("URLI.Action.performAction() - instance=" + instance + ", action=" + action + ", caller=" + caller);
     let actionPerformed = false;
     // Handle AUTO
     if (instance.autoEnabled) {
@@ -38,7 +38,7 @@ URLI.Action = function () {
       // Prevents a rare race condition:
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
-        //console.log("URLI.Action: performAction() Auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
+        //console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
         actionPerformed = clear(instance, action, caller, callback);
         return;
       }
@@ -54,7 +54,7 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
-        if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto") || instance.enhancedMode)) {
+        if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || instance.enhancedMode)) {
           actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
         } else {
           actionPerformed = incrementDecrement(instance, action, caller, callback);
@@ -126,14 +126,14 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
-      //console.log("URLI.Action: incrementDecrementSkipErrors() Performing error skipping...");
+      //console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
       chrome.tabs.executeScript(instance.tabId, {
         file: "js/increment-decrement.js",
         runAt: "document_start"
       }, function () {
         // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
         if (chrome.runtime.lastError) {
-          //console.log("URLI.Action: incrementDecrementSkipErrors() chrome.runtime.lastError:" + chrome.runtime.lastError.message);
+          //console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
           return incrementDecrement(instance, action, caller, callback);
         }
         const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
@@ -267,7 +267,7 @@ URLI.Action = function () {
           if (results && results[0]) {
             const downloads = results[0];
             for (let download of downloads) {
-              //console.log("URLI.Action: download() downloading url=" + download.url);
+              //console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
               chrome.downloads.download({url: download.url}, function(downloadId) {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
@@ -276,7 +276,7 @@ URLI.Action = function () {
                         (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) > downloadItem.totalBytes : false) ||
                         (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) < downloadItem.totalBytes : false)
                       )) {
-                      //console.log("URLI.Action: download() Canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
+                      //console.log("URLI.Action.download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
                       chrome.downloads.cancel(downloadId);
                     }
                   }
