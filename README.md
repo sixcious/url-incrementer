@@ -15,7 +15,8 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Error Skipping... and more!
+- Error / Redirect Skipping: 404 Page Not Found, and all 3XX Redirects, 4XX Client Errors, 5XX Server Error HTTP Codes
+- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (batch downloader)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
@@ -24,7 +25,10 @@ URLI 5 and a personal apology to you ...
 
 If you were using Versions 3 or 4: I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
 
-To Everyone: This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+
+What's New in Version 5.3 (7/3/2018)
+- Bug Fix: Fixed Error Skipping to detect redirects correctly; URLI's icon will now flash with the text "RED" when these are detected and skipped (Sorry for the mistake!)
 
 What's New in Version 5.2 (6/30/2018)
 - New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!

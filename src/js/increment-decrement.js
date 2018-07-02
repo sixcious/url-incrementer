@@ -132,13 +132,13 @@ URLI.IncrementDecrement = function () {
       fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes.includes("404") && response.status === 404) ||
-            (instance.errorCodes.includes("3XX") && response.status >= 300 && response.status <= 399) ||
+            (instance.errorCodes.includes("3XX") && (response.status >= 300 && response.status <= 399) || (response.redirected)) || //response.url !== urlProps.urlmod)) ||
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) {
           //console.log("URLI.IncrementDecrement: modifyURLAndSkipErrors() Attempting to skip this URL because response.status was in errorCodes");
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
-            chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.status, "instance": instance});
+            chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
           }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncoutnered to true
           modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
@@ -147,7 +147,7 @@ URLI.IncrementDecrement = function () {
           chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
         }
       }).catch(e => {
-        //console.log("URLI.IncrementDecrement: modifyURLAndSkipErrors() fetch() Exception encountered:" + e);
+        console.log("URLI.IncrementDecrement: modifyURLAndSkipErrors() fetch() Exception encountered:" + e);
         chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance});
         chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
       });
