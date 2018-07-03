@@ -126,10 +126,10 @@ URLI.IncrementDecrement = function () {
       fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes.includes("404") && response.status === 404) ||
-            (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) ||
+            (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) || // Note: 301,302,303,307,308 return response.status of 200 and must be checked by response.redirected
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) {
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - attempting to skip this URL because response.status was in errorCodes");
+          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
             chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});

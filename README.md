@@ -15,7 +15,7 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Error / Redirect Skipping: 404 Page Not Found, and all 3XX Redirects, 4XX Client Errors, 5XX Server Error HTTP Codes
+- Error + Redirect Skipping: 404 Page Not Found, and all 3XX Redirects, 4XX Client Errors, 5XX Server Error HTTP Codes
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
@@ -23,7 +23,7 @@ Features:
 
 URLI 5 and a personal apology to you ...
 
-If you were using Versions 3 or 4: I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
+If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
@@ -33,7 +33,8 @@ NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C
 ... and most of all you for using URLI!
 
 What's New in Version 5.3 (7/3/2018)
-- Bug Fix: Fixed Error Skipping to detect redirects correctly; URLI's icon will now flash with the text "RED" (Real sorry for this bug!)
+- Bug Fix: Fixed Error Skipping to detect redirects correctly (e.g. 301, 302); URLI's icon will now flash with the text "RED" for any redirect skipped (Real sorry for this mistake!)
+- Another permission bugfix!: Fixed losing Internal Shortcuts declarativeContent rule when the extension updates in rare circumstances. This seems to be a Chrome/Chromium bug.
 
 What's New in Version 5.2 (6/30/2018)
 - New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!
