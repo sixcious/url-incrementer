@@ -101,6 +101,8 @@ URLI.Options = function () {
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-1XX-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-2XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
@@ -184,6 +186,8 @@ URLI.Options = function () {
         DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
         DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
         DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
+        DOM["#error-codes-1XX-input"].checked = items.errorCodes.includes("1XX");
+        DOM["#error-codes-2XX-input"].checked = items.errorCodes.includes("2XX");
         DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
         DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
         DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
@@ -287,7 +291,9 @@ URLI.Options = function () {
       [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
        DOM["#error-codes-3XX-input"].checked ? DOM["#error-codes-3XX-input"].value : "",
        DOM["#error-codes-4XX-input"].checked ? DOM["#error-codes-4XX-input"].value : "",
-       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : ""]
+       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : "",
+       DOM["#error-codes-1XX-input"].checked ? DOM["#error-codes-1XX-input"].value : "",
+       DOM["#error-codes-2XX-input"].checked ? DOM["#error-codes-2XX-input"].value : ""]
     });
   }
 
