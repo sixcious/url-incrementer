@@ -122,15 +122,14 @@ URLI.IncrementDecrement = function () {
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if (origin === urlOrigin && errorSkipRemaining > 0 && instance.errorCodes && instance.errorCodes.length > 0) {
+    if (origin === urlOrigin && errorSkipRemaining > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) {
       fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes.includes("404") && response.status === 404) ||
             (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) || // Note: 301,302,303,307,308 return response.status of 200 and must be checked by response.redirected
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599) ||
-            (instance.errorCodes.includes("1XX") && response.status >= 100 && response.status <= 199) ||
-            (instance.errorCodes.includes("2XX") && response.status >= 200 && response.status <= 299))) {
+            (instance.errorCodesCustomEnabled && instance.errorCodesCustom && (instance.errorCodesCustom.includes(response.status) || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) {
           console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {

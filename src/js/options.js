@@ -24,7 +24,8 @@ URLI.Options = function () {
         NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
-  let key = [0,""]; // Reusable key to stores the key's event modifiers [0] and code [1]
+  let key = [0,""], // Reusable key to stores the key's event modifiers [0] and code [1]
+      timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -94,15 +95,15 @@ URLI.Options = function () {
     DOM["#interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"interval": +this.value > 0 ? +this.value : 1}); });
     DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
-    DOM["#base-case-lowercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#base-case-uppercase-input"].addEventListener("change", function () { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-1XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-2XX-input"].addEventListener("change", updateErrorCodes);
+    DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#error-codes-custom-input"].addEventListener("input", updateErrorCodesCustom);
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
@@ -186,8 +187,9 @@ URLI.Options = function () {
         DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
         DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
         DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
-        DOM["#error-codes-1XX-input"].checked = items.errorCodes.includes("1XX");
-        DOM["#error-codes-2XX-input"].checked = items.errorCodes.includes("2XX");
+        DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
+        DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
+        DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
         DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
         DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
         DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
@@ -291,10 +293,22 @@ URLI.Options = function () {
       [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
        DOM["#error-codes-3XX-input"].checked ? DOM["#error-codes-3XX-input"].value : "",
        DOM["#error-codes-4XX-input"].checked ? DOM["#error-codes-4XX-input"].value : "",
-       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : "",
-       DOM["#error-codes-1XX-input"].checked ? DOM["#error-codes-1XX-input"].value : "",
-       DOM["#error-codes-2XX-input"].checked ? DOM["#error-codes-2XX-input"].value : ""]
+       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : ""]
     });
+  }
+
+  /**
+   * This function is called as the user is typing in the error code custom text input.
+   * We don't want to call chrome.storage after each key press, as it's an expensive procedure, so we set a timeout delay.
+   *
+   * @private
+   */
+  function updateErrorCodesCustom() {
+    console.log("URLI.Options.updateErrorCodesCustom() - about to clearTimeout and setTimeout");
+    clearTimeout(timeout);
+    timeout = setTimeout(function() { chrome.storage.sync.set({
+      "errorCodesCustom": DOM["#error-codes-custom-input"].value ? DOM["#error-codes-custom-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : []
+    })}, 1000);
   }
 
   /**
