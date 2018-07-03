@@ -494,7 +494,7 @@ URLI.Popup = function () {
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    //console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
+    console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }

@@ -210,6 +210,10 @@ input[type="image"]:focus {
 
 /* special thanks */
 
+#special-thanks {
+  margin-top: 0.75em;
+}
+
 #special-thanks-content, #special-thanks-you {
   font-size: 0.75em;
   font-style: italic;
@@ -287,5 +291,5 @@ input[type="image"]:focus {
 
 /* Overrides generateAlert overlay styling so alert is displayed in gap space */
 #options .overlay {
-  top: 82%; /* initial */
+  top: 80%; /* initial */
 }

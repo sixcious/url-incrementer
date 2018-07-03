@@ -70,7 +70,7 @@ URLI.Shortcuts = function () {
    * @private
    */
   function keyPressed(event, key) {
-    //console.log("URLI.Shortcuts.keyPressed() - event.code=" + event.code + ", actionKey=" + key);
+    console.log("URLI.Shortcuts.keyPressed() - event.code=" + event.code + ", actionKey=" + key);
     return key && key.length !== 0 && event.code === key[1] &&
       (!(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
        !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
@@ -87,7 +87,7 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    //console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", actionMouse=" + mouse);
+    console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", actionMouse=" + mouse);
     return event.button === mouse;
   }
 
@@ -102,7 +102,7 @@ URLI.Shortcuts = function () {
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.storage.sync.get(null, function(items) {
   chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    //console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
+    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
     URLI.Shortcuts.setItems(items);
     // Key
     if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
@@ -117,7 +117,7 @@ chrome.storage.sync.get(null, function(items) {
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  //console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+  console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addKeyListener":
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);
