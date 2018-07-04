@@ -124,7 +124,7 @@ URLI.IncrementDecrement = function () {
     instance.selection = urlProps.selectionmod;
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (origin === urlOrigin && errorSkipRemaining > 0) {
-      fetch(urlProps.urlmod, { method: "HEAD" }).then(function(response) {
+      fetch(urlProps.urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes && (
             (instance.errorCodes.includes("404") && response.status === 404) ||
@@ -133,6 +133,8 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
+          //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - request.url= " + urlProps.urlmod);
+          //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - response.url=" + response.url);
           //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
