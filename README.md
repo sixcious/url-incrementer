@@ -27,12 +27,7 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-Special Thanks:
-NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Concept), Blue / Will / Adam C (Feedback)
-
-... and most of all you for using URLI!
-
-What's New in Version 5.3 (7/3/2018)
+What's New in Version 5.3 (7/4/2018)
 - Error Skipping now supports *any* combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!
 - Bug Fix: Fixed Error Skipping to detect redirects correctly (e.g. 301, 302); URLI's icon will now flash with the text "RED" for any redirect skipped (Real sorry for this mistake!)
 - Another permission bugfix!: Fixed losing Internal Shortcuts declarativeContent rule when the extension updates in rare circumstances. This seems to be a Chrome/Chromium bug.
@@ -63,3 +58,8 @@ What's New in Version 5.0 (6/13/18)
 - Improved Permissions: Permissions for features (Internal Shortcuts, Download, Enhanced) are now modularized and separated so you can grant and enable only the features you want to
 - Improved Internal code: Better tab instance memory management + numerous minor bugfixes
 - Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
+
+Special Thanks:
+NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Concept), Blue / Will / Adam C (Feedback)
+
+... and most of all you for using URLI!
