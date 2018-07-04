@@ -54,7 +54,7 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
-        if ((instance.errorSkip > 0 && instance.errorCodes && instance.errorCodes.length > 0) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || instance.enhancedMode)) {
+        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || instance.enhancedMode)) {
           actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
         } else {
           actionPerformed = incrementDecrement(instance, action, caller, callback);

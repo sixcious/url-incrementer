@@ -22,7 +22,7 @@ URLI.Background = function () {
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
-    /* fun */         "urli": 0
+    /* fun */         "urli": "loves incrementing for you"
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -175,29 +175,34 @@ URLI.Background = function () {
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
           chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-            // Re-save old version's increment values:
             chrome.storage.sync.set({
               "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
               "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
               "leadingZerosPadByDetection": olditems && olditems.leadingZerosPadByDetection ? olditems.leadingZerosPadByDetection : STORAGE_DEFAULT_VALUES.leadingZerosPadByDetection,
               "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
               "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
-              "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom,
+              "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom
             });
           });
         });
       });
-      // Remove all permissions:
       if (chrome.declarativeContent) {
         chrome.declarativeContent.onPageChanged.removeRules(undefined);
       }
       chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
     }
-    // Update Installations Version 5.1+: Ensure icon color and declarativeContent
+    // Update Installations Version 5.1 and 5.2 only: storage sync new storage additions/updates
+    if (details.reason === "update" && details.previousVersion === "5.1" || details.previousVersion === "5.2") {
+      chrome.storage.sync.set({
+        "errorCodesCustomEnabled": false,
+        "errorCodesCustom": [],
+        "urli": "loves incrementing for you"
+      });
+    }
+    // Update Installations Version 5.1+: Ensure icon color and declarativeContent after each update
     if (details.reason === "update" && details.previousVersion >= "5.1") {
       console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
-        // Re-set icon color: this may be needed every time the user updates the extension
         if (olditems && ["dark", "light", "rainbow", "urli"].includes(olditems.iconColor)) {
           chrome.browserAction.setIcon({
             path : {
@@ -207,15 +212,15 @@ URLI.Background = function () {
             }
           });
         }
-        // If internal shortcuts enabled, ensure declarativeContent rule is added
         if (olditems && olditems.permissionsInternalShortcuts) {
           if (chrome.declarativeContent) {
             chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
               let shortcutsjsRule = false;
               for (let rule of rules) {
                 if (rule.actions[0].js[0] === "js/shortcuts.js") {
-                  shortcutsjsRule = true;
                   console.log("URLI.Background.installedListener() - internal shortcuts enabled, found shortcuts.js rule!");
+                  shortcutsjsRule = true;
+                  break;
                 }
               }
               if (!shortcutsjsRule) {
@@ -291,8 +296,8 @@ URLI.Background = function () {
    */
   function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "pcnnadmamobmpbkkkjhhbfbiaedfkpjg",
-          URL_DECREMENT_BUTTON_EXTENSION_ID = "jnhdglfipfjfbjihdimpmfpikbaelnpo";
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "obmoblbenipafbppnhkjpecfmahjibio",
+          URL_DECREMENT_BUTTON_EXTENSION_ID = "hpcdhobbbapkkjlninoiaablcanlmbga";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":

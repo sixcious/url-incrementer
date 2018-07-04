@@ -1,5 +1,5 @@
 /**
- * URL Increment [+] Button Background
+ * URL Increment Button Background
  *
  * @author Roy Six
  * @namespace
@@ -9,7 +9,7 @@ var URLIncrementButton = URLIncrementButton || {};
 
 URLIncrementButton.Background = function () {
 
-  const URL_INCREMENTER_EXTENSION_ID = "bdocjbdeifhehdhogbfjghciijeckkbj";
+  const URL_INCREMENTER_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
   
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to
