@@ -304,7 +304,7 @@ URLI.Options = function () {
    * @private
    */
   function updateErrorCodesCustom() {
-    console.log("URLI.Options.updateErrorCodesCustom() - about to clearTimeout and setTimeout");
+    //console.log("URLI.Options.updateErrorCodesCustom() - about to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { chrome.storage.sync.set({
       "errorCodesCustom": DOM["#error-codes-custom-input"].value ? DOM["#error-codes-custom-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : []
@@ -377,7 +377,7 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          console.log("URLI.Options.resetOptions() - removing all permissions...");
+          //console.log("URLI.Options.resetOptions() - removing all permissions...");
           URLI.Permissions.removeAllPermissions();
           changeIconColor.call(DOM["#icon-color-radio-dark"]);
           populateValuesFromStorage("all");

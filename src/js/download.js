@@ -79,7 +79,7 @@ URLI.Download = function () {
           break;
       }
     } catch (e) {
-      console.log("URLI.Download.findDownloadURLs() - exception caught:" + e);
+      //console.log("URLI.Download.findDownloadURLs() - exception caught:" + e);
       results = [];
     }
     return results;
@@ -106,7 +106,7 @@ URLI.Download = function () {
         extension = "",
         attribute = "",
         tag = "";
-    console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
+    //console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (let element of elements) {
       for (let urlattribute of URL_ATTRIBUTES) {
         if (element[urlattribute]) {
@@ -259,7 +259,7 @@ URLI.Download = function () {
           const match = regex.exec(style[property]);
           url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
           if (url) {
-            console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
+            //console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
             break;
           }
         }
