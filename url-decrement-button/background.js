@@ -9,7 +9,7 @@ var URLDecrementButton = URLDecrementButton || {};
 
 URLDecrementButton.Background = function () {
 
-  const URL_INCREMENTER_EXTENSION_ID = "maapbhnoodphafajhjphecmhmghpphgf";
+  const URL_INCREMENTER_EXTENSION_ID = "hjgllnccfndbjbedlecgdedlikohgbko";
 
   /**
    * Listen for browser action (extension icon) clicks and then sends a message to

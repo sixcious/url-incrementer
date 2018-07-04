@@ -47,7 +47,7 @@ URLI.IncrementDecrement = function () {
           malas = relas.exec(url),
           mafir = refir.exec(url),
           macus = recus ? recus.exec(url) : undefined;
-    console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
+    //console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
     // TODO: Validate custom regex with current url for alphanumeric selection
     return preference === "prefixes" ?
               mapag ? {selection: mapag[1], selectionStart: mapag.index + 1} :
@@ -116,7 +116,7 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
-    console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
+    //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin,
           urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
@@ -133,7 +133,7 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
+          //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           if (!errorCodeEncountered) {
             chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
@@ -141,16 +141,16 @@ URLI.IncrementDecrement = function () {
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
           modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
         } else {
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes or errorCodesCustom. aborting and updating tab");
+          //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
         }
       }).catch(e => {
-        console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - a fetch() exception was caught:" + e);
+        //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - a fetch() exception was caught:" + e);
         chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance});
         chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
       });
     } else {
-      console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      //console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
       chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
     }
   }
