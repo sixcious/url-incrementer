@@ -167,13 +167,17 @@ div.column {
   margin-bottom: 24px;
 }
 
-#auto-eta, #download-experimental {
+#profile-save, #auto-eta, #download-experimental {
   font-size: 0.8em;
   font-weight: bold;
   font-style: italic;
   position: absolute;
   right: 12px;
   margin-top: -10px;
+}
+
+#profile-save {
+  margin-top: -19px;
 }
 
 #auto-eta {

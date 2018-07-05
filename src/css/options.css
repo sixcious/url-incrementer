@@ -101,6 +101,11 @@ input[type="image"]:focus {
   cursor: pointer;
 }
 
+/* profile */
+#profile-none {
+  font-style: italic;
+}
+
 /* error-skip */
 
 #error-skip.column {

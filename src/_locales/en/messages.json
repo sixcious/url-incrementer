@@ -18,6 +18,7 @@
 
   "POPUP": { "message": "----- POPUP -----" },
   "setup_h3_label": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
+  "profile_save_label": { "message": "Save Profile" },
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
   "accept_button": { "message": "Accept" },
@@ -139,6 +140,10 @@
   "popup_animations_enable_label": { "message": "Enable button click animations (Try it!)" },
   "popup_open_setup_label": { "message": "When Popup UI opens, automatically jump to URL Setup" },
   "popup_settings_can_overwrite_label": { "message": "Allow Popup UI settings to overwrite these settings" },
+  "profile_settings_h3":  { "message": "Quick URL Profile Settings" },
+  "profile_settings_p": { "message": "Save your favorite URLs' + - settings such as selection and interval so you can use Quick Shortcuts when you visit them again without having to enter Setup!" },
+  "profile_settings_exist_p": { "message": "Your current URL Profiles:" },
+  "profile_settings_none_p": { "message": "Aw, you haven't saved any Quick URL Profiles yet! Why not? Just check the box in the Popup UI before hitting Accept to start saving!" },
   "increment_decrement_settings_h3": { "message": "Increment Decrement Settings" },
   "increment_decrement_settings_p": { "message": "Change the way URLI pre-selects the number to increment and other options. You can set a couple of these options in the Popup UI too." },
   "selection_option_prefixes": { "message": "Select numbers in the URL with prefixes like page=1" },

@@ -563,87 +563,88 @@ URLI.Popup = function () {
       if (DOM["#download-strategy-select"].value === "tags") {       translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); }
       if (DOM["#download-strategy-select"].value === "attributes") { translateCheckboxValuesToHiddenInput("#download-attributes input", "#download-attributes-generated"); }
     }
-    const url = DOM["#url-textarea"].value,
-        selection = DOM["#selection-input"].value,
-        selectionStart = +DOM["#selection-start-input"].value,
-        interval = +DOM["#interval-input"].value,
-        base = +DOM["#base-select"].value,
-        baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
-        selectionParsed = parseInt(selection, base).toString(base),
-        leadingZeros = DOM["#leading-zeros-input"].checked,
-        errorSkip = +DOM["#error-skip-input"].value,
-        autoEnabled = DOM["#auto-toggle-input"].checked,
-        autoAction = DOM["#auto-action-select"].value,
-        autoTimes = +DOM["#auto-times-input"].value,
-        autoSeconds = +DOM["#auto-seconds-input"].value,
-        autoWait = DOM["#auto-wait-input"].checked,
-        autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
-        downloadEnabled = DOM["#download-toggle-input"].checked,
-        downloadStrategy = DOM["#download-strategy-select"].value,
-        downloadSelector = DOM["#download-selector-input"].value,
-        // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
-        // by user1106925 @see https://stackoverflow.com/a/16701357
-        downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-        downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-        downloadMinMB = +DOM["#download-min-mb-input"].value,
-        downloadMaxMB = +DOM["#download-max-mb-input"].value,
-        downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(","),
-        downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-        downloadTags = DOM["#download-tags-generated"].value.split(","),
-        downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
+    const profileSave = DOM["#profile-save-input"].checked,
+          url = DOM["#url-textarea"].value,
+          selection = DOM["#selection-input"].value,
+          selectionStart = +DOM["#selection-start-input"].value,
+          interval = +DOM["#interval-input"].value,
+          base = +DOM["#base-select"].value,
+          baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
+          selectionParsed = parseInt(selection, base).toString(base),
+          leadingZeros = DOM["#leading-zeros-input"].checked,
+          errorSkip = +DOM["#error-skip-input"].value,
+          autoEnabled = DOM["#auto-toggle-input"].checked,
+          autoAction = DOM["#auto-action-select"].value,
+          autoTimes = +DOM["#auto-times-input"].value,
+          autoSeconds = +DOM["#auto-seconds-input"].value,
+          autoWait = DOM["#auto-wait-input"].checked,
+          autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
+          downloadEnabled = DOM["#download-toggle-input"].checked,
+          downloadStrategy = DOM["#download-strategy-select"].value,
+          downloadSelector = DOM["#download-selector-input"].value,
+          // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
+          // by user1106925 @see https://stackoverflow.com/a/16701357
+          downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+          downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+          downloadMinMB = +DOM["#download-min-mb-input"].value,
+          downloadMaxMB = +DOM["#download-max-mb-input"].value,
+          downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(","),
+          downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
+          downloadTags = DOM["#download-tags-generated"].value.split(","),
+          downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
 
-        // Increment Decrement Errors
-        errors = [ // [0] = selection errors and [1] = interval errors
-          // [0] = Selection Errors
-          selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-          url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
-          !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
-          selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-          parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
-          isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-          // [1] Interval Errors
-          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-          // [2] Error Skip Errors
-          errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
-        ],
-        // Auto Errors
-        autoErrors = [
-          autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
-          autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
-          autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-          autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
-          // TODO: Should we give the user the option or should this be enforced? autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
-          autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : ""
-        ],
-        // Download Errors
-        downloadErrors = [
-          downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
-        ],
-        errorsExist = errors.some(error => error !== ""),
-        autoErrorsExist = autoErrors.some(error => error !== ""),
-        downloadErrorsExist = downloadErrors.some(error => error !== ""),
-        enabled = !errorsExist && autoEnabled ? (autoAction !== "next" && autoAction !== "prev") : !errorsExist,
-        
-        /* Validates Rules:
-        1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
-        2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
-        3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
-        4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
-        5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
-        6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
-        */
-        validated = !autoEnabled && !downloadEnabled ?
-                 !errorsExist :
-               autoEnabled ? 
-                 autoAction === "increment" || autoAction === "decrement" ?
-                   !downloadEnabled ?
-                     !errorsExist && !autoErrorsExist : 
-                     !errorsExist && !autoErrorsExist && !downloadErrorsExist :
-                 // e.g. autoAction === "next" || autoAction === "prev"
-                   !downloadEnabled ?
-                     !autoErrorsExist :
-                     !autoErrorsExist && !downloadErrorsExist :
-                 downloadEnabled && !autoEnabled && !downloadErrorsExist;
+          // Increment Decrement Errors
+          errors = [ // [0] = selection errors and [1] = interval errors
+            // [0] = Selection Errors
+            selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+            url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+            !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+            selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+            parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+            isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+            // [1] Interval Errors
+            interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+            // [2] Error Skip Errors
+            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+          ],
+          // Auto Errors
+          autoErrors = [
+            autoEnabled && (autoAction === "next" || autoAction === "prev") && !items_.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
+            autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
+            autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+            autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
+            // TODO: Should we give the user the option or should this be enforced? autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
+            autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : ""
+          ],
+          // Download Errors
+          downloadErrors = [
+            downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
+          ],
+          errorsExist = errors.some(error => error !== ""),
+          autoErrorsExist = autoErrors.some(error => error !== ""),
+          downloadErrorsExist = downloadErrors.some(error => error !== ""),
+          enabled = !errorsExist && autoEnabled ? (autoAction !== "next" && autoAction !== "prev") : !errorsExist,
+
+          /* Validates Rules:
+          1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
+          2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
+          3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
+          4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
+          5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
+          6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
+          */
+          validated = !autoEnabled && !downloadEnabled ?
+                   !errorsExist :
+                 autoEnabled ?
+                   autoAction === "increment" || autoAction === "decrement" ?
+                     !downloadEnabled ?
+                       !errorsExist && !autoErrorsExist :
+                       !errorsExist && !autoErrorsExist && !downloadErrorsExist :
+                   // e.g. autoAction === "next" || autoAction === "prev"
+                     !downloadEnabled ?
+                       !autoErrorsExist :
+                       !autoErrorsExist && !downloadErrorsExist :
+                   downloadEnabled && !autoEnabled && !downloadErrorsExist;
 
     // Generate alerts if not validated
     if (!validated) {
@@ -693,6 +694,14 @@ URLI.Popup = function () {
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
+        // Profile Save
+        if (profileSave) {
+          const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [];
+          profiles.push({"url": url, "url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "selectionParsed": selectionParsed, "leadingZeros": leadingZeros, "errorSkip": errorSkip });
+          chrome.storage.sync.set({
+            "profiles": profiles
+          });
+        }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({

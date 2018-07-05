@@ -169,6 +169,8 @@ URLI.Options = function () {
         DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
         DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
         DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+        DOM["#profile-exist"].className = items.profiles && items.profiles.length > 0 ? "display-block" : "display-none";
+        DOM["#profile-none"].className = items.profiles && items.profiles.length > 0 ? "display-none" : "display-block";
         DOM["#selection-select"].value = items.selectionPriority;
         DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
         DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
