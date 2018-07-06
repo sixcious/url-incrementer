@@ -89,6 +89,7 @@ URLI.Popup = function () {
             instance = backgroundPage.URLI.Background.buildInstance(tabs[0], items);
           }
           updateControls();
+          DOM["#profile-save-input"].checked = instance.profileFound;
           DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
           const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
           DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
@@ -697,7 +698,7 @@ URLI.Popup = function () {
         // Profile Save
         if (profileSave) {
           const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [];
-          profiles.push({"url": url, "url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "selectionParsed": selectionParsed, "leadingZeros": leadingZeros, "errorSkip": errorSkip });
+          profiles.push({"url": url, "url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros, "errorSkip": errorSkip });
           chrome.storage.sync.set({
             "profiles": profiles
           });

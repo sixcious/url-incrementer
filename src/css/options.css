@@ -106,6 +106,14 @@ input[type="image"]:focus {
   font-style: italic;
 }
 
+#profile-why-cant-see-title {
+  border-bottom: 1px dotted #333;
+  padding-bottom: 2px;
+  font-style: italic;
+  display: inline-block;
+  margin-top: 12px;
+}
+
 /* error-skip */
 
 #error-skip.column {
@@ -125,11 +133,11 @@ input[type="image"]:focus {
 }
 
 #error-skip-description {
-  display: inline;
   border-bottom: 1px dotted #333;
-  margin-left: 4px;
   padding-bottom: 2px;
   font-style: italic;
+  display: inline;
+  margin-left: 4px;
 }
 
 /* selection-custom  */

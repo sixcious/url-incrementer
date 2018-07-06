@@ -27,14 +27,15 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-What's Coming in Version 5.4 (TBD)
-- New Feature: Save URL Profiles! URLI can now remember different website patterns and intervals you set! You can check the checkbox if you want to save a URL Profile while in Setup. URLs saved will be encrypted and then decrypted on the fly when you do quick shortcuts.
-- Error Skipping: To reduce redirect false alarms, your current credentials/cookie state with the server will now be maintained by adding "credentials same-origin" to the fetch request
+Coming Soon in Version 5.4 (TBD)
+- New Feature: Save URL Profiles/Patterns! URLI can now remember different URL patterns and intervals you set! You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. URLs saved will be encrypted and then decrypted on the fly when you do quick shortcuts.
+- New Feature: The "Incrementer's Toolbox" - 1: Open up to (25?) incremented tabs in your browser or 2: Generate a list of incremented URLs!
+- Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 
 What's New in Version 5.3 (7/4/2018)
-- Error Skipping now supports *any* combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!
+- Error Skipping now supports any combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!
 - Bug Fix: Fixed Error Skipping to detect redirects correctly (e.g. 301, 302); URLI's icon will now flash with the text "RED" for any redirect skipped (Real sorry for this mistake!)
-- Another permission bugfix!: Fixed losing Internal Shortcuts declarativeContent rule when the extension updates in rare circumstances. This seems to be a Chrome/Chromium bug.
+- Another permission bug fix: Fixed losing Internal Shortcuts declarativeContent rule when the extension updates in rare circumstances. This seems to be a Chrome/Chromium bug.
 
 What's New in Version 5.2 (6/30/2018)
 - New "1 Click" Increment Button and Decrement Button mini extensions for your toolbar are now available on the Chrome Web Store -- no more popups needed, super convenient, and consume 0 background memory when inactive! They're a win-win!

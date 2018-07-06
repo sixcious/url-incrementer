@@ -171,6 +171,7 @@ URLI.Options = function () {
         DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
         DOM["#profile-exist"].className = items.profiles && items.profiles.length > 0 ? "display-block" : "display-none";
         DOM["#profile-none"].className = items.profiles && items.profiles.length > 0 ? "display-none" : "display-block";
+        buildSelectProfiles(items.profiles);
         DOM["#selection-select"].value = items.selectionPriority;
         DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
         DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -283,6 +284,21 @@ URLI.Options = function () {
       if (key[1] && !KEY_MODIFIER_CODE_ARRAY.includes(key[1])) { text += key[1]; }
     }
     input.value = text;
+  }
+
+  /**
+   * Builds out the select for the profiles if any exist.
+   *
+   * @private
+   */
+  function buildSelectProfiles(profiles) {
+    let select = "<select id=\"profiles-select\">",
+        count = 1;
+    for (let profile of profiles) {
+      select += "<option id=\"" + profile.url +"\" value=\"" + profile.url + "\">" + (count++) + " - hash: " + profile.url.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+    }
+    select += "</select>"
+    DOM["#profile-select-div"].innerHTML = select;
   }
 
   /**
