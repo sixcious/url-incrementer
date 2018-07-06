@@ -292,13 +292,15 @@ URLI.Options = function () {
    * @private
    */
   function buildSelectProfiles(profiles) {
-    let select = "<select id=\"profiles-select\">",
-        count = 1;
-    for (let profile of profiles) {
-      select += "<option id=\"" + profile.url +"\" value=\"" + profile.url + "\">" + (count++) + " - hash: " + profile.url.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+    if (profiles && profiles.length > 0) {
+      let select = "<select id=\"profiles-select\">",
+          count = 1;
+      for (let profile of profiles) {
+        select += "<option id=\"" + profile.url +"\" value=\"" + profile.url + "\">" + (count++) + " - hash: " + profile.url.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+      }
+      select += "</select>"
+      DOM["#profile-select-div"].innerHTML = select;
     }
-    select += "</select>"
-    DOM["#profile-select-div"].innerHTML = select;
   }
 
   /**
