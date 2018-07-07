@@ -60,6 +60,7 @@ URLI.Popup = function () {
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
+    DOM["#toolkit-button"].addEventListener("click", function() { DOM["#toolkit"].className = DOM["#toolkit"].className === "display-none" ? "display-block fade-in" : "display-none"; DOM["#toolkit-button-span"].textContent = DOM["#toolkit"].className === "display-none" ? chrome.i18n.getMessage("toolkit_button_span") : chrome.i18n.getMessage("toolkit_close_button_span")  });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
@@ -90,6 +91,9 @@ URLI.Popup = function () {
           }
           updateControls();
           DOM["#profile-save-input"].checked = instance.profileFound;
+          if (instance.profileFound) {
+            DOM["#profile-save-label"].style.color = "#1779BA";
+          }
           DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
           const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
           DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
@@ -698,7 +702,7 @@ URLI.Popup = function () {
         // Profile Save
         if (profileSave) {
           const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [];
-          profiles.push({"url": url, "url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros, "errorSkip": errorSkip });
+          profiles.push({"url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "url2length": url.substring(selectionStart + selection.length).length, "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
           chrome.storage.sync.set({
             "profiles": profiles
           });

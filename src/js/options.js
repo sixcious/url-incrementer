@@ -296,7 +296,7 @@ URLI.Options = function () {
       let select = "<select id=\"profiles-select\">",
           count = 1;
       for (let profile of profiles) {
-        select += "<option id=\"" + profile.url +"\" value=\"" + profile.url + "\">" + (count++) + " - hash: " + profile.url.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+        select += "<option id=\"" + profile.url +"\" value=\"" + profile.url1 + "\">" + (count++) + " - hash: " + profile.url1.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
       }
       select += "</select>"
       DOM["#profile-select-div"].innerHTML = select;

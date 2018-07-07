@@ -140,7 +140,7 @@ div.column {
   margin-right: 12px;
 }
 
-#options-button {
+#extra-options {
   position: absolute;
   right: 4px;
   bottom: 3px;
@@ -149,8 +149,12 @@ div.column {
   cursor: pointer;
 }
 
-#options-button img {
+#extra-options #options-button img {
   margin-right: -2px;
+}
+
+#setup #extra-options div:not(:last-child) {
+  margin-right: 16px;
 }
 
 #setup #extra-toggles {
@@ -180,6 +184,28 @@ div.column {
   margin-top: -19px;
 }
 
+/* Toolkit */
+
+#setup #toolkit {
+  margin-bottom: 48px;
+}
+
+#toolkit-instructions {
+  font-style: italic;
+}
+
+#toolkit-urli-button-div {
+  display: inline-block;
+  position: absolute;
+  right: 60px;
+  margin-top: -40px;
+}
+
+#toolkit-urli-button-img {
+  transform: scaleX(-1);
+  cursor: pointer;
+}
+
 #auto-eta {
   color: #FF6600;
 }
@@ -188,7 +214,7 @@ div.column {
   color: rebeccapurple;
 }
 
-#setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+#setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 30px;
 }
 
@@ -244,7 +270,7 @@ div.column {
   vertical-align: bottom;
 }
 
-#setup h3#setup-h3 {
+#setup h3#increment-decrement-h3 {
   color: #333333;
   border-bottom-color: #333333;
 }

@@ -110,9 +110,9 @@ URLI.Background = function () {
     if (items.profiles && items.profiles.length > 0 ) {
       for (let profile of items.profiles) {
         const url1 = tab.url.substring(0, profile.selectionStart),
-              url2 = tab.url.slice(profile.selectionStart + profile.selection.length);
+              url2 = tab.url.slice(-profile.url2.length);
         console.log("URLI.Background.buildInstance() - profile of current url is url1=" + url1 + " url2=" + url2);
-        if (tab.url.startsWith(profile.url1) && tab.url.endsWith(profile.url2)) {
+        if (url1 === profile.url1 && url2 === profile.url2) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.url1);
           props = profile;
           props.profileFound = true;
@@ -129,10 +129,6 @@ URLI.Background = function () {
       props.interval = items.interval;
       props.base = items.base;
       props.baseCase = items.baseCase;
-      props.errorSkip = items.errorSkip;
-      props.errorCodes = items.errorCodes;
-      props.errorCodesCustomEnabled = items.errorCodesCustomEnabled;
-      props.errorCodesCustom = items.errorCodesCustom;
     }
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
@@ -142,7 +138,7 @@ URLI.Background = function () {
       "leadingZeros": items.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1,
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
-      "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
+      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
       "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
