@@ -123,34 +123,68 @@
       </div>
       <div id="toolkit" class="display-none">
         <h3 id="toolkit-h3">
-          <img src="../img/font-awesome/wrench.png" alt="" width="12" height="12"/>
+          <img src="../img/font-awesome/black/wrench.png" alt="" width="12" height="12"/>
           <span id="toolkit-h3-label" data-i18n="textContent"></span>
         </h3>
         <div id="toolkit-instructions" data-i18n="textContent"></div>
         <div class="table">
           <div class="row">
             <div id="toolkit-tool" class="column">
-              <label id="toolkit-tool-label" for="toolkit-tool-select" data-i18n="textContent"></label>
+              <label id="toolkit-tool-label" data-i18n="textContent"></label>
+              <div class="radio">
+                <label>
+                  <input id="toolkit-tool-open-tabs-input" type="radio" name="toolkit-tool" value="open-tabs"/>
+                  <img src="../img/font-awesome/suitcase.png" alt="" width="14" height="14"/>
+                  <span id="toolkit-tool-open-tabs-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id="toolkit-tool-generate-urls-input" type="radio" name="toolkit-tool" value="generate-urls"/>
+                  <img src="../img/font-awesome/tint.png" alt="" width="14" height="14"/>
+                  <span id="toolkit-tool-generate-urls-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+              <!--
               <select id="toolkit-tool-select">
                 <option id="toolkit-tool-option-generate-urls" value="generate-urls" data-i18n="textContent"></option>
                 <option id="toolkit-tool-option-open-tabs" value="open-tabs" data-i18n="textContent"></option>
               </select>
+              -->
             </div>
             <div id="toolkit-action" class="column">
-              <label id="toolkit-action-label" for="toolkit-action-select" data-i18n="textContent"></label>
+              <label id="toolkit-action-label" data-i18n="textContent"></label>
+              <div class="radio">
+                <label>
+                  <input id="toolkit-action-increment-input" type="radio" name="toolkit-action" value="increment"/>
+                  <img src="../img/font-awesome/blue/plus-circle.png" alt="" width="14" height="14"/>
+                  <span id="toolkit-action-increment-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id="toolkit-action-decrement-input" type="radio" name="toolkit-action" value="decrement"/>
+                  <img src="../img/font-awesome/blue/minus-circle.png" alt="" width="14" height="14"/>
+                  <span id="toolkit-action-decrement-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+              <!--
               <select id="toolkit-action-select">
                 <option id="toolkit-action-option-increment" value="increment" data-i18n="textContent"></option>
                 <option id="toolkit-action-option-decrement" value="decrement" data-i18n="textContent"></option>
               </select>
+              -->
             </div>
             <div id="toolkit-quantity" class="column">
               <label id="toolkit-quantity-label" for="toolkit-quantity-input" data-i18n="textContent"></label>
               <input id="toolkit-quantity-input" type="number" min="1"/>
             </div>
+            <div class="column">
+              <div id="toolkit-urli-button-div" class="hvr-grow">
+                <img id="toolkit-urli-button-img" src="../img/extras/urli.png" alt="" width="64" height="64"/>
+              </div>
+            </div>
           </div>
-        </div>
-        <div id="toolkit-urli-button-div" class="hvr-grow">
-          <img id="toolkit-urli-button-img" src="../img/extras/urli.png" alt="" width="64" height="64"/>
         </div>
       </div>
       <div id="auto">
@@ -321,7 +355,7 @@
         <button id="cancel-button" data-i18n="textContent"></button>
         <div id="extra-options">
           <div id="toolkit-button" class="hvr-skew-forward">
-            <img src="../img/font-awesome/wrench.png" alt="" width="14" height="14"/>
+            <img src="../img/font-awesome/black/wrench.png" alt="" width="14" height="14"/>
             <span id="toolkit-button-span" data-i18n="textContent"></span>
           </div>
           <div id="options-button" class="hvr-skew-forward">

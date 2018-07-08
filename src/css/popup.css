@@ -167,7 +167,7 @@ div.column {
   margin-right: 8px;
 }
 
-#setup #auto, #setup #download {
+#setup #toolkit, #setup #auto, #setup #download {
   margin-bottom: 24px;
 }
 
@@ -186,19 +186,17 @@ div.column {
 
 /* Toolkit */
 
-#setup #toolkit {
-  margin-bottom: 48px;
-}
-
 #toolkit-instructions {
   font-style: italic;
 }
 
 #toolkit-urli-button-div {
-  display: inline-block;
+/*  display: inline-block;
   position: absolute;
   right: 60px;
-  margin-top: -40px;
+  margin-top: -40px;*/
+  vertical-align: top;
+  margin-top: 14px;
 }
 
 #toolkit-urli-button-img {
