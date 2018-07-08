@@ -296,9 +296,9 @@ URLI.Options = function () {
       let select = "<select id=\"profiles-select\">",
           count = 1;
       for (let profile of profiles) {
-        select += "<option id=\"" + profile.url +"\" value=\"" + profile.url1 + "\">" + (count++) + " - hash: " + profile.url1.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+        select += "<option id=\"" + profile.urlhash1 +"\" value=\"" + profile.urlhash1 + "\">" + (count++) + " - hash: " + profile.urlhash1.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
       }
-      select += "</select>"
+      select += "</select>";
       DOM["#profile-select-div"].innerHTML = select;
     }
   }

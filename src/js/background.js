@@ -18,7 +18,7 @@ URLI.Background = function () {
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
-    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 }, "profiles": [],
+    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 }, "profiles": [], "profileSave": "user-select",
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
@@ -110,16 +110,30 @@ URLI.Background = function () {
     if (items.profiles && items.profiles.length > 0 ) {
       for (let profile of items.profiles) {
         const url1 = tab.url.substring(0, profile.selectionStart),
-              url2 = tab.url.slice(-profile.url2.length);
+              url2 = tab.url.slice(-profile.url2length);
         console.log("URLI.Background.buildInstance() - profile of current url is url1=" + url1 + " url2=" + url2);
-        if (url1 === profile.url1 && url2 === profile.url2) {
-          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.url1);
-          props = profile;
-          props.profileFound = true;
-          //   urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
-          console.log("tab.url.indexof(profile.url2)=" + tab.url.indexOf(profile.url2));
-          props.selection =  tab.url.substring(props.selectionStart, profile.url2 ? tab.url.indexOf(profile.url2) : tab.url.length);
-        }
+        URLI.Encryption.calculateHash(url1, profile.urlsalt1).then(
+          function(urlhash1) {
+            URLI.Encryption.calculateHash(url2, profile.urlsalt2).then(
+              function(urlhash2) {
+                if (urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true)) {
+                  console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
+                  props = profile;
+                  props.profileFound = true;
+                  console.log("tab.url.indexof(url2)=" + tab.url.indexOf(url2));
+                  props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.indexOf(url2) : tab.url.length);
+                }
+              }
+            );
+          }
+        );
+        // if (url1 === profile.url1 && (profile.url2length > 0 ? url2 === profile.url2 : true)) {
+        //   console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.url1);
+        //   props = profile;
+        //   props.profileFound = true;
+        //   console.log("tab.url.indexof(profile.url2)=" + tab.url.indexOf(profile.url2));
+        //   props.selection =  tab.url.substring(props.selectionStart, profile.url2 ? tab.url.indexOf(profile.url2) : tab.url.length);
+        // }
       }
     }
     // If no profile found, use storage items:

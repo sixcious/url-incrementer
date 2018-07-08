@@ -701,11 +701,34 @@ URLI.Popup = function () {
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {
-          const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [];
-          profiles.push({"url1": url.substring(0, selectionStart), "url2": url.substring(selectionStart + selection.length), "url2length": url.substring(selectionStart + selection.length).length, "selection": selection, "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
-          chrome.storage.sync.set({
-            "profiles": profiles
-          });
+          console.log("saving profile...");
+          const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [],
+                url1 = url.substring(0, selectionStart),
+                url2 = url.substring(selectionStart + selection.length),
+                urlsalt1 = backgroundPage.URLI.Encryption.generateSalt(),
+                urlsalt2 = backgroundPage.URLI.Encryption.generateSalt();
+          console.log("urlsalt1=" + urlsalt1);
+          console.log("urlsalt2=" + urlsalt2);
+          backgroundPage.URLI.Encryption.calculateHash(url1, urlsalt1).then(
+            function(urlhash1) {
+              console.log("calculated urlhash1=" + urlhash1);
+              backgroundPage.URLI.Encryption.calculateHash(url2, urlsalt2).then(
+                function(urlhash2) {
+                  console.log("calculated urlhash2=" + urlhash2);
+                  profiles.push({
+                    "urlhash1": urlhash1,
+                    "urlhash2": urlhash2,
+                    "urlsalt1": urlsalt1,
+                    "urlsalt2": urlsalt2,
+                    "url2length": url.substring(selectionStart + selection.length).length,
+                    "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
+                  chrome.storage.sync.set({
+                    "profiles": profiles
+                  });
+                }
+              )
+            }
+          );
         }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {

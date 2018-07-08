@@ -18,7 +18,7 @@
 
   "POPUP": { "message": "----- POPUP -----" },
   "increment_decrement_h3_label": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
-  "profile_save_label": { "message": "Save URL" },
+  "profile_save_label": { "message": "Save" },
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
   "accept_button": { "message": "Accept" },
@@ -154,7 +154,7 @@
   "profile_settings_h3":  { "message": "Quick URL Profile Settings" },
   "profile_settings_p": { "message": "Save your favorite URLs' settings such as selection and interval so you can use Quick Shortcuts when you visit them again WITHOUT having to enter Setup!" },
   "profile_settings_exist_p": { "message": "Your current URL Profiles:" },
-  "profile_settings_none_p": { "message": "Aw, you haven't saved any Quick URL Profiles yet! Why not? Just check the box in the Popup UI before hitting Accept to start saving!" },
+  "profile_settings_none_p": { "message": "Aw, you haven't saved any Quick URL Profiles yet! Why not? Just check the Save box at the top of the Setup window before clicking Accept to start saving!" },
   "profile_why_cant_see": { "message": "Why can't I see the URLs?" },
   "profile_why_cant_see_title": { "message": "To ensure your data is as private as possible, URLI encrypts the URLs you save in storage with what's known in cryptography as \"hashes\" and \"salts.\" Even URLI can't see the URLs you save!" },
   "increment_decrement_settings_h3": { "message": "Increment Decrement Settings" },
