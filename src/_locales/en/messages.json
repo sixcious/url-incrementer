@@ -105,7 +105,7 @@
   "error_skip_invalid_error": { "message": "Error Skip has to be between 0 and 100" },
   "toolkit_invalid_error": { "message": "Toolkit configuration missing tool, action, or quantity" },
   "toolkit_open_tabs_too_many_open_error": { "message": "Too many tabs are open in this window; please close some or opening a new window" },
-  "toolkit_open_tabs_quantity_error": { "message": "Toolkit Open Tabs Quantity must be between 1 and 25" },
+  "toolkit_open_tabs_quantity_error": { "message": "Toolkit Open Tabs Quantity must be between 1 and 100" },
   "toolkit_generate_links_quantity_error": { "message": "Toolkit Generate URLS Quantity must be between 1 and 10000" },
   "auto_next_prev_error": { "message": "To use Next [>] Prev [<] with Auto, please first enable Enhanced Mode in Options to give URLI permissions" },
   "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 1000" },

@@ -571,7 +571,8 @@ URLI.Popup = function () {
     if (items_.popupAnimationsEnabled) {
       URLI.UI.clickHoverCss(this, "hvr-push-click");
     }
-    chrome.tabs.query({lastFocusedWindow: true}, function(tabs) {
+    chrome.tabs.query({}, function(tabs) {
+      console.log("tabs.length=" + tabs.length);
       const
         // Increment Decrement Values
         url = DOM["#url-textarea"].value,
@@ -583,7 +584,8 @@ URLI.Popup = function () {
         selectionParsed = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
         errorSkip = +DOM["#error-skip-input"].value,
-        // Toolkit Values
+        // Toolkit
+        tabsLength = tabs ? tabs.length : 0,
         toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-links-input"].checked ? DOM["#toolkit-tool-generate-links-input"].value : undefined,
         toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked  ? DOM["#toolkit-action-decrement-input"].value : undefined,
         toolkitQuantity = +DOM["#toolkit-quantity-input"].value,
@@ -604,8 +606,8 @@ URLI.Popup = function () {
         // Toolkit Errors
         toolkitErrors = [
           !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
-            toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 25) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
-              toolkitTool === "open-tabs" && tabs && (tabs.length + toolkitQuantity >= 100) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
+            toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
+              toolkitTool === "open-tabs" && (tabsLength + toolkitQuantity >= 100) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
               toolkitTool === "generate-links" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
         ],
         errorsExist = errors.some(error => error !== ""),
