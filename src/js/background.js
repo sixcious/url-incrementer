@@ -18,8 +18,10 @@ URLI.Background = function () {
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
-    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 }, "profiles": [], "profileSave": "user-select",
+    /* profiles */    "profiles": [], "profileSave": "user-select",
+    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
+    /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* fun */         "urli": "loves incrementing for you"
@@ -154,6 +156,7 @@ URLI.Background = function () {
       "base": props.base, "baseCase": props.baseCase,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity,
       "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
       "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
@@ -241,6 +244,17 @@ URLI.Background = function () {
     // Update Installations Version 5.1+: Ensure icon color and declarativeContent after each update
     if (details.reason === "update" && details.previousVersion >= "5.1") {
       //console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1, actual previousVersion=" + details.previousVersion);
+
+      // TODO: 5.1 - 5.3 Only:
+      chrome.storage.sync.set({
+        "profiles": [],
+        "profileSave": "user-select",
+        "toolkitTool": "open-tabs",
+        "toolkitAction": "increment",
+        "toolkitQuantity": 1
+      });
+
+
       chrome.storage.sync.get(null, function(olditems) {
         if (olditems && ["dark", "light", "rainbow", "urli"].includes(olditems.iconColor)) {
           chrome.browserAction.setIcon({

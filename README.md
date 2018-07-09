@@ -10,12 +10,14 @@ URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it o
 Features:
 - Auto Incrementing
 - Download Incrementing [Experimental] (Optional, Requires Extra Permissions) **
+- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate up to 10,000 incremented URL Links in 1 second for easy navigation in a new window!
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Error & Redirect Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
+- Save Your Favorite URL Patterns (URLs are encrypted using PBKDF2 with HMAC SHA-512)
+- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 

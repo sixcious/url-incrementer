@@ -191,10 +191,6 @@ div.column {
 }
 
 #toolkit-urli-button-div {
-/*  display: inline-block;
-  position: absolute;
-  right: 60px;
-  margin-top: -40px;*/
   vertical-align: top;
   margin-top: 14px;
 }
@@ -202,6 +198,10 @@ div.column {
 #toolkit-urli-button-img {
   transform: scaleX(-1);
   cursor: pointer;
+}
+
+#toolkit-generate-urls-div {
+  margin-top: 1em;
 }
 
 #auto-eta {

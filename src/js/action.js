@@ -19,7 +19,7 @@ URLI.Action = function () {
    * @public
    */
   function performAction(instance, action, caller, callback) {
-    //console.log("URLI.Action.performAction() - instance=" + instance + ", action=" + action + ", caller=" + caller);
+    console.log("URLI.Action.performAction() - instance=" + instance + ", action=" + action + ", caller=" + caller);
     let actionPerformed = false;
     // Handle AUTO
     if (instance.autoEnabled) {
@@ -66,6 +66,9 @@ URLI.Action = function () {
         break;
       case "clear":
         actionPerformed = clear(instance, action, caller, callback);
+        break;
+      case "toolkit":
+        actionPerformed = toolkit(instance, action, caller, callback);
         break;
       case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
@@ -213,6 +216,53 @@ URLI.Action = function () {
       callback(instance);
     } else {
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+    }
+    return actionPerformed;
+  }
+
+  /**
+   * Performs a toolkit action. The instance's toolkit tool, action, and quantity are used.
+   *
+   * @param instance the instance for this tab
+   * @param action   the action (toolkit)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
+  function toolkit(instance, action, caller, callback) {
+    let actionPerformed = false;
+    // If URLI didn't find a selection, we can't increment or decrement
+    if (instance.selection !== "" && instance.selectionStart >= 0) {
+      switch (instance.toolkitTool) {
+        case "open-tabs": {
+          let url = instance.url, selection = instance.selection;
+          for (let i = 0; i < instance.toolkitQuantity; i++) {
+            const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+            url = urlProps.urlmod;
+            selection = urlProps.selectionmod;
+            console.log("in open-tabs for loop. url=" + url);
+            chrome.tabs.create({"url": url, "active": false});
+          }
+          actionPerformed = true;
+          break;
+        }
+        case "generate-urls": {
+          const urls = [];
+          let url = instance.url, selection = instance.selection;
+          urls.push(url);
+          for (let i = 0; i < instance.toolkitQuantity - 1; i++) {
+            const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+            url = urlProps.urlmod;
+            selection = urlProps.selectionmod;
+            urls.push(url);
+          }
+          actionPerformed = true;
+          chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance, urls: urls});
+          break;
+        }
+        default:
+          break;
+      }
     }
     return actionPerformed;
   }

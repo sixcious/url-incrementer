@@ -64,6 +64,7 @@ URLI.Popup = function () {
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -118,6 +119,7 @@ URLI.Popup = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
+    console.log("URLI.Popup.messageListener() - request=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
         if (request.instance && request.instance.tabId === instance.tabId) {
@@ -129,6 +131,11 @@ URLI.Popup = function () {
       case "updatePopupDownloadPreview":
         if (request.instance && request.instance.tabId === instance.tabId) {
           updateDownloadPreviewCompletely();
+        }
+        break;
+      case "updatePopupToolkitGenerateURLs":
+        if (request.instance && request.instance.tabId === instance.tabId) {
+          updateToolkitGenerateURLs(request.urls);
         }
         break;
       default:
@@ -221,6 +228,12 @@ URLI.Popup = function () {
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
+    // Toolkit Setup:
+    DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
+    DOM["#toolkit-tool-generate-urls-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-urls-input"].value;
+    DOM["#toolkit-action-increment-input"].checked = instance.toolkitAction === DOM["#toolkit-action-increment-input"].value;
+    DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
+    DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled;
     DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
@@ -432,7 +445,7 @@ URLI.Popup = function () {
         for (let unselected of unselecteds) {
           table += buildDownloadPreviewTR(unselected, false, count++);
         }
-        table +=  "</tbody>" + "</table>";
+        table += "</tbody>" + "</table>";
         DOM["#download-preview-table-div"].innerHTML = table;
         // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
@@ -554,6 +567,101 @@ URLI.Popup = function () {
     }
   }
 
+  function toolkit() {
+    if (items_.popupAnimationsEnabled) {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+    }
+    chrome.tabs.query({lastFocusedWindow: true}, function(tabs) {
+      const
+        // Increment Decrement Values
+        url = DOM["#url-textarea"].value,
+        selection = DOM["#selection-input"].value,
+        selectionStart = +DOM["#selection-start-input"].value,
+        interval = +DOM["#interval-input"].value,
+        base = +DOM["#base-select"].value,
+        baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
+        selectionParsed = parseInt(selection, base).toString(base),
+        leadingZeros = DOM["#leading-zeros-input"].checked,
+        errorSkip = +DOM["#error-skip-input"].value,
+        // Toolkit Values
+        toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-urls-input"].checked ? DOM["#toolkit-tool-generate-urls-input"].value : undefined,
+        toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked  ? DOM["#toolkit-action-decrement-input"].value : undefined,
+        toolkitQuantity = +DOM["#toolkit-quantity-input"].value,
+        // Increment Decrement Errors
+        errors = [ // [0] = selection errors and [1] = interval errors
+          // [0] = Selection Errors
+          selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+            url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+              !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+                selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+                  parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+                    isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+          // [1] Interval Errors
+          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+          // [2] Error Skip Errors
+          errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+        ],
+        // Toolkit Errors
+        toolkitErrors = [
+          !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
+            toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 25) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
+              toolkitTool === "open-tabs" && tabs && (tabs.length + toolkitQuantity >= 100) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
+              toolkitTool === "generate-urls" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_urls_quantity_error") : ""
+        ],
+        errorsExist = errors.some(error => error !== ""),
+        toolkitErrorsExist = toolkitErrors.some(toolkitError => toolkitError !== "");
+      if (toolkitErrorsExist) {
+        errors.unshift(chrome.i18n.getMessage("oops_error"));
+        URLI.UI.generateAlert(toolkitErrors);
+      } else if (errorsExist) {
+        errors.unshift(chrome.i18n.getMessage("oops_error"));
+        URLI.UI.generateAlert(errors);
+      } else {
+        instance.selection = selection;
+        instance.selectionStart = selectionStart;
+        instance.interval = interval;
+        instance.base = base;
+        instance.baseCase = baseCase;
+        instance.leadingZeros = leadingZeros;
+        instance.errorSkip = errorSkip;
+        instance.toolkitTool = toolkitTool;
+        instance.toolkitAction = toolkitAction;
+        instance.toolkitQuantity = toolkitQuantity;
+        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+          backgroundPage.URLI.Action.performAction(instance, "toolkit", "popup");
+        });
+        // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
+        chrome.storage.sync.set({
+          "toolkitTool": toolkitTool,
+          "toolkitAction": toolkitAction,
+          "toolkitQuantity": toolkitQuantity
+        });
+      }
+    });
+  }
+
+  function updateToolkitGenerateURLs(urls) {
+    if (urls && urls.length > 0) {
+      let tip = "<div style=\"font-style: italic;\">" + chrome.i18n.getMessage("toolkit_generate_urls_tip") + "</div>";
+      let table =
+        "<table>" +
+          "<thead>" +
+          "<tr>" +
+            "<th>URL</th>" +
+          "</tr>" +
+          "</thead>" +
+        "<tbody>";
+      for (let url of urls) {
+        table +=
+        "<tr>" +
+          "<td><a href=\"" + url + "\" target=\"_blank\">" + url + "</a></td>" +
+        "</tr>";
+      }
+      table += "</tbody>" + "</table>";
+      DOM["#toolkit-generate-urls-div"].innerHTML = tip + table;
+    }
+  }
+
   /**
    * Sets up the instance in increment decrement mode. First validates user input for any
    * errors, then saves and enables the instance, then toggles the view back to
@@ -626,8 +734,8 @@ URLI.Popup = function () {
             downloadEnabled && !items_.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
           ],
           errorsExist = errors.some(error => error !== ""),
-          autoErrorsExist = autoErrors.some(error => error !== ""),
-          downloadErrorsExist = downloadErrors.some(error => error !== ""),
+          autoErrorsExist = autoErrors.some(autoError => autoError !== ""),
+          downloadErrorsExist = downloadErrors.some(downloadError => downloadError !== ""),
           enabled = !errorsExist && autoEnabled ? (autoAction !== "next" && autoAction !== "prev") : !errorsExist,
 
           /* Validates Rules:
@@ -654,8 +762,8 @@ URLI.Popup = function () {
     // Generate alerts if not validated
     if (!validated) {
       if (downloadErrorsExist) {
-      downloadErrors.unshift(chrome.i18n.getMessage("oops_error"));
-      URLI.UI.generateAlert(downloadErrors);
+        downloadErrors.unshift(chrome.i18n.getMessage("oops_error"));
+        URLI.UI.generateAlert(downloadErrors);
       } else if (autoErrorsExist) {
         autoErrors.unshift(chrome.i18n.getMessage("oops_error"));
         URLI.UI.generateAlert(autoErrors);
