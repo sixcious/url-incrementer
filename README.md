@@ -16,7 +16,7 @@ Features:
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save Your Favorite URL Patterns (URLs are encrypted using PBKDF2 with HMAC SHA-512)
+- Save Your Favorite URL Patterns (URLs are saved securely as hashes using a secure cryptographic hashing algorithm PBKDF2 with HMAC SHA-512)
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
@@ -30,7 +30,7 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 5.4 (TBD)
-- New Feature: Save URL Profiles/Patterns! URLI can now remember different URL patterns and intervals you set! You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. URLs saved will be encrypted and then decrypted on the fly when you do quick shortcuts.
+- New Feature: Save URL Profiles/Patterns! URLI can now remember different URL patterns and intervals you set! You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high random number of iterations. Not even URLI can figure out the URLs!
 - New Feature: The "Incrementer's Toolbox" - 1: Open up to (25?) incremented tabs in your browser or 2: Generate a list of incremented URLs!
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 
