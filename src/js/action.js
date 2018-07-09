@@ -246,7 +246,7 @@ URLI.Action = function () {
           actionPerformed = true;
           break;
         }
-        case "generate-urls": {
+        case "generate-links": {
           const urls = [];
           let url = instance.url, selection = instance.selection;
           urls.push(url);

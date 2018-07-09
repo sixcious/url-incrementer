@@ -134,20 +134,20 @@
               <div class="radio">
                 <label>
                   <input id="toolkit-tool-open-tabs-input" type="radio" name="toolkit-tool" value="open-tabs"/>
-                  <img src="../img/font-awesome/suitcase.png" alt="" width="14" height="14"/>
+                  <img src="../img/font-awesome/list-alt.png" alt="" width="14" height="14"/>
                   <span id="toolkit-tool-open-tabs-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-generate-urls-input" type="radio" name="toolkit-tool" value="generate-urls"/>
-                  <img src="../img/font-awesome/tint.png" alt="" width="14" height="14"/>
-                  <span id="toolkit-tool-generate-urls-label" data-i18n="textContent"></span>
+                  <input id="toolkit-tool-generate-links-input" type="radio" name="toolkit-tool" value="generate-links"/>
+                  <img src="../img/font-awesome/link.png" alt="" width="14" height="14"/>
+                  <span id="toolkit-tool-generate-links-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <!--
               <select id="toolkit-tool-select">
-                <option id="toolkit-tool-option-generate-urls" value="generate-urls" data-i18n="textContent"></option>
+                <option id="toolkit-tool-option-generate-links" value="generate-links" data-i18n="textContent"></option>
                 <option id="toolkit-tool-option-open-tabs" value="open-tabs" data-i18n="textContent"></option>
               </select>
               -->
@@ -186,7 +186,10 @@
             </div>
           </div>
         </div>
-        <div id="toolkit-generate-urls-div"></div>
+        <div id="toolkit-generate-links-div" class="display-none">
+          <a id="toolkit-generate-links-download" data-i18n="textContent" title="url-incremented-links.htm" download="url-incremented-links"></a>
+          <table id="toolkit-generate-links-table"></table>
+        </div>
       </div>
       <div id="auto">
         <h3 id="auto-h3">

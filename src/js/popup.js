@@ -230,7 +230,7 @@ URLI.Popup = function () {
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
-    DOM["#toolkit-tool-generate-urls-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-urls-input"].value;
+    DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
     DOM["#toolkit-action-increment-input"].checked = instance.toolkitAction === DOM["#toolkit-action-increment-input"].value;
     DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
@@ -584,7 +584,7 @@ URLI.Popup = function () {
         leadingZeros = DOM["#leading-zeros-input"].checked,
         errorSkip = +DOM["#error-skip-input"].value,
         // Toolkit Values
-        toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-urls-input"].checked ? DOM["#toolkit-tool-generate-urls-input"].value : undefined,
+        toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-links-input"].checked ? DOM["#toolkit-tool-generate-links-input"].value : undefined,
         toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked  ? DOM["#toolkit-action-decrement-input"].value : undefined,
         toolkitQuantity = +DOM["#toolkit-quantity-input"].value,
         // Increment Decrement Errors
@@ -606,7 +606,7 @@ URLI.Popup = function () {
           !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
             toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 25) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
               toolkitTool === "open-tabs" && tabs && (tabs.length + toolkitQuantity >= 100) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
-              toolkitTool === "generate-urls" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_urls_quantity_error") : ""
+              toolkitTool === "generate-links" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
         ],
         errorsExist = errors.some(error => error !== ""),
         toolkitErrorsExist = toolkitErrors.some(toolkitError => toolkitError !== "");
@@ -642,23 +642,28 @@ URLI.Popup = function () {
 
   function updateToolkitGenerateURLs(urls) {
     if (urls && urls.length > 0) {
-      let tip = "<div style=\"font-style: italic;\">" + chrome.i18n.getMessage("toolkit_generate_urls_tip") + "</div>";
+      // Table must have similar inline styling from popup.css for the download blob:
       let table =
-        "<table>" +
-          "<thead>" +
-          "<tr>" +
-            "<th>URL</th>" +
+        "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
+          "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
+          "<tr style='background: transparent;'>" +
+            "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
           "</tr>" +
           "</thead>" +
-        "<tbody>";
+        "<tbody style='border: 1px solid #f1f1f1; background-color: #fefefe;'>",
+        count = 1;
       for (let url of urls) {
-        table +=
-        "<tr>" +
-          "<td><a href=\"" + url + "\" target=\"_blank\">" + url + "</a></td>" +
-        "</tr>";
+        table += ((count++ % 2) !== 0 ?
+          "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
+            "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
+              "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>" +
+            "</td>" +
+          "</tr>";
       }
       table += "</tbody>" + "</table>";
-      DOM["#toolkit-generate-urls-div"].innerHTML = tip + table;
+      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
+      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table], {"type": "text/html"}));
+      DOM["#toolkit-generate-links-table"].innerHTML = table;
     }
   }
 

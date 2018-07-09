@@ -192,7 +192,11 @@ div.column {
 
 #toolkit-urli-button-div {
   vertical-align: top;
-  margin-top: 14px;
+  margin-top: 8px;
+  position: absolute;
+  right: 60px;
+  border-bottom: 1px solid #1779BA;
+  padding-bottom: 3px;
 }
 
 #toolkit-urli-button-img {
@@ -200,7 +204,11 @@ div.column {
   cursor: pointer;
 }
 
-#toolkit-generate-urls-div {
+#toolkit-generate-links-div {
+  margin-top: 1em;
+}
+
+#toolkit-generate-links-table {
   margin-top: 1em;
 }
 
