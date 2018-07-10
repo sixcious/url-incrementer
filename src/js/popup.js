@@ -785,7 +785,7 @@ URLI.Popup = function () {
     // Else good to go!
     else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Action.performAction(instance, "clear", "popupClearBeforeSet", function() {
+        backgroundPage.URLI.Action.performAction(instance, "clear", "popupClearBeforeSet", async function() {
         instance.enabled = enabled;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
@@ -824,26 +824,19 @@ URLI.Popup = function () {
                 urlsalt2 = backgroundPage.URLI.Encryption.generateSalt();
           console.log("urlsalt1=" + urlsalt1);
           console.log("urlsalt2=" + urlsalt2);
-          backgroundPage.URLI.Encryption.calculateHash(url1, urlsalt1).then(
-            function(urlhash1) {
-              console.log("calculated urlhash1=" + urlhash1);
-              backgroundPage.URLI.Encryption.calculateHash(url2, urlsalt2).then(
-                function(urlhash2) {
-                  console.log("calculated urlhash2=" + urlhash2);
-                  profiles.push({
-                    "urlhash1": urlhash1,
-                    "urlhash2": urlhash2,
-                    "urlsalt1": urlsalt1,
-                    "urlsalt2": urlsalt2,
-                    "url2length": url.substring(selectionStart + selection.length).length,
-                    "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
-                  chrome.storage.sync.set({
-                    "profiles": profiles
-                  });
-                }
-              )
-            }
-          );
+          const urlhash1 = await backgroundPage.URLI.Encryption.calculateHash(url1, urlsalt1);
+          const urlhash2 = await backgroundPage.URLI.Encryption.calculateHash(url2, urlsalt2);
+          console.log("calculated urlhash2=" + urlhash2);
+          profiles.push({
+            "urlhash1": urlhash1,
+            "urlhash2": urlhash2,
+            "urlsalt1": urlsalt1,
+            "urlsalt2": urlsalt2,
+            "url2length": url.substring(selectionStart + selection.length).length,
+            "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
+          chrome.storage.sync.set({
+            "profiles": profiles
+          });
         }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
