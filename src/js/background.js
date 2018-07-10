@@ -136,7 +136,7 @@ URLI.Background = function () {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
           props = profile;
           props.profileFound = true;
-          props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.indexOf(url2) : tab.url.length);
+          props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.lastIndexOf(url2) : tab.url.length);
           break;
         }
       }
