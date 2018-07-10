@@ -98,6 +98,23 @@ URLI.Background = function () {
     instances.delete(tabId);
   }
 
+  async function checkProfile(profile, url1, url2) {
+    console.log("URLI.Background.checkProfile() - profile of current url is url1=" + url1 + " url2=" + url2);
+    const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
+    const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
+    console.log("URLI.Background.checkProfile() - urlhash1");
+    return urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true);
+    // URLI.Encryption.calculateHash(url1, profile.urlsalt1).then(
+    //   function(urlhash1) {
+    //     URLI.Encryption.calculateHash(url2, profile.urlsalt2).then(
+    //       function(urlhash2) {
+    //         return urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true);
+    //       }
+    //     );
+    //   }
+    // );
+  }
+
   /**
    * Builds an instance with default values, either an existing saved profile or by using the storage items defaults.
    * 
@@ -106,36 +123,21 @@ URLI.Background = function () {
    * @return instance the newly built instance
    * @public
    */
-  function buildInstance(tab, items) {
+  async function buildInstance(tab, items) {
     let props;
     // Search for profile first:
     if (items.profiles && items.profiles.length > 0 ) {
       for (let profile of items.profiles) {
         const url1 = tab.url.substring(0, profile.selectionStart),
-              url2 = tab.url.slice(-profile.url2length);
-        console.log("URLI.Background.buildInstance() - profile of current url is url1=" + url1 + " url2=" + url2);
-        URLI.Encryption.calculateHash(url1, profile.urlsalt1).then(
-          function(urlhash1) {
-            URLI.Encryption.calculateHash(url2, profile.urlsalt2).then(
-              function(urlhash2) {
-                if (urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true)) {
-                  console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
-                  props = profile;
-                  props.profileFound = true;
-                  console.log("tab.url.indexof(url2)=" + tab.url.indexOf(url2));
-                  props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.indexOf(url2) : tab.url.length);
-                }
-              }
-            );
-          }
-        );
-        // if (url1 === profile.url1 && (profile.url2length > 0 ? url2 === profile.url2 : true)) {
-        //   console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.url1);
-        //   props = profile;
-        //   props.profileFound = true;
-        //   console.log("tab.url.indexof(profile.url2)=" + tab.url.indexOf(profile.url2));
-        //   props.selection =  tab.url.substring(props.selectionStart, profile.url2 ? tab.url.indexOf(profile.url2) : tab.url.length);
-        // }
+          url2 = tab.url.slice(-profile.url2length);
+        const found = await checkProfile(profile, url1, url2);
+        if (found) {
+          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
+          props = profile;
+          props.profileFound = true;
+          props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.indexOf(url2) : tab.url.length);
+          break;
+        }
       }
     }
     // If no profile found, use storage items:
@@ -309,10 +311,10 @@ URLI.Background = function () {
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
         break;
       case "performAction":
-        chrome.storage.sync.get(null, function(items) {
+        chrome.storage.sync.get(null, async function(items) {
           let instance = getInstance(sender.tab.id);
           if (!instance && request.action !== "auto") {
-            instance = buildInstance(sender.tab, items);
+            instance = await buildInstance(sender.tab, items);
           }
           if (instance) {
             URLI.Action.performAction(instance, request.action, "shortcuts.js");
@@ -354,10 +356,10 @@ URLI.Background = function () {
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
-          chrome.storage.sync.get(null, function(items) {
+          chrome.storage.sync.get(null, async function(items) {
             let instance = getInstance(request.tab.id);
             if (!instance && request.action !== "auto") {
-              instance = buildInstance(request.tab, items);
+              instance = await buildInstance(request.tab, items);
             }
             if (instance && (request.action === "increment" || request.action === "decrement")) {
               URLI.Action.performAction(instance, request.action, "externalExtension");
@@ -381,14 +383,14 @@ URLI.Background = function () {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
       chrome.storage.sync.get(null, function(items) {
         if (!items.permissionsInternalShortcuts) {
-          chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+          chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
             if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
               let instance = getInstance(tabs[0].id);
               if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
                   (command === "auto" && instance && instance.autoEnabled) ||
                   (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
                 if (!instance && items.quickEnabled) {
-                  instance = buildInstance(tabs[0], items);
+                  instance = await buildInstance(tabs[0], items);
                 }
                 URLI.Action.performAction(instance, command, "command");
               }

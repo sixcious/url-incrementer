@@ -85,10 +85,10 @@ URLI.Popup = function () {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
         items_ = items;
-        chrome.runtime.getBackgroundPage(function(backgroundPage) {
+        chrome.runtime.getBackgroundPage(async function(backgroundPage) {
           instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
           if (!instance) {
-            instance = backgroundPage.URLI.Background.buildInstance(tabs[0], items);
+            instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items);
           }
           updateControls();
           DOM["#profile-save-input"].checked = instance.profileFound;

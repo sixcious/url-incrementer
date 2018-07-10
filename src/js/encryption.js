@@ -17,12 +17,18 @@ URLI.Encryption = function () {
         HASH_BITS_LENGTH = 512,
         SALT_BYTE_LENGTH = 64;
 
-  function calculateHash(plaintext, salt, iterations, algorithm, hash) {
-    return crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext), "PBKDF2", false, ["deriveBits"]).then(key => {
-      return crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2buf(salt), iterations: 1000}, key, 512).then(bits => {
-        return buf2str(new Uint8Array(bits));
-      });
-    });
+  // function calculateHash(plaintext, salt, iterations, algorithm, hash) {
+  //   return crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext), "PBKDF2", false, ["deriveBits"]).then(key => {
+  //     return crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2buf(salt), iterations: 1000}, key, 512).then(bits => {
+  //       return buf2str(new Uint8Array(bits));
+  //     });
+  //   });
+  // }
+
+  async function calculateHash(plaintext, salt, iterations, algorithm, hash) {
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext), "PBKDF2", false, ["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2buf(salt), iterations: 1000}, key, 512);
+    return buf2str(new Uint8Array(bits));
   }
 
   function generateSalt() {
