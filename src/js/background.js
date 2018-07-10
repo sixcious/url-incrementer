@@ -132,11 +132,17 @@ URLI.Background = function () {
         const url1 = tab.url.substring(0, profile.selectionStart),
           url2 = tab.url.slice(-profile.url2length);
         const found = await checkProfile(profile, url1, url2);
-        if (found) {
+        const selection = tab.url.substring(profile.selectionStart, profile.url2length > 0 ? tab.url.lastIndexOf(url2) : tab.url.length);
+        const selectionParsed = parseInt(selection, profile.base).toString(profile.base);
+        // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
+        // Test base matches selection for same reason
+        if (found &&
+            /^[a-z0-9]+$/i.test(selection) &&
+            !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()))) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
           props = profile;
           props.profileFound = true;
-          props.selection = tab.url.substring(props.selectionStart, props.url2length > 0 ? tab.url.lastIndexOf(url2) : tab.url.length);
+          props.selection = selection;
           break;
         }
       }
@@ -198,7 +204,7 @@ URLI.Background = function () {
   function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
     if (details.reason === "install") {
-      //console.log("URLI.Background.installedListener() - details.reason === install");
+      console.log("URLI.Background.installedListener() - details.reason === install");
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.runtime.openOptionsPage();
@@ -207,7 +213,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.1: Remove declarativeContent if internal shortcuts not enabled (this was erroneously set for download and enhanced mode):
     else if (details.reason === "update" && details.previousVersion === "5.1") {
-      //console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion === 5.1, actual previousVersion=" + details.previousVersion);
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion === 5.1, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         if (olditems && !olditems.permissionsInternalShortcuts) {
           chrome.permissions.remove({ permissions: ["declarativeContent"]});
@@ -216,7 +222,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
     else if (details.reason === "update" && details.previousVersion <= "5.0") {
-      //console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
+      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(olditems) {
         chrome.storage.sync.clear(function() {
           chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
@@ -246,7 +252,7 @@ URLI.Background = function () {
     }
     // Update Installations Version 5.1+: Ensure icon color and declarativeContent after each update
     if (details.reason === "update" && details.previousVersion >= "5.1") {
-      //console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1, actual previousVersion=" + details.previousVersion);
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1, actual previousVersion=" + details.previousVersion);
 
       // TODO: 5.1 - 5.3 Only:
       chrome.storage.sync.set({
@@ -255,44 +261,6 @@ URLI.Background = function () {
         "toolkitTool": "open-tabs",
         "toolkitAction": "increment",
         "toolkitQuantity": 1
-      });
-
-
-      chrome.storage.sync.get(null, function(olditems) {
-        if (olditems && ["dark", "light", "rainbow", "urli"].includes(olditems.iconColor)) {
-          chrome.browserAction.setIcon({
-            path : {
-              "16": "/img/icons/" + olditems.iconColor + "/16.png",
-              "24": "/img/icons/" + olditems.iconColor + "/24.png",
-              "32": "/img/icons/" + olditems.iconColor + "/32.png"
-            }
-          });
-        }
-        if (olditems && olditems.permissionsInternalShortcuts) {
-          if (chrome.declarativeContent) {
-            chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-              let shortcutsjsRule = false;
-              for (let rule of rules) {
-                if (rule.actions[0].js[0] === "js/shortcuts.js") {
-                  //console.log("URLI.Background.installedListener() - internal shortcuts enabled, found shortcuts.js rule!");
-                  shortcutsjsRule = true;
-                  break;
-                }
-              }
-              if (!shortcutsjsRule) {
-                //console.log("URLI.Background.installedListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-                chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-                  chrome.declarativeContent.onPageChanged.addRules([{
-                    conditions: [new chrome.declarativeContent.PageStateMatcher()],
-                    actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-                  }], function(rules) {
-                    //console.log("URLI.Background.installedListener() - successfully added declarativeContent rules:" + rules);
-                  });
-                });
-              }
-            });
-          }
-        }
       });
     }
   }
@@ -306,7 +274,7 @@ URLI.Background = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    //console.log("URLI.Background.messageListener() - request=" + request + " sender=" + sender);
+    console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + " sender.tab.id=" + sender.tab.id);
     switch (request.greeting) {
       case "getInstance":
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
@@ -351,7 +319,7 @@ URLI.Background = function () {
    * @public
    */
   function messageExternalListener(request, sender, sendResponse) {
-    //console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
+    console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
     const URL_INCREMENT_BUTTON_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
@@ -425,7 +393,7 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    //console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated download preview listener is on!");
+    console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated download preview listener is on!");
     if (changeInfo.status === "complete") {
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
@@ -434,6 +402,57 @@ URLI.Background = function () {
       }
       chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
     }
+  }
+
+  /**
+   * The extension's background startup listener that is run the first time the extension starts.
+   * For example, when Chrome is started, when the extension is installed or updated, or when the
+   * extension is re-enabled after being disabled.
+   *
+   * Ensures the extension's toolbar icon and declarativeContent rules are set due to Chrome not re-setting these.
+   */
+  function startupListener() {
+    console.log("URLI.Background.startupListener()");
+    chrome.storage.sync.get(null, function(items) {
+      // Ensure the chosen toolbar icon is set
+      if (items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
+        console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
+        chrome.browserAction.setIcon({
+          path : {
+            "16": "/img/icons/" + items.iconColor + "/16.png",
+            "24": "/img/icons/" + items.iconColor + "/24.png",
+            "32": "/img/icons/" + items.iconColor + "/32.png"
+          }
+        });
+      }
+      // Ensure Internal Shortcuts declarativeContent rule is added
+      // The declarativeContent rule gets lost when the extension is updated or when the extension is enabled after being disabled
+      if (items && items.permissionsInternalShortcuts) {
+        if (chrome.declarativeContent) {
+          chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+            let shortcutsjsRule = false;
+            for (let rule of rules) {
+              if (rule.actions[0].js[0] === "js/shortcuts.js") {
+                console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
+                shortcutsjsRule = true;
+                break;
+              }
+            }
+            if (!shortcutsjsRule) {
+              console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+              chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+                chrome.declarativeContent.onPageChanged.addRules([{
+                  conditions: [new chrome.declarativeContent.PageStateMatcher()],
+                  actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+                }], function(rules) {
+                  console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
+                });
+              });
+            }
+          });
+        }
+      }
+    });
   }
 
   // Return Public Functions
@@ -450,7 +469,8 @@ URLI.Background = function () {
     messageExternalListener: messageExternalListener,
     commandListener: commandListener,
     tabRemovedListener: tabRemovedListener,
-    tabUpdatedListener: tabUpdatedListener
+    tabUpdatedListener: tabUpdatedListener,
+    startupListener: startupListener,
   };
 }();
 
@@ -460,3 +480,4 @@ chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
+URLI.Background.startupListener();

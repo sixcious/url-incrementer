@@ -10,13 +10,13 @@ URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it o
 Features:
 - Auto Incrementing
 - Download Incrementing [Experimental] (Optional, Requires Extra Permissions) **
-- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate up to 10,000 incremented URL Links in 1 second for easy navigation in a new window!
+- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate up to 10,000 incremented URL Links in 1 second!
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save Your Favorite URL Patterns (URLs are saved securely as hashes using a secure cryptographic hashing algorithm PBKDF2 with HMAC SHA-512)
+- Save Your Favorite URL Profiles for Quick Incrementing! URLs are saved securely, just like how websites save your passwords as hashes using a secure cryptographic hashing algorithm such as PBKDF2 with HMAC SHA-512
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
@@ -30,9 +30,10 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 5.4 (TBD)
-- New Feature: Save URL Profiles/Patterns! URLI can now remember different URL patterns and intervals you set! You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high random number of iterations. Not even URLI can figure out the URLs!
-- New Feature: The "Incrementer's Toolbox" - 1: Open up to (25?) incremented tabs in your browser or 2: Generate a list of incremented URLs!
+- New Feature: Save URL Profiles/Patterns. URLI can now remember different URL patterns and intervals you set. You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high number of iterations. Not even URLI can figure out the URLs!
+- New Feature: "The Incrementer's Toolkit" - 1: Open a range of up to 100 incremented tabs in your browser or 2: Generate a list of incremented URL links for easy navigation!
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
+- Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 
 What's New in Version 5.3 (7/4/2018)
 - Error Skipping now supports any combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!

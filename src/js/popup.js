@@ -512,7 +512,7 @@ URLI.Popup = function () {
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    //console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
+    console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
     clearTimeout(timeout);
     timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
@@ -571,7 +571,7 @@ URLI.Popup = function () {
     if (items_.popupAnimationsEnabled) {
       URLI.UI.clickHoverCss(this, "hvr-push-click");
     }
-    chrome.tabs.query({}, function(tabs) {
+    chrome.tabs.query({currentWindow: true}, function(tabs) {
       console.log("tabs.length=" + tabs.length);
       const
         // Increment Decrement Values
@@ -607,7 +607,7 @@ URLI.Popup = function () {
         toolkitErrors = [
           !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
             toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
-              toolkitTool === "open-tabs" && (tabsLength + toolkitQuantity >= 100) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
+              toolkitTool === "open-tabs" && (tabsLength + toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
               toolkitTool === "generate-links" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
         ],
         errorsExist = errors.some(error => error !== ""),
