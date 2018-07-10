@@ -98,6 +98,7 @@ URLI.Background = function () {
     instances.delete(tabId);
   }
 
+  //https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
   async function checkProfile(profile, url1, url2) {
     console.log("URLI.Background.checkProfile() - profile of current url is url1=" + url1 + " url2=" + url2);
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
