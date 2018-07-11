@@ -89,6 +89,7 @@ URLI.Options = function () {
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
+    DOM["#profile-delete-button"].addEventListener("click", function() { deleteProfile(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
@@ -143,6 +144,11 @@ URLI.Options = function () {
         DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
         DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
       }
+      if (values === "all" || values === "profiles") {
+        DOM["#profile-exist"].className = items.profiles && items.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+        DOM["#profile-none"].className = !items.profiles || items.profiles.length <= 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+        buildSelectProfiles(items.profiles);
+      }
       if (values === "all") {
         DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
         DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
@@ -169,9 +175,6 @@ URLI.Options = function () {
         DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
         DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
         DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-        DOM["#profile-exist"].className = items.profiles && items.profiles.length > 0 ? "display-block" : "display-none";
-        DOM["#profile-none"].className = items.profiles && items.profiles.length > 0 ? "display-none" : "display-block";
-        buildSelectProfiles(items.profiles);
         DOM["#selection-select"].value = items.selectionPriority;
         DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
         DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -296,11 +299,43 @@ URLI.Options = function () {
       let select = "<select id=\"profiles-select\">",
           count = 1;
       for (let profile of profiles) {
-        select += "<option id=\"" + profile.urlhash1 +"\" value=\"" + profile.urlhash1 + "\">" + (count++) + " - hash: " + profile.urlhash1.substring(0, 20) + "... interval: " + profile.interval + " base: " + profile.base + "</option>";
+        select +=
+          "<option data-urlhash1=\"" + profile.urlhash1 + "\"" +
+                 " data-urlhash2=\"" + profile.urlhash2 + "\"" + ">" +
+            (count++) +
+            " - hash: " + profile.urlhash1.substring(0, 16) + "..." +
+            " interval: " + (profile.interval < 100000 ? profile.interval : profile.interval.toString().substring(0, 5) + "...") +
+            " base: " + profile.base +
+            " zeros: " + (profile.leadingZeros ? "Y" : "N") +
+          "</option>";
       }
       select += "</select>";
       DOM["#profile-select-div"].innerHTML = select;
     }
+  }
+
+  function deleteProfile() {
+    const select = document.getElementById("profiles-select"), // Dynamically Generated Select, so can't use DOM Cache
+          option = select.options[select.selectedIndex],
+          urlhash1 = option.dataset.urlhash1,
+          urlhash2 = option.dataset.urlhash2;
+    chrome.storage.sync.get(null, function(items) {
+      const profiles = items.profiles;
+      if (profiles && profiles.length > 0) {
+        for (let i = 0; i < profiles.length; i++) {
+          if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
+            console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
+            profiles.splice(i, 1);
+            chrome.storage.sync.set({
+              profiles: profiles
+            }, function() {
+              populateValuesFromStorage("profiles");
+            });
+            break;
+          }
+        }
+      }
+    });
   }
 
   /**

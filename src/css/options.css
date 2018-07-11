@@ -111,7 +111,10 @@ input[type="image"]:focus {
   padding-bottom: 2px;
   font-style: italic;
   display: inline-block;
-/*  margin-top: 12px;*/
+}
+
+#profile-delete-button {
+  margin-top: 2em;
 }
 
 /* error-skip */

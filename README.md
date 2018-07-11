@@ -27,7 +27,7 @@ URLI 5 and a personal apology to you ...
 
 If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
 
-This is the only extension I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 5.4 (TBD)
 - New Feature: Save URL Profiles/Patterns. URLI can now remember different URL patterns and intervals you set. You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high number of iterations. Not even URLI can figure out the URLs!

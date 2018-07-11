@@ -27,6 +27,7 @@ URLI.Popup = function () {
 
   let instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
+      localItems_ = {}, // Local Storage items cache
       downloadPreviewAlls = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
       timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
 
@@ -84,27 +85,30 @@ URLI.Popup = function () {
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.storage.sync.get(null, function(items) {
-        items_ = items;
-        chrome.runtime.getBackgroundPage(async function(backgroundPage) {
-          instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
-          if (!instance) {
-            instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items);
-          }
-          updateControls();
-          DOM["#profile-save-input"].checked = instance.profileFound;
-          if (instance.profileFound) {
-            DOM["#profile-save-label"].style.color = "#1779BA";
-          }
-          DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
-          const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-          DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
-          DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
-          DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
-          updateSetup();
-          // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-          if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
-            toggleView.call(DOM["#setup-input"]);
-          }
+        chrome.storage.local.get(null, function(localItems) {
+          items_ = items;
+          localItems_ = localItems;
+          chrome.runtime.getBackgroundPage(async function(backgroundPage) {
+            instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
+            if (!instance) {
+              instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items);
+            }
+            updateControls();
+            DOM["#profile-save-input"].checked = instance.profileFound;
+            if (instance.profileFound) {
+              DOM["#profile-save-label"].style.color = "#1779BA";
+            }
+            DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+            const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
+            DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
+            DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
+            DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+            updateSetup();
+            // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
+            if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
+              toggleView.call(DOM["#setup-input"]);
+            }
+          });
         });
       });
     });
@@ -817,13 +821,24 @@ URLI.Popup = function () {
         // Profile Save
         if (profileSave) {
           console.log("saving profile...");
-          const profiles = items_.profiles && Array.isArray(items_.profiles)? items_.profiles : [],
+          const profiles = localItems_ && localItems_.profiles && Array.isArray(localItems_.profiles)? localItems_.profiles : [],
                 url1 = url.substring(0, selectionStart),
                 url2 = url.substring(selectionStart + selection.length),
                 urlsalt1 = backgroundPage.URLI.Encryption.generateSalt(),
                 urlsalt2 = backgroundPage.URLI.Encryption.generateSalt();
           console.log("urlsalt1=" + urlsalt1);
           console.log("urlsalt2=" + urlsalt2);
+          // Check if this URL has already been saved, if it has remove the existing saved profile
+          if (profiles && profiles.length > 0) {
+            for (let i = 0; i < profiles.length; i++) {
+              const result = await backgroundPage.URLI.Background.profileMatchesURL(profiles[i], url);
+              if (result.matches) {
+                console.log("URLI.Popup.setup() - this URL has already been saved, so removing the old entry");
+                profiles.splice(i, 1);
+                break;
+              }
+            }
+          }
           const urlhash1 = await backgroundPage.URLI.Encryption.calculateHash(url1, urlsalt1);
           const urlhash2 = await backgroundPage.URLI.Encryption.calculateHash(url2, urlsalt2);
           console.log("calculated urlhash2=" + urlhash2);
@@ -834,7 +849,7 @@ URLI.Popup = function () {
             "urlsalt2": urlsalt2,
             "url2length": url.substring(selectionStart + selection.length).length,
             "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
-          chrome.storage.sync.set({
+          chrome.storage.local.set({
             "profiles": profiles
           });
         }

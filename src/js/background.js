@@ -39,6 +39,7 @@ URLI.Background = function () {
     "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "download":  { "text": "DL",   "backgroundColor": "#663399" },
     "skip":      { "text": "",     "backgroundColor": "#000028" }, //"#FFCC22" },
+    "toolkit":   { "text": "TOOL", "backgroundColor": "#000028" },
     "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -98,69 +99,76 @@ URLI.Background = function () {
     instances.delete(tabId);
   }
 
-  //https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
-  async function checkProfile(profile, url1, url2) {
-    console.log("URLI.Background.checkProfile() - profile of current url is url1=" + url1 + " url2=" + url2);
+  /**
+   * TODO
+   *
+   * @param profile the saved profile with url hashes to check
+   * @param url     the current URL to check
+   * @returns {Promise<{matches: boolean, selection: string}>}
+   * @public
+   */
+  async function profileMatchesURL(profile, url) {
+    console.log("URLI.Background.checkProfile() - profile of current url is url=" + url);
+    const url1 = url.substring(0, profile.selectionStart),
+          url2 = url.slice(-profile.url2length);
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
     const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
-    console.log("URLI.Background.checkProfile() - urlhash1");
-    return urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true);
-    // URLI.Encryption.calculateHash(url1, profile.urlsalt1).then(
-    //   function(urlhash1) {
-    //     URLI.Encryption.calculateHash(url2, profile.urlsalt2).then(
-    //       function(urlhash2) {
-    //         return urlhash1 === profile.urlhash1 && (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true);
-    //       }
-    //     );
-    //   }
-    // );
+    const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
+    const selectionParsed = parseInt(selection, profile.base).toString(profile.base);
+    // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
+    // Test base matches selection for same reason
+    return {
+      "matches":
+      urlhash1 === profile.urlhash1 &&
+      (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true) &&
+      /^[a-z0-9]+$/i.test(selection) &&
+      !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())),
+      "selection": selection
+    };
   }
 
   /**
-   * Builds an instance with default values, either an existing saved profile or by using the storage items defaults.
+   * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
    * 
-   * @param tab   the tab properties (id, url) to set this instance with
-   * @param items the storage items to help build a default instance
+   * @param tab        the tab properties (id, url) to set this instance with
+   * @param items      the storage items to help build a default instance
+   * @param localItems the storage local items (profiles)
    * @return instance the newly built instance
    * @public
    */
-  async function buildInstance(tab, items) {
+  async function buildInstance(tab, items, localItems) {
     let props;
     // Search for profile first:
-    if (items.profiles && items.profiles.length > 0 ) {
-      for (let profile of items.profiles) {
-        const url1 = tab.url.substring(0, profile.selectionStart),
-          url2 = tab.url.slice(-profile.url2length);
-        const found = await checkProfile(profile, url1, url2);
-        const selection = tab.url.substring(profile.selectionStart, profile.url2length > 0 ? tab.url.lastIndexOf(url2) : tab.url.length);
-        const selectionParsed = parseInt(selection, profile.base).toString(profile.base);
-        // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
-        // Test base matches selection for same reason
-        if (found &&
-            /^[a-z0-9]+$/i.test(selection) &&
-            !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()))) {
-          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.url1=" + profile.urlhash1);
-          props = profile;
+    if (localItems && localItems.profiles && localItems.profiles.length > 0 ) {
+      // How to handle async/await in for loops:
+      // https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
+      for (let profile of localItems.profiles) {
+        const result = await profileMatchesURL(profile, tab.url);
+        if (result.matches) {
+          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
+          props = profile; // selectionStart, interval, base, baseCase, leadingZeros
           props.profileFound = true;
-          props.selection = selection;
+          props.selection = result.selection;
           break;
         }
       }
     }
     // If no profile found, use storage items:
     if (!props) {
-      props = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+      props = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
       props.profileFound = false;
       props.interval = items.interval;
       props.base = items.base;
       props.baseCase = items.baseCase;
+      props.leadingZeros = items.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
     }
+    // Return newly built instance using props and items:
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
       "tabId": tab.id, "url": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart,
-      "leadingZeros": items.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1,
+      "leadingZeros": props.leadingZeros,
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
@@ -280,14 +288,16 @@ URLI.Background = function () {
         sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
         break;
       case "performAction":
-        chrome.storage.sync.get(null, async function(items) {
-          let instance = getInstance(sender.tab.id);
-          if (!instance && request.action !== "auto") {
-            instance = await buildInstance(sender.tab, items);
-          }
-          if (instance) {
-            URLI.Action.performAction(instance, request.action, "shortcuts.js");
-          }
+        chrome.storage.sync.get(null, function(items) {
+          chrome.storage.local.get(null, async function(localItems) {
+            let instance = getInstance(sender.tab.id);
+            if (!instance && request.action !== "auto") {
+              instance = await buildInstance(sender.tab, items, localItems);
+            }
+            if (instance) {
+              URLI.Action.performAction(instance, request.action, "shortcuts.js");
+            }
+          });
         });
         break;
       case "incrementDecrementSkipErrors":
@@ -325,14 +335,16 @@ URLI.Background = function () {
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
-          chrome.storage.sync.get(null, async function(items) {
-            let instance = getInstance(request.tab.id);
-            if (!instance && request.action !== "auto") {
-              instance = await buildInstance(request.tab, items);
-            }
-            if (instance && (request.action === "increment" || request.action === "decrement")) {
-              URLI.Action.performAction(instance, request.action, "externalExtension");
-            }
+          chrome.storage.sync.get(null, function(items) {
+            chrome.storage.local.get(null, async function(localItems) {
+              let instance = getInstance(request.tab.id);
+              if (!instance && request.action !== "auto") {
+                instance = await buildInstance(request.tab, items, localItems);
+              }
+              if (instance && (request.action === "increment" || request.action === "decrement")) {
+                URLI.Action.performAction(instance, request.action, "externalExtension");
+              }
+            });
           });
           break;
         default:
@@ -351,21 +363,23 @@ URLI.Background = function () {
   function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
       chrome.storage.sync.get(null, function(items) {
-        if (!items.permissionsInternalShortcuts) {
-          chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
-            if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
-              let instance = getInstance(tabs[0].id);
-              if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
+        chrome.storage.local.get(null, function(localItems) {
+          if (!items.permissionsInternalShortcuts) {
+            chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
+              if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
+                let instance = getInstance(tabs[0].id);
+                if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
                   (command === "auto" && instance && instance.autoEnabled) ||
                   (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
-                if (!instance && items.quickEnabled) {
-                  instance = await buildInstance(tabs[0], items);
+                  if (!instance && items.quickEnabled) {
+                    instance = await buildInstance(tabs[0], items, localItems);
+                  }
+                  URLI.Action.performAction(instance, command, "command");
                 }
-                URLI.Action.performAction(instance, command, "command");
               }
-            }
-          });
-        }
+            });
+          }
+        });
       });
     }
   }
@@ -462,6 +476,7 @@ URLI.Background = function () {
     getInstance: getInstance,
     setInstance: setInstance,
     deleteInstance: deleteInstance,
+    profileMatchesURL: profileMatchesURL,
     buildInstance: buildInstance,
     setBadge: setBadge,
     installedListener: installedListener,
