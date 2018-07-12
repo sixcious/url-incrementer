@@ -76,6 +76,24 @@ URLI.Background = function () {
   }
 
   /**
+   * Gets the sync storage items.
+   *
+   * @returns {{}} the sync storage items
+   */
+  function getItems() {
+    return items_;
+  }
+
+  /**
+   * Gets the local storage items.
+   *
+   * @returns {{}} the local storage items
+   */
+  function getLocalItems() {
+    return localItems_;
+  }
+
+  /**
    * Gets all instances.
    *
    * @return {Map<tabId, instance>} the tab instances
@@ -118,7 +136,60 @@ URLI.Background = function () {
   }
 
   /**
-   * TODO
+   * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
+   * 
+   * @param tab the tab properties (id, url) to set this instance with
+   * @return instance the newly built instance
+   * @public
+   */
+  async function buildInstance(tab) {
+    let props;
+    // Search for profile first:
+    if (localItems_ && localItems_.profiles && localItems_.profiles.length > 0 ) {
+      // How to handle async/await in for loops:
+      // https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
+      for (let profile of localItems_.profiles) {
+        const result = await profileMatchesURL(profile, tab.url);
+        if (result.matches) {
+          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
+          props = profile; // selectionStart, interval, base, baseCase, leadingZeros
+          props.profileFound = true;
+          props.selection = result.selection;
+          break;
+        }
+      }
+    }
+    // If no profile found, use storage items:
+    if (!props) {
+      props = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
+      props.profileFound = false;
+      props.interval = items_.interval;
+      props.base = items_.base;
+      props.baseCase = items_.baseCase;
+      props.leadingZeros = items_.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    }
+    // Return newly built instance using props and items:
+    return {
+      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "tabId": tab.id, "url": tab.url,
+      "profileFound": props.profileFound,
+      "selection": props.selection, "selectionStart": props.selectionStart,
+      "leadingZeros": props.leadingZeros,
+      "interval": props.interval,
+      "base": props.base, "baseCase": props.baseCase,
+      "errorSkip": items_.errorSkip, "errorCodes": items_.errorCodes, "errorCodesCustomEnabled": items_.errorCodesCustomEnabled, "errorCodesCustom": items_.errorCodesCustom,
+      "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
+      "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,
+      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge,
+      "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
+      "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
+      "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,
+      "downloadPreview": items_.downloadPreview
+    };
+  }
+
+  /**
+   * Checks if the saved profile's hashed URL matches the URL.
    *
    * @param profile the saved profile with url hashes to check
    * @param url     the current URL to check
@@ -128,7 +199,7 @@ URLI.Background = function () {
   async function profileMatchesURL(profile, url) {
     console.log("URLI.Background.checkProfile() - profile of current url is url=" + url);
     const url1 = url.substring(0, profile.selectionStart),
-          url2 = url.slice(-profile.url2length);
+      url2 = url.slice(-profile.url2length);
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
     const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
     const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
@@ -142,61 +213,6 @@ URLI.Background = function () {
       /^[a-z0-9]+$/i.test(selection) &&
       !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())),
       "selection": selection
-    };
-  }
-
-  /**
-   * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
-   * 
-   * @param tab        the tab properties (id, url) to set this instance with
-   * @param items      the storage items to help build a default instance
-   * @param localItems the storage local items (profiles)
-   * @return instance the newly built instance
-   * @public
-   */
-  async function buildInstance(tab, items, localItems) {
-    let props;
-    // Search for profile first:
-    if (localItems && localItems.profiles && localItems.profiles.length > 0 ) {
-      // How to handle async/await in for loops:
-      // https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
-      for (let profile of localItems.profiles) {
-        const result = await profileMatchesURL(profile, tab.url);
-        if (result.matches) {
-          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
-          props = profile; // selectionStart, interval, base, baseCase, leadingZeros
-          props.profileFound = true;
-          props.selection = result.selection;
-          break;
-        }
-      }
-    }
-    // If no profile found, use storage items:
-    if (!props) {
-      props = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
-      props.profileFound = false;
-      props.interval = items.interval;
-      props.base = items.base;
-      props.baseCase = items.baseCase;
-      props.leadingZeros = items.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
-    }
-    // Return newly built instance using props and items:
-    return {
-      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false, "enhancedMode": items.permissionsEnhancedMode,
-      "tabId": tab.id, "url": tab.url,
-      "profileFound": props.profileFound,
-      "selection": props.selection, "selectionStart": props.selectionStart,
-      "leadingZeros": props.leadingZeros,
-      "interval": props.interval,
-      "base": props.base, "baseCase": props.baseCase,
-      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
-      "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
-      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity,
-      "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge,
-      "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
-      "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
-      "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
-      "downloadPreview": items.downloadPreview
     };
   }
 
@@ -265,6 +281,15 @@ URLI.Background = function () {
               "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
               "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
               "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom
+            }, function() {
+              chrome.storage.sync.get(null, function(items) {
+                items_ = items;
+                chrome.storage.local.clear(function() {
+                  chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+                    localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
+                  });
+                });
+              });
             });
           });
         });
@@ -282,17 +307,17 @@ URLI.Background = function () {
         "urli": "loves incrementing for you"
       });
     }
-    // Update Installations Version 5.1+: Ensure icon color and declarativeContent after each update
-    if (details.reason === "update" && details.previousVersion >= "5.1") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1, actual previousVersion=" + details.previousVersion);
-
-      // TODO: 5.1 - 5.3 Only:
+    // Update Installations Version 5.1, 5.2, and 5.3 only: Storage updates for new features: Toolkit and Profiles
+    if (details.reason === "update" && details.previousVersion >= "5.1" && details.previousVersion <= "5.3") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1 && <= 5.3, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.set({
-        "profiles": [],
-        "profileSave": "user-select",
         "toolkitTool": "open-tabs",
         "toolkitAction": "increment",
         "toolkitQuantity": 1
+      });
+      chrome.storage.local.set({
+        "profilePreselect": false,
+        "profiles": []
       });
     }
   }
@@ -305,24 +330,20 @@ URLI.Background = function () {
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
-  function messageListener(request, sender, sendResponse) {
+  async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + " sender.tab.id=" + sender.tab.id);
     switch (request.greeting) {
       case "getInstance":
-        sendResponse({instance: URLI.Background.getInstance(sender.tab.id)});
+        sendResponse({instance: getInstance(sender.tab.id), items: getItems()});
         break;
       case "performAction":
-        chrome.storage.sync.get(null, function(items) {
-          chrome.storage.local.get(null, async function(localItems) {
-            let instance = getInstance(sender.tab.id);
-            if (!instance && request.action !== "auto") {
-              instance = await buildInstance(sender.tab, items, localItems);
-            }
-            if (instance) {
-              URLI.Action.performAction(instance, request.action, "shortcuts.js");
-            }
-          });
-        });
+        let instance = getInstance(sender.tab.id);
+        if (!instance && request.action !== "auto") {
+          instance = await buildInstance(sender.tab);
+        }
+        if (instance) {
+          URLI.Action.performAction(instance, request.action, "shortcuts.js");
+        }
         break;
       case "incrementDecrementSkipErrors":
         if (request.instance) {
@@ -352,24 +373,20 @@ URLI.Background = function () {
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
-  function messageExternalListener(request, sender, sendResponse) {
+  async function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
     const URL_INCREMENT_BUTTON_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
       switch (request.greeting) {
         case "performAction":
-          chrome.storage.sync.get(null, function(items) {
-            chrome.storage.local.get(null, async function(localItems) {
-              let instance = getInstance(request.tab.id);
-              if (!instance && request.action !== "auto") {
-                instance = await buildInstance(request.tab, items, localItems);
-              }
-              if (instance && (request.action === "increment" || request.action === "decrement")) {
-                URLI.Action.performAction(instance, request.action, "externalExtension");
-              }
-            });
-          });
+          let instance = getInstance(request.tab.id);
+          if (!instance && request.action !== "auto") {
+            instance = await buildInstance(request.tab);
+          }
+          if (instance && (request.action === "increment" || request.action === "decrement")) {
+            URLI.Action.performAction(instance, request.action, "externalExtension");
+          }
           break;
         default:
           break;
@@ -386,25 +403,21 @@ URLI.Background = function () {
    */
   function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
-      chrome.storage.sync.get(null, function(items) {
-        chrome.storage.local.get(null, function(localItems) {
-          if (!items.permissionsInternalShortcuts) {
-            chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
-              if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
-                let instance = getInstance(tabs[0].id);
-                if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled)) ||
-                  (command === "auto" && instance && instance.autoEnabled) ||
-                  (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
-                  if (!instance && items.quickEnabled) {
-                    instance = await buildInstance(tabs[0], items, localItems);
-                  }
-                  URLI.Action.performAction(instance, command, "command");
-                }
+      if (!items_.permissionsInternalShortcuts) {
+        chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
+          if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
+            let instance = getInstance(tabs[0].id);
+            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items_.quickEnabled || (instance && instance.enabled)) ||
+                (command === "auto" && instance && instance.autoEnabled) ||
+                (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
+              if (!instance && items_.quickEnabled) {
+                instance = await buildInstance(tabs[0]);
               }
-            });
+              URLI.Action.performAction(instance, command, "command");
+            }
           }
         });
-      });
+      }
     }
   }
 
@@ -443,15 +456,45 @@ URLI.Background = function () {
   }
 
   /**
+   * The storage changed listener that listens for changes in both sync and local storage
+   * and then updates the Background's items and localItems storage caches.
+   *
+   * @param changes  Object mapping each key that changed to its corresponding storage.StorageChange for that item
+   * @param areaName the name of the storage area("sync", "local" or "managed") the changes are for
+   */
+  function storageChangedListener(changes, areaName) {
+    switch (areaName) {
+      case "sync":
+        for (let key in changes) {
+          console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
+          if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
+            items_[key] = changes[key].newValue;
+          }
+        }
+        break;
+      case "local":
+        for (let key in changes) {
+          console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
+          if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
+            localItems_[key] = changes[key].newValue;
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
    * The extension's background startup listener that is run the first time the extension starts.
    * For example, when Chrome is started, when the extension is installed or updated, or when the
    * extension is re-enabled after being disabled.
    *
-   * Ensures the extension's toolbar icon and declarativeContent rules are set due to Chrome not re-setting these.
+   * 1) Caches the sync storage and local storage items into items_ and localItems_
+   * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
    */
   function startupListener() {
     console.log("URLI.Background.startupListener()");
-    chrome.storage.local.get(null, function(localItems) { localItems_ = localItems; });
     chrome.storage.sync.get(null, function(items) {
       items_ = items;
       // Ensure the chosen toolbar icon is set
@@ -466,7 +509,7 @@ URLI.Background = function () {
         });
       }
       // Ensure Internal Shortcuts declarativeContent rule is added
-      // The declarativeContent rule gets lost when the extension is updated or when the extension is enabled after being disabled
+      // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
       if (items && items.permissionsInternalShortcuts) {
         if (chrome.declarativeContent) {
           chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
@@ -493,50 +536,23 @@ URLI.Background = function () {
         }
       }
     });
-  }
-
-  function getItems() { return items_; } function getLocalItems() { return localItems_; }
-  function storageListener(changes, namespace) {
-    switch (namespace) {
-      case "sync":
-        for (let key in changes) {
-          if (changes[key].newValue !== undefined) {
-            items_[key] = changes[key].newValue;
-          }
-        }
-        break;
-      case "local":
-        for (let key in changes) {
-          if (changes[key].newValue !== undefined) {
-            localItems_[key] = changes[key].newValue;
-          }
-        }
-        break;
-      default:
-        break;
-    }
-
-    for (key in changes) {
-      var storageChange = changes[key];
-      console.log('Storage key "%s" in namespace "%s" changed. ' +
-        'Old value was "%s", new value is "%s".',
-        key,
-        namespace,
-        storageChange.oldValue,
-        storageChange.newValue);
-    }
-
+    chrome.storage.local.get(null, function(localItems) {
+      localItems_ = localItems;
+    });
   }
 
   // Return Public Functions
   return {
     getSDV: getSDV,
+    getLSDV: getLSDV,
+    getItems: getItems,
+    getLocalItems: getLocalItems,
     getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,
     deleteInstance: deleteInstance,
-    profileMatchesURL: profileMatchesURL,
     buildInstance: buildInstance,
+    profileMatchesURL: profileMatchesURL,
     setBadge: setBadge,
     installedListener: installedListener,
     messageListener: messageListener,
@@ -544,8 +560,8 @@ URLI.Background = function () {
     commandListener: commandListener,
     tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener,
-    startupListener: startupListener,
-    storageListener: storageListener, getItems: getItems, getLocalItems: getLocalItems
+    storageChangedListener: storageChangedListener,
+    startupListener: startupListener
   };
 }();
 
@@ -555,5 +571,5 @@ chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
+chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 URLI.Background.startupListener();
-chrome.storage.onChanged.addListener(URLI.Background.storageListener);

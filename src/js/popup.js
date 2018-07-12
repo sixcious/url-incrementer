@@ -84,32 +84,28 @@ URLI.Popup = function () {
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.storage.sync.get(null, function(items) {
-        chrome.storage.local.get(null, function(localItems) {
-          items_ = items;
-          localItems_ = localItems;
-          chrome.runtime.getBackgroundPage(async function(backgroundPage) {
-            instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
-            if (!instance) {
-              instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
-            }
-            updateControls();
-            DOM["#profile-save-input"].checked = instance.profileFound || items_.profilePreselect;
-            if (instance.profileFound) {
-              DOM["#profile-save-label"].style.color = "#1779BA";
-            }
-            DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
-            const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-            DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
-            DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
-            DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
-            updateSetup();
-            // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-            if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
-              toggleView.call(DOM["#setup-input"]);
-            }
-          });
-        });
+      chrome.runtime.getBackgroundPage(async function(backgroundPage) {
+        instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
+        items_ = backgroundPage.URLI.Background.getItems();
+        localItems_ = backgroundPage.URLI.Background.getLocalItems();
+        if (!instance) {
+          instance = await backgroundPage.URLI.Background.buildInstance(tabs[0]);
+        }
+        updateControls();
+        DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
+        if (instance.profileFound) {
+          DOM["#profile-save-label"].style.color = "#1779BA";
+        }
+        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+        const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
+        DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
+        DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
+        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+        updateSetup();
+        // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
+        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
+          toggleView.call(DOM["#setup-input"]);
+        }
       });
     });
   }
@@ -123,7 +119,7 @@ URLI.Popup = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Popup.messageListener() - request=" + request + " sender=" + sender);
+    console.log("URLI.Popup.messageListener() - request.greeting=" + request + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
         if (request.instance && request.instance.tabId === instance.tabId) {
@@ -571,10 +567,44 @@ URLI.Popup = function () {
     }
   }
 
-  function toolkit() {
-    if (items_.popupAnimationsEnabled) {
-      URLI.UI.clickHoverCss(this, "hvr-push-click");
+  /**
+   * Called each time the Generate URLS tool is called to update the table of links and the download button link.
+   *
+   * @param urls the incremented or decremented URLs that were generated
+   * @private
+   */
+  function updateToolkitGenerateURLs(urls) {
+    if (urls && urls.length > 0) {
+      // Table must have similar inline styling from popup.css for the download blob's HTML file:
+      let table =
+        "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
+        "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
+        "<tr style='background: transparent;'>" +
+        "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
+        "</tr>" +
+        "</thead>" +
+        "<tbody style='border: 1px solid #f1f1f1; background-color: #fefefe;'>",
+        count = 1;
+      for (let url of urls) {
+        table += ((count++ % 2) !== 0 ?
+          "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
+          "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
+          "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>" +
+          "</td>" +
+          "</tr>";
+      }
+      table += "</tbody>" + "</table>";
+      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
+      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table], {"type": "text/html"}));
+      DOM["#toolkit-generate-links-table"].innerHTML = table;
     }
+  }
+
+  /**
+   * TODO
+   */
+  function toolkit() {
+    URLI.UI.clickHoverCss(this, "hvr-push-click");
     chrome.tabs.query({currentWindow: true}, function(tabs) {
       console.log("tabs.length=" + tabs.length);
       const
@@ -644,33 +674,6 @@ URLI.Popup = function () {
         });
       }
     });
-  }
-
-  function updateToolkitGenerateURLs(urls) {
-    if (urls && urls.length > 0) {
-      // Table must have similar inline styling from popup.css for the download blob:
-      let table =
-        "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
-          "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
-          "<tr style='background: transparent;'>" +
-            "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
-          "</tr>" +
-          "</thead>" +
-        "<tbody style='border: 1px solid #f1f1f1; background-color: #fefefe;'>",
-        count = 1;
-      for (let url of urls) {
-        table += ((count++ % 2) !== 0 ?
-          "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
-            "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
-              "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>" +
-            "</td>" +
-          "</tr>";
-      }
-      table += "</tbody>" + "</table>";
-      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
-      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table], {"type": "text/html"}));
-      DOM["#toolkit-generate-links-table"].innerHTML = table;
-    }
   }
 
   /**
@@ -820,14 +823,12 @@ URLI.Popup = function () {
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {
-          console.log("saving profile...");
           const profiles = localItems_ && localItems_.profiles && Array.isArray(localItems_.profiles)? localItems_.profiles : [],
                 url1 = url.substring(0, selectionStart),
                 url2 = url.substring(selectionStart + selection.length),
                 urlsalt1 = backgroundPage.URLI.Encryption.generateSalt(),
                 urlsalt2 = backgroundPage.URLI.Encryption.generateSalt();
-          console.log("urlsalt1=" + urlsalt1);
-          console.log("urlsalt2=" + urlsalt2);
+          console.log("URLI.Popup.setup() - saving a URL to local storage...");
           // Check if this URL has already been saved, if it has remove the existing saved profile
           if (profiles && profiles.length > 0) {
             for (let i = 0; i < profiles.length; i++) {
@@ -841,8 +842,8 @@ URLI.Popup = function () {
           }
           const urlhash1 = await backgroundPage.URLI.Encryption.calculateHash(url1, urlsalt1);
           const urlhash2 = await backgroundPage.URLI.Encryption.calculateHash(url2, urlsalt2);
-          console.log("calculated urlhash2=" + urlhash2);
-          profiles.push({
+          // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
+          profiles.unshift({
             "urlhash1": urlhash1,
             "urlhash2": urlhash2,
             "urlsalt1": urlsalt1,

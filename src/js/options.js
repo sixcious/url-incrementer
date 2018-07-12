@@ -89,7 +89,7 @@ URLI.Options = function () {
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
-    DOM["#profile-preselect-input"].addEventListener("change", function () { chrome.storage.sync.set({"profilePreselect": this.checked}); });
+    DOM["#profile-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"profilePreselect": this.checked}); });
     DOM["#profile-delete-button"].addEventListener("click", function() { deleteProfile(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
@@ -177,7 +177,7 @@ URLI.Options = function () {
           DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
           DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
           DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-          DOM["#profile-preselect-input"].checked = items.profilePreselect;
+          DOM["#profile-preselect-input"].checked = localItems.profilePreselect;
           DOM["#selection-select"].value = items.selectionPriority;
           DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
           DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -437,11 +437,15 @@ URLI.Options = function () {
     chrome.runtime.getBackgroundPage(function(backgroundPage) {
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          console.log("URLI.Options.resetOptions() - removing all permissions...");
-          URLI.Permissions.removeAllPermissions();
-          changeIconColor.call(DOM["#icon-color-radio-dark"]);
-          populateValuesFromStorage("all");
-          URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(backgroundPage.URLI.Background.getLSDV(), function() {
+              console.log("URLI.Options.resetOptions() - removing all permissions...");
+              URLI.Permissions.removeAllPermissions();
+              changeIconColor.call(DOM["#icon-color-radio-dark"]);
+              populateValuesFromStorage("all");
+              URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
+            });
+          });
         });
       });
     });

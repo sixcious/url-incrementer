@@ -35,12 +35,12 @@ URLI.Shortcuts = function () {
    * @public
    */
   function keyListener(event) {
-    if      (keyPressed(event, items_.keyIncrement)) { console.log("hit increment key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
-    else if (keyPressed(event, items_.keyDecrement)) { console.log("hit dec key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
-    else if (keyPressed(event, items_.keyNext))      { console.log("hit nxt key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
-    else if (keyPressed(event, items_.keyPrev))      { console.log("hit prv key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
-    else if (keyPressed(event, items_.keyClear))     { console.log("hit clr key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
-    else if (keyPressed(event, items_.keyAuto))      { console.log("hit aut key, sending message!"); chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
+    if      (keyPressed(event, items_.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
+    else if (keyPressed(event, items_.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
+    else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
+    else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
+    else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
+    else if (keyPressed(event, items_.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
   }
 
   /**
@@ -100,20 +100,18 @@ URLI.Shortcuts = function () {
 }();
 
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-chrome.storage.sync.get(null, function(items) {
-  chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
-    URLI.Shortcuts.setItems(items);
-    // Key
-    if (items.keyEnabled && (items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-      console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
-      document.addEventListener("keyup", URLI.Shortcuts.keyListener);
-    }
-    // Mouse
-    if (items.mouseEnabled && (items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-      document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
-    }
-  });
+chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+  console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
+  URLI.Shortcuts.setItems(response.items);
+  // Key
+  if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
+    document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+  }
+  // Mouse
+  if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+    document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+  }
 });
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)

@@ -20,6 +20,7 @@ URLI.Action = function () {
    */
   function performAction(instance, action, caller, callback) {
     console.log("URLI.Action.performAction() - instance=" + instance + ", action=" + action + ", caller=" + caller);
+    const items = URLI.Background.getItems();
     let actionPerformed = false;
     // Handle AUTO
     if (instance.autoEnabled) {
@@ -54,7 +55,7 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
-        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || instance.enhancedMode)) {
+        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.enhancedMode)) {
           actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
         } else {
           actionPerformed = incrementDecrement(instance, action, caller, callback);
@@ -81,11 +82,9 @@ URLI.Action = function () {
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     if (actionPerformed && !(instance.autoEnabled || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
-      chrome.storage.sync.get(null, function(items) {
-        if (items.iconFeedbackEnabled) {
-          URLI.Background.setBadge(instance.tabId, action, true);
-        }
-      });
+      if (items.iconFeedbackEnabled) {
+        URLI.Background.setBadge(instance.tabId, action, true);
+      }
     }
   }
 
@@ -199,14 +198,13 @@ URLI.Action = function () {
     }
     URLI.Background.deleteInstance(instance.tabId);
     if (caller !== "popupClearBeforeSet") { // Don't remove key/mouse listeners if popup clear before set
-      chrome.storage.sync.get(null, function (items) {
-        if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
-        }
-        if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
-        }
-      });
+      const items = URLI.Background.getItems();
+      if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
+      }
+      if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+      }
     }
     if (instance.autoEnabled) {
       URLI.Auto.stopAutoTimer(instance, caller);

@@ -158,7 +158,7 @@ div.column {
 }
 
 #setup #extra-options div:not(:last-child) {
-  margin-right: 16px;
+  margin-right: 14px;
 }
 
 #setup #extra-toggles {
