@@ -24,6 +24,6 @@ body {
   font-size: 75%;
 }
 
-button {
+button, .button {
   font-family: 'Segoe UI', Tahoma, sans-serif;
 }

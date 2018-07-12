@@ -20,6 +20,10 @@ h3, :-webkit-any(.checkbox, .radio) label input ~ span {
   -webkit-margin-start: 0.3em;
 }
 
+a.button {
+  text-decoration: none;
+}
+
 /* Native elements styles */
 
 body {

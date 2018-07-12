@@ -91,10 +91,10 @@ URLI.Popup = function () {
           chrome.runtime.getBackgroundPage(async function(backgroundPage) {
             instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
             if (!instance) {
-              instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items);
+              instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
             }
             updateControls();
-            DOM["#profile-save-input"].checked = instance.profileFound;
+            DOM["#profile-save-input"].checked = instance.profileFound || items_.profilePreselect;
             if (instance.profileFound) {
               DOM["#profile-save-label"].style.color = "#1779BA";
             }

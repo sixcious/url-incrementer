@@ -89,6 +89,7 @@ URLI.Options = function () {
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
+    DOM["#profile-preselect-input"].addEventListener("change", function () { chrome.storage.sync.set({"profilePreselect": this.checked}); });
     DOM["#profile-delete-button"].addEventListener("click", function() { deleteProfile(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
@@ -128,78 +129,81 @@ URLI.Options = function () {
    */
   function populateValuesFromStorage(values) {
     chrome.storage.sync.get(null, function(items) {
-      if (values === "all" || values === "internalShortcuts") {
-        DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-      }
-      if (values === "all" || values === "enhancedMode") {
-        DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-      }
-      if (values === "all" || values === "download") {
-        DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-      }
-      if (values === "all" || values === "profiles") {
-        DOM["#profile-exist"].className = items.profiles && items.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
-        DOM["#profile-none"].className = !items.profiles || items.profiles.length <= 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
-        buildSelectProfiles(items.profiles);
-      }
-      if (values === "all") {
-        DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
-        DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
-        DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
-        DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
-        DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
-        writeInput(DOM["#key-increment-input"], items.keyIncrement);
-        writeInput(DOM["#key-decrement-input"], items.keyDecrement);
-        writeInput(DOM["#key-next-input"], items.keyNext);
-        writeInput(DOM["#key-prev-input"], items.keyPrev);
-        writeInput(DOM["#key-clear-input"], items.keyClear);
-        writeInput(DOM["#key-auto-input"], items.keyAuto);
-        DOM["#mouse-increment-select"].value = items.mouseIncrement;
-        DOM["#mouse-decrement-select"].value = items.mouseDecrement;
-        DOM["#mouse-next-select"].value = items.mouseNext;
-        DOM["#mouse-prev-select"].value = items.mousePrev;
-        DOM["#mouse-clear-select"].value = items.mouseClear;
-        DOM["#mouse-auto-select"].value = items.mouseAuto;
-        DOM["#icon-color-radio-" + items.iconColor].checked = true;
-        DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
-        DOM["#popup-button-size-input"].value = items.popupButtonSize;
-        DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-        DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
-        DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
-        DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
-        DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-        DOM["#selection-select"].value = items.selectionPriority;
-        DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
-        DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
-        DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
-        DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
-        DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
-        DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
-        DOM["#interval-input"].value = items.interval;
-        DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
-        DOM["#base-select"].value = items.base;
-        DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
-        DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
-        DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
-        DOM["#error-skip-input"].value = items.errorSkip;
-        DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
-        DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
-        DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
-        DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
-        DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
-        DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
-        DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
-        DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
-        DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
-        DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-      }
+      chrome.storage.local.get(null, function(localItems) {
+        if (values === "all" || values === "internalShortcuts") {
+          DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+        }
+        if (values === "all" || values === "enhancedMode") {
+          DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+        }
+        if (values === "all" || values === "download") {
+          DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+        }
+        if (values === "all" || values === "profiles") {
+          DOM["#profile-exist"].className = localItems.profiles && localItems.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#profile-none"].className = !localItems.profiles || localItems.profiles.length <= 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+          buildSelectProfiles(localItems.profiles);
+        }
+        if (values === "all") {
+          DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
+          DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
+          DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
+          DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
+          DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
+          writeInput(DOM["#key-increment-input"], items.keyIncrement);
+          writeInput(DOM["#key-decrement-input"], items.keyDecrement);
+          writeInput(DOM["#key-next-input"], items.keyNext);
+          writeInput(DOM["#key-prev-input"], items.keyPrev);
+          writeInput(DOM["#key-clear-input"], items.keyClear);
+          writeInput(DOM["#key-auto-input"], items.keyAuto);
+          DOM["#mouse-increment-select"].value = items.mouseIncrement;
+          DOM["#mouse-decrement-select"].value = items.mouseDecrement;
+          DOM["#mouse-next-select"].value = items.mouseNext;
+          DOM["#mouse-prev-select"].value = items.mousePrev;
+          DOM["#mouse-clear-select"].value = items.mouseClear;
+          DOM["#mouse-auto-select"].value = items.mouseAuto;
+          DOM["#icon-color-radio-" + items.iconColor].checked = true;
+          DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
+          DOM["#popup-button-size-input"].value = items.popupButtonSize;
+          DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+          DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+          DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
+          DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
+          DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+          DOM["#profile-preselect-input"].checked = items.profilePreselect;
+          DOM["#selection-select"].value = items.selectionPriority;
+          DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
+          DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
+          DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
+          DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
+          DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
+          DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
+          DOM["#interval-input"].value = items.interval;
+          DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
+          DOM["#base-select"].value = items.base;
+          DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
+          DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
+          DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+          DOM["#error-skip-input"].value = items.errorSkip;
+          DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
+          DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
+          DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
+          DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
+          DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
+          DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
+          DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
+          DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
+          DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
+          DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
+        }
+      });
     });
   }
 
@@ -311,6 +315,7 @@ URLI.Options = function () {
       }
       select += "</select>";
       DOM["#profile-select-div"].innerHTML = select;
+      DOM["#profile-quantity"].textContent = " (" + profiles.length + "):";
     }
   }
 
@@ -319,14 +324,14 @@ URLI.Options = function () {
           option = select.options[select.selectedIndex],
           urlhash1 = option.dataset.urlhash1,
           urlhash2 = option.dataset.urlhash2;
-    chrome.storage.sync.get(null, function(items) {
-      const profiles = items.profiles;
+    chrome.storage.local.get(null, function(localItems) {
+      const profiles = localItems.profiles;
       if (profiles && profiles.length > 0) {
         for (let i = 0; i < profiles.length; i++) {
           if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
             console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
             profiles.splice(i, 1);
-            chrome.storage.sync.set({
+            chrome.storage.local.set({
               profiles: profiles
             }, function() {
               populateValuesFromStorage("profiles");

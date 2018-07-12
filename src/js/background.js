@@ -9,7 +9,7 @@ var URLI = URLI || {};
 
 URLI.Background = function () {
 
-  // The storage default values
+  // The sync storage default values
   // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
   const STORAGE_DEFAULT_VALUES = {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
@@ -18,13 +18,17 @@ URLI.Background = function () {
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
-    /* profiles */    "profiles": [], "profileSave": "user-select",
     /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [], "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* fun */         "urli": "loves incrementing for you"
+  },
+
+  // The local storage default values
+  LOCAL_STORAGE_DEFAULT_VALUES = {
+    /* profiles */    "profilePreselect": false, "profiles": []
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -47,6 +51,10 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
+  // The sync storage and local storage items caches
+  let items_ = {},
+      localItems_ = {};
+
   /**
    * Gets the storage default values (SDV).
    *
@@ -55,6 +63,16 @@ URLI.Background = function () {
    */
   function getSDV() {
     return STORAGE_DEFAULT_VALUES;
+  }
+
+  /**
+   * Gets the local storage default values (LSDV).
+   *
+   * @return the storage default values (LSDV)
+   * @public
+   */
+  function getLSDV() {
+    return LOCAL_STORAGE_DEFAULT_VALUES;
   }
 
   /**
@@ -215,7 +233,13 @@ URLI.Background = function () {
       console.log("URLI.Background.installedListener() - details.reason === install");
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.runtime.openOptionsPage();
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+              items_ = STORAGE_DEFAULT_VALUES;
+              localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
+              chrome.runtime.openOptionsPage();
+            });
+          });
         });
       });
     }
@@ -427,7 +451,9 @@ URLI.Background = function () {
    */
   function startupListener() {
     console.log("URLI.Background.startupListener()");
+    chrome.storage.local.get(null, function(localItems) { localItems_ = localItems; });
     chrome.storage.sync.get(null, function(items) {
+      items_ = items;
       // Ensure the chosen toolbar icon is set
       if (items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
         console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
@@ -469,6 +495,39 @@ URLI.Background = function () {
     });
   }
 
+  function getItems() { return items_; } function getLocalItems() { return localItems_; }
+  function storageListener(changes, namespace) {
+    switch (namespace) {
+      case "sync":
+        for (let key in changes) {
+          if (changes[key].newValue !== undefined) {
+            items_[key] = changes[key].newValue;
+          }
+        }
+        break;
+      case "local":
+        for (let key in changes) {
+          if (changes[key].newValue !== undefined) {
+            localItems_[key] = changes[key].newValue;
+          }
+        }
+        break;
+      default:
+        break;
+    }
+
+    for (key in changes) {
+      var storageChange = changes[key];
+      console.log('Storage key "%s" in namespace "%s" changed. ' +
+        'Old value was "%s", new value is "%s".',
+        key,
+        namespace,
+        storageChange.oldValue,
+        storageChange.newValue);
+    }
+
+  }
+
   // Return Public Functions
   return {
     getSDV: getSDV,
@@ -486,6 +545,7 @@ URLI.Background = function () {
     tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener,
     startupListener: startupListener,
+    storageListener: storageListener, getItems: getItems, getLocalItems: getLocalItems
   };
 }();
 
@@ -496,3 +556,4 @@ chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalList
 chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
 URLI.Background.startupListener();
+chrome.storage.onChanged.addListener(URLI.Background.storageListener);

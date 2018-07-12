@@ -9,6 +9,7 @@
 /* Default state **************************************************************/
 
 :-webkit-any(button,
+             .button,
              input[type='button'],
              input[type='submit']):not(.custom-appearance),
 select,
@@ -29,6 +30,7 @@ input[type='radio'] {
 }
 
 :-webkit-any(button,
+             .button,
              input[type='button'],
              input[type='submit']):not(.custom-appearance),
 select {
@@ -41,6 +43,7 @@ select {
 }
 
 :-webkit-any(button,
+             .button,
              input[type='button'],
              input[type='submit']):not(.custom-appearance) {
   -webkit-padding-end: 10px;
@@ -145,6 +148,7 @@ input[type='radio']:checked::before {
     input[type='radio'],
     :-webkit-any(
         button,
+        .button,
         input[type='button'],
         input[type='submit']):not(.custom-appearance)) {
   background-image: -webkit-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
@@ -168,6 +172,7 @@ input[type='radio']:checked::before {
     input[type='radio'],
     :-webkit-any(
         button,
+        .button,
         input[type='button'],
         input[type='submit']):not(.custom-appearance)) {
   background-image: -webkit-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
@@ -185,6 +190,7 @@ input[type='radio']:checked::before {
 
 :disabled:-webkit-any(
     button,
+    .button,
     input[type='button'],
     input[type='submit']):not(.custom-appearance),
 select:disabled {
@@ -228,6 +234,7 @@ input:disabled:-webkit-any([type='password'],
     input:not([type]),
     :-webkit-any(
          button,
+         .button,
          input[type='button'],
          input[type='submit']):not(.custom-appearance)) {
   /* OVERRIDE */
