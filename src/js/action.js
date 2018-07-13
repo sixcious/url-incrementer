@@ -235,12 +235,19 @@ URLI.Action = function () {
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       switch (instance.toolkitTool) {
         case "open-tabs": {
-          let url = instance.url, selection = instance.selection;
+          const urls = [];
+          let url = instance.url,
+              selection = instance.selection;
           for (let i = 0; i < instance.toolkitQuantity; i++) {
             const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
             url = urlProps.urlmod;
             selection = urlProps.selectionmod;
-            console.log("in open-tabs for loop. url=" + url);
+            urls.push(url);
+          }
+          if (instance.randomizeSequence) {
+            URLI.IncrementDecrement.randomize(urls);
+          }
+          for (let url of urls) {
             chrome.tabs.create({"url": url, "active": false});
           }
           actionPerformed = true;
@@ -248,13 +255,17 @@ URLI.Action = function () {
         }
         case "generate-links": {
           const urls = [];
-          let url = instance.url, selection = instance.selection;
+          let url = instance.url,
+              selection = instance.selection;
           urls.push(url);
           for (let i = 0; i < instance.toolkitQuantity - 1; i++) {
             const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
             url = urlProps.urlmod;
             selection = urlProps.selectionmod;
             urls.push(url);
+          }
+          if (instance.randomizeSequence) {
+            URLI.IncrementDecrement.randomize(urls);
           }
           actionPerformed = true;
           chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance, urls: urls});

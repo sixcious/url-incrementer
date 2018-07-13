@@ -157,10 +157,27 @@ URLI.IncrementDecrement = function () {
     }
   }
 
+  /**
+   * Randomizes and shuffles an array using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
+   * Note: This function is written by Laurens Holst.
+   *
+   * @param array the array to shuffle
+   * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+   * @see https://stackoverflow.com/a/12646864
+   * @private
+   */
+  function randomize(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+    }
+  }
+
   // Return Public Functions
   return {
     findSelection: findSelection,
     modifyURL: modifyURL,
-    modifyURLAndSkipErrors: modifyURLAndSkipErrors
+    modifyURLAndSkipErrors: modifyURLAndSkipErrors,
+    randomize: randomize
   };
 }();

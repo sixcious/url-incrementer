@@ -118,6 +118,12 @@ input[type="image"]:focus {
   margin-top: 2em;
 }
 
+/* base-case */
+
+#base-case .radio label:not(:last-child) {
+  margin-right: 1em;
+}
+
 /* error-skip */
 
 #error-skip.column {

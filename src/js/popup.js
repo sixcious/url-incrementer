@@ -228,6 +228,7 @@ URLI.Popup = function () {
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
+    DOM["#randomize-sequence-input"].checked = instance.randomizeSequence;
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
     DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
@@ -617,6 +618,7 @@ URLI.Popup = function () {
         baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
         selectionParsed = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
+        randomizeSequence = DOM["#randomize-sequence-input"].checked,
         errorSkip = +DOM["#error-skip-input"].value,
         // Toolkit
         tabsLength = tabs ? tabs.length : 0,
@@ -659,6 +661,7 @@ URLI.Popup = function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
+        instance.randomizeSequence = randomizeSequence;
         instance.errorSkip = errorSkip;
         instance.toolkitTool = toolkitTool;
         instance.toolkitAction = toolkitAction;
@@ -699,6 +702,7 @@ URLI.Popup = function () {
           baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
           selectionParsed = parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
+          randomizeSequence = DOM["#randomize-sequence-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
           autoEnabled = DOM["#auto-toggle-input"].checked,
           autoAction = DOM["#auto-action-select"].value,
@@ -800,6 +804,7 @@ URLI.Popup = function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
+        instance.randomizeSequence = randomizeSequence;
         instance.errorSkip = errorSkip;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
