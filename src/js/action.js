@@ -55,7 +55,7 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
-        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.enhancedMode)) {
+        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
           actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
         } else {
           actionPerformed = incrementDecrement(instance, action, caller, callback);
@@ -102,7 +102,13 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
-      const urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      let urlProps;
+      // TODO:
+      if (instance.randomizeSequence) {
+        urlProps = action === instance.autoAction ? instance.randomizeURLs[instance.randomizeCurrentIndex++] : instance.randomizeURLs[instance.randomizeCurrentIndex--];
+      } else {
+        urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      }
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
       chrome.tabs.update(instance.tabId, {url: instance.url});
@@ -235,40 +241,24 @@ URLI.Action = function () {
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       switch (instance.toolkitTool) {
         case "open-tabs": {
-          const urls = [];
-          let url = instance.url,
-              selection = instance.selection;
-          for (let i = 0; i < instance.toolkitQuantity; i++) {
-            const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
-            url = urlProps.urlmod;
-            selection = urlProps.selectionmod;
-            urls.push(url);
-          }
+          const urls = URLI.IncrementDecrement.precalculateURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
           if (instance.randomizeSequence) {
             URLI.IncrementDecrement.randomize(urls);
           }
           for (let url of urls) {
-            chrome.tabs.create({"url": url, "active": false});
+            chrome.tabs.create({"url": url.urlmod, "active": false});
           }
           actionPerformed = true;
           break;
         }
         case "generate-links": {
-          const urls = [];
-          let url = instance.url,
-              selection = instance.selection;
-          urls.push(url);
-          for (let i = 0; i < instance.toolkitQuantity - 1; i++) {
-            const urlProps = URLI.IncrementDecrement.modifyURL(instance.toolkitAction, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
-            url = urlProps.urlmod;
-            selection = urlProps.selectionmod;
-            urls.push(url);
-          }
+          const urls = URLI.IncrementDecrement.precalculateURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
+          urls.unshift({"urlmod": instance.url, "selectionmod": instance.selection}); // Include the original URL in the list for completeness
           if (instance.randomizeSequence) {
             URLI.IncrementDecrement.randomize(urls);
           }
-          actionPerformed = true;
           chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance, urls: urls});
+          actionPerformed = true;
           break;
         }
         default:
@@ -333,11 +323,12 @@ URLI.Action = function () {
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
                   if (downloadItem) {
+                    const bytesInAMegabyte = 1048576;
                     if (downloadItem.totalBytes > 0 && (
-                        (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * 1048576) > downloadItem.totalBytes : false) ||
-                        (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * 1048576) < downloadItem.totalBytes : false)
+                        (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * bytesInAMegabyte) > downloadItem.totalBytes : false) ||
+                        (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * bytesInAMegabyte) < downloadItem.totalBytes : false)
                       )) {
-                      console.log("URLI.Action.download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB=" + (instance.downloadMinMB * 1048576) + " or instance.MaxMB=" + (instance.downloadMaxMB * 1048576));
+                      console.log("URLI.Action.download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB bytes=" + (instance.downloadMinMB * bytesInAMegabyte) + " or instance.MaxMB bytes=" + (instance.downloadMaxMB * bytesInAMegabyte));
                       chrome.downloads.cancel(downloadId);
                     }
                   }

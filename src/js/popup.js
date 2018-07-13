@@ -590,7 +590,7 @@ URLI.Popup = function () {
         table += ((count++ % 2) !== 0 ?
           "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
           "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
-          "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>" +
+          "<a href=\"" + url.urlmod + "\" target=\"_blank\">" + url.urlmod + "</a>" +
           "</td>" +
           "</tr>";
       }
@@ -804,7 +804,6 @@ URLI.Popup = function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
-        instance.randomizeSequence = randomizeSequence;
         instance.errorSkip = errorSkip;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
@@ -825,6 +824,9 @@ URLI.Popup = function () {
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
+        instance.randomizeSequence = randomizeSequence;
+        instance.randomizeURLs = randomizeSequence ? backgroundPage.URLI.IncrementDecrement.randomize(backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance, instance.autoAction, instance.autoTimes)) : [];
+        instance.randomizeCurrentIndex = 0;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {

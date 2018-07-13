@@ -118,8 +118,14 @@ URLI.IncrementDecrement = function () {
   function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
     console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
-          urlOrigin = new URL(instance.url).origin,
-          urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+          urlOrigin = new URL(instance.url).origin;
+    let urlProps;
+    // TODO:
+    if (instance.randomizeSequence) {
+      urlProps = action === instance.autoAction ? instance.randomizeURLs[instance.randomizeCurrentIndex++] : instance.randomizeURLs[instance.randomizeCurrentIndex--];
+    } else {
+      urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+    }
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
@@ -157,6 +163,20 @@ URLI.IncrementDecrement = function () {
     }
   }
 
+  function precalculateURLs(instance, action, threshold) {
+    console.log("URLI.IncrementDecrement.precalculateURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", threshold=" + threshold);
+    const urls = [];
+    let url = instance.url,
+        selection = instance.selection;
+    for (let i = 0; i < threshold; i++) {
+      const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      url = urlProps.urlmod;
+      selection = urlProps.selectionmod;
+      urls.push({"urlmod": url, "selectionmod": selection});
+    }
+    return urls;
+  }
+
   /**
    * Randomizes and shuffles an array using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
    * Note: This function is written by Laurens Holst.
@@ -171,6 +191,7 @@ URLI.IncrementDecrement = function () {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
     }
+    return array;
   }
 
   // Return Public Functions
@@ -178,6 +199,7 @@ URLI.IncrementDecrement = function () {
     findSelection: findSelection,
     modifyURL: modifyURL,
     modifyURLAndSkipErrors: modifyURLAndSkipErrors,
+    precalculateURLs: precalculateURLs,
     randomize: randomize
   };
 }();

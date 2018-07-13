@@ -22,6 +22,7 @@
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
   "randomize_sequence_label": { "message": "Randomize Sequence" },
+  "randomize_sequence_title": { "message": "Think of this feature like how you would shuffle a deck of cards. It shuffles the URLs you'll see next. For example, say you start AUTO at page=1 with a Times of 9; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order. We use the Durstenfeld algorithm to perform the shuffling in O(n) time." },
   "accept_button": { "message": "Accept" },
   "cancel_button": { "message": "Cancel" },
   "toolkit_button_span": { "message": "Open Toolkit" },

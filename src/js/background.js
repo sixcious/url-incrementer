@@ -221,7 +221,7 @@ URLI.Background = function () {
   /**
    * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time. Note that when the tab is updated, the browser removes the badge.
    *
-   * @param tabId           the tab ID to set this badge to
+   * @param tabId           the tab ID to set this badge for
    * @param badge           the badge key to set from BROWSER_ACTION_BADGES
    * @param temporary       boolean indicating whether the badge should be displayed temporarily
    * @param text            (optional) the text to use instead of the the badge text
