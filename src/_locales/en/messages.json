@@ -48,6 +48,7 @@
   "auto_action_option_prev": { "message": "Prev [<]" },
   "auto_times_label": { "message": "Times"},
   "auto_seconds_label": { "message": "Seconds" },
+  "auto_repeat_label": { "message": "Repeat" },
   "auto_wait_label": { "message": "Wait for the page to fully load" },
   "auto_badge_label": { "message": "Show times left in the icon badge" },
   "auto_eta_label": { "message": "ETA: " },

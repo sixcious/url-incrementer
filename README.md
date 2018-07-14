@@ -8,7 +8,7 @@ URLI (Extension Mascot / Incrementer Robot):
 URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error & Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
-- Auto Incrementing
+- Auto Incrementing (Custom Web Page Slideshows) with Repeat Mode
 - Download Incrementing [Experimental] (Optional, Requires Extra Permissions) **
 - The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate up to 10,000 incremented URL Links in 1 second!
 - Increment [+] Decrement [-]
@@ -18,7 +18,7 @@ Features:
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Save Your Favorite URL Profiles for Quick Incrementing! URLs are saved securely, just like how websites save your passwords as hashes using a secure cryptographic hashing algorithm such as PBKDF2 with HMAC SHA-512
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
+- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Randomized Sequences (Shuffling)... and more!
 - Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
@@ -32,6 +32,8 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 Coming Soon in Version 5.4 (TBD)
 - New Feature: Save URL Profiles/Patterns. URLI can now remember different URL patterns and intervals you set. You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high number of iterations. Not even URLI can figure out the URLs!
 - New Feature: "The Incrementer's Toolkit" - 1: Open a range of up to 100 incremented tabs in your browser or 2: Generate a list of incremented URL links for easy navigation!
+- New Feature: Repeat Mode for AUTO: Loops back to the starting URL and repeats!
+- New Feature: Randomize Sequence: Shuffles the next URLs you'll see in random order, like shuffling a deck of cards. Works in normal, AUTO, or Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 - Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 

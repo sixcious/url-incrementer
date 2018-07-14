@@ -219,6 +219,15 @@ URLI.Action = function () {
     if (instance.autoEnabled) {
       URLI.Auto.stopAutoTimer(instance, caller);
     }
+    if (instance.autoRepeat && caller === "auto") {
+      chrome.tabs.update(instance.tabId, {url: instance.startingURL});
+      instance.autoTimes = instance.autoTimesOriginal;
+      instance.url = instance.startingURL;
+      instance.selection = instance.startingSelection;
+      instance.selectionStart = instance.startingSelectionStart;
+      URLI.Background.setInstance(instance);
+      URLI.Auto.startAutoTimer(instance);
+    }
     // for callers like popup that still need the instance, disable all states and reset autoTimes
     instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
     instance.autoTimes = instance.autoTimesOriginal;
@@ -245,7 +254,7 @@ URLI.Action = function () {
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       switch (instance.toolkitTool) {
         case "open-tabs": {
-          const urls = URLI.IncrementDecrement.precalculateURLs(instance);
+          const urls = URLI.IncrementDecrement.precalculateURLs(instance).urls;
           for (let url of urls) {
             chrome.tabs.create({"url": url.urlmod, "active": false});
           }
@@ -253,7 +262,7 @@ URLI.Action = function () {
           break;
         }
         case "generate-links": {
-          const urls = URLI.IncrementDecrement.precalculateURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
+          const urls = URLI.IncrementDecrement.precalculateURLs(instance).urls;
           chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance, urls: urls});
           actionPerformed = true;
           break;

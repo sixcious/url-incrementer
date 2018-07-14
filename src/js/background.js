@@ -22,7 +22,7 @@ URLI.Background = function () {
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
-    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
+    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* fun */         "urli": "loves incrementing for you"
   },
@@ -172,9 +172,9 @@ URLI.Background = function () {
     // Return newly built instance using props and items:
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
-      "tabId": tab.id, "url": tab.url,
+      "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
-      "selection": props.selection, "selectionStart": props.selectionStart,
+      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.startingSelectionStart,
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
@@ -182,7 +182,7 @@ URLI.Background = function () {
       "errorSkip": items_.errorSkip, "errorCodes": items_.errorCodes, "errorCodesCustomEnabled": items_.errorCodesCustomEnabled, "errorCodesCustom": items_.errorCodesCustom,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,
-      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge,
+      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat,
       "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
       "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
       "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,

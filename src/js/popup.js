@@ -243,6 +243,7 @@ URLI.Popup = function () {
     DOM["#auto-seconds-input"].value = instance.autoSeconds;
     DOM["#auto-wait-input"].checked = instance.autoWait;
     DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
+    DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     updateAutoETA();
     // Download Setup:
     DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
@@ -711,6 +712,7 @@ URLI.Popup = function () {
           autoSeconds = +DOM["#auto-seconds-input"].value,
           autoWait = DOM["#auto-wait-input"].checked,
           autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
+          autoRepeat = DOM["#auto-repeat-input"].checked,
           downloadEnabled = DOM["#download-toggle-input"].checked,
           downloadStrategy = DOM["#download-strategy-select"].value,
           downloadSelector = DOM["#download-selector-input"].value,
@@ -813,6 +815,7 @@ URLI.Popup = function () {
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
         instance.autoBadge = autoBadge;
+        instance.autoRepeat = autoRepeat;
         instance.autoPaused = false; // always starts auto un-paused
         instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes
         instance.downloadEnabled = downloadEnabled;
@@ -879,7 +882,8 @@ URLI.Popup = function () {
             "autoSeconds": autoSeconds,
             "autoTimes": autoTimes,
             "autoWait": autoWait,
-            "autoBadge": autoBadge
+            "autoBadge": autoBadge,
+            "autoRepeat": autoRepeat
           });
         }
         if (instance.downloadEnabled) {
