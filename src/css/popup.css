@@ -36,6 +36,13 @@ body {
   padding: 0;
 }
 
+h3 {
+  display: inline;
+  user-select: initial;
+  color: inherit;
+  font-weight: inherit;
+}
+
 div.table {
   display: table;
 }
@@ -78,14 +85,11 @@ div.column {
   margin: 12px;
 }
 
-#setup h3 {
+#setup .heading {
   font-weight: bold;
   /* font-style: italic;*/
   padding-bottom: 4px;
   margin-bottom: 0.6em;
-}
-
-#setup h3 {
   color: #333333;
   border-bottom: 1px solid #333333;
 }
@@ -117,7 +121,13 @@ div.column {
   padding-top: 7px;
 }
 
-#properties {
+/* increment-decrement */
+
+#setup #increment-decrement #increment-decrement-img-mouse-pointer {
+  margin-bottom: 2px;
+}
+
+#setup #properties {
   margin-bottom: 16px;
 }
 
@@ -142,54 +152,13 @@ div.column {
   text-align: right;
 }
 
-#setup #setup-buttons {
-  text-align: center;
-  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
-  height: auto;
-}
-
-#setup #setup-buttons > button:not(:last-child) {
-  margin-right: 12px;
-}
-
-#extra-options {
-  position: absolute;
-  right: 4px;
-  bottom: 3px;
-  font-size: 1.05em;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-#extra-options #options-button img {
-  margin-right: -2px;
-}
-
-#setup #extra-options div:not(:last-child) {
-  margin-right: 14px;
-}
-
-#setup #extra-toggles {
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-}
-
-#setup #extra-toggles .checkbox > label:not(:last-child) {
-  margin-right: 8px;
-}
-
-#setup #toolkit, #setup #auto, #setup #download {
-  margin-bottom: 24px;
-}
-
-#profile-save, #auto-eta, #download-experimental {
+#profile-save, #auto-eta-repeat, #download-experimental {
   font-size: 0.8em;
   font-weight: bold;
   font-style: italic;
   position: absolute;
   right: 12px;
-  margin-top: -10px;
+  margin-top: -12px;
 }
 
 #profile-save {
@@ -222,7 +191,7 @@ div.column {
   margin-top: 1em;
 }
 
-#auto-eta {
+#auto-eta-repeat {
   color: #FF6600;
 }
 
@@ -258,7 +227,6 @@ div.column {
   font-size: 1.05em;
   font-weight: bold;
   font-style: italic;
-  margin-left: 3px;
 }
 
 #auto-toggle span {
@@ -278,25 +246,21 @@ div.column {
   padding: 4px 8px;
 }
 
-#setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
-  margin-bottom: -2px;
-}
-
 #setup #download-toggle {
   vertical-align: bottom;
 }
 
-#setup h3#increment-decrement-h3 {
+#setup .heading {
   color: #333333;
   border-bottom-color: #333333;
 }
 
-#setup h3#auto-h3 {
+#setup #auto .heading {
   color: #FF6600;
   border-bottom-color: #FF6600;
 }
 
-#setup h3#download-h3 {
+#setup #download .heading {
   color: rebeccapurple;
   border-bottom-color: rebeccapurple;
   margin: 0;
@@ -458,3 +422,46 @@ table th.tag, td.tag { min-width: 36px; }
 table th.attribute, td.attribute { min-width: 34px; }
 table th.url, td.url { min-width: 34px; }
 table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
+
+/* setup-buttons */
+
+#setup #setup-buttons {
+  text-align: center;
+  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
+  height: auto;
+}
+
+#setup #setup-buttons > button:not(:last-child) {
+  margin-right: 12px;
+}
+
+#extra-options {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#extra-options #options-button img {
+  margin-right: -2px;
+}
+
+#setup #extra-options div:not(:last-child) {
+  margin-right: 14px;
+}
+
+#setup #extra-toggles {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+#setup #extra-toggles .checkbox > label:not(:last-child) {
+  margin-right: 8px;
+}
+
+#setup #toolkit, #setup #auto, #setup #download {
+  margin-bottom: 24px;
+}

@@ -36,6 +36,7 @@ Coming Soon in Version 5.4 (TBD)
 - New Feature: Randomize Sequence: Shuffles the next URLs you'll see in random order, like shuffling a deck of cards. Works in normal, AUTO, or Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 - Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
+- Bug fix: popup.html and options.html rewritten in valid HTML 5
 
 What's New in Version 5.3 (7/4/2018)
 - Error Skipping now supports any combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!

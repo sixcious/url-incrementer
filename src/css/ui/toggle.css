@@ -78,10 +78,16 @@
 }
 
 /* URLI Custom Toggle Button Overrides: */
+
+.tgl-outer, .tgl-inner {
+  display: inline-block;
+}
+
 .tgl + .tgl-btn {
   width: 2.5em;
   height: 1.25em;
   background: #AAAAAA;
+  display: inline-block;
 }
 .tgl-ios:checked + .tgl-btn {
   background: #4285f4;

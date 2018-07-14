@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] a URL or go to the Next [>] Page; Supports Auto Slideshows and Download Incrementing",
+    "message": "Increment [+] a URL or go to the Next [>] Page; Supports Auto & Download Incrementing and Webpage Slideshows",
     "description": "Extension description."
   },
   "title": {
@@ -17,7 +17,7 @@
   },
 
   "POPUP": { "message": "----- POPUP -----" },
-  "increment_decrement_h3_label": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
+  "increment_decrement_h3": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
   "profile_save_label": { "message": "Save" },
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
@@ -41,6 +41,7 @@
   "toolkit_quantity_label": { "message": "Quantity"},
   "toolkit_generate_links_download": { "message": "Download Links (HTML File)"},
   "auto_label": { "message": "Auto" },
+  "auto_h3": { "message": "Auto Settings" },
   "auto_action_label": { "message": "Action"},
   "auto_action_option_increment": { "message": "Increment [+]" },
   "auto_action_option_decrement": { "message": "Decrement [-]" },
@@ -62,6 +63,7 @@
   "auto_eta_tbd": { "message": "TBD" },
   "auto_eta_done": { "message": "Done!" },
   "download_label": { "message": "Download" },
+  "download_h3": { "message": "Download Settings" },
   "download_strategy_label": { "message": "Strategy" },
   "download_strategy_option_extensions": { "message": "Download these file extension(s)" },
   "download_strategy_option_tags": { "message": "Download these tag(s)" },
@@ -202,11 +204,9 @@
   "next_prev_same_domain_policy_enable_label": { "message": "Only consider same-domain links" },
   "next_prev_popup_buttons_label": { "message": "Buttons" },
   "next_prev_popup_buttons_description_label": { "message": "Show Next Prev buttons (Requires Enhanced Permissions)" },
-  "auto_settings_h3": { "message": "Auto Settings" },
-  "auto_settings_h3_alt": { "message": "Auto" },
+  "auto_settings_h3": { "message": "Auto" },
   "auto_settings_p": { "message": "Relax and start a custom web page slideshow! Start Auto anytime by toggling it in the Popup UI. Supports multiple tabs at the same time and pause/resume." },
-  "download_settings_h3": { "message": "Download Settings" },
-  "download_settings_h3_alt": { "message": "Download" },
+  "download_settings_h3": { "message": "Download" },
   "download_experimental_label": { "message": "EXPERIMENTAL" },
   "download_enable_button": { "message": "Enable Download" },
   "download_disable_button": { "message": "Disable Download" },
