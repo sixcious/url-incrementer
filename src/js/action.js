@@ -103,9 +103,13 @@ URLI.Action = function () {
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       actionPerformed = true;
       let urlProps;
-      // TODO:
+      // Handle Randomize Sequence (Use the randomizeURLs array, don't call IncrementDecrement.modifyURL)
       if (instance.randomizeSequence) {
-        urlProps = action === instance.autoAction ? instance.randomizeURLs[instance.randomizeCurrentIndex++] : instance.randomizeURLs[instance.randomizeCurrentIndex--];
+        const randomizeURLsLength = instance.randomizeURLs.length;
+        urlProps =
+          (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+            instance.randomizeURLs[instance.randomizeCurrentIndex + 1 < randomizeURLsLength ? !instance.autoEnabled ? ++instance.randomizeCurrentIndex : instance.randomizeCurrentIndex++ : randomizeURLsLength - 1] :
+            instance.randomizeURLs[instance.randomizeCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.randomizeCurrentIndex : instance.randomizeCurrentIndex-- : 0];
       } else {
         urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
       }
@@ -241,10 +245,7 @@ URLI.Action = function () {
     if (instance.selection !== "" && instance.selectionStart >= 0) {
       switch (instance.toolkitTool) {
         case "open-tabs": {
-          const urls = URLI.IncrementDecrement.precalculateURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
-          if (instance.randomizeSequence) {
-            URLI.IncrementDecrement.randomize(urls);
-          }
+          const urls = URLI.IncrementDecrement.precalculateURLs(instance);
           for (let url of urls) {
             chrome.tabs.create({"url": url.urlmod, "active": false});
           }
@@ -253,10 +254,6 @@ URLI.Action = function () {
         }
         case "generate-links": {
           const urls = URLI.IncrementDecrement.precalculateURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
-          urls.unshift({"urlmod": instance.url, "selectionmod": instance.selection}); // Include the original URL in the list for completeness
-          if (instance.randomizeSequence) {
-            URLI.IncrementDecrement.randomize(urls);
-          }
           chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance, urls: urls});
           actionPerformed = true;
           break;

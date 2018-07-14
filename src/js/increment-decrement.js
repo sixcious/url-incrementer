@@ -90,8 +90,8 @@ URLI.IncrementDecrement = function () {
     let urlmod,
         selectionmod,
         selectionint = parseInt(selection, base); // parseInt base range is 2-36
-    // Increment or decrement the selection; if decrement is negative, set to 0 (low bound)
-    selectionmod = action === "increment" ? (selectionint + interval).toString(base) :
+    // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
+    selectionmod = action === "increment" ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
                    action === "decrement" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                    "";
     if (leadingZeros && selection.length > selectionmod.length) { // Leading 0s
@@ -163,16 +163,46 @@ URLI.IncrementDecrement = function () {
     }
   }
 
-  function precalculateURLs(instance, action, threshold) {
-    console.log("URLI.IncrementDecrement.precalculateURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", threshold=" + threshold);
+  function precalculateURLs(instance) {
+    console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
+    let urls = [], currentIndex = 0;
+    if (instance.toolkitEnabled) {
+      urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
+    } else if (instance.autoEnabled) {
+      urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
+    } else {
+      const threshold = URLI.Background.getItems().randomizeThreshold;
+      const urlsIncrement = buildURLs(instance, "increment", threshold / 2);
+      const urlsDecrement = buildURLs(instance, "decrement", threshold / 2);
+      const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
+      currentIndex = urlsDecrement.length;
+      urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
+    }
+    return {"urls": urls, "currentIndex": currentIndex};
+  }
+
+  function buildURLs(instance, action, threshold) {
+    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", threshold=" + threshold);
     const urls = [];
     let url = instance.url,
         selection = instance.selection;
+    // If Toolkit Generate URLs first include the original URL for completeness and include it in the threshold
+    if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
+      urls.push({"urlmod": url, "selectionmod": selection});
+      threshold--;
+    }
     for (let i = 0; i < threshold; i++) {
+      const selectionint = parseInt(selection, instance.base);
+      if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
+        break;
+      }
       const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
       url = urlProps.urlmod;
       selection = urlProps.selectionmod;
       urls.push({"urlmod": url, "selectionmod": selection});
+    }
+    if (instance.randomizeSequence) {
+      randomize(urls);
     }
     return urls;
   }

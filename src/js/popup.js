@@ -663,6 +663,7 @@ URLI.Popup = function () {
         instance.leadingZeros = leadingZeros;
         instance.randomizeSequence = randomizeSequence;
         instance.errorSkip = errorSkip;
+        instance.toolkitEnabled = true;
         instance.toolkitTool = toolkitTool;
         instance.toolkitAction = toolkitAction;
         instance.toolkitQuantity = toolkitQuantity;
@@ -805,6 +806,7 @@ URLI.Popup = function () {
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
         instance.errorSkip = errorSkip;
+        instance.toolkitEnabled = false;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
         instance.autoTimes = autoTimes;
@@ -825,8 +827,9 @@ URLI.Popup = function () {
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
         instance.randomizeSequence = randomizeSequence;
-        instance.randomizeURLs = randomizeSequence ? backgroundPage.URLI.IncrementDecrement.randomize(backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance, instance.autoAction, instance.autoTimes)) : [];
-        instance.randomizeCurrentIndex = 0;
+        const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
+        instance.randomizeURLs = precalculateProps.urls;
+        instance.randomizeCurrentIndex = precalculateProps.currentIndex;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {
