@@ -192,13 +192,13 @@ URLI.IncrementDecrement = function () {
       threshold--;
     }
     for (let i = 0; i < threshold; i++) {
+      const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      url = urlProps.urlmod;
+      selection = urlProps.selectionmod;
       const selectionint = parseInt(selection, instance.base);
       if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
         break;
       }
-      const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
-      url = urlProps.urlmod;
-      selection = urlProps.selectionmod;
       urls.push({"urlmod": url, "selectionmod": selection});
     }
     if (instance.randomizeSequence) {

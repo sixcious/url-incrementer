@@ -34,18 +34,19 @@ URLI.Background = function () {
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
-    "increment": { "text": "+",    "backgroundColor": "#1779BA" },
-    "decrement": { "text": "-",    "backgroundColor": "#1779BA" },
-    "next":      { "text": ">",    "backgroundColor": "#05854D" },
-    "prev":      { "text": "<",    "backgroundColor": "#05854D" },
-    "clear":     { "text": "X",    "backgroundColor": "#FF0000" },
-    "auto":      { "text": "AUTO", "backgroundColor": "#FF6600" },
-    "autotimes": { "text": "",     "backgroundColor": "#FF6600" },
-    "autopause": { "text": "❚❚",    "backgroundColor": "#FF6600" },
-    "download":  { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":      { "text": "",     "backgroundColor": "#000028" }, //"#FFCC22" },
-    "toolkit":   { "text": "TOOL", "backgroundColor": "#000028" },
-    "default":   { "text": "",     "backgroundColor": [0,0,0,0] }
+    "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
+    "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
+    "next":       { "text": ">",    "backgroundColor": "#05854D" },
+    "prev":       { "text": "<",    "backgroundColor": "#05854D" },
+    "clear":      { "text": "X",    "backgroundColor": "#FF0000" },
+    "auto":       { "text": "AUTO", "backgroundColor": "#FF6600" },
+    "autotimes":  { "text": "",     "backgroundColor": "#FF6600" },
+    "autopause":  { "text": "❚❚",    "backgroundColor": "#FF6600" },
+    "autorepeat": { "text": "REP",  "backgroundColor": "#FF6600" },
+    "download":   { "text": "DL",   "backgroundColor": "#663399" },
+    "skip":       { "text": "",     "backgroundColor": "#000028" }, //"#FFCC22" },
+    "toolkit":    { "text": "TOOL", "backgroundColor": "#000028" },
+    "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
   // The individual tab instances in Background memory
@@ -174,7 +175,7 @@ URLI.Background = function () {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
-      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.startingSelectionStart,
+      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
@@ -182,7 +183,7 @@ URLI.Background = function () {
       "errorSkip": items_.errorSkip, "errorCodes": items_.errorCodes, "errorCodesCustomEnabled": items_.errorCodesCustomEnabled, "errorCodesCustom": items_.errorCodesCustom,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,
-      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat,
+      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat, "autoRepeatCount": 0,
       "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
       "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
       "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,

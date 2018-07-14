@@ -219,22 +219,39 @@ URLI.Action = function () {
     if (instance.autoEnabled) {
       URLI.Auto.stopAutoTimer(instance, caller);
     }
-    if (instance.autoRepeat && caller === "auto") {
-      chrome.tabs.update(instance.tabId, {url: instance.startingURL});
-      instance.autoTimes = instance.autoTimesOriginal;
-      instance.url = instance.startingURL;
-      instance.selection = instance.startingSelection;
-      instance.selectionStart = instance.startingSelectionStart;
-      URLI.Background.setInstance(instance);
-      URLI.Auto.startAutoTimer(instance);
-    }
-    // for callers like popup that still need the instance, disable all states and reset autoTimes
-    instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
-    instance.autoTimes = instance.autoTimesOriginal;
-    if (callback) {
-      callback(instance);
+    // Handle AUTO Repeat
+    if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
+      const instanceR = {};
+      Object.assign(instanceR, instance);
+      // If auto enabled and auto repeat, set badge to auto repeat on this last page (autoTimes=0)
+      URLI.Background.setBadge(instanceR.tabId, "autorepeat", false);
+      setTimeout(function () {
+        chrome.tabs.update(instanceR.tabId, {url: instanceR.startingURL});
+        instanceR.autoRepeatCount++;
+        instanceR.autoTimes = instanceR.autoTimesOriginal;
+        instanceR.url = instanceR.startingURL;
+        instanceR.selection = instanceR.startingSelection;
+        instanceR.selectionStart = instanceR.startingSelectionStart;
+        const precalculateProps = URLI.IncrementDecrement.precalculateURLs(instanceR);
+        instanceR.randomizeURLs = precalculateProps.urls;
+        instanceR.randomizeCurrentIndex = precalculateProps.currentIndex;
+        URLI.Background.setInstance(instanceR.tabId, instanceR);
+        URLI.Auto.startAutoTimer(instanceR);
+        if (callback) {
+          callback(instanceR);
+        } else {
+          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instanceR});
+        }
+      }, instanceR.autoSeconds * 1000);
     } else {
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      // for callers like popup that still need the instance, disable all states and reset autoTimes
+      instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
+      instance.autoTimes = instance.autoTimesOriginal;
+      if (callback) {
+        callback(instance);
+      } else {
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      }
     }
     return actionPerformed;
   }

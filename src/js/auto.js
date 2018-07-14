@@ -27,7 +27,11 @@ URLI.Auto = function () {
     clearAutoTimeout(instance);
     setAutoTimeout(instance);
     addAutoListener();
-    URLI.Background.setBadge(instance.tabId, "auto", false);
+    if (instance.autoRepeatCount === 0) {
+      URLI.Background.setBadge(instance.tabId, "auto", false);
+    }/* else {
+      URLI.Background.setBadge(instance.tabId, "autorepeat", false);
+    }*/
   }
 
   /**
@@ -43,7 +47,7 @@ URLI.Auto = function () {
     // Don't need to set the badge if the tab is being removed
     if (caller !== "tabRemovedListener") {
       // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
-      if (caller !== "popupClearBeforeSet") {
+      if (caller !== "popupClearBeforeSet" && !instance.autoRepeat) { // Don't do any badge setting if auto repeat is on
         URLI.Background.setBadge(instance.tabId, "clear", true);
       } else {
         URLI.Background.setBadge(instance.tabId, "default", false);
