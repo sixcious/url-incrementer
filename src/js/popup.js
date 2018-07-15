@@ -63,11 +63,11 @@ URLI.Popup = function () {
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#toolkit-button"].addEventListener("click", function() { DOM["#toolkit"].className = DOM["#toolkit"].className === "display-none" ? "display-block fade-in" : "display-none"; DOM["#toolkit-button-span"].textContent = DOM["#toolkit"].className === "display-none" ? chrome.i18n.getMessage("toolkit_button_span") : chrome.i18n.getMessage("toolkit_close_button_span")  });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
+    DOM["#custom-urls-input"].addEventListener("change", function() { changeCustomURLsInput.call(this); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#auto-action-select"].addEventListener("change", function() { changeAutoAction.call(this); });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
@@ -246,7 +246,7 @@ URLI.Popup = function () {
     DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
     DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     updateAutoETA();
-    changeAutoAction.call(DOM["auto-action-select"]);
+    changeCustomURLsInput.call(DOM["custom-urls-input"]);
     // Download Setup:
     DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
     DOM["#download-toggle-input"].checked = instance.downloadEnabled;
@@ -314,13 +314,13 @@ URLI.Popup = function () {
   }
 
   /**
-   * Changes the affected auto settings when the auto action is changed by the user.
+   * Changes the affected settings when the Custom URLs checkbox is changed by the user.
    *
    * @private
    */
-  function changeAutoAction() {
-    DOM["#auto-times"].style.visibility = this.value === "custom-urls" ? "hidden" : "initial";
-    DOM["#auto-custom"].className = this.value === "custom-urls" ? "display-block fade-in" : "display-none";
+  function changeCustomURLsInput() {
+    DOM["#auto-custom"].className = this.checked ? "display-block fade-in" : "display-none";
+    DOM["#auto-times"].style.visibility = this.checked ? "hidden" : "initial";
   }
 
   /**

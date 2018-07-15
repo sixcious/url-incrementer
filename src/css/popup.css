@@ -148,7 +148,7 @@ div.checkbox  img {
   margin-bottom: 2px;
 }
 
-#setup #leading-zeros-pad-label, #setup #randomize-sequence-label, #setup #base-case {
+#setup #leading-zeros-pad-label, #setup #base-case, #setup #custom-urls-shuffle-urls {
   font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 }
 
@@ -156,8 +156,12 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
-#setup #randomize-sequence {
+#setup #custom-urls-shuffle-urls {
   text-align: right;
+}
+
+#setup #custom-urls-shuffle-urls > label:not(:last-child) {
+  margin-right: 2px;
 }
 
 #profile-save, #auto-eta-repeat, #download-experimental {

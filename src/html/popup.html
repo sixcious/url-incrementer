@@ -38,6 +38,10 @@
         <div id="url">
           <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
           <textarea id="url-textarea" readonly="readonly"></textarea>
+          <div id="auto-custom">
+            <label id="auto-custom-label" class="label-display-block" for="auto-custom-textarea" data-i18n="textContent"></label>
+            <textarea id="auto-custom-textarea"></textarea>
+          </div>
         </div>
         <div id="properties">
           <div class="table">
@@ -115,7 +119,11 @@
                     </label>
                   </div>
                 </div>
-                <div id="randomize-sequence" class="checkbox">
+                <div id="custom-urls-shuffle-urls" class="checkbox">
+                  <label>
+                    <input id="custom-urls-input" type="checkbox"/>
+                    <span id="custom-urls-label" data-i18n="textContent"></span>
+                  </label>
                   <label id="randomize-sequence-title" data-i18n="title">
                     <input id="randomize-sequence-input" type="checkbox"/>
                     <span id="randomize-sequence-label" data-i18n="textContent"></span>
@@ -214,7 +222,6 @@
                 <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
                 <option id="auto-action-option-next" value="next" data-i18n="textContent"></option>
                 <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
-                <option id="auto-action-option-custom" value="custom-urls" data-i18n="textContent"></option>
               </select>
             </div>
             <div id="auto-times" class="column">
@@ -240,10 +247,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div id="auto-custom">
-          <label id="auto-custom-label" class="label-display-block" for="auto-custom-textarea" data-i18n="textContent"></label>
-          <textarea id="auto-custom-textarea"></textarea>
         </div>
       </section>
       <section id="download">
