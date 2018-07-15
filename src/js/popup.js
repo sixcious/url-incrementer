@@ -67,6 +67,7 @@ URLI.Popup = function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-action-select"].addEventListener("change", function() { changeAutoAction.call(this); });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
@@ -245,6 +246,7 @@ URLI.Popup = function () {
     DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
     DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     updateAutoETA();
+    changeAutoAction.call(DOM["auto-action-select"]);
     // Download Setup:
     DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
     DOM["#download-toggle-input"].checked = instance.downloadEnabled;
@@ -309,6 +311,16 @@ URLI.Popup = function () {
       itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
       instance.autoEnabled ? AUTO_ETA_I18NS.done : AUTO_ETA_I18NS.tbd :
       time > 86400 ? AUTO_ETA_I18NS.day : fhours + fminutes + fseconds;
+  }
+
+  /**
+   * Changes the affected auto settings when the auto action is changed by the user.
+   *
+   * @private
+   */
+  function changeAutoAction() {
+    DOM["#auto-times"].style.visibility = this.value === "custom-urls" ? "hidden" : "initial";
+    DOM["#auto-custom"].className = this.value === "custom-urls" ? "display-block fade-in" : "display-none";
   }
 
   /**
@@ -712,6 +724,7 @@ URLI.Popup = function () {
           autoSeconds = +DOM["#auto-seconds-input"].value,
           autoWait = DOM["#auto-wait-input"].checked,
           autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
+          autoCustomURLs = autoAction === "custom-urls" && DOM["#auto-custom-textarea"].value ? DOM["#auto-custom-textarea"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
           autoRepeat = DOM["#auto-repeat-input"].checked,
           downloadEnabled = DOM["#download-toggle-input"].checked,
           downloadStrategy = DOM["#download-strategy-select"].value,
@@ -815,6 +828,7 @@ URLI.Popup = function () {
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
         instance.autoBadge = autoBadge;
+        instance.autoCustomURLs = autoCustomURLs;
         instance.autoRepeat = autoRepeat;
         instance.autoPaused = false; // always starts auto un-paused
         instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes

@@ -55,6 +55,10 @@ div.column {
   display: table-cell;
 }
 
+div.checkbox  img {
+  margin-left: 3px;
+}
+
 /* Controls CSS */
 
 #controls {
@@ -88,7 +92,7 @@ div.column {
 #setup .heading {
   font-weight: bold;
   /* font-style: italic;*/
-  padding-bottom: 4px;
+  padding-bottom: 2px;
   margin-bottom: 0.6em;
   color: #333333;
   border-bottom: 1px solid #333333;
@@ -162,11 +166,19 @@ div.column {
   font-style: italic;
   position: absolute;
   right: 12px;
-  margin-top: -12px;
+  margin-top: -23px;
 }
 
-#profile-save {
-  margin-top: -21px;
+#auto-eta, #auto-repeat {
+  display: inline-block;
+}
+
+#auto-eta {
+  margin-right: 2em;
+}
+
+#download-experimental{
+  margin-top: -15px;
 }
 
 /* Toolkit */
@@ -195,7 +207,7 @@ div.column {
   margin-top: 1em;
 }
 
-#auto-eta-repeat {
+#auto-eta-repeat, #auto-repeat-label {
   color: #FF6600;
 }
 
@@ -215,6 +227,10 @@ div.column {
   padding: 2px 0;
 }
 
+#setup #auto #auto-custom {
+  margin-top: 1em;
+}
+
 #setup div.row.two div.column {
   padding-top: 12px;
 }
@@ -227,22 +243,12 @@ div.column {
   background: rebeccapurple;
 }
 
-#auto-toggle span, #download-toggle span {
-  font-size: 1.05em;
-  font-weight: bold;
-  font-style: italic;
-}
-
-#auto-toggle span {
+#auto-toggle .tgl-text {
   color: #FF6600;
 }
 
-#download-toggle span {
+#download-toggle .tgl-text {
   color: rebeccapurple;
-}
-
-#auto-toggle-img {
-  margin-bottom: -1px;
 }
 
 /* cloud-download ireregular padding overrides */

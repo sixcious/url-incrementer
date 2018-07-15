@@ -74,6 +74,9 @@ URLI.Action = function () {
       case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
         break;
+      case "custom-urls":
+        actionPerformed = customURLs(instance, action, caller, callback);
+        break;
       case "download":
         actionPerformed = download(instance, action, caller, callback);
         break;
@@ -303,6 +306,31 @@ URLI.Action = function () {
   function auto(instance, action, caller, callback) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
+      URLI.Auto.pauseOrResumeAutoTimer(instance);
+      instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
+      if (callback) {
+        callback(instance);
+      } else {
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      }
+      actionPerformed = true;
+    }
+    return actionPerformed;
+  }
+
+  /**
+   * Performs an auto action (pause or resume only).
+   *
+   * @param instance the instance for this tab
+   * @param action   the action (auto pause/resume)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
+  function customURLs(instance, action, caller, callback) {
+    let actionPerformed = false;
+    if (instance && instance.autoEnabled && instance.autoCustomURLs) {
+      chrome.tabs.
       URLI.Auto.pauseOrResumeAutoTimer(instance);
       instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
       if (callback) {

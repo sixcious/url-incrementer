@@ -29,6 +29,7 @@
             <div class="checkbox">
               <label id="profile-how-save-title" data-i18n="title">
                 <input id="profile-save-input" type="checkbox"/>
+                <img src="../img/font-awesome/black/bookmark-o.png" alt="" width="14" height="14"/>
                 <span id="profile-save-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -188,14 +189,16 @@
           <img src="../img/font-awesome/orange/refresh.png" alt="" width="17" height="17"/>
           <h3 id="auto-h3" data-i18n="textContent"></h3>
           <div id="auto-eta-repeat">
-            <img src="../img/font-awesome/orange/clock-o.png" alt="" width="12" height="12"/>
-            <span id="auto-eta-label" data-i18n="textContent"></span>
-            <span id="auto-eta-value"></span>
+            <div id="auto-eta">
+              <img src="../img/font-awesome/orange/clock-o.png" alt="" width="14" height="14"/>
+              <span id="auto-eta-label" data-i18n="textContent"></span>
+              <span id="auto-eta-value"></span>
+            </div>
             <div id="auto-repeat">
               <div class="checkbox">
                 <label>
                   <input id="auto-repeat-input" type="checkbox"/>
-                  <img src="../img/font-awesome/orange/refresh.png" alt="" width="12" height="12"/>
+                  <img src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14"/>
                   <span id="auto-repeat-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -211,6 +214,7 @@
                 <option id="auto-action-option-decrement" value="decrement" data-i18n="textContent"></option>
                 <option id="auto-action-option-next" value="next" data-i18n="textContent"></option>
                 <option id="auto-action-option-prev" value="prev" data-i18n="textContent"></option>
+                <option id="auto-action-option-custom" value="custom-urls" data-i18n="textContent"></option>
               </select>
             </div>
             <div id="auto-times" class="column">
@@ -237,13 +241,17 @@
             </div>
           </div>
         </div>
+        <div id="auto-custom">
+          <label id="auto-custom-label" class="label-display-block" for="auto-custom-textarea" data-i18n="textContent"></label>
+          <textarea id="auto-custom-textarea"></textarea>
+        </div>
       </section>
       <section id="download">
         <div class="heading">
           <img src="../img/font-awesome/purple/cloud-download.png" alt="" width="18" height="18"/>
           <h3 id="download-h3" data-i18n="textContent"></h3>
           <div id="download-experimental">
-            <img src="../img/font-awesome/purple/flask.png" alt="" width="12" height="12"/>
+            <img src="../img/font-awesome/purple/flask.png" alt="" width="13" height="13"/>
             <span id="download-experimental-label" data-i18n="textContent"></span>
           </div>
         </div>
@@ -344,7 +352,7 @@
           <div id="auto-toggle" class="tgl-outer">
             <div class="tgl-inner">
               <img id="auto-toggle-img" src="../img/font-awesome/orange/refresh.png" alt="" width="16" height="16"/>
-              <span id="auto-toggle-span" data-i18n="textContent"></span>
+              <div id="auto-toggle-span" class="tgl-text" data-i18n="textContent"></div>
             </div>
             <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" value="0"/>
             <label class="tgl-btn" for="auto-toggle-input"></label>
@@ -352,7 +360,7 @@
           <div id="download-toggle" class="tgl-outer">
             <div class="tgl-inner">
               <img id="download-toggle-img" src="../img/font-awesome/purple/cloud-download.png" alt="" width="17" height="17"/>
-              <span id="download-toggle-span" data-i18n="textContent"></span>
+              <div id="download-toggle-span" class="tgl-text" data-i18n="textContent"></div>
             </div>
             <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" value="0"/>
             <label class="tgl-btn" for="download-toggle-input"></label>

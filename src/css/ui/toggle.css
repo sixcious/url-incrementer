@@ -83,6 +83,10 @@
   display: inline-block;
 }
 
+.tgl-inner {
+  vertical-align: top;
+}
+
 .tgl + .tgl-btn {
   width: 2.5em;
   height: 1.25em;
@@ -96,7 +100,7 @@
 .tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
   width: 63%;
   height: 175%;
-  top: -38%;
+  top: -38%; /* -42% */
 }
 
 .tgl-ios + .tgl-btn:after {
@@ -108,5 +112,12 @@
 }
 
 .tgl-btn {
-  margin-left: 5px;
+  margin-left: 2px;
+}
+
+.tgl-text {
+  display: inline-block;
+  font-size: 1.05em;
+  font-weight: bold;
+  font-style: italic;
 }
