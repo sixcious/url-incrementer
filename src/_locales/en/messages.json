@@ -30,7 +30,7 @@
   "options_button_span": { "message": "Options" },
   "auto_toggle_span": { "message": "AUTO" },
   "download_toggle_span": { "message": "DL" },
-  "toolkit_h3_label": { "message": "tH3 1nCr3m3nT3R's t00Lk1T" },
+  "toolkit_h3": { "message": "tH3 1nCr3m3nT3R's t00Lk1T" },
   "toolkit_instructions": { "message": "Select and configure a tool then click on the Incrementing Robot to have the work performed."},
   "toolkit_tool_label": { "message": "Tool" },
   "toolkit_tool_open_tabs_label": { "message": "Open Tabs" },

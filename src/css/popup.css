@@ -121,6 +121,10 @@ div.column {
   padding-top: 7px;
 }
 
+#setup #toolkit, #setup #auto, #setup #download {
+  margin-bottom: 24px;
+}
+
 /* increment-decrement */
 
 #setup #increment-decrement #increment-decrement-img-mouse-pointer {
@@ -153,8 +157,8 @@ div.column {
 }
 
 #profile-save, #auto-eta-repeat, #download-experimental {
-  font-size: 0.8em;
-  font-weight: bold;
+/*  font-size: 0.9em;
+  font-weight: bold;*/
   font-style: italic;
   position: absolute;
   right: 12px;
@@ -162,7 +166,7 @@ div.column {
 }
 
 #profile-save {
-  margin-top: -19px;
+  margin-top: -21px;
 }
 
 /* Toolkit */
@@ -458,10 +462,6 @@ table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the
   bottom: 0;
 }
 
-#setup #extra-toggles .checkbox > label:not(:last-child) {
+#setup #extra-toggles > div:not(:last-child) {
   margin-right: 8px;
-}
-
-#setup #toolkit, #setup #auto, #setup #download {
-  margin-bottom: 24px;
 }
