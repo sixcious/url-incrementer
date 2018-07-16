@@ -171,7 +171,7 @@ URLI.IncrementDecrement = function () {
   function precalculateURLs(instance) {
     console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
-    if (instance.customURLs || instance.shuffleURLs) {
+    if (instance.toolkitEnabled || instance.customURLs || instance.shuffleURLs) {
       // Custom URLs are treated the same in all modes
       if (instance.customURLs) {
         urls = buildCustomURLs(instance);

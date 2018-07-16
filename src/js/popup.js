@@ -136,7 +136,7 @@ URLI.Popup = function () {
         break;
       case "updatePopupToolkitGenerateURLs":
         if (request.instance && request.instance.tabId === instance.tabId) {
-          updateToolkitGenerateURLs(request.urls);
+          updateToolkitGenerateURLs(request.instance.urls);
         }
         break;
       default:
@@ -622,45 +622,47 @@ URLI.Popup = function () {
     chrome.tabs.query({currentWindow: true}, function(tabs) {
       console.log("tabs.length=" + tabs.length);
       const
-        // Increment Decrement Values
-        url = DOM["#url-textarea"].value,
-        selection = DOM["#selection-input"].value,
-        selectionStart = +DOM["#selection-start-input"].value,
-        interval = +DOM["#interval-input"].value,
-        base = +DOM["#base-select"].value,
-        baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
-        selectionParsed = parseInt(selection, base).toString(base),
-        leadingZeros = DOM["#leading-zeros-input"].checked,
-        shuffleURLs = DOM["#shuffle-urls-input"].checked,
-        errorSkip = +DOM["#error-skip-input"].value,
-        // Toolkit
-        tabsLength = tabs ? tabs.length : 0,
-        toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-links-input"].checked ? DOM["#toolkit-tool-generate-links-input"].value : undefined,
-        toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked  ? DOM["#toolkit-action-decrement-input"].value : undefined,
-        toolkitQuantity = +DOM["#toolkit-quantity-input"].value,
-        // Increment Decrement Errors
-        errors = [ // [0] = selection errors and [1] = interval errors
-          // [0] = Selection Errors
-          selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-            url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+            // Increment Decrement Values
+            url = DOM["#url-textarea"].value,
+            selection = DOM["#selection-input"].value,
+            selectionStart = +DOM["#selection-start-input"].value,
+            interval = +DOM["#interval-input"].value,
+            base = +DOM["#base-select"].value,
+            baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
+            selectionParsed = parseInt(selection, base).toString(base),
+            leadingZeros = DOM["#leading-zeros-input"].checked,
+            errorSkip = +DOM["#error-skip-input"].value,
+            customURLs = DOM["#custom-urls-input"].checked,
+            shuffleURLs = DOM["#shuffle-urls-input"].checked,
+            urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
+            // Toolkit
+            tabsLength = tabs ? tabs.length : 0,
+            toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-links-input"].checked ? DOM["#toolkit-tool-generate-links-input"].value : undefined,
+            toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked  ? DOM["#toolkit-action-decrement-input"].value : undefined,
+            toolkitQuantity = +DOM["#toolkit-quantity-input"].value,
+            // Increment Decrement Errors
+            errors = [ // [0] = selection errors and [1] = interval errors
+              // [0] = Selection Errors
+              selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+              url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
               !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
-                selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-                  parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
-                    isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-          // [1] Interval Errors
-          interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-          // [2] Error Skip Errors
-          errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
-        ],
-        // Toolkit Errors
-        toolkitErrors = [
-          !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
-            toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
+              selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+              parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+              isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+              // [1] Interval Errors
+              interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+              // [2] Error Skip Errors
+              errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+            ],
+            // Toolkit Errors
+            toolkitErrors = [
+              !toolkitTool || !toolkitAction || isNaN(toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
+              toolkitTool === "open-tabs" && (toolkitQuantity < 1 || toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
               toolkitTool === "open-tabs" && (tabsLength + toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
               toolkitTool === "generate-links" && (toolkitQuantity < 1 || toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
-        ],
-        errorsExist = errors.some(error => error !== ""),
-        toolkitErrorsExist = toolkitErrors.some(toolkitError => toolkitError !== "");
+            ],
+            errorsExist = errors.some(error => error !== ""),
+            toolkitErrorsExist = toolkitErrors.some(toolkitError => toolkitError !== "");
       if (toolkitErrorsExist) {
         errors.unshift(chrome.i18n.getMessage("oops_error"));
         URLI.UI.generateAlert(toolkitErrors);
@@ -674,13 +676,18 @@ URLI.Popup = function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
-        instance.shuffleURLs = shuffleURLs;
         instance.errorSkip = errorSkip;
+        instance.customURLs = customURLs;
+        instance.shuffleURLs = shuffleURLs;
+        instance.urls = urls;
         instance.toolkitEnabled = true;
         instance.toolkitTool = toolkitTool;
         instance.toolkitAction = toolkitAction;
         instance.toolkitQuantity = toolkitQuantity;
         chrome.runtime.getBackgroundPage(function(backgroundPage) {
+          const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
+          instance.urls = precalculateProps.urls;
+          instance.urlsCurrentIndex = precalculateProps.currentIndex;
           backgroundPage.URLI.Action.performAction(instance, "toolkit", "popup");
         });
         // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
