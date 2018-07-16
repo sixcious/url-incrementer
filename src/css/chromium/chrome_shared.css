@@ -19,8 +19,8 @@ html {
 }
 
 html.loading * {
-  -webkit-transition-delay: 0ms !important;
-  -webkit-transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
+  transition-duration: 0ms !important;
 }
 
 body {
@@ -35,7 +35,7 @@ p {
 h1,
 h2,
 h3 {
-  -webkit-user-select: none;
+  user-select: none;
   font-weight: normal;
   /* Makes the vertical size of the text the same for all fonts. */
   line-height: 1;
@@ -103,7 +103,7 @@ html[dir='rtl'] select.weakrtl option {
  * This CSS is a workaround. Please remove once WebKit bug is fixed.
  * https://bugs.webkit.org/show_bug.cgi?id=63367
  */
-html[dir='rtl'] input.weakrtl::-webkit-input-placeholder,
-html[dir='rtl'] .weakrtl input::-webkit-input-placeholder {
+html[dir='rtl'] input.weakrtl::placeholder,
+html[dir='rtl'] .weakrtl input::placeholder {
   direction: rtl;
 }
