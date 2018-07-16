@@ -885,7 +885,9 @@ URLI.Popup = function () {
             "urlsalt1": urlsalt1,
             "urlsalt2": urlsalt2,
             "url2length": url.substring(selectionStart + selection.length).length,
-            "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros });
+            "selectionStart": selectionStart, "interval": interval, "base": base, "baseCase": baseCase, "leadingZeros": leadingZeros,
+            "errorSkip": errorSkip, "errorCodes":  instance.errorCodes, "errorCodesCustomEnabled": instance.errorCodesCustomEnabled, "errorCodesCustom": instance.errorCodesCustom
+          });
           chrome.storage.local.set({
             "profiles": profiles
           });

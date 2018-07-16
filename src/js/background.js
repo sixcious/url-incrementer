@@ -154,7 +154,7 @@ URLI.Background = function () {
         const result = await profileMatchesURL(profile, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
-          props = profile; // selectionStart, interval, base, baseCase, leadingZeros
+          props = profile; // selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodesCustomEnabled, errorCodesCustom
           props.profileFound = true;
           props.selection = result.selection;
           break;
@@ -169,6 +169,10 @@ URLI.Background = function () {
       props.base = items_.base;
       props.baseCase = items_.baseCase;
       props.leadingZeros = items_.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+      props.errorSkip = items_.errorSkip;
+      props.errorCodes = items_.errorCodes;
+      props.errorCodesCustomEnabled = items_.errorCodesCustomEnabled;
+      props.errorCodesCustom = items_.errorCodesCustom;
     }
     // Return newly built instance using props and items:
     return {
@@ -179,7 +183,7 @@ URLI.Background = function () {
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
-      "errorSkip": items_.errorSkip, "errorCodes": items_.errorCodes, "errorCodesCustomEnabled": items_.errorCodesCustomEnabled, "errorCodesCustom": items_.errorCodesCustom,
+      "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleThreshold": items_.shuffleThreshold,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,

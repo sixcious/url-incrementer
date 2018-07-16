@@ -5,20 +5,21 @@
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
 
-URLI ("yur-lee") increments URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error & Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
+URLI ("yur-lee") increments URLs and other interesting things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
-- Auto Incrementing (Custom Web Page Slideshows) with Repeat Mode
+- Auto Incrementing with a Repeat Mode
 - Download Incrementing [Experimental] (Optional, Requires Extra Permissions) **
-- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate up to 10,000 incremented URL Links in 1 second!
+- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate 10,000 incremented URLs in 1 second!
+- Custom Web Page Slideshows
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save Your Favorite URL Profiles for Quick Incrementing! URLs are saved securely, just like how websites save your passwords as hashes using a secure cryptographic hashing algorithm such as PBKDF2 with HMAC SHA-512
-- Custom URLs:
-- Shuffle URLs:
+- Save URLs for faster incrementing! (Note: URLs are saved securely, just like how websites save your passwords using a secure cryptographic hashing algorithm such as PBKDF2 with an HMAC of SHA-512)
+- Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with!
+- Shuffle URLs: Make it fun and have the next URLs you see be randomized!
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
 - Safe, Open Source, Lightweight (Under 190KiB in size!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
@@ -78,3 +79,5 @@ Special Thanks:
 NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Idea), Will & Adam C. (User Feedback)
 
 ... and most of all you for using URLI!
+
+Copyright © 2018 Roy Six
