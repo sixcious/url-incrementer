@@ -156,17 +156,11 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
-#setup #custom-urls-shuffle-urls {
-  text-align: right;
-}
-
 #setup #custom-urls-shuffle-urls > label:not(:last-child) {
   margin-right: 2px;
 }
 
 #profile-save, #auto-eta-repeat, #download-experimental {
-/*  font-size: 0.9em;
-  font-weight: bold;*/
   font-style: italic;
   position: absolute;
   right: 12px;

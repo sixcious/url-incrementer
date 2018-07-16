@@ -17,9 +17,11 @@ Features:
 - Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Save Your Favorite URL Profiles for Quick Incrementing! URLs are saved securely, just like how websites save your passwords as hashes using a secure cryptographic hashing algorithm such as PBKDF2 with HMAC SHA-512
+- Custom URLs:
+- Shuffle URLs:
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros, Randomized Sequences (Shuffling)... and more!
-- Safe, Open Source, Lightweight (Under 400KB unpacked!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
+- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
+- Safe, Open Source, Lightweight (Under 190KiB in size!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
@@ -30,10 +32,12 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 5.4 (TBD)
-- New Feature: Save URL Profiles/Patterns. URLI can now remember different URL patterns and intervals you set. You can check the save checkbox if you want to save a URL Profile while in the Popup UI Setup. To protect your privacy, URLs saved will be saved as cryptographic hashes using PBKDF2 with HMAC SHA-512, a salt, and a high number of iterations. Not even URLI can figure out the URLs!
-- New Feature: "The Incrementer's Toolkit" - 1: Open a range of up to 100 incremented tabs in your browser or 2: Generate a list of incremented URL links for easy navigation!
-- New Feature: Repeat Mode for AUTO: Loops back to the starting URL and repeats!
-- New Feature: Randomize Sequence: Shuffles the next URLs you'll see in random order, like shuffling a deck of cards. Works in normal, AUTO, or Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
+- 5 New Features!
+- New Feature: Save URLs - URLI can now finally remember your favorite URL patterns and intervals you set so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
+- New Feature: "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
+- New Feature: AUTO Repeat Mode - Loops back to the starting URL and repeats!
+- New Feature: Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
+- New Feature: Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 - Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 - Bug fix: popup.html and options.html rewritten in valid HTML 5

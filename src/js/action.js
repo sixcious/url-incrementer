@@ -103,23 +103,27 @@ URLI.Action = function () {
   function incrementDecrement(instance, action, caller, callback) {
     let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
-    if (instance.selection !== "" && instance.selectionStart >= 0) {
+    if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       let urlProps;
-      // Handle Randomize Sequence (Use the randomizeURLs array, don't call IncrementDecrement.modifyURL)
-      if (instance.randomizeSequence) {
-        const randomizeURLsLength = instance.randomizeURLs.length;
+      // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
+      if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
+        console.log("URLI.Action.incrementDecrement() - performing increment/decrement on the urls array...");
+        const urlsLength = instance.urls.length;
+        console.log("URLI.Action.incrementDecrement() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+        console.log("URLI.Action.incrementDecrement() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
         urlProps =
           (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-            instance.randomizeURLs[instance.randomizeCurrentIndex + 1 < randomizeURLsLength ? !instance.autoEnabled ? ++instance.randomizeCurrentIndex : instance.randomizeCurrentIndex++ : randomizeURLsLength - 1] :
-            instance.randomizeURLs[instance.randomizeCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.randomizeCurrentIndex : instance.randomizeCurrentIndex-- : 0];
+            instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+            instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
       } else {
+        console.log("URLI.Action.incrementDecrement() - performing increment/decrement via modifyURL...");
         urlProps = URLI.IncrementDecrement.modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
       }
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
       chrome.tabs.update(instance.tabId, {url: instance.url});
-      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+      if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
         URLI.Background.setInstance(instance.tabId, instance);
       }
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
@@ -236,8 +240,8 @@ URLI.Action = function () {
         instanceR.selection = instanceR.startingSelection;
         instanceR.selectionStart = instanceR.startingSelectionStart;
         const precalculateProps = URLI.IncrementDecrement.precalculateURLs(instanceR);
-        instanceR.randomizeURLs = precalculateProps.urls;
-        instanceR.randomizeCurrentIndex = precalculateProps.currentIndex;
+        instanceR.urls = precalculateProps.urls;
+        instanceR.urlsCurrentIndex = precalculateProps.currentIndex;
         URLI.Background.setInstance(instanceR.tabId, instanceR);
         URLI.Auto.startAutoTimer(instanceR);
         if (callback) {

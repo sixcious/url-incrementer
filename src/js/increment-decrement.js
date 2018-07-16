@@ -121,8 +121,13 @@ URLI.IncrementDecrement = function () {
           urlOrigin = new URL(instance.url).origin;
     let urlProps;
     // TODO:
-    if (instance.randomizeSequence) {
-      urlProps = action === instance.autoAction ? instance.randomizeURLs[instance.randomizeCurrentIndex++] : instance.randomizeURLs[instance.randomizeCurrentIndex--];
+    // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
+    if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
+      const urlsLength = instance.urls.length;
+      urlProps =
+        (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+          instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+          instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
     } else {
       urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
     }
@@ -166,17 +171,23 @@ URLI.IncrementDecrement = function () {
   function precalculateURLs(instance) {
     console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
-    if (instance.toolkitEnabled) {
-      urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
-    } else if (instance.autoEnabled) {
-      urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
-    } else {
-      const threshold = URLI.Background.getItems().randomizeThreshold;
-      const urlsIncrement = buildURLs(instance, "increment", threshold / 2);
-      const urlsDecrement = buildURLs(instance, "decrement", threshold / 2);
-      const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
-      currentIndex = urlsDecrement.length;
-      urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
+    if (instance.customURLs || instance.shuffleURLs) {
+      // Custom URLs are treated the same in all modes
+      if (instance.customURLs) {
+        urls = buildCustomURLs(instance);
+        currentIndex = -1; // Start the index at -1 because 0 will be the first URL in the custom URLs array
+      } else if (instance.toolkitEnabled) {
+        urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
+      } else if (instance.autoEnabled) {
+        urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
+      } else {
+        const threshold = URLI.Background.getItems().shuffleThreshold;
+        const urlsIncrement = buildURLs(instance, "increment", threshold / 2);
+        const urlsDecrement = buildURLs(instance, "decrement", threshold / 2);
+        const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
+        currentIndex = urlsDecrement.length;
+        urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
+      }
     }
     return {"urls": urls, "currentIndex": currentIndex};
   }
@@ -185,7 +196,7 @@ URLI.IncrementDecrement = function () {
     console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", threshold=" + threshold);
     const urls = [];
     let url = instance.url,
-        selection = instance.selection;
+      selection = instance.selection;
     // If Toolkit Generate URLs first include the original URL for completeness and include it in the threshold
     if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
       urls.push({"urlmod": url, "selectionmod": selection});
@@ -201,14 +212,30 @@ URLI.IncrementDecrement = function () {
       }
       urls.push({"urlmod": url, "selectionmod": selection});
     }
-    if (instance.randomizeSequence) {
-      randomize(urls);
+    if (instance.shuffleURLs) {
+      shuffle(urls);
+    }
+    return urls;
+  }
+
+  function buildCustomURLs(instance) {
+    const urls = [];
+    for (let url of instance.urls) {
+      // Only need to construct an object the first time TODO: Should we construct the objects this from the get-go in popup's instance.urls array so we don't have to do this?
+      if (instance.autoRepeatCount === 0) {
+        urls.push({"urlmod": url, "selectionmod": ""});
+      } else {
+        urls.push(url);
+      }
+    }
+    if (instance.shuffleURLs) {
+      shuffle(urls);
     }
     return urls;
   }
 
   /**
-   * Randomizes and shuffles an array using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
+   * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
    * Note: This function is written by Laurens Holst.
    *
    * @param array the array to shuffle
@@ -216,7 +243,7 @@ URLI.IncrementDecrement = function () {
    * @see https://stackoverflow.com/a/12646864
    * @private
    */
-  function randomize(array) {
+  function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
@@ -229,7 +256,6 @@ URLI.IncrementDecrement = function () {
     findSelection: findSelection,
     modifyURL: modifyURL,
     modifyURLAndSkipErrors: modifyURLAndSkipErrors,
-    precalculateURLs: precalculateURLs,
-    randomize: randomize
+    precalculateURLs: precalculateURLs
   };
 }();

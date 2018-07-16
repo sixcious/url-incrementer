@@ -457,10 +457,11 @@ URLI.Options = function () {
    * @private
    */
   function clickURLI() {
-    const face = " " + FACES[Math.floor(Math.random() * FACES.length)];
-    this.value = +this.value + 1;
+    const face = " " + FACES[Math.floor(Math.random() * FACES.length)],
+          value = +this.dataset.value + 1;
+    this.dataset.value = value + "";
     URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
-    URLI.UI.generateAlert([+this.value <= 10 ? NUMBERS[+this.value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
+    URLI.UI.generateAlert([value <= 10 ? NUMBERS[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
   }
 
   // Return Public Functions

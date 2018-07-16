@@ -229,7 +229,7 @@ URLI.Popup = function () {
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-    DOM["#randomize-sequence-input"].checked = instance.randomizeSequence;
+    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
     DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
@@ -319,8 +319,8 @@ URLI.Popup = function () {
    * @private
    */
   function changeCustomURLsInput() {
-    DOM["#auto-custom"].className = this.checked ? "display-block fade-in" : "display-none";
-    DOM["#auto-times"].style.visibility = this.checked ? "hidden" : "initial";
+    DOM["#custom-urls"].className = this.checked ? "display-block" : "display-none";
+    DOM["#url"].className = !this.checked ? "display-block" : "display-none";
   }
 
   /**
@@ -631,7 +631,7 @@ URLI.Popup = function () {
         baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
         selectionParsed = parseInt(selection, base).toString(base),
         leadingZeros = DOM["#leading-zeros-input"].checked,
-        randomizeSequence = DOM["#randomize-sequence-input"].checked,
+        shuffleURLs = DOM["#shuffle-urls-input"].checked,
         errorSkip = +DOM["#error-skip-input"].value,
         // Toolkit
         tabsLength = tabs ? tabs.length : 0,
@@ -674,7 +674,7 @@ URLI.Popup = function () {
         instance.base = base;
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
-        instance.randomizeSequence = randomizeSequence;
+        instance.shuffleURLs = shuffleURLs;
         instance.errorSkip = errorSkip;
         instance.toolkitEnabled = true;
         instance.toolkitTool = toolkitTool;
@@ -697,7 +697,9 @@ URLI.Popup = function () {
    * Sets up the instance in increment decrement mode. First validates user input for any
    * errors, then saves and enables the instance, then toggles the view back to
    * the controls.
-   * 
+   *
+   * Note: Filtering arrays e.g. .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2," by user1106925 @ StackOverflow.com
+   * @see https://stackoverflow.com/a/16701357
    * @private
    */
   function setup() {
@@ -716,21 +718,20 @@ URLI.Popup = function () {
           baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
           selectionParsed = parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
-          randomizeSequence = DOM["#randomize-sequence-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
+          customURLs = DOM["#custom-urls-input"].checked,
+          shuffleURLs = DOM["#shuffle-urls-input"].checked,
+          urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
           autoEnabled = DOM["#auto-toggle-input"].checked,
           autoAction = DOM["#auto-action-select"].value,
-          autoTimes = +DOM["#auto-times-input"].value,
+          autoTimes = customURLs && urls && urls.length > 0 ? urls.length : +DOM["#auto-times-input"].value,
           autoSeconds = +DOM["#auto-seconds-input"].value,
           autoWait = DOM["#auto-wait-input"].checked,
           autoBadge = DOM["#auto-badge-input"].checked ? "times" : "",
-          autoCustomURLs = autoAction === "custom-urls" && DOM["#auto-custom-textarea"].value ? DOM["#auto-custom-textarea"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
           autoRepeat = DOM["#auto-repeat-input"].checked,
           downloadEnabled = DOM["#download-toggle-input"].checked,
           downloadStrategy = DOM["#download-strategy-select"].value,
           downloadSelector = DOM["#download-selector-input"].value,
-          // .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2,"
-          // by user1106925 @see https://stackoverflow.com/a/16701357
           downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
           downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
           downloadMinMB = +DOM["#download-min-mb-input"].value,
@@ -821,6 +822,9 @@ URLI.Popup = function () {
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
         instance.errorSkip = errorSkip;
+        instance.customURLs = customURLs;
+        instance.shuffleURLs = shuffleURLs;
+        instance.urls = urls;
         instance.toolkitEnabled = false;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
@@ -828,7 +832,6 @@ URLI.Popup = function () {
         instance.autoSeconds = autoSeconds;
         instance.autoWait = autoWait;
         instance.autoBadge = autoBadge;
-        instance.autoCustomURLs = autoCustomURLs;
         instance.autoRepeat = autoRepeat;
         instance.autoPaused = false; // always starts auto un-paused
         instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes
@@ -843,10 +846,9 @@ URLI.Popup = function () {
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
-        instance.randomizeSequence = randomizeSequence;
         const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
-        instance.randomizeURLs = precalculateProps.urls;
-        instance.randomizeCurrentIndex = precalculateProps.currentIndex;
+        instance.urls = precalculateProps.urls;
+        instance.urlsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {
