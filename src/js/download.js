@@ -47,42 +47,60 @@ URLI.Download = function () {
   function findDownloadURLs(strategy, extensions, tags, attributes, selector, includes, excludes) {
     let results = [],
         selectorbuilder = "";
+    switch (strategy) {
+      case "all":
+      case "extensions": // Noticed issues with using a selectorbuilder based on the extensions so go with all for this for now
+        for (let urlattribute of URL_ATTRIBUTES) {
+          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
+        }
+        break;
+      case "tags":
+        for (let tag of tags) {
+          selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
+        }
+        break;
+      case "attributes":
+        for (let attribute of attributes) {
+          selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + attribute + "]";
+        }
+        break;
+      case "selector":
+        selectorbuilder = selector;
+        break;
+      case "page":
+        break;
+      default:
+        break;
+    }
     try {
-      switch (strategy) {
-        case "all":
-        case "extensions": // Noticed issues with using a selectorbuilder based on the extensions so go with all for this for now
-          for (let urlattribute of URL_ATTRIBUTES) {
-            selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
-          }
-          results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
-          break;
-        case "tags":
-          for (let tag of tags) {
-            selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
-          }
-          results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
-          break;
-        case "attributes":
-          for (let attribute of attributes) {
-            selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + attribute + "]";
-          }
-          results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
-          break;
-        case "selector":
-          results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes);
-          break;
-        case "page":
-          results = findPageURL(includes, excludes);
-          break;
-        default:
-          results = [];
-          break;
+      if (strategy === "page") {
+        results = findPageURL(includes, excludes);
+      } else {
+        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
       }
     } catch (e) {
       console.log("URLI.Download.findDownloadURLs() - exception caught:" + e);
       results = [];
     }
     return results;
+  }
+
+  /**
+   * Finds the current web page's URL.
+   *
+   * @param includes (optional) the array of Strings that must be included in the URL
+   * @param excludes (optional) the array of Strings that must be excluded from the URL
+   * @returns {*} results, the array of results
+   * @private
+   */
+  function findPageURL(includes, excludes) {
+    const url = document.location.href,
+      extension = findExtension(url);
+    if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+      return [{"url": url, "extension": extension, "tag": "", "attribute": ""}];
+    } else {
+      return [];
+    }
   }
 
   /**
@@ -102,36 +120,14 @@ URLI.Download = function () {
   function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
     const items = new Map(), // return value, we use a Map to avoid potential duplicate URLs
           elements = document.querySelectorAll(selector);
-    let url = "",
-        extension = "",
-        attribute = "",
-        tag = "";
     console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (let element of elements) {
-      for (let urlattribute of URL_ATTRIBUTES) {
-        if (element[urlattribute]) {
-          if (urlattribute === "style") {
-            url = extractURLFromStyle(element.style);
-          } else {
-            url = element[urlattribute];
-          }
-          if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-            extension = findExtension(url);
-            // Special Restriction (Extensions)
-            if (strategy === "extensions" && (!extension || !extensions.includes(extension))) {
-              continue;
-            }
-            tag = element.tagName ? element.tagName.toLowerCase() : "";
-            // Special Restriction (Tags)
-            if (strategy === "tags" && (!tag || !tags.includes(tag))) {
-              continue;
-            }
-            attribute = urlattribute;
-            // Special Restriction (Attributes)
-            if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
-              continue;
-            }
-            items.set(url + "", {"url": url, "extension": extension, "tag": tag, "attribute": attribute});
+      for (let attribute of URL_ATTRIBUTES) {
+        if (element[attribute]) {
+          // The style attribute might contain multiple URLs so we use an array to cover all cases:
+          const urls = attribute === "style" ? extractURLsFromStyle(element.style) : [element[attribute]];
+          for (let url of urls) {
+            buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
           }
         }
       }
@@ -140,20 +136,41 @@ URLI.Download = function () {
   }
 
   /**
-   * Finds the current web page's URL.
+   * Finds all URLs that match the specified strategy and applicable parameters. Performs a query on the page's elements
+   * and checks each element to see if it passes the strategy's rules.
    *
-   * @param includes (optional) the array of Strings that must be included in the URL
-   * @param excludes (optional) the array of Strings that must be excluded from the URL
-   * @returns {*} results, the array of results
+   * @param items      the items map
+   * @param element    the element that contained the attribute
+   * @param attribute  the attribute that contained the URL
+   * @param url        the URL to check
+   * @param strategy   the download strategy to employ
+   * @param extensions (optional) if strategy is extensions: the file extensions to check for
+   * @param tags       (optional) if strategy is tags: the HTML tags (e.g. <img>) to check for
+   * @param attributes (optional) if strategy is attributes: the HTML tag attributes (e.g. src, href) to check for
+   * @param selector   (optional) if strategy is selector: the CSS selectors to use in querySelectorAll()
+   * @param includes   (optional) the array of Strings that must be included in the URLs
+   * @param excludes   (optional) the array of Strings that must be excluded from the URLs
    * @private
    */
-  function findPageURL(includes, excludes) {
-    const url = document.location.href,
-          extension = findExtension(url);
+  function buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes) {
+    let extension = "",
+        tag = "";
     if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-      return [{"url": url, "extension": extension, "tag": "", "attribute": ""}];
-    } else {
-      return [];
+      extension = findExtension(url);
+      // Special Restriction (Extensions)
+      if (strategy === "extensions" && (!extension || !extensions.includes(extension))) {
+        return;
+      }
+      tag = element.tagName ? element.tagName.toLowerCase() : "";
+      // Special Restriction (Tags)
+      if (strategy === "tags" && (!tag || !tags.includes(tag))) {
+        return;
+      }
+      // Special Restriction (Attributes)
+      if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
+        return;
+      }
+      items.set(url + "", {"url": url, "extension": extension, "tag": tag, "attribute": attribute});
     }
   }
 
@@ -239,33 +256,33 @@ URLI.Download = function () {
   }
 
   /**
-   * Finds the URL from a CSS style.
+   * Finds the URLs from a CSS inline style.
    * Regex to find the URL from a CSS style is by Alex Z @ stackoverflow.com
    * Style properties that can have URLs is by Chad Scira et all @ stackoverflow.com
    *
    * @param style the CSS style
-   * @returns {string} the URL extracted from the style, if it exists
+   * @returns {Array} the URLs array extracted from the style, if it exists
    * @see https://stackoverflow.com/a/34166861
    * @see https://stackoverflow.com/q/24730939
    * @private
    */
-  function extractURLFromStyle(style) {
-    let url = "";
+  function extractURLsFromStyle(style) {
+    const urls = [];
     if (style) {
       const URL_STYLE_PROPERTIES =  ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
             regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
       for (let property of URL_STYLE_PROPERTIES) {
         if (style[property]) {
           const match = regex.exec(style[property]);
-          url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
+          const url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
           if (url) {
             console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
-            break;
+            urls.push(url);
           }
         }
       }
     }
-    return url;
+    return urls;
   }
 
   // Return Public Functions

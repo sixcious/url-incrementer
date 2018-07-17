@@ -473,7 +473,7 @@ URLI.Background = function () {
   function storageChangedListener(changes, areaName) {
     switch (areaName) {
       case "sync":
-        for (let key in changes) {
+        for (const key in changes) {
           console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
           if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
             items_[key] = changes[key].newValue;
@@ -481,7 +481,7 @@ URLI.Background = function () {
         }
         break;
       case "local":
-        for (let key in changes) {
+        for (const key in changes) {
           console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
           if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
             localItems_[key] = changes[key].newValue;

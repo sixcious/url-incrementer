@@ -16,13 +16,13 @@ Features:
 - Next [>] Prev [<]
 - Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts
-- "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
+- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Save URLs for faster incrementing! URLs are saved as cryptographic hashes, just like how websites save your passwords
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with!
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more!
-- Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
+- Safe, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 

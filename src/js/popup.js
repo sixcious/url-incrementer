@@ -358,21 +358,25 @@ URLI.Popup = function () {
   function updateDownloadPreviewCompletely() {
     // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
     chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
-      const code = "URLI.Download.previewDownloadURLs();";
-      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-        if (results && results[0]) {
-          // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
-          // download preview (e.g. table) in the next method
-          downloadPreviewAlls = results[0];
-          const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-                downloadTags = DOM["#download-tags-generated"].value.split(","),
-                downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
-          DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allExtensions, downloadExtensions);
-          DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allTags, downloadTags);
-          DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allAttributes, downloadAttributes);
-          updateDownloadPreview();
-        }
-      });
+      if (chrome.runtime.lastError) {
+        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+      } else {
+        const code = "URLI.Download.previewDownloadURLs();";
+        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+          if (results && results[0]) {
+            // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
+            // download preview (e.g. table) in the next method
+            downloadPreviewAlls = results[0];
+            const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
+              downloadTags = DOM["#download-tags-generated"].value.split(","),
+              downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
+            DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allExtensions, downloadExtensions);
+            DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allTags, downloadTags);
+            DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allAttributes, downloadAttributes);
+            updateDownloadPreview();
+          }
+        });
+      }
     });
   }
 
@@ -420,7 +424,9 @@ URLI.Popup = function () {
             JSON.stringify(downloadIncludes) + ", " +
             JSON.stringify(downloadExcludes) + ");";
     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-      if (results && results[0]) {
+      if (chrome.runtime.lastError) {
+        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+      } else if (results && results[0]) {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
         // @see https://stackoverflow.com/a/21988249
@@ -770,7 +776,8 @@ URLI.Popup = function () {
             autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
             autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
             // TODO: Should we give the user the option or should this be enforced? autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
-            autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : ""
+            autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
+            autoEnabled && downloadEnabled && autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
           ],
           // Download Errors
           downloadErrors = [

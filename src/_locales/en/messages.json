@@ -120,6 +120,7 @@
   "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3600" },
   "auto_eta_toohigh_error": { "message": "Auto ETA needs to be less than 1 Day" },
   "auto_download_seconds_error": { "message": "When using Auto with Download, seconds must be at least 5" },
+  "auto_download_repeat_error": { "message": "When using Auto with Download, repeat can't be checked" },
   "download_enabled_error": { "message": "Please first enable Download in Options to give URLI permissions" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
@@ -215,6 +216,7 @@
   "download_disable_button": { "message": "Disable Download" },
   "download_disable_p": { "message": "This isn't just any downloader! Use it with Auto to create an Auto Incrementer Downloader! Click the button to enable (grant permissions)." },
   "download_enable_p": { "message": "Download is now enabled! Start Downloading anytime by toggling the \"DL\" in the Popup UI." },
+  "download_settings_a": { "message": "Before downloading, please go to chrome://settings and make sure the \"Ask where to save each file before downloading\" toggle is unchecked." },
   "enhanced_mode_h3": { "message": "Enhanced Mode" },
   "enhanced_mode_enable_button": { "message": "Enable Enhanced Mode" },
   "enhanced_mode_disable_button": { "message": "Disable Enhanced Mode" },
