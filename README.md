@@ -5,24 +5,24 @@
 URLI (Extension Mascot / Incrementer Robot):
 ![URLI](src/img/extras/urli.png?raw=true "URLI")
 
-URLI ("yur-lee") increments URLs and other interesting things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
+URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
 - Auto Incrementing with a Repeat Mode
-- Download Incrementing [Experimental] (Optional, Requires Extra Permissions) **
-- The Incrementer's Toolkit: Open up to 100 incremented tabs at once or generate 10,000 incremented URLs in 1 second!
+- Download Incrementing [Experimental] **
+- "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Custom Web Page Slideshows
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
 - Chrome Shortcuts
-- Internal Keyboard and Mouse Button Shortcuts (Requires Extra Permissions)
+- Internal Keyboard and Mouse Button Shortcuts
 - "1 Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save URLs for faster incrementing! (Note: URLs are saved securely, just like how websites save your passwords using a secure cryptographic hashing algorithm such as PBKDF2 with an HMAC of SHA-512)
+- Save URLs for faster incrementing! URLs are saved as cryptographic hashes, just like how websites save your passwords
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with!
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
-- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other combination of HTTP Response Codes you want!
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment, Intervals, Leading Zeros... and more!
-- Safe, Open Source, Lightweight (Under 190KiB in size!), Low Memory Footprint, No Ads, No Bloat, and Requires no permissions for most functionality
+- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want!
+- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more!
+- Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 

@@ -19,6 +19,7 @@
   "POPUP": { "message": "----- POPUP -----" },
   "increment_decrement_h3": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
   "profile_save_label": { "message": "Save" },
+  "profile_found_img": { "message": "Saved URL" },
   "url_label": { "message": "URL" },
   "custom_urls_label": { "message": "Use Custom URLs" },
   "custom_urls_textarea_label": { "message": "Enter a list of URLs separated by commas, spaces, or line breaks" },

@@ -94,6 +94,7 @@ URLI.Popup = function () {
         }
         updateControls();
         DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
+        DOM["#profile-found-img"].className = instance.profileFound ? "display-block" : "display-none";
         if (instance.profileFound) {
           DOM["#profile-save-label"].style.color = "#1779BA";
         }
@@ -104,7 +105,7 @@ URLI.Popup = function () {
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
         updateSetup();
         // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled) && items_.popupOpenSetup) {
+        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
           toggleView.call(DOM["#setup-input"]);
         }
       });
@@ -179,7 +180,7 @@ URLI.Popup = function () {
    */
   function clickActionButton() {
     const action = this.dataset.action;
-    if (((action === "increment" || action === "decrement") && instance.enabled) ||
+    if (((action === "increment" || action === "decrement") && (instance.enabled || instance.profileFound)) ||
         (action === "next" || action === "prev") ||
         (action === "clear" && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
         (action === "auto" && instance.autoEnabled) ||
@@ -201,7 +202,7 @@ URLI.Popup = function () {
    */
   function updateControls() {
     DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = instance.enabled ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
