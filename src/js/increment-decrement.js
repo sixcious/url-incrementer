@@ -206,11 +206,11 @@ URLI.IncrementDecrement = function () {
       const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
       url = urlProps.urlmod;
       selection = urlProps.selectionmod;
+      urls.push({"urlmod": url, "selectionmod": selection});
       const selectionint = parseInt(selection, instance.base);
       if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
         break;
       }
-      urls.push({"urlmod": url, "selectionmod": selection});
     }
     if (instance.shuffleURLs) {
       shuffle(urls);
