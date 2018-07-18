@@ -154,16 +154,12 @@ div.checkbox  img {
   margin-bottom: 2px;
 }
 
-#setup #leading-zeros-pad-label, #setup #base-case, #setup #custom-urls-shuffle-urls {
+#setup #leading-zeros-pad-label, #setup #base-case {
   font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 }
 
 #setup #properties #base-case label:not(:last-child) {
   margin-right: 1em;
-}
-
-#setup #custom-urls-shuffle-urls > label:not(:last-child) {
-  margin-right: 2px;
 }
 
 #profile-save, #auto-eta-repeat, #download-experimental {
@@ -178,7 +174,7 @@ div.checkbox  img {
 }
 
 #auto-eta {
-  margin-right: 2em;
+  margin-right: 1em;
 }
 
 #download-experimental{
@@ -229,10 +225,6 @@ div.checkbox  img {
 
 #setup #auto #auto-wait-badge .checkbox label {
   padding: 2px 0;
-}
-
-#setup #auto #auto-custom {
-  margin-top: 1em;
 }
 
 #setup div.row.two div.column {
@@ -463,7 +455,7 @@ table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the
 }
 
 #setup #extra-options div:not(:last-child) {
-  margin-right: 14px;
+  margin-right: 16px;
 }
 
 #setup #extra-toggles {
