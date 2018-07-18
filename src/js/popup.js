@@ -29,7 +29,7 @@ URLI.Popup = function () {
       items_ = {}, // Storage items cache
       localItems_ = {}, // Local Storage items cache
       downloadPreviewAlls = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
-      timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
+      timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -61,9 +61,9 @@ URLI.Popup = function () {
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
-    DOM["#toolkit-button"].addEventListener("click", function() { DOM["#toolkit"].className = DOM["#toolkit"].className === "display-none" ? "display-block fade-in" : "display-none"; DOM["#toolkit-button-span"].textContent = DOM["#toolkit"].className === "display-none" ? chrome.i18n.getMessage("toolkit_button_span") : chrome.i18n.getMessage("toolkit_close_button_span")  });
+    DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
+    DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
-    DOM["#custom-urls-input"].addEventListener("change", function() { changeCustomURLsInput.call(this); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
@@ -247,7 +247,6 @@ URLI.Popup = function () {
     DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
     DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     updateAutoETA();
-    changeCustomURLsInput.call(DOM["custom-urls-input"]);
     // Download Setup:
     DOM["#download-toggle"].style = items_.permissionsDownload ? "" : "display: none;";
     DOM["#download-toggle-input"].checked = instance.downloadEnabled;
@@ -312,16 +311,6 @@ URLI.Popup = function () {
       itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
       instance.autoEnabled ? AUTO_ETA_I18NS.done : AUTO_ETA_I18NS.tbd :
       time > 86400 ? AUTO_ETA_I18NS.day : fhours + fminutes + fseconds;
-  }
-
-  /**
-   * Changes the affected settings when the Custom URLs checkbox is changed by the user.
-   *
-   * @private
-   */
-  function changeCustomURLsInput() {
-    DOM["#custom-urls"].className = this.checked ? "display-block" : "display-none";
-    DOM["#url"].className = !this.checked ? "display-block" : "display-none";
   }
 
   /**
@@ -534,8 +523,8 @@ URLI.Popup = function () {
    */
   function inputUpdateDownloadPreview(input, label, style) {
     console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
-    clearTimeout(timeout);
-    timeout = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
+    clearTimeout(timeouts[input.id]);
+    timeouts[input.id] = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
 
   /**

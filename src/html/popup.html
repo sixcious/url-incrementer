@@ -9,14 +9,18 @@
     <div id="controls" class="display-block fade-in">
       <div class="table">
         <div class="row">
-          <div class="column"> <input id="auto-input"      type="image" alt="auto-input"      src="../img/font-awesome/orange/pause-circle.png"        width="32" height="32" class="display-none" data-action="auto"/>      </div>
-          <div class="column"> <input id="download-input"  type="image" alt="download-input"  src="../img/font-awesome/purple/cloud-download.png"      width="32" height="32" class="display-none" data-action="download"/>  </div>
-          <div class="column"> <input id="prev-input"      type="image" alt="prev-input"      src="../img/font-awesome/green/chevron-circle-left.png"  width="32" height="32" class="display-none" data-action="prev"/>      </div>
-          <div class="column"> <input id="next-input"      type="image" alt="next-input"      src="../img/font-awesome/green/chevron-circle-right.png" width="32" height="32" class="display-none" data-action="next"/>      </div>
-          <div class="column"> <input id="increment-input" type="image" alt="increment-input" src="../img/font-awesome/blue/plus-circle.png"           width="32" height="32" class="disabled"     data-action="increment"/> </div>
-          <div class="column"> <input id="decrement-input" type="image" alt="decrement-input" src="../img/font-awesome/blue/minus-circle.png"          width="32" height="32" class="disabled"     data-action="decrement"/> </div>
-          <div class="column"> <input id="clear-input"     type="image" alt="clear-input"     src="../img/font-awesome/red/times-circle.png"           width="32" height="32" class="disabled"     data-action="clear"/>     </div>
-          <div class="column"> <input id="setup-input"     type="image" alt="setup-input"     src="../img/font-awesome/black/pencil-square.png"        width="32" height="32"/>                                              </div>
+          <div class="column"> <input id="auto-input"        type="image" alt="auto-input"        src="../img/font-awesome/orange/pause-circle.png"        width="32" height="32" class="display-none" data-action="auto"/>      </div>
+          <div class="column"> <input id="download-input"    type="image" alt="download-input"    src="../img/font-awesome/purple/cloud-download.png"      width="32" height="32" class="display-none" data-action="download"/>  </div>
+          <div class="column"> <input id="prev-input"        type="image" alt="prev-input"        src="../img/font-awesome/green/chevron-circle-left.png"  width="32" height="32" class="display-none" data-action="prev"/>      </div>
+          <div class="column"> <input id="next-input"        type="image" alt="next-input"        src="../img/font-awesome/green/chevron-circle-right.png" width="32" height="32" class="display-none" data-action="next"/>      </div>
+          <div class="column"> <input id="increment-input"   type="image" alt="increment-input"   src="../img/font-awesome/blue/plus-circle.png"           width="32" height="32" class="disabled"     data-action="increment"/> </div>
+          <div class="column"> <input id="decrement-input"   type="image" alt="decrement-input"   src="../img/font-awesome/blue/minus-circle.png"          width="32" height="32" class="disabled"     data-action="decrement"/> </div>
+          <div class="column"> <input id="increment-input-2" type="image" alt="increment-input-2" src="../img/font-awesome/blue/plus-circle.png"           width="32" height="32" class="display-none" data-action="increment2"/> </div>
+          <div class="column"> <input id="decrement-input-2" type="image" alt="decrement-input-2" src="../img/font-awesome/blue/minus-circle.png"          width="32" height="32" class="display-none" data-action="decrement2"/> </div>
+          <div class="column"> <input id="increment-input-3" type="image" alt="increment-input-2" src="../img/font-awesome/blue/plus-circle.png"           width="32" height="32" class="display-none" data-action="increment3"/> </div>
+          <div class="column"> <input id="decrement-input-3" type="image" alt="decrement-input-2" src="../img/font-awesome/blue/minus-circle.png"          width="32" height="32" class="display-none" data-action="decrement3"/> </div>
+          <div class="column"> <input id="clear-input"       type="image" alt="clear-input"       src="../img/font-awesome/red/times-circle.png"           width="32" height="32" class="disabled"     data-action="clear"/>     </div>
+          <div class="column"> <input id="setup-input"       type="image" alt="setup-input"       src="../img/font-awesome/black/pencil-square.png"        width="32" height="32"/>                                              </div>
         </div>
       </div>
       <img id="profile-found-img" src="../img/font-awesome/black/bookmark-o.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>
@@ -40,15 +44,15 @@
           <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
           <textarea id="url-textarea" readonly="readonly"></textarea>
         </div>
-        <div id="custom-urls">
-          <label id="custom-urls-textarea-label" class="label-display-block" for="custom-urls-textarea" data-i18n="textContent"></label>
-          <textarea id="custom-urls-textarea" spellcheck="false" data-i18n="placeholder"></textarea>
-        </div>
         <div id="properties">
           <div class="table">
             <div class="row">
               <div id="selection" class="column">
-                <label id="selection-label" for="selection-input" data-i18n="textContent"></label>
+                <label id="selection-label" for="selection-input" data-i18n="textContent" class="label-display-inline-block"></label>
+                <div id="multi-button" class="hvr-skew-forward icon-button">
+                  <img id="multi-img" src="../img/font-awesome/transparent/share-alt.png" width="14" height="14" class="transparent"/>
+                  Multi
+                </div>
                 <input id="selection-input" type="text" readonly="readonly"/>
                 <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
                 <div class="checkbox">
@@ -123,6 +127,16 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+      <section id="custom" class="display-none">
+        <div class="heading">
+          <img src="../img/font-awesome/transparent/pencil.png" alt="" width="14" height="14" class="transparent"/>
+          <h3 id="custom-urls-h3" data-i18n="textContent"></h3>
+        </div>
+        <div id="custom-urls">
+          <label id="custom-urls-textarea-label" class="label-display-block" for="custom-urls-textarea" data-i18n="textContent"></label>
+          <textarea id="custom-urls-textarea" spellcheck="false" data-i18n="placeholder"></textarea>
         </div>
       </section>
       <section id="toolkit" class="display-none">
@@ -344,18 +358,18 @@
       <div id="setup-buttons">
         <div id="extra-toggles">
           <div id="auto-toggle" class="tgl-outer">
-            <div class="tgl-inner">
+            <label class="tgl-inner" for="auto-toggle-input">
               <img id="auto-toggle-img" src="../img/font-awesome/orange/refresh.png" alt="" width="16" height="16"/>
-              <div id="auto-toggle-span" class="tgl-text" data-i18n="textContent"></div>
-            </div>
+              <span id="auto-toggle-span" class="tgl-text" data-i18n="textContent"></span>
+            </label>
             <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" value="0"/>
             <label class="tgl-btn" for="auto-toggle-input"></label>
           </div>
           <div id="download-toggle" class="tgl-outer">
-            <div class="tgl-inner">
+            <label class="tgl-inner" for="download-toggle-input">
               <img id="download-toggle-img" src="../img/font-awesome/purple/cloud-download.png" alt="" width="17" height="17"/>
-              <div id="download-toggle-span" class="tgl-text" data-i18n="textContent"></div>
-            </div>
+              <span id="download-toggle-span" class="tgl-text" data-i18n="textContent"></span>
+            </label>
             <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" value="0"/>
             <label class="tgl-btn" for="download-toggle-input"></label>
           </div>
@@ -363,26 +377,33 @@
         <button id="accept-button" data-i18n="textContent"></button>
         <button id="cancel-button" data-i18n="textContent"></button>
         <div id="extra-options">
-          <div id="custom-urls-button" class="hvr-skew-forward">
-            <input id="custom-urls-input" type="checkbox" class="display-none"/>
-            <img src="../img/font-awesome/black/check.png" alt="" width="14" height="14"/><!--
-            <span id="custom-urls-label" data-i18n="textContent"></span>-->
-
+          <div id="custom-urls-button" class="hvr-skew-forward icon-button">
+            <label id="custom-urls-label" for="custom-urls-input">
+              <input id="custom-urls-input" type="checkbox" class="display-none"/>
+              <img src="../img/font-awesome/transparent/pencil.png" alt="" width="14" height="14" class="transparent"/>
+              <!--<span>Cust</span>-->
+              <!--<span id="shuffle-urls-span" data-i18n="textContent"></span>-->
+            </label>
           </div>
-          <div id="shuffle-urls-title" data-i18n="title" class="hvr-skew-forward">
-            <input id="shuffle-urls-input" type="checkbox" class="display-none"/>
-            <img src="../img/font-awesome/black/times.png" alt="" width="14" height="14"/>
-<!--            <span id="shuffle-urls-label" data-i18n="textContent"></span>-->
-
+          <div id="shuffle-urls-title" data-i18n="title" class="hvr-skew-forward icon-button">
+            <label id="shuffle-urls-label" for="shuffle-urls-input">
+              <input id="shuffle-urls-input" type="checkbox" class="display-none"/>
+              <img src="../img/font-awesome/transparent/subscript.png" alt="" width="14" height="14" class="transparent"/>
+              <!--<span>Rand</span>-->
+              <!--<span id="shuffle-urls-span" data-i18n="textContent"></span>-->
+            </label>
           </div>
-          <div id="toolkit-button" class="hvr-skew-forward">
-            <img src="../img/font-awesome/black/wrench.png" alt="" width="14" height="14"/>
-<!--            <span id="toolkit-button-span" data-i18n="textContent"></span>-->
-
+          <div id="toolkit-button" class="hvr-skew-forward icon-button">
+            <label id="toolkit-label" for="toolkit-input">
+              <input id="toolkit-input" type="checkbox" class="display-none"/>
+              <img src="../img/font-awesome/transparent/wrench.png" alt="" width="14" height="14" class="transparent"/>
+              <!--<span>Tool</span>-->
+              <!--<span id="toolkit-button-span" data-i18n="textContent"></span>-->
+            </label>
           </div>
-          <div id="options-button" class="hvr-skew-forward">
-            <img src="../img/font-awesome/black/gear.png" alt="" width="14" height="14"/>
-<!--            <span id="options-button-span" data-i18n="textContent"></span>-->
+          <div id="options-button" class="hvr-skew-forward icon-button">
+            <img src="../img/font-awesome/transparent/gear.png" alt="" width="14" height="14" class="transparent"/>
+            <!--<span id="options-button-span" data-i18n="textContent"></span>-->
           </div>
         </div>
       </div>
