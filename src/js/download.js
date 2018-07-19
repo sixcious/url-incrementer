@@ -170,7 +170,7 @@ URLI.Download = function () {
       if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
         return;
       }
-      items.set(url + "", {"url": url, "extension": extension, "tag": tag, "attribute": attribute});
+      items.set(url + "", {"url": url, "filename": findFilename(url), "extension": extension, "tag": tag, "attribute": attribute});
     }
   }
 
@@ -214,6 +214,14 @@ URLI.Download = function () {
       }
     }
     return does;
+  }
+
+  function findFilename(url) {
+    let filename = "";
+    if (url && url.length > 0) {
+      filename = url.split('#').shift().split('?').shift().split('/').pop().replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
+    }
+    return filename;
   }
 
   /**

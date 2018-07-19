@@ -10,6 +10,7 @@ URLI ("yur-lee") increments URLs and other interesting incrementing things. For 
 Features:
 - Auto Incrementing with a Repeat Mode
 - Download Incrementing [Experimental] **
+- Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Custom Web Page Slideshows
 - Increment [+] Decrement [-]

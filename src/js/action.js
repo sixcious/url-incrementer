@@ -418,7 +418,11 @@ URLI.Action = function () {
             const downloads = results[0];
             for (let download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
-              chrome.downloads.download({url: download.url}, function(downloadId) {
+              const params = download.filename && download.extension ? {url: download.url, filename: "folder/" + download.filename} : {url: download.url};
+              chrome.downloads.download(params, function(downloadId) {
+                if (chrome.runtime.lastError) {
+                  chrome.downloads.download({url: download.url});
+                }
                 chrome.downloads.search({id: downloadId}, function(results) {
                   const downloadItem = results ? results[0] : undefined;
                   if (downloadItem) {

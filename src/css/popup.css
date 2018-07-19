@@ -433,6 +433,7 @@ table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
 table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
 table th.extension, td.extension { min-width: 34px; }
+table th.filename, td.filename { min-width: 50px; }
 table th.tag, td.tag { min-width: 36px; }
 table th.attribute, td.attribute { min-width: 34px; }
 table th.url, td.url { min-width: 34px; }

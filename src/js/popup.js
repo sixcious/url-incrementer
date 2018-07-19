@@ -18,6 +18,7 @@ URLI.Popup = function () {
           "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
          },
         DOWNLOAD_PREVIEW_I18NS = { // DOWNLOAD PREVIEW messages cache
+          "filename": "Name",
           "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"),
           "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
           "urls": chrome.i18n.getMessage("download_preview_urls"), "thumb": chrome.i18n.getMessage("download_preview_thumb_label"),
@@ -367,8 +368,8 @@ URLI.Popup = function () {
             // download preview (e.g. table) in the next method
             downloadPreviewAlls = results[0];
             const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-              downloadTags = DOM["#download-tags-generated"].value.split(","),
-              downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
+                  downloadTags = DOM["#download-tags-generated"].value.split(","),
+                  downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
             DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allExtensions, downloadExtensions);
             DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allTags, downloadTags);
             DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allAttributes, downloadAttributes);
@@ -451,6 +452,7 @@ URLI.Popup = function () {
                 "<th class=\"check\">&nbsp;</th>" +
                 "<th class=\"count\">&nbsp;</th>" +
                 "<th class=\"thumb\">" + DOWNLOAD_PREVIEW_I18NS.thumb + "</th>" +
+                "<th class=\"filename\">" + DOWNLOAD_PREVIEW_I18NS.filename + "</th>" +
                 "<th class=\"extension\">" + DOWNLOAD_PREVIEW_I18NS.extension + "</th>" +
                 "<th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th>" +
                 "<th class=\"attribute\">" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th>" +
@@ -494,6 +496,7 @@ URLI.Popup = function () {
         "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td>" +
         "<td class=\"count\">" + (count) + "</td>" +
         "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
+        "<td class=\"filename\">" + item.filename + "</td>" +
         "<td class=\"extension\">" + item.extension + "</td>" +
         "<td class=\"tag\">" + item.tag + "</td>" +
         "<td class=\"attribute\">" + item.attribute + "</td>" +

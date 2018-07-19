@@ -18,9 +18,9 @@ URLI.Background = function () {
     /* shortcuts */   "quickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
-    /* incdec */      "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleThreshold": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
+    /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleThreshold": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
-    /* nextprev */    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
+    /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
@@ -36,6 +36,10 @@ URLI.Background = function () {
   BROWSER_ACTION_BADGES = {
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
     "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
+    "increment2": { "text": "+",    "backgroundColor": "#004687" },
+    "decrement2": { "text": "-",    "backgroundColor": "#004687" },
+    "increment3": { "text": "+",    "backgroundColor": "#001354" },
+    "decrement3": { "text": "-",    "backgroundColor": "#001354" },
     "next":       { "text": ">",    "backgroundColor": "#05854D" },
     "prev":       { "text": "<",    "backgroundColor": "#05854D" },
     "clear":      { "text": "X",    "backgroundColor": "#FF0000" },
@@ -267,37 +271,15 @@ URLI.Background = function () {
         });
       });
     }
-    // Update Installations Version 5.1: Remove declarativeContent if internal shortcuts not enabled (this was erroneously set for download and enhanced mode):
-    else if (details.reason === "update" && details.previousVersion === "5.1") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion === 5.1, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.get(null, function(olditems) {
-        if (olditems && !olditems.permissionsInternalShortcuts) {
-          chrome.permissions.remove({ permissions: ["declarativeContent"]});
-        }
-      });
-    }
-    // Update Installations Version 5.0 and Below: Reset storage and re-save old increment values and remove all permissions for a clean slate
-    else if (details.reason === "update" && details.previousVersion <= "5.0") {
-      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.0, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.get(null, function(olditems) {
-        chrome.storage.sync.clear(function() {
-          chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-            chrome.storage.sync.set({
-              "selectionPriority": olditems && olditems.selectionPriority ? olditems.selectionPriority : STORAGE_DEFAULT_VALUES.selectionPriority,
-              "interval": olditems && olditems.interval ? olditems.interval : STORAGE_DEFAULT_VALUES.interval,
-              "leadingZerosPadByDetection": olditems && olditems.leadingZerosPadByDetection ? olditems.leadingZerosPadByDetection : STORAGE_DEFAULT_VALUES.leadingZerosPadByDetection,
-              "base": olditems && olditems.base ? olditems.base : STORAGE_DEFAULT_VALUES.base,
-              "baseCase": olditems && olditems.baseCase ? olditems.baseCase : STORAGE_DEFAULT_VALUES.baseCase,
-              "selectionCustom": olditems && olditems.selectionCustom ? olditems.selectionCustom : STORAGE_DEFAULT_VALUES.selectionCustom
-            }, function() {
-              chrome.storage.sync.get(null, function(items) {
-                items_ = items;
-                chrome.storage.local.clear(function() {
-                  chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-                    localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
-                  });
-                });
-              });
+    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
+    else if (details.reason === "update" && details.previousVersion <= "5.2") {
+      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+              items_ = STORAGE_DEFAULT_VALUES;
+              localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
             });
           });
         });
@@ -307,17 +289,9 @@ URLI.Background = function () {
       }
       chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
     }
-    // Update Installations Version 5.1 and 5.2 only: storage sync new storage additions/updates
-    if (details.reason === "update" && details.previousVersion === "5.1" || details.previousVersion === "5.2") {
-      chrome.storage.sync.set({
-        "errorCodesCustomEnabled": false,
-        "errorCodesCustom": [],
-        "urli": "loves incrementing for you"
-      });
-    }
-    // Update Installations Version 5.1, 5.2, and 5.3 only: Storage updates for new features: Toolkit and Profiles
-    if (details.reason === "update" && details.previousVersion >= "5.1" && details.previousVersion <= "5.3") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion >= 5.1 && <= 5.3, actual previousVersion=" + details.previousVersion);
+    // 5.3 only: Storage updates for new features: Toolkit and Profiles
+    else if (details.reason === "update" && details.previousVersion === "5.3") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion === 5.3, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.set({
         "toolkitTool": "open-tabs",
         "toolkitAction": "increment",
