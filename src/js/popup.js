@@ -53,6 +53,10 @@ URLI.Popup = function () {
     // Add Event Listeners to the DOM elements
     DOM["#increment-input"].addEventListener("click", clickActionButton);
     DOM["#decrement-input"].addEventListener("click", clickActionButton);
+    DOM["#increment-input-2"].addEventListener("click", clickActionButton);
+    DOM["#decrement-input-2"].addEventListener("click", clickActionButton);
+    DOM["#increment-input-3"].addEventListener("click", clickActionButton);
+    DOM["#decrement-input-3"].addEventListener("click", clickActionButton);
     DOM["#clear-input"].addEventListener("click", clickActionButton);
     DOM["#next-input"].addEventListener("click", clickActionButton);
     DOM["#prev-input"].addEventListener("click", clickActionButton);
@@ -61,6 +65,7 @@ URLI.Popup = function () {
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
+    DOM["#multi-button"].addEventListener("click", clickMulti);
     DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
@@ -98,7 +103,7 @@ URLI.Popup = function () {
         if (instance.profileFound) {
           DOM["#profile-save-label"].style.color = "#1779BA";
         }
-        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
         const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
         DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
@@ -181,10 +186,11 @@ URLI.Popup = function () {
   function clickActionButton() {
     const action = this.dataset.action;
     if (((action === "increment" || action === "decrement") && (instance.enabled || instance.profileFound)) ||
-        (action === "next" || action === "prev") ||
-        (action === "clear" && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
-        (action === "auto" && instance.autoEnabled) ||
-        (action === "download" && instance.downloadEnabled)) {
+        ((action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multi > 1)) ||
+         (action === "next" || action === "prev") ||
+         (action === "clear" && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+         (action === "auto" && instance.autoEnabled) ||
+         (action === "download" && instance.downloadEnabled)) {
       if (items_.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
@@ -203,6 +209,10 @@ URLI.Popup = function () {
   function updateControls() {
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#increment-input-2"].className =
+    DOM["#decrement-input-2"].className = instance.multi >= 2 ? "hvr-grow" : "display-none";
+    DOM["#increment-input-3"].className =
+    DOM["#decrement-input-3"].className = instance.multi === 3 ? "hvr-grow" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
@@ -577,6 +587,52 @@ URLI.Popup = function () {
     }
   }
 
+
+  function clickMulti() {
+    const
+      // Increment Decrement Values
+      url = DOM["#url-textarea"].value,
+      selection = DOM["#selection-input"].value,
+      selectionStart = +DOM["#selection-start-input"].value,
+      interval = +DOM["#interval-input"].value,
+      base = +DOM["#base-select"].value,
+      baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
+      selectionParsed = parseInt(selection, base).toString(base),
+      leadingZeros = DOM["#leading-zeros-input"].checked,
+      errorSkip = +DOM["#error-skip-input"].value,
+      multi = instance.multi >= 3 ? 1 : instance.multi + 1,
+      // Increment Decrement Errors
+      errors = [ // [0] = selection errors and [1] = interval errors
+        // [0] = Selection Errors
+        selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+          url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+            !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+              selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+                parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+                  isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+        // [1] Interval Errors
+        interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+        // [2] Error Skip Errors
+        errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+        // [3] Multi Errors ?
+      ],
+      errorsExist = errors.some(error => error !== "");
+    if (errorsExist) {
+      errors.unshift(chrome.i18n.getMessage("oops_error"));
+      URLI.UI.generateAlert(errors);
+    } else {
+      instance.multi = multi;
+      instance["selection" + multi] = selection;
+      instance["selectionStart" + multi] = selectionStart;
+      instance["interval" + multi] = interval;
+      instance["base" + multi] = base;
+      instance["baseCase" + multi] = baseCase;
+      instance["leadingZeros" + multi] = leadingZeros;
+      instance["errorSkip" + multi] = errorSkip;
+      DOM["#multi-selections"].textContent = multi;
+    }
+  }
+
   /**
    * Called each time the Generate URLS tool is called to update the table of links and the download button link.
    *
@@ -628,6 +684,7 @@ URLI.Popup = function () {
             selectionParsed = parseInt(selection, base).toString(base),
             leadingZeros = DOM["#leading-zeros-input"].checked,
             errorSkip = +DOM["#error-skip-input"].value,
+            // URLs Values:
             customURLs = DOM["#custom-urls-input"].checked,
             shuffleURLs = DOM["#shuffle-urls-input"].checked,
             urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],

@@ -55,10 +55,14 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
+      case "increment2":
+      case "decrement2":
+      case "increment3":
+      case "decrement3":
         if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
           actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
         } else {
-          actionPerformed = incrementDecrement(instance, action, caller, callback);
+          actionPerformed = instance.multi > 0 ? incrementDecrementMulti(instance, action, caller, callback) : incrementDecrement(instance, action, caller, callback);
         }
         break;
       case "next":
@@ -89,6 +93,45 @@ URLI.Action = function () {
         URLI.Background.setBadge(instance.tabId, action, true);
       }
     }
+  }
+
+  function incrementDecrementMulti(instance, action, caller, callback) {
+    console.log("URLI.Action.incrementDecrementMulti() - performing action=" + action + ", instance.multi=" + instance.multi);
+    let actionPerformed = false;
+    if (instance.multi >= 1 && instance.multi <= 3) {
+      const match = /\d+/.exec(action),
+            part = match ? match : "1";
+      let urlProps;
+      if (action.startsWith("increment")) {
+        urlProps = URLI.IncrementDecrement.modifyURL("increment", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
+      } else if (action.startsWith("decrement")) {
+        urlProps = URLI.IncrementDecrement.modifyURL("decrement", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
+      }
+      if (instance.url.length !== urlProps.urlmod.length && instance.multi > 1) {
+        const urlLengthDiff = instance.url.length - urlProps.urlmod.length; // positive need to subtract, negative need to add
+        const thisPartSelectionStart = instance["selectionStart" + part];
+        console.log("URLI.Background.incrementDecrementMulti() - urlLengthDiff=" + urlLengthDiff);
+        // if this part isn't the last part, we need to adjust the selectionStarts of the other earlier parts
+        for (let i = 1; i <= instance.multi; i++) {
+          if (i !== part && instance["selectionStart" + i] < thisPartSelectionStart) {
+            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
+            console.log("urlLengthDiff=" + urlLengthDiff);
+            console.log("urlLengthDiff < 0=" + urlLengthDiff < 0);
+            instance["selectionStart" + i] = urlLengthDiff < 0 ? instance["selectionStart" + i] + urlLengthDiff : instance["selectionStart" + i] - urlLengthDiff;
+            console.log("selectionStart" + i + " changed");
+            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
+          }
+        }
+      }
+      instance.url = urlProps.urlmod;
+      instance["selection" + part] = urlProps.selectionmod;
+      chrome.tabs.update(instance.tabId, {url: instance.url});
+      if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+        URLI.Background.setInstance(instance.tabId, instance);
+      }
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+    }
+    return actionPerformed;
   }
 
   /**
@@ -214,7 +257,8 @@ URLI.Action = function () {
       actionPerformed = true;
     }
     URLI.Background.deleteInstance(instance.tabId);
-    if (caller !== "popupClearBeforeSet") { // Don't remove key/mouse listeners if popup clear before set
+    if (caller !== "popupClearBeforeSet") { // Don't reset multi or remove key/mouse listeners if popup clear before set
+      instance.multi = 0;
       const items = URLI.Background.getItems();
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});

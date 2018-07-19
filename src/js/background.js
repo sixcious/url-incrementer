@@ -184,6 +184,7 @@ URLI.Background = function () {
       "interval": props.interval,
       "base": props.base, "baseCase": props.baseCase,
       "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
+      "multi": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleThreshold": items_.shuffleThreshold,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,
