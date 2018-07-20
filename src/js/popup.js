@@ -211,9 +211,9 @@ URLI.Popup = function () {
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-2"].className =
-    DOM["#decrement-input-2"].className = instance.multi >= 2 ? "hvr-grow" : "display-none";
+    DOM["#decrement-input-2"].className = instance.enabled && !instance.autoEnabled && instance.multi >= 2 ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#increment-input-3"].className =
-    DOM["#decrement-input-3"].className = instance.multi === 3 ? "hvr-grow" : "display-none";
+    DOM["#decrement-input-3"].className = instance.enabled && !instance.autoEnabled && instance.multi === 3 ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";

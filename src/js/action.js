@@ -78,9 +78,6 @@ URLI.Action = function () {
       case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
         break;
-      case "custom-urls":
-        actionPerformed = customURLs(instance, action, caller, callback);
-        break;
       case "download":
         actionPerformed = download(instance, action, caller, callback);
         break;
@@ -99,6 +96,7 @@ URLI.Action = function () {
     console.log("URLI.Action.incrementDecrementMulti() - performing action=" + action + ", instance.multi=" + instance.multi);
     let actionPerformed = false;
     if (instance.multi >= 1 && instance.multi <= 3) {
+      actionPerformed = true;
       const match = /\d+/.exec(action),
             part = match ? match : "1";
       let urlProps;
@@ -110,14 +108,14 @@ URLI.Action = function () {
       if (instance.url.length !== urlProps.urlmod.length && instance.multi > 1) {
         const urlLengthDiff = instance.url.length - urlProps.urlmod.length; // positive need to subtract, negative need to add
         const thisPartSelectionStart = instance["selectionStart" + part];
-        console.log("URLI.Background.incrementDecrementMulti() - urlLengthDiff=" + urlLengthDiff);
-        // if this part isn't the last part, we need to adjust the selectionStarts of the other earlier parts
+        console.log("URLI.Background.incrementDecrementMulti() - part=" + part + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
+        // if this part isn't the last part, we need to adjust the selectionStarts of the other later parts
         for (let i = 1; i <= instance.multi; i++) {
-          if (i !== part && instance["selectionStart" + i] < thisPartSelectionStart) {
+          if (i !== part && instance["selectionStart" + i] > thisPartSelectionStart) {
             console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
             console.log("urlLengthDiff=" + urlLengthDiff);
-            console.log("urlLengthDiff < 0=" + urlLengthDiff < 0);
-            instance["selectionStart" + i] = urlLengthDiff < 0 ? instance["selectionStart" + i] + urlLengthDiff : instance["selectionStart" + i] - urlLengthDiff;
+            console.log("urlLengthDiff < 0=" + (urlLengthDiff < 0));
+            instance["selectionStart" + i] = instance["selectionStart" + i] - urlLengthDiff;
             console.log("selectionStart" + i + " changed");
             console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
           }
@@ -354,31 +352,6 @@ URLI.Action = function () {
   function auto(instance, action, caller, callback) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
-      URLI.Auto.pauseOrResumeAutoTimer(instance);
-      instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
-      if (callback) {
-        callback(instance);
-      } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
-      }
-      actionPerformed = true;
-    }
-    return actionPerformed;
-  }
-
-  /**
-   * Performs an auto action (pause or resume only).
-   *
-   * @param instance the instance for this tab
-   * @param action   the action (auto pause/resume)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
-   * @param callback the function callback (optional)
-   * @private
-   */
-  function customURLs(instance, action, caller, callback) {
-    let actionPerformed = false;
-    if (instance && instance.autoEnabled && instance.autoCustomURLs) {
-      chrome.tabs.
       URLI.Auto.pauseOrResumeAutoTimer(instance);
       instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
       if (callback) {
