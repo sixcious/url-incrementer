@@ -59,6 +59,7 @@ URLI.Popup = function () {
     DOM["#increment-input-3"].addEventListener("click", clickActionButton);
     DOM["#decrement-input-3"].addEventListener("click", clickActionButton);
     DOM["#clear-input"].addEventListener("click", clickActionButton);
+    DOM["#return-input"].addEventListener("click", clickActionButton);
     DOM["#next-input"].addEventListener("click", clickActionButton);
     DOM["#prev-input"].addEventListener("click", clickActionButton);
     DOM["#download-input"].addEventListener("click", clickActionButton);
@@ -104,7 +105,7 @@ URLI.Popup = function () {
         if (instance.profileFound) {
           DOM["#profile-save-label"].style.color = "#1779BA";
         }
-        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
         const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
         DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
@@ -189,7 +190,7 @@ URLI.Popup = function () {
     if (((action === "increment" || action === "decrement") && (instance.enabled || instance.profileFound)) ||
         ((action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multi > 1)) ||
          (action === "next" || action === "prev") ||
-         (action === "clear" && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
       if (items_.popupAnimationsEnabled) {
@@ -216,7 +217,7 @@ URLI.Popup = function () {
     DOM["#decrement-input-3"].className = instance.enabled && !instance.autoEnabled && instance.multi === 3 ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
+    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";

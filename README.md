@@ -33,16 +33,20 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
+Coming Soon in Version 6.0 (TBD)
+- Scroll Incrementing
+
 Coming Soon in Version 5.4 (TBD)
-- 7 New Features!
-- New Save URLs - URLI can now finally remember your favorite URL patterns and intervals you set so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
-- New "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
-- New Multi-Incrementing - A long-requested feature! Increment up to 3 parts of the URL...at the same time!!! Click the Multi near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
-- New AUTO Repeat Mode - Loops back to the starting URL and repeats!
-- New Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
-- New Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
-- New Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
-- Download Improvement/Options: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder
+- 10 New Features!
+- Save URLs - URLI can now finally remember your favorite URL patterns and intervals you set so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
+- "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
+- Multi-Incrementing - A long-requested feature! Increment up to 3 parts of the URL...at the same time!!! Click the Multi near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
+- AUTO Repeat Mode - Loops back to the starting URL and repeats!
+- Return to Start Button (Yellow) - Convenient button to return you back to the starting URL 
+- Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
+- Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
+- Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
+- Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
 - Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 - Bug fix: popup.html and options.html rewritten in valid HTML 5

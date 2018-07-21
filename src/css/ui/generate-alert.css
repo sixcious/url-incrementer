@@ -28,6 +28,10 @@
   padding: 0;
 }
 
+.overlay ul li {
+  text-align: center;
+}
+
 .overlay-visible {
   opacity: 1;
   transform: scale(1);

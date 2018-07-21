@@ -43,12 +43,13 @@ URLI.Background = function () {
     "next":       { "text": ">",    "backgroundColor": "#05854D" },
     "prev":       { "text": "<",    "backgroundColor": "#05854D" },
     "clear":      { "text": "X",    "backgroundColor": "#FF0000" },
+    "return":     { "text": "BACK", "backgroundColor": "#FFCC22" },
     "auto":       { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes":  { "text": "",     "backgroundColor": "#FF6600" },
     "autopause":  { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "autorepeat": { "text": "REP",  "backgroundColor": "#FF6600" },
     "download":   { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":       { "text": "",     "backgroundColor": "#000028" }, //"#FFCC22" },
+    "skip":       { "text": "",     "backgroundColor": "#000028" },
     "toolkit":    { "text": "TOOL", "backgroundColor": "#000028" },
     "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
   },
@@ -387,14 +388,14 @@ URLI.Background = function () {
    * @public
    */
   function commandListener(command) {
-    if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "clear")  {
+    if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "return" || command === "clear")  {
       if (!items_.permissionsInternalShortcuts) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
           if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
             let instance = getInstance(tabs[0].id);
             if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items_.quickEnabled || (instance && instance.enabled)) ||
                 (command === "auto" && instance && instance.autoEnabled) ||
-                (command === "clear" && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
+                ((command === "clear" || command === "return") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
               if (!instance && items_.quickEnabled) {
                 instance = await buildInstance(tabs[0]);
               }

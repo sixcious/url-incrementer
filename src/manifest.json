@@ -13,6 +13,7 @@
                 "decrement": { "suggested_key": { "default": "Ctrl+Shift+Down"},  "description": "Decrement [-]" },
                 "next":      { "description": "Next [>]" },
                 "prev":      { "description": "Prev [<]" },
+                "return":    { "description": "Return To Start" },
                 "clear":     { "suggested_key": { "default": "Ctrl+Shift+X"},     "description": "Clear [x]" },
                 "auto":      { "suggested_key": { "default": "Ctrl+Shift+A"},     "description": "Auto Pause / Resume" } },
   "minimum_chrome_version": "55",

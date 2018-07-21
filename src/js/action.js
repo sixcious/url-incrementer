@@ -72,6 +72,9 @@ URLI.Action = function () {
       case "clear":
         actionPerformed = clear(instance, action, caller, callback);
         break;
+      case "return":
+        actionPerformed = returnToStart(instance, action, caller, callback);
+        break;
       case "toolkit":
         actionPerformed = toolkit(instance, action, caller, callback);
         break;
@@ -300,6 +303,29 @@ URLI.Action = function () {
       } else {
         chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
       }
+    }
+    return actionPerformed;
+  }
+
+  /**
+   * Performs a return action, returning back to the instance's starting URL.
+   *
+   * @param instance the instance for this tab
+   * @param action   the action (toolkit)
+   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param callback the function callback (optional)
+   * @private
+   */
+  function returnToStart(instance, action, caller, callback) {
+    let actionPerformed = false;
+    if (instance.startingURL) {
+      actionPerformed = true;
+      // TODO: Deal with auto
+      // instance.autoTimes = instance.autoTimesOriginal;
+      instance.url = instance.startingURL;
+      instance.selection = instance.startingSelection;
+      instance.selectionStart = instance.startingSelectionStart;
+      chrome.tabs.update(instance.tabId, {url: instance.startingURL});
     }
     return actionPerformed;
   }
