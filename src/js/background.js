@@ -16,8 +16,8 @@ URLI.Background = function () {
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* shortcuts */   "quickEnabled": true,
-    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
+    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyFIncrement": [0, "ArrowRight"], "keyFDecrement": [0, "ArrowLeft"], "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleThreshold": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -57,9 +57,10 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  // The sync storage and local storage items caches
+  // The sync storage and local storage items caches and a boolean flag indicating if the internal shortcuts listener has been added (to prevent adding multiple listeners)
   let items_ = {},
-      localItems_ = {};
+      localItems_ = {},
+      internalShortcutsListenerAdded = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -128,7 +129,8 @@ URLI.Background = function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    instances.set(tabId, instance);
+    // Set a deep-copy of the instance to avoid the Firefox "can't access dead object" error
+    instances.set(tabId, JSON.parse(JSON.stringify(instance)));
   }
 
   /**
@@ -321,7 +323,7 @@ URLI.Background = function () {
       case "performAction":
         let instance = getInstance(sender.tab.id);
         if (!instance && request.action !== "auto") {
-          sender.tab.url = /*sender.tab.url ? sender.tab.url :*/ sender.url; // TODO Testing sender.url vs sender.tab.url (iframe difference?)...
+          sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
           instance = await buildInstance(sender.tab);
         }
         if (instance) {
@@ -444,6 +446,7 @@ URLI.Background = function () {
    *
    * @param changes  Object mapping each key that changed to its corresponding storage.StorageChange for that item
    * @param areaName the name of the storage area("sync", "local" or "managed") the changes are for
+   * @public
    */
   function storageChangedListener(changes, areaName) {
     switch (areaName) {
@@ -452,8 +455,18 @@ URLI.Background = function () {
           console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
           if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
             items_[key] = changes[key].newValue;
+            if (key === "permissionsInternalShortcuts") {
+              if (changes[key].newValue === true && !internalShortcutsListenerAdded) {
+                chrome.tabs.onUpdated.addListener(internalShortcutsListener);
+                internalShortcutsListenerAdded = true;
+              } else if (changes[key].newValue === false) {
+                chrome.tabs.onUpdated.removeListener(internalShortcutsListener);
+                internalShortcutsListenerAdded = false;
+              }
+            }
           }
         }
+
         break;
       case "local":
         for (const key in changes) {
@@ -475,6 +488,7 @@ URLI.Background = function () {
    *
    * 1) Caches the sync storage and local storage items into items_ and localItems_
    * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
+   * @public
    */
   function startupListener() {
     console.log("URLI.Background.startupListener()");
@@ -493,35 +507,60 @@ URLI.Background = function () {
       }
       // Ensure Internal Shortcuts declarativeContent rule is added
       // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-      if (items && items.permissionsInternalShortcuts) {
-        if (chrome.declarativeContent) {
-          chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-            let shortcutsjsRule = false;
-            for (let rule of rules) {
-              if (rule.actions[0].js[0] === "js/shortcuts.js") {
-                console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
-                shortcutsjsRule = true;
-                break;
-              }
-            }
-            if (!shortcutsjsRule) {
-              console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-              chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-                chrome.declarativeContent.onPageChanged.addRules([{
-                  conditions: [new chrome.declarativeContent.PageStateMatcher()],
-                  actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-                }], function(rules) {
-                  console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
-                });
-              });
-            }
-          });
-        }
+      if (items && items.permissionsInternalShortcuts && !internalShortcutsListenerAdded) {
+        chrome.tabs.onUpdated.addListener(internalShortcutsListener);
+        internalShortcutsListenerAdded = true;
+        // if (chrome.declarativeContent) {
+        //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+        //     let shortcutsjsRule = false;
+        //     for (let rule of rules) {
+        //       if (rule.actions[0].js[0] === "js/shortcuts.js") {
+        //         console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
+        //         shortcutsjsRule = true;
+        //         break;
+        //       }
+        //     }
+        //     if (!shortcutsjsRule) {
+        //       console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+        //       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+        //         chrome.declarativeContent.onPageChanged.addRules([{
+        //           conditions: [new chrome.declarativeContent.PageStateMatcher()],
+        //           actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+        //         }], function(rules) {
+        //           console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
+        //         });
+        //       });
+        //     }
+        //   });
+        // }
       }
     });
     chrome.storage.local.get(null, function(localItems) {
       localItems_ = localItems;
     });
+  }
+
+  /**
+   * The chrome.tabs.onUpdated internal shortcuts listener that is added if internal shortcuts is enabled.
+   * Note: This is required for Firefox only because it does not support the chrome.declarativeContent API.
+   * When FF gets declarativeContent, consider removing this and switching to dC.
+   *
+   * @param tabId      the tab ID
+   * @param changeInfo the status (either complete or loading)
+   * @param tab        the tab object
+   * @private
+   */
+  function internalShortcutsListener(tabId, changeInfo, tab) {
+    console.log("URLI.Background.internalShortcutsListener() - the chrome.tabs.onUpdated internal shortcuts listener is on!");
+    if (changeInfo.status === "loading") {
+      if (items_.permissionsInternalShortcuts) {
+        chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
+          if (chrome.runtime.lastError) {
+            console.log("URLI.Background.internalShortcutsListener() - chrome.runtime.lastError=" + chrome.runtime.lastError)
+          }
+        });
+      }
+    }
   }
 
   // Return Public Functions

@@ -51,26 +51,34 @@ URLI.Options = function () {
     DOM["#chrome-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#chrome-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
     DOM["#chrome-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
-    DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
-    DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
+    // DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
+    // DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
+    DOM["#key-f-increment-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
+    DOM["#key-f-decrement-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-increment-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-decrement-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-auto-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
+    DOM["#key-f-increment-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyFIncrement": key}, function() { setKeyEnabled(); }); });
+    DOM["#key-f-decrement-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyFDecrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-increment-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-decrement-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDecrement": key}, function() { setKeyEnabled(); }); });
     DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}, function() { setKeyEnabled(); }); });
     DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}, function() { setKeyEnabled(); }); });
     DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}, function() { setKeyEnabled(); }); });
     DOM["#key-auto-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyAuto": key}, function() { setKeyEnabled(); }); });
+    DOM["#key-f-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyFIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-f-increment-input"], []); });
+    DOM["#key-f-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyFDecrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-f-decrement-input"], []); });
     DOM["#key-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
     DOM["#key-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDecrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-decrement-input"], []); });
     DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], []); });
     DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPrev": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-prev-input"], []); });
     DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], []); });
     DOM["#key-auto-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyAuto": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-auto-input"], []); });
+    DOM["#mouse-f-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseFIncrement": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-f-decrement-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseFDecrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseIncrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-decrement-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDecrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
@@ -153,16 +161,20 @@ URLI.Options = function () {
         }
         if (values === "all") {
           DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
-          DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
-          DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
+          // DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
+          // DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
           DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
           DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
+          writeInput(DOM["#key-f-increment-input"], items.keyFIncrement);
+          writeInput(DOM["#key-f-decrement-input"], items.keyFDecrement);
           writeInput(DOM["#key-increment-input"], items.keyIncrement);
           writeInput(DOM["#key-decrement-input"], items.keyDecrement);
           writeInput(DOM["#key-next-input"], items.keyNext);
           writeInput(DOM["#key-prev-input"], items.keyPrev);
           writeInput(DOM["#key-clear-input"], items.keyClear);
           writeInput(DOM["#key-auto-input"], items.keyAuto);
+          DOM["#mouse-f-increment-select"].value = items.mouseFIncrement;
+          DOM["#mouse-f-decrement-select"].value = items.mouseFDecrement;
           DOM["#mouse-increment-select"].value = items.mouseIncrement;
           DOM["#mouse-decrement-select"].value = items.mouseDecrement;
           DOM["#mouse-next-select"].value = items.mouseNext;
@@ -231,8 +243,9 @@ URLI.Options = function () {
    */
   function setKeyEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      const enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
-      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
+      const quickEnabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0;
+      const enabled = items.keyFIncrement.length !== 0 || items.keyFDecrement.length !== 0 || items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
+      chrome.storage.sync.set({"keyQuickEnabled": "", "keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
@@ -245,7 +258,8 @@ URLI.Options = function () {
    */
   function setMouseEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      const enabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
+      const quickEnabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1;
+      const enabled = items.mouseFIncrement !== -1 || items.mouseFDecrement !== -1 || items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
         DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });

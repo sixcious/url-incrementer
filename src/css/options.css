@@ -4,9 +4,20 @@
 @import url("ui/hover.css");
 @import url("ui/generate-alert.css");
 
+/* Firefox: Set max-width and margin */
 body {
-  min-width: 415px;
+  min-width: 420px;
+  max-width: 420px;
+  margin: 20px;
 }
+
+/* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+textarea {
+  overflow-x: hidden;
+}
+
+/* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
+input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
 
 h3 {
   display: inline;
@@ -63,11 +74,25 @@ input[type="image"]:focus {
   outline: none;
 }
 
-.key-input {
-  width: 210px;
+/* Firefox: Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+textarea {
+  font: inherit;
+  overflow-x: hidden;
 }
 
-.tooltip img {
+.key-input {
+  width: 175px;
+}
+
+.tooltip {
+  border-bottom: 1px dotted #333;
+  padding-bottom: 2px;
+  font-style: italic;
+  display: inline-block;
+  margin-bottom: 1em;
+}
+
+.tooltip-alt img {
   display: inline-block;
   margin-left: 4px;
 }
@@ -130,8 +155,8 @@ input[type="image"]:focus {
   padding-bottom: 0;
 }
 
-#error-skip-checkboxes {
-  margin-top: 8px;
+#error-skip-description {
+  margin-left: 4px;
 }
 
 #error-skip-checkboxes div.column {
@@ -140,14 +165,6 @@ input[type="image"]:focus {
 
 #error-skip-checkboxes label {
   padding: 0;
-}
-
-#error-skip-description {
-  border-bottom: 1px dotted #333;
-  padding-bottom: 2px;
-  font-style: italic;
-  display: inline;
-  margin-left: 4px;
 }
 
 /* selection-custom  */

@@ -6,6 +6,14 @@
 @import url("ui/fade.css");
 @import url("ui/toggle.css");
 
+/* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+textarea {
+  overflow-x: hidden;
+}
+
+/* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
+input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
+
 /* chromium/chrome-shared.css Overrides */
 html {
   height: auto;
@@ -493,11 +501,11 @@ img.transparent {
   transition: 0.6s;
 }
 
-.icon-button:hover img.transparent, .icon-button input:checked + img.transparent {
+/*.icon-button:hover img.transparent, */.icon-button input:checked + img.transparent {
   background: #BA1F40;
 }
 
-.icon-button:hover span, .icon-button input:checked + img.transparent + span {
+/*.icon-button:hover span,*/ .icon-button input:checked + img.transparent + span {
   color: #BA1F40;
 }
 

@@ -188,7 +188,7 @@ URLI.Action = function () {
       actionPerformed = true;
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
       chrome.tabs.executeScript(instance.tabId, {
-        file: "js/increment-decrement.js",
+        file: "/js/increment-decrement.js",
         runAt: "document_start"
       }, function () {
         // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
@@ -218,7 +218,7 @@ URLI.Action = function () {
    */
   function nextPrev(instance, action, caller, callback) {
     let actionPerformed = true;
-    chrome.tabs.executeScript(instance.tabId, {file: "js/next-prev.js", runAt: "document_end"}, function() {
+    chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
         JSON.stringify(action) + ", " + 
         JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
@@ -270,8 +270,7 @@ URLI.Action = function () {
     }
     // Handle AUTO Repeat
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
-      const instanceR = {};
-      Object.assign(instanceR, instance);
+      const instanceR = JSON.parse(JSON.stringify(instance));
       // If auto enabled and auto repeat, set badge to auto repeat on this last page (autoTimes=0)
       URLI.Background.setBadge(instanceR.tabId, "autorepeat", false);
       setTimeout(function () {
@@ -377,7 +376,7 @@ URLI.Action = function () {
     let actionPerformed = false;
     if (instance.downloadEnabled) {
       actionPerformed = true;
-      chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+      chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
         const code = "URLI.Download.findDownloadURLs(" +
           JSON.stringify(instance.downloadStrategy) + ", " +
           JSON.stringify(instance.downloadExtensions) + ", " +

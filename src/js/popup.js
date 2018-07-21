@@ -294,7 +294,7 @@ URLI.Popup = function () {
    * @private
    */
   function selectURL() {
-    DOM["#selection-input"].value = window.getSelection().toString();
+    DOM["#selection-input"].value = DOM["#url-textarea"].value.substring(DOM["#url-textarea"].selectionStart, DOM["#url-textarea"].selectionEnd); // Firefox: window.getSelection().toString(); does not work in FF
     DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     if (items_.leadingZerosPadByDetection) {
       DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
@@ -357,7 +357,7 @@ URLI.Popup = function () {
    */
   function updateDownloadPreviewCompletely() {
     // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
-    chrome.tabs.executeScript(instance.tabId, {file: "js/download.js", runAt: "document_end"}, function() {
+    chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
       if (chrome.runtime.lastError) {
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
       } else {
