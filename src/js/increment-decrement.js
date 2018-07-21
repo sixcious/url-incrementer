@@ -181,9 +181,9 @@ URLI.IncrementDecrement = function () {
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
-        const threshold = URLI.Background.getItems().shuffleThreshold;
-        const urlsIncrement = buildURLs(instance, "increment", threshold / 2);
-        const urlsDecrement = buildURLs(instance, "decrement", threshold / 2);
+        const shuffleLimit = URLI.Background.getItems().shuffleLimit;
+        const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
+        const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
         currentIndex = urlsDecrement.length;
         urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];

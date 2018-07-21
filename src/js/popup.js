@@ -603,16 +603,16 @@ URLI.Popup = function () {
       selectionParsed = parseInt(selection, base).toString(base),
       leadingZeros = DOM["#leading-zeros-input"].checked,
       errorSkip = +DOM["#error-skip-input"].value,
-      multi = instance.multi >= 3 ? 1 : instance.multi + 1,
+      multi = instance.multi >= 3 ? 0 : instance.multi + 1,
       // Increment Decrement Errors
       errors = [ // [0] = selection errors and [1] = interval errors
         // [0] = Selection Errors
         selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-          url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
-            !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
-              selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-                parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
-                  isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+        url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+        !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+        selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+        parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+        isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
         // [1] Interval Errors
         interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
@@ -620,7 +620,11 @@ URLI.Popup = function () {
         // [3] Multi Errors ?
       ],
       errorsExist = errors.some(error => error !== "");
-    if (errorsExist) {
+    if (multi === 0) {
+      instance.multi = 0;
+      DOM["#multi-selections"].textContent = "";
+    }
+    else if (errorsExist) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
       URLI.UI.generateAlert(errors);
     } else {

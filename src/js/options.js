@@ -107,6 +107,7 @@ URLI.Options = function () {
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
     DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#shuffle-limit-input"].addEventListener("change", function () { chrome.storage.sync.set({"shuffleLimit": +this.value > 0 ? +this.value : 1}); });
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
@@ -203,6 +204,7 @@ URLI.Options = function () {
           DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
           DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
           DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+          DOM["#shuffle-limit-input"].value = items.shuffleLimit;
           DOM["#error-skip-input"].value = items.errorSkip;
           DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
           DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
