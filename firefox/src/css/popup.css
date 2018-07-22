@@ -304,7 +304,7 @@ div.checkbox  img {
   border-bottom: 1px solid rebeccapurple;
 }
 
-div.column#download-strategy, div.column#download-optional {  
+div.column#download-strategy, div.column#download-optional {
   padding-top: 8px;
   padding-bottom: 12px;
   width: 50%;
@@ -492,7 +492,7 @@ table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the
 }
 
 .icon-button, .icon-button label {
-/*  font-size: 0.8em;*/
+  /*  font-size: 0.8em;*/
   font-weight: bold;
   cursor: pointer;
 }
@@ -506,12 +506,12 @@ img.transparent {
 }
 
 /*.icon-button:hover img.transparent, */.icon-button input:checked + img.transparent {
-  background: #BA1F40;
-}
+                                          background: #BA1F40;
+                                        }
 
 /*.icon-button:hover span,*/ .icon-button input:checked + img.transparent + span {
-  color: #BA1F40;
-}
+                               color: #BA1F40;
+                             }
 
 #multi-button {
   float: right;
