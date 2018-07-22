@@ -83,8 +83,8 @@ html[dir='rtl'] div.weakrtl input {
 }
 
 html[dir='rtl'] .favicon-cell.weakrtl {
-  -webkit-padding-end: 22px;
-  -webkit-padding-start: 0;
+  -moz-padding-end: 22px;
+  -moz-padding-start: 0;
 }
 
 /* weakrtl for selection drop downs needs to account for the fact that
@@ -103,7 +103,7 @@ html[dir='rtl'] select.weakrtl option {
  * This CSS is a workaround. Please remove once WebKit bug is fixed.
  * https://bugs.webkit.org/show_bug.cgi?id=63367
  */
-html[dir='rtl'] input.weakrtl::input-placeholder,
-html[dir='rtl'] .weakrtl input::input-placeholder {
+html[dir='rtl'] input.weakrtl::placeholder,
+html[dir='rtl'] .weakrtl input::placeholder {
   direction: rtl;
 }
