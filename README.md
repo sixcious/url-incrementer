@@ -45,6 +45,7 @@ Coming Soon in Version 5.4 (TBD)
 - Return to Start Button (Yellow) - Convenient button to return you back to the starting URL 
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
 - Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
+- 2 Extra Increment Decrement Shortcuts that will only activate on your saved/enabled URLs. You can set easier 1-key shortcuts for these sites and still keep the "quick" increment / decrement keys! This goes back to URLI's original design in 1.0/2.0 and removes the need to have Quick Checkboxes and a less flexible "all or nothing" approach.
 - Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
 - Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
