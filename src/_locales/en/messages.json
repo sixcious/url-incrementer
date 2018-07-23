@@ -8,7 +8,7 @@
     "description": "Extension short name."
   },
   "description": {
-    "message": "Increment [+] a URL or go to the Next [>] Page; Supports Auto & Download Incrementing and Webpage Slideshows",
+    "message": "Increment [+] a URL or go to the Next [>] Page; Supports Auto & Download Incrementing & Infinite Scrolling",
     "description": "Extension description."
   },
   "title": {

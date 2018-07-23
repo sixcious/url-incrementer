@@ -393,10 +393,10 @@ URLI.Background = function () {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
           if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
             let instance = getInstance(tabs[0].id);
-            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items_.quickEnabled || (instance && instance.enabled)) ||
+            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") || //&& (items_.quickEnabled || (instance && instance.enabled)) ||
                 (command === "auto" && instance && instance.autoEnabled) ||
                 ((command === "clear" || command === "return") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
-              if (!instance && items_.quickEnabled) {
+              if (!instance) { //&& items_.quickEnabled) {
                 instance = await buildInstance(tabs[0]);
               }
               URLI.Action.performAction(instance, command, "command");
