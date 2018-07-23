@@ -26,9 +26,21 @@ URLI.Scroll = function () {
     // const el = document.createElement("div");
     // const shadowRoot = el.attachShadow({ mode: "open"});
     fetch(instance.url, { method: "GET", credentials: "same-origin" })
+      .then(response => response.blob()).then(blob => {
+      console.log("got a blob!");
+      const objectURL = URL.createObjectURL(blob);
+      const img = document.createElement("img");
+      img.src = objectURL;
+
+
+      shadowRoot.appendChild(img);
+      document.body.appendChild(shadowRoot);
+    });
+      /*
       .then(response => response.text())
       .then(text => new DOMParser().parseFromString(text, "text/html"))
       .then(document2 => {
+
         //const slot = document.createElement("slot");
         //slot.name = "page2";
         //slot.appendChild(document2.head);
@@ -37,9 +49,15 @@ URLI.Scroll = function () {
         //slot.appendChild(spacer);
         //slot.appendChild(document2.body);
         //shadowRoot.appendChild(slot);
-        shadowRoot.appendChild(document2.body);
+        //shadowRoot.appendChild(document2.body);
+        const div = document.createElement("div");
+        for (let element of document2.body.children) {
+          div.appendChild(element);
+        }
+        shadowRoot.appendChild(div);
         document.body.appendChild(shadowRoot);
-      });
+             });
+             */
   }
 
   // Return Public Functions
