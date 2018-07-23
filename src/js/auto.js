@@ -71,7 +71,7 @@ URLI.Auto = function () {
       } else {
         autoTimer.resume();
         instance.autoPaused = false;
-        if (instance.autoBadge === "times") {
+        if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use "auto" badge at start
           URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
         } else {
           URLI.Background.setBadge(instance.tabId, "auto", false);
