@@ -9,22 +9,6 @@ var URLI = URLI || {};
 
 URLI.Scroll = function () {
 
-  let i = 0;
-  const el = document.createElement("div");
-  const shadowRoot = el.attachShadow({ mode: "open"});
-  //document.body.appendChild(shadowRoot);
-  const slot1 = document.createElement("div");
-  slot1.id = "" + (++i);
-  slot1.appendChild(document.head);
-  slot1.appendChild(document.body);
-  shadowRoot.appendChild(slot1);
-  document.head = document.createElement("head");
-  document.body = document.createElement("body");
-//document.appendChild(head); document.appendChild(body);
-  //body.createElement("div");
-  document.body.appendChild(shadowRoot);
-  //shadowRoot.appendChild(document2.body);
-
   /**
    * TODO
    *
@@ -34,7 +18,7 @@ URLI.Scroll = function () {
    * @param instance
    */
   function scroll(instance) {
-    console.log("URLI.Scroll() - instance.url=" + instance.url);
+    console.log("URLI.Scroll() - instance.url=" + instance.url + ", i=" + i);
     // const el = document.createElement("div");
     //const shadowRoot = el.attachShadow({ mode: "open"});
     fetch(instance.url, { method: "GET", credentials: "same-origin" })
@@ -81,6 +65,33 @@ URLI.Scroll = function () {
 
   // Return Public Functions
   return {
+    // init: init,
     scroll: scroll
   };
 }();
+
+// https://stackoverflow.com/questions/23208134/avoid-dynamically-injecting-the-same-script-multiple-times-when-using-chrome-tab?rq=1
+if (!window.contentScriptInjected) {
+  contentScriptInjected = true;
+  init();
+}
+
+function init() {
+  console.log("" + contentScriptInjected);
+  console.log("doing init!");
+  i = 0;
+  console.log("hello scrolling... i=" + i);
+  const el = document.createElement("div");
+  shadowRoot = el.attachShadow({ mode: "open"});
+  //document.body.appendChild(shadowRoot);
+  const slot = document.createElement("div");
+  slot.id = "" + (++i);
+  slot.appendChild(document.head);
+  slot.appendChild(document.body);
+  shadowRoot.appendChild(slot);
+  document.head = document.createElement("head");
+  document.body = document.createElement("body");
+  //body.createElement("div");
+  document.body.appendChild(shadowRoot);
+  //shadowRoot.appendChild(document2.body);
+}
