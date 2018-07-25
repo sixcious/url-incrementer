@@ -74,6 +74,7 @@ URLI.Popup = function () {
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
+    DOM["#scroll-toggle-input"].addEventListener("change", function() { DOM["#scroll"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -249,6 +250,13 @@ URLI.Popup = function () {
     DOM["#toolkit-action-increment-input"].checked = instance.toolkitAction === DOM["#toolkit-action-increment-input"].value;
     DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
+    // Scroll Setup:
+    DOM["#scroll-toggle-input"].checked = instance.scrollEnabled;
+    DOM["#scroll"].className = instance.scrollEnabled ? "display-block" : "display-none";
+    DOM["#scroll-action-select"].value = instance.scrollAction;
+    //TODO DOM["#scroll-mode-iframe-input"].checked = instance.scrollMode === DOM["#toolkit-action-increment-input"].value;
+    //TODO DOM["#scroll-mode-shadow-dom-input"].checked = instance.scrollMode === DOM["#toolkit-action-decrement-input"].value;
+    //TODO DOM["#scroll-spacing-input"].value = instance.scrollSpacing;
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled;
     DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
@@ -791,8 +799,9 @@ URLI.Popup = function () {
           shuffleURLs = DOM["#shuffle-urls-input"].checked,
           urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
           scrollEnabled = DOM["#scroll-toggle-input"].checked,
-          scrollAction = "", // TODO
-          scrollSpacing = "", // TODO
+          scrollAction = DOM["#scroll-action-select"].value,
+          scrollMode = "iframe", // TODO DOM["#scroll-mode-"]
+          scrollSpacing = 0, // TODO
           autoEnabled = DOM["#auto-toggle-input"].checked,
           autoAction = DOM["#auto-action-select"].value,
           autoTimes = customURLs && urls && urls.length > 0 ? urls.length : +DOM["#auto-times-input"].value,
@@ -900,6 +909,7 @@ URLI.Popup = function () {
         instance.toolkitEnabled = false;
         instance.scrollEnabled = scrollEnabled;
         instance.scrollAction = scrollAction;
+        instance.scrollMode = scrollMode;
         instance.scrollSpacing = scrollSpacing;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;

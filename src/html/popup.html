@@ -199,6 +199,43 @@
           <table id="toolkit-generate-links-table"></table>
         </div>
       </section>
+      <section id="scroll" class="display-none">
+        <div class="heading">
+          <img src="../img/font-awesome/black/link.png" alt="" width="18" height="18"/>
+          <h3 id="scroll-h3" data-i18n="textContent"></h3>
+          <div id="scroll-experimental">
+            <img src="../img/font-awesome/purple/flask.png" alt="" width="13" height="13"/>
+            <span id="scroll-experimental-label" data-i18n="textContent"></span>
+          </div>
+        </div>
+        <div id="scroll-instructions" data-i18n="textContent"></div>
+        <div class="table">
+          <div class="row">
+            <div id="scroll-action" class="column">
+              <label id="scroll-action-label" for="auto-action-select" data-i18n="textContent"></label>
+              <select id="scroll-action-select">
+                <option id="scroll-action-option-increment" value="increment" data-i18n="textContent"></option>
+                <option id="scroll-action-option-decrement" value="decrement" data-i18n="textContent"></option>
+                <option id="scroll-action-option-next" value="next" data-i18n="textContent"></option>
+                <option id="scroll-action-option-prev" value="prev" data-i18n="textContent"></option>
+              </select>
+            </div>
+            <div id="scroll-mode" class="column">
+              <div class="radio">
+                <label>
+                  <input id="scroll-mode-iframe-input" type="radio" name="scroll-mode" value="iframe"/>
+                  <img src="../img/font-awesome/black/link.png" alt="" width="14" height="14"/>
+                  <span id="scroll-mode-iframe-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
+            <div id="scroll-spacing" class="column">
+              <label id="scroll-spacing-label" for="scroll-spacing-input" data-i18n="textContent"></label>
+              <input id="scroll-spacing-input" type="number" min="1"/>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="auto">
         <div class="heading">
           <img src="../img/font-awesome/orange/refresh.png" alt="" width="17" height="17"/>

@@ -2,9 +2,14 @@
 
 ![URL Incrementer](../_assets/img/darku/128.png?raw=true "URL Incrementer")
 
+- [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-(scroll-incrementing))
+- [Auto Incrementing] (#auto-incrementing)
+
+
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" style="transform:rotate(90deg)">
 
 ## Infinite Scrolling (Scroll Incrementing)
+
 TODO (Version 6.0)
 
 Toggle on Scroll in the Setup Window and click Accept to "turn on" Infinite Scrolling for the current page!

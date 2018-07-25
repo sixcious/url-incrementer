@@ -148,7 +148,7 @@ div.checkbox  img {
   padding-top: 7px;
 }
 
-#setup #custom-urls, #setup #toolkit, #setup #auto, #setup #download {
+#setup #custom-urls, #setup #toolkit, #setup #scroll, #setup #auto, #setup #download {
   margin-bottom: 24px;
 }
 
@@ -183,7 +183,7 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
-#profile-save, #auto-eta-repeat, #download-experimental {
+#profile-save, #scroll-experimental, #auto-eta-repeat, #download-experimental {
   font-style: italic;
   position: absolute;
   right: 12px;
@@ -198,7 +198,7 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
-#download-experimental{
+#scroll-experimental, #download-experimental {
   margin-top: -15px;
 }
 
@@ -236,7 +236,7 @@ div.checkbox  img {
   color: rebeccapurple;
 }
 
-#setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+#setup #toolkit div.column:not(:last-child), #setup #scroll div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 30px;
 }
 
