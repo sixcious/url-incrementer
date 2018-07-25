@@ -94,10 +94,9 @@ URLI.Download = function () {
    * @private
    */
   function findPageURL(includes, excludes) {
-    const url = document.location.href,
-      extension = findExtension(url);
-    if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-      return [{"url": url, "extension": extension, "tag": "", "attribute": ""}];
+    const url = document.location.href;
+    if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+      return [{"url": url, "extension": findExtension(url), "tag": "", "attribute": ""}];
     } else {
       return [];
     }
@@ -119,14 +118,28 @@ URLI.Download = function () {
    */
   function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
     const items = new Map(), // return value, we use a Map to avoid potential duplicate URLs
-          elements = document.querySelectorAll(selector);
+          elements = document.querySelectorAll(selector),
+          origin = new URL(document.location.href).origin;
     console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (let element of elements) {
       for (let attribute of URL_ATTRIBUTES) {
         if (element[attribute]) {
-          // The style attribute might contain multiple URLs so we use an array to cover all cases:
-          const urls = attribute === "style" ? extractURLsFromStyle(element.style) : [element[attribute]];
-          for (let url of urls) {
+          // The style attribute might contain multiple URLs
+          if (attribute && attribute.toLowerCase() === "style") {
+            const urls = extractURLsFromStyle(element.style);
+            for (let url of urls) {
+              buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+            }
+          } else if (element.tagName && element.tagName.toLowerCase() === "iframe" && attribute && attribute.toLowerCase() === "src") {
+            const url = element[attribute];
+            buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+            console.log("found iframe, origin=" + origin);
+            console.log("found iframe, iframe=" + new URL(url).origin);
+            if (new URL(url).origin === origin) {
+              extractURLsFromIframe(items, element, strategy, extensions, tags, attributes, selector, includes, excludes);
+            }
+          } else {
+            const url = element[attribute];
             buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
           }
         }
@@ -155,7 +168,7 @@ URLI.Download = function () {
   function buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes) {
     let extension = "",
         tag = "";
-    if (url && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+    if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
       extension = findExtension(url);
       // Special Restriction (Extensions)
       if (strategy === "extensions" && (!extension || !extensions.includes(extension))) {
@@ -194,6 +207,11 @@ URLI.Download = function () {
     return [...properties].sort();
   }
 
+  // TODO
+  function isValidURL(url) {
+    return url && typeof url === "string" && url.trim().length > 0;
+  }
+
   /**
    * Determines if the URL includes or excludes the terms.
    *
@@ -216,9 +234,10 @@ URLI.Download = function () {
     return does;
   }
 
+  // TODO:
   function findFilename(url) {
     let filename = "";
-    if (url && url.length > 0) {
+    if (url) {
       filename = url.split('#').shift().split('?').shift().split('/').pop().replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
     }
     return filename;
@@ -235,7 +254,7 @@ URLI.Download = function () {
    */
   function findExtension(url) {
     let extension = "";
-    if (url && url.length > 0) {
+    if (url) {
       const regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
             group = 1,
             urlquestion = url.substring(0, url.indexOf("?")),
@@ -283,14 +302,26 @@ URLI.Download = function () {
         if (style[property]) {
           const match = regex.exec(style[property]);
           const url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
-          if (url) {
-            console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
-            urls.push(url);
-          }
+          console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
+          urls.push(url);
         }
       }
     }
     return urls;
+  }
+
+  // TODO: Rewrite findDownloadURLs by selector to accept a document and then rewrite this method...
+  function extractURLsFromIframe(items, iframe, strategy, extensions, tags, attributes, selector, includes, excludes)  {
+    if (iframe) {
+      const elements = iframe.contentWindow.document.querySelectorAll(selector);
+      console.log("URLI.Download.extractURLsFromIframe() - found " + elements.length + " element(s)");
+      for (let element of elements) {
+        for (let attribute of URL_ATTRIBUTES) {
+          const url = element[attribute];
+          buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+        }
+      }
+    }
   }
 
   // Return Public Functions

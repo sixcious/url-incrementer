@@ -8,9 +8,9 @@ URLI (Extension Mascot / Incrementer Robot):
 URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 Features:
-- Auto Incrementing with a Repeat Mode
+- Auto Incrementing
 - Download Incrementing [Experimental] **
-- Multiple-Parts Incrementing
+- Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Custom Web Page Slideshows
 - Increment [+] Decrement [-]
@@ -34,7 +34,7 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 6.0 (TBD)
-- Scroll Incrementing
+- Infinite Scrolling (Scroll Incrementing)
 
 Coming Soon in Version 5.4 (TBD)
 - 10 New Features!
