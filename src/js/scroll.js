@@ -15,6 +15,16 @@ URLI.Scroll = function () {
 
   const id = ""; // TODO unique name for the pages
 
+  const  offset = 0; // document.body.scrollHeight / 3;
+
+  function scrollListener(event) {
+    console.log("scrolling!");
+    if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
+      console.log("Hit bottom of page");
+      chrome.runtime.sendMessage({greeting: "performAction", action: "increment"});
+    }
+  }
+
   /**
    * TODO
    *
@@ -109,6 +119,7 @@ URLI.Scroll = function () {
   // Return Public Functions
   return {
     // init: init,
+    scrollListener: scrollListener,
     scroll: scroll
   };
 }();
@@ -158,15 +169,15 @@ function init() {
   //document.body.appendChild(shadowRoot);
   //shadowRoot.appendChild(document2.body);
 
-  var offset = 0; // document.body.scrollHeight / 3;
-  window.onscroll = function(event) {
-    console.log("scrolling!");
-    if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
-      console.log("Hit bottom of page");
-      //request();
-      chrome.runtime.sendMessage({greeting: "performAction", action: "increment"});
-    }
-  };
+  // var offset = document.body.scrollHeight / 3; //0; // document.body.scrollHeight / 3;
+  // window.onscroll = function(event) {
+  //   console.log("scrolling!");
+  //   if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
+  //     console.log("Hit bottom of page");
+  //     //request();
+  //     chrome.runtime.sendMessage({greeting: "performAction", action: "increment"});
+  //   }
+  // };
 }
 
 
@@ -175,10 +186,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("URLI.Scroll.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addScrollListener":
-      // TODO document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+      window.addEventListener("scroll", URLI.Scroll.scrollListener);
       break;
     case "removeScrollListener":
-      // TODO document.removeEventListener("keyup", URLI.Shortcuts.keyListener);
+      window.removeEventListener("scroll", URLI.Scroll.scrollListener);
       break;
     case "scroll":
       URLI.Scroll.scroll(request.instance);

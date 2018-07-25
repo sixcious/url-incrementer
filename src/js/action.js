@@ -107,6 +107,7 @@ URLI.Action = function () {
         console.log("URLI.Action.scroll() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
         //return incrementDecrement(instance, action, caller, callback);
       }
+      chrome.tabs.sendMessage(instance.tabId, {greeting: "addScrollListener"});
       // const code = "URLI.Scroll.scroll(" +
       //   // JSON.stringify(action) + ", " +
       //   JSON.stringify(instance) + ");";
@@ -283,7 +284,7 @@ URLI.Action = function () {
   function clear(instance, action, caller, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
-    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
+    if (instance.enabled || instance.scrollEnabled || instance.autoEnabled || instance.downloadEnabled) {
       actionPerformed = true;
     }
     URLI.Background.deleteInstance(instance.tabId);
@@ -295,6 +296,9 @@ URLI.Action = function () {
       }
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+      }
+      if (instance.scrollEnabled) {
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeScrollListener"});
       }
     }
     if (instance.autoEnabled) {

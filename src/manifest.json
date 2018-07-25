@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_name__",
-  "version": "5.4",
+  "version": "6.0",
   "default_locale": "en",
   "description": "__MSG_description__",
   "icons": { "16": "img/icons/dark/16.png", "48": "img/icons/dark/48.png", "128": "img/icons/dark/128.png" },
