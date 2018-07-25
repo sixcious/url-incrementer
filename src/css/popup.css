@@ -252,6 +252,13 @@ div.checkbox  img {
   padding-top: 12px;
 }
 
+
+#scroll-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: #00003d;
+  //background: linear-gradient(to right, #1779BA, #FF0000, #05854D, #FFCC22);
+  //background: linear-gradient(to right, orange , yellow, green, cyan, blue, violet); /*#BA1F40;*/
+}
+
 #auto-toggle-input.tgl-ios:checked + .tgl-btn {
   background: #FF6600;
 }

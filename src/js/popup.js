@@ -790,6 +790,9 @@ URLI.Popup = function () {
           customURLs = DOM["#custom-urls-input"].checked,
           shuffleURLs = DOM["#shuffle-urls-input"].checked,
           urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
+          scrollEnabled = DOM["#scroll-toggle-input"].checked,
+          scrollAction = "", // TODO
+          scrollSpacing = "", // TODO
           autoEnabled = DOM["#auto-toggle-input"].checked,
           autoAction = DOM["#auto-action-select"].value,
           autoTimes = customURLs && urls && urls.length > 0 ? urls.length : +DOM["#auto-times-input"].value,
@@ -895,6 +898,9 @@ URLI.Popup = function () {
         instance.shuffleURLs = shuffleURLs;
         instance.urls = urls;
         instance.toolkitEnabled = false;
+        instance.scrollEnabled = scrollEnabled;
+        instance.scrollAction = scrollAction;
+        instance.scrollSpacing = scrollSpacing;
         instance.autoEnabled = autoEnabled;
         instance.autoAction = autoAction;
         instance.autoTimes = autoTimes;
@@ -993,6 +999,10 @@ URLI.Popup = function () {
         }
         if (items_.permissionsInternalShortcuts && items_.mouseEnabled && !items_.mouseQuickEnabled) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
+        }
+        // TODO Scroll
+        if (instance.scrollEnabled) {
+        backgroundPage.URLI.Action.performAction(instance, "scroll", "popup");
         }
         // If auto is enabled, ask Auto to start auto timer
         if (instance.autoEnabled) {

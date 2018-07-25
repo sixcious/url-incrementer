@@ -20,10 +20,11 @@ URLI.Background = function () {
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* np keywords */ "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer", "new"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older", "old"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
-    /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
+    /* keywords */    "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer", "new"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older", "old"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
+    /* scroll */      "scrollMode": "default", "scrollAction": "increment", "scrollSpacing": 0,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
+    /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* fun */         "urli": "loves incrementing for you"
   },
 
@@ -183,7 +184,7 @@ URLI.Background = function () {
     }
     // Return newly built instance using props and items:
     return {
-      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "enabled": false, "scrollEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
@@ -194,12 +195,13 @@ URLI.Background = function () {
       "multi": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items_.shuffleLimit,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
-      "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity,
+      "scrollMode": items_.scrollMode, "scrollAction": items_.scrollAction, "scrollSpacing": items_.scrollSpacing,
       "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat, "autoRepeatCount": 0,
       "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
       "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
       "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,
-      "downloadPreview": items_.downloadPreview
+      "downloadPreview": items_.downloadPreview,
+      "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity
     };
   }
 

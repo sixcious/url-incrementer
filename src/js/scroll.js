@@ -87,7 +87,7 @@ URLI.Scroll = function () {
     const iframe = document.createElement("iframe");
     iframe.src = instance.url;
     iframe.style = "width: 100%; height: 100vh; border: 0; overflow: hidden; margin: 0; padding: 0; line-height: 0; display: block;";
-    // iframe.scrolling = "no";
+    iframe.scrolling = "no";
     // @see https://meta.stackexchange.com/questions/155720/i-busted-the-stack-overflow-frame-buster-buster-buster
     // sandbox iframe to avoid "For security reasons, framing is not allowed; click OK to remove the frames."
     iframe.sandbox = "allow-same-origin allow-scripts";
@@ -97,6 +97,10 @@ URLI.Scroll = function () {
       iframe.contentWindow.document.documentElement.style.overflow = iframe.contentWindow.document.body.style.overflow = "hidden";
       iframe.style.height = "";
       iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
+      // iframe.contentWindow.scrollTo({
+      //   top: 0,
+      //   behavior: "smooth"
+      // });
     };
     div.appendChild(iframe);
     shadowRoot.appendChild(div);
@@ -164,3 +168,23 @@ function init() {
     }
   };
 }
+
+
+// Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log("URLI.Scroll.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+  switch (request.greeting) {
+    case "addScrollListener":
+      // TODO document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+      break;
+    case "removeScrollListener":
+      // TODO document.removeEventListener("keyup", URLI.Shortcuts.keyListener);
+      break;
+    case "scroll":
+      URLI.Scroll.scroll(request.instance);
+      break;
+    default:
+      break;
+  }
+  sendResponse({});
+});

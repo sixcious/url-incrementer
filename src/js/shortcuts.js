@@ -110,6 +110,7 @@ chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
   }
   // Mouse
   if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
     document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
   }
 });
@@ -119,7 +120,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
   switch (request.greeting) {
     case "addKeyListener":
-      console.log("URLI.Shortcuts.chrome.runtime.onMessage() - adding keyListener");
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);
       break;
     case "removeKeyListener":

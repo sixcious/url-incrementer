@@ -78,6 +78,9 @@ URLI.Action = function () {
       case "toolkit":
         actionPerformed = toolkit(instance, action, caller, callback);
         break;
+      case "scroll":
+        actionPerformed = scroll(instance); // TODO
+        break;
       case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
         break;
@@ -95,44 +98,21 @@ URLI.Action = function () {
     }
   }
 
-  function incrementDecrementMulti(instance, action, caller, callback) {
-    console.log("URLI.Action.incrementDecrementMulti() - performing action=" + action + ", instance.multi=" + instance.multi);
-    let actionPerformed = false;
-    if (instance.multi >= 1 && instance.multi <= 3) {
-      actionPerformed = true;
-      const match = /\d+/.exec(action),
-            part = match ? match : "1";
-      let urlProps;
-      if (action.startsWith("increment")) {
-        urlProps = URLI.IncrementDecrement.modifyURL("increment", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
-      } else if (action.startsWith("decrement")) {
-        urlProps = URLI.IncrementDecrement.modifyURL("decrement", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
+  function scroll(instance) {
+    chrome.tabs.executeScript(instance.tabId, {
+      file: "/js/scroll.js"
+    }, function () {
+      // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+      if (chrome.runtime.lastError) {
+        console.log("URLI.Action.scroll() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+        //return incrementDecrement(instance, action, caller, callback);
       }
-      if (instance.url.length !== urlProps.urlmod.length && instance.multi > 1) {
-        const urlLengthDiff = instance.url.length - urlProps.urlmod.length; // positive need to subtract, negative need to add
-        const thisPartSelectionStart = instance["selectionStart" + part];
-        console.log("URLI.Background.incrementDecrementMulti() - part=" + part + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
-        // if this part isn't the last part, we need to adjust the selectionStarts of the other later parts
-        for (let i = 1; i <= instance.multi; i++) {
-          if (i !== part && instance["selectionStart" + i] > thisPartSelectionStart) {
-            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
-            console.log("urlLengthDiff=" + urlLengthDiff);
-            console.log("urlLengthDiff < 0=" + (urlLengthDiff < 0));
-            instance["selectionStart" + i] = instance["selectionStart" + i] - urlLengthDiff;
-            console.log("selectionStart" + i + " changed");
-            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
-          }
-        }
-      }
-      instance.url = urlProps.urlmod;
-      instance["selection" + part] = urlProps.selectionmod;
-      chrome.tabs.update(instance.tabId, {url: instance.url});
-      if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        URLI.Background.setInstance(instance.tabId, instance);
-      }
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
-    }
-    return actionPerformed;
+      // const code = "URLI.Scroll.scroll(" +
+      //   // JSON.stringify(action) + ", " +
+      //   JSON.stringify(instance) + ");";
+      // // No callback ... TODO
+      // chrome.tabs.executeScript(instance.tabId, {code: code});
+    });
   }
 
   /**
@@ -167,24 +147,13 @@ URLI.Action = function () {
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
 
-
-
       // TODO Test Scroll
-      //chrome.tabs.update(instance.tabId, {url: instance.url});
-      chrome.tabs.executeScript(instance.tabId, {
-        file: "/js/scroll.js"
-      }, function () {
-        // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-        if (chrome.runtime.lastError) {
-          console.log("URLI.Action.incrementDecrement() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-          //return incrementDecrement(instance, action, caller, callback);
-        }
-        const code = "URLI.Scroll.scroll(" +
-          // JSON.stringify(action) + ", " +
-          JSON.stringify(instance) + ");";
-        // No callback because this will be executing async code and then sending a message back to the background
-        chrome.tabs.executeScript(instance.tabId, {code: code});
-      });
+      if (instance.scrollEnabled) {
+        //scroll();
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "scroll", instance: instance});
+      } else {
+        chrome.tabs.update(instance.tabId, {url: instance.url});
+      }
 
       if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
         URLI.Background.setInstance(instance.tabId, instance);
@@ -225,6 +194,47 @@ URLI.Action = function () {
         // No callback because this will be executing async code and then sending a message back to the background
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
       });
+    }
+    return actionPerformed;
+  }
+
+// TODO
+  function incrementDecrementMulti(instance, action, caller, callback) {
+    console.log("URLI.Action.incrementDecrementMulti() - performing action=" + action + ", instance.multi=" + instance.multi);
+    let actionPerformed = false;
+    if (instance.multi >= 1 && instance.multi <= 3) {
+      actionPerformed = true;
+      const match = /\d+/.exec(action),
+        part = match ? match : "1";
+      let urlProps;
+      if (action.startsWith("increment")) {
+        urlProps = URLI.IncrementDecrement.modifyURL("increment", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
+      } else if (action.startsWith("decrement")) {
+        urlProps = URLI.IncrementDecrement.modifyURL("decrement", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
+      }
+      if (instance.url.length !== urlProps.urlmod.length && instance.multi > 1) {
+        const urlLengthDiff = instance.url.length - urlProps.urlmod.length; // positive need to subtract, negative need to add
+        const thisPartSelectionStart = instance["selectionStart" + part];
+        console.log("URLI.Background.incrementDecrementMulti() - part=" + part + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
+        // if this part isn't the last part, we need to adjust the selectionStarts of the other later parts
+        for (let i = 1; i <= instance.multi; i++) {
+          if (i !== part && instance["selectionStart" + i] > thisPartSelectionStart) {
+            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
+            console.log("urlLengthDiff=" + urlLengthDiff);
+            console.log("urlLengthDiff < 0=" + (urlLengthDiff < 0));
+            instance["selectionStart" + i] = instance["selectionStart" + i] - urlLengthDiff;
+            console.log("selectionStart" + i + " changed");
+            console.log("instance[\"selectionStart\" + i]" + instance["selectionStart" + i]);
+          }
+        }
+      }
+      instance.url = urlProps.urlmod;
+      instance["selection" + part] = urlProps.selectionmod;
+      chrome.tabs.update(instance.tabId, {url: instance.url});
+      if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+        URLI.Background.setInstance(instance.tabId, instance);
+      }
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
     return actionPerformed;
   }
