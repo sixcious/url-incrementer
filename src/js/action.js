@@ -261,7 +261,7 @@ URLI.Action = function () {
           const url = results[0];
           chrome.tabs.update(instance.tabId, {url: url});
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
-            console.log("setting instance.url in nextprev and setting instance in bg!");
+            console.log("URLI.Action.nextPrev() - setting instance in background");
             instance.url = url;
             URLI.Background.setInstance(instance.tabId, instance);
           }

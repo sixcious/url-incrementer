@@ -33,11 +33,8 @@ If you were using Versions 3 or 4, I really want to apologize to you for the sta
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-Coming Soon in Version 6.0 (TBD)
+Coming Soon in Version 6.0 (8/8/2018)
 - Infinite Scrolling (Scroll Incrementing)
-
-Coming Soon in Version 5.4 (TBD)
-- 10 New Features!
 - Save URLs - URLI can now finally remember your favorite URL patterns and intervals you set so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
 - Multi-Incrementing - A long-requested feature! Increment up to 3 parts of the URL...at the same time!!! Click the Multi near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
@@ -48,9 +45,12 @@ Coming Soon in Version 5.4 (TBD)
 - 2 Extra Increment Decrement Shortcuts that will only activate on your saved/enabled URLs. You can set easier 1-key shortcuts for these sites and still keep the "quick" increment / decrement keys! This goes back to URLI's original design in 1.0/2.0 and removes the need to have Quick Checkboxes and a less flexible "all or nothing" approach.
 - Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
-- Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
-- Bug fix: Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 - Bug fix: popup.html and options.html rewritten in valid HTML 5
+
+What's New in Version 5.4 (7/26/2018)
+- To ensure compatibility with older Chrome versions (Min Version 55+), replaced Lookbehind regex for finding the part in the URL to increment with an equivalent non-lookbehind regex 
+- Error Skipping Improvement: Reduced redirect false alarms by maintaining the current state with the server (added "credentials same-origin" to the fetch request)
+- Now ensuring the toolbar icon and the Internal Shortcuts declarativeContent rule are correctly re-set when the extension first starts as opposed to when the extension just updates (e.g. covers a Chrome bug use-case when the declarativeContent rule is lost when the extension is simply disabled and re-enabled)
 
 What's New in Version 5.3 (7/4/2018)
 - Error Skipping now supports any combination of HTTP Response codes! Just check the custom checkbox in the options and enter any combinations of codes you want separated by commas!

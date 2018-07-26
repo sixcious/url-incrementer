@@ -36,7 +36,7 @@ URLI.IncrementDecrement = function () {
     // Regular Expressions:
     // Firefox: Lookbehind is not supported yet in FF as of Version 61.1 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are enclosed in comments below
     const repag = /page=\d+/, // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/
-          reter = /(?:(pid|p|next|id)=\d+)/, // RegExp to find numbers with common terms like "id=" TODO: replace with lookbehind regex /(?<=pid|p|next|id)=(\d+)/
+          reter = /(?:(p|id|next)=\d+)/, // RegExp to find numbers with common terms like "id=" TODO: replace with lookbehind regex /(?<=pid|p|next|id)=(\d+)/
           repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
           relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
           refir = /\d+/, // RegExg to find the first number in the url
@@ -135,6 +135,7 @@ URLI.IncrementDecrement = function () {
     instance.selection = urlProps.selectionmod;
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (origin === urlOrigin && errorSkipRemaining > 0) {
+      // fetch using credentials: same-origin to keep session/cookie state alive
       fetch(urlProps.urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes && (
