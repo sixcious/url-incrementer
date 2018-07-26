@@ -21,7 +21,7 @@ URLI.Background = function () {
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer", "new"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older", "old"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
-    /* scroll */      "scrollMode": "default", "scrollAction": "increment", "scrollSpacing": 0,
+    /* scroll */      "scrollMode": "iframe", "scrollAction": "increment", "scrollSpacing": 0,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
@@ -60,7 +60,7 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  // The sync storage and local storage items caches and a boolean flag indicating if the internal shortcuts listener has been added (to prevent adding multiple listeners)
+  // The sync storage and local storage items caches and a boolean flag indicating if the content scripts listener has been added (to prevent adding multiple listeners)
   let items_ = {},
       localItems_ = {},
       contentScriptListenerAdded = false;
@@ -132,7 +132,7 @@ URLI.Background = function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    // Set a deep-copy of the instance to avoid the Firefox "can't access dead object" error
+    // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
     instances.set(tabId, JSON.parse(JSON.stringify(instance)));
   }
 
@@ -610,3 +610,23 @@ chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
 chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 URLI.Background.startupListener();
+
+// todo https://stackoverflow.com/questions/15532791/getting-around-x-frame-options-deny-in-a-chrome-extension
+//
+// chrome.webRequest.onHeadersReceived.addListener(
+//   function(info) {
+//     var headers = info.responseHeaders;
+//     for (var i=headers.length-1; i>=0; --i) {
+//       var header = headers[i].name.toLowerCase();
+//       if (header == 'x-frame-options' || header == 'frame-options') {
+//         headers.splice(i, 1); // Remove header
+//       }
+//     }
+//     return {responseHeaders: headers};
+//   },
+//   {
+//     urls: [ '*://*/*' ], // Pattern to match all http(s) pages
+//     types: [ 'sub_frame' ]
+//   },
+//   ['blocking', 'responseHeaders']
+// );
