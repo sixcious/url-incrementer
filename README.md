@@ -23,15 +23,11 @@ Features:
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
 - Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want!
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more!
-- Safe, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
+- Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-URLI 5 and a personal apology to you ...
-
-If you were using Versions 3 or 4, I really want to apologize to you for the state this extension has been in. You deserve a way better extension. The only reason Version 5 exists is because of you!
-
-This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. I can't express in words how happy I am that you are using URLI. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This was the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 Coming Soon in Version 6.0 (8/8/2018)
 - Infinite Scrolling (Scroll Incrementing)
@@ -46,6 +42,9 @@ Coming Soon in Version 6.0 (8/8/2018)
 - Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
 - Bug fix: popup.html and options.html rewritten in valid HTML 5
+
+What's New in Version 5.5 (7/26/2018)
+- Removed debug statements (apologies!)
 
 What's New in Version 5.4 (7/26/2018)
 - To ensure compatibility with older Chrome versions (Min Version 55+), replaced Lookbehind regex for finding the part in the URL to increment with an equivalent non-lookbehind regex 
@@ -85,7 +84,7 @@ What's New in Version 5.0 (6/13/18)
 - Note: The options had to be reset due to this major update and the way URLI now modularizes permissions for each feature. I'm VERY sorry for this.
 
 Special Thanks:
-NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Idea), Will & Adam C. (User Feedback)
+NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Idea), and Adam C. & Will (User Feedback)
 
 ... and most of all you for using URLI!
 
