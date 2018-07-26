@@ -199,3 +199,25 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   sendResponse({});
 });
+
+
+// Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
+chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+
+  if (response.shouldActivate) {
+    // activate scrolling...
+  }
+
+  // console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
+  // URLI.Shortcuts.setItems(response.items);
+  // // Key
+  // if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+  //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
+  //   document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+  // }
+  // // Mouse
+  // if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+  //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
+  //   document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+  // }
+});

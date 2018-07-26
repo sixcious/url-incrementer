@@ -17,7 +17,7 @@
                 "clear":     { "suggested_key": { "default": "Ctrl+Shift+X"},     "description": "Clear [x]" },
                 "auto":      { "suggested_key": { "default": "Ctrl+Shift+A"},     "description": "Auto Pause / Resume" } },
   "minimum_chrome_version": "55",
-  "optional_permissions": ["<all_urls>", "downloads"],
+  "optional_permissions": ["<all_urls>", "webRequest", "webRequestBlocking", "downloads"],
   "options_ui": { "page": "html/options.html", "chrome_style": true },
   "permissions": ["activeTab", "storage"],
   "short_name": "__MSG_short_name__"

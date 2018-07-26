@@ -115,13 +115,15 @@ URLI.Options = function () {
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#error-codes-custom-input"].addEventListener("input", updateErrorCodesCustom);
-    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
+    DOM["#scroll-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("scroll", function(granted) { if (granted) { populateValuesFromStorage("scroll"); } }) });
+    DOM["#scroll-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("scroll", function(removed) { if (removed) { populateValuesFromStorage("scroll"); } }) });
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
@@ -143,17 +145,23 @@ URLI.Options = function () {
           DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
         }
-        if (values === "all" || values === "enhancedMode") {
-          DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+        if (values === "all" || values === "scroll") {
+          DOM["#scroll-disable-button"].className = items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#scroll-enable-button"].className = !items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#scroll-settings-enable"].className = items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#scroll-settings-disable"].className = !items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
         }
         if (values === "all" || values === "download") {
           DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+        }
+        if (values === "all" || values === "enhancedMode") {
+          DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
         }
         if (values === "all" || values === "profiles") {
           DOM["#profile-exist"].className = localItems.profiles && localItems.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";

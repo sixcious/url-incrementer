@@ -9,46 +9,50 @@ var URLI = URLI || {};
 
 URLI.Encryption = function () {
 
-  // https://timtaubert.de/blog/2015/05/implementing-a-pbkdf2-based-password-storage-scheme-for-firefox-os/
-
-  const SECRET_KEY_FACTORY_ALGORITHM = "PBKDF2", //"PBKDF2WithHmacSHA512",
-        SECRET_KEY_HASH_ALGORITHM = "SHA-512",
-        PBKDF2_ITERATION_COUNT = 1000,
-        HASH_BITS_LENGTH = 512,
-        SALT_BYTE_LENGTH = 64;
-
   /**
+   * Calculates a cryptographic hash. We use the PBKDF2WithHmacSHA512 algorithm and hash.
+   * For simplicity, we hardcode the algorithm, hash, and iterations.
    *
    * @param plaintext
    * @param salt
-   * @param iterations
-   * @param algorithm
-   * @param hash
-   * @returns {Promise<*>} the calculated ciphertext hash from the plaintext
+   * @returns {Promise<string>} the hash
+   * @public
    */
-  async function calculateHash(plaintext, salt, iterations, algorithm, hash) {
+  async function calculateHash(plaintext, salt) {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext), "PBKDF2", false, ["deriveBits"]);
-    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2buf(salt), iterations: 1000}, key, 512);
-    return buf2str(new Uint8Array(bits));
+    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2u8a(salt), iterations: 1000}, key, 512);
+    return u8a2str(new Uint8Array(bits));
   }
 
-  function generateSalt() {
-    return buf2str(crypto.getRandomValues(new Uint8Array(64)));
-  }
-
-  //https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string
-  //https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/42334410#42334410
-  /*
-  var base64 = btoa(
-  new Uint8Array(arrayBuffer)
-    .reduce((data, byte) => data + String.fromCharCode(byte), '')
-);
+  /**
+   * Generates a random cryptographic salt.
+   *
+   * @returns {string} the salt
+   * @public
    */
-  function buf2str(buf) {
-    return btoa(String.fromCharCode.apply(null, buf));
+  function generateSalt() {
+    return u8a2str(crypto.getRandomValues(new Uint8Array(64)));
   }
 
-  function str2buf(str) {
+  /**
+   * Converts an 8-bit Unsigned Integer Array to a Base 64 Encoded String.
+   *
+   * @param u8a the unsigned 8-bit integer array
+   * @returns {string} the string
+   * @private
+   */
+  function u8a2str(u8a) {
+    return btoa(String.fromCharCode.apply(null, u8a));
+  }
+
+  /**
+   * Converts a Base 64 Encoded String to an 8-bit Unsigned Integer Array.
+   *
+   * @param str the string
+   * @returns {Uint8Array} the unsigned 8-bit integer array
+   * @private
+   */
+  function str2u8a(str) {
     return new Uint8Array(atob(str).split("").map(function(c) { return c.charCodeAt(0); }));
   }
 
@@ -58,3 +62,10 @@ URLI.Encryption = function () {
     generateSalt: generateSalt
   };
 }();
+
+// TODO:
+// https://timtaubert.de/blog/2015/05/implementing-a-pbkdf2-based-password-storage-scheme-for-firefox-os/
+//https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string
+// ..
+//https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/42334410#42334410
+//return btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));

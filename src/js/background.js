@@ -12,7 +12,7 @@ URLI.Background = function () {
   // The sync storage default values
   // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
+    /* permissions */ "permissionsInternalShortcuts": false, "permissionsScroll": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyFIncrement": [0, "ArrowRight"], "keyFDecrement": [0, "ArrowLeft"], "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
@@ -30,7 +30,8 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* profiles */    "profilePreselect": false, "profiles": []
+    /* profiles */    "profilePreselect": false, "profiles": [],
+    /* scroll */      "scrollWhiteList": []
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -62,7 +63,7 @@ URLI.Background = function () {
   // The sync storage and local storage items caches and a boolean flag indicating if the internal shortcuts listener has been added (to prevent adding multiple listeners)
   let items_ = {},
       localItems_ = {},
-      internalShortcutsListenerAdded = false;
+      contentScriptListenerAdded = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -320,6 +321,10 @@ URLI.Background = function () {
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
     switch (request.greeting) {
+      case "shouldScroll":
+        const shouldScroll = false;
+        sendResponse({"shouldScroll": shouldScroll});
+        break;
       case "getInstance":
         sendResponse({instance: getInstance(sender.tab.id), items: getItems()});
         break;
@@ -458,18 +463,18 @@ URLI.Background = function () {
           console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
           if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
             items_[key] = changes[key].newValue;
-            if (key === "permissionsInternalShortcuts") {
-              if (changes[key].newValue === true && !internalShortcutsListenerAdded) {
-                chrome.tabs.onUpdated.addListener(internalShortcutsListener);
-                internalShortcutsListenerAdded = true;
-              } else if (changes[key].newValue === false) {
-                chrome.tabs.onUpdated.removeListener(internalShortcutsListener);
-                internalShortcutsListenerAdded = false;
+            // We must handle the contentScriptListener depending on the storage change for either permissionsInternalShortcuts or permissionsScroll
+            if (key === "permissionsInternalShortcuts" || key === "permissionsScroll") {
+              if (changes[key].newValue === true && !contentScriptListenerAdded) {
+                chrome.tabs.onUpdated.addListener(contentScriptListener);
+                contentScriptListenerAdded = true;
+              } else if (changes[key].newValue === false && (key === "permissionsInternalShortcuts" ? !items_.permissionsScroll : !items_.permissionsInternalShortcuts)) {
+                chrome.tabs.onUpdated.removeListener(contentScriptListener);
+                contentScriptListenerAdded = false;
               }
             }
           }
         }
-
         break;
       case "local":
         for (const key in changes) {
@@ -510,9 +515,9 @@ URLI.Background = function () {
       }
       // Ensure Internal Shortcuts declarativeContent rule is added
       // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-      if (items && items.permissionsInternalShortcuts && !internalShortcutsListenerAdded) {
-        chrome.tabs.onUpdated.addListener(internalShortcutsListener);
-        internalShortcutsListenerAdded = true;
+      if (items && (items.permissionsInternalShortcuts || items.permissionsScroll) && !contentScriptListenerAdded) {
+        chrome.tabs.onUpdated.addListener(contentScriptListener);
+        contentScriptListenerAdded = true;
         // if (chrome.declarativeContent) {
         //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         //     let shortcutsjsRule = false;
@@ -544,7 +549,7 @@ URLI.Background = function () {
   }
 
   /**
-   * The chrome.tabs.onUpdated internal shortcuts listener that is added if internal shortcuts is enabled.
+   * The chrome.tabs.onUpdated content script listener that is added if a content script is enabled (e.g. internal shortcuts).
    * Note: This is required for Firefox only because it does not support the chrome.declarativeContent API.
    * When FF gets declarativeContent, consider removing this and switching to dC.
    *
@@ -553,13 +558,20 @@ URLI.Background = function () {
    * @param tab        the tab object
    * @private
    */
-  function internalShortcutsListener(tabId, changeInfo, tab) {
-    console.log("URLI.Background.internalShortcutsListener() - the chrome.tabs.onUpdated internal shortcuts listener is on!");
+  function contentScriptListener(tabId, changeInfo, tab) {
+    console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated content script listener is on!");
     if (changeInfo.status === "loading") {
       if (items_.permissionsInternalShortcuts) {
         chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
           if (chrome.runtime.lastError) {
-            console.log("URLI.Background.internalShortcutsListener() - chrome.runtime.lastError=" + chrome.runtime.lastError)
+            console.log("URLI.Background.contentScriptListener() - shortcuts.js chrome.runtime.lastError=" + chrome.runtime.lastError)
+          }
+        });
+      }
+      if (items_.permissionsScroll) {
+        chrome.tabs.executeScript(tabId, {file: "/js/scroll.js", runAt: "document_start"}, function(result) {
+          if (chrome.runtime.lastError) {
+            console.log("URLI.Background.contentScriptListener() - scroll.js chrome.runtime.lastError=" + chrome.runtime.lastError)
           }
         });
       }
