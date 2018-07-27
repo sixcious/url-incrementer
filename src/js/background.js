@@ -542,6 +542,9 @@ URLI.Background = function () {
         //   });
         // }
       }
+      if (items && items.permissionsScroll) {
+        addWebRequestOnHeadersReceivedListener();
+      }
     });
     chrome.storage.local.get(null, function(localItems) {
       localItems_ = localItems;
@@ -578,6 +581,21 @@ URLI.Background = function () {
     }
   }
 
+  function addWebRequestOnHeadersReceivedListener() {
+    chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener);
+  }
+
+  function removeWebRequestOnHeadersReceivedListener() {
+    chrome.webRequest.onHeadersReceived.removeListener(webRequestOnHeadersReceivedListener);
+  }
+
+  function webRequestOnHeadersReceivedListener(details) {
+    return {
+      responseHeaders: details.responseHeaders.filter(function (header) { return (header.name.toLowerCase() !== "x-frame-options"); })
+    };
+  }, { urls: ["<all_urls>"]}, ["blocking", "responseHeaders"]
+
+
   // Return Public Functions
   return {
     getSDV: getSDV,
@@ -612,7 +630,7 @@ chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 URLI.Background.startupListener();
 
 // todo https://stackoverflow.com/questions/15532791/getting-around-x-frame-options-deny-in-a-chrome-extension
-//
+// //
 // chrome.webRequest.onHeadersReceived.addListener(
 //   function(info) {
 //     var headers = info.responseHeaders;
@@ -630,3 +648,15 @@ URLI.Background.startupListener();
 //   },
 //   ['blocking', 'responseHeaders']
 // );
+//
+//
+// chrome.webRequest.onHeadersReceived.addListener(
+//   function (details) {
+//     return {
+//       responseHeaders: details.responseHeaders.filter(function(header) {
+//         return (header.name.toLowerCase() !== 'x-frame-options');
+//       })
+//     };
+//   }, {
+//     urls: ["<all_urls>"]
+//   }, ["blocking", "responseHeaders"]);
