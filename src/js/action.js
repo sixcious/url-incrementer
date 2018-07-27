@@ -148,9 +148,8 @@ URLI.Action = function () {
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
 
-      // TODO Test Scroll
+      // If scroll enabled, tell scroll to load next page in current DOM, else update the tab
       if (instance.scrollEnabled) {
-        //scroll();
         chrome.tabs.sendMessage(instance.tabId, {greeting: "scroll", instance: instance});
       } else {
         chrome.tabs.update(instance.tabId, {url: instance.url});
@@ -255,11 +254,20 @@ URLI.Action = function () {
       const code = "URLI.NextPrev.findNextPrevURL(" +
         JSON.stringify(action) + ", " + 
         JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
-        JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
+        JSON.parse(instance.nextPrevSameDomainPolicy) + ", " +
+        JSON.stringify(instance.domId) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           const url = results[0];
-          chrome.tabs.update(instance.tabId, {url: url});
+          // If scroll enabled, tell scroll to load next page in current DOM, else update the tab
+          if (instance.scrollEnabled) {
+            // todo
+            instance.url = url;
+            chrome.tabs.sendMessage(instance.tabId, {greeting: "scroll", instance: instance});
+          } else {
+            //chrome.tabs.update(instance.tabId, {url: instance.url});
+            chrome.tabs.update(instance.tabId, {url: url});
+          }
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
             console.log("URLI.Action.nextPrev() - setting instance in background");
             instance.url = url;

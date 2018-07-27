@@ -25,7 +25,7 @@ URLI.Options = function () {
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
   let key = [0,""], // Reusable key to stores the key's event modifiers [0] and code [1]
-      timeout = undefined; // Reusable global timeout for input changes to fire after the user stops typing
+      timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -120,6 +120,7 @@ URLI.Options = function () {
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#scroll-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("scroll", function(granted) { if (granted) { populateValuesFromStorage("scroll"); } }) });
     DOM["#scroll-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("scroll", function(removed) { if (removed) { populateValuesFromStorage("scroll"); } }) });
+    DOM["#scroll-whitelist-textarea"].addEventListener("input", updateScrollWhitelistTextarea());
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
@@ -389,9 +390,23 @@ URLI.Options = function () {
    */
   function updateErrorCodesCustom() {
     console.log("URLI.Options.updateErrorCodesCustom() - about to clearTimeout and setTimeout");
-    clearTimeout(timeout);
-    timeout = setTimeout(function() { chrome.storage.sync.set({
+    clearTimeout(timeouts["error-codes-custom-input"]);
+    timeouts["error-codes-custom-input"] = setTimeout(function() { chrome.storage.sync.set({
       "errorCodesCustom": DOM["#error-codes-custom-input"].value ? DOM["#error-codes-custom-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : []
+    })}, 1000);
+  }
+
+  /**
+   * This function is called as the user is typing in the scroll whitelist textarea.
+   * We don't want to call chrome.storage after each key press, as it's an expensive procedure, so we set a timeout delay.
+   *
+   * @private
+   */
+  function updateScrollWhitelistTextarea() {
+    console.log("URLI.Options.updateScrollWhitelistTextarea() - about to clearTimeout and setTimeout");
+    clearTimeout(timeouts["scroll-whitelist-textarea"]);
+    timeouts["scroll-whitelist-textarea"] = setTimeout(function() { chrome.storage.local.set({
+        "scrollWhitelist": DOM["#scroll-whitelist-textarea"].value ? DOM["#scroll-whitelist-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
     })}, 1000);
   }
 

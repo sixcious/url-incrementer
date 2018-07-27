@@ -15,13 +15,13 @@ URLI.Scroll = function () {
 
   const id = ""; // TODO unique name for the pages
 
-  const  offset = 0; // document.body.scrollHeight / 3;
+  const offset = 0; // document.body.scrollHeight / 3;
 
   function scrollListener(event) {
     console.log("scrolling!");
     if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
       console.log("Hit bottom of page");
-      chrome.runtime.sendMessage({greeting: "performAction", action: "increment"});
+      chrome.runtime.sendMessage({greeting: "performAction", action: "next"});
     }
   }
 
@@ -64,11 +64,14 @@ URLI.Scroll = function () {
       .then(response => response.text())
       .then(text => new DOMParser().parseFromString(text, "text/html"))
       .then(document2 => {
-        const slot = document.createElement("div");
-        slot.id = "" + (++i);
+        const div = document.createElement("div");
+        const shadowRoot = div.attachShadow({ mode: "open"});
+        const slot = document.createElement("slot");
+        slot.name = "" + (++i);
         slot.appendChild(document2.head);
         slot.appendChild(document2.body);
         shadowRoot.appendChild(slot);
+        document.body.appendChild(div);
         //document.body.appendChild(shadowRoot);
 
         // const slot = document.createElement("slot");
@@ -95,6 +98,7 @@ URLI.Scroll = function () {
     div.id = "" + (++i);
     div.style.marginTop = "10em";
     const iframe = document.createElement("iframe");
+    iframe.id = instance.domId = "mysweetlittleiframe" + i;
     iframe.src = instance.url;
     iframe.style = "width: 100%; height: 100vh; border: 0; overflow: hidden; margin: 0; padding: 0; line-height: 0; display: block;";
     iframe.scrolling = "no";
@@ -104,16 +108,20 @@ URLI.Scroll = function () {
 
     // @see https://stackoverflow.com/a/9163087
     iframe.onload = function() {
-      iframe.contentWindow.document.documentElement.style.overflow = iframe.contentWindow.document.body.style.overflow = "hidden";
-      iframe.style.height = "";
-      iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
+      //iframe.contentWindow.document.documentElement.style.overflow = iframe.contentWindow.document.body.style.overflow = "hidden";
+      // style html and body overflow to hidden
+      iframe.contentDocument.documentElement.style.overflow = iframe.contentDocument.body.style.overflow = "hidden";
+      iframe.style.height = ""; // TODO is this needed?
+      //iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
+      iframe.style.height = iframe.contentDocument.body.scrollHeight + "px";
       // iframe.contentWindow.scrollTo({
       //   top: 0,
       //   behavior: "smooth"
       // });
     };
     div.appendChild(iframe);
-    shadowRoot.appendChild(div);
+    document.body.appendChild(div);
+    chrome.runtime.sendMessage({greeting: "setInstance", instance: instance});
   }
 
   // Return Public Functions
@@ -130,10 +138,11 @@ if (!window.contentScriptInjected) {
   init();
 }
 
+var i = i ? i : 0;
+
 function init() {
   console.log("" + contentScriptInjected);
   console.log("doing init!");
-  i = 0;
   //console.log("hello scrolling... i=" + i);
   //const el = document.createElement("div");
 
@@ -147,10 +156,10 @@ function init() {
   //document.head = document.createElement("head");
   //document.body = document.createElement("body");
   //shadowRoot = document.body.attachShadow({ mode: "open"});
-  const div = document.createElement("div");
-  document.body.appendChild(div);
+  //const div = document.createElement("div");
+  //document.body.appendChild(div);
   //shadowRoot = div.attachShadow({ mode: "open"});
-  shadowRoot = div;
+  //shadowRoot = div;
   // const style = document.createElement("style");
   // style.type = "text/css";
   // style.appendChild(document.createTextNode("::-webkit-scrollbar {\n" +
@@ -178,46 +187,46 @@ function init() {
   //     chrome.runtime.sendMessage({greeting: "performAction", action: "increment"});
   //   }
   // };
-}
 
 
-// Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log("URLI.Scroll.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
-  switch (request.greeting) {
-    case "addScrollListener":
-      window.addEventListener("scroll", URLI.Scroll.scrollListener);
-      break;
-    case "removeScrollListener":
-      window.removeEventListener("scroll", URLI.Scroll.scrollListener);
-      break;
-    case "scroll":
-      URLI.Scroll.scroll(request.instance);
-      break;
-    default:
-      break;
-  }
-  sendResponse({});
-});
+  // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log("URLI.Scroll.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+    switch (request.greeting) {
+      case "addScrollListener":
+        window.addEventListener("scroll", URLI.Scroll.scrollListener);
+        break;
+      case "removeScrollListener":
+        window.removeEventListener("scroll", URLI.Scroll.scrollListener);
+        break;
+      case "scroll":
+        URLI.Scroll.scroll(request.instance);
+        break;
+      default:
+        break;
+    }
+    sendResponse({});
+  });
 
 
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+  chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
 
-  if (response && response.shouldActivate) {
-    // activate scrolling...
-  }
+    if (response && response.shouldActivate) {
+      // activate scrolling...
+    }
 
-  // console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
-  // URLI.Shortcuts.setItems(response.items);
-  // // Key
-  // if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-  //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
-  //   document.addEventListener("keyup", URLI.Shortcuts.keyListener);
-  // }
-  // // Mouse
-  // if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-  //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
-  //   document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
-  // }
-});
+    // console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
+    // URLI.Shortcuts.setItems(response.items);
+    // // Key
+    // if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+    //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
+    //   document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+    // }
+    // // Mouse
+    // if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
+    //   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
+    //   document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+    // }
+  });
+}

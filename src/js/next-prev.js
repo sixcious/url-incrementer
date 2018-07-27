@@ -32,7 +32,7 @@ URLI.NextPrev = function () {
    * @return {string} the next or prev url
    * @public
    */
-  function findNextPrevURL(direction, priority, sameDomain) {
+  function findNextPrevURL(direction, priority, sameDomain, domId) {
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
             { "priority": "important", "subpriority": "relAttribute" },
@@ -43,7 +43,7 @@ URLI.NextPrev = function () {
             { "priority": priority,    "subpriority": "includes"     },
             { "priority": priority2,   "subpriority": "includes"     }
           ];
-    buildURLs(direction, sameDomain);    
+    buildURLs(direction, sameDomain, domId);
     for (let algorithm of algorithms) {
       const url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
       if (url) { return url; }
@@ -80,13 +80,20 @@ URLI.NextPrev = function () {
    * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function buildURLs(direction, sameDomain) {
+  function buildURLs(direction, sameDomain, domId) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    const links = document.getElementsByTagName("link"),
-          anchors = document.links, // document.links includes all anchor and area elements
-          hostname = document.location.hostname;
-    parseElements(direction, links, hostname, sameDomain);
-    parseElements(direction, anchors, hostname, sameDomain);
+    console.log("domId=" + domId);
+    console.log("domelemtnid=" +  document.getElementById("mysweetlittleiframe7"));
+    const domObject = domId ? document.getElementById("domId") : undefined,
+          document_ = domObject ? domObject.contentDocument : document, // TODO: Handle shadow dom instead of iframe
+          //links = document.getElementsByTagName("link"),
+          //anchors = document.links, // document.links includes all anchor and area elements
+          elements = document_.querySelectorAll("link[href], a[href], area[href]"),
+          hostname = document_.location.hostname;
+    console.log("domObject=" + domObject);
+    parseElements(direction, elements, hostname, sameDomain);
+    //parseElements(direction, links, hostname, sameDomain);
+    //parseElements(direction, anchors, hostname, sameDomain);
   }
 
   /**

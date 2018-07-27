@@ -196,6 +196,20 @@ textarea {
   width: 52px;
 }
 
+/* scroll */
+
+
+#scroll-whitelist-textarea {
+  display: block;
+  width: 100%;
+  color: #BA1F40;
+  word-break: break-all;
+  max-width: 400px;
+  max-height: 90px;
+  min-width: 300px;
+  min-height: 41px;
+}
+
 /* download (experimental and img alignment for cloud and flask */
 
 #scroll-experimental, #download-experimental {

@@ -329,6 +329,9 @@ URLI.Background = function () {
       case "getInstance":
         sendResponse({instance: getInstance(sender.tab.id), items: getItems()});
         break;
+      case "setInstance":
+        setInstance(sender.tab.id, request.instance);
+        break;
       case "performAction":
         let instance = getInstance(sender.tab.id);
         if (!instance && request.action !== "auto") {
@@ -336,7 +339,7 @@ URLI.Background = function () {
           instance = await buildInstance(sender.tab);
         }
         if (instance) {
-          URLI.Action.performAction(instance, request.action, "shortcuts.js");
+          URLI.Action.performAction(instance, request.action, "content-script");
         }
         break;
       case "incrementDecrementSkipErrors":
@@ -583,17 +586,17 @@ URLI.Background = function () {
    * @private
    */
   function webRequestOnHeadersReceivedListener(details) {
-    console.log("URLI.Background.webRequestOnHeadersReceivedListener() - the chrome.webRequest.onHeadresReceived listener is on!");
-    return {};
-    // return {
-    //   responseHeaders: details.responseHeaders.map(header => {
-    //     console.log("header:" + header.name + "=" + header.value);
-    //     if (header.name.toLowerCase() === "x-frame-options") {
-    //       header.value = "SAME-ORIGIN";
-    //       console.log("CHANGED:" + header.name + "=" + header.value);
-    //     }
-    //   })
-    // };
+    console.log("URLI.Background.webRequestOnHeadersReceivedListener() - the chrome.webRequest.onHeadersReceived listener is on!");
+    return {
+      responseHeaders: details.responseHeaders.map(header => {
+        console.log("header:" + header.name + "=" + header.value);
+        if (header.name.toLowerCase() === "x-frame-options") {
+          header.value = "SAMEORIGIN";
+          console.log("CHANGED:" + header.name + "=" + header.value);
+        }
+        return header;
+      })
+    };
   }
 
   // Return Public Functions

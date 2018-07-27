@@ -247,6 +247,8 @@
   "scroll_disable_button": { "message": "Disable Scroll" },
   "scroll_disable_p": { "message": "The next level of incrementing. Experimental. Click the button to enable (grant permissions)." },
   "scroll_enable_p": { "message": "TODO." },
+  "scroll_whitelist_textarea_label": { "message": "Auto-Enabled Whitelist URLs" },
+  "scroll_whitelist_textarea": { "message": "Enter a list of URL wildcards separated by commas, spaces, or line breaks." },
   "auto_settings_h3": { "message": "Auto" },
   "auto_settings_p": { "message": "Relax and let URLI auto-increment! Start Auto anytime by toggling it in the UI. Supports multiple tabs at the same time, pause/resume, and repeat." },
   "download_settings_h3": { "message": "Download" },
