@@ -63,7 +63,8 @@ URLI.Background = function () {
   // The sync storage and local storage items caches and a boolean flag indicating if the content scripts listener has been added (to prevent adding multiple listeners)
   let items_ = {},
       localItems_ = {},
-      contentScriptListenerAdded = false;
+      contentScriptListenerAdded = false,
+      webRequestOnHeadersReceivedListenerAdded = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -465,12 +466,23 @@ URLI.Background = function () {
             items_[key] = changes[key].newValue;
             // We must handle the contentScriptListener depending on the storage change for either permissionsInternalShortcuts or permissionsScroll
             if (key === "permissionsInternalShortcuts" || key === "permissionsScroll") {
+              // contentScriptListenerAdded
               if (changes[key].newValue === true && !contentScriptListenerAdded) {
                 chrome.tabs.onUpdated.addListener(contentScriptListener);
                 contentScriptListenerAdded = true;
               } else if (changes[key].newValue === false && (key === "permissionsInternalShortcuts" ? !items_.permissionsScroll : !items_.permissionsInternalShortcuts)) {
                 chrome.tabs.onUpdated.removeListener(contentScriptListener);
                 contentScriptListenerAdded = false;
+              }
+              // webRequestOnHeadersReceivedListenerAdded
+              if (key === "permissionsScroll") {
+                if (changes[key].newValue === true && !webRequestOnHeadersReceivedListenerAdded && chrome.webRequest) {
+                  chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener, { urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]}, ["blocking", "responseHeaders"]);
+                  webRequestOnHeadersReceivedListenerAdded = true;
+                } else if (changes[key].newValue === false && chrome.webRequest) {
+                  chrome.webRequest.onHeadersReceived.removeListener(webRequestOnHeadersReceivedListener);
+                  webRequestOnHeadersReceivedListenerAdded = false;
+                }
               }
             }
           }
@@ -518,32 +530,10 @@ URLI.Background = function () {
       if (items && (items.permissionsInternalShortcuts || items.permissionsScroll) && !contentScriptListenerAdded) {
         chrome.tabs.onUpdated.addListener(contentScriptListener);
         contentScriptListenerAdded = true;
-        // if (chrome.declarativeContent) {
-        //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        //     let shortcutsjsRule = false;
-        //     for (let rule of rules) {
-        //       if (rule.actions[0].js[0] === "js/shortcuts.js") {
-        //         console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
-        //         shortcutsjsRule = true;
-        //         break;
-        //       }
-        //     }
-        //     if (!shortcutsjsRule) {
-        //       console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-        //       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-        //         chrome.declarativeContent.onPageChanged.addRules([{
-        //           conditions: [new chrome.declarativeContent.PageStateMatcher()],
-        //           actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-        //         }], function(rules) {
-        //           console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
-        //         });
-        //       });
-        //     }
-        //   });
-        // }
       }
-      if (items && items.permissionsScroll) {
-        addWebRequestOnHeadersReceivedListener();
+      if (items && items.permissionsScroll && !webRequestOnHeadersReceivedListenerAdded && chrome.webRequest) {
+        chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener, { urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]}, ["blocking", "responseHeaders"]);
+        webRequestOnHeadersReceivedListenerAdded = true;
       }
     });
     chrome.storage.local.get(null, function(localItems) {
@@ -581,20 +571,30 @@ URLI.Background = function () {
     }
   }
 
-  function addWebRequestOnHeadersReceivedListener() {
-    chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener);
-  }
-
-  function removeWebRequestOnHeadersReceivedListener() {
-    chrome.webRequest.onHeadersReceived.removeListener(webRequestOnHeadersReceivedListener);
-  }
-
+  /**
+   * The chrome.webRequest.onHeadersReceived listener that is added if scroll TODO is enabled.
+   * Fired when HTTP response headers of a request have been received.
+   * Changes the HTTP Header X-Frame-Options value to SAME-ORIGIN to allow the use of embedded iframes on the page.
+   * This is needed if a website sends a X-Frame-Options with a value of DENY or ALLOW-FROM.
+   * X-Frame-Options: DENY, SAMEORIGIN, ALLOW-FROM https://example.com
+   *
+   * @param details object containing details of the headers received
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+   * @private
+   */
   function webRequestOnHeadersReceivedListener(details) {
-    return {
-      responseHeaders: details.responseHeaders.filter(function (header) { return (header.name.toLowerCase() !== "x-frame-options"); })
-    };
-  }, { urls: ["<all_urls>"]}, ["blocking", "responseHeaders"]
-
+    console.log("URLI.Background.webRequestOnHeadersReceivedListener() - the chrome.webRequest.onHeadresReceived listener is on!");
+    return {};
+    // return {
+    //   responseHeaders: details.responseHeaders.map(header => {
+    //     console.log("header:" + header.name + "=" + header.value);
+    //     if (header.name.toLowerCase() === "x-frame-options") {
+    //       header.value = "SAME-ORIGIN";
+    //       console.log("CHANGED:" + header.name + "=" + header.value);
+    //     }
+    //   })
+    // };
+  }
 
   // Return Public Functions
   return {
@@ -628,35 +628,3 @@ chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
 chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 URLI.Background.startupListener();
-
-// todo https://stackoverflow.com/questions/15532791/getting-around-x-frame-options-deny-in-a-chrome-extension
-// //
-// chrome.webRequest.onHeadersReceived.addListener(
-//   function(info) {
-//     var headers = info.responseHeaders;
-//     for (var i=headers.length-1; i>=0; --i) {
-//       var header = headers[i].name.toLowerCase();
-//       if (header == 'x-frame-options' || header == 'frame-options') {
-//         headers.splice(i, 1); // Remove header
-//       }
-//     }
-//     return {responseHeaders: headers};
-//   },
-//   {
-//     urls: [ '*://*/*' ], // Pattern to match all http(s) pages
-//     types: [ 'sub_frame' ]
-//   },
-//   ['blocking', 'responseHeaders']
-// );
-//
-//
-// chrome.webRequest.onHeadersReceived.addListener(
-//   function (details) {
-//     return {
-//       responseHeaders: details.responseHeaders.filter(function(header) {
-//         return (header.name.toLowerCase() !== 'x-frame-options');
-//       })
-//     };
-//   }, {
-//     urls: ["<all_urls>"]
-//   }, ["blocking", "responseHeaders"]);

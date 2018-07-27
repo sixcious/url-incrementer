@@ -204,7 +204,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
 chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
 
-  if (response.shouldActivate) {
+  if (response && response.shouldActivate) {
     // activate scrolling...
   }
 
