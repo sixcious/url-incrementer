@@ -602,9 +602,14 @@ URLI.Background = function () {
     return {
       responseHeaders: details.responseHeaders.map(header => {
         console.log("header:" + header.name + "=" + header.value);
-        if (header.name.toLowerCase() === "x-frame-options") {
+        const headerName = header.name.toLowerCase(),
+              headerValue = header.value.toLowerCase();
+        if (headerName === "x-frame-options") {
           header.value = "SAMEORIGIN";
           console.log("CHANGED:" + header.name + "=" + header.value);
+        } else if (headerName === "content-security-policy" && headerValue.includes("frame-ancestors")) {
+          // todo check frame-src and frame-ancestors and frame... who knows...
+          header.value = "self";
         }
         return header;
       })
