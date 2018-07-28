@@ -257,7 +257,7 @@ URLI.Action = function () {
         JSON.parse(instance.nextPrevSameDomainPolicy) + ", " +
         JSON.stringify(instance.domId) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
-        if (results && results[0]) {
+        if (results && results[0] && instance.url !== results[0]) {
           const url = results[0];
           // If scroll enabled, tell scroll to load next page in current DOM, else update the tab
           if (instance.scrollEnabled) {

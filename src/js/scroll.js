@@ -18,7 +18,7 @@ URLI.Scroll = function () {
   const offset = 0; // document.body.scrollHeight / 3;
 
   function scrollChecker() {
-    var hasScrollbar = document.clientHeight >= window.innerHeight;
+    var hasScrollbar = document.body.clientHeight >= window.innerHeight;
     console.log("scrollChecker:"+ hasScrollbar);
     if (!hasScrollbar) {
       console.log("No scrollbar present, doing action!");
