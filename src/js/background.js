@@ -324,6 +324,7 @@ URLI.Background = function () {
     switch (request.greeting) {
       case "shouldActivateScroll":
         let shouldActivateScrollAnswer = false;
+        sender.tab.url = sender.url;
         console.log("checking shouldactivateScroll, url=" + sender.tab.url);
         for (const wildcard of localItems_.scrollWhitelist) {
           console.log("wilcard=" + wildcard);
@@ -331,7 +332,9 @@ URLI.Background = function () {
             shouldActivateScrollAnswer = true;
             console.log("shouldActivateScrollAnswer=" + shouldActivateScrollAnswer);
             sendResponse({"shouldActivateScrollAnswer": shouldActivateScrollAnswer});
+
             const instance = await buildInstance(sender.tab);
+            instance.enabled = true;
             instance.scrollEnabled = true;
             setInstance(sender.tab.id, instance);
             break;
@@ -577,7 +580,7 @@ URLI.Background = function () {
         });
       }
       if (items_.permissionsScroll) {
-        chrome.tabs.executeScript(tabId, {file: "/js/scroll.js", runAt: "document_start"}, function(result) {
+        chrome.tabs.executeScript(tabId, {file: "/js/scroll.js", runAt: "document_end"}, function(result) {
           if (chrome.runtime.lastError) {
             console.log("URLI.Background.contentScriptListener() - scroll.js chrome.runtime.lastError=" + chrome.runtime.lastError)
           }

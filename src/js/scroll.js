@@ -13,9 +13,11 @@ var URLI = URLI || {};
 
 URLI.Scroll = function () {
 
-  const id = ""; // TODO unique name for the pages
+  const PAGE_ID = "infy-scroll-page-"; // TODO unique name for the pages
 
-  const offset = 0; // document.body.scrollHeight / 3;
+  const PAGE_OFFSET = 10; // document.body.scrollHeight / 3; // todo this should not be a constant as the scrollHeight changes dynamically
+
+  const SPACING = 0;
 
   function scrollChecker() {
     var hasScrollbar = document.body.clientHeight >= window.innerHeight;
@@ -28,6 +30,7 @@ URLI.Scroll = function () {
 
   function scrollListener(event) {
     console.log("scrolling!");
+    const offset = document.body.scrollHeight / PAGE_OFFSET;
     if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
       console.log("Hit bottom of page");
       chrome.runtime.sendMessage({greeting: "performAction", action: "next"});
@@ -57,6 +60,7 @@ URLI.Scroll = function () {
   }
 
   function scrollShadowDOM(instance) {
+    i++;
     console.log("URLI.ScrollShadowDOM() - instance.url=" + instance.url + ", i=" + i);
     fetch(instance.url, { method: "GET", credentials: "same-origin" })
     // blob:
@@ -76,7 +80,7 @@ URLI.Scroll = function () {
         const div = document.createElement("div");
         const shadowRoot = div.attachShadow({ mode: "open"});
         const slot = document.createElement("slot");
-        slot.name = "" + (++i);
+        slot.name = "" + (i);
         slot.appendChild(document2.head);
         slot.appendChild(document2.body);
         shadowRoot.appendChild(slot);
@@ -102,14 +106,15 @@ URLI.Scroll = function () {
   }
 
   function scrollIframe(instance) {
+    i++;
     console.log("URLI.ScrollIframe() - instance.url=" + instance.url + ", i=" + i);
     const div = document.createElement("div");
-    div.id = "" + (++i);
-    div.style.marginTop = "10em";
+    div.id = "" + (i);
+    div.style.marginTop = SPACING + "px";
     const iframe = document.createElement("iframe");
-    iframe.id = instance.domId = "mysweetlittleiframe" + i;
+    iframe.id = instance.domId = PAGE_ID + i;
     iframe.src = instance.url;
-    iframe.style = "width: 100%; height: 100vh; border: 0; overflow: hidden; margin: 0; padding: 0; line-height: 0; display: block;";
+    iframe.style = "width: 100%; height: 100vh; border: 0; overflow: hidden; margin: 0; padding: 0; line-height: 0; display: block; opacity: 0; height: 0; transition: opacity 1.5s ease-in-out, height 3s ease-in-out";
     iframe.scrolling = "no";
     // @see https://meta.stackexchange.com/questions/155720/i-busted-the-stack-overflow-frame-buster-buster-buster
     // sandbox iframe to avoid "For security reasons, framing is not allowed; click OK to remove the frames."
@@ -123,6 +128,7 @@ URLI.Scroll = function () {
       iframe.style.height = ""; // TODO is this needed?
       //iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
       iframe.style.height = iframe.contentDocument.body.scrollHeight + "px";
+      iframe.style.opacity = "1";
       // iframe.contentWindow.scrollTo({
       //   top: 0,
       //   behavior: "smooth"
@@ -148,7 +154,7 @@ if (!window.contentScriptInjected) {
   init();
 }
 
-var i = i ? i : 0;
+var i = i ? i : 1;
 
 function init() {
   console.log("" + contentScriptInjected);
