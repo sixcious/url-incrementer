@@ -31,7 +31,7 @@ URLI.Background = function () {
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
     /* profiles */    "profilePreselect": false, "profiles": [],
-    /* scroll */      "scrollWhiteList": []
+    /* scroll */      "scrollWhitelist": []
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -322,9 +322,21 @@ URLI.Background = function () {
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
     switch (request.greeting) {
-      case "shouldScroll":
-        const shouldScroll = false;
-        sendResponse({"shouldScroll": shouldScroll});
+      case "shouldActivateScroll":
+        let shouldActivateScrollAnswer = false;
+        console.log("checking shouldactivateScroll, url=" + sender.tab.url);
+        for (const wildcard of localItems_.scrollWhitelist) {
+          console.log("wilcard=" + wildcard);
+          if (sender.tab.url.includes(wildcard)) {
+            shouldActivateScrollAnswer = true;
+            console.log("shouldActivateScrollAnswer=" + shouldActivateScrollAnswer);
+            sendResponse({"shouldActivateScrollAnswer": shouldActivateScrollAnswer});
+            const instance = await buildInstance(sender.tab);
+            instance.scrollEnabled = true;
+            setInstance(sender.tab.id, instance);
+            break;
+          }
+        }
         break;
       case "getInstance":
         sendResponse({instance: getInstance(sender.tab.id), items: getItems()});

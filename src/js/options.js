@@ -120,7 +120,7 @@ URLI.Options = function () {
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#scroll-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("scroll", function(granted) { if (granted) { populateValuesFromStorage("scroll"); } }) });
     DOM["#scroll-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("scroll", function(removed) { if (removed) { populateValuesFromStorage("scroll"); } }) });
-    DOM["#scroll-whitelist-textarea"].addEventListener("input", updateScrollWhitelistTextarea());
+    DOM["#scroll-whitelist-textarea"].addEventListener("input", updateScrollWhitelistTextarea);
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
@@ -225,6 +225,7 @@ URLI.Options = function () {
           DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
           DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
           DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
+          DOM["#scroll-whitelist-textarea"].value = localItems.scrollWhitelist;
         }
       });
     });

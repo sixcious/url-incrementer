@@ -17,6 +17,15 @@ URLI.Scroll = function () {
 
   const offset = 0; // document.body.scrollHeight / 3;
 
+  function scrollChecker() {
+    var hasScrollbar = document.clientHeight >= window.innerHeight;
+    console.log("scrollChecker:"+ hasScrollbar);
+    if (!hasScrollbar) {
+      console.log("No scrollbar present, doing action!");
+      chrome.runtime.sendMessage({greeting: "performAction", action: "next"});
+    }
+  }
+
   function scrollListener(event) {
     console.log("scrolling!");
     if ((window.innerHeight + window.scrollY + offset) >= document.body.scrollHeight) {
@@ -127,6 +136,7 @@ URLI.Scroll = function () {
   // Return Public Functions
   return {
     // init: init,
+    scrollChecker: scrollChecker,
     scrollListener: scrollListener,
     scroll: scroll
   };
@@ -194,6 +204,7 @@ function init() {
     console.log("URLI.Scroll.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
     switch (request.greeting) {
       case "addScrollListener":
+        window.removeEventListener("scroll", URLI.Scroll.scrollListener);
         window.addEventListener("scroll", URLI.Scroll.scrollListener);
         break;
       case "removeScrollListener":
@@ -210,9 +221,13 @@ function init() {
 
 
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-  chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+  chrome.runtime.sendMessage({greeting: "shouldActivateScroll"}, function(response) {
 
-    if (response && response.shouldActivate) {
+    if (response && response.shouldActivateScrollAnswer) {
+      window.removeEventListener("scroll", URLI.Scroll.scrollListener);
+      window.addEventListener("scroll", URLI.Scroll.scrollListener);
+      URLI.Scroll.scrollChecker();
+      console.log("activating auto scroll for this url!");
       // activate scrolling...
     }
 

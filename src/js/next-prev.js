@@ -82,9 +82,7 @@ URLI.NextPrev = function () {
    */
   function buildURLs(direction, sameDomain, domId) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    console.log("domId=" + domId);
-    console.log("domelemtnid=" +  document.getElementById("mysweetlittleiframe7"));
-    const domObject = domId ? document.getElementById("domId") : undefined,
+    const domObject = domId ? document.getElementById(domId) : undefined,
           document_ = domObject ? domObject.contentDocument : document, // TODO: Handle shadow dom instead of iframe
           //links = document.getElementsByTagName("link"),
           //anchors = document.links, // document.links includes all anchor and area elements
