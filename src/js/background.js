@@ -570,7 +570,7 @@ URLI.Background = function () {
    * @private
    */
   function contentScriptListener(tabId, changeInfo, tab) {
-    console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated content script listener is on!");
+    console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated content script listener is on! changeInfo.status=" + changeInfo.status);
     if (changeInfo.status === "loading") {
       if (items_.permissionsInternalShortcuts) {
         chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
