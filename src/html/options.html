@@ -434,7 +434,7 @@
               <label id="shuffle-limit-label" for="shuffle-limit-input" data-i18n="textContent"></label>
             </div>
             <div class="column">
-              <input id="shuffle-limit-input" type="number" min="1"/>
+              <input id="shuffle-limit-input" type="number" min="1" max="10000"/>
             </div>
           </div>
           <div class="row">
@@ -561,6 +561,10 @@
         </div>
         <div id="download-settings-disable">
           <p id="download-disable-p" data-i18n="textContent"></p>
+          <p id="download-experimental-disclaimer-div">
+            <img src="../img/font-awesome/purple/exclamation-circle.png" alt="" width="16" height="16"/>
+            <span id="download-experimental-disclaimer" class="note" data-i18n="textContent"></span>
+          </p>
         </div>
         <div id="download-settings-enable">
           <p id="download-enable-p" data-i18n="textContent"></p>
@@ -568,10 +572,6 @@
             <img src="../img/font-awesome/purple/exclamation-circle.png" alt="" width="16" height="16"/>
             <span id="download-settings-disclaimer" class="note" data-i18n="textContent"></span>
           </p>
-        </div>
-        <div id="download-experimental-disclaimer-div">
-          <img src="../img/font-awesome/purple/exclamation-circle.png" alt="" width="16" height="16"/>
-          <span id="download-experimental-disclaimer" class="note" data-i18n="textContent"></span>
         </div>
       </section>
       <section id="enhanced-mode">

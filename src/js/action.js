@@ -126,13 +126,15 @@ URLI.Action = function () {
       }
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
-
       chrome.tabs.update(instance.tabId, {url: instance.url});
 
-      if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        URLI.Background.setInstance(instance.tabId, instance);
-      }
+      instance.enabled = true;
+      URLI.Background.setInstance(instance.tabId, instance);
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      // if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+      //   URLI.Background.setInstance(instance.tabId, instance);
+      // }
+
     }
     return actionPerformed;
   }
@@ -271,6 +273,9 @@ URLI.Action = function () {
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
       }
+      if (instance.profileFound && caller !== "tabRemovedListener") { // Don't delete saved URLs if the tab is simply being removed
+        deleteProfileByInstance(instance);
+      }
     }
     if (instance.autoEnabled) {
       URLI.Auto.stopAutoTimer(instance, caller);
@@ -330,6 +335,8 @@ URLI.Action = function () {
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
       chrome.tabs.update(instance.tabId, {url: instance.startingURL});
+      URLI.Background.setInstance(instance.tabId, instance);
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
     return actionPerformed;
   }
@@ -448,6 +455,31 @@ URLI.Action = function () {
       });
     }
     return actionPerformed;
+  }
+
+  // TODO
+  function deleteProfileByInstance(instance) {
+    const url1 = instance.url.substring(0, instance.selectionStart),
+          url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
+    chrome.storage.local.get(null, async function(localItems) {
+      const profiles = localItems.profiles;
+      if (profiles && profiles.length > 0) {
+        for (let i = 0; i < profiles.length; i++) {
+          const urlhash1 = await URLI.Encryption.calculateHash(url1, profiles[i].urlsalt1);
+          const urlhash2 = await URLI.Encryption.calculateHash(url2, profiles[i].urlsalt2);
+          if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
+            console.log("URLI.Action.deleteProfile() - deleting URL url=" + instance.url + ", with urlhash1=" + profiles[i].urlhash1);
+            profiles.splice(i, 1);
+            chrome.storage.local.set({
+              profiles: profiles
+            }, function() {
+              // populateValuesFromStorage("profiles");
+            });
+            break;
+          }
+        }
+      }
+    });
   }
 
   // Return Public Functions

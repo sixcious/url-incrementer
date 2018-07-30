@@ -238,7 +238,7 @@ URLI.Download = function () {
   function findFilename(url) {
     let filename = "";
     if (url) {
-      filename = url.split('#').shift().split('?').shift().split('/').pop().replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
+      filename = url.split('#').shift().split('?').shift().split('/').pop(); // TODO Replace? replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
     }
     return filename;
   }

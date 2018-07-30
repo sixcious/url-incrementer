@@ -100,11 +100,6 @@ URLI.Popup = function () {
           instance = await backgroundPage.URLI.Background.buildInstance(tabs[0]);
         }
         updateControls();
-        DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
-        DOM["#profile-found-img"].className = instance.profileFound ? "display-block" : "display-none";
-        if (instance.profileFound) {
-          DOM["#profile-save-label"].style.color = "#1779BA";
-        }
         DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
         const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
@@ -209,6 +204,7 @@ URLI.Popup = function () {
    * @private
    */
   function updateControls() {
+    DOM["#profile-found-img"].className = instance.profileFound ? "display-block" : "display-none";
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-2"].className =
@@ -230,6 +226,10 @@ URLI.Popup = function () {
    */
   function updateSetup() {
     // Increment Decrement Setup:
+    DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
+    if (instance.profileFound) {
+      DOM["#profile-save-label"].style.color = "#1779BA";
+    }
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
     DOM["#url-textarea"].focus();
@@ -884,6 +884,7 @@ URLI.Popup = function () {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
         backgroundPage.URLI.Action.performAction(instance, "clear", "popupClearBeforeSet", async function() {
         instance.enabled = enabled;
+        instance.profileFound = profileSave;
         instance.selection = selection;
         instance.selectionStart = selectionStart;
         instance.interval = interval;
