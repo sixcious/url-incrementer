@@ -12,7 +12,7 @@ URLI.Background = function () {
   // The sync storage default values
   // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsInternalShortcuts": false, "permissionsScroll": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
+    /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyFIncrement": [0, "ArrowRight"], "keyFDecrement": [0, "ArrowLeft"], "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
@@ -21,7 +21,6 @@ URLI.Background = function () {
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer", "new"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older", "old"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
-    /* scroll */      "scrollMode": "iframe", "scrollAction": "increment", "scrollSpacing": 0,
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
@@ -30,8 +29,7 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* profiles */    "profilePreselect": false, "profiles": [],
-    /* scroll */      "scrollWhitelist": []
+    /* profiles */    "profilePreselect": false, "profiles": []
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -186,7 +184,7 @@ URLI.Background = function () {
     }
     // Return newly built instance using props and items:
     return {
-      "enabled": false, "scrollEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
@@ -197,7 +195,6 @@ URLI.Background = function () {
       "multi": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items_.shuffleLimit,
       "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
-      "scrollMode": items_.scrollMode, "scrollAction": items_.scrollAction, "scrollSpacing": items_.scrollSpacing,
       "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat, "autoRepeatCount": 0,
       "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
       "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
@@ -322,30 +319,8 @@ URLI.Background = function () {
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
     switch (request.greeting) {
-      case "shouldActivateScroll":
-        let shouldActivateScrollAnswer = false;
-        sender.tab.url = sender.url;
-        console.log("checking shouldactivateScroll, url=" + sender.tab.url);
-        for (const wildcard of localItems_.scrollWhitelist) {
-          console.log("wilcard=" + wildcard);
-          if (sender.tab.url.includes(wildcard)) {
-            shouldActivateScrollAnswer = true;
-            console.log("shouldActivateScrollAnswer=" + shouldActivateScrollAnswer);
-            sendResponse({"shouldActivateScrollAnswer": shouldActivateScrollAnswer});
-
-            const instance = await buildInstance(sender.tab);
-            instance.enabled = true;
-            instance.scrollEnabled = true;
-            setInstance(sender.tab.id, instance);
-            break;
-          }
-        }
-        break;
       case "getInstance":
         sendResponse({instance: getInstance(sender.tab.id), items: getItems()});
-        break;
-      case "setInstance":
-        setInstance(sender.tab.id, request.instance);
         break;
       case "performAction":
         let instance = getInstance(sender.tab.id);
@@ -482,25 +457,14 @@ URLI.Background = function () {
           console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
           if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
             items_[key] = changes[key].newValue;
-            // We must handle the contentScriptListener depending on the storage change for either permissionsInternalShortcuts or permissionsScroll
-            if (key === "permissionsInternalShortcuts" || key === "permissionsScroll") {
-              // contentScriptListenerAdded
+            // We must handle the contentScriptListener depending on the storage change for permissionsInternalShortcuts
+            if (key === "permissionsInternalShortcuts") {
               if (changes[key].newValue === true && !contentScriptListenerAdded) {
                 chrome.tabs.onUpdated.addListener(contentScriptListener);
                 contentScriptListenerAdded = true;
-              } else if (changes[key].newValue === false && (key === "permissionsInternalShortcuts" ? !items_.permissionsScroll : !items_.permissionsInternalShortcuts)) {
+              } else if (changes[key].newValue === false) {
                 chrome.tabs.onUpdated.removeListener(contentScriptListener);
                 contentScriptListenerAdded = false;
-              }
-              // webRequestOnHeadersReceivedListenerAdded
-              if (key === "permissionsScroll") {
-                if (changes[key].newValue === true && !webRequestOnHeadersReceivedListenerAdded && chrome.webRequest) {
-                  chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener, { urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]}, ["blocking", "responseHeaders"]);
-                  webRequestOnHeadersReceivedListenerAdded = true;
-                } else if (changes[key].newValue === false && chrome.webRequest) {
-                  chrome.webRequest.onHeadersReceived.removeListener(webRequestOnHeadersReceivedListener);
-                  webRequestOnHeadersReceivedListenerAdded = false;
-                }
               }
             }
           }
@@ -545,13 +509,9 @@ URLI.Background = function () {
       }
       // Ensure Internal Shortcuts declarativeContent rule is added
       // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-      if (items && (items.permissionsInternalShortcuts || items.permissionsScroll) && !contentScriptListenerAdded) {
+      if (items && items.permissionsInternalShortcuts && !contentScriptListenerAdded) {
         chrome.tabs.onUpdated.addListener(contentScriptListener);
         contentScriptListenerAdded = true;
-      }
-      if (items && items.permissionsScroll && !webRequestOnHeadersReceivedListenerAdded && chrome.webRequest) {
-        chrome.webRequest.onHeadersReceived.addListener(webRequestOnHeadersReceivedListener, { urls: ["<all_urls>"], types: ["main_frame", "sub_frame"]}, ["blocking", "responseHeaders"]);
-        webRequestOnHeadersReceivedListenerAdded = true;
       }
     });
     chrome.storage.local.get(null, function(localItems) {
@@ -579,44 +539,7 @@ URLI.Background = function () {
           }
         });
       }
-      if (items_.permissionsScroll) {
-        chrome.tabs.executeScript(tabId, {file: "/js/scroll.js", runAt: "document_end"}, function(result) {
-          if (chrome.runtime.lastError) {
-            console.log("URLI.Background.contentScriptListener() - scroll.js chrome.runtime.lastError=" + chrome.runtime.lastError)
-          }
-        });
-      }
     }
-  }
-
-  /**
-   * The chrome.webRequest.onHeadersReceived listener that is added if scroll TODO is enabled.
-   * Fired when HTTP response headers of a request have been received.
-   * Changes the HTTP Header X-Frame-Options value to SAME-ORIGIN to allow the use of embedded iframes on the page.
-   * This is needed if a website sends a X-Frame-Options with a value of DENY or ALLOW-FROM.
-   * X-Frame-Options: DENY, SAMEORIGIN, ALLOW-FROM https://example.com
-   *
-   * @param details object containing details of the headers received
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-   * @private
-   */
-  function webRequestOnHeadersReceivedListener(details) {
-    console.log("URLI.Background.webRequestOnHeadersReceivedListener() - the chrome.webRequest.onHeadersReceived listener is on!");
-    return {
-      responseHeaders: details.responseHeaders.map(header => {
-        console.log("header:" + header.name + "=" + header.value);
-        const headerName = header.name.toLowerCase(),
-              headerValue = header.value.toLowerCase();
-        if (headerName === "x-frame-options") {
-          header.value = "SAMEORIGIN";
-          console.log("CHANGED:" + header.name + "=" + header.value);
-        } else if (headerName === "content-security-policy" && headerValue.includes("frame-ancestors")) {
-          // todo check frame-src and frame-ancestors and frame... who knows...
-          header.value = "self";
-        }
-        return header;
-      })
-    };
   }
 
   // Return Public Functions

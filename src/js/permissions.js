@@ -12,11 +12,6 @@ URLI.Permissions = function () {
   // This object contains all of the extension's optional permissions. Each permission contains:
   // 1) What storage keys to set, 2) The permission request, 3) The permission conflict to use instead if a conflict exists with another permission (optional), and  4) The script (optional)
   const PERMISSIONS = {
-    "scroll": {
-      "storageKey": "permissionsScroll",
-      "request": {permissions: ["webRequest", "webRequestBlocking"], origins: ["<all_urls>"]},
-      "requestConflict": {permissions: ["webRequest", "webRequestBlocking"]}
-    },
     "internalShortcuts": {
       "storageKey": "permissionsInternalShortcuts",
       "request": {/*permissions: ["declarativeContent"], */origins: ["<all_urls>"]}
@@ -97,10 +92,9 @@ URLI.Permissions = function () {
     // Remove:
     chrome.storage.sync.get(null, function(items) {
       // Check for conflicts if another permission is enabled; if conflict, then only remove the request's conflict (not the original request)
-      if ((permission === "scroll" && !items.permissionsInternalShortcuts && !items.permissionsDownload && !items.permissionsEnhancedMode) ||
-          (permission === "internalShortcuts" && !items.permissionsScroll && !items.permissionsDownload && !items.permissionsEnhancedMode) ||
-          (permission === "download" && !items.permissionsScroll && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
-          (permission === "enhancedMode" && !items.permissionsScroll && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
+      if ((permission === "internalShortcuts" && !items.permissionsDownload && !items.permissionsEnhancedMode) ||
+          (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
+          (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
           if (removed) {
             console.log("URLI.Permissions.removePermissions() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
@@ -131,7 +125,7 @@ URLI.Permissions = function () {
     // if (chrome.declarativeContent) {
     //   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
     // }
-    chrome.permissions.remove({ permissions: [/*"declarativeContent",*/ "webRequest", "webRequestBlocking", "downloads"], origins: ["<all_urls>"]}, function(removed) {
+    chrome.permissions.remove({ permissions: [/*"declarativeContent",*/ "downloads"], origins: ["<all_urls>"]}, function(removed) {
       if (removed) {
         console.log("URLI.Permissions.removeAllPermissions() - all permissions successfully removed!");
         if (callback) {

@@ -118,9 +118,6 @@ URLI.Options = function () {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#scroll-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("scroll", function(granted) { if (granted) { populateValuesFromStorage("scroll"); } }) });
-    DOM["#scroll-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("scroll", function(removed) { if (removed) { populateValuesFromStorage("scroll"); } }) });
-    DOM["#scroll-whitelist-textarea"].addEventListener("input", updateScrollWhitelistTextarea);
     DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
@@ -145,12 +142,6 @@ URLI.Options = function () {
         if (values === "all" || values === "internalShortcuts") {
           DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-        }
-        if (values === "all" || values === "scroll") {
-          DOM["#scroll-disable-button"].className = items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#scroll-enable-button"].className = !items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#scroll-settings-enable"].className = items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#scroll-settings-disable"].className = !items.permissionsScroll ? values === "scroll" ? "display-block fade-in" : "display-block" : "display-none";
         }
         if (values === "all" || values === "download") {
           DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
@@ -225,7 +216,6 @@ URLI.Options = function () {
           DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
           DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
           DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-          DOM["#scroll-whitelist-textarea"].value = localItems.scrollWhitelist;
         }
       });
     });
@@ -394,20 +384,6 @@ URLI.Options = function () {
     clearTimeout(timeouts["error-codes-custom-input"]);
     timeouts["error-codes-custom-input"] = setTimeout(function() { chrome.storage.sync.set({
       "errorCodesCustom": DOM["#error-codes-custom-input"].value ? DOM["#error-codes-custom-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : []
-    })}, 1000);
-  }
-
-  /**
-   * This function is called as the user is typing in the scroll whitelist textarea.
-   * We don't want to call chrome.storage after each key press, as it's an expensive procedure, so we set a timeout delay.
-   *
-   * @private
-   */
-  function updateScrollWhitelistTextarea() {
-    console.log("URLI.Options.updateScrollWhitelistTextarea() - about to clearTimeout and setTimeout");
-    clearTimeout(timeouts["scroll-whitelist-textarea"]);
-    timeouts["scroll-whitelist-textarea"] = setTimeout(function() { chrome.storage.local.set({
-        "scrollWhitelist": DOM["#scroll-whitelist-textarea"].value ? DOM["#scroll-whitelist-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
     })}, 1000);
   }
 

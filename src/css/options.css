@@ -196,23 +196,9 @@ textarea {
   width: 52px;
 }
 
-/* scroll */
-
-
-#scroll-whitelist-textarea {
-  display: block;
-  width: 100%;
-  color: #BA1F40;
-  word-break: break-all;
-  max-width: 400px;
-  max-height: 90px;
-  min-width: 300px;
-  min-height: 41px;
-}
-
 /* download (experimental and img alignment for cloud and flask */
 
-#scroll-experimental, #download-experimental {
+#download-experimental {
   font-size: 0.9em;
   font-style: italic;
   display: inline-block;
@@ -223,7 +209,7 @@ textarea {
   margin-bottom: -1px;
 }
 
-#scroll-experimental-flask, #download-experimental-flask {
+#download-experimental-flask {
   margin-bottom: 1px;
 }
 
@@ -294,10 +280,6 @@ textarea {
   border-bottom-color: #05854D;
 }
 
-#scroll-settings div.heading {
-  border-bottom-color: #000000;
-}
-
 #auto-settings div.heading {
   border-bottom-color: #FF6600;
 }
@@ -318,10 +300,6 @@ textarea {
 
 #next-prev-settings div.heading h3 {
   color: #05854D;
-}
-
-#scroll-settings div.heading h3, #scroll-experimental {
-  color: #000000;
 }
 
 #auto-settings div.heading h3 {

@@ -78,9 +78,6 @@ URLI.Action = function () {
       case "toolkit":
         actionPerformed = toolkit(instance, action, caller, callback);
         break;
-      case "scroll":
-        actionPerformed = scroll(instance); // TODO
-        break;
       case "auto": // the auto action is always a pause or resume
         actionPerformed = auto(instance, action, caller, callback);
         break;
@@ -96,24 +93,6 @@ URLI.Action = function () {
         URLI.Background.setBadge(instance.tabId, action, true);
       }
     }
-  }
-
-  function scroll(instance) {
-    chrome.tabs.executeScript(instance.tabId, {
-      file: "/js/scroll.js"
-    }, function () {
-      // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-      if (chrome.runtime.lastError) {
-        console.log("URLI.Action.scroll() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-        //return incrementDecrement(instance, action, caller, callback);
-      }
-      chrome.tabs.sendMessage(instance.tabId, {greeting: "addScrollListener"});
-      // const code = "URLI.Scroll.scroll(" +
-      //   // JSON.stringify(action) + ", " +
-      //   JSON.stringify(instance) + ");";
-      // // No callback ... TODO
-      // chrome.tabs.executeScript(instance.tabId, {code: code});
-    });
   }
 
   /**
@@ -148,12 +127,7 @@ URLI.Action = function () {
       instance.url = urlProps.urlmod;
       instance.selection = urlProps.selectionmod;
 
-      // If scroll enabled, tell scroll to load next page in current DOM, else update the tab
-      if (instance.scrollEnabled) {
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "scroll", instance: instance});
-      } else {
-        chrome.tabs.update(instance.tabId, {url: instance.url});
-      }
+      chrome.tabs.update(instance.tabId, {url: instance.url});
 
       if (instance.enabled || instance.customURLs || instance.shuffleURLs) { // Don't store Quick Instances (Instance is never enabled in quick mode)
         URLI.Background.setInstance(instance.tabId, instance);
@@ -259,15 +233,7 @@ URLI.Action = function () {
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0] && instance.url !== results[0]) {
           const url = results[0];
-          // If scroll enabled, tell scroll to load next page in current DOM, else update the tab
-          if (instance.scrollEnabled) {
-            // todo
-            instance.url = url;
-            chrome.tabs.sendMessage(instance.tabId, {greeting: "scroll", instance: instance});
-          } else {
-            //chrome.tabs.update(instance.tabId, {url: instance.url});
-            chrome.tabs.update(instance.tabId, {url: url});
-          }
+          chrome.tabs.update(instance.tabId, {url: url});
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
             console.log("URLI.Action.nextPrev() - setting instance in background");
             instance.url = url;
@@ -292,7 +258,7 @@ URLI.Action = function () {
   function clear(instance, action, caller, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
-    if (instance.enabled || instance.scrollEnabled || instance.autoEnabled || instance.downloadEnabled) {
+    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
       actionPerformed = true;
     }
     URLI.Background.deleteInstance(instance.tabId);
@@ -304,9 +270,6 @@ URLI.Action = function () {
       }
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
-      }
-      if (instance.scrollEnabled) {
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeScrollListener"});
       }
     }
     if (instance.autoEnabled) {

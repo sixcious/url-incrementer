@@ -148,7 +148,7 @@ div.checkbox  img {
   padding-top: 7px;
 }
 
-#setup #custom-urls, #setup #toolkit, #setup #scroll, #setup #auto, #setup #download {
+#setup #custom-urls, #setup #toolkit, #setup #auto, #setup #download {
   margin-bottom: 24px;
 }
 
@@ -183,7 +183,7 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
-#profile-save, #scroll-experimental, #auto-eta-repeat, #download-experimental {
+#profile-save, #auto-eta-repeat, #download-experimental {
   font-style: italic;
   position: absolute;
   right: 12px;
@@ -196,10 +196,6 @@ div.checkbox  img {
 
 #auto-eta {
   margin-right: 1em;
-}
-
-#scroll-experimental, #download-experimental {
-  margin-top: -15px;
 }
 
 /* Toolkit */
@@ -228,10 +224,6 @@ div.checkbox  img {
   margin-top: 1em;
 }
 
-#scroll-experimental {
-  color: #000000;
-}
-
 #auto-eta-repeat, #auto-repeat-label {
   color: #FF6600;
 }
@@ -240,7 +232,7 @@ div.checkbox  img {
   color: rebeccapurple;
 }
 
-#setup #toolkit div.column:not(:last-child), #setup #scroll div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+#setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 30px;
 }
 
@@ -256,10 +248,6 @@ div.checkbox  img {
   padding-top: 12px;
 }
 
-#scroll-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: #000000;
-}
-
 #auto-toggle-input.tgl-ios:checked + .tgl-btn {
   background: #FF6600;
 }
@@ -268,13 +256,13 @@ div.checkbox  img {
   background: rebeccapurple;
 }
 
-/*#auto-toggle .tgl-text {
+#auto-toggle .tgl-text {
   color: #FF6600;
 }
 
 #download-toggle .tgl-text {
   color: rebeccapurple;
-}*/
+}
 
 /* cloud-download ireregular padding overrides */
 #controls input[type="image"]#download-input {
@@ -288,11 +276,6 @@ div.checkbox  img {
 #setup .heading {
   color: #333333;
   border-bottom-color: #333333;
-}
-
-#setup #scroll .heading {
-  color: #000000;
-  border-bottom-color: #000000;
 }
 
 #setup #auto .heading {
