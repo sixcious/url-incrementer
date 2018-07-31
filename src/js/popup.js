@@ -99,14 +99,15 @@ URLI.Popup = function () {
         if (!instance) {
           instance = await backgroundPage.URLI.Background.buildInstance(tabs[0]);
         }
-        updateControls();
         DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
         const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";// margin-bottom:-" + downloadPaddingAdjustment + "px;";
         DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
-        updateSetup();
         // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
+
+        updateSetup();
+        updateControls();
         if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
           toggleView.call(DOM["#setup-input"]);
         }
@@ -158,11 +159,7 @@ URLI.Popup = function () {
       case "setup-input": // Hide controls, show setup
         DOM["#controls"].className = "display-none";
         DOM["#setup"].className = "display-block fade-in";
-        DOM["#url-textarea"].value = instance.url;
-        DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
-        DOM["#url-textarea"].focus();
-        DOM["#selection-input"].value = instance.selection;
-        DOM["#selection-start-input"].value = instance.selectionStart;
+        updateSetup(true);
         break;
       case "accept-button": // Hide setup, show controls
       case "cancel-button":
@@ -224,7 +221,7 @@ URLI.Popup = function () {
    *
    * @private
    */
-  function updateSetup() {
+  function updateSetup(minimal) {
     // Increment Decrement Setup:
     DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
     if (instance.profileFound) {
@@ -235,6 +232,9 @@ URLI.Popup = function () {
     DOM["#url-textarea"].focus();
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
+    if (minimal) {
+      return;
+    }
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
     DOM["#base-select"].value = instance.base;
@@ -630,8 +630,8 @@ URLI.Popup = function () {
       URLI.UI.generateAlert(errors);
     } else {
       instance.multi = multi;
-      instance["selection" + multi] = selection;
-      instance["selectionStart" + multi] = selectionStart;
+      instance["selection" + multi] = instance["startingSelection" + multi] = selection;
+      instance["selectionStart" + multi] = instance["startingSelectionStart" + multi] = selectionStart;
       instance["interval" + multi] = interval;
       instance["base" + multi] = base;
       instance["baseCase" + multi] = baseCase;
@@ -918,7 +918,7 @@ URLI.Popup = function () {
         instance.downloadPreview = downloadPreview;
         const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
-        instance.urlsCurrentIndex = precalculateProps.currentIndex;
+        instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
         // Profile Save
         if (profileSave) {

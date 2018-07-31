@@ -273,7 +273,8 @@ URLI.Action = function () {
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
       }
-      if (instance.profileFound && caller !== "tabRemovedListener") { // Don't delete saved URLs if the tab is simply being removed
+      if (instance.profileFound && caller !== "tabRemovedListener" && caller !== "auto") { // Don't delete saved URLs if the tab is simply being removed or auto clearing
+        instance.profileFound = false;
         deleteProfileByInstance(instance);
       }
     }
@@ -334,6 +335,17 @@ URLI.Action = function () {
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
+      // Multi:
+      if (instance.multi && instance.multi > 1) {
+        for (let i = 1; i <= instance.multi; i++) {
+          instance["selection" + i] = instance["startingSelection" + i];
+          instance["selectionStart" + i] = instance["startingSelectionStart" + i];
+        }
+      }
+      // URLs Array:
+      if (instance.urls && instance.startingURLsCurrentIndex) {
+        instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
+      }
       chrome.tabs.update(instance.tabId, {url: instance.startingURL});
       URLI.Background.setInstance(instance.tabId, instance);
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
