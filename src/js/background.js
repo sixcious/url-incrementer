@@ -20,7 +20,7 @@ URLI.Background = function () {
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* keywords */    "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer", "new"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older", "old"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
+    /* keywords */    "nextPrevNextKeywords": ["next", "forward", "次", "&gt;", ">", "newer"], "nexPrevPrevKeywords": ["prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
@@ -329,7 +329,7 @@ URLI.Background = function () {
           instance = await buildInstance(sender.tab);
         }
         if (instance) {
-          URLI.Action.performAction(instance, request.action, "content-script");
+          URLI.Action.performAction(request.action, "content-script", instance);
         }
         break;
       case "incrementDecrementSkipErrors":
@@ -372,7 +372,7 @@ URLI.Background = function () {
             instance = await buildInstance(request.tab);
           }
           if (instance && (request.action === "increment" || request.action === "decrement")) {
-            URLI.Action.performAction(instance, request.action, "externalExtension");
+            URLI.Action.performAction(request.action, "externalExtension", instance);
           }
           break;
         default:
@@ -400,7 +400,7 @@ URLI.Background = function () {
               if (!instance) { //&& items_.quickEnabled) {
                 instance = await buildInstance(tabs[0]);
               }
-              URLI.Action.performAction(instance, command, "command");
+              URLI.Action.performAction(command, "command", instance);
             }
           }
         });
@@ -418,7 +418,7 @@ URLI.Background = function () {
   function tabRemovedListener(tabId, removeInfo) {
     const instance = URLI.Background.getInstance(tabId);
     if (instance) {
-      URLI.Action.performAction(instance, "clear", "tabRemovedListener");
+      URLI.Action.performAction("clear", "tabRemovedListener", instance);
     }
   }
 

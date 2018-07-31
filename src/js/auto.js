@@ -27,11 +27,12 @@ URLI.Auto = function () {
     clearAutoTimeout(instance);
     setAutoTimeout(instance);
     addAutoListener();
+    // Set starting badge with either normal "auto" badge or repeat badge if it has repeated at least 1 or more times
     if (instance.autoRepeatCount === 0) {
       URLI.Background.setBadge(instance.tabId, "auto", false);
-    }/* else {
+    } else {
       URLI.Background.setBadge(instance.tabId, "autorepeat", false);
-    }*/
+    }
   }
 
   /**
@@ -71,15 +72,37 @@ URLI.Auto = function () {
       } else {
         autoTimer.resume();
         instance.autoPaused = false;
-        if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use "auto" badge at start
+        if (instance.autoRepeating) { // The small window when the auto timer is repeating (REP), always show the autorepeat badge
+          URLI.Background.setBadge(instance.tabId, "autorepeat", false);
+        } else  if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use normal "auto" badge at start even if badge is times
           URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
-        } else {
+        } else { // All other conditions, show the normal auto badge
           URLI.Background.setBadge(instance.tabId, "auto", false);
         }
       }
       URLI.Background.setInstance(instance.tabId, instance); // necessary: update instance.autoPaused boolean state
       autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
     }
+  }
+
+  /**
+   * TODO
+   *
+   * @param instance
+   */
+  function repeatAutoTimer(instance) {
+    console.log("URLI.Auto.repeatAutoTimer() - repeating auto timer");
+    instance.autoRepeating = true;
+    instance.autoRepeatCount++;
+    instance.autoTimes = instance.autoTimesOriginal;
+    instance.url = instance.startingURL;
+    instance.selection = instance.startingSelection;
+    instance.selectionStart = instance.startingSelectionStart;
+    const precalculateProps = URLI.IncrementDecrement.precalculateURLs(instance);
+    instance.urls = precalculateProps.urls;
+    instance.urlsCurrentIndex = precalculateProps.currentIndex;
+    URLI.Background.setInstance(instance.tabId, instance);
+    startAutoTimer(instance);
   }
 
   /**
@@ -90,12 +113,14 @@ URLI.Auto = function () {
    */
   function setAutoTimeout(instance) {
     const autoTimer = new URLI.AutoTimer(function() {
-      if (instance.downloadEnabled) {
-        URLI.Action.performAction(instance, "download", "auto", function(instance) {
-          URLI.Action.performAction(instance, instance.autoAction, "auto");
+      if (instance.autoRepeating) {
+        URLI.Action.performAction("return", "auto", instance);
+      } else if (instance.downloadEnabled) {
+        URLI.Action.performAction("download", "auto", instance, function(instance) {
+          URLI.Action.performAction(instance.autoAction, "auto", instance);
         });
       } else {
-        URLI.Action.performAction(instance, instance.autoAction, "auto");
+        URLI.Action.performAction(instance.autoAction, "auto", instance);
       }
     }, instance.autoSeconds * 1000);
     autoTimers.set(instance.tabId, autoTimer);
@@ -211,7 +236,7 @@ URLI.Auto = function () {
         if (instance.autoPaused) {
           // Clear the instance if auto is paused but the times count is at 0 or less (TODO: is this really needed, we need to treat paused differently?)
           if (instance.autoTimes <= 0) {
-            URLI.Action.performAction(instance, "clear", "auto");
+            URLI.Action.performAction("clear", "auto", instance);
           }
         }
         // If autoTimes is still greater than 0, set the auto timeout, else clear the instance
@@ -221,7 +246,7 @@ URLI.Auto = function () {
           setAutoTimeout(instance);
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
-          URLI.Action.performAction(instance, "clear", "auto");
+          URLI.Action.performAction("clear", "auto", instance);
         }
       }
     } else if (complete) { // Removes any stray auto listeners that may possibly exist
@@ -233,7 +258,8 @@ URLI.Auto = function () {
   return {
     startAutoTimer: startAutoTimer,
     stopAutoTimer: stopAutoTimer,
-    pauseOrResumeAutoTimer: pauseOrResumeAutoTimer
+    pauseOrResumeAutoTimer: pauseOrResumeAutoTimer,
+    repeatAutoTimer: repeatAutoTimer
   };
 }();
 

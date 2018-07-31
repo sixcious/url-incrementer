@@ -7,7 +7,9 @@ URLI (Extension Mascot / Incrementer Robot):
 
 URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
-This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If there's anything you don't like, please let me know and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the first extension/app I ever made, so it's important to me 100% that you are happy with it.
+
+If something isn't working right or if there's anything you don't like, I'd really appreciate it if you could please give me a chance and email me before leaving a low-rating/review, and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your web experience!
 
 # Features
 - Auto Incrementing
@@ -16,7 +18,7 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
-- Chrome Shortcuts
+- Browser Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts
 - "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Save URLs for faster incrementing! URLs are saved as cryptographic hashes, just like how websites save your passwords

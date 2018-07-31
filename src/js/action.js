@@ -10,16 +10,16 @@ var URLI = URLI || {};
 URLI.Action = function () {
 
   /**
-   * Performs the instance's action.
-   * 
-   * @param instance the instance for this tab
+   * Performs an action.
+   *
    * @param action   the action (e.g. increment or decrement)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @public
    */
-  function performAction(instance, action, caller, callback) {
-    console.log("URLI.Action.performAction() - instance=" + instance + ", action=" + action + ", caller=" + caller);
+  function performAction(action, caller, instance, callback) {
+    console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
     const items = URLI.Background.getItems();
     let actionPerformed = false;
     // Handle AUTO
@@ -40,7 +40,7 @@ URLI.Action = function () {
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
         console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
-        actionPerformed = clear(instance, action, caller, callback);
+        actionPerformed = clear(action, caller, instance, callback);
         return;
       }
     }
@@ -60,36 +60,37 @@ URLI.Action = function () {
       case "increment3":
       case "decrement3":
         if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) || (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) && (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
-          actionPerformed = incrementDecrementSkipErrors(instance, action, caller, callback);
+          actionPerformed = incrementDecrementSkipErrors(action, caller, instance, callback);
         } else {
-          actionPerformed = instance.multi > 0 ? incrementDecrementMulti(instance, action, caller, callback) : incrementDecrement(instance, action, caller, callback);
+          actionPerformed = instance.multi > 0 ? incrementDecrementMulti(action, caller, instance, callback) : incrementDecrement(action, caller, instance, callback);
         }
         break;
       case "next":
       case "prev":
-        actionPerformed = nextPrev(instance, action, caller, callback);
+        actionPerformed = nextPrev(action, caller, instance, callback);
         break;
       case "clear":
-        actionPerformed = clear(instance, action, caller, callback);
+        actionPerformed = clear(action, caller, instance, callback);
         break;
       case "return":
-        actionPerformed = returnToStart(instance, action, caller, callback);
+        actionPerformed = returnToStart(action, caller, instance, callback);
         break;
       case "toolkit":
-        actionPerformed = toolkit(instance, action, caller, callback);
+        actionPerformed = toolkit(action, caller, instance, callback);
         break;
       case "auto": // the auto action is always a pause or resume
-        actionPerformed = auto(instance, action, caller, callback);
+        actionPerformed = auto(action, caller, instance, callback);
         break;
       case "download":
-        actionPerformed = download(instance, action, caller, callback);
+        actionPerformed = download(action, caller, instance, callback);
         break;
       default:
         break;
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
-    if (actionPerformed && !(instance.autoEnabled || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
+    if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       if (items.iconFeedbackEnabled) {
+        console.log("URLI.Action.performAction() - setting badge action=" + action +", caller=" + caller + "instance.autoRepeat=" + instance.autoRepeat);
         URLI.Background.setBadge(instance.tabId, action, true);
       }
     }
@@ -97,14 +98,14 @@ URLI.Action = function () {
 
   /**
    * Performs an increment or decrement action.
-   * 
-   * @param instance the instance for this tab
+   *
    * @param action   the action (increment or decrement)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function incrementDecrement(instance, action, caller, callback) {
+  function incrementDecrement(action, caller, instance, callback) {
     let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
@@ -142,13 +143,13 @@ URLI.Action = function () {
   /**
    * Performs an increment or decrement action while also skipping errors.
    *
-   * @param instance the instance for this tab
    * @param action   the action (increment or decrement)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function incrementDecrementSkipErrors(instance, action, caller, callback) {
+  function incrementDecrementSkipErrors(action, caller, instance, callback) {
     let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
@@ -175,7 +176,7 @@ URLI.Action = function () {
   }
 
 // TODO
-  function incrementDecrementMulti(instance, action, caller, callback) {
+  function incrementDecrementMulti(action, caller, instance, callback) {
     console.log("URLI.Action.incrementDecrementMulti() - performing action=" + action + ", instance.multi=" + instance.multi);
     let actionPerformed = false;
     if (instance.multi >= 1 && instance.multi <= 3) {
@@ -217,14 +218,14 @@ URLI.Action = function () {
 
   /**
    * Performs a next or prev action.
-   * 
-   * @param instance the instance for this tab
+   *
    * @param action   the action (e.g. next or prev)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function nextPrev(instance, action, caller, callback) {
+  function nextPrev(action, caller, instance, callback) {
     let actionPerformed = true;
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
@@ -249,14 +250,14 @@ URLI.Action = function () {
 
   /**
    * Performs a clear action.
-   * 
-   * @param instance the instance for this tab
+   *
    * @param action   the action (clear)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function clear(instance, action, caller, callback) {
+  function clear(action, caller, instance, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
     if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
@@ -282,29 +283,10 @@ URLI.Action = function () {
     }
     // Handle AUTO Repeat
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
-      const instanceR = JSON.parse(JSON.stringify(instance));
-      // If auto enabled and auto repeat, set badge to auto repeat on this last page (autoTimes=0)
-      URLI.Background.setBadge(instanceR.tabId, "autorepeat", false);
-      setTimeout(function () {
-        chrome.tabs.update(instanceR.tabId, {url: instanceR.startingURL});
-        instanceR.autoRepeatCount++;
-        instanceR.autoTimes = instanceR.autoTimesOriginal;
-        instanceR.url = instanceR.startingURL;
-        instanceR.selection = instanceR.startingSelection;
-        instanceR.selectionStart = instanceR.startingSelectionStart;
-        const precalculateProps = URLI.IncrementDecrement.precalculateURLs(instanceR);
-        instanceR.urls = precalculateProps.urls;
-        instanceR.urlsCurrentIndex = precalculateProps.currentIndex;
-        URLI.Background.setInstance(instanceR.tabId, instanceR);
-        URLI.Auto.startAutoTimer(instanceR);
-        if (callback) {
-          callback(instanceR);
-        } else {
-          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instanceR});
-        }
-      }, instanceR.autoSeconds * 1000);
-    } else {
-      // for callers like popup that still need the instance, disable all states and reset autoTimes
+      URLI.Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
+    }
+    // for callers like popup that still need the instance, disable all states and reset autoTimes
+    else {
       instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
       instance.autoTimes = instance.autoTimesOriginal;
       if (callback) {
@@ -319,17 +301,20 @@ URLI.Action = function () {
   /**
    * Performs a return action, returning back to the instance's starting URL.
    *
-   * @param instance the instance for this tab
    * @param action   the action (toolkit)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function returnToStart(instance, action, caller, callback) {
+  function returnToStart(action, caller, instance, callback) {
     let actionPerformed = false;
     if (instance.startingURL) {
       actionPerformed = true;
       // TODO: Deal with auto
+      if (caller === "auto") {
+        instance.autoRepeating = false;
+      }
       // instance.autoTimes = instance.autoTimesOriginal;
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
@@ -355,13 +340,13 @@ URLI.Action = function () {
   /**
    * Performs a toolkit action. The instance's toolkit tool, action, and quantity are used.
    *
-   * @param instance the instance for this tab
    * @param action   the action (toolkit)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function toolkit(instance, action, caller, callback) {
+  function toolkit(action, caller, instance, callback) {
     let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.selection !== "" && instance.selectionStart >= 0) {
@@ -389,14 +374,14 @@ URLI.Action = function () {
 
   /**
    * Performs an auto action (pause or resume only).
-   * 
-   * @param instance the instance for this tab
+   *
    * @param action   the action (auto pause/resume)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function auto(instance, action, caller, callback) {
+  function auto(action, caller, instance, callback) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
       URLI.Auto.pauseOrResumeAutoTimer(instance);
@@ -413,14 +398,14 @@ URLI.Action = function () {
 
   /**
    * Performs a download action.
-   * 
-   * @param instance the instance for this tab
+   *
    * @param action   the action (download)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param instance the instance for this tab
    * @param callback the function callback (optional)
    * @private
    */
-  function download(instance, action, caller, callback) {
+  function download(action, caller, instance, callback) {
     let actionPerformed = false;
     if (instance.downloadEnabled) {
       actionPerformed = true;

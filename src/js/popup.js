@@ -189,7 +189,7 @@ URLI.Popup = function () {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Action.performAction(instance, action, "popupClickActionButton");
+        backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance);
       });
       // Note: After performing the action, the background sends a message back to popup with the updated instance
     }
@@ -749,7 +749,7 @@ URLI.Popup = function () {
           const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
           instance.urls = precalculateProps.urls;
           instance.urlsCurrentIndex = precalculateProps.currentIndex;
-          backgroundPage.URLI.Action.performAction(instance, "toolkit", "popup");
+          backgroundPage.URLI.Action.performAction("toolkit", "popup", instance);
         });
         // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
         chrome.storage.sync.set({
@@ -882,7 +882,7 @@ URLI.Popup = function () {
     // Else good to go!
     else {
       chrome.runtime.getBackgroundPage(function(backgroundPage) {
-        backgroundPage.URLI.Action.performAction(instance, "clear", "popupClearBeforeSet", async function() {
+        backgroundPage.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, async function() {
         instance.enabled = enabled;
         instance.profileFound = profileSave;
         instance.selection = selection;
