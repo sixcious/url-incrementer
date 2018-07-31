@@ -230,10 +230,9 @@ URLI.Action = function () {
       const code = "URLI.NextPrev.findNextPrevURL(" +
         JSON.stringify(action) + ", " + 
         JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
-        JSON.parse(instance.nextPrevSameDomainPolicy) + ", " +
-        JSON.stringify(instance.domId) + ");";
+        JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
-        if (results && results[0] && instance.url !== results[0]) {
+        if (results && results[0]) {
           const url = results[0];
           chrome.tabs.update(instance.tabId, {url: url});
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {

@@ -32,7 +32,7 @@ URLI.NextPrev = function () {
    * @return {string} the next or prev url
    * @public
    */
-  function findNextPrevURL(direction, priority, sameDomain, domId) {
+  function findNextPrevURL(direction, priority, sameDomain) {
     console.log("URLI.NextPrev.findNextPrevURL() - direction=" + direction);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
@@ -44,7 +44,7 @@ URLI.NextPrev = function () {
             { "priority": priority,    "subpriority": "includes"     },
             { "priority": priority2,   "subpriority": "includes"     }
           ];
-    buildURLs(direction, sameDomain, domId);
+    buildURLs(direction, sameDomain);
     for (let algorithm of algorithms) {
       const url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
       if (url) { return url; }
@@ -81,18 +81,11 @@ URLI.NextPrev = function () {
    * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function buildURLs(direction, sameDomain, domId) {
+  function buildURLs(direction, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
-    const domObject = domId ? document.getElementById(domId) : undefined,
-          document_ = domObject ? domObject.contentDocument : document, // TODO: Handle shadow dom instead of iframe
-          //links = document.getElementsByTagName("link"),
-          //anchors = document.links, // document.links includes all anchor and area elements
-          elements = document_.querySelectorAll("link[href], a[href], area[href]"),
-          hostname = document_.location.hostname;
-    console.log("domObject=" + domObject);
+    const elements = document.querySelectorAll("link[href], a[href], area[href]"),
+          hostname = document.location.hostname;
     parseElements(direction, elements, hostname, sameDomain);
-    //parseElements(direction, links, hostname, sameDomain);
-    //parseElements(direction, anchors, hostname, sameDomain);
   }
 
   /**
