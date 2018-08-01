@@ -61,8 +61,7 @@ URLI.Background = function () {
   // The sync storage and local storage items caches and a boolean flag indicating if the content scripts listener has been added (to prevent adding multiple listeners)
   let items_ = {},
       localItems_ = {},
-      contentScriptListenerAdded = false,
-      webRequestOnHeadersReceivedListenerAdded = false;
+      contentScriptListenerAdded = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -184,7 +183,7 @@ URLI.Background = function () {
     }
     // Return newly built instance using props and items:
     return {
-      "enabled": props.profileFound, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "enabled": props.profileFound, "multiEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
@@ -293,9 +292,10 @@ URLI.Background = function () {
       }
       chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
     }
-    // 5.3 only: Storage updates for new features: Toolkit and Profiles
-    else if (details.reason === "update" && details.previousVersion === "5.3") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion === 5.3, actual previousVersion=" + details.previousVersion);
+    // 5.3 - 5.5 only: Storage updates for new features: Toolkit and Profiles
+    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
+      // TODO: Remove declarativeContent?
       chrome.storage.sync.set({
         "toolkitTool": "open-tabs",
         "toolkitAction": "increment",

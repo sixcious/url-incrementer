@@ -33,66 +33,77 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function findSelection(url, preference, custom) {
-    // Regular Expressions:
-    // Firefox: Lookbehind is not supported yet in FF as of Version 61.1 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are enclosed in comments below
-    const repag = /page=\d+/, // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/
-          reter = /(?:(p|id|next)=\d+)/, // RegExp to find numbers with common terms like "id=" TODO: replace with lookbehind regex /(?<=pid|p|next|id)=(\d+)/
-          repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
-          relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-          refir = /\d+/, // RegExg to find the first number in the url
-          recus = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined, // RegExp Custom (if set by user) TODO: Validate custom regex with current url for alphanumeric selection
-    // Matches:
-          mapag = repag.exec(url),
-          mater = reter.exec(url),
-          mapre = repre.exec(url),
-          malas = relas.exec(url),
-          mafir = refir.exec(url),
-          macus = recus ? recus.exec(url) : undefined;
-    console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
-    return preference === "prefixes" ?
-              mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
-              mater ? {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1} :
-              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
-              malas ? {selection: malas[0], selectionStart: malas.index} :
-              {selection: "", selectionStart: -1} :
-           preference === "lastnumber" ?
-              malas ? {selection: malas[0], selectionStart: malas.index} :
-              {selection: "", selectionStart: -1} :
-           preference === "firstnumber" ?
-              mafir ? {selection: mafir[0], selectionStart: mafir.index} :
-              {selection: "", selectionStart: -1} :
-           preference === "custom" ?
-              macus && macus[custom.group] ? {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index} :
-              mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
-              mater ? {selection: mater[0].substring(mater[1].length), selectionStart: mater.index + mater[1].length} :
-              mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
-              malas ? {selection: malas[0], selectionStart: malas.index} :
-              {selection: "", selectionStart: -1} :
-          {selection: "", selectionStart: -1};
+    let selectionProps;
+    try {
+      // Regular Expressions:
+      // Firefox: Lookbehind is not supported yet in FF as of Version 61 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are enclosed in comments below
+      const repag = /page=\d+/, // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/
+            reter = /(?:(p|id|next)=\d+)/, // RegExp to find numbers with common terms like "id=" TODO: replace with lookbehind regex /(?<=p|id|next)=(\d+)/
+            repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
+            relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
+            refir = /\d+/, // RegExg to find the first number in the url
+            recus = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined, // RegExp Custom (if set by user) TODO: Validate custom regex with current url for alphanumeric selection
+      // Matches:
+            mapag = repag.exec(url),
+            mater = reter.exec(url),
+            mapre = repre.exec(url),
+            malas = relas.exec(url),
+            mafir = refir.exec(url),
+            macus = recus ? recus.exec(url) : undefined;
+      console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
+      selectionProps =
+        preference === "prefixes" ?
+          mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
+          mater ? {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1} :
+          mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
+          malas ? {selection: malas[0], selectionStart: malas.index} :
+          {selection: "", selectionStart: -1} :
+        preference === "lastnumber" ?
+          malas ? {selection: malas[0], selectionStart: malas.index} :
+          {selection: "", selectionStart: -1} :
+        preference === "firstnumber" ?
+          mafir ? {selection: mafir[0], selectionStart: mafir.index} :
+          {selection: "", selectionStart: -1} :
+        preference === "custom" ?
+          macus && macus[custom.group] ? {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index} :
+          mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
+          mater ? {selection: mater[0].substring(mater[1].length), selectionStart: mater.index + mater[1].length} :
+          mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
+          malas ? {selection: malas[0], selectionStart: malas.index} :
+          {selection: "", selectionStart: -1} :
+        {selection: "", selectionStart: -1};
+    } catch(e) {
+      console.log("URLI.IncrementDecrement.findSelection() - exception encountered:" + e);
+      selectionProps = {selection: "", selectionStart: -1};
+    }
+    return selectionProps;
   }
 
   /**
-   * Modifies the URL by either incrementing or decrementing the specified
-   * selection.
+   * Modifies the URL by either incrementing or decrementing it using
+   * an instance object that contains contains the following properties:
    *
-   * @param action         the action to perform (increment or decrement)
-   * @param url            the URL that will be modified
-   * @param selection      the selected part in the URL to modify
-   * @param selectionStart the starting index of the selection in the URL
-   * @param interval       the amount to increment or decrement
-   * @param base           the base to use (the supported base range is 2-36)
-   * @param baseCase       the case to use for letters (lowercase or uppercase)
-   * @param leadingZeros   if true, pad with leading zeros, false don't pad
-   * @return JSON object {urlmod: modified url, selectionmod: modified selection}
+   * 1. url            the URL that will be modified
+   * 2. selection      the selected part in the URL to modify
+   * 3. selectionStart the starting index of the selection in the URL
+   * 4. interval       the amount to increment or decrement
+   * 5. base           the base to use (the supported base range is 2-36)
+   * 6. baseCase       the case to use for letters (lowercase or uppercase)
+   * 7. leadingZeros   if true, pad with leading zeros, false don't pad
+   *
+   * @param action   the action to perform (increment or decrement)
+   * @param instance the instance containing the parameters used to increment or decrement
    * @public
    */
-  function modifyURL(action, url, selection, selectionStart, interval, base, baseCase, leadingZeros) {
-    let urlmod,
-        selectionmod,
-        selectionint = parseInt(selection, base); // parseInt base range is 2-36
+  function modifyURL(action, instance) {
+    multiPre(action, instance);
+    const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
+          interval = instance.interval, base = instance.base, baseCase = instance.baseCase, leadingZeros = instance.leadingZeros,
+          selectionint = parseInt(selection, base); // parseInt base range is 2-36
+    let selectionmod;
     // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
-    selectionmod = action === "increment" ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
-                   action === "decrement" ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
+    selectionmod = action.startsWith("increment") ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
+                   action.startsWith("decrement") ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
                    "";
     if (leadingZeros && selection.length > selectionmod.length) { // Leading 0s
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
@@ -101,8 +112,10 @@ URLI.IncrementDecrement = function () {
       selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
     }
     // Append: part 1 of the URL + modified selection + part 2 of the URL
-    urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
-    return {urlmod: urlmod, selectionmod: selectionmod};
+    const urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
+    multiPost(selectionmod, urlmod, instance);
+    instance.url = urlmod;
+    instance.selection = selectionmod;
   }
 
   /**
@@ -119,24 +132,17 @@ URLI.IncrementDecrement = function () {
     console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
-    let urlProps;
-    // TODO:
     // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
-      const urlsLength = instance.urls.length;
-      urlProps =
-        (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-          instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
-          instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
+      stepThruURLs(action, instance);
     } else {
-      urlProps = modifyURL(action, instance.url, instance.selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
+      modifyURL(action, instance);
     }
-    instance.url = urlProps.urlmod;
-    instance.selection = urlProps.selectionmod;
+
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (origin === urlOrigin && errorSkipRemaining > 0) {
-      // fetch using credentials: same-origin to keep session/cookie state alive
-      fetch(urlProps.urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes && (
             (instance.errorCodes.includes("404") && response.status === 404) ||
@@ -145,13 +151,15 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - request.url= " + urlProps.urlmod);
+          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - request.url= " + instance.url);
           console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - response.url=" + response.url);
           console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
-          if (!errorCodeEncountered) {
-            chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
-          }
+          // if (!errorCodeEncountered) {
+          //   chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
+          // }
+          // TODO: Test sending this message multiple times?
+          chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
           modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
         } else {
@@ -169,6 +177,34 @@ URLI.IncrementDecrement = function () {
     }
   }
 
+  /**
+   * Steps to the next or previous position in the URLs array.
+   * This is used instead of modifyURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
+   *
+   * @param action   the action (increment moves forward, decrement moves backward in the array)
+   * @param instance the instance containing the URLs array
+   * @public
+   */
+  function stepThruURLs(action, instance) {
+    console.log("URLI.IncrementDecrement.precalculateURLs() - performing increment/decrement on the urls array...");
+    const urlsLength = instance.urls.length;
+    console.log("URLI.IncrementDecrement.precalculateURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+    console.log("URLI.IncrementDecrement.precalculateURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+    // Get the urlProps object from the next or previous position in the urls array and update the instance
+    const urlProps =
+      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
+    instance.url = urlProps.urlmod;
+    instance.selection = urlProps.selectionmod;
+  }
+
+  /**
+   * Pre-calculates an array of URLs.
+   *
+   * @param instance
+   * @returns {{urls: Array, currentIndex: number}}
+   */
   function precalculateURLs(instance) {
     console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
@@ -193,26 +229,27 @@ URLI.IncrementDecrement = function () {
     return {"urls": urls, "currentIndex": currentIndex};
   }
 
-  function buildURLs(instance, action, threshold) {
-    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", threshold=" + threshold);
-    const urls = [];
-    let url = instance.url,
-      selection = instance.selection;
-    // If Toolkit Generate URLs first include the original URL for completeness and include it in the threshold
+  function buildURLs(instance, action, limit) {
+    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
+    const urls = [],
+          url = instance.url,
+          selection = instance.selection;
+    // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
     if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
       urls.push({"urlmod": url, "selectionmod": selection});
-      threshold--;
+      limit--;
     }
-    for (let i = 0; i < threshold; i++) {
-      const urlProps = modifyURL(action, url, selection, instance.selectionStart, instance.interval, instance.base, instance.baseCase, instance.leadingZeros);
-      url = urlProps.urlmod;
-      selection = urlProps.selectionmod;
-      urls.push({"urlmod": url, "selectionmod": selection});
-      const selectionint = parseInt(selection, instance.base);
+    for (let i = 0; i < limit; i++) {
+      modifyURL(action, instance);
+      urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+      const selectionint = parseInt(instance.selection, instance.base);
       if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
         break;
       }
     }
+    // Reset instance url and selection after calling modifyURL():
+    instance.url = url;
+    instance.selection = selection;
     if (instance.shuffleURLs) {
       shuffle(urls);
     }
@@ -252,11 +289,62 @@ URLI.IncrementDecrement = function () {
     return array;
   }
 
+  /**
+   * Pre-handles a multi-incrementing instance before modifyURL().
+   *
+   * @param action   the action (increment or decrement, for multi, this may have a 2 or 3 at the end e.g. increment3)
+   * @param instance the instance to handle
+   * @private
+   */
+  function multiPre(action, instance) {
+    if (instance && instance.multiEnabled) {
+      // Set the current instance properties with the multi part's properties for modifyURL()
+      const match = /\d+/.exec(action),
+            part = match ? match[0] : "1"; // an "increment" action without a number at the end (e.g. increment#) is always 1
+      instance.multiPart = part; // Stored later for multiPost() so we don't have to execute the above regex again
+      instance.selection = instance["selection" + part];
+      instance.selectionStart = instance["selectionStart" + part];
+      instance.interval = instance["interval" + part];
+      instance.base = instance["base" + part];
+      instance.baseCase = instance["baseCase" + part];
+      instance.leadingZeros = instance["leadingZeros" + part];
+    }
+  }
+
+  /**
+   * Post-handles a multi-incrementing instance after modifyURL().
+   *
+   * @param selectionmod the modified selection
+   * @param urlmod       the modified URL
+   * @param instance     the instance to handle
+   * @private
+   */
+  function multiPost(selectionmod, urlmod, instance) {
+    if (instance && instance.multiEnabled) {
+      // Update the selection part's to the new selection and selectionStart
+      instance["selection" + instance.multiPart] = selectionmod;
+      // If after incrementing/decrementing, the url length changed update the other parts' selectionStart
+      if (instance.url && instance.url.length !== urlmod.length) {
+        const urlLengthDiff = instance.url.length - urlmod.length; // Handles both positive and negative changes (e.g. URL became shorter or longer)
+        const thisPartSelectionStart = instance["selectionStart" + instance.multiPart];
+        console.log("URLI.IncrementDecrement.multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
+        // If this part isn't the last part, adjust the selectionStarts of the other parts that come later in the URL
+        for (let i = 1; i <= instance.multi; i++) {
+          if (i !== instance.multiPart && instance["selectionStart" + i] > thisPartSelectionStart) {
+            console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance["selectionStart" + i] + " to:" + instance["selectionStart" + i] - urlLengthDiff);
+            instance["selectionStart" + i] = instance["selectionStart" + i] - urlLengthDiff;
+          }
+        }
+      }
+    }
+  }
+
   // Return Public Functions
   return {
     findSelection: findSelection,
     modifyURL: modifyURL,
     modifyURLAndSkipErrors: modifyURLAndSkipErrors,
+    stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };
 }();

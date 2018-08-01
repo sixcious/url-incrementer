@@ -49,7 +49,7 @@
   "custom_urls_textarea_label": { "message": "URLs" },
   "custom_urls_textarea": { "message": "URLs must include a scheme (i.e. \"http://www.google.com\", not \"www.google.com\")" },
   "toolkit_h3": { "message": "tH3 1nCr3m3nT3R's t00Lk1T" },
-  "toolkit_instructions": { "message": "Select and configure a tool then click on the Incrementing Robot to have the work performed."},
+  "toolkit_instructions": { "message": "Select and configure a tool, then click on the Incrementing Robot to have the work performed."},
   "toolkit_tool_label": { "message": "Tool" },
   "toolkit_tool_open_tabs_label": { "message": "Open Tabs" },
   "toolkit_tool_generate_links_label": { "message": "Generate Links" },

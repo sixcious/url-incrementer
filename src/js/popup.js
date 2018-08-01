@@ -603,7 +603,6 @@ URLI.Popup = function () {
       baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
       selectionParsed = parseInt(selection, base).toString(base),
       leadingZeros = DOM["#leading-zeros-input"].checked,
-      errorSkip = +DOM["#error-skip-input"].value,
       multi = instance.multi >= 3 ? 0 : instance.multi + 1,
       // Increment Decrement Errors
       errors = [ // [0] = selection errors and [1] = interval errors
@@ -615,17 +614,13 @@ URLI.Popup = function () {
         parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
         isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
         // [1] Interval Errors
-        interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-        // [2] Error Skip Errors
-        errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
-        // [3] Multi Errors ?
+        interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : ""
       ],
       errorsExist = errors.some(error => error !== "");
     if (multi === 0) {
       instance.multi = 0;
       DOM["#multi-selections"].textContent = "";
-    }
-    else if (errorsExist) {
+    } else if (errorsExist) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
       URLI.UI.generateAlert(errors);
     } else {
@@ -636,7 +631,6 @@ URLI.Popup = function () {
       instance["base" + multi] = base;
       instance["baseCase" + multi] = baseCase;
       instance["leadingZeros" + multi] = leadingZeros;
-      instance["errorSkip" + multi] = errorSkip;
       DOM["#multi-selections"].textContent = multi;
     }
   }
@@ -787,6 +781,7 @@ URLI.Popup = function () {
           selectionParsed = parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
+          multiEnabled = instance.multi >= 2 && instance.multi <= 3,
           customURLs = DOM["#custom-urls-input"].checked,
           shuffleURLs = DOM["#shuffle-urls-input"].checked,
           urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
@@ -821,7 +816,9 @@ URLI.Popup = function () {
             // [1] Interval Errors
             interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
             // [2] Error Skip Errors
-            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
+            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : "",
+            // [3] Other Errors (Multi / Shuffle)
+            multiEnabled && shuffleURLs ? chrome.i18n.getMessage("multi_shuffle_error") : ""
           ],
           // Auto Errors
           autoErrors = [
@@ -829,6 +826,7 @@ URLI.Popup = function () {
             autoEnabled && (autoTimes < 1 || autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
             autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
             autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
+            autoEnabled && multiEnabled ? chrome.i18n.getMessage("auto_multi_error") : "",
             // TODO: Should we give the user the option or should this be enforced? autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
             autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
             autoEnabled && downloadEnabled && autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
@@ -892,6 +890,7 @@ URLI.Popup = function () {
         instance.baseCase = baseCase;
         instance.leadingZeros = leadingZeros;
         instance.errorSkip = errorSkip;
+        instance.multiEnabled = multiEnabled;
         instance.customURLs = customURLs;
         instance.shuffleURLs = shuffleURLs;
         instance.urls = urls;
