@@ -224,6 +224,8 @@
   "error_codes_custom_enabled_label": { "message": "Use Custom HTTP Status Codes" },
   "next_prev_settings_h3": { "message": "Next Prev Settings" },
   "next_prev_settings_p": { "message": "Some URLs may not have numbers, so URLI can increment using Next Prev links on the page. To use Next Prev with Auto, enable Enhanced Mode below." },
+  "next_prev_keywords_next_label": { "message": "Next Keywords" },
+  "next_prev_keywords_prev_label": { "message": "Prev Keywords" },
   "next_prev_links_priority_label": { "message": "Links" },
   "next_prev_links_priority_attributes_option": { "message": "Prefer links with attributes like \"rel=next\"" },
   "next_prev_links_priority_innerHTML_option": { "message": "Prefer links with inner HTML like \"Next\" in them" },

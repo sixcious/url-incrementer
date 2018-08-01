@@ -114,7 +114,9 @@ URLI.Options = function () {
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#error-codes-custom-input"].addEventListener("input", updateErrorCodesCustom);
+    DOM["#error-codes-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "errorCodesCustom"); });
+    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsNext"); });
+    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsPrev"); });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
@@ -213,6 +215,8 @@ URLI.Options = function () {
           DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
           DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
           DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
+          DOM["#next-prev-keywords-next-textarea"].value = items.nextPrevKeywordsNext;
+          DOM["#next-prev-keywords-prev-textarea"].value = items.nextPrevKeywordsPrev;
           DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
           DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
           DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
@@ -374,17 +378,17 @@ URLI.Options = function () {
   }
 
   /**
-   * This function is called as the user is typing in the error code custom text input.
+   * This function is called as the user is typing in a text input or textarea that is updated dynamically.
    * We don't want to call chrome.storage after each key press, as it's an expensive procedure, so we set a timeout delay.
    *
    * @private
    */
-  function updateErrorCodesCustom() {
-    console.log("URLI.Options.updateErrorCodesCustom() - about to clearTimeout and setTimeout");
-    clearTimeout(timeouts["error-codes-custom-input"]);
-    timeouts["error-codes-custom-input"] = setTimeout(function() { chrome.storage.sync.set({
-      "errorCodesCustom": DOM["#error-codes-custom-input"].value ? DOM["#error-codes-custom-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : []
-    })}, 1000);
+  function updateTextInputDynamically(domId, storageKey) {
+    console.log("URLI.Options.updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
+    clearTimeout(timeouts[domId]);
+    timeouts[domId] = setTimeout(function() {
+      chrome.storage.sync.set({ [storageKey]: DOM["#" + domId].value ? DOM["#" + domId].value.split(/[ ,\n]+/).filter(Boolean) : [] });
+    }, 1000);
   }
 
   /**

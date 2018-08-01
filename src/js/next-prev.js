@@ -11,11 +11,8 @@ URLI.NextPrev = function () {
 
   // Keywords are ordered in priority
   // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
-  const keywords = {
-    "next": ["next page", "next", "forward", "次", "&gt;", ">", "newer"], // "new" TODO
-    "prev": ["prev page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], // "old" TODO
-    "startsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"] // TODO
-  },
+  const startsWithExcludes = ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
+
   // urls store important, attributes, and innerHTML links that were found
   urls = {
     "important":  { "relAttribute": new Map() },
@@ -27,12 +24,13 @@ URLI.NextPrev = function () {
    * Finds the next or prev URL.
    *
    * @param direction  the direction to go: next or prev
+   * @param keywords   the next or prev keywords list to use
    * @param priority   the link priority to use: attributes or innerHTML
    * @param sameDomain whether to enforce the same domain policy
    * @return {string} the next or prev url
    * @public
    */
-  function findNextPrevURL(direction, priority, sameDomain) {
+  function findNextPrevURL(direction, keywords, priority, sameDomain) {
     console.log("URLI.NextPrev.findNextPrevURL() - direction=" + direction);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
@@ -44,9 +42,9 @@ URLI.NextPrev = function () {
             { "priority": priority,    "subpriority": "includes"     },
             { "priority": priority2,   "subpriority": "includes"     }
           ];
-    buildURLs(direction, sameDomain);
+    buildURLs(direction, keywords, sameDomain);
     for (let algorithm of algorithms) {
-      const url = traverseResults(algorithm.priority, algorithm.subpriority, keywords[direction]);
+      const url = traverseResults(algorithm.priority, algorithm.subpriority, keywords);
       if (url) { return url; }
     }
     return "";
@@ -81,11 +79,11 @@ URLI.NextPrev = function () {
    * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function buildURLs(direction, sameDomain) {
+  function buildURLs(direction, keywords, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
     const elements = document.querySelectorAll("link[href], a[href], area[href]"),
           hostname = document.location.hostname;
-    parseElements(direction, elements, hostname, sameDomain);
+    parseElements(direction, keywords, elements, hostname, sameDomain);
   }
 
   /**
@@ -98,7 +96,7 @@ URLI.NextPrev = function () {
    * @param sameDomain whether to enforce the same domain policy
    * @private
    */
-  function parseElements(direction, elements, hostname, sameDomain) {
+  function parseElements(direction, keywords, elements, hostname, sameDomain) {
     for (let element of elements) {
       if (!element.href) {
         continue;
@@ -111,9 +109,9 @@ URLI.NextPrev = function () {
       } catch (e) {
         continue;
       }
-      parseText(direction, "innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
+      parseText(direction, keywords, "innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");
       for (let attribute of element.attributes) {
-        parseText(direction, "attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
+        parseText(direction, keywords, "attributes", element.href, attribute.nodeValue.trim().toLowerCase(), attribute.nodeName.toLowerCase());
       }
     }
   }
@@ -123,20 +121,21 @@ URLI.NextPrev = function () {
    * link. Adds the link to the urls map if a match is found.
    * 
    * @param direction the direction to go: next or prev
+   * @param keywords
    * @param type      the type of element text: attributes or innerHTML
    * @param href      the URL to set this link to
    * @param text      the element's text to parse keywords from
    * @param attribute attribute's node name if it's needed
    * @private
    */
-  function parseText(direction, type, href, text, attribute) {
+  function parseText(direction, keywords, type, href, text, attribute) {
     // Iterate over this direction's keywords and build out the urls object's maps
-    for (let keyword of keywords[direction]) {
+    for (let keyword of keywords) {
       if (type === "attributes" && attribute === "rel" && text === keyword) { // important e.g. rel="next" or rel="prev"
         urls.important.relAttribute.set(keyword, href);
       } else if (text === keyword) {
         urls[type].equals.set(keyword, href);
-      } else if (text.startsWith(keyword) && keywords.startsWithExcludes.indexOf(keyword) < 0) { // startsWithExcludes
+      } else if (text.startsWith(keyword) && !startsWithExcludes.includes(keyword)) { //startsWithExcludes.indexOf(keyword) < 0) {
         urls[type].startsWith.set(keyword, href);
       } else if (text.includes(keyword)) {
         urls[type].includes.set(keyword, href);

@@ -11,9 +11,17 @@ body {
   margin: 20px;
 }
 
-/* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+/* Firefox: Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
+  font: inherit;
   overflow-x: hidden;
+  vertical-align: text-top;
+  width: 100%;
+  color: #333333;
+  max-width: 300px;
+  max-height: 90px;
+  min-width: 300px;
+  min-height: 41px;
 }
 
 /* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
@@ -72,12 +80,6 @@ input[type="image"] {
 
 input[type="image"]:focus {
   outline: none;
-}
-
-/* Firefox: Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
-textarea {
-  font: inherit;
-  overflow-x: hidden;
 }
 
 .clear-both {
@@ -178,13 +180,8 @@ textarea {
 }
 
 #selection-custom-url-textarea {
-  width: 100%;
-  color: #777777;
+  vertical-align: initial;
   word-break: break-all;
-  max-width: 300px;
-  max-height: 90px;
-  min-width: 300px;
-  min-height: 41px;
 }
 
 #selection-custom-pattern-input {

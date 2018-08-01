@@ -182,7 +182,7 @@ URLI.Action = function () {
     if (instance.multi >= 1 && instance.multi <= 3) {
       actionPerformed = true;
       const match = /\d+/.exec(action),
-        part = match ? match : "1";
+            part = match ? match : "1"; // "increment" action without a number is "increment1"
       let urlProps;
       if (action.startsWith("increment")) {
         urlProps = URLI.IncrementDecrement.modifyURL("increment", instance.url, instance["selection" + part], instance["selectionStart" + part], instance["interval" + part], instance["base" + part], instance["baseCase" + part], instance["leadingZeros" + part]);
@@ -227,11 +227,13 @@ URLI.Action = function () {
    */
   function nextPrev(action, caller, instance, callback) {
     let actionPerformed = true;
+    const items = URLI.Background.getItems();
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
-        JSON.stringify(action) + ", " + 
-        JSON.stringify(instance.nextPrevLinksPriority) + ", " + 
-        JSON.parse(instance.nextPrevSameDomainPolicy) + ");";
+        JSON.stringify(action) + ", " +
+        JSON.stringify(action === "next" ? items.nextPrevKeywordsNext : items.nextPrevKeywordsPrev) + "," +
+        JSON.stringify(items.nextPrevLinksPriority) + ", " +
+        JSON.parse(items.nextPrevSameDomainPolicy) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           const url = results[0];
