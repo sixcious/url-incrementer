@@ -386,7 +386,30 @@ URLI.Action = function () {
           JSON.stringify(instance.downloadExcludes) + ");";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
           if (results && results[0]) {
-            const downloads = results[0];
+            let downloads = results[0];
+            // If this is the starting URL, handle the manually selected and unselected items the user specified
+            if (instance.url === instance.startingURL) {
+              // Selecteds: Remove duplicates first and then add to downloads
+              if (instance.downloadSelectds && instance.downloadSelecteds.length > 0) {
+                instance.downloadSelecteds = instance.downloadSelecteds.filter(function(selected) {
+                  return downloads.some(function(download) {
+                    return download.url !== selected;
+                  });
+                });
+                for (let selected of instance.downloadSelecteds) {
+                  downloads.push({"url": selected});
+                }
+                // downloads.push(...instance.downloadSelecteds);
+              }
+              // Unselecteds: Remove any unselectds from downloads
+              if (instance.downloadUnselecteds && instance.downloadUnselecteds.length > 0) {
+                downloads = downloads.filter(function(download) {
+                  return !instance.downloadUnselecteds.some(function(unselected) {
+                    return download.url === unselected.url;
+                  });
+                });
+              }
+            }
             for (let download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
               const params = download.filename && download.extension ? {url: download.url, filename: "folder/" + download.filename} : {url: download.url};

@@ -9,7 +9,7 @@ URLI ("yur-lee") increments URLs and other interesting incrementing things. For 
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it.
 
-If something isn't working right or if there's anything you don't like, I'd really appreciate it if you could please give me a chance and email me before leaving a low-rating/review, and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your web experience!
+If something isn't working right or if there's anything you don't like, I'd really appreciate it if you could please give me a chance and email me before leaving a low-rating/review, and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features
 - Auto Incrementing
@@ -18,20 +18,20 @@ If something isn't working right or if there's anything you don't like, I'd real
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
-- Browser Shortcuts
+- Chrome Shortcuts
 - Internal Keyboard and Mouse Button Shortcuts
 - "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save URLs for faster incrementing! URLs are saved as cryptographic hashes, just like how websites save your passwords
-- Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with!
+- Save URLs for faster incrementing. URLs are saved as cryptographic hashes, just like how websites save your passwords
+- Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
-- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want!
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more!
+- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want
+- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
-** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down em all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
+** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 # Coming Soon in Version 6.0 (8/8/2018)
-- Save URLs - URLI can now finally remember your favorite URL patterns and intervals you set so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
+- Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
 - Multi-Incrementing - A long-requested feature! Increment up to 3 parts of the URL...at the same time!!! Click the Multi near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
 - AUTO Repeat Mode - Loops back to the starting URL and repeats!
@@ -39,6 +39,7 @@ If something isn't working right or if there's anything you don't like, I'd real
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
 - Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
 - "S" Increment Decrement Shortcuts - 2 Extra Shortcuts that will only activate on your saved/enabled URLs. You can set easier 1-key shortcuts for these sites and still keep the "quick" increment / decrement keys! This goes back to URLI's original design in 1.0/2.0 and removes the need to have Quick Checkboxes and a less flexible "all or nothing" approach.
+- Next Prev Improvement: Adjust the next prev keywords on the Options Page!
 - Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
 - Internal Code Enhancements: Caching storage for faster performance

@@ -1,6 +1,6 @@
 /**
  * URL Incrementer Popup
- * 
+ *
  * @author Roy Six
  * @namespace
  */
@@ -29,7 +29,7 @@ URLI.Popup = function () {
   let instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       localItems_ = {}, // Local Storage items cache
-      downloadPreviewAlls = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [] }, // Download Preview All URLs Cache
+      downloadPreviewCache = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [], "selecteds": [], "unselecteds": [] }, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
@@ -90,7 +90,7 @@ URLI.Popup = function () {
     DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-table-div"].addEventListener("click", updateDownloadItemsIncludesExcludes);
+    DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.runtime.getBackgroundPage(async function(backgroundPage) {
@@ -203,7 +203,7 @@ URLI.Popup = function () {
    */
   function updateControls() {
     DOM["#profile-found-controls-icon"].className = instance.profileFound ? "" : "display-none";
-    DOM["#auto-repeat-controls-icon"].className = instance.autoRepeat ? "" : "display-none";
+    DOM["#auto-repeat-controls-icon"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-2"].className =
@@ -369,13 +369,13 @@ URLI.Popup = function () {
           if (results && results[0]) {
             // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
             // download preview (e.g. table) in the next method
-            downloadPreviewAlls = results[0];
+            downloadPreviewCache = results[0];
             const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
                   downloadTags = DOM["#download-tags-generated"].value.split(","),
                   downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
-            DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allExtensions, downloadExtensions);
-            DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allTags, downloadTags);
-            DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewAlls.allAttributes, downloadAttributes);
+            DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions);
+            DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags);
+            DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes);
             updateDownloadPreview();
           }
         });
@@ -433,7 +433,7 @@ URLI.Popup = function () {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
         // @see https://stackoverflow.com/a/21988249
-        const alls = downloadStrategy !== "page" ? downloadPreviewAlls.allURLs : downloadPreviewAlls.pageURL,
+        const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL,
               selecteds = results[0],
               unselecteds = alls.filter(function(obj) {
                 return !selecteds.some(function(obj2) {
@@ -445,7 +445,7 @@ URLI.Popup = function () {
         // Download Preview Heading Title:
         DOM["#download-preview-heading-title"].innerHTML =
           "<div class=\"" + (selectedsLength > 0 ? "success" : "error") + "\">" +
-            DOWNLOAD_PREVIEW_I18NS.set + selectedsLength + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls +
+            DOWNLOAD_PREVIEW_I18NS.set + "<span id=\"selecteds-length\">" + selectedsLength + "</span>" + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls +
           "</div>";
         // Download Preview Table and a count index to keep track of current row index:
         let table =
@@ -478,6 +478,8 @@ URLI.Popup = function () {
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
+        // Reset the manually selected includes and excludes each time the table is rebuilt:
+        downloadPreviewCache.selecteds = downloadPreviewCache.unselecteds = [];
       } else {
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
       }
@@ -495,7 +497,7 @@ URLI.Popup = function () {
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
     return "" + // need this empty string for return to concatenate nicely down to the next line
-      "<tr class=\"" + (isSelected ? "selected" : "unselected") + "\" data-url=\"" + item.url + "\">" +
+      "<tr class=\"" + (isSelected ? "selected" : "unselected") +  "\" data-json='" + JSON.stringify(item) + "'>" + // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
         "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" class=\"hvr-grow check-circle\"/></td>" +
         "<td class=\"count\">" + (count) + "</td>" +
         "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
@@ -593,25 +595,47 @@ URLI.Popup = function () {
     }
   }
 
-  function updateDownloadItemsIncludesExcludes(event) {
+  function updateDownloadSelectedsUnselecteds(event) {
     const element = event.target;
     if (element && element.classList.contains("check-circle")) {
       const parent = element.parentNode.parentNode;
-      const url = parent.dataset.url;
+      const json = parent.dataset.json;
+      const object = JSON.parse(json);
       const isBeingAdded = parent.className === "unselected";
-      const generatedId = isBeingAdded ? "#download-items-includes" : "#download-items-excludes";
-      const otherId = isBeingAdded ? "#download-items-excludes" : "#download-items-includes";
+      const generatedId = isBeingAdded ? "selecteds" : "unselecteds";
+      const otherId = isBeingAdded ? "unselecteds" : "selecteds";
       parent.className = isBeingAdded ? "selected" : "unselected";
-      let generatedValue = DOM[generatedId].value,
-          otherValue = DOM[otherId].value;
-      if (!generatedValue.includes(url)) {
-        generatedValue += (generatedValue !== "" ? "," : "") + url;
-        DOM[generatedId].value = generatedValue;
+      if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
+        downloadPreviewCache[generatedId].push(object);
       }
-      if (otherValue.includes(url)) {
-        DOM[otherId].value = otherValue.replace(url, "");
-      }
+      console.log(generatedId + ":");
+      console.log(downloadPreviewCache[generatedId]);
+      console.log(otherId + ":");
+      console.log(downloadPreviewCache[otherId]);
+
+
+      // let generatedValue = DOM[generatedId].value,
+      //     otherValue = DOM[otherId].value;
+      // if (!generatedValue.includes(json)) {
+      //   if (isBeingAdded ? !downloadPreviewCache.selecteds.includes(object) : downloadPreviewCache.unselecteds.includes(object)) {
+      //     console.log("oops that's already in " + (isBeingAdded ? "selecteds" : "nselecteds") + "! not adding a duplicate!");
+      //     generatedValue += (generatedValue !== "" ? "," : "") + json;
+      //     DOM[generatedId].value = generatedValue;
+      //   }
+        const selectedsLengthElement = document.getElementById("selecteds-length");
+        const selectedsLengthNumber = Number(selectedsLengthElement.textContent);
+        const selectedsLengthNumberFinal = isBeingAdded ? selectedsLengthNumber + 1 : selectedsLengthNumber - 1;
+        selectedsLengthElement.textContent = "" + (selectedsLengthNumberFinal);
+        selectedsLengthElement.parentElement.className = selectedsLengthNumberFinal > 0 ? "success" : "error";
+      //}
+      // if (otherValue.includes(json)) {
+      //   DOM[otherId].value = otherValue.replace(json, "");
+      // }
+      //downloadPreviewCache[generatedId] = downloadPreviewCache[generatedId].filter((object, index) => index === downloadPreviewCache[generatedId].findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
+      //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
     }
+    //TODO...
+    //el.value.substring(2, el.value.length - 2).split("\"},{\"").forEach(value => console.log(JSON.parse("{\"" + value + "\"}")));
   }
 
 
@@ -826,8 +850,6 @@ URLI.Popup = function () {
           downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
           downloadTags = DOM["#download-tags-generated"].value.split(","),
           downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
-          downloadItemsIncludes = DOM["#download-items-includes"].value.split(","),
-          downloadItemsExcludes = DOM["#download-items-excludes"].value.split(","),
 
           // Increment Decrement Errors
           errors = [ // [0] = selection errors and [1] = interval errors
@@ -922,27 +944,29 @@ URLI.Popup = function () {
         instance.urls = urls;
         instance.toolkitEnabled = false;
         instance.autoEnabled = autoEnabled;
-        instance.autoAction = autoAction;
-        instance.autoTimes = autoTimes;
-        instance.autoSeconds = autoSeconds;
-        instance.autoWait = autoWait;
-        instance.autoBadge = autoBadge;
-        instance.autoRepeat = autoRepeat;
-        instance.autoPaused = false; // always starts auto un-paused
-        instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes
+        if (autoEnabled) {
+          instance.autoAction = autoAction;
+          instance.autoTimes = autoTimes;
+          instance.autoSeconds = autoSeconds;
+          instance.autoWait = autoWait;
+          instance.autoBadge = autoBadge;
+          instance.autoRepeat = autoRepeat;
+          instance.autoPaused = false; // always starts auto un-paused
+          instance.autoTimesOriginal = autoTimes; // store the original autoTimes for reference as we are going to decrement autoTimes
+        }
         instance.downloadEnabled = downloadEnabled;
-        instance.downloadStrategy = downloadStrategy;
-        instance.downloadExtensions = downloadExtensions;
-        instance.downloadTags = downloadTags;
-        instance.downloadAttributes = downloadAttributes;
-        instance.downloadSelector = downloadSelector;
-        instance.downloadIncludes = downloadIncludes;
-        instance.downloadExcludes = downloadExcludes;
-        instance.downloadMinMB = downloadMinMB;
-        instance.downloadMaxMB = downloadMaxMB;
-        instance.downloadPreview = downloadPreview;
-        instance.downloadItemsIncludes = downloadItemsIncludes;
-        instance.downloadItemsExcludes = downloadItemsExcludes;
+        if (downloadEnabled) {
+          instance.downloadStrategy = downloadStrategy;
+          instance.downloadExtensions = downloadExtensions;
+          instance.downloadTags = downloadTags;
+          instance.downloadAttributes = downloadAttributes;
+          instance.downloadSelector = downloadSelector;
+          instance.downloadIncludes = downloadIncludes;
+          instance.downloadExcludes = downloadExcludes;
+          instance.downloadMinMB = downloadMinMB;
+          instance.downloadMaxMB = downloadMaxMB;
+          instance.downloadPreview = downloadPreview;
+        }
         const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;

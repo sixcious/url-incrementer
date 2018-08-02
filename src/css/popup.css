@@ -230,6 +230,11 @@ div.checkbox  img {
 
 #download-experimental {
   color: rebeccapurple;
+  margin-top: -16px;
+}
+
+#auto-eta img, #download-experimental img {
+  margin-bottom: 1px;
 }
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
