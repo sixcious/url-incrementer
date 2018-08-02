@@ -202,7 +202,8 @@ URLI.Popup = function () {
    * @private
    */
   function updateControls() {
-    DOM["#profile-found-img"].className = instance.profileFound ? "display-block" : "display-none";
+    DOM["#profile-found-controls-icon"].className = instance.profileFound ? "" : "display-none";
+    DOM["#auto-repeat-controls-icon"].className = instance.autoRepeat ? "" : "display-none";
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-2"].className =
