@@ -90,6 +90,7 @@ URLI.Popup = function () {
     DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-table-div"].addEventListener("click", updateDownloadItemsIncludesExcludes);
     // Initialize popup content
     chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
       chrome.runtime.getBackgroundPage(async function(backgroundPage) {
@@ -493,8 +494,8 @@ URLI.Popup = function () {
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
     return "" + // need this empty string for return to concatenate nicely down to the next line
-      "<tr class=\"" + (isSelected ? "selected" : "unselected") + "\">" +
-        "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\"/></td>" +
+      "<tr class=\"" + (isSelected ? "selected" : "unselected") + "\" data-url=\"" + item.url + "\">" +
+        "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" class=\"hvr-grow check-circle\"/></td>" +
         "<td class=\"count\">" + (count) + "</td>" +
         "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
         "<td class=\"filename\">" + item.filename + "</td>" +
@@ -591,8 +592,29 @@ URLI.Popup = function () {
     }
   }
 
+  function updateDownloadItemsIncludesExcludes(event) {
+    const element = event.target;
+    if (element && element.classList.contains("check-circle")) {
+      const parent = element.parentNode.parentNode;
+      const url = parent.dataset.url;
+      const isBeingAdded = parent.className === "unselected";
+      const generatedId = isBeingAdded ? "#download-items-includes" : "#download-items-excludes";
+      const otherId = isBeingAdded ? "#download-items-excludes" : "#download-items-includes";
+      parent.className = isBeingAdded ? "selected" : "unselected";
+      let generatedValue = DOM[generatedId].value,
+          otherValue = DOM[otherId].value;
+      if (!generatedValue.includes(url)) {
+        generatedValue += (generatedValue !== "" ? "," : "") + url;
+        DOM[generatedId].value = generatedValue;
+      }
+      if (otherValue.includes(url)) {
+        DOM[otherId].value = otherValue.replace(url, "");
+      }
+    }
+  }
 
-  function clickMulti() {
+
+    function clickMulti() {
     const
       // Increment Decrement Values
       url = DOM["#url-textarea"].value,
@@ -803,6 +825,8 @@ URLI.Popup = function () {
           downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
           downloadTags = DOM["#download-tags-generated"].value.split(","),
           downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
+          downloadItemsIncludes = DOM["#download-items-includes"].value.split(","),
+          downloadItemsExcludes = DOM["#download-items-excludes"].value.split(","),
 
           // Increment Decrement Errors
           errors = [ // [0] = selection errors and [1] = interval errors
@@ -891,6 +915,7 @@ URLI.Popup = function () {
         instance.leadingZeros = leadingZeros;
         instance.errorSkip = errorSkip;
         instance.multiEnabled = multiEnabled;
+        instance.startingURL = url;
         instance.customURLs = customURLs;
         instance.shuffleURLs = shuffleURLs;
         instance.urls = urls;
@@ -915,6 +940,8 @@ URLI.Popup = function () {
         instance.downloadMinMB = downloadMinMB;
         instance.downloadMaxMB = downloadMaxMB;
         instance.downloadPreview = downloadPreview;
+        instance.downloadItemsIncludes = downloadItemsIncludes;
+        instance.downloadItemsExcludes = downloadItemsExcludes;
         const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;

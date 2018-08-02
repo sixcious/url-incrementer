@@ -128,7 +128,7 @@ URLI.Action = function () {
    */
   function incrementDecrementRegular(action, caller, instance, callback) {
     let actionPerformed = false;
-    // If URLI didn't find a selection, we can't increment or decrement
+    // If we didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
@@ -267,7 +267,7 @@ URLI.Action = function () {
   /**
    * Performs a return action, returning back to the instance's starting URL.
    *
-   * @param action   the action (toolkit)
+   * @param action   the action (return)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
    * @param callback the function callback (optional)
@@ -278,15 +278,15 @@ URLI.Action = function () {
     if (instance.startingURL) {
       actionPerformed = true;
       // TODO: Deal with auto
+      // If Auto is calling return, it is completing a repeat loop
       if (caller === "auto") {
         instance.autoRepeating = false;
       }
-      // instance.autoTimes = instance.autoTimesOriginal;
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
       // Multi:
-      if (instance.multi && instance.multi > 1) {
+      if (instance.multiEnabled && instance.multi) {
         for (let i = 1; i <= instance.multi; i++) {
           instance["selection" + i] = instance["startingSelection" + i];
           instance["selectionStart" + i] = instance["startingSelectionStart" + i];
