@@ -390,25 +390,28 @@ URLI.Action = function () {
             // If this is the starting URL, handle the manually selected and unselected items the user specified
             if (instance.url === instance.startingURL) {
               // Selecteds: Remove duplicates first and then add to downloads
-              if (instance.downloadSelectds && instance.downloadSelecteds.length > 0) {
-                instance.downloadSelecteds = instance.downloadSelecteds.filter(function(selected) {
-                  return downloads.some(function(download) {
-                    return download.url !== selected;
-                  });
-                });
-                for (let selected of instance.downloadSelecteds) {
-                  downloads.push({"url": selected});
-                }
-                // downloads.push(...instance.downloadSelecteds);
+              if (instance.downloadMSelecteds && instance.downloadMSelecteds.length > 0) {
+                // instance.downloadSelecteds = instance.downloadSelecteds.filter(function(selected) {
+                //   return downloads.some(function(download) {
+                //     return download.url !== selected;
+                //   });
+                // });
+                // for (let selected of instance.downloadSelecteds) {
+                //   downloads.push({"url": selected});
+                // }
+                downloads.push(...instance.downloadMSelecteds);
               }
               // Unselecteds: Remove any unselectds from downloads
-              if (instance.downloadUnselecteds && instance.downloadUnselecteds.length > 0) {
+              if (instance.downloadMUnselecteds && instance.downloadMUnselecteds.length > 0) {
                 downloads = downloads.filter(function(download) {
-                  return !instance.downloadUnselecteds.some(function(unselected) {
-                    return download.url === unselected.url;
+                  return !instance.downloadMUnselecteds.some(function(munselected) {
+                    return download.url === munselected.url;
                   });
                 });
               }
+              // TODO remove duplicates if exist (they shouldn't)?
+              //downloadPreviewCache[otherId] = downloadPreviewCache[otherId].filter((object, index) => index === downloadPreviewCache[otherId].findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
+              //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
             }
             for (let download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");

@@ -29,7 +29,7 @@ URLI.Popup = function () {
   let instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       localItems_ = {}, // Local Storage items cache
-      downloadPreviewCache = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [], "selecteds": [], "unselecteds": [] }, // Download Preview Cache
+      downloadPreviewCache = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [], "selecteds": [], "unselecteds": [], "mselecteds": [], "munselecteds": [] }, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
@@ -479,7 +479,10 @@ URLI.Popup = function () {
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
         // Reset the manually selected includes and excludes each time the table is rebuilt:
-        downloadPreviewCache.selecteds = downloadPreviewCache.unselecteds = [];
+        downloadPreviewCache.selecteds = selecteds;
+        downloadPreviewCache.unselecteds = unselecteds;
+        downloadPreviewCache.mselecteds = [];
+        downloadPreviewCache.munselecteds = [];
       } else {
         DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
       }
@@ -606,12 +609,15 @@ URLI.Popup = function () {
       const otherId = isBeingAdded ? "unselecteds" : "selecteds";
       parent.className = isBeingAdded ? "selected" : "unselected";
       if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
-        downloadPreviewCache[generatedId].push(object);
+        console.log("pushing into download preview cache" + generatedId);
+        downloadPreviewCache["m" + generatedId].push(object);
       }
+      downloadPreviewCache["m" + otherId] = downloadPreviewCache["m" + otherId].filter(otherObject => { return otherObject.url !== object.url });
+
       console.log(generatedId + ":");
-      console.log(downloadPreviewCache[generatedId]);
+      console.log(downloadPreviewCache["m" + generatedId]);
       console.log(otherId + ":");
-      console.log(downloadPreviewCache[otherId]);
+      console.log(downloadPreviewCache["m" + otherId]);
 
 
       // let generatedValue = DOM[generatedId].value,
@@ -631,8 +637,7 @@ URLI.Popup = function () {
       // if (otherValue.includes(json)) {
       //   DOM[otherId].value = otherValue.replace(json, "");
       // }
-      //downloadPreviewCache[generatedId] = downloadPreviewCache[generatedId].filter((object, index) => index === downloadPreviewCache[generatedId].findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
-      //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
+
     }
     //TODO...
     //el.value.substring(2, el.value.length - 2).split("\"},{\"").forEach(value => console.log(JSON.parse("{\"" + value + "\"}")));
@@ -966,6 +971,8 @@ URLI.Popup = function () {
           instance.downloadMinMB = downloadMinMB;
           instance.downloadMaxMB = downloadMaxMB;
           instance.downloadPreview = downloadPreview;
+          instance.downloadMSelecteds = downloadPreviewCache.mselecteds;
+          instance.downloadMUnselecteds = downloadPreviewCache.munselecteds;
         }
         const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
