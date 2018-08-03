@@ -13,6 +13,8 @@ URLI.Download = function () {
   // List derived from Daniel DiPaolo @ stackoverflow.com @see https://stackoverflow.com/a/2725168
   const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap", "style"];
 
+  // let items = new Map(); TODO...
+
   /**
    * Finds the current page URL and all URLs, extensions, tags, and attributes on the page to build a
    * download preview.
@@ -21,7 +23,7 @@ URLI.Download = function () {
    * @public
    */
   function previewDownloadURLs() {
-    const  pageURL = findPageURL(),
+    const  pageURL = findDownloadURLs("page"),//findPageURL(),
            allURLs = findDownloadURLs("all"),
            allExtensions = findProperties(allURLs, "extension"),
            allTags = findProperties(allURLs, "tag"),
@@ -94,12 +96,16 @@ URLI.Download = function () {
    * @private
    */
   function findPageURL(includes, excludes) {
-    const url = document.location.href;
-    if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-      return [{"url": url, "extension": findExtension(url), "tag": "", "attribute": ""}];
-    } else {
-      return [];
-    }
+    const items = new Map(),
+          url = document.location.href;
+    buildItems(items, undefined, undefined, url, "page", undefined, undefined, undefined, undefined, includes, excludes);
+    return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
+    // if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
+    //   return [{"url": url, "extension": findExtension(url), "tag": "", "attribute": ""}];
+    //   //return [{"url": url, "filenameAndExtension": filenameAndExtension, "filename": filename, "extension": extension, "tag": "", "attribute": ""}];
+    // } else {
+    //   return [];
+    // }
   }
 
   /**
@@ -166,15 +172,19 @@ URLI.Download = function () {
    * @private
    */
   function buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes) {
-    let extension = "",
+    let filenameAndExtension = "",
+        filename = "",
+        extension = "",
         tag = "";
     if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-      extension = findExtension(url);
+      filenameAndExtension = findFilenameAndExtension(url);
+      filename = findFilename(filenameAndExtension);
+      extension = findExtension(filenameAndExtension);
       // Special Restriction (Extensions)
       if (strategy === "extensions" && (!extension || !extensions.includes(extension))) {
         return;
       }
-      tag = element.tagName ? element.tagName.toLowerCase() : "";
+      tag = element && element.tagName ? element.tagName.toLowerCase() : "";
       // Special Restriction (Tags)
       if (strategy === "tags" && (!tag || !tags.includes(tag))) {
         return;
@@ -183,7 +193,7 @@ URLI.Download = function () {
       if (strategy === "attributes" && (!attribute || !attributes.includes(attribute))) {
         return;
       }
-      items.set(url + "", {"url": url, "filename": findFilename(url), "extension": extension, "tag": tag, "attribute": attribute});
+      items.set(url + "", {"url": url, "filenameAndExtension": filenameAndExtension, "filename": filename, "extension": extension, "tag": tag, "attribute": attribute});
     }
   }
 
@@ -209,7 +219,7 @@ URLI.Download = function () {
 
   // TODO
   function isValidURL(url) {
-    return url && typeof url === "string" && url.trim().length > 0;
+    return url && typeof url === "string" && url.trim().length > 0 && !url.startsWith("mailto");
   }
 
   /**
@@ -234,11 +244,23 @@ URLI.Download = function () {
     return does;
   }
 
-  // TODO:
-  function findFilename(url) {
-    let filename = "";
+  function findFilenameAndExtension(url) {
+    let filenameAndExtension = "";
     if (url) {
-      filename = url.split('#').shift().split('?').shift().split('/').pop(); // TODO Replace? replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
+      // TODO:
+      // by hayatbiralem
+      // @see https://stackoverflow.com/questions/511761/js-function-to-get-filename-from-url/2480287#comment61576914_17143667
+      filenameAndExtension = url.split('#').shift().split('?').shift().split('/').pop(); // TODO Replace? replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
+    }
+    return filenameAndExtension;
+
+  }
+
+
+  function findFilename(filenameAndExtension) {
+    let filename = "";
+    if (filenameAndExtension) {
+      filename = filenameAndExtension.split('.').shift();
     }
     return filename;
   }
@@ -252,19 +274,26 @@ URLI.Download = function () {
    * @see https://stackoverflow.com/a/42841283
    * @private
    */
-  function findExtension(url) {
+  function findExtension(filenameAndExtension) {
     let extension = "";
-    if (url) {
-      const regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
-            group = 1,
-            urlquestion = url.substring(0, url.indexOf("?")),
-            urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,
-            match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
-      if (match && match[group]) {
-        extension = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
-        if (!isValidExtension(extension)) { // If extension is not valid, throw it out
-          extension = "";
-        }
+    // if (url) {
+    //   const regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
+    //         group = 1,
+    //         urlquestion = url.substring(0, url.indexOf("?")),
+    //         urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,
+    //         match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
+    //   if (match && match[group]) {
+    //     extension = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
+    //     if (!isValidExtension(extension)) { // If extension is not valid, throw it out
+    //       extension = "";
+    //     }
+    //   }
+    // }
+    if (filenameAndExtension && filenameAndExtension.includes(".")) {
+      extension = filenameAndExtension.split('.').pop();
+      //extension = filenameAndExtension.substr(filenameAndExtension.indexOf(".") + 1);
+      if (!isValidExtension(extension)) { // If extension is not valid, throw it out
+        extension = "";
       }
     }
     return extension;
@@ -279,7 +308,7 @@ URLI.Download = function () {
    * @private
    */
   function isValidExtension(extension) {
-    return extension && extension.trim() !== "" && /^[a-z0-9]+$/i.test(extension) && extension.length <= 8;
+    return extension && extension.trim() !== "" && /^[a-z0-9\\.]+$/i.test(extension) && extension.length <= 8;
   }
 
   /**

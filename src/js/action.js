@@ -415,7 +415,7 @@ URLI.Action = function () {
             }
             for (let download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
-              const params = download.filename && download.extension ? {url: download.url, filename: "folder/" + download.filename} : {url: download.url};
+              const params = download.filenameAndExtension && download.filename && download.extension ? {url: download.url, filename: "folder/" + download.filenameAndExtension} : {url: download.url};
               chrome.downloads.download(params, function(downloadId) {
                 if (chrome.runtime.lastError) {
                   chrome.downloads.download({url: download.url});
