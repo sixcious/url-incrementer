@@ -31,6 +31,7 @@ If something isn't working right or if there's anything you don't like, I'd real
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 # Coming Soon in Version 6.0 (8/8/2018)
+Over 10 New Features...
 - Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
 - Multi-Incrementing - A long-requested feature! Increment up to 3 parts of the URL...at the same time!!! Click the Multi near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
@@ -38,9 +39,9 @@ If something isn't working right or if there's anything you don't like, I'd real
 - Return to Start Button (Yellow) - Convenient button to return you back to the starting URL 
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
 - Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
-- "S" Increment Decrement Shortcuts - 2 Extra Shortcuts that will only activate on your saved/enabled URLs. You can set easier 1-key shortcuts for these sites and still keep the "quick" increment / decrement keys! This goes back to URLI's original design in 1.0/2.0 and removes the need to have Quick Checkboxes and a less flexible "all or nothing" approach.
-- Next Prev Improvement: Adjust the next prev keywords on the Options Page!
-- Download Features: 1. Manually select/deselect items to download by clicking the checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a new subfolder (experimental)
+- "My" Increment Decrement Shortcuts - 2 Extra Shortcuts that will only activate on your saved/enabled URLs. You can set easier 1-key shortcuts for these sites and still keep the "quick" increment / decrement keys! This goes back to URLI's original design in 1.0/2.0 and removes the need to have Quick Checkboxes and a less flexible "all or nothing" approach.
+- Next Prev Improvements: Adjust the next prev keywords on the Options Page!
+- Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a separate subfolder (experimental) 3. New Name column in Download Preview Table
 - Help Guide: Click the ? in the Setup UI for detailed help guide on how the extension works
 - Internal Code Enhancements: Caching storage for faster performance
 - Bug fix: popup.html and options.html rewritten in valid HTML 5

@@ -18,10 +18,10 @@ URLI.Popup = function () {
           "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
          },
         DOWNLOAD_PREVIEW_I18NS = { // DOWNLOAD PREVIEW messages cache
-          "filename": "Name",
           "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"),
           "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
-          "urls": chrome.i18n.getMessage("download_preview_urls"), "thumb": chrome.i18n.getMessage("download_preview_thumb_label"),
+          "urls": chrome.i18n.getMessage("download_preview_urls"),
+          "thumb": chrome.i18n.getMessage("download_preview_thumb_label"), "filename": chrome.i18n.getMessage("download_preview_filename_label"),
           "extension": chrome.i18n.getMessage("download_preview_extension_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
           "attribute": chrome.i18n.getMessage("download_preview_attribute_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
         };
@@ -86,9 +86,11 @@ URLI.Popup = function () {
     DOM["#download-includes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-includes-label"], "font-weight: bold; color: #05854D"); });
     DOM["#download-excludes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-excludes-label"], "font-weight: bold; color: #E6003E"); });
     DOM["#download-preview-thumb-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-filename-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-extension-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
     // Initialize popup content
@@ -275,9 +277,11 @@ URLI.Popup = function () {
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
+    DOM["#download-preview-filename-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("filename");
     DOM["#download-preview-extension-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("extension");
     DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
     DOM["#download-preview-attribute-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("attribute");
+    DOM["#download-preview-url-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("url");
     DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
@@ -474,9 +478,11 @@ URLI.Popup = function () {
         DOM["#download-preview-table-div"].innerHTML = table;
         // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-extension-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-url-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
         // Reset the manually selected includes and excludes each time the table is rebuilt:
         downloadPreviewCache.selecteds = selecteds;
