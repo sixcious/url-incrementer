@@ -160,22 +160,28 @@ URLI.Action = function () {
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
-      chrome.tabs.executeScript(instance.tabId, {
-        file: "/js/increment-decrement.js",
-        runAt: "document_start"
-      }, function () {
-        // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-        if (chrome.runtime.lastError) {
-          console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-          return incrementDecrementRegular(instance, action, caller, callback);
-        }
-        const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
-          JSON.stringify(action) + ", " +
-          JSON.stringify(instance) + ", " +
-          JSON.parse(instance.errorSkip) + ");";
-        // No callback because this will be executing async code and then sending a message back to the background
-        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-      });
+      const items = URLI.Background.getItems();
+      if (items.permissionsEnhancedMode) {
+        URLI.IncrementDecrement.modifyURLAndSkipErrors(action, instance, "background", instance.errorSkip);
+      } else {
+        chrome.tabs.executeScript(instance.tabId, {
+          file: "/js/increment-decrement.js",
+          runAt: "document_start"
+        }, function () {
+          // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+          if (chrome.runtime.lastError) {
+            console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+            return incrementDecrementRegular(instance, action, caller, callback);
+          }
+          const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
+            JSON.stringify(action) + ", " +
+            JSON.stringify(instance) + ", " +
+            "content-script" + ", " +
+            JSON.parse(instance.errorSkip) + ");";
+          // No callback because this will be executing async code and then sending a message back to the background
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+        });
+      }
     }
     return actionPerformed;
   }

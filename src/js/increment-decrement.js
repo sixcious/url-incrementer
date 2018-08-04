@@ -101,6 +101,13 @@ URLI.IncrementDecrement = function () {
           interval = instance.interval, base = instance.base, baseCase = instance.baseCase, leadingZeros = instance.leadingZeros,
           selectionint = parseInt(selection, base); // parseInt base range is 2-36
     let selectionmod;
+    if (base === "date") {
+      const baseDateFormat = instance.baseDateFormat;
+      const date = new Date(selection);
+      date.setDate(date.getDate() + 1);
+      selectionmod = date.toString();
+    }
+    else {
     // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
     selectionmod = action.startsWith("increment") ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
                    action.startsWith("decrement") ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
@@ -111,11 +118,16 @@ URLI.IncrementDecrement = function () {
     if (/[a-z]/i.test(selectionmod)) { // If Alphanumeric, convert case
       selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
     }
+    }//
     // Append: part 1 of the URL + modified selection + part 2 of the URL
     const urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
     multiPost(selectionmod, urlmod, instance);
     instance.url = urlmod;
     instance.selection = selectionmod;
+  }
+
+  function incrementDecrementDate(action, instance) {
+
   }
 
   /**
@@ -128,21 +140,29 @@ URLI.IncrementDecrement = function () {
    * @param errorCodeEncountered whether or not an error code has been encountered yet while performing this action
    * @public
    */
-  function modifyURLAndSkipErrors(action, instance, errorSkipRemaining, errorCodeEncountered) {
+  function modifyURLAndSkipErrors(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
     console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
+    console.log("origin=" + origin);
+    console.log("urlorigin=" + urlOrigin);
+    const sender = { "tab": { "id": instance.tabId } };
     // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
       stepThruURLs(action, instance);
     } else {
       modifyURL(action, instance);
     }
-
+console.log("after stepThruURLs and modifyURL");
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if (origin === urlOrigin && errorSkipRemaining > 0) {
+    if ((context === "background" || (origin === urlOrigin)) && errorSkipRemaining > 0) {
+      console.log("about to do fetch");
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+        console.log("response.redirected=" + response.redirected);
+        console.log("instance.url===response.url" + instance.url === response.url);
+        console.log("instance.url=" + instance.url);
+        console.log("response.url=" + response.url);
         if (response && response.status &&
             ((instance.errorCodes && (
             (instance.errorCodes.includes("404") && response.status === 404) ||
@@ -159,21 +179,29 @@ URLI.IncrementDecrement = function () {
           //   chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
           // }
           // TODO: Test sending this message multiple times?
-          chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
+          const request = {greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance};
+          if (context === "background") { URLI.Background.messageListener(request, sender); }
+          else { chrome.runtime.sendMessage(request); }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-          modifyURLAndSkipErrors(action, instance, errorSkipRemaining - 1, true);
+          modifyURLAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
         } else {
           console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
+          const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+          if (context === "background") { URLI.Background.messageListener(request, sender); }
+          else { chrome.runtime.sendMessage(request);}
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - a fetch() exception was caught:" + e);
-        chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance});
-        chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
+        const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
+        const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+        if (context === "background") { URLI.Background.messageListener(request1, sender); URLI.Background.messageListener(request2, sender); }
+        else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
       });
     } else {
-      console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
-      chrome.runtime.sendMessage({greeting: "incrementDecrementSkipErrors", "instance": instance});
+      console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+      if (context === "background") { URLI.Background.messageListener(request, sender); }
+      else { chrome.runtime.sendMessage(request); }
     }
   }
 

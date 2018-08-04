@@ -135,7 +135,7 @@ URLI.NextPrev = function () {
         urls.important.relAttribute.set(keyword, href);
       } else if (text === keyword) {
         urls[type].equals.set(keyword, href);
-      } else if (text.startsWith(keyword) && !startsWithExcludes.includes(keyword)) { //startsWithExcludes.indexOf(keyword) < 0) {
+      } else if (text.startsWith(keyword) && !startsWithExcludes.includes(keyword)) {
         urls[type].startsWith.set(keyword, href);
       } else if (text.includes(keyword)) {
         urls[type].includes.set(keyword, href);

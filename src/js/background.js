@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyFIncrement": [0, "ArrowRight"], "keyFDecrement": [0, "ArrowLeft"], "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
-    /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
+    /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "yyyy/mm/dd", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
@@ -175,6 +175,7 @@ URLI.Background = function () {
       props.interval = items_.interval;
       props.base = items_.base;
       props.baseCase = items_.baseCase;
+      props.baseDateFormat = items_.baseDateFormat;
       props.leadingZeros = items_.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
       props.errorSkip = items_.errorSkip;
       props.errorCodes = items_.errorCodes;
@@ -189,7 +190,7 @@ URLI.Background = function () {
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
-      "base": props.base, "baseCase": props.baseCase,
+      "base": props.base, "baseCase": props.baseCase, "baseDateFormat": props.baseDateFormat,
       "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
       "multi": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items_.shuffleLimit,
@@ -343,7 +344,7 @@ URLI.Background = function () {
         break;
       case "setBadgeSkipErrors":
         if (request.errorCode && request.instance && !request.instance.autoEnabled) {
-          setBadge(sender.tab.id, "skip", true, request.errorCode + "");
+          setBadge(request.instance.tabId, "skip", true, request.errorCode + "");
         }
         break;
       default:

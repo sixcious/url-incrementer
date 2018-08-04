@@ -72,7 +72,7 @@ URLI.Popup = function () {
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
-    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; });
+    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value !== "date" && +this.value > 10 ? "display-block fade-in" : "display-none"; DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
@@ -242,9 +242,11 @@ URLI.Popup = function () {
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
     DOM["#base-select"].value = instance.base;
-    DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
+    DOM["#base-case"].className = instance.base !== "date" && instance.base > 10 ? "display-block" : "display-none";
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
+    DOM["#base-date"].className = instance.base === "date" ? "display-block" : "display-none";
+    DOM["#base-date-format-input"].value = instance.baseDateFormat;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
     // Toolkit Setup:
@@ -666,7 +668,7 @@ URLI.Popup = function () {
       errors = [ // [0] = selection errors and [1] = interval errors
         // [0] = Selection Errors
         selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-        url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+        !url.includes(selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
         selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
         parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
@@ -757,7 +759,7 @@ URLI.Popup = function () {
             errors = [ // [0] = selection errors and [1] = interval errors
               // [0] = Selection Errors
               selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-              url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
+              !url.includes(selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
               !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
               selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
               parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
@@ -834,8 +836,9 @@ URLI.Popup = function () {
           selection = DOM["#selection-input"].value,
           selectionStart = +DOM["#selection-start-input"].value,
           interval = +DOM["#interval-input"].value,
-          base = +DOM["#base-select"].value,
+          base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
           baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined,
+          baseDateFormat = DOM["#base-date-format-input"].value,
           selectionParsed = parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
@@ -866,9 +869,9 @@ URLI.Popup = function () {
           errors = [ // [0] = selection errors and [1] = interval errors
             // [0] = Selection Errors
             selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-            url.indexOf(selection) === -1 ? chrome.i18n.getMessage("selection_notinurl_error") :
-            !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+            !url.includes(selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
             selectionStart < 0 || url.substr(selectionStart, selection.length) !== selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+            !/^[a-z0-9]+$/i.test(selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
             parseInt(selection, base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
             isNaN(parseInt(selection, base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
             // [1] Interval Errors
