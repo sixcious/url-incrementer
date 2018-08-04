@@ -149,20 +149,74 @@ URLI.IncrementDecrement = function () {
    * @returns {string | *}
    */
   function incrementDecrementDate(action, selection, interval, dateFormat) {
-    const regex = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
-    const match = dateFormat.match(regex);
+    var selectionmod;
 
-    // y, not Y (Week Year)
-    let lowestDatePart = dateFormat.includes("d") ? "day" : dateFormat.includes("m") ? "month" : dateFormat.includes("y") ? "year": "";
-
-
-    selection;
+    // Part 1: String to Date
+    var regex = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
+    var matches = dateFormat.match(regex);
 
 
-    let selectionmod;
-    const date = new Date(selection);
-    date.setDate(date.getDate() + 1);
-    selectionmod = date.toString();
+    var delimiters = "";
+    for (let match of matches) {
+      if (/^(?![ymdhisl])/.exec(match)) {
+        delimiters += (delimiters ? "|" : "") + match;
+      }
+    }
+
+
+    // yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
+    // todo find the lowest one.
+
+    var delimitersregexp = new RegExp(delimiters, "g");
+    var selectionparts = selection.split(delimitersregexp);
+    var formatparts = dateFormat.split(delimitersregexp);
+    var mapparts = new Map();
+    for (let i = 0; i < formatparts.length; i++) {
+      switch(formatparts[i]) {
+        case "yyyy":
+          mapparts.set("year", {"format": "yyyy", "selection": selectionparts[i]});
+          break;
+        case "yy":
+          mapparts.set("year", {"format": "yy", "selection": selectionparts[i]}); // TODO: 20 or 19 (default) ?
+          break;
+        case "mm":
+          mapparts.set("month", {"format": "mm", "selection": selectionparts[i]});
+          break;
+        case "m":
+          mapparts.set("month", {"format": "m", "selection": selectionparts[i]});
+          break;
+        case "dd":
+          mapparts.set("day", {"format": "dd", "selection": selectionparts[i]});
+          break;
+        case "d":
+          mapparts.set("day", {"format": "d", "selection": selectionparts[i]});
+          break;
+        default:
+          break;
+      }
+    }
+    var date = new Date(mapparts.get("year").selection, mapparts.get("month").selection - 1, mapparts.get("day").selection);
+
+    // Part 2 Increment:
+
+    date.setDate(action.startsWith("increment") ? date.getDate() + interval : action.startsWith("decrement") ? date.getDate() - interval : date.getDate());
+
+    var mapreverse = new Map();
+    mapreverse.set("yyyy", date.getFullYear());
+    mapreverse.set("yy", date.getFullYear());
+    mapreverse.set("mm", date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1);
+    mapreverse.set("m", date.getMonth() + 1);
+    mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
+    mapreverse.set("d", date.getDate());
+
+
+    // Part 3 Date to String:
+    selectionmod = dateFormat;
+    for (let i = 0; i < formatparts.length; i++) {
+      selectionmod = selectionmod.replace(formatparts[i], mapreverse.get(formatparts[i]));
+    }
+
+
     return selectionmod;
   }
 

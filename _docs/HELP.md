@@ -4,7 +4,7 @@
 
 - [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
 - [Auto Incrementing](#auto-incrementing)
-- [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multi--page-downloading)
+- [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multi-page-downloading)
 - [Multi Incrementing](#multi-incrementing)
 - [Date Incrementing](#date-incrementing)
 - [Error Skipping](#error-skipping)
@@ -32,7 +32,7 @@ TODO
 ## Error Skipping
 This checks if the next URL will return an HTTP error code (like 404) and increments again, skipping it up to 100 times, or until it finds the next good URL. If an error is encountered, the extension icon will flash with the error code (or flash \"RED\" for redirects). Set it to 0 to disable it. Important: This will make a request to the server each time to check the status code, and setting this value too high might cause the server to issue a \"Too Many Requests\" response. A value of 10 or less should be reasonably OK. Also, Please Note: Using this with Auto or the Popup UI/1-Click Buttons requires Enhanced Mode.
 
-##### Example
+### Example
 You are on page=1 and increment with error skip set to 10. If the next 3 pages (page=2 thru page=4) don't exist, they'll be skipped and you'll be taken to the next valid page, page=5 automatically. If more than 10 consecutive pages don't exist, URLI will "give up" checking since error skip is set to 10, and just take you to the 11th next page. You can then manually increment again to repeat the process.
 
 ## Saving URLs
@@ -46,7 +46,7 @@ Also, the cryptographic hashes are *only* saved to your local extension storage 
 
 Important: Because we save URLs just like passwords, the URL must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save http://www.google.com/search?term=abc&page=1 then http://www.google.com/search?term=xyz&page=1 will not be recognized because of the difference in abc and xyz.
 
-#### Creating Saved URL Wildcards
+### Creating Saved URL Wildcards
 TODO May not be in final version
 
 To mitigate this, you can also add less-restrictive URL patterns to save the interval, base, and base case. However the selection will need to use a predefined option like (page=, or last number). The pattern must match the first part of the URL however. 
