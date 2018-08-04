@@ -36,7 +36,7 @@ URLI.IncrementDecrement = function () {
     let selectionProps;
     try {
       // Regular Expressions:
-      // Firefox: Lookbehind is not supported yet in FF as of Version 61 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are enclosed in comments below
+      // Firefox: Lookbehind is not supported yet in FF as of Version 61 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are in comments below
       const repag = /page=\d+/, // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/
             reter = /(?:(p|id|next)=\d+)/, // RegExp to find numbers with common terms like "id=" TODO: replace with lookbehind regex /(?<=p|id|next)=(\d+)/
             repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
@@ -90,6 +90,7 @@ URLI.IncrementDecrement = function () {
    * 5. base           the base to use (the supported base range is 2-36)
    * 6. baseCase       the case to use for letters (lowercase or uppercase)
    * 7. leadingZeros   if true, pad with leading zeros, false don't pad
+   * 8. dateFormat     the date format mask to use when the selection is a date
    *
    * @param action   the action to perform (increment or decrement)
    * @param instance the instance containing the parameters used to increment or decrement
@@ -98,36 +99,71 @@ URLI.IncrementDecrement = function () {
   function modifyURL(action, instance) {
     multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
-          interval = instance.interval, base = instance.base, baseCase = instance.baseCase, leadingZeros = instance.leadingZeros,
-          selectionint = parseInt(selection, base); // parseInt base range is 2-36
+          interval = instance.interval, base = instance.base, baseCase = instance.baseCase, leadingZeros = instance.leadingZeros, dateFormat = instance.baseDateFormat;
     let selectionmod;
-    if (base === "date") {
-      const baseDateFormat = instance.baseDateFormat;
-      const date = new Date(selection);
-      date.setDate(date.getDate() + 1);
-      selectionmod = date.toString();
+    switch(base) {
+      case "date":
+        selectionmod = incrementDecrementDate(action, selection, interval, dateFormat);
+        break;
+      default:
+        selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
+        break;
     }
-    else {
-    // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
-    selectionmod = action.startsWith("increment") ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
-                   action.startsWith("decrement") ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
-                   "";
-    if (leadingZeros && selection.length > selectionmod.length) { // Leading 0s
-      selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
-    }
-    if (/[a-z]/i.test(selectionmod)) { // If Alphanumeric, convert case
-      selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
-    }
-    }//
     // Append: part 1 of the URL + modified selection + part 2 of the URL
+    // TODO: cache urlpart1, urlpart2 earlier?
     const urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
     multiPost(selectionmod, urlmod, instance);
     instance.url = urlmod;
     instance.selection = selectionmod;
   }
 
-  function incrementDecrementDate(action, instance) {
+  function incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros) {
+    let selectionmod;
+    const selectionint = parseInt(selection, base); // parseInt base range is 2-36
+    // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
+    selectionmod = action.startsWith("increment") ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
+                   action.startsWith("decrement") ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
+                   "";
+    // If Leading 0s, pad with 0s
+    if (leadingZeros && selection.length > selectionmod.length) {
+      selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
+    }
+    // If Alphanumeric, convert case
+    if (/[a-z]/i.test(selectionmod)) {
+      selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
+    }
+    return selectionmod;
+  }
 
+  /**
+   * TODO
+   *
+   * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
+   * Patterns - yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
+   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh/mm/ss
+   *
+   * @param action
+   * @param selection
+   * @param interval
+   * @param dateFormat
+   * @returns {string | *}
+   */
+  function incrementDecrementDate(action, selection, interval, dateFormat) {
+    const regex = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
+    const match = dateFormat.match(regex);
+
+    // y, not Y (Week Year)
+    let lowestDatePart = dateFormat.includes("d") ? "day" : dateFormat.includes("m") ? "month" : dateFormat.includes("y") ? "year": "";
+
+
+    selection;
+
+
+    let selectionmod;
+    const date = new Date(selection);
+    date.setDate(date.getDate() + 1);
+    selectionmod = date.toString();
+    return selectionmod;
   }
 
   /**
@@ -147,6 +183,7 @@ URLI.IncrementDecrement = function () {
     console.log("origin=" + origin);
     console.log("urlorigin=" + urlOrigin);
     const sender = { "tab": { "id": instance.tabId } };
+    const response = {};
     // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
       stepThruURLs(action, instance);
@@ -180,27 +217,27 @@ console.log("after stepThruURLs and modifyURL");
           // }
           // TODO: Test sending this message multiple times?
           const request = {greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, sender); }
+          if (context === "background") { URLI.Background.messageListener(request, sender, response); }
           else { chrome.runtime.sendMessage(request); }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
           modifyURLAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
         } else {
           console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, sender); }
+          if (context === "background") { URLI.Background.messageListener(request, sender, response); }
           else { chrome.runtime.sendMessage(request);}
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - a fetch() exception was caught:" + e);
         const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
         const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-        if (context === "background") { URLI.Background.messageListener(request1, sender); URLI.Background.messageListener(request2, sender); }
+        if (context === "background") { URLI.Background.messageListener(request1, sender, response); URLI.Background.messageListener(request2, sender, response); }
         else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
       });
     } else {
       console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
       const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-      if (context === "background") { URLI.Background.messageListener(request, sender); }
+      if (context === "background") { URLI.Background.messageListener(request, sender, response); }
       else { chrome.runtime.sendMessage(request); }
     }
   }

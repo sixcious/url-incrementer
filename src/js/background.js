@@ -536,7 +536,7 @@ URLI.Background = function () {
       if (items_.permissionsInternalShortcuts) {
         chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
           if (chrome.runtime.lastError) {
-            console.log("URLI.Background.contentScriptListener() - shortcuts.js chrome.runtime.lastError=" + chrome.runtime.lastError)
+            console.log("URLI.Background.contentScriptListener() - shortcuts.js chrome.runtime.lastError=" + chrome.runtime.lastError.message)
           }
         });
       }

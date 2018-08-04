@@ -176,7 +176,7 @@ URLI.Action = function () {
           const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
             JSON.stringify(action) + ", " +
             JSON.stringify(instance) + ", " +
-            "content-script" + ", " +
+            "\"content-script\"" + ", " +
             JSON.parse(instance.errorSkip) + ");";
           // No callback because this will be executing async code and then sending a message back to the background
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
