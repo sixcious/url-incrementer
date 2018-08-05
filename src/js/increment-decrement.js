@@ -216,7 +216,11 @@ URLI.IncrementDecrement = function () {
       case "i": date.setMinutes(date.getMinutes() + interval); break;
       case "h": date.setHours(date.getHours() + interval); break;
       case "d": date.setDate(date.getDate() + interval); break;
-      case "m": date.setMonth(date.getMonth() + interval); break;
+      case "m": var month = (date.getMonth() + interval) % 12; date = new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), month !== 0 ? month : date.getMonth() + interval); break;
+        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12)); var month = (date.getMonth() + interval) % 12; date.setMonth(month !== 0 ? month : date.getMonth() + interval); break;
+         //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + 1 + interval) / 12)); var month = (date.getMonth() + interval) % 11; date.setMonth(month !== 0 ? month : date.getMonth()); break;
+      //year = year + Math.floor(interval / 12); month = (month + interval) % 12; if (month === 0) { month = 12; }  break;
+      // date.setMonth(date.getMonth() + interval); break;
       case "y": date.setFullYear(date.getFullYear() + interval); break;
       default: break;
     }
