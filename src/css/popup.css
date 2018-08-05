@@ -179,8 +179,16 @@ div.checkbox  img {
   font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 }
 
-#setup #properties #base-case label:not(:last-child) {
+#setup #base-case label:not(:last-child) {
   margin-right: 1em;
+}
+
+#setup #base-date-format-input {
+  width: 128px;
+  height: 1.75em;
+  min-height: 1.75em;
+  margin-top: 8px;
+  margin-left: 12px;
 }
 
 #profile-save, #auto-eta-repeat, #download-experimental {

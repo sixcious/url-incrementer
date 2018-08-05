@@ -32,7 +32,8 @@
   "setup_input": { "message": "Setup" },
   "increment_decrement_h3": { "message": "Select the part of the URL to Increment [+] or Decrement [-]" },
   "profile_save_label": { "message": "Save" },
-  "profile_found_img": { "message": "Saved URL" },
+  "controls_icons_saved_url": { "message": "Saved URL" },
+  "controls_icons_auto_repeat": { "message": "Auto Repeating" },
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
   "multi_button": { "message": "Multi - Click to increment up to 3 parts of the URL" },
@@ -269,7 +270,8 @@
   "interval_label": { "message": "Interval" },
   "base_label": { "message": "Base" },
   "base_option_default": { "message": "(Default)" },
-  "base_option_date": { "message": "Date / Time" },
+  "base_option_date": { "message": "Date Time" },
+  "base_option_roman": { "message": "Roman Numeral" },
   "base_option_2": { "message": "2 Binary [0-1]" },
   "base_option_3": { "message": "3 Ternary [0-2]" },
   "base_option_4": { "message": "4 Quaternary [0-3]" },
@@ -307,5 +309,6 @@
   "base_option_36": { "message": "36 Hexatrigesimal [0-9][A-Z]" },
   "base_case_lowercase_label": { "message": "Lowercase" },
   "base_case_uppercase_label": { "message": "Uppercase" },
+  "base_date_format_label": { "message": "Format" },
   "error_skip_label": { "message": "Error Skip" }
 }

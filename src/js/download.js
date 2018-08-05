@@ -98,7 +98,7 @@ URLI.Download = function () {
   function findPageURL(includes, excludes) {
     const items = new Map(),
           url = document.location.href;
-    buildItems(items, undefined, undefined, url, "page", undefined, undefined, undefined, undefined, includes, excludes);
+    buildItems(items, undefined, "", url, "page", undefined, undefined, undefined, undefined, includes, excludes);
     return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
     // if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
     //   return [{"url": url, "extension": findExtension(url), "tag": "", "attribute": ""}];

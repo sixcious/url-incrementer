@@ -131,11 +131,11 @@ URLI.Action = function () {
     // If we didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
+      // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.incrementDecrementURL
       if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
         URLI.IncrementDecrement.stepThruURLs(action, instance);
       } else {
-        URLI.IncrementDecrement.modifyURL(action, instance);
+        URLI.IncrementDecrement.incrementDecrementURL(action, instance);
       }
       instance.enabled = true;
       URLI.Background.setInstance(instance.tabId, instance);
@@ -162,7 +162,7 @@ URLI.Action = function () {
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
       const items = URLI.Background.getItems();
       if (items.permissionsEnhancedMode) {
-        URLI.IncrementDecrement.modifyURLAndSkipErrors(action, instance, "background", instance.errorSkip);
+        URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors(action, instance, "background", instance.errorSkip);
       } else {
         chrome.tabs.executeScript(instance.tabId, {
           file: "/js/increment-decrement.js",
@@ -173,7 +173,7 @@ URLI.Action = function () {
             console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
             return incrementDecrementRegular(instance, action, caller, callback);
           }
-          const code = "URLI.IncrementDecrement.modifyURLAndSkipErrors(" +
+          const code = "URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors(" +
             JSON.stringify(action) + ", " +
             JSON.stringify(instance) + ", " +
             "\"content-script\"" + ", " +

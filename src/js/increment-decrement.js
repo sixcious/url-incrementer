@@ -80,23 +80,13 @@ URLI.IncrementDecrement = function () {
   }
 
   /**
-   * Modifies the URL by either incrementing or decrementing it using
-   * an instance object that contains contains the following properties:
-   *
-   * 1. url            the URL that will be modified
-   * 2. selection      the selected part in the URL to modify
-   * 3. selectionStart the starting index of the selection in the URL
-   * 4. interval       the amount to increment or decrement
-   * 5. base           the base to use (the supported base range is 2-36)
-   * 6. baseCase       the case to use for letters (lowercase or uppercase)
-   * 7. leadingZeros   if true, pad with leading zeros, false don't pad
-   * 8. dateFormat     the date format mask to use when the selection is a date
+   * Increments or decrements a URL using an instance object that contains the URL.
    *
    * @param action   the action to perform (increment or decrement)
-   * @param instance the instance containing the parameters used to increment or decrement
+   * @param instance the instance containing the URL and parameters used to increment or decrement
    * @public
    */
-  function modifyURL(action, instance) {
+  function incrementDecrementURL(action, instance) {
     multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
           interval = instance.interval, base = instance.base, baseCase = instance.baseCase, leadingZeros = instance.leadingZeros, dateFormat = instance.baseDateFormat;
@@ -104,6 +94,9 @@ URLI.IncrementDecrement = function () {
     switch(base) {
       case "date":
         selectionmod = incrementDecrementDate(action, selection, interval, dateFormat);
+        break;
+      case "roman":
+        selectionmod = incrementDecrementRoman(action, selection, interval);
         break;
       default:
         selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
@@ -117,6 +110,26 @@ URLI.IncrementDecrement = function () {
     instance.selection = selectionmod;
   }
 
+  /**
+   * Performs a regular (alphanumeric) increment or decrement operation on the selection.
+   *
+   * 1. url            the URL that will be modified
+   * 2. selection      the selected part in the URL to modify
+   * 3. selectionStart the starting index of the selection in the URL
+   * 4. interval       the amount to increment or decrement
+   * 5. base           the base to use (the supported base range is 2-36)
+   * 6. baseCase       the case to use for letters (lowercase or uppercase)
+   * 7. leadingZeros   if true, pad with leading zeros, false don't pad
+   * 8. dateFormat     the date format mask to use when the selection is a date
+   *
+   * @param action
+   * @param selection
+   * @param interval
+   * @param base
+   * @param baseCase
+   * @param leadingZeros
+   * @returns {string | *}
+   */
   function incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros) {
     let selectionmod;
     const selectionint = parseInt(selection, base); // parseInt base range is 2-36
@@ -136,7 +149,7 @@ URLI.IncrementDecrement = function () {
   }
 
   /**
-   * TODO
+   * Performs an increment decrement operation on the date selection string.
    *
    * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
    * Patterns - yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
@@ -152,8 +165,8 @@ URLI.IncrementDecrement = function () {
     var selectionmod;
 
     // Part 1: String to Date
-    var regex = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
-    var matches = dateFormat.match(regex);
+    var regexp = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
+    var matches = dateFormat.match(regexp);
 
 
     var delimiters = "";
@@ -166,45 +179,54 @@ URLI.IncrementDecrement = function () {
 
     // yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
     // todo find the lowest one.
+    // @see https://stackoverflow.com/a/39196460
+    var lowestregexp = /(l|(s|i|h|d|m|y(?!.*m))(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
+    var lowestmatch = lowestregexp.exec(dateFormat)[0];
 
     var delimitersregexp = new RegExp(delimiters, "g");
     var selectionparts = selection.split(delimitersregexp);
     var formatparts = dateFormat.split(delimitersregexp);
-    var mapparts = new Map();
+    var mapparts = new Map([["y", 0], ["m", 1], ["d", 0], ["h", 0], ["i", 0], ["s", 0], ["l", 0]]);
     for (let i = 0; i < formatparts.length; i++) {
       switch(formatparts[i]) {
-        case "yyyy":
-          mapparts.set("year", {"format": "yyyy", "selection": selectionparts[i]});
-          break;
-        case "yy":
-          mapparts.set("year", {"format": "yy", "selection": selectionparts[i]}); // TODO: 20 or 19 (default) ?
-          break;
-        case "mm":
-          mapparts.set("month", {"format": "mm", "selection": selectionparts[i]});
-          break;
-        case "m":
-          mapparts.set("month", {"format": "m", "selection": selectionparts[i]});
-          break;
-        case "dd":
-          mapparts.set("day", {"format": "dd", "selection": selectionparts[i]});
-          break;
-        case "d":
-          mapparts.set("day", {"format": "d", "selection": selectionparts[i]});
-          break;
-        default:
-          break;
+        case "yyyy": mapparts.set("y", selectionparts[i]); break;
+        case "yy":   mapparts.set("y", selectionparts[i]); break; // TODO: 20 or 19 (default) ?
+        case "mm":   mapparts.set("m", selectionparts[i]); break;
+        case "m":    mapparts.set("m", selectionparts[i]); break;
+        case "dd":   mapparts.set("d", selectionparts[i]); break;
+        case "d":    mapparts.set("d", selectionparts[i]); break;
+        case "hh":   mapparts.set("h", selectionparts[i]); break;
+        case "h":    mapparts.set("h", selectionparts[i]); break;
+        case "ii":   mapparts.set("i", selectionparts[i]); break;
+        case "i":    mapparts.set("i", selectionparts[i]); break;
+        case "ss":   mapparts.set("s", selectionparts[i]); break;
+        case "s":    mapparts.set("s", selectionparts[i]); break;
+        case "ll":   mapparts.set("l", selectionparts[i]); break;
+        case "l":    mapparts.set("l", selectionparts[i]); break;
+        default: break;
       }
     }
-    var date = new Date(mapparts.get("year").selection, mapparts.get("month").selection - 1, mapparts.get("day").selection);
+    var date = new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
 
     // Part 2 Increment:
+    interval = action.startsWith("decrement") ? -interval : interval;
+    switch(lowestmatch) {
+      case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
+      case "s": date.setSeconds(date.getSeconds() + interval); break;
+      case "i": date.setMinutes(date.getMinutes() + interval); break;
+      case "h": date.setHours(date.getHours() + interval); break;
+      case "d": date.setDate(date.getDate() + interval); break;
+      case "m": date.setMonth(date.getMonth() + interval); break;
+      case "y": date.setFullYear(date.getFullYear() + interval); break;
+      default: break;
+    }
 
-    date.setDate(action.startsWith("increment") ? date.getDate() + interval : action.startsWith("decrement") ? date.getDate() - interval : date.getDate());
+    //date.setDate(action.startsWith("increment") ? date.getDate() + interval : action.startsWith("decrement") ? date.getDate() - interval : date.getDate());
 
     var mapreverse = new Map();
     mapreverse.set("yyyy", date.getFullYear());
     mapreverse.set("yy", date.getFullYear());
-    mapreverse.set("mm", date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1);
+    mapreverse.set("mm", (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
     mapreverse.set("m", date.getMonth() + 1);
     mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
     mapreverse.set("d", date.getDate());
@@ -220,31 +242,36 @@ URLI.IncrementDecrement = function () {
     return selectionmod;
   }
 
+  // TODO
+  function incrementDecrementRoman(action, selection, interval) {
+  }
+
   /**
-   * Modifies the URL by either incrementing or decrementing the specified
-   * selection and performs error skipping.
+   * Increments or decrements a URL using an instance object that contains the URL
+   * while performing error skipping.
    *
    * @param action               the action to perform (increment or decrement)
-   * @param instance             the instance containing the URL properties
+   * @param instance             the instance containing the URL and parameters used to increment or decrement
+   * @param context              the context this method is running in ("background" or "content-script")
    * @param errorSkipRemaining   the number of times left to skip while performing this action
    * @param errorCodeEncountered whether or not an error code has been encountered yet while performing this action
    * @public
    */
-  function modifyURLAndSkipErrors(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
-    console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
+  function incrementDecrementURLAndSkipErrors(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
+    console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
     console.log("origin=" + origin);
     console.log("urlorigin=" + urlOrigin);
     const sender = { "tab": { "id": instance.tabId } };
     const response = {};
-    // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.modifyURL
+    // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.incrementDecrementURL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
       stepThruURLs(action, instance);
     } else {
-      modifyURL(action, instance);
+      incrementDecrementURL(action, instance);
     }
-console.log("after stepThruURLs and modifyURL");
+console.log("after stepThruURLs and incrementDecrementURL");
     // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if ((context === "background" || (origin === urlOrigin)) && errorSkipRemaining > 0) {
       console.log("about to do fetch");
@@ -262,9 +289,9 @@ console.log("after stepThruURLs and modifyURL");
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - request.url= " + instance.url);
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - response.url=" + response.url);
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
+          console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - request.url= " + instance.url);
+          console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - response.url=" + response.url);
+          console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           // setBadgeSkipErrors, but only need to send message the first time an errorCode is encountered
           // if (!errorCodeEncountered) {
           //   chrome.runtime.sendMessage({greeting: "setBadgeSkipErrors", "errorCode": response.redirected ? "RED" : response.status, "instance": instance});
@@ -274,22 +301,22 @@ console.log("after stepThruURLs and modifyURL");
           if (context === "background") { URLI.Background.messageListener(request, sender, response); }
           else { chrome.runtime.sendMessage(request); }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-          modifyURLAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
+          incrementDecrementURLAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
         } else {
-          console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
+          console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
           if (context === "background") { URLI.Background.messageListener(request, sender, response); }
           else { chrome.runtime.sendMessage(request);}
         }
       }).catch(e => {
-        console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - a fetch() exception was caught:" + e);
+        console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - a fetch() exception was caught:" + e);
         const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
         const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
         if (context === "background") { URLI.Background.messageListener(request1, sender, response); URLI.Background.messageListener(request2, sender, response); }
         else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
       });
     } else {
-      console.log("URLI.IncrementDecrement.modifyURLAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      console.log("URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
       const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
       if (context === "background") { URLI.Background.messageListener(request, sender, response); }
       else { chrome.runtime.sendMessage(request); }
@@ -298,7 +325,7 @@ console.log("after stepThruURLs and modifyURL");
 
   /**
    * Steps to the next or previous position in the URLs array.
-   * This is used instead of modifyURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
+   * This is used instead of incrementDecrementURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
    *
    * @param action   the action (increment moves forward, decrement moves backward in the array)
    * @param instance the instance containing the URLs array
@@ -323,6 +350,7 @@ console.log("after stepThruURLs and modifyURL");
    *
    * @param instance
    * @returns {{urls: Array, currentIndex: number}}
+   * @public
    */
   function precalculateURLs(instance) {
     console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
@@ -359,14 +387,14 @@ console.log("after stepThruURLs and modifyURL");
       limit--;
     }
     for (let i = 0; i < limit; i++) {
-      modifyURL(action, instance);
+      incrementDecrementURL(action, instance);
       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
       const selectionint = parseInt(instance.selection, instance.base);
       if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
         break;
       }
     }
-    // Reset instance url and selection after calling modifyURL():
+    // Reset instance url and selection after calling incrementDecrementURL():
     instance.url = url;
     instance.selection = selection;
     if (instance.shuffleURLs) {
@@ -409,7 +437,7 @@ console.log("after stepThruURLs and modifyURL");
   }
 
   /**
-   * Pre-handles a multi-incrementing instance before modifyURL().
+   * Pre-handles a multi-incrementing instance before incrementDecrementURL().
    *
    * @param action   the action (increment or decrement, for multi, this may have a 2 or 3 at the end e.g. increment3)
    * @param instance the instance to handle
@@ -417,7 +445,7 @@ console.log("after stepThruURLs and modifyURL");
    */
   function multiPre(action, instance) {
     if (instance && instance.multiEnabled) {
-      // Set the current instance properties with the multi part's properties for modifyURL()
+      // Set the current instance properties with the multi part's properties for incrementDecrementURL()
       const match = /\d+/.exec(action),
             part = match ? match[0] : "1"; // an "increment" action without a number at the end (e.g. increment#) is always 1
       instance.multiPart = part; // Stored later for multiPost() so we don't have to execute the above regex again
@@ -431,7 +459,7 @@ console.log("after stepThruURLs and modifyURL");
   }
 
   /**
-   * Post-handles a multi-incrementing instance after modifyURL().
+   * Post-handles a multi-incrementing instance after incrementDecrementURL().
    *
    * @param selectionmod the modified selection
    * @param urlmod       the modified URL
@@ -461,8 +489,8 @@ console.log("after stepThruURLs and modifyURL");
   // Return Public Functions
   return {
     findSelection: findSelection,
-    modifyURL: modifyURL,
-    modifyURLAndSkipErrors: modifyURLAndSkipErrors,
+    incrementDecrementURL: incrementDecrementURL,
+    incrementDecrementURLAndSkipErrors: incrementDecrementURLAndSkipErrors,
     stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };
