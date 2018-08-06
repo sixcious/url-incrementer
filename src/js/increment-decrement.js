@@ -192,6 +192,8 @@ URLI.IncrementDecrement = function () {
     console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     var selectionmod;
     try {
+      // TODO month names, short and logn mmm mmmmm
+      var months = new Map([["jan", 0], ["feb", 1], ["mar", 2]]);
       // Part 1: String to Date
       var regexp = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
       var matches = dateFormat.match(regexp);
@@ -212,6 +214,8 @@ URLI.IncrementDecrement = function () {
         switch(formatparts[i]) {
           case "yyyy": mapparts.set("y", selectionparts[i]); break;
           case "yy":   mapparts.set("y", selectionparts[i]); break; // TODO: 20 or 19 (default) ?
+          case "mmmm": mapparts.set("m", selectionparts[i]); break;
+          case "mmm":  mapparts.set("m", selectionparts[i]); break;
           case "mm":   mapparts.set("m", selectionparts[i]); break;
           case "m":    mapparts.set("m", selectionparts[i]); break;
           case "dd":   mapparts.set("d", selectionparts[i]); break;
