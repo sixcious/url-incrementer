@@ -29,43 +29,59 @@ TODO
 TODO
 
 ## Date Incrementing
-Increment dates and times in URLs by providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like year/month/day, then day will be incremented by the interval. Each part of the date needs to be separated by a non date-format character (like / or - for example).
+Increment dates and times in URLs by providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
+
+Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to be fixed-width without any separators (e.g. "201801"). 
 
 #### Date Selection and Format Examples
 
-| Selection  | Format |
-| ---------  | ------ |
-| 01/25/2018 | mm/dd/yyyy |
-| Jan-2018   | Mmm-yyyy |
-| 18_01_25   | yy_mm_dd |
-| 12:30:05   | hh:mm:ii |
-| 1-25_12:30 | m-d_hh:mm |
+Valid Examples:
 
-#### Date Format List
+| Selection  | Format     |
+| ---------  | ---------- |
+| 01/25/2018 | mm/dd/yyyy |
+| Jan-2018   | Mmm-yyyy   |
+| 18_1_25    | yy_m_dd    |
+| 20180125   | yyyymmdd   |
+| 12:30:05   | hh:mm:ii   |
+| 1-25_12:30 | m-d_hh:mm  |
+
+Invalid Examples:
+
+| Selection   | Format    | Reason                                                                    |
+| ----------  | --------- | ------------------------------------------------------------------------- |
+| /01/25/2018 | /mm/dd/yyyy | 
+| 01-252018   | mm-ddyyyy | Mixed usage of separators and non-separators between date parts           |
+| 1252018     | mddyyyy   | Uses a non fixed-width date part without separators ("m" instead of "mm") |
+| Sept-2018   | Mmm-yyyy  | "Sept" not in supported short month names ("Sep" only is)                 |
+
+#### Date Formats
 This is a table of all the allowable parts you can use in the format.
 
-| Format | Component | Presentation | Examples |
-| ------ | --------- | ------------ | -------- |
-| yyyy   | Year      | 4 Digits     | 2000, 2010 |
-| yy     | Year      | 2 Digits     | 00, 10 |
-| mm     | Month     | 2 Digits     | 01, 12 |
-| m      | Month     | 1 Digit      | 1, 12 |
-| mmm    | Month     | Short Name Lowercased  | jan, dec |
-| Mmm    | Month     | Short Name Capitalized | Jan, Dec |
-| MMM    | Month     | Short Name Uppercased  | JAN, DEC |
-| mmmm   | Month     | Long Name Lowercased   | january, december |
-| Mmmm   | Month     | Long Name Capitalized  | January, December |
-| MMMMM  | Month     | Long Name Uppercased   | JANUARY, DECEMBER |
-| dd     | Day       | 2 Digits     | 01, 31 |
-| d      | Day       | 1 Digit      | 1, 31 |
-| hh     | Hours     | 2 Digits     | 01, 23 |
-| h      | Hours     | 1 Digit      | 1, 23 |
-| ii     | Minutes   | 2 Digits     | 01, 59 |
-| i      | Minutes   | 1 Digit      | 1, 59 |
-| ss     | Seconds   | 2 Digits     | 01, 59 |
-| s      | Seconds   | 1 Digit      | 1, 59 |
-| ll     | Milliseconds | X Digits  | 0000, 0999 |
-| l      | Milliseconds | 1 Digit   | 0, 999 |
+| Format | Component    | Presentation | Examples |
+| ------ | ------------ | ------------ | -------- |
+| yyyy   | Year         | 4 Digits     | 2000, 2010 |
+| yy     | Year         | 2 Digits     | 00, 10 |
+| mm     | Month        | 2 Digits     | 01, 12 |
+| m      | Month        | 1 Digit      | 1, 12 |
+| mmm    | Month        | Short Name Lowercased  | jan, dec |
+| Mmm    | Month        | Short Name Capitalized | Jan, Dec |
+| MMM    | Month        | Short Name Uppercased  | JAN, DEC |
+| mmmm   | Month        | Long Name Lowercased   | january, december |
+| Mmmm   | Month        | Long Name Capitalized  | January, December |
+| MMMM   | Month        | Long Name Uppercased   | JANUARY, DECEMBER |
+| dd     | Day          | 2 Digits     | 01, 31 |
+| d      | Day          | 1 Digit      | 1, 31 |
+| hh     | Hours        | 2 Digits     | 01, 23 |
+| h      | Hours        | 1 Digit      | 1, 23 |
+| ii     | Minutes      | 2 Digits     | 01, 59 |
+| i      | Minutes      | 1 Digit      | 1, 59 |
+| ss     | Seconds      | 2 Digits     | 01, 59 |
+| s      | Seconds      | 1 Digit      | 1, 59 |
+| ll     | Milliseconds | 4 Digits  | 0001, 0999 |
+| l      | Milliseconds | 1 Digit   | 1, 999 |
+
+* For the yy format (2 Digit Year) format, if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
 
 #### Short and Long Month Names
 Only the the EN-US language is currently supported.

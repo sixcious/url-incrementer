@@ -988,8 +988,8 @@ URLI.Popup = function () {
         backgroundPage.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, async function() {
         instance.enabled = enabled;
         instance.profileFound = profileSave;
-        instance.selection = selection;
-        instance.selectionStart = selectionStart;
+        instance.selection = instance.startingSelection = selection;
+        instance.selectionStart = instance.startingSelectionStart = selectionStart;
         instance.interval = interval;
         instance.base = base;
         instance.baseCase = baseCase;
@@ -1071,8 +1071,9 @@ URLI.Popup = function () {
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({
             "interval": interval,
-            "base": base,
+            "base": !isNaN(base) ? base : items_.base, // Don't ever save non Number bases (e.g. Date Time) as the default
             "baseCase": baseCase,
+            "baseDateFormat": baseDateFormat,
             "errorSkip": errorSkip
           });
         }

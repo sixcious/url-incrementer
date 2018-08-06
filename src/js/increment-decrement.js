@@ -206,9 +206,17 @@ URLI.IncrementDecrement = function () {
         }
       }
 
-      var delimitersregexp = new RegExp(delimiters, "g");
-      var selectionparts = selection.split(delimitersregexp);
-      var formatparts = dateFormat.split(delimitersregexp);
+      var formatparts = [], selectionparts = [];
+      if (delimiters !== "") {
+        var delimitersregexp = new RegExp(delimiters, "g");
+        formatparts = dateFormat.split(delimitersregexp).filter(Boolean);
+        selectionparts = selection.split(delimitersregexp).filter(Boolean);
+      } else {
+        formatparts = matches;
+        for (var i = 0; i < formatparts.length; i++) {
+          selectionparts[i] = selection.substr(i > 0 ? formatparts[i - 1].length  : 0, formatparts[i].length); // use substr over substring here
+        }
+      }
       var mapparts = new Map([["y", 2000], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
       for (let i = 0; i < formatparts.length; i++) {
         switch(formatparts[i]) {
