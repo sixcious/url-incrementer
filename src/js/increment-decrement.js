@@ -80,6 +80,33 @@ URLI.IncrementDecrement = function () {
   }
 
   /**
+   * TODO
+   *
+   * @param action
+   * @param instance
+   */
+  function incrementDecrement(action, instance) {
+    //TODO Put this here?
+    // // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.incrementDecrementURL
+    // if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
+    //   stepThruURLs(action, instance);
+    // } else {
+    //   incrementDecrement(action, instance);
+    // }
+
+
+    // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
+    if (instance.multiEnabled && !/\d/.test(action)) {
+      console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutli=" + instance.multi);
+      for (let i = 1; i <= instance.multi; i++) {
+        incrementDecrementURL(action + i, instance);
+      }
+    } else {
+      incrementDecrementURL(action, instance);
+    }
+  }
+
+  /**
    * Increments or decrements a URL using an instance object that contains the URL.
    *
    * @param action   the action to perform (increment or decrement)
@@ -162,87 +189,94 @@ URLI.IncrementDecrement = function () {
    * @returns {string | *}
    */
   function incrementDecrementDate(action, selection, interval, dateFormat) {
+    console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     var selectionmod;
+    try {
+      // Part 1: String to Date
+      var regexp = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
+      var matches = dateFormat.match(regexp);
 
-    // Part 1: String to Date
-    var regexp = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
-    var matches = dateFormat.match(regexp);
 
-
-    var delimiters = "";
-    for (let match of matches) {
-      if (/^(?![ymdhisl])/.exec(match)) {
-        delimiters += (delimiters ? "|" : "") + match;
+      var delimiters = "";
+      for (let match of matches) {
+        if (/^(?![ymdhisl])/.exec(match)) {
+          delimiters += (delimiters ? "|" : "") + match;
+        }
       }
-    }
+
+      var delimitersregexp = new RegExp(delimiters, "g");
+      var selectionparts = selection.split(delimitersregexp);
+      var formatparts = dateFormat.split(delimitersregexp);
+      var mapparts = new Map([["y", 0], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
+      for (let i = 0; i < formatparts.length; i++) {
+        switch(formatparts[i]) {
+          case "yyyy": mapparts.set("y", selectionparts[i]); break;
+          case "yy":   mapparts.set("y", selectionparts[i]); break; // TODO: 20 or 19 (default) ?
+          case "mm":   mapparts.set("m", selectionparts[i]); break;
+          case "m":    mapparts.set("m", selectionparts[i]); break;
+          case "dd":   mapparts.set("d", selectionparts[i]); break;
+          case "d":    mapparts.set("d", selectionparts[i]); break;
+          case "hh":   mapparts.set("h", selectionparts[i]); break;
+          case "h":    mapparts.set("h", selectionparts[i]); break;
+          case "ii":   mapparts.set("i", selectionparts[i]); break;
+          case "i":    mapparts.set("i", selectionparts[i]); break;
+          case "ss":   mapparts.set("s", selectionparts[i]); break;
+          case "s":    mapparts.set("s", selectionparts[i]); break;
+          case "ll":   mapparts.set("l", selectionparts[i]); break;
+          case "l":    mapparts.set("l", selectionparts[i]); break;
+          default: break;
+        }
+      }
+      var date = new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
+      var originalDate = date;
 
 
-    // yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
-    // todo find the lowest one.
-    // @see https://stackoverflow.com/a/39196460
-    var lowestregexp = /(l|(s|i|h|d|m|y(?!.*m))(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
-    var lowestmatch = lowestregexp.exec(dateFormat)[0];
+      // Part 2 Increment:
+      interval = action.startsWith("decrement") ? -interval : interval;
 
-    var delimitersregexp = new RegExp(delimiters, "g");
-    var selectionparts = selection.split(delimitersregexp);
-    var formatparts = dateFormat.split(delimitersregexp);
-    var mapparts = new Map([["y", 0], ["m", 1], ["d", 0], ["h", 0], ["i", 0], ["s", 0], ["l", 0]]);
-    for (let i = 0; i < formatparts.length; i++) {
-      switch(formatparts[i]) {
-        case "yyyy": mapparts.set("y", selectionparts[i]); break;
-        case "yy":   mapparts.set("y", selectionparts[i]); break; // TODO: 20 or 19 (default) ?
-        case "mm":   mapparts.set("m", selectionparts[i]); break;
-        case "m":    mapparts.set("m", selectionparts[i]); break;
-        case "dd":   mapparts.set("d", selectionparts[i]); break;
-        case "d":    mapparts.set("d", selectionparts[i]); break;
-        case "hh":   mapparts.set("h", selectionparts[i]); break;
-        case "h":    mapparts.set("h", selectionparts[i]); break;
-        case "ii":   mapparts.set("i", selectionparts[i]); break;
-        case "i":    mapparts.set("i", selectionparts[i]); break;
-        case "ss":   mapparts.set("s", selectionparts[i]); break;
-        case "s":    mapparts.set("s", selectionparts[i]); break;
-        case "ll":   mapparts.set("l", selectionparts[i]); break;
-        case "l":    mapparts.set("l", selectionparts[i]); break;
+      // yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
+      // todo find the lowest one.
+      // @see https://stackoverflow.com/a/39196460
+      var lowestregexp = /(l|(s|i|h|d|m|y(?!.*m))(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
+      var lowestmatch = lowestregexp.exec(dateFormat)[0];
+
+      switch(lowestmatch) {
+        case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
+        case "s": date.setSeconds(date.getSeconds() + interval); break;
+        case "i": date.setMinutes(date.getMinutes() + interval); break;
+        case "h": date.setHours(date.getHours() + interval); break;
+        case "d": date.setDate(date.getDate() + interval); break;
+        case "m": date = new Date(date.getFullYear(), date.getMonth() + interval); break;
+        // new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), (date.getMonth() + interval) < 0 ? Math.abs((date.getMonth() + interval + 12) % 12) : (date.getMonth() + interval) % 12); break;
+        //(((date.getMonth() + interval) < 0 ? Math.abs(interval + 1 % 12) : date.getMonth() + interval)) % 12); break;
+        //var month = (date.getMonth() + interval + 1) % 12; date = new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), month !== 0 ? month - 1 : date.getMonth() + interval - 1); break;
+        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12)); var month = (date.getMonth() + interval) % 12; date.setMonth(month !== 0 ? month : date.getMonth() + interval); break;
+        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + 1 + interval) / 12)); var month = (date.getMonth() + interval) % 11; date.setMonth(month !== 0 ? month : date.getMonth()); break;
+        //year = year + Math.floor(interval / 12); month = (month + interval) % 12; if (month === 0) { month = 12; }  break;
+        // date.setMonth(date.getMonth() + interval); break;
+        case "y": date.setFullYear(date.getFullYear() + interval); break;
         default: break;
       }
+
+
+      // Part 3 Date to String:
+      var mapreverse = new Map();
+      mapreverse.set("yyyy", date.getFullYear());
+      mapreverse.set("yy", (date.getFullYear() + "").substring(2));
+      mapreverse.set("mm", (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
+      mapreverse.set("m", date.getMonth() + 1);
+      mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
+      mapreverse.set("d", date.getDate());
+
+      selectionmod = dateFormat;
+      for (let i = 0; i < formatparts.length; i++) {
+        selectionmod = selectionmod.replace(formatparts[i], mapreverse.get(formatparts[i]));
+      }
+
+    } catch(e) {
+      console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
+      selectionmod = "DateError";
     }
-    var date = new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
-
-    // Part 2 Increment:
-    interval = action.startsWith("decrement") ? -interval : interval;
-    switch(lowestmatch) {
-      case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
-      case "s": date.setSeconds(date.getSeconds() + interval); break;
-      case "i": date.setMinutes(date.getMinutes() + interval); break;
-      case "h": date.setHours(date.getHours() + interval); break;
-      case "d": date.setDate(date.getDate() + interval); break;
-      case "m": var month = (date.getMonth() + interval) % 12; date = new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), month !== 0 ? month : date.getMonth() + interval); break;
-        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12)); var month = (date.getMonth() + interval) % 12; date.setMonth(month !== 0 ? month : date.getMonth() + interval); break;
-         //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + 1 + interval) / 12)); var month = (date.getMonth() + interval) % 11; date.setMonth(month !== 0 ? month : date.getMonth()); break;
-      //year = year + Math.floor(interval / 12); month = (month + interval) % 12; if (month === 0) { month = 12; }  break;
-      // date.setMonth(date.getMonth() + interval); break;
-      case "y": date.setFullYear(date.getFullYear() + interval); break;
-      default: break;
-    }
-
-    //date.setDate(action.startsWith("increment") ? date.getDate() + interval : action.startsWith("decrement") ? date.getDate() - interval : date.getDate());
-
-    var mapreverse = new Map();
-    mapreverse.set("yyyy", date.getFullYear());
-    mapreverse.set("yy", date.getFullYear());
-    mapreverse.set("mm", (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
-    mapreverse.set("m", date.getMonth() + 1);
-    mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
-    mapreverse.set("d", date.getDate());
-
-
-    // Part 3 Date to String:
-    selectionmod = dateFormat;
-    for (let i = 0; i < formatparts.length; i++) {
-      selectionmod = selectionmod.replace(formatparts[i], mapreverse.get(formatparts[i]));
-    }
-
-
     return selectionmod;
   }
 
@@ -273,10 +307,11 @@ URLI.IncrementDecrement = function () {
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
       stepThruURLs(action, instance);
     } else {
-      incrementDecrementURL(action, instance);
+      incrementDecrement(action, instance);
     }
+
 console.log("after stepThruURLs and incrementDecrementURL");
-    // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    // We check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS (unless the context is background, e.g. Enhanced Mode <all_urls> permissions)
     if ((context === "background" || (origin === urlOrigin)) && errorSkipRemaining > 0) {
       console.log("about to do fetch");
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
@@ -391,7 +426,16 @@ console.log("after stepThruURLs and incrementDecrementURL");
       limit--;
     }
     for (let i = 0; i < limit; i++) {
-      incrementDecrementURL(action, instance);
+      // // If multi is enabled, simultaneously increment multiple parts of the URL:
+      // if (instance.multiEnabled) {
+      //   console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutli=" + instance.multi);
+      //   for (let i = 1; i <= instance.multi; i++) {
+      //     incrementDecrementURL(action + i, instance);
+      //   }
+      // } else {
+      //   incrementDecrementURL(action, instance);
+      // }
+      incrementDecrement(action, instance);
       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
       const selectionint = parseInt(instance.selection, instance.base);
       if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
@@ -493,8 +537,10 @@ console.log("after stepThruURLs and incrementDecrementURL");
   // Return Public Functions
   return {
     findSelection: findSelection,
+    incrementDecrement: incrementDecrement,
     incrementDecrementURL: incrementDecrementURL,
     incrementDecrementURLAndSkipErrors: incrementDecrementURLAndSkipErrors,
+    incrementDecrementDate: incrementDecrementDate,
     stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };

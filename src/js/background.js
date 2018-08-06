@@ -22,7 +22,7 @@ URLI.Background = function () {
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
-    /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "filename", "extension", "tag", "url", "compressed"],
+    /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* fun */         "urli": "loves incrementing for you"
   },
@@ -219,7 +219,7 @@ URLI.Background = function () {
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
     const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
     const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
-    const selectionParsed = parseInt(selection, profile.base).toString(profile.base);
+    const selectionParsed = isNaN(profile.base) ? undefined : parseInt(selection, profile.base).toString(profile.base);
     // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
     // Test base matches selection for same reason
     return {
@@ -227,7 +227,7 @@ URLI.Background = function () {
       urlhash1 === profile.urlhash1 &&
       (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true) &&
       /^[a-z0-9]+$/i.test(selection) &&
-      !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())),
+      selectionParsed ? !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) : profile.base === "date" && false, // TODO date base
       "selection": selection
     };
   }

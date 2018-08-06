@@ -55,6 +55,8 @@ URLI.Action = function () {
     switch (action) {
       case "increment":
       case "decrement":
+      case "increment1":
+      case "decrement1":
       case "increment2":
       case "decrement2":
       case "increment3":
@@ -135,7 +137,7 @@ URLI.Action = function () {
       if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
         URLI.IncrementDecrement.stepThruURLs(action, instance);
       } else {
-        URLI.IncrementDecrement.incrementDecrementURL(action, instance);
+        URLI.IncrementDecrement.incrementDecrement(action, instance);
       }
       instance.enabled = true;
       URLI.Background.setInstance(instance.tabId, instance);

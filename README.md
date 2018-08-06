@@ -9,14 +9,14 @@ URLI ("yur-lee") increments URLs and other interesting incrementing things. For 
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it.
 
-If something isn't working right or if there's anything you don't like, I'd really appreciate it if you could please give me a chance and email me before leaving a low-rating/review, and I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features
 - Auto Incrementing
 - Download Incrementing [Experimental] **
 - Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
-- Date & Time Incrementing
+- Date Time Incrementing
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
 - Chrome Shortcuts
@@ -31,13 +31,13 @@ If something isn't working right or if there's anything you don't like, I'd real
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-# Coming Soon in Version 6.0 (8/8/2018)
+# Coming Soon in Version 6.0 (8/18/2018)
 Over 10 New Features
 - Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
-- Multi-Incrementing - Increment up to 3 different parts of the URL at the same time. Click the Multi (share icon) near Selection and then click Accept. + - Buttons will show in the UI. Great for year/month/day URLs!
-- Date & Time Incrementing - Increment dates and times in URLs like 2018/08/05 and/or 12:30:05 supplying your own custom date and time format mask!
-- AUTO Repeat Mode - Loops back to the starting URL and repeats!
+- Multi-Incrementing - Increment up to 3 different parts of the URL at the same time or individually. Click the Multi (share icon) near Selection and then click Accept. Additional + - Buttons will show in the UI for simultaneous and individual-part incrementing.
+- Date Time Incrementing - Increment dates and times in URLs like 2018/08/05 and/or 12:30:05
+- AUTO Repeat Mode - Loops back to the starting URL and repeats
 - Return to Start Button (Yellow) - Convenient button to return you back to the starting URL 
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
 - Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
