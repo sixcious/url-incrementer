@@ -29,7 +29,59 @@ TODO
 TODO
 
 ## Date Incrementing
-TODO
+Increment dates and times in URLs by providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like year/month/day, then day will be incremented by the interval. Each part of the date needs to be separated by a non date-format character (like / or - for example).
+
+#### Date Selection and Format Examples
+
+| Selection  | Format |
+| ---------  | ------ |
+| 01/25/2018 | mm/dd/yyyy |
+| Jan-2018   | Mmm-yyyy |
+| 18_01_25   | yy_mm_dd |
+| 12:30:05   | hh:mm:ii |
+| 1-25_12:30 | m-d_hh:mm |
+
+#### Date Format List
+This is a table of all the allowable parts you can use in the format.
+
+| Format | Component | Presentation | Examples |
+| ------ | --------- | ------------ | -------- |
+| yyyy   | Year      | 4 Digits     | 2000, 2010 |
+| yy     | Year      | 2 Digits     | 00, 10 |
+| mm     | Month     | 2 Digits     | 01, 12 |
+| m      | Month     | 1 Digit      | 1, 12 |
+| mmm    | Month     | Short Name Lowercased  | jan, dec |
+| Mmm    | Month     | Short Name Capitalized | Jan, Dec |
+| MMM    | Month     | Short Name Uppercased  | JAN, DEC |
+| mmmm   | Month     | Long Name Lowercased   | january, december |
+| Mmmm   | Month     | Long Name Capitalized  | January, December |
+| MMMMM  | Month     | Long Name Uppercased   | JANUARY, DECEMBER |
+| dd     | Day       | 2 Digits     | 01, 31 |
+| d      | Day       | 1 Digit      | 1, 31 |
+| hh     | Hours     | 2 Digits     | 01, 23 |
+| h      | Hours     | 1 Digit      | 1, 23 |
+| ii     | Minutes   | 2 Digits     | 01, 59 |
+| i      | Minutes   | 1 Digit      | 1, 59 |
+| ss     | Seconds   | 2 Digits     | 01, 59 |
+| s      | Seconds   | 1 Digit      | 1, 59 |
+| ll     | Milliseconds | X Digits  | 0000, 0999 |
+| l      | Milliseconds | 1 Digit   | 0, 999 |
+
+#### Short and Long Month Names
+Only the the EN-US language is currently supported.
+
+- Jan - January
+- Feb - February
+- Mar - March
+- Apr - April
+- May - May
+- Jun - June
+- Jul - July
+- Aug - August
+- Sep - September
+- Oct - October
+- Nov - November
+- Dec - December
 
 ## Error Skipping
 This checks if the next URL will return an HTTP error code (like 404) and increments again, skipping it up to 100 times, or until it finds the next good URL. If an error is encountered, the extension icon will flash with the error code (or flash \"RED\" for redirects). Set it to 0 to disable it. Important: This will make a request to the server each time to check the status code, and setting this value too high might cause the server to issue a \"Too Many Requests\" response. A value of 10 or less should be reasonably OK. Also, Please Note: Using this with Auto or the Popup UI/1-Click Buttons requires Enhanced Mode.

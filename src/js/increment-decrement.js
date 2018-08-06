@@ -192,16 +192,16 @@ URLI.IncrementDecrement = function () {
     console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     var selectionmod;
     try {
-      // TODO month names, short and logn mmm mmmmm
-      var months = new Map([["jan", 0], ["feb", 1], ["mar", 2]]);
       // Part 1: String to Date
-      var regexp = /(y+)|(m+)|(d+)|(h+)|(i+)|(l+)|([^ymdhisl]+)/g;
+
+      var mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+      var mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+      var regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
       var matches = dateFormat.match(regexp);
-
-
       var delimiters = "";
       for (let match of matches) {
-        if (/^(?![ymdhisl])/.exec(match)) {
+        if (/^(?![ymMdhisl])/.exec(match)) {
           delimiters += (delimiters ? "|" : "") + match;
         }
       }
@@ -209,13 +209,13 @@ URLI.IncrementDecrement = function () {
       var delimitersregexp = new RegExp(delimiters, "g");
       var selectionparts = selection.split(delimitersregexp);
       var formatparts = dateFormat.split(delimitersregexp);
-      var mapparts = new Map([["y", 0], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
+      var mapparts = new Map([["y", 2000], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
       for (let i = 0; i < formatparts.length; i++) {
         switch(formatparts[i]) {
           case "yyyy": mapparts.set("y", selectionparts[i]); break;
-          case "yy":   mapparts.set("y", selectionparts[i]); break; // TODO: 20 or 19 (default) ?
-          case "mmmm": mapparts.set("m", selectionparts[i]); break;
-          case "mmm":  mapparts.set("m", selectionparts[i]); break;
+          case "yy":   mapparts.set("y", parseInt(selectionparts[i]) > 70 ? "19" + selectionparts[i] : "20" + selectionparts[i]); break;
+          case "mmmm": case "Mmmm": case"MMMM": mapparts.set("m", mmmm.findIndex(m => m === selectionparts[i].toLowerCase()) + 1); break;
+          case "mmm": case"Mmm": case"MMM": mapparts.set("m", mmm.findIndex(m => m === selectionparts[i].toLowerCase()) + 1); break;
           case "mm":   mapparts.set("m", selectionparts[i]); break;
           case "m":    mapparts.set("m", selectionparts[i]); break;
           case "dd":   mapparts.set("d", selectionparts[i]); break;
@@ -234,49 +234,48 @@ URLI.IncrementDecrement = function () {
       var date = new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
       var originalDate = date;
 
-
       // Part 2 Increment:
       interval = action.startsWith("decrement") ? -interval : interval;
-
-      // yyyy | yy, mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
-      // todo find the lowest one.
       // @see https://stackoverflow.com/a/39196460
-      var lowestregexp = /(l|(s|i|h|d|m|y(?!.*m))(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
+      var lowestregexp = /(l|(s|i|h|d|M|m|y(?!.*m))(?!.*M)(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
       var lowestmatch = lowestregexp.exec(dateFormat)[0];
-
       switch(lowestmatch) {
         case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
         case "s": date.setSeconds(date.getSeconds() + interval); break;
         case "i": date.setMinutes(date.getMinutes() + interval); break;
         case "h": date.setHours(date.getHours() + interval); break;
         case "d": date.setDate(date.getDate() + interval); break;
-        case "m": date = new Date(date.getFullYear(), date.getMonth() + interval); break;
-        // new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), (date.getMonth() + interval) < 0 ? Math.abs((date.getMonth() + interval + 12) % 12) : (date.getMonth() + interval) % 12); break;
-        //(((date.getMonth() + interval) < 0 ? Math.abs(interval + 1 % 12) : date.getMonth() + interval)) % 12); break;
-        //var month = (date.getMonth() + interval + 1) % 12; date = new Date(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12), month !== 0 ? month - 1 : date.getMonth() + interval - 1); break;
-        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + interval) / 12)); var month = (date.getMonth() + interval) % 12; date.setMonth(month !== 0 ? month : date.getMonth() + interval); break;
-        //date.setFullYear(date.getFullYear() + Math.floor((date.getMonth() + 1 + interval) / 12)); var month = (date.getMonth() + interval) % 11; date.setMonth(month !== 0 ? month : date.getMonth()); break;
-        //year = year + Math.floor(interval / 12); month = (month + interval) % 12; if (month === 0) { month = 12; }  break;
-        // date.setMonth(date.getMonth() + interval); break;
+        case "m": case "M": date = new Date(date.getFullYear(), date.getMonth() + interval); break;
         case "y": date.setFullYear(date.getFullYear() + interval); break;
         default: break;
       }
-
 
       // Part 3 Date to String:
       var mapreverse = new Map();
       mapreverse.set("yyyy", date.getFullYear());
       mapreverse.set("yy", (date.getFullYear() + "").substring(2));
+      mapreverse.set("mmmm", mmmm[date.getMonth()]);
+      mapreverse.set("Mmmm", mmmm[date.getMonth()][0].toUpperCase() + mmmm[date.getMonth()].substring(1));
+      mapreverse.set("MMMM", mmmm[date.getMonth()].toUpperCase());
+      mapreverse.set("mmm", mmm[date.getMonth()]);
+      mapreverse.set("Mmm", mmm[date.getMonth()][0].toUpperCase() + mmm[date.getMonth()].substring(1));
+      mapreverse.set("MMM", mmm[date.getMonth()].toUpperCase());
       mapreverse.set("mm", (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
       mapreverse.set("m", date.getMonth() + 1);
       mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
       mapreverse.set("d", date.getDate());
-
+      mapreverse.set("hh", date.getHours() < 10 ? "0" + date.getHours() : date.getHours());
+      mapreverse.set("h", date.getHours());
+      mapreverse.set("ii", date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+      mapreverse.set("i", date.getMinutes());
+      mapreverse.set("ss", date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
+      mapreverse.set("s", date.getSeconds());
+      mapreverse.set("ll", date.getMilliseconds() < 10 ? "0" + date.getMilliseconds() : date.getMilliseconds());
+      mapreverse.set("l", date.getMilliseconds());
       selectionmod = dateFormat;
       for (let i = 0; i < formatparts.length; i++) {
         selectionmod = selectionmod.replace(formatparts[i], mapreverse.get(formatparts[i]));
       }
-
     } catch(e) {
       console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
       selectionmod = "DateError";
