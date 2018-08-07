@@ -5,7 +5,7 @@
 - [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
 - [Auto Incrementing](#auto-incrementing)
 - [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multi-page-downloading)
-- [The Incrementer's Toolkit](#the-incrementer's-toolkit)
+- [The Incrementer's Toolkit](#the-incrementers-toolkit)
 - [Multi Incrementing](#multi-incrementing)
 - [Date Incrementing](#date-incrementing)
 - [Error Skipping](#error-skipping)
