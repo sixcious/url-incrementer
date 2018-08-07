@@ -266,7 +266,7 @@ URLI.IncrementDecrement = function () {
         selectionparts = selection.split(delimitersregexp).filter(Boolean);
       } else {
         // variable widths:
-        // mmmm, Mmmm, MMMMM, m, d, h, i, s, l
+        // mmmm, Mmmm, MMMM, m, d, h, i, s, l
         formatparts = matches;
         for (var i = 0; i < formatparts.length; i++) {
           selectionparts[i] = selection.substr(i > 0 ? formatparts[i - 1].length  : 0, formatparts[i].length); // use substr over substring here

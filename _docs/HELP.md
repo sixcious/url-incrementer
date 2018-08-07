@@ -40,7 +40,7 @@ You can use Multi Incrementing with AUTO and the Toolkit to generate links or op
 Increment dates and times in URLs by changing the Base to *Date Time* and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
 
 Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to contain only fixed-width date formats without any separators (e.g. "20180125").
-The following formats are variable-width and not allowed without separators: mmmm, Mmmm, MMMMM, m, d, h, i, s, l
+The following formats are variable-width and not allowed without separators: mmmm, Mmmm, MMMM, m, d, h, i, s, l
 
 #### Date Selection and Format Examples
 
