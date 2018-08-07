@@ -31,7 +31,7 @@ TODO
 ## Date Incrementing
 Increment dates and times in URLs by providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
 
-Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to be fixed-width without any separators (e.g. "201801"). 
+Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to be fixed-width without any separators (e.g. "20180125"). 
 
 #### Date Selection and Format Examples
 
@@ -43,14 +43,14 @@ Valid Examples:
 | Jan-2018   | Mmm-yyyy   |
 | 18_1_25    | yy_m_dd    |
 | 20180125   | yyyymmdd   |
-| 12:30:05   | hh:mm:ii   |
-| 1-25_12:30 | m-d_hh:mm  |
+| 12:30:05   | hh:ii:ss   |
+| 1-25_12:30 | m-d_hh:ii  |
 
 Invalid Examples:
 
 | Selection   | Format    | Reason                                                                    |
 | ----------  | --------- | ------------------------------------------------------------------------- |
-| /01/25/2018 | /mm/dd/yyyy | 
+| /01/25/2018 | mm/dd/yyyy | Format missing leading / and does not match selection |
 | 01-252018   | mm-ddyyyy | Mixed usage of separators and non-separators between date parts           |
 | 1252018     | mddyyyy   | Uses a non fixed-width date part without separators ("m" instead of "mm") |
 | Sept-2018   | Mmm-yyyy  | "Sept" not in supported short month names ("Sep" only is)                 |

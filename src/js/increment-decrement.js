@@ -196,6 +196,7 @@ URLI.IncrementDecrement = function () {
 
       var mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
       var mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+      var mmmmm = ["jan", "feb", "mar", "apr", "may", "june", "july", "aug", "sept", "oct", "nov", "dec"];
 
       var regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
       var matches = dateFormat.match(regexp);
@@ -293,6 +294,8 @@ URLI.IncrementDecrement = function () {
 
   // TODO
   function incrementDecrementRoman(action, selection, interval) {
+    var numerals = ["I", "V", "X", "L", "C", "D", "M"];
+
   }
 
   /**
@@ -437,20 +440,14 @@ console.log("after stepThruURLs and incrementDecrementURL");
       limit--;
     }
     for (let i = 0; i < limit; i++) {
-      // // If multi is enabled, simultaneously increment multiple parts of the URL:
-      // if (instance.multiEnabled) {
-      //   console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutli=" + instance.multi);
-      //   for (let i = 1; i <= instance.multi; i++) {
-      //     incrementDecrementURL(action + i, instance);
-      //   }
-      // } else {
-      //   incrementDecrementURL(action, instance);
-      // }
       incrementDecrement(action, instance);
       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      const selectionint = parseInt(instance.selection, instance.base);
-      if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
-        break;
+      // Only exit if base is numeric and beyond bounds
+      if (!isNaN(instance.base)) {
+        const selectionint = parseInt(instance.selection, instance.base);
+        if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
+          break;
+        }
       }
     }
     // Reset instance url and selection after calling incrementDecrementURL():
