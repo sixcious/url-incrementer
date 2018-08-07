@@ -12,7 +12,7 @@ URLI.Action = function () {
   /**
    * Performs an action.
    *
-   * @param action   the action (e.g. increment or decrement)
+   * @param action   the action (e.g. increment)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
    * @param callback the function callback (optional)
@@ -20,8 +20,41 @@ URLI.Action = function () {
    */
   function performAction(action, caller, instance, callback) {
     console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
-    const items = URLI.Background.getItems();
     let actionPerformed = false;
+    action = prePerformAction(action, caller, instance);
+    // Perform Action
+    switch (action) {
+      case "increment":  case "decrement":
+      case "increment1": case "decrement1":
+      case "increment2": case "decrement2":
+      case "increment3": case "decrement3":
+        actionPerformed = incrementDecrement(action, caller, instance, callback);
+        break;
+      case "next": case "prev":
+        actionPerformed = nextPrev(action, caller, instance, callback);
+        break;
+      case "clear":
+        actionPerformed = clear(action, caller, instance, callback);
+        break;
+      case "return":
+        actionPerformed = returnToStart(action, caller, instance, callback);
+        break;
+      case "toolkit":
+        actionPerformed = toolkit(action, caller, instance, callback);
+        break;
+      case "auto":
+        actionPerformed = auto(action, caller, instance, callback);
+        break;
+      case "download":
+        actionPerformed = download(action, caller, instance, callback);
+        break;
+      default:
+        break;
+    }
+    postPerformAction(action, caller, instance, actionPerformed);
+  }
+
+  function prePerformAction(action, caller, instance) {
     // Handle AUTO
     if (instance.autoEnabled) {
       // Get the most recent instance from Background in case auto has been paused
@@ -40,8 +73,9 @@ URLI.Action = function () {
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
         console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
-        actionPerformed = clear(action, caller, instance, callback);
-        return;
+        // actionPerformed = clear(action, caller, instance, callback);
+        // return;
+        action = "clear";
       }
     }
     // Handle DOWNLOAD
@@ -51,41 +85,12 @@ URLI.Action = function () {
         chrome.tabs.onUpdated.addListener(URLI.Background.tabUpdatedListener);
       }
     }
-    // Perform Action
-    switch (action) {
-      case "increment":
-      case "decrement":
-      case "increment1":
-      case "decrement1":
-      case "increment2":
-      case "decrement2":
-      case "increment3":
-      case "decrement3":
-        actionPerformed = incrementDecrement(action, caller, instance, callback);
-        break;
-      case "next":
-      case "prev":
-        actionPerformed = nextPrev(action, caller, instance, callback);
-        break;
-      case "clear":
-        actionPerformed = clear(action, caller, instance, callback);
-        break;
-      case "return":
-        actionPerformed = returnToStart(action, caller, instance, callback);
-        break;
-      case "toolkit":
-        actionPerformed = toolkit(action, caller, instance, callback);
-        break;
-      case "auto": // the auto action is always a pause or resume
-        actionPerformed = auto(action, caller, instance, callback);
-        break;
-      case "download":
-        actionPerformed = download(action, caller, instance, callback);
-        break;
-      default:
-        break;
-    }
+    return action;
+  }
+
+  function postPerformAction(action, caller, instance, actionPerformed) {
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
+    const items = URLI.Background.getItems();
     if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       if (items.iconFeedbackEnabled) {
         URLI.Background.setBadge(instance.tabId, action, true);
@@ -120,7 +125,7 @@ URLI.Action = function () {
   }
 
   /**
-   * Performs a regular increment or decrement action (without error skipping or multi).
+   * Performs a regular increment or decrement action (without error skipping) and then updates the URL.
    *
    * @param action   the action (increment or decrement)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
@@ -133,12 +138,7 @@ URLI.Action = function () {
     // If we didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't call IncrementDecrement.incrementDecrementURL
-      if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
-        URLI.IncrementDecrement.stepThruURLs(action, instance);
-      } else {
-        URLI.IncrementDecrement.incrementDecrement(action, instance);
-      }
+      URLI.IncrementDecrement.incrementDecrement(action, instance);
       instance.enabled = true;
       URLI.Background.setInstance(instance.tabId, instance);
       chrome.tabs.update(instance.tabId, {url: instance.url});
@@ -164,7 +164,7 @@ URLI.Action = function () {
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
       const items = URLI.Background.getItems();
       if (items.permissionsEnhancedMode) {
-        URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors(action, instance, "background", instance.errorSkip);
+        URLI.IncrementDecrement.incrementDecrementAndSkipErrors(action, instance, "background", instance.errorSkip);
       } else {
         chrome.tabs.executeScript(instance.tabId, {
           file: "/js/increment-decrement.js",
@@ -175,7 +175,7 @@ URLI.Action = function () {
             console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
             return incrementDecrementRegular(instance, action, caller, callback);
           }
-          const code = "URLI.IncrementDecrement.incrementDecrementURLAndSkipErrors(" +
+          const code = "URLI.IncrementDecrement.incrementDecrementAndSkipErrors(" +
             JSON.stringify(action) + ", " +
             JSON.stringify(instance) + ", " +
             "\"content-script\"" + ", " +
@@ -347,7 +347,7 @@ URLI.Action = function () {
   }
 
   /**
-   * Performs an auto action (pause or resume only).
+   * Performs an auto action (the auto action is either a pause or resume only).
    *
    * @param action   the action (auto pause/resume)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)

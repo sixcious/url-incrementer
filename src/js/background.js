@@ -29,13 +29,15 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* profiles */    "profilePreselect": true, "profileQuick": true, "profiles": []
+    /* saved */    "profilePreselect": true, "profileQuick": true, "profiles": []
   },
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
     "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
+    "increment1": { "text": "+",    "backgroundColor": "#004687" },
+    "decrement1": { "text": "-",    "backgroundColor": "#004687" },
     "increment2": { "text": "+",    "backgroundColor": "#004687" },
     "decrement2": { "text": "-",    "backgroundColor": "#004687" },
     "increment3": { "text": "+",    "backgroundColor": "#001354" },
@@ -49,7 +51,7 @@ URLI.Background = function () {
     "autopause":  { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "autorepeat": { "text": "REP",  "backgroundColor": "#FF6600" },
     "download":   { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":       { "text": "",     "backgroundColor": "#000028" },
+    "skip":       { "text": "",     "backgroundColor": "#000000" },
     "toolkit":    { "text": "TOOL", "backgroundColor": "#000028" },
     "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
   },
@@ -66,7 +68,7 @@ URLI.Background = function () {
   /**
    * Gets the storage default values (SDV).
    *
-   * @return the storage default values (SDV)
+   * @return {{}} the storage default values (SDV)
    * @public
    */
   function getSDV() {
@@ -76,7 +78,7 @@ URLI.Background = function () {
   /**
    * Gets the local storage default values (LSDV).
    *
-   * @return the storage default values (LSDV)
+   * @return {{}} the local storage default values (LSDV)
    * @public
    */
   function getLSDV() {
@@ -102,7 +104,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Gets all instances.
+   * Gets all the instances.
    *
    * @return {Map<tabId, instance>} the tab instances
    * @public
@@ -213,9 +215,9 @@ URLI.Background = function () {
    * @public
    */
   async function profileMatchesURL(profile, url) {
-    console.log("URLI.Background.checkProfile() - profile of current url is url=" + url);
+    console.log("URLI.Background.profileMatchesURL() - checking this url, profile.urlhash1=" + profile.urlhash1 + ", url=" + url);
     const url1 = url.substring(0, profile.selectionStart),
-      url2 = url.slice(-profile.url2length);
+          url2 = url.slice(-profile.url2length);
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
     const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
     const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
@@ -237,7 +239,7 @@ URLI.Background = function () {
    *
    * @param tabId           the tab ID to set this badge for
    * @param badge           the badge key to set from BROWSER_ACTION_BADGES
-   * @param temporary       boolean indicating whether the badge should be displayed temporarily
+   * @param temporary       boolean indicating whether the badge should be displayed temporarily (true) or not (false)
    * @param text            (optional) the text to use instead of the the badge text
    * @param backgroundColor (optional) the backgroundColor to use instead of the badge backgroundColor
    * @public
@@ -296,7 +298,6 @@ URLI.Background = function () {
     // 5.3 - 5.5 only: Storage updates for new features: Toolkit and Profiles
     else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
       console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
-      // TODO: Remove declarativeContent?
       chrome.storage.sync.set({
         "toolkitTool": "open-tabs",
         "toolkitAction": "increment",
@@ -306,6 +307,11 @@ URLI.Background = function () {
         "profilePreselect": false,
         "profiles": []
       });
+      // Remove declarativeContent rule and permission
+      if (chrome.declarativeContent) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined);
+      }
+      chrome.permissions.remove({ permissions: ["declarativeContent"]});
     }
   }
 
@@ -326,7 +332,8 @@ URLI.Background = function () {
       case "performAction":
         let instance = getInstance(sender.tab.id);
         if (!instance && request.action !== "auto") {
-          sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+          // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+          sender.tab.url = sender.url;
           instance = await buildInstance(sender.tab);
         }
         if (instance) {
@@ -342,9 +349,9 @@ URLI.Background = function () {
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
         }
         break;
-      case "setBadgeSkipErrors":
-        if (request.errorCode && request.instance && !request.instance.autoEnabled) {
-          setBadge(request.instance.tabId, "skip", true, request.errorCode + "");
+      case "setBadge":
+        if (request.instance && !request.instance.autoEnabled) {
+          setBadge(request.tabId, request.badge, request.temporary, request.text, request.backgroundColor);
         }
         break;
       default:

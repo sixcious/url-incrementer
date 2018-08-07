@@ -836,7 +836,6 @@ URLI.Popup = function () {
           instance.toolkitTool = toolkitTool;
           instance.toolkitAction = toolkitAction;
           instance.toolkitQuantity = toolkitQuantity;
-
           const precalculateProps = backgroundPage.URLI.IncrementDecrement.precalculateURLs(instance);
           instance.urls = precalculateProps.urls;
           instance.urlsCurrentIndex = precalculateProps.currentIndex;

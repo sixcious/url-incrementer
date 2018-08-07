@@ -98,6 +98,12 @@ input[type="image"]:focus {
   margin-bottom: 1em;
 }
 
+.tooltip.link {
+  border-bottom: none;
+  padding-bottom: initial;
+  font-style: initial;
+}
+
 .tooltip-alt img {
   display: inline-block;
   margin-left: 4px;
@@ -135,15 +141,6 @@ input[type="image"]:focus {
 /* profile */
 #profile-none {
   font-style: italic;
-}
-
-#profile-how-save-title {
-  display: inline-block;
-  margin-bottom: 1em;
-}
-
-#profile-how-save-title a {
-  color: #FF0000;
 }
 
 #profile-delete-button {
