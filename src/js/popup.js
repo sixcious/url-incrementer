@@ -9,29 +9,14 @@ var URLI = URLI || {};
 
 URLI.Popup = function () {
 
-  const DOM = {}, // Map to cache DOM elements: key=id, value=element
-        AUTO_ETA_I18NS = { // AUTO ETA messages cache
-          "day": chrome.i18n.getMessage("auto_eta_day"),
-          "hour": chrome.i18n.getMessage("auto_eta_hour"), "hours": chrome.i18n.getMessage("auto_eta_hours"),
-          "minute": chrome.i18n.getMessage("auto_eta_minute"), "minutes": chrome.i18n.getMessage("auto_eta_minutes"),
-          "second": chrome.i18n.getMessage("auto_eta_second"), "seconds": chrome.i18n.getMessage("auto_eta_seconds"),
-          "tbd": chrome.i18n.getMessage("auto_eta_tbd"), "done": chrome.i18n.getMessage("auto_eta_done")
-         },
-        DOWNLOAD_PREVIEW_I18NS = { // DOWNLOAD PREVIEW messages cache
-          "noresults": chrome.i18n.getMessage("download_preview_noresults"), "blocked": chrome.i18n.getMessage("download_preview_blocked"),
-          "set": chrome.i18n.getMessage("download_preview_set"), "outof": chrome.i18n.getMessage("download_preview_outof"),
-          "urls": chrome.i18n.getMessage("download_preview_urls"),
-          "thumb": chrome.i18n.getMessage("download_preview_thumb_label"), "filename": chrome.i18n.getMessage("download_preview_filename_label"),
-          "extension": chrome.i18n.getMessage("download_preview_extension_label"), "tag": chrome.i18n.getMessage("download_preview_tag_label"),
-          "attribute": chrome.i18n.getMessage("download_preview_attribute_label"), "url": chrome.i18n.getMessage("download_preview_url_label")
-        };
+  const DOM = {}; // Map to cache DOM elements: key=id, value=element
 
   let _ = {}, // Temporary instance before validation
       instance = {}, // Tab instance cache
       items_ = {}, // Storage items cache
       localItems_ = {}, // Local Storage items cache
       backgroundPage_ = {}, // Background page cache
-      downloadPreviewCache = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [], "selecteds": [], "unselecteds": [], "mselecteds": [], "munselecteds": [] }, // Download Preview Cache
+      downloadPreviewCache = {}, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
@@ -49,6 +34,31 @@ URLI.Popup = function () {
     for (let element of ids) {
       DOM["#" + element.id] = element;
     }
+    // Initialize popup content
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+      chrome.runtime.getBackgroundPage(async function(backgroundPage) {
+        backgroundPage_ = backgroundPage;
+        instance = backgroundPage_.URLI.Background.getInstance(tabs[0].id);
+        items_ = backgroundPage_.URLI.Background.getItems();
+        localItems_ = backgroundPage_.URLI.Background.getLocalItems();
+        if (!instance) {
+          instance = await backgroundPage_.URLI.Background.buildInstance(tabs[0]);
+        }
+        _ = JSON.parse(JSON.stringify(instance));
+        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
+        const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
+        DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";
+        DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
+        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
+        updateSetup();
+        // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
+        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
+          toggleView.call(DOM["#setup-input"]);
+        } else {
+          toggleView.call(DOM["#accept-button"]);
+        }
+      });
+    });
     // Set i18n (internationalization) text from messages.json
     for (let element of i18ns) {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
@@ -97,30 +107,6 @@ URLI.Popup = function () {
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
-    // Initialize popup content
-    chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
-      chrome.runtime.getBackgroundPage(async function(backgroundPage) {
-        backgroundPage_ = backgroundPage;
-        instance = backgroundPage_.URLI.Background.getInstance(tabs[0].id);
-        items_ = backgroundPage_.URLI.Background.getItems();
-        localItems_ = backgroundPage_.URLI.Background.getLocalItems();
-        if (!instance) {
-          instance = await backgroundPage_.URLI.Background.buildInstance(tabs[0]);
-        }
-        _ = JSON.parse(JSON.stringify(instance));
-        DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items_.popupButtonSize + "px; height:" + items_.popupButtonSize + "px;";
-        const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-        DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";
-        DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
-        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
-        updateSetup();
-        updateControls();
-        // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
-          toggleView.call(DOM["#setup-input"]);
-        }
-      });
-    });
   }
 
   /**
@@ -171,9 +157,9 @@ URLI.Popup = function () {
         break;
       case "accept-button": // Hide setup, show controls
       case "cancel-button":
+        updateControls(); // Needed to reset hover.css click effect
         DOM["#setup"].className = "display-none";
         DOM["#controls"].className = "display-block fade-in";
-        updateControls(); // Needed to reset hover.css click effect
         break;
       default:
         break;
@@ -332,13 +318,13 @@ URLI.Popup = function () {
           hours = ~~ (time / 3600),
           minutes = ~~ ((time % 3600) / 60),
           seconds = time % 60,
-          fhours = hours ? hours + (hours === 1 ? AUTO_ETA_I18NS.hour : AUTO_ETA_I18NS.hours) : "",
-          fminutes = minutes ? minutes + (minutes === 1 ? AUTO_ETA_I18NS.minute : AUTO_ETA_I18NS.minutes) : "",
-          fseconds = seconds ? seconds + (seconds === 1 ? AUTO_ETA_I18NS.second : AUTO_ETA_I18NS.seconds) : "";
+          fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("auto_eta_hour") : chrome.i18n.getMessage("auto_eta_hours")) : "",
+          fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("auto_eta_minute") : chrome.i18n.getMessage("auto_eta_minutes")) : "",
+          fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("auto_eta_second") : chrome.i18n.getMessage("auto_eta_seconds")) : "";
     DOM["#auto-eta-value"].textContent =
       itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
-      instance.autoEnabled ? AUTO_ETA_I18NS.done : AUTO_ETA_I18NS.tbd :
-      time > 86400 ? AUTO_ETA_I18NS.day : fhours + fminutes + fseconds;
+      instance.autoEnabled ? chrome.i18n.getMessage("auto_eta_done") : chrome.i18n.getMessage("auto_eta_tbd") :
+      time > 86400 ? chrome.i18n.getMessage("auto_eta_day") : fhours + fminutes + fseconds;
   }
 
   /**
@@ -376,7 +362,7 @@ URLI.Popup = function () {
     // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
     chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
       if (chrome.runtime.lastError) {
-        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
       } else {
         const code = "URLI.Download.previewDownloadURLs();";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
@@ -442,24 +428,28 @@ URLI.Popup = function () {
             JSON.stringify(downloadExcludes) + ");";
     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
       if (chrome.runtime.lastError) {
-        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.blocked;
+        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
       } else if (results && results[0]) {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
         // @see https://stackoverflow.com/a/21988249
         const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL,
-              selecteds = results[0],
-              unselecteds = alls.filter(function(obj) {
-                return !selecteds.some(function(obj2) {
-                  return obj.url === obj2.url;
-                });
-              }),
-              selectedsLength = selecteds.length,
-              totalLength = selecteds.length + unselecteds.length;
+          selecteds = results[0],
+          unselecteds = alls.filter(function(allObj) {
+            return !selecteds.some(function(selectedObj) {
+              return allObj.url === selectedObj.url;
+            });
+          }),
+          selectedsLength = selecteds.length,
+          totalLength = selecteds.length + unselecteds.length,
+          isStartingURL = instance.url === instance.startingURL,
+          selectedsAmended = isStartingURL && instance.downloadMUnselecteds && instance.downloadMUnselecteds.length > 0,
+          unselectedsAmended = isStartingURL && instance.downloadMSelecteds && instance.downloadMSelecteds.length > 0;
+console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selectedsAmended + ", unselectedsAmended=" + unselectedsAmended);
         // Download Preview Heading Title:
         DOM["#download-preview-heading-title"].innerHTML =
           "<div class=\"" + (selectedsLength > 0 ? "success" : "error") + "\">" +
-            DOWNLOAD_PREVIEW_I18NS.set + "<span id=\"selecteds-length\">" + selectedsLength + "</span>" + DOWNLOAD_PREVIEW_I18NS.outof + totalLength + DOWNLOAD_PREVIEW_I18NS.urls +
+            chrome.i18n.getMessage("download_preview_set") + "<span id=\"selecteds-length\">" + selectedsLength + "</span>" + chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls") +
           "</div>";
         // Download Preview Table and a count index to keep track of current row index:
         let table =
@@ -468,20 +458,40 @@ URLI.Popup = function () {
               "<tr>" +
                 "<th class=\"check\">&nbsp;</th>" +
                 "<th class=\"count\">&nbsp;</th>" +
-                "<th class=\"thumb\">" + DOWNLOAD_PREVIEW_I18NS.thumb + "</th>" +
-                "<th class=\"filename\">" + DOWNLOAD_PREVIEW_I18NS.filename + "</th>" +
-                "<th class=\"extension\">" + DOWNLOAD_PREVIEW_I18NS.extension + "</th>" +
-                "<th class=\"tag\">" + DOWNLOAD_PREVIEW_I18NS.tag + "</th>" +
-                "<th class=\"attribute\">" + DOWNLOAD_PREVIEW_I18NS.attribute + "</th>" +
-                "<th class=\"url\">" + DOWNLOAD_PREVIEW_I18NS.url + "</th>" +
+                "<th class=\"thumb\">" + chrome.i18n.getMessage("download_preview_thumb_label") + "</th>" +
+                "<th class=\"filename\">" + chrome.i18n.getMessage("download_preview_filename_label") + "</th>" +
+                "<th class=\"extension\">" + chrome.i18n.getMessage("download_preview_extension_label") + "</th>" +
+                "<th class=\"tag\">" + chrome.i18n.getMessage("download_preview_tag_label") + "</th>" +
+                "<th class=\"attribute\">" + chrome.i18n.getMessage("download_preview_attribute_label") + "</th>" +
+                "<th class=\"url\">" + chrome.i18n.getMessage("download_preview_url_label") + "</th>" +
               "</tr>" +
             "</thead>" +
             "<tbody>",
             count = 1;
+        let selectedsLength2 = selecteds.length;
+        const selectedsLengthEl = document.getElementById("selecteds-length");
         for (let selected of selecteds) {
-          table += buildDownloadPreviewTR(selected, true, count++);
+          let val = true;
+          if (selectedsAmended) {
+            instance.downloadMUnselecteds.filter(function(munselected) {
+              if (munselected.url === selected.url) {
+                val = false;
+                selectedsLengthEl.textContent = (--selectedsLength2) + "";
+              }
+            });
+          }
+          table += buildDownloadPreviewTR(selected, val, count++);
         }
         for (let unselected of unselecteds) {
+          // let val = false;
+          // if (unselectedsAmended) {
+          //   instance.downloadMSelecteds.filter(function(mselected) {
+          //     if (mselected.url === unselected.url) {
+          //       val = true;
+          //       selectedsLengthEl.textContent = (++selectedsLength2) + "";
+          //     }
+          //   });
+          // }
           table += buildDownloadPreviewTR(unselected, false, count++);
         }
         table += "</tbody>" + "</table>";
@@ -497,10 +507,10 @@ URLI.Popup = function () {
         // Reset the manually selected includes and excludes each time the table is rebuilt:
         downloadPreviewCache.selecteds = selecteds;
         downloadPreviewCache.unselecteds = unselecteds;
-        downloadPreviewCache.mselecteds = [];
-        downloadPreviewCache.munselecteds = [];
+        _.mselecteds = [];
+        _.munselecteds = [];
       } else {
-        DOM["#download-preview-table-div"].innerHTML = DOWNLOAD_PREVIEW_I18NS.noresults;
+        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_noresults");
       }
     });
   }
@@ -619,8 +629,8 @@ URLI.Popup = function () {
     const element = event.target;
     if (element && element.classList.contains("check-circle")) {
       const parent = element.parentNode.parentNode;
-      const json = parent.dataset.json;
-      const object = JSON.parse(json);
+     // const json = parent.dataset.json;
+      const object = JSON.parse(parent.dataset.json);
       const isBeingAdded = parent.className === "unselected";
       const generatedId = isBeingAdded ? "selecteds" : "unselecteds";
       const otherId = isBeingAdded ? "unselecteds" : "selecteds";
@@ -630,34 +640,12 @@ URLI.Popup = function () {
         downloadPreviewCache["m" + generatedId].push(object);
       }
       downloadPreviewCache["m" + otherId] = downloadPreviewCache["m" + otherId].filter(otherObject => { return otherObject.url !== object.url });
-
-      console.log(generatedId + ":");
-      console.log(downloadPreviewCache["m" + generatedId]);
-      console.log(otherId + ":");
-      console.log(downloadPreviewCache["m" + otherId]);
-
-
-      // let generatedValue = DOM[generatedId].value,
-      //     otherValue = DOM[otherId].value;
-      // if (!generatedValue.includes(json)) {
-      //   if (isBeingAdded ? !downloadPreviewCache.selecteds.includes(object) : downloadPreviewCache.unselecteds.includes(object)) {
-      //     console.log("oops that's already in " + (isBeingAdded ? "selecteds" : "nselecteds") + "! not adding a duplicate!");
-      //     generatedValue += (generatedValue !== "" ? "," : "") + json;
-      //     DOM[generatedId].value = generatedValue;
-      //   }
-        const selectedsLengthElement = document.getElementById("selecteds-length");
-        const selectedsLengthNumber = Number(selectedsLengthElement.textContent);
-        const selectedsLengthNumberFinal = isBeingAdded ? selectedsLengthNumber + 1 : selectedsLengthNumber - 1;
-        selectedsLengthElement.textContent = "" + (selectedsLengthNumberFinal);
-        selectedsLengthElement.parentElement.className = selectedsLengthNumberFinal > 0 ? "success" : "error";
-      //}
-      // if (otherValue.includes(json)) {
-      //   DOM[otherId].value = otherValue.replace(json, "");
-      // }
-
+      const selectedsLengthElement = document.getElementById("selecteds-length");
+      const selectedsLengthNumber = Number(selectedsLengthElement.textContent);
+      const selectedsLengthNumberFinal = isBeingAdded ? selectedsLengthNumber + 1 : selectedsLengthNumber - 1;
+      selectedsLengthElement.textContent = "" + (selectedsLengthNumberFinal);
+      selectedsLengthElement.parentElement.className = selectedsLengthNumberFinal > 0 ? "success" : "error";
     }
-    //TODO...
-    //el.value.substring(2, el.value.length - 2).split("\"},{\"").forEach(value => console.log(JSON.parse("{\"" + value + "\"}")));
   }
 
   /**
@@ -954,8 +942,8 @@ URLI.Popup = function () {
       _.downloadMinMB = +DOM["#download-min-mb-input"].value;
       _.downloadMaxMB = +DOM["#download-max-mb-input"].value;
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
-      _.downloadMSelecteds = downloadPreviewCache.mselecteds;
-      _.downloadMUnselecteds = downloadPreviewCache.munselecteds;
+      // Note: _.downloadMSelecteds is set in updateDownloadSelectedsUnselecteds()
+      // Note: _.downloadMUnselecteds is set in updateDownloadSelectedsUnselecteds()
     }
   }
 
