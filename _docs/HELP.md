@@ -15,7 +15,7 @@
 
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
 
-# Infinite Scrolling (Scroll Incrementing)
+## Infinite Scrolling (Scroll Incrementing)
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
 
 ## Auto Incrementing
@@ -37,10 +37,10 @@ Increment up to 3 different parts of the URL at the same time or individually. S
 You can use Multi Incrementing with AUTO and the Toolkit to generate links or open tabs. In these modes, it will do a simultaneous multi-increment on all the parts you selected.
 
 ## Date Incrementing
-Increment dates and times in URLs by changing the Base to *Date Time* and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
+Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
 
 Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to contain only fixed-width date formats without any separators (e.g. "20180125").
-The following formats are variable-width and not allowed without separators: mmmm, Mmmm, MMMM, m, d, h, i, s, l
+The following formats are variable-width and not allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.
 
 #### Date Selection and Format Examples
 
@@ -90,7 +90,7 @@ This is a table of all the allowable parts you can use in the format.
 | ll     | Millisecond | 3 Digits     | 001, 999   |
 | l      | Millisecond | 1-3 Digits   | 1, 999     |
 
-* For the yy format (2 Digit Year) format, if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
+* For the `yy` format (2 Digit Year), if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
 
 #### Short and Long Month Names
 Only the the EN-US language is currently supported.
@@ -113,10 +113,10 @@ This checks if the next URL will return an HTTP error code (like 404) and increm
 
 You may notice a minor delay (~1 second) when incrementing with error skipping due to the time it takes to wait for a response from a server.
 
-### An Error-Skipping Example
+#### An Error-Skipping Example
 You are on page=1 and increment with error skip set to 10. If the next 3 pages (page=2 thru page=4) don't exist, they'll be skipped and you'll be taken to the next valid page, page=5 automatically. If more than 10 consecutive pages don't exist, URLI will "give up" checking since error skip is set to 10, and take you to page=12. You can then manually increment again to repeat the process.
 
-### Important Note!
+#### Important Note!
 You MUST have Enhanced Mode enabled to use Error Skipping in the following situations:
 1. On "Browser Error Pages" (e.g. the website didn't implement an error page, so the browser forwarded you to its own error page)
 2. When using the Popup or 1-Click Buttons
@@ -129,13 +129,13 @@ To make life easy, you can save your favorite URL patterns and Increment Decreme
 
 After you save a URL, you can use your easier "Fav" Increment Decrement Shortcut Keys whenever you visit the site.
 
-### How Are URLs Saved?
+#### How Are URLs Saved?
 To protect your privacy to the highest standard, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to decrypt the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and checking if the hashes are equal.
 
-### Where Are The Cryptographic Hashes Saved?
+#### Where Are The Cryptographic Hashes Saved?
 The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all the other extension data of course).
 
-### Creating Saved URL Wildcards
+#### Creating Saved URL Wildcards
 TODO: May not be in final version
 
 Because we save URLs just like passwords, the URLs must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save https://www.google.com/abc/page=1 then http://www.google.com/xyz/page=1 will not be recognized because of the difference in abc and xyz.

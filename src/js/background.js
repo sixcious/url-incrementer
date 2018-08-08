@@ -186,7 +186,7 @@ URLI.Background = function () {
     }
     // Return newly built instance using props and items:
     return {
-      "enabled": props.profileFound, "multiEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "enabled": props.profileFound, "multiEnabled": false, "toolkitEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
