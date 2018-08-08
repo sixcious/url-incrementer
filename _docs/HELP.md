@@ -67,28 +67,28 @@ Invalid Examples:
 #### Date Formats
 This is a table of all the allowable parts you can use in the format.
 
-| Format | Component   | Presentation | Examples |
-| ------ | ----------- | ------------ | -------- |
+| Format | Component   | Presentation | Examples   |
+| ------ | ----------- | ------------ | ---------- |
 | yyyy   | Year        | 4 Digits     | 2000, 2010 |
-| yy     | Year        | 2 Digits     | 00, 10 |
-| mm     | Month       | 2 Digits     | 01, 12 |
-| m      | Month       | 1 Digit      | 1, 12 |
+| yy     | Year        | 2 Digits     | 00, 10     |
+| mm     | Month       | 2 Digits     | 01, 12     |
+| m      | Month       | 1-2 Digits   | 1, 12      |
 | mmm    | Month       | Short Name Lowercased  | jan, dec |
 | Mmm    | Month       | Short Name Capitalized | Jan, Dec |
 | MMM    | Month       | Short Name Uppercased  | JAN, DEC |
 | mmmm   | Month       | Long Name Lowercased   | january, december |
 | Mmmm   | Month       | Long Name Capitalized  | January, December |
 | MMMM   | Month       | Long Name Uppercased   | JANUARY, DECEMBER |
-| dd     | Day         | 2 Digits     | 01, 31 |
-| d      | Day         | 1 Digit      | 1, 31 |
-| hh     | Hour        | 2 Digits     | 01, 23 |
-| h      | Hour        | 1 Digit      | 1, 23 |
-| ii     | Minute      | 2 Digits     | 01, 59 |
-| i      | Minute      | 1 Digit      | 1, 59 |
-| ss     | Second      | 2 Digits     | 01, 59 |
-| s      | Second      | 1 Digit      | 1, 59 |
-| ll     | Millisecond | 3 Digits | 001, 999 |
-| l      | Millisecond | 1 Digit   | 1, 999 |
+| dd     | Day         | 2 Digits     | 01, 31     |
+| d      | Day         | 1-2 Digits   | 1, 31      |
+| hh     | Hour        | 2 Digits     | 01, 23     |
+| h      | Hour        | 1-2 Digits   | 1, 23      |
+| ii     | Minute      | 2 Digits     | 01, 59     |
+| i      | Minute      | 1-2 Digits   | 1, 59      |
+| ss     | Second      | 2 Digits     | 01, 59     |
+| s      | Second      | 1-2 Digits   | 1, 59      |
+| ll     | Millisecond | 3 Digits     | 001, 999   |
+| l      | Millisecond | 1-3 Digits   | 1, 999     |
 
 * For the yy format (2 Digit Year) format, if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
 

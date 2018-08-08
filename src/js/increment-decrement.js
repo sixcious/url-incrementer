@@ -96,8 +96,8 @@ URLI.IncrementDecrement = function () {
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
     else if (instance.multiEnabled && !/\d/.test(action)) {
-      console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutli=" + instance.multi);
-      for (let i = 1; i <= instance.multi; i++) {
+      console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutliCount=" + instance.multiCount);
+      for (let i = 1; i <= instance.multiCount; i++) {
         incrementDecrementURL(action + i, instance);
       }
     }
@@ -503,12 +503,13 @@ URLI.IncrementDecrement = function () {
             part = match ? match[0] : "";
       // multiPart is stored later for multiPost() so we don't have to execute the above regex again
       instance.multiPart = part;
-      instance.selection = instance["selection" + part];
-      instance.selectionStart = instance["selectionStart" + part];
-      instance.interval = instance["interval" + part];
-      instance.base = instance["base" + part];
-      instance.baseCase = instance["baseCase" + part];
-      instance.leadingZeros = instance["leadingZeros" + part];
+      instance.selection = instance.multi[part].selection;
+      instance.selectionStart = instance.multi[part].selectionStart;
+      instance.interval = instance.multi[part].interval;
+      instance.base = instance.multi[part].base;
+      instance.baseCase = instance.multi[part].baseCase;
+      instance.baseDateFormat = instance.multi[part].baseDateFormat;
+      instance.leadingZeros = instance.multi[part].leadingZeros;
     }
   }
 
@@ -522,18 +523,18 @@ URLI.IncrementDecrement = function () {
    */
   function multiPost(selectionmod, urlmod, instance) {
     if (instance && instance.multiEnabled) {
-      // Update the selection part's to the new selection and selectionStart
-      instance["selection" + instance.multiPart] = selectionmod;
+      // Update the multi selection part's to the new selection
+      instance.multi[instance.multiPart].selection = selectionmod;
       // If after incrementing/decrementing, the url length changed update the other parts' selectionStart
       if (instance.url && instance.url.length !== urlmod.length) {
         const urlLengthDiff = instance.url.length - urlmod.length; // Handles both positive and negative changes (e.g. URL became shorter or longer)
-        const thisPartSelectionStart = instance["selectionStart" + instance.multiPart];
+        const thisPartSelectionStart = instance.multi[instance.multiPart].selectionStart;
         console.log("URLI.IncrementDecrement.multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
         // If this part isn't the last part, adjust the selectionStarts of the other parts that come later in the URL
-        for (let i = 1; i <= instance.multi; i++) {
-          if (i !== instance.multiPart && instance["selectionStart" + i] > thisPartSelectionStart) {
+        for (let i = 1; i <= instance.multiCount; i++) {
+          if (i !== instance.multiPart && instance.multi[i].selectionStart > thisPartSelectionStart) {
             console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance["selectionStart" + i] + " to:" + instance["selectionStart" + i] - urlLengthDiff);
-            instance["selectionStart" + i] = instance["selectionStart" + i] - urlLengthDiff;
+            instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
           }
         }
       }

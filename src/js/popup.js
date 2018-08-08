@@ -30,6 +30,7 @@ URLI.Popup = function () {
       items_ = {}, // Storage items cache
       localItems_ = {}, // Local Storage items cache
       backgroundPage_ = {}, // Background page cache
+      multi = {"1": {}, "2": {}, "3": {}}, // Multi Object
       downloadPreviewCache = { "pageURL": [], "allURLs": [], "allExtensions": [], "allTags": [], "selecteds": [], "unselecteds": [], "mselecteds": [], "munselecteds": [] }, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
@@ -228,6 +229,7 @@ URLI.Popup = function () {
   /**
    * Updates the setup input properties. This method is called when the popup loads or when the instance is updated.
    *
+   * @param minimal if true, only update a minimal part of the setup, if false update everything
    * @private
    */
   function updateSetup(minimal) {
@@ -254,6 +256,8 @@ URLI.Popup = function () {
     DOM["#base-date-format-input"].value = instance.baseDateFormat;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
+    DOM["#multi-count"].value = instance.multiCount;
+    DOM["#multi-selections"].textContent = instance.multiCount;
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
     DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
@@ -670,8 +674,7 @@ URLI.Popup = function () {
       selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(selection, base).toString(base),
       leadingZeros = DOM["#leading-zeros-input"].checked,
       errorSkip = +DOM["#error-skip-input"].value,
-      multi = instance.multi >= 3 ? 0 : instance.multi + 1,
-      multiEnabled = instance.multi >= 2 && instance.multi <= 3,
+      multiCount = +DOM["#multi-count"].value,
       // URLs Values:
       customURLs = DOM["#custom-urls-input"].checked,
       shuffleURLs = DOM["#shuffle-urls-input"].checked,
@@ -695,26 +698,26 @@ URLI.Popup = function () {
         // [1] Interval Errors
         interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
-        errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : "",
-        // [3] Other Errors (Multi / Shuffle)
-        multiEnabled && shuffleURLs ? chrome.i18n.getMessage("multi_shuffle_error") : ""
+        errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
       ],
       errorsExist = errors.some(error => error !== "");
-    if (multi === 0) {
-      instance.multi = 0;
+    if (multiCount >= 3) {
+      DOM["#multi-count"].value = 0;
       DOM["#multi-selections"].textContent = "";
     } else if (errorsExist) {
       errors.unshift(chrome.i18n.getMessage("oops_error"));
       URLI.UI.generateAlert(errors);
     } else {
-      instance.multi = multi;
-      instance["selection" + multi] = instance["startingSelection" + multi] = selection;
-      instance["selectionStart" + multi] = instance["startingSelectionStart" + multi] = selectionStart;
-      instance["interval" + multi] = interval;
-      instance["base" + multi] = base;
-      instance["baseCase" + multi] = baseCase;
-      instance["leadingZeros" + multi] = leadingZeros;
-      DOM["#multi-selections"].textContent = multi;
+      const multiCountNew = multiCount + 1;
+      DOM["#multi-count"].value = multiCountNew;
+      DOM["#multi-selections"].textContent = multiCountNew;
+      multi[multiCountNew].selection = multi[multiCountNew].startingSelection = selection;
+      multi[multiCountNew].selectionStart = multi[multiCountNew].startingSelection = startingSelection;
+      multi[multiCountNew].interval = interval;
+      multi[multiCountNew].base = base;
+      multi[multiCountNew].baseCase = baseCase;
+      multi[multiCountNew].baseDateFormat = baseDateFormat;
+      multi[multiCountNew].leadingZeros = leadingZeros;
     }
   }
 
@@ -771,7 +774,8 @@ URLI.Popup = function () {
           selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
-          multiEnabled = instance.multi >= 2 && instance.multi <= 3,
+          multiCount = +DOM["#multi-count"].value,
+          multiEnabled = multiCount >= 2 && multiCount <= 3,
           // URLs Values:
           customURLs = DOM["#custom-urls-input"].checked,
           shuffleURLs = DOM["#shuffle-urls-input"].checked,
@@ -800,9 +804,7 @@ URLI.Popup = function () {
             // [1] Interval Errors
             interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
             // [2] Error Skip Errors
-            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : "",
-            // [3] Other Errors (Multi / Shuffle)
-            multiEnabled && shuffleURLs ? chrome.i18n.getMessage("multi_shuffle_error") : ""
+            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
           ],
           // Toolkit Errors
           toolkitErrors = [
@@ -828,7 +830,9 @@ URLI.Popup = function () {
           instance.baseDateFormat = baseDateFormat;
           instance.leadingZeros = leadingZeros;
           instance.errorSkip = errorSkip;
+          instance.multiCount = multiCount;
           instance.multiEnabled = multiEnabled;
+          instance.multi = multi;
           instance.customURLs = customURLs;
           instance.shuffleURLs = shuffleURLs;
           instance.urls = urls;
@@ -879,7 +883,8 @@ URLI.Popup = function () {
           selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(selection, base).toString(base),
           leadingZeros = DOM["#leading-zeros-input"].checked,
           errorSkip = +DOM["#error-skip-input"].value,
-          multiEnabled = instance.multi >= 2 && instance.multi <= 3,
+          multiCount = +DOM["#multi-count"].value,
+          multiEnabled = multiCount >= 2 && multiCount <= 3,
           customURLs = DOM["#custom-urls-input"].checked,
           shuffleURLs = DOM["#shuffle-urls-input"].checked,
           urls = customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [],
@@ -921,9 +926,7 @@ URLI.Popup = function () {
             // [1] Interval Errors
             interval < 1 || interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
             // [2] Error Skip Errors
-            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : "",
-            // [3] Other Errors (Multi / Shuffle)
-            multiEnabled && shuffleURLs ? chrome.i18n.getMessage("multi_shuffle_error") : ""
+            errorSkip < 0 || errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
           ],
           // Auto Errors
           autoErrors = [
@@ -932,7 +935,6 @@ URLI.Popup = function () {
             autoEnabled && (autoSeconds < 1 || autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
             autoEnabled && (autoSeconds * autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
             autoEnabled && multiEnabled ? chrome.i18n.getMessage("auto_multi_error") : "",
-            // TODO: Should we give the user the option or should this be enforced? autoEnabled && downloadEnabled && !autoWait ? chrome.i18n.getMessage("auto_download_wait_error") : "",
             autoEnabled && downloadEnabled && autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
             autoEnabled && downloadEnabled && autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
           ],
@@ -995,6 +997,8 @@ URLI.Popup = function () {
         instance.baseDateFormat = baseDateFormat;
         instance.leadingZeros = leadingZeros;
         instance.errorSkip = errorSkip;
+        instance.multi = multi;
+        instance.multiCount = multiCount;
         instance.multiEnabled = multiEnabled;
         instance.startingURL = url;
         instance.customURLs = customURLs;

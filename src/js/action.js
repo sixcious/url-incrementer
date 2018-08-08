@@ -239,7 +239,8 @@ URLI.Action = function () {
     }
     URLI.Background.deleteInstance(instance.tabId);
     if (caller !== "popupClearBeforeSet") { // Don't reset multi or remove key/mouse listeners if popup clear before set
-      instance.multi = 0;
+      instance.multiCount = 0;
+      resetMulti(instance);
       const items = URLI.Background.getItems();
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
@@ -294,8 +295,8 @@ URLI.Action = function () {
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
       // Multi:
-      if (instance.multiEnabled && instance.multi) {
-        for (let i = 1; i <= instance.multi; i++) {
+      if (instance.multiEnabled) {
+        for (let i = 1; i <= instance.multiCount; i++) {
           instance["selection" + i] = instance["startingSelection" + i];
           instance["selectionStart" + i] = instance["startingSelectionStart" + i];
         }
@@ -451,6 +452,16 @@ URLI.Action = function () {
       });
     }
     return actionPerformed;
+  }
+
+  // TODO
+  function resetMulti(instance) {
+    if (instance.multiEnabled) {
+      for (let i = 1; i <= instance.multiCount; i++) {
+        instance.multi[i].selection = instance.multi[i].startingSelection;
+        instance.multi[i].selectionStart = instance.multi[i].startingSelectionStart;
+      }
+    }
   }
 
   // TODO
