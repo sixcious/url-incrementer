@@ -441,11 +441,7 @@ URLI.Popup = function () {
             });
           }),
           selectedsLength = selecteds.length,
-          totalLength = selecteds.length + unselecteds.length,
-          isStartingURL = instance.url === instance.startingURL,
-          selectedsAmended = isStartingURL && instance.downloadMUnselecteds && instance.downloadMUnselecteds.length > 0,
-          unselectedsAmended = isStartingURL && instance.downloadMSelecteds && instance.downloadMSelecteds.length > 0;
-console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selectedsAmended + ", unselectedsAmended=" + unselectedsAmended);
+          totalLength = selecteds.length + unselecteds.length;
         // Download Preview Heading Title:
         DOM["#download-preview-heading-title"].innerHTML =
           "<div class=\"" + (selectedsLength > 0 ? "success" : "error") + "\">" +
@@ -468,30 +464,10 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
             "</thead>" +
             "<tbody>",
             count = 1;
-        let selectedsLength2 = selecteds.length;
-        const selectedsLengthEl = document.getElementById("selecteds-length");
         for (let selected of selecteds) {
-          let val = true;
-          if (selectedsAmended) {
-            instance.downloadMUnselecteds.filter(function(munselected) {
-              if (munselected.url === selected.url) {
-                val = false;
-                selectedsLengthEl.textContent = (--selectedsLength2) + "";
-              }
-            });
-          }
-          table += buildDownloadPreviewTR(selected, val, count++);
+          table += buildDownloadPreviewTR(selected, true, count++);
         }
         for (let unselected of unselecteds) {
-          // let val = false;
-          // if (unselectedsAmended) {
-          //   instance.downloadMSelecteds.filter(function(mselected) {
-          //     if (mselected.url === unselected.url) {
-          //       val = true;
-          //       selectedsLengthEl.textContent = (++selectedsLength2) + "";
-          //     }
-          //   });
-          // }
           table += buildDownloadPreviewTR(unselected, false, count++);
         }
         table += "</tbody>" + "</table>";
@@ -507,8 +483,8 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
         // Reset the manually selected includes and excludes each time the table is rebuilt:
         downloadPreviewCache.selecteds = selecteds;
         downloadPreviewCache.unselecteds = unselecteds;
-        _.mselecteds = [];
-        _.munselecteds = [];
+        downloadPreviewCache.mselecteds = [];
+        downloadPreviewCache.munselecteds = [];
       } else {
         DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_noresults");
       }
@@ -659,19 +635,19 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       let table =
         "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
-        "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
-        "<tr style='background: transparent;'>" +
-        "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
-        "</tr>" +
-        "</thead>" +
+          "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
+            "<tr style='background: transparent;'>" +
+              "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
+            "</tr>" +
+          "</thead>" +
         "<tbody style='border: 1px solid #f1f1f1; background-color: #fefefe;'>",
         count = 1;
       for (let url of urls) {
         table += ((count++ % 2) !== 0 ?
           "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
-          "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
-          "<a href=\"" + url.urlmod + "\" target=\"_blank\">" + url.urlmod + "</a>" +
-          "</td>" +
+            "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
+              "<a href=\"" + url.urlmod + "\" target=\"_blank\">" + url.urlmod + "</a>" +
+            "</td>" +
           "</tr>";
       }
       table += "</tbody>" + "</table>";
@@ -794,41 +770,7 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage_.URLI.Background.setInstance(instance.tabId, instance);
-        // Profile Save
-        if (_.profileSave) {
-          const profiles = localItems_ && localItems_.profiles && Array.isArray(localItems_.profiles)? localItems_.profiles : [],
-                url1 = _.url.substring(0, _.selectionStart),
-                url2 = _.url.substring(_.selectionStart + _.selection.length),
-                urlsalt1 = backgroundPage_.URLI.Encryption.generateSalt(),
-                urlsalt2 = backgroundPage_.URLI.Encryption.generateSalt();
-          console.log("URLI.Popup.setup() - saving a URL to local storage...");
-          // Check if this URL has already been saved, if it has remove the existing saved profile
-          if (profiles && profiles.length > 0) {
-            for (let i = 0; i < profiles.length; i++) {
-              const result = await backgroundPage_.URLI.Background.profileMatchesURL(profiles[i], _.url);
-              if (result.matches) {
-                console.log("URLI.Popup.setup() - this URL has already been saved, so removing the old entry");
-                profiles.splice(i, 1);
-                break;
-              }
-            }
-          }
-          const urlhash1 = await backgroundPage_.URLI.Encryption.calculateHash(url1, urlsalt1);
-          const urlhash2 = await backgroundPage_.URLI.Encryption.calculateHash(url2, urlsalt2);
-          // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
-          profiles.unshift({
-            "urlhash1": urlhash1,
-            "urlhash2": urlhash2,
-            "urlsalt1": urlsalt1,
-            "urlsalt2": urlsalt2,
-            "url2length": _.url.substring(_.selectionStart + _.selection.length).length,
-            "selectionStart": _.selectionStart, "interval": _.interval, "base": _.base, "baseCase": _.baseCase, "leadingZeros": _.leadingZeros,
-            "errorSkip": _.errorSkip, "errorCodes":  _.errorCodes, "errorCodesCustomEnabled": _.errorCodesCustomEnabled, "errorCodesCustom": _.errorCodesCustom
-          });
-          chrome.storage.local.set({
-            "profiles": profiles
-          });
-        }
+        saveProfile();
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({
@@ -875,14 +817,14 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
           backgroundPage_.URLI.Auto.startAutoTimer(instance);
         }
         toggleView.call(DOM["#accept-button"]);
-        });
+      });
     }
   }
 
   function setupInputs(caller, tabs) {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement:
-      _.profileSave = DOM["#profile-save-input"].checked;
+      _.profileFound = DOM["#profile-save-input"].checked;
       _.url = DOM["#url-textarea"].value;
       _.startingURL = DOM["#url-textarea"].value;
       _.selection = DOM["#selection-input"].value;
@@ -942,8 +884,8 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
       _.downloadMinMB = +DOM["#download-min-mb-input"].value;
       _.downloadMaxMB = +DOM["#download-max-mb-input"].value;
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
-      // Note: _.downloadMSelecteds is set in updateDownloadSelectedsUnselecteds()
-      // Note: _.downloadMUnselecteds is set in updateDownloadSelectedsUnselecteds()
+      _.downloadMSelecteds = downloadPreviewCache.mselecteds;
+      _.downloadMUnselecteds = downloadPreviewCache.munselecteds;
     }
   }
 
@@ -1012,6 +954,44 @@ console.log("isStartingURL=" + isStartingURL + ", selectedsAmended=" + selecteds
       }
     }
     return e;
+  }
+
+  async function saveProfile() {
+    // Profile Save
+    if (_.profileFound) { // not really profileFound, profileSave input value .. TODO
+      const profiles = localItems_ && localItems_.profiles && Array.isArray(localItems_.profiles)? localItems_.profiles : [],
+        url1 = _.url.substring(0, _.selectionStart),
+        url2 = _.url.substring(_.selectionStart + _.selection.length),
+        urlsalt1 = backgroundPage_.URLI.Encryption.generateSalt(),
+        urlsalt2 = backgroundPage_.URLI.Encryption.generateSalt();
+      console.log("URLI.Popup.setup() - saving a URL to local storage...");
+      // Check if this URL has already been saved, if it has remove the existing saved profile
+      if (profiles && profiles.length > 0) {
+        for (let i = 0; i < profiles.length; i++) {
+          const result = await backgroundPage_.URLI.Background.profileMatchesURL(profiles[i], _.url);
+          if (result.matches) {
+            console.log("URLI.Popup.setup() - this URL has already been saved, so removing the old entry");
+            profiles.splice(i, 1);
+            break;
+          }
+        }
+      }
+      const urlhash1 = await backgroundPage_.URLI.Encryption.calculateHash(url1, urlsalt1);
+      const urlhash2 = await backgroundPage_.URLI.Encryption.calculateHash(url2, urlsalt2);
+      // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
+      profiles.unshift({
+        "urlhash1": urlhash1,
+        "urlhash2": urlhash2,
+        "urlsalt1": urlsalt1,
+        "urlsalt2": urlsalt2,
+        "url2length": _.url.substring(_.selectionStart + _.selection.length).length,
+        "selectionStart": _.selectionStart, "interval": _.interval, "base": _.base, "baseCase": _.baseCase, "leadingZeros": _.leadingZeros,
+        "errorSkip": _.errorSkip, "errorCodes":  _.errorCodes, "errorCodesCustomEnabled": _.errorCodesCustomEnabled, "errorCodesCustom": _.errorCodesCustom
+      });
+      chrome.storage.local.set({
+        "profiles": profiles
+      });
+    }
   }
 
   // Return Public Functions
