@@ -19,7 +19,7 @@ URLI.Encryption = function () {
    * @public
    */
   async function calculateHash(plaintext, salt) {
-    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext), "PBKDF2", false, ["deriveBits"]);
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext ? plaintext : " "), "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2u8a(salt), iterations: 1000}, key, 512);
     return u8a2str(new Uint8Array(bits));
   }

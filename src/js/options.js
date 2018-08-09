@@ -351,9 +351,7 @@ URLI.Options = function () {
           if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
             console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
             profiles.splice(i, 1);
-            chrome.storage.local.set({
-              profiles: profiles
-            }, function() {
+            chrome.storage.local.set({profiles: profiles}, function() {
               populateValuesFromStorage("profiles");
             });
             break;

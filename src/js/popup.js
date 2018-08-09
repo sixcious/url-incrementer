@@ -766,11 +766,15 @@ URLI.Popup = function () {
       backgroundPage_.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, async function() {
         instance = JSON.parse(JSON.stringify(_));
         instance.enabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
+        instance.profileFound = instance.profileSave;
         const precalculateProps = backgroundPage_.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage_.URLI.Background.setInstance(instance.tabId, instance);
-        saveProfile();
+        // Profile Save
+        if (instance.profileSave) {
+          backgroundPage_.URLI.SaveURLs.saveURL(instance); // TODO
+        }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items_.popupSettingsCanOverwrite) {
           chrome.storage.sync.set({
@@ -824,7 +828,7 @@ URLI.Popup = function () {
   function setupInputs(caller, tabs) {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement:
-      _.profileFound = DOM["#profile-save-input"].checked;
+      _.profileSave = DOM["#profile-save-input"].checked;
       _.url = DOM["#url-textarea"].value;
       _.startingURL = DOM["#url-textarea"].value;
       _.selection = DOM["#selection-input"].value;
@@ -954,44 +958,6 @@ URLI.Popup = function () {
       }
     }
     return e;
-  }
-
-  async function saveProfile() {
-    // Profile Save
-    if (_.profileFound) { // not really profileFound, profileSave input value .. TODO
-      const profiles = localItems_ && localItems_.profiles && Array.isArray(localItems_.profiles)? localItems_.profiles : [],
-        url1 = _.url.substring(0, _.selectionStart),
-        url2 = _.url.substring(_.selectionStart + _.selection.length),
-        urlsalt1 = backgroundPage_.URLI.Encryption.generateSalt(),
-        urlsalt2 = backgroundPage_.URLI.Encryption.generateSalt();
-      console.log("URLI.Popup.setup() - saving a URL to local storage...");
-      // Check if this URL has already been saved, if it has remove the existing saved profile
-      if (profiles && profiles.length > 0) {
-        for (let i = 0; i < profiles.length; i++) {
-          const result = await backgroundPage_.URLI.Background.profileMatchesURL(profiles[i], _.url);
-          if (result.matches) {
-            console.log("URLI.Popup.setup() - this URL has already been saved, so removing the old entry");
-            profiles.splice(i, 1);
-            break;
-          }
-        }
-      }
-      const urlhash1 = await backgroundPage_.URLI.Encryption.calculateHash(url1, urlsalt1);
-      const urlhash2 = await backgroundPage_.URLI.Encryption.calculateHash(url2, urlsalt2);
-      // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
-      profiles.unshift({
-        "urlhash1": urlhash1,
-        "urlhash2": urlhash2,
-        "urlsalt1": urlsalt1,
-        "urlsalt2": urlsalt2,
-        "url2length": _.url.substring(_.selectionStart + _.selection.length).length,
-        "selectionStart": _.selectionStart, "interval": _.interval, "base": _.base, "baseCase": _.baseCase, "leadingZeros": _.leadingZeros,
-        "errorSkip": _.errorSkip, "errorCodes":  _.errorCodes, "errorCodesCustomEnabled": _.errorCodesCustomEnabled, "errorCodesCustom": _.errorCodesCustom
-      });
-      chrome.storage.local.set({
-        "profiles": profiles
-      });
-    }
   }
 
   // Return Public Functions

@@ -154,17 +154,27 @@ URLI.Background = function () {
    * @public
    */
   async function buildInstance(tab) {
-    let props;
+    let props = {}, profilematch;
     // Search for profile first:
     if (localItems_ && localItems_.profiles && localItems_.profiles.length > 0 ) {
       // How to handle async/await in for loops:
       // https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
       for (let profile of localItems_.profiles) {
-        const result = await profileMatchesURL(profile, tab.url);
+        const result = await URLI.SaveURLs.matchesURL(profile, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
-          props = profile; // selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodesCustomEnabled, errorCodesCustom
+          //props = JSON.parse(JSON.stringify(profile)); // selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodesCustomEnabled, errorCodesCustom
+          profilematch = profile;
           props.profileFound = true;
+          props.interval = profile.interval;
+          props.base = profile.base;
+          props.baseCase = profile.baseCase;
+          props.baseDateFormat = profile.baseDateFormat;
+          props.leadingZeros = profile.leadingZeros;
+          props.errorSkip = profile.errorSkip;
+          props.errorCodes = profile.errorCodes;
+          props.errorCodesCustomEnabled = profile.errorCodesCustomEnabled;
+          props.errorCodesCustom = profile.errorCodesCustom;
           props.selection = result.selection;
           break;
         }
@@ -203,34 +213,6 @@ URLI.Background = function () {
       "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,
       "downloadPreview": items_.downloadPreview,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity
-    };
-  }
-
-  /**
-   * Checks if the saved profile's hashed URL matches the URL.
-   *
-   * @param profile the saved profile with url hashes to check
-   * @param url     the current URL to check
-   * @returns {Promise<{matches: boolean, selection: string}>}
-   * @public
-   */
-  async function profileMatchesURL(profile, url) {
-    console.log("URLI.Background.profileMatchesURL() - checking this url, profile.urlhash1=" + profile.urlhash1 + ", url=" + url);
-    const url1 = url.substring(0, profile.selectionStart),
-          url2 = url.slice(-profile.url2length);
-    const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
-    const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
-    const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
-    const selectionParsed = isNaN(profile.base) ? undefined : parseInt(selection, profile.base).toString(profile.base);
-    // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
-    // Test base matches selection for same reason
-    return {
-      "matches":
-      urlhash1 === profile.urlhash1 &&
-      (profile.url2length > 0 ? urlhash2 === profile.urlhash2 : true) &&
-      /^[a-z0-9]+$/i.test(selection) &&
-      selectionParsed ? !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) : profile.base === "date" && false, // TODO date base
-      "selection": selection
     };
   }
 
@@ -561,7 +543,6 @@ URLI.Background = function () {
     setInstance: setInstance,
     deleteInstance: deleteInstance,
     buildInstance: buildInstance,
-    profileMatchesURL: profileMatchesURL,
     setBadge: setBadge,
     installedListener: installedListener,
     messageListener: messageListener,

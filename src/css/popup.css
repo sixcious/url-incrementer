@@ -183,6 +183,11 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
+/* display inline-block to remove whitespace from link */
+#setup #base-date-format-a {
+  display: inline-block;
+}
+
 #setup #base-date-format-input {
   width: 128px;
   height: 1.75em;

@@ -249,7 +249,7 @@ URLI.Action = function () {
       }
       if (instance.profileFound && caller !== "tabRemovedListener" && caller !== "auto") { // Don't delete saved URLs if the tab is simply being removed or auto clearing
         instance.profileFound = false;
-        deleteProfileByInstance(instance);
+        URLI.SaveURLs.deleteURL(instance, "clear");
       }
     }
     if (instance.autoEnabled) {
@@ -451,31 +451,6 @@ URLI.Action = function () {
       });
     }
     return actionPerformed;
-  }
-
-  // TODO
-  function deleteProfileByInstance(instance) {
-    const url1 = instance.url.substring(0, instance.selectionStart),
-          url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
-    chrome.storage.local.get(null, async function(localItems) {
-      const profiles = localItems.profiles;
-      if (profiles && profiles.length > 0) {
-        for (let i = 0; i < profiles.length; i++) {
-          const urlhash1 = await URLI.Encryption.calculateHash(url1, profiles[i].urlsalt1);
-          const urlhash2 = await URLI.Encryption.calculateHash(url2, profiles[i].urlsalt2);
-          if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
-            console.log("URLI.Action.deleteProfile() - deleting URL url=" + instance.url + ", with urlhash1=" + profiles[i].urlhash1);
-            profiles.splice(i, 1);
-            chrome.storage.local.set({
-              profiles: profiles
-            }, function() {
-              // populateValuesFromStorage("profiles");
-            });
-            break;
-          }
-        }
-      }
-    });
   }
 
   // Return Public Functions

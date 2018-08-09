@@ -127,20 +127,19 @@ Finally, a few websites may not send an error code and instead "swallow" the err
 ## Saving URLs
 To make life easy, you can save your favorite URL patterns and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. You can also have the Save checkbox always pre-checked in the Options.
 
-After you save a URL, you can use your easier "Fav" Increment Decrement Shortcut Keys whenever you visit the site.
+After you save a URL, you can use the easier "Fav" Increment Decrement Shortcut Keys whenever you visit the site.
 
 #### How Are URLs Saved?
-To protect your privacy to the highest standard, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to decrypt the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and checking if the hashes are equal.
+To protect your privacy to the highest standard, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to decrypt the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URLs into two parts (meaning we go to the trouble of calculating **two separate hashes and salts for each URL!**).
+
+When you view your saved URLs in Options, you'll see a small part of the hash followed by the interval, base, and other formats.
 
 #### Where Are The Cryptographic Hashes Saved?
-The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all the other extension data of course).
+The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all your other saved settings). We do not save anything outside the extension storage space allotted to us.
 
-#### Creating Saved URL Wildcards
-TODO: May not be in final version
+#### Recognizing Saved URLs
 
 Because we save URLs just like passwords, the URLs must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save https://www.google.com/abc/page=1 then http://www.google.com/xyz/page=1 will not be recognized because of the difference in abc and xyz.
-
-To mitigate this, you can also add less-restrictive URL patterns to save the interval, base, and base case. However the selection will need to use a predefined option like (page=, or last number). The pattern must match the first part of the URL however. 
 
 ## Shuffle URLs
 Click the Shuffle (crossed-arrows) icon to turn this mode on.
