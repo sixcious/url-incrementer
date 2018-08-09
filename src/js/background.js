@@ -51,8 +51,8 @@ URLI.Background = function () {
     "autopause":  { "text": "❚❚",    "backgroundColor": "#FF6600" },
     "autorepeat": { "text": "REP",  "backgroundColor": "#FF6600" },
     "download":   { "text": "DL",   "backgroundColor": "#663399" },
-    "skip":       { "text": "",     "backgroundColor": "#000000" },
     "toolkit":    { "text": "TOOL", "backgroundColor": "#000028" },
+    "skip":       { "text": "SKIP", "backgroundColor": "#000000" },
     "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
@@ -154,45 +154,23 @@ URLI.Background = function () {
    * @public
    */
   async function buildInstance(tab) {
-    let props = {}, profilematch;
-    // Search for profile first:
-    if (localItems_ && localItems_.profiles && localItems_.profiles.length > 0 ) {
-      // How to handle async/await in for loops:
-      // https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
-      for (let profile of localItems_.profiles) {
+    const profiles = localItems_.profiles;
+    let props;
+    // First search for a profile to build an instance from:
+    if (profiles && profiles.length > 0) {
+      for (let profile of profiles) {
         const result = await URLI.SaveURLs.matchesURL(profile, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
-          //props = JSON.parse(JSON.stringify(profile)); // selectionStart, interval, base, baseCase, leadingZeros, errorSkip, errorCodes, errorCodesCustomEnabled, errorCodesCustom
-          profilematch = profile;
-          props.profileFound = true;
-          props.interval = profile.interval;
-          props.base = profile.base;
-          props.baseCase = profile.baseCase;
-          props.baseDateFormat = profile.baseDateFormat;
-          props.leadingZeros = profile.leadingZeros;
-          props.errorSkip = profile.errorSkip;
-          props.errorCodes = profile.errorCodes;
-          props.errorCodesCustomEnabled = profile.errorCodesCustomEnabled;
-          props.errorCodesCustom = profile.errorCodesCustom;
-          props.selection = result.selection;
+          props = buildProps("profile", profile, result);
           break;
         }
       }
     }
-    // If no profile found, use storage items:
+    // If no profile found, build using storage items:
     if (!props) {
-      props = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
-      props.profileFound = false;
-      props.interval = items_.interval;
-      props.base = items_.base;
-      props.baseCase = items_.baseCase;
-      props.baseDateFormat = items_.baseDateFormat;
-      props.leadingZeros = items_.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
-      props.errorSkip = items_.errorSkip;
-      props.errorCodes = items_.errorCodes;
-      props.errorCodesCustomEnabled = items_.errorCodesCustomEnabled;
-      props.errorCodesCustom = items_.errorCodesCustom;
+      const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
+      props = buildProps("items", items_, selectionProps);
     }
     // Return newly built instance using props and items:
     return {
@@ -214,6 +192,32 @@ URLI.Background = function () {
       "downloadPreview": items_.downloadPreview,
       "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity
     };
+  }
+
+  /**
+   * Builds properties for an instance using either a base of a saved URL or storage items.
+   *
+   * @param via   string indicating how the props are being built ("profile" or "items")
+   * @param base  the base object to build from (saved url or storage items)
+   * @param sbase the selection base object to build from
+   * @returns {{}} the built properties from the bases
+   * @private
+   */
+  function buildProps(via, base, sbase) {
+    const props = {};
+    props.profileFound = via === "profile";
+    props.selection = sbase.selection;
+    props.selectionStart = props.profileFound ? base.selectionStart : sbase.selectionStart;
+    props.interval = base.interval;
+    props.base = base.base;
+    props.baseCase = base.baseCase;
+    props.baseDateFormat = base.baseDateFormat;
+    props.leadingZeros = props.profileFound ? base.leadingZeros : base.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    props.errorSkip = base.errorSkip;
+    props.errorCodes = base.errorCodes;
+    props.errorCodesCustomEnabled = base.errorCodesCustomEnabled;
+    props.errorCodesCustom = base.errorCodesCustom;
+    return props;
   }
 
   /**
