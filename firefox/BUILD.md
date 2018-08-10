@@ -13,7 +13,7 @@ Need to adjust the overlay since the Firefox Options Page doesn't use the Chrome
       left: 17em;
     }
 
-##3. Replace options.html
+## 3. Replace options.html
 TODO
     <div>
       Firefox's Commands API is currently in infancy and requires you to t-y-p-e out the keys. Click on the text boxes and enter up to 2 Modifier Keys followed by 1 normal key. The API requires you to enter at least 1 modifier key.
@@ -29,3 +29,7 @@ TODO
       <button id="update">Update keyboard shortcut</button>
       <button id="reset">Reset keyboard shortcut</button>
     </div>
+    
+    
+## 4. Add web-extensions-commands.js
+Integrate web-extensions-commands.js into the options.html
