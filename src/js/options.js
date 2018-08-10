@@ -15,7 +15,7 @@ URLI.Options = function () {
         FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META  = 0x8, // 1000
-        KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
+        KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
           "Alt", "AltLeft", "AltRight",
           "Control", "ControlLeft", "ControlRight",
           "Shift", "ShiftLeft", "ShiftRight",
@@ -280,6 +280,7 @@ URLI.Options = function () {
    * @private
    */
   function setKey(event) {
+    event.preventDefault();
     // Set key [0] as the event modifiers OR'd together and [1] as the event key code
     key = [
       (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001

@@ -9,27 +9,40 @@ var WebExtensionsCommands = function () {
 
   const browser = chrome;
 
+  const RESET_INPUT_IMG_PATH = "../img/font-awesome/black/times.png",
+    I18N = {
+      "commandActivate":     "Activate the extension",     // browser.i18n.getMessage("web_extensions_commands_command_activate")
+      "typeShortcut": "Type a shortcut", // browser.i18n.getMessage("web_extensions_commands_type_shortcut")
+      "errorIncludeCtrlAlt": "Include either Ctrl or Alt", // browser.i18n.getMessage("web_extensions_commands_error_include_ctrl_alt")
+      "errorUseCtrlAlt": "" //
+    };
+
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
-    ACTIVATE_EXTENSION_DESCRIPTION = "Activate the extension",
-    RESET_INPUT_IMG_PATH = "../img/font-awesome/black/times.png",
     KEYBOARDEVENT_CODE_TO_COMMAND_KEYS = new Map(),
     FLAG_KEY_NONE  = 0x0, // 0000
     FLAG_KEY_ALT   = 0x1, // 0001
     FLAG_KEY_CTRL  = 0x2, // 0010
     FLAG_KEY_SHIFT = 0x4, // 0100
-    KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers (used in the case of an assigned shortcut only being a key modifier, e.g. just the Shift key for Increment)
+    KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
       "Alt", "AltLeft", "AltRight",
       "Control", "ControlLeft", "ControlRight",
       "Shift", "ShiftLeft", "ShiftRight",
       "Meta", "MetaLeft", "MetaRight"
     ];
 
+  const medias = new Map([
+    ["MediaTrackNext", "MediaNextTrack"],
+    ["MediaTrackPrevious", "MediaPrevTrack"],
+    ["MediaPlayPause", "MediaPlayPause"],
+    ["MediaStop", "MediaStop"]
+  ]);
 
-  let commands_, // commands cache
+
+  let // commands_, // commands cache
     key = [0,""], // Reusable key to stores the key's event modifiers [0] and code [1]
     timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
-  let keym;
   let allowed = false;
+  let error = "";
 
   /*
       <div>
@@ -41,7 +54,9 @@ var WebExtensionsCommands = function () {
       Normal Keys: A-Z, 0-9, F1-F12, Comma, Period, Home, End, PageUp, PageDown, Space, Insert, Delete, Up, Down, Left, Right
       <br>
       Examples: Ctrl+Up, Ctrl+Alt+Up, Shift+PageUp
-      <a href="https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands">More Help("Shortcut Values")</a>
+      <a href="https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">More Help</a>
+      https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
+      https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
     </div>
    */
 
@@ -56,93 +71,39 @@ var WebExtensionsCommands = function () {
    */
   function DOMContentLoaded() {
     DOM["#web-extensions-commands"] = document.getElementById("web-extensions-commands");
+    buildKeyboardEventCodeToCommandKeysMap();
     browser.commands.getAll(function(commands) {
       console.log(commands);
-      commands_ = commands;
-      buildHTML();
+      // commands_ = commands;
+      generateHTML(commands);
       cacheDOM();
-      addEventListeners();
-      allowedKeyboardCodes();
+      addEventListeners(commands);
     });
   }
 
-  function buildHTML() {
-    let html = "<div class=\"table\">";
-    for (const command of commands_) {
-      html +=
-        "<div class=\"row\">" +
-        "<div class=\"column\">" +
-        "<label id=\"web-extensions-commands-label-" + command.name + "\" for=\"web-extensions-commands-input-" + command.name + "\">" + ((command.name === "_execute_browser_action" || !command.description) ? ACTIVATE_EXTENSION_DESCRIPTION : command.description) + "</label>" +
-        "</div>" +
-        "<div class=\"column\">" +
-        "<input type=\"text\" id=\"web-extensions-commands-input-" + command.name + "\" class=\"web-extensions-commands-input\" value=\"" + command.shortcut + "\" data-command=\"" + command.name + "\" readonly/>" +
-        "<input type=\"image\" id=\"web-extensions-commands-reset-input-" + command.name + "\" class=\"web-extensions-commands-reset-input\" src=\"" + RESET_INPUT_IMG_PATH + "\" alt=\"web-extensions-commands-reset-input\" data-command=\"" + command.name + "\" width=\"16\" height=\"16\"/>" +
-        "</div>" +
-        "</div>";
-    }
-    html += "</div>";
-    DOM["#web-extensions-commands"].innerHTML = html;
-  }
-
-  function cacheDOM() {
-    const elements = document.querySelectorAll("[class='web-extensions-commands-input'],[class='web-extensions-commands-reset-input']");
-    for (let element of elements) {
-      DOM["#" + element.id] = element;
-    }
-  }
-
-  function addEventListeners() {
-    for (const command of commands_) {
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
-      DOM["#web-extensions-commands-reset-input-" + command.name].addEventListener("click", click); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
-    }
-  }
-
-  function keydown(event) {
-    setKey(event);
-    writeInput(this, key);
-  }
-
-  function keyup(event) {
-    if (!allowed) {
-      return;
-    }
-    console.log("keyup!" + key + ", " + this.dataset.command + ", " + this.value);
-    browser.commands.update({
-      name: this.dataset.command,
-      shortcut: this.value
-    });
-  }
-
-  function click() {
-    console.log("clicked!" + this.dataset.command);
-    // browser.commands.update({
-    //   name: this.dataset.command,
-    //   shortcut: null
-    // });
-    // DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
-    browser.commands.reset(this.dataset.command);
-    DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
-  }
-
-  function allowedKeyboardCodes() {
+  function buildKeyboardEventCodeToCommandKeysMap() {
     const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
     const keys = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
     const sames = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Comma", "Period", "Home", "End", "PageUp", "PageDown", "Space", "Insert", "Delete"];
-    const modifiers = new Map([
-      ["AltLeft", "Alt"],
-      ["AltRight", "Alt"],
-      ["ControlLeft", "Control"],
-      ["ControlRight", "Control"],
-      ["ShiftLeft", "Shift"],
-      ["ShiftRight", "Shift"]
-    ]);
+    // const modifiers = new Map([
+    //   ["AltLeft", "Alt"],
+    //   ["AltRight", "Alt"],
+    //   ["ControlLeft", "Ctrl"],
+    //   ["ControlRight", "Ctrl"],
+    //   ["ShiftLeft", "Shift"],
+    //   ["ShiftRight", "Shift"]
+    // ]);
     const arrows = new Map([
       ["ArrowUp", "Up"],
       ["ArrowDown", "Down"],
       ["ArrowLeft", "Left"],
       ["ArrowRight", "Right"]
+    ]);
+    const medias = new Map([
+      ["MediaTrackNext", "MediaNextTrack"],
+      ["MediaTrackPrevious", "MediaPrevTrack"],
+      ["MediaPlayPause", "MediaPlayPause"],
+      ["MediaStop", "MediaStop"]
     ]);
     // Alt: AltLeft, AltRight
     // Ctrl: ControlLeft, ControlRight
@@ -150,11 +111,14 @@ var WebExtensionsCommands = function () {
     // A-Z: Replace Key with "" e.g. KeyA
     // 0-9: Replace Digit with "" e.g. Digit1
     // Up,Down,Left,Right: Replace Arrow with "" e.g. ArrowUp
-    for (const modifier of modifiers) {
-      KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.set(modifier[0], modifier[1]);
-    }
+    // for (const modifier of modifiers) {
+    //   KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.set(modifier[0], modifier[1]);
+    // }
     for (const arrow of arrows) {
       KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.set(arrow[0], arrow[1]);
+    }
+    for (const media of medias) {
+      KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.set(media[0], media[1]);
     }
     for (const same of sames) {
       KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.set(same, same);
@@ -168,6 +132,106 @@ var WebExtensionsCommands = function () {
     }
   }
 
+  function generateHTML(commands) {
+    let html = "<div class=\"table\">";
+    for (const command of commands) {
+      html +=
+        "<div class=\"row\">" +
+          "<div class=\"column\">" +
+            "<label id=\"web-extensions-commands-label-" + command.name + "\" class=\"web-extensions-commands-label\">" + ((command.name === "_execute_browser_action" || !command.description) ? I18N.commandActivate : command.description) + "</label>" +
+          "</div>" +
+          "<div class=\"column\">" +
+            "<input type=\"text\" id=\"web-extensions-commands-input-" + command.name + "\" class=\"web-extensions-commands-input\" value=\"" + command.shortcut + "\" data-command=\"" + command.name + "\" data-shortcut=\"" + command.shortcut + "\"  placeholder=\"\"/>" +
+            "<div id='web-extensions-commands-input-underline-" + command.name + "' class='web-extensions-commands-input-underline'></div>" +
+            "<div id='web-extensions-commands-error-" + command.name + "' class='web-extensions-commands-error'></div>" +
+            "<input type=\"image\" id=\"web-extensions-commands-reset-input-" + command.name + "\" class=\"web-extensions-commands-reset-input\" src=\"" + RESET_INPUT_IMG_PATH + "\" alt=\"web-extensions-commands-reset-input\" data-command=\"" + command.name + "\" width=\"16\" height=\"16\"/>" +
+          "</div>" +
+        "</div>";
+    }
+    html += "</div>";
+    DOM["#web-extensions-commands"].innerHTML = html;
+  }
+
+  function cacheDOM() {
+    const elements = document.querySelectorAll("#web-extensions-commands [id]");
+    for (let element of elements) {
+      DOM["#" + element.id] = element;
+    }
+  }
+
+  function addEventListeners(commands) {
+    for (const command of commands) {
+      DOM["#web-extensions-commands-input-" + command.name].addEventListener("focus", focus);
+      DOM["#web-extensions-commands-input-" + command.name].addEventListener("blur", blur);
+      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
+      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
+      DOM["#web-extensions-commands-reset-input-" + command.name].addEventListener("click", click); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
+    }
+  }
+
+  function updateError(that) {
+    if (error) {
+      DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.add("error");
+      DOM["#web-extensions-commands-error-" + that.dataset.command].innerText = error;
+    } else {
+      DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.remove("error");
+      DOM["#web-extensions-commands-error-" + that.dataset.command].innerText = "";
+    }
+  }
+
+
+  function focus() {
+    this.value = "";
+    this.placeholder = I18N.typeShortcut;
+    error = "";
+    key = [0, ""];
+    updateError(this);
+  }
+
+  function blur() {
+    this.value = this.dataset.shortcut;
+    this.placeholder = "";
+    error = "";
+    key = [0, ""];
+    updateError(this);
+  }
+
+  function keydown(event) {
+    event.preventDefault();
+    setKey(event);
+    writeInput(this, key);
+    updateError(this);
+  }
+
+  function keyup(event) {
+    if (!allowed) {
+      this.value = "";
+      error = "";
+      updateError(this);
+      return;
+    }
+    console.log("keyup!" + key + ", " + this.dataset.command + ", " + this.value);
+    // browser.commands.update({
+    //   name: this.dataset.command,
+    //   shortcut: this.value
+    // });
+    this.dataset.shortcut = this.value;
+    this.blur();
+  }
+
+  function click() {
+    console.log("clicked!" + this.dataset.command);
+    // browser.commands.update({
+    //   name: this.dataset.command,
+    //   shortcut: null
+    // });
+    // DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
+    browser.commands.reset(this.dataset.command);
+    DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
+  }
+
+
+
 
 
   /**
@@ -178,6 +242,8 @@ var WebExtensionsCommands = function () {
    * @private
    */
   function setKey(event) {
+     error = "";
+     key = [0, ""];
     // Set key [0] as the event modifiers OR'd together and [1] as the event key code
     const modifier =
       (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001  1
@@ -194,12 +260,37 @@ var WebExtensionsCommands = function () {
 
     //allowed modifiiers: Alt, Ctrl, Alt+Shift, Ctrl+Shift
     const code = KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.get(event.code);
-    if (![1,2,5,6].includes(modifier) || !code || KEY_MODIFIER_CODE_ARRAY.includes(event.code)) {
-      //input.value = "Not allowed";
-      allowed = false;
-      return;
+
+    // if (modifier === 3) {
+    //   error = "Use either Ctrl or Alt";
+    // }
+    switch (modifier) {
+      case 0: case 4: case 7:
+        error = "Include either Ctrl or Alt";
+        return;
+        break;
+      case 3:
+        error = "Use either Ctrl or Alt";
+        return;
+        break;
+      case 1: case 2: case 5: case 6:
+        if (!code) {
+          error = "Type a letter";
+        }
+        break;
     }
-    allowed = true;
+
+    allowed = !error;
+
+
+
+    // if (![1,2,5,6].includes(modifier) || !code || KEY_MODIFIER_CODE_ARRAY.includes(event.code)) {
+    //   //input.value = "Not allowed";
+    //   error = "";
+    //   allowed = false;
+    //   return;
+    // }
+    // allowed = true;
     key = [
       // (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
       // (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
@@ -208,6 +299,10 @@ var WebExtensionsCommands = function () {
       modifier,
       code
     ];
+
+    // // remove error
+    // DOM["#web-extensions-commands-input-underline-" + this.dataset.command].classList.remove("error");
+    // DOM["#web-extensions-commands-error-" + this.dataset.command].innerText = "";
   }
 
   /**
