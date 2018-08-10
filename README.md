@@ -47,7 +47,7 @@ Over 10 New Features
 - Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
 - Internal Code Enhancements: Caching storage for faster performance
-- Bug fix: popup.html and options.html rewritten in valid HTML 5
+- Front-End Enhancements: popup.html and options.html rewritten in valid HTML 5 and improved page loading speed for popup and options by replacing CSS @imports with HTML links
 
 # What's New in Version 5.5 (7/26/2018)
 - Removed debug statements (apologies!)

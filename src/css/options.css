@@ -1,9 +1,5 @@
 /* Options CSS is minimal because Options is set to use Chrome style */
 
-@import url("ui/fade.css");
-@import url("ui/hover.css");
-@import url("ui/generate-alert.css");
-
 /* Firefox: Set max-width and margin */
 body {
   min-width: 420px;

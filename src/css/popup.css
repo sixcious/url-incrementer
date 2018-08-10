@@ -1,11 +1,5 @@
 /* Popup CSS relies on Chromium CSS */
 
-@import url("chromium/chrome_shared.css");
-@import url("ui/generate-alert.css");
-@import url("ui/hover.css");
-@import url("ui/fade.css");
-@import url("ui/toggle.css");
-
 /* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
   overflow-x: hidden;
