@@ -16,6 +16,8 @@
     "description": "Extension title (tool tip) shown when hovered."
   },
 
+  "BROWSER": { "message": "----- BROWSER -----" },
+
   "POPUP": { "message": "----- POPUP -----" },
   "increment_input": { "message": "Increment" },
   "decrement_input": { "message": "Decrement" },
@@ -144,12 +146,12 @@
   "download_enabled_error": { "message": "Please first enable Download in Options to give URLI permissions" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
-  "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment [+] or perform other actions instantly without having to enter Setup"},
-  "chrome_shortcuts_h3": { "message": "Chrome Shortcuts" },
-  "chrome_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
-  "chrome_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
-  "chrome_shortcuts_p1": { "message": "URLI is currently set to use Chrome Shortcuts." },
-  "chrome_shortcuts_p2": { "message": "Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts to use any key or mouse button you want! (requires permissions)" },
+  "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment [+] or perform other actions instantly without having to enter Setup or Save URLs"},
+  "browser_shortcuts_h3": { "message": "Browser Shortcuts" },
+  "browser_shortcuts_enable_button": { "message": "Enable Browser Shortcuts" },
+  "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Browser Shortcuts" },
+  "browser_shortcuts_p1": { "message": "URLI is currently set to use Browser Shortcuts." },
+  "browser_shortcuts_p2": { "message": "Browser Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts to use any key or mouse button you want! (requires permissions)" },
   "chrome_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },

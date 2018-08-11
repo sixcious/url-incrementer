@@ -139,7 +139,7 @@ The cryptographic hashes are *only* saved to your local extension storage space 
 
 #### Recognizing Saved URLs
 
-Because we save URLs just like passwords, the URLs must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save https://www.google.com/abc/page=1 then http://www.google.com/xyz/page=1 will not be recognized because of the difference in abc and xyz.
+Because we save URLs just like passwords, the URLs must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save https://www.example.com/abc/page=1 then https://www.example.com/xyz/page=1 will not be recognized because of the difference in abc and xyz.
 
 ## Shuffle URLs
 Click the Shuffle (crossed-arrows) icon to turn this mode on.

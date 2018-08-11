@@ -126,5 +126,5 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   sendResponse({});
 });
 
-// Content Script Start: Check if internal shortcuts should be enabled (e.g. quick shortcuts or instance are enabled)
+// Content Script starts by sending a message to check if internal shortcuts should be enabled (e.g. quick shortcuts, saved url, enabled instance)
 chrome.runtime.sendMessage({greeting: "checkInternalShortcuts"});

@@ -48,8 +48,8 @@ URLI.Options = function () {
     }
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#chrome-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#chrome-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
     DOM["#chrome-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
@@ -138,7 +138,7 @@ URLI.Options = function () {
     chrome.storage.sync.get(null, function(items) {
       chrome.storage.local.get(null, function(localItems) {
         if (values === "all" || values === "internalShortcuts") {
-          DOM["#chrome-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#browser-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
         }
         if (values === "all" || values === "download") {
@@ -159,7 +159,7 @@ URLI.Options = function () {
           buildSelectProfiles(localItems.profiles);
         }
         if (values === "all") {
-          DOM["#chrome-shortcuts-quick-enable-input"].checked = items.quickEnabled;
+          DOM["#browser-shortcuts-quick-enable-input"].checked = items.quickEnabled;
           DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
           DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
           DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
@@ -243,9 +243,8 @@ URLI.Options = function () {
    */
   function setKeyEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      const quickEnabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0;
-      const enabled = items.keyFIncrement.length !== 0 || items.keyFDecrement.length !== 0 || items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyAuto.length !== 0;
-      chrome.storage.sync.set({"keyQuickEnabled": "", "keyEnabled": enabled}, function() {
+      const enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyReturn.length !== 0 || items.keyAuto.length !== 0;
+      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
@@ -258,8 +257,7 @@ URLI.Options = function () {
    */
   function setMouseEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      const quickEnabled = items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1;
-      const enabled = items.mouseFIncrement !== -1 || items.mouseFDecrement !== -1 || items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseAuto !== -1;
+      const enabled =  items.mouseIncrement !== -1 || items.mouseDecrement !== -1 || items.mouseNext !== -1 || items.mousePrev !== -1 || items.mouseClear !== -1 || items.mouseReturn !== -1 || items.mouseAuto !== -1;
       chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
         DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
