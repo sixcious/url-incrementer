@@ -101,25 +101,6 @@ URLI.Shortcuts = function () {
   };
 }();
 
-// // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-// chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-//   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
-//   URLI.Shortcuts.setItems(response.items);
-//   // Key
-//   if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled || response.instance.profileFound)))) {
-//     console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
-//     document.addEventListener("keyup", URLI.Shortcuts.keyListener);
-//   }
-//   // Mouse
-//   if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled || response.instance.profileFound)))) {
-//     console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
-//     document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
-//   }
-// });
-
-// Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-chrome.runtime.sendMessage({greeting: "getInstance"});
-
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
@@ -144,3 +125,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   sendResponse({});
 });
+
+// Content Script Start: Check if internal shortcuts should be enabled (e.g. quick shortcuts or instance are enabled)
+chrome.runtime.sendMessage({greeting: "checkInternalShortcuts"});

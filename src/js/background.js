@@ -318,7 +318,7 @@ URLI.Background = function () {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
     let instance;
     switch (request.greeting) {
-      case "getInstance":
+      case "checkInternalShortcuts":
         instance = getInstance(sender.tab.id);
         if (!instance) {
           sender.tab.url = sender.url;
