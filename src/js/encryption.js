@@ -62,10 +62,3 @@ URLI.Encryption = function () {
     generateSalt: generateSalt
   };
 }();
-
-// TODO:
-// https://timtaubert.de/blog/2015/05/implementing-a-pbkdf2-based-password-storage-scheme-for-firefox-os/
-//https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base64-encoded-string
-// ..
-//https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/42334410#42334410
-//return btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));

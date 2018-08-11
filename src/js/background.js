@@ -15,8 +15,8 @@ URLI.Background = function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
-    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyFIncrement": [0, "ArrowRight"], "keyFDecrement": [0, "ArrowLeft"], "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyAuto": [6, "KeyA"],
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseAuto": -1,
+    /* key */         "quickEnabled": true, "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyReturn": [6, "KeyB"], "keyAuto": [6, "KeyA"],
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseReturn": -1, "mouseAuto": -1,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -172,9 +172,14 @@ URLI.Background = function () {
       const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
       props = buildProps("items", items_, selectionProps);
     }
+    // // Starting URL (Quick Instances)
+    // const instance = getInstance(tab.id);
+    // if (!instance) {
+    //   setInstance(tabId)
+    // }
     // Return newly built instance using props and items:
     return {
-      "enabled": props.profileFound, "multiEnabled": false, "toolkitEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
+      "enabled": false/*props.profileFound*/, "multiEnabled": false, "toolkitEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
@@ -311,12 +316,26 @@ URLI.Background = function () {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
+    let instance;
     switch (request.greeting) {
       case "getInstance":
-        sendResponse({instance: getInstance(sender.tab.id), items: getItems()});
+        instance = getInstance(sender.tab.id);
+        if (!instance) {
+          sender.tab.url = sender.url;
+          instance = await buildInstance(sender.tab);
+        }
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items_});
+        // Key
+        if (items_.keyEnabled && (items_.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
+        }
+        // Mouse
+        if (items_.mouseEnabled && (items_.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+          chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
+        }
         break;
       case "performAction":
-        let instance = getInstance(sender.tab.id);
+        instance = getInstance(sender.tab.id);
         if (!instance && request.action !== "auto") {
           // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
           sender.tab.url = sender.url;
@@ -358,14 +377,15 @@ URLI.Background = function () {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
     const URL_INCREMENT_BUTTON_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
-    if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID)) {
+    if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
+        request && (request.action === "increment" || request.action === "decrement")) {
       switch (request.greeting) {
         case "performAction":
           let instance = getInstance(request.tab.id);
-          if (!instance && request.action !== "auto") {
+          if (!instance) {
             instance = await buildInstance(request.tab);
           }
-          if (instance && (request.action === "increment" || request.action === "decrement")) {
+          if (instance) {
             URLI.Action.performAction(request.action, "externalExtension", instance);
           }
           break;

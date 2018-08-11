@@ -139,8 +139,11 @@ URLI.Action = function () {
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       URLI.IncrementDecrement.incrementDecrement(action, instance);
-      instance.enabled = true;
-      URLI.Background.setInstance(instance.tabId, instance);
+      // instance.enabled = true;
+      //URLI.Background.setInstance(instance.tabId, instance);
+      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+        URLI.Background.setInstance(instance.tabId, instance);
+      }
       chrome.tabs.update(instance.tabId, {url: instance.url});
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
@@ -210,6 +213,7 @@ URLI.Action = function () {
         if (results && results[0]) {
           const url = results[0];
           chrome.tabs.update(instance.tabId, {url: url});
+          // Only save next prev instances that are auto enabled and doing auto next or prev:
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
             console.log("URLI.Action.nextPrev() - setting instance in background");
             instance.url = url;

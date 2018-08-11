@@ -40,6 +40,7 @@ URLI.Shortcuts = function () {
     else if (keyPressed(event, items_.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
     else if (keyPressed(event, items_.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (keyPressed(event, items_.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
+    else if (keyPressed(event, items_.keyReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }
     else if (keyPressed(event, items_.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
   }
 
@@ -57,6 +58,7 @@ URLI.Shortcuts = function () {
     else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
     else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
     else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
+    else if (mousePressed(event, items_.mouseReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }
     else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
   }
 
@@ -99,26 +101,32 @@ URLI.Shortcuts = function () {
   };
 }();
 
+// // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
+// chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
+//   console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
+//   URLI.Shortcuts.setItems(response.items);
+//   // Key
+//   if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled || response.instance.profileFound)))) {
+//     console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
+//     document.addEventListener("keyup", URLI.Shortcuts.keyListener);
+//   }
+//   // Mouse
+//   if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled || response.instance.profileFound)))) {
+//     console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
+//     document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+//   }
+// });
+
 // Content Script Start: Cache items from storage and check if quick shortcuts or instance are enabled
-chrome.runtime.sendMessage({greeting: "getInstance"}, function(response) {
-  console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - response.instance=" + response.instance);
-  URLI.Shortcuts.setItems(response.items);
-  // Key
-  if (response.items.keyEnabled && (response.items.keyQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding keyListener");
-    document.addEventListener("keyup", URLI.Shortcuts.keyListener);
-  }
-  // Mouse
-  if (response.items.mouseEnabled && (response.items.mouseQuickEnabled || (response.instance && (response.instance.enabled || response.instance.autoEnabled)))) {
-    console.log("URLI.Shortcuts.chrome.runtime.sendMessage() - adding mouseListener");
-    document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
-  }
-});
+chrome.runtime.sendMessage({greeting: "getInstance"});
 
 // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
   switch (request.greeting) {
+    case "setItems":
+      URLI.Shortcuts.setItems(request.items);
+      break;
     case "addKeyListener":
       document.addEventListener("keyup", URLI.Shortcuts.keyListener);
       break;

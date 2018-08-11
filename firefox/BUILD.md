@@ -33,3 +33,7 @@ TODO
     
 ## 4. Add web-extensions-commands.js
 Integrate web-extensions-commands.js into the options.html
+
+    <link type="text/css" rel="stylesheet" href="../lib/web-extensions-commands/web-extensions-commands.css"/>
+    <div id="web-extensions-commands"></div>
+    <script src="../lib/web-extensions-commands/web-extensions-commands.js"></script>
