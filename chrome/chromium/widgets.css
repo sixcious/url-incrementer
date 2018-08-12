@@ -8,15 +8,16 @@
 
 /* Default state **************************************************************/
 
-:-moz-any(button,
-             input[type='button'],
-             input[type='submit']):not(.custom-appearance),
+button,
+.button,
+input[type='button'],
+input[type='submit'],
 select,
 input[type='checkbox'],
 input[type='radio'] {
-  -moz-appearance: none;
-  -moz-user-select: none;
-  background-image: -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
+  -webkit-appearance: none;
+  user-select: none;
+  background-image: linear-gradient(#ededed, #ededed 38%, #dedede);
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 2px;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.75);
@@ -27,9 +28,10 @@ input[type='radio'] {
   text-shadow: 0 1px 0 rgb(240, 240, 240);
 }
 
-:-moz-any(button,
-             input[type='button'],
-             input[type='submit']):not(.custom-appearance),
+button,
+.button,
+input[type='button'],
+input[type='submit'],
 select {
   min-height: 2em;
   min-width: 4em;
@@ -39,20 +41,21 @@ select {
   padding-bottom: 1px;
 }
 
-:-moz-any(button,
-             input[type='button'],
-             input[type='submit']):not(.custom-appearance) {
-  -moz-padding-end: 10px;
-  -moz-padding-start: 10px;
+button,
+.button,
+input[type='button'],
+input[type='submit'] {
+  -webkit-padding-end: 10px;
+  -webkit-padding-start: 10px;
 }
 
 select {
-  -moz-appearance: none;
-  -moz-padding-end: 20px;
-  -moz-padding-start: 6px;
+  -webkit-appearance: none;
+  -webkit-padding-end: 20px;
+  -webkit-padding-start: 6px;
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
-      -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
+  linear-gradient(#ededed, #ededed 38%, #dedede);
   background-position: right center;
   background-repeat: no-repeat;
 }
@@ -93,14 +96,13 @@ textarea {
   margin: 0;
   /* Use min-height to accommodate addditional padding for touch as needed. */
   min-height: 2em;
-  padding: 3px;
   outline: none;
 /* For better alignment between adjacent buttons and inputs. */
-  padding-bottom: 4px;
+  padding: 3px 3px 4px;
 }
 
 input[type='search'] {
-  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
   /* NOTE: Keep a relatively high min-width for this so we don't obscure the end
    * of the default text in relatively spacious languages (i.e. German). */
   min-width: 160px;
@@ -115,7 +117,7 @@ input[type='search']::-webkit-textfield-decoration-container {
 /* Checked ********************************************************************/
 
 input[type='checkbox']:checked::before {
-  -moz-user-select: none;
+  user-select: none;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAQAAAADpb+tAAAAaElEQVR4Xl3PIQoCQQCF4Y8JW42D1bDZ4iVEjDbxFpstYhC7eIVBZHkXFGw734sv/TqDQQ8Xb1udja/I8igeIm7Aygj2IpoKTGZnVRNxAHYi4iPiDlA9xX+aNQDFySziqDN6uSp6y7ofEMwZ05uUZRkAAAAASUVORK5CYII=);
   background-size: 100% 100%;
   content: '';
@@ -138,56 +140,59 @@ input[type='radio']:checked::before {
 
 /* Hover **********************************************************************/
 
-:enabled:hover:-moz-any(
+:enabled:hover:-webkit-any(
     select,
     input[type='checkbox'],
     input[type='radio'],
-    :-moz-any(
+    :-webkit-any(
         button,
+        .button,
         input[type='button'],
         input[type='submit']):not(.custom-appearance)) {
-  background-image: -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
+  background-image: linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
   border-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12),
       inset 0 1px 2px rgba(255, 255, 255, 0.95);
   color: black;
 }
 
-:enabled:hover:-moz-any(select) {
+:enabled:hover:-webkit-any(select) {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
-      -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
+      linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
 }
 
 /* Active *********************************************************************/
 
-:enabled:active:-moz-any(
+:enabled:active:-webkit-any(
     select,
     input[type='checkbox'],
     input[type='radio'],
-    :-moz-any(
+    :-webkit-any(
         button,
+        .button,
         input[type='button'],
         input[type='submit']):not(.custom-appearance)) {
-  background-image: -moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
+  background-image: linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
   box-shadow: none;
   text-shadow: none;
 }
 
-:enabled:active:-moz-any(select) {
+:enabled:active:-webkit-any(select) {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
-      -moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
+      linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
 }
 
 /* Disabled *******************************************************************/
 
-:disabled:-moz-any(
+:disabled:-webkit-any(
     button,
+    .button,
     input[type='button'],
     input[type='submit']):not(.custom-appearance),
 select:disabled {
-  background-image: -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
+  background-image: linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
   border-color: rgba(80, 80, 80, 0.2);
   box-shadow: 0 1px 0 rgba(80, 80, 80, 0.08),
       inset 0 1px 2px rgba(255, 255, 255, 0.75);
@@ -197,15 +202,15 @@ select:disabled {
 select:disabled {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAASklEQVQY02P4z0AMRGZGMaShwCisyhITG/4jw8RErMr+KyxYiFC0YOF/BeyWIikEKWLA4Ta4QogiPMpACt82QRThVQYUYYWz4BAAGr6Ii6kEPacAAAAASUVORK5CYII=),
-      -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
+      linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
 }
 
-input:disabled:-moz-any([type='checkbox'],
+input:disabled:-webkit-any([type='checkbox'],
                            [type='radio']) {
   opacity: .75;
 }
 
-input:disabled:-moz-any([type='password'],
+input:disabled:-webkit-any([type='password'],
                            [type='search'],
                            [type='text'],
                            [type='url'],
@@ -215,7 +220,7 @@ input:disabled:-moz-any([type='password'],
 
 /* Focus **********************************************************************/
 
-:enabled:focus:-moz-any(
+:enabled:focus:-webkit-any(
     select,
     input[type='checkbox'],
     input[type='number'],
@@ -225,12 +230,13 @@ input:disabled:-moz-any([type='password'],
     input[type='text'],
     input[type='url'],
     input:not([type]),
-    :-moz-any(
+    :-webkit-any(
          button,
+         .button,
          input[type='button'],
          input[type='submit']):not(.custom-appearance)) {
   /* OVERRIDE */
-  -moz-transition: border-color 200ms;
+  transition: border-color 200ms;
   /* We use border color because it follows the border radius (unlike outline).
    * This is particularly noticeable on mac. */
   border-color: rgb(77, 144, 254);
@@ -278,7 +284,7 @@ input:disabled:-moz-any([type='password'],
  *   </div>
  */
 
-:-moz-any(.checkbox, .radio) label {
+:-webkit-any(.checkbox, .radio) label {
   /* Don't expand horizontally: <http://crbug.com/112091>. */
   align-items: center;
   display: inline-flex;
@@ -286,27 +292,29 @@ input:disabled:-moz-any([type='password'],
   padding-top: 7px;
 }
 
-:-moz-any(.checkbox, .radio) label input {
+:-webkit-any(.checkbox, .radio) label input {
   flex-shrink: 0;
 }
 
-:-moz-any(.checkbox, .radio) label input ~ span {
-  -moz-margin-start: 0.6em;
-  -moz-user-select: none;
+:-webkit-any(.checkbox, .radio) label input ~ span {
+  -webkit-margin-start: 0.6em;
+  user-select: none;
   /* Make sure long spans wrap at the same horizontal position they start. */
   display: block;
 }
 
-:-moz-any(.checkbox, .radio) label:hover {
+:-webkit-any(.checkbox, .radio) label:hover {
   color: black;
 }
 
-label > input:disabled:-moz-any([type='checkbox'], [type='radio']) ~ span {
+label > input:disabled:-webkit-any([type='checkbox'], [type='radio']) ~ span {
   color: #999;
 }
 
+/*
 extensionview {
   display: inline-block;
   height: 300px;
   width: 300px;
 }
+*/

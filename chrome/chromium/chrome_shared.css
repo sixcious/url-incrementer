@@ -84,9 +84,7 @@ html[dir='rtl'] div.weakrtl input {
 
 html[dir='rtl'] .favicon-cell.weakrtl {
   -webkit-padding-end: 22px;
-  -moz-padding-end: 22px;
   -webkit-padding-start: 0;
-  -moz-padding-start: 0;
 }
 
 /* weakrtl for selection drop downs needs to account for the fact that
