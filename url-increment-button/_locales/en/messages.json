@@ -1,14 +1,14 @@
 {
   "name": {
-    "message": "URL Increment Button for URLI",
+    "message": "URL Increment",
     "description": "Extension name."
   },
   "short_name": {
-    "message": "URL Increment Button for URLI",
+    "message": "URL Increment",
     "description": "Extension short name."
   },
   "description": {
-    "message": "1-Click URL Increment [+] Button for your toolbar. Requires URL Incrementer Extension. Uses 0 Chrome memory when inactive.",
+    "message": "1-Click URL Increment [+] Button for your toolbar. Uses 0 Chrome memory when inactive.",
     "description": "Extension description."
   },
   "title": {

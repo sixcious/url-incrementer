@@ -333,11 +333,19 @@ URLI.Background = function () {
         }
         break;
       case "performAction":
-        instance = getInstance(sender.tab.id);
+        let tab;
+        // if sender.tab, messageListener, else if request.tab messageExternalListener
+        if (sender && sender.tab && sender.tab.id) {
+          tab = sender.tab;
+          tab.url = sender.url;
+        } else {
+          tab = request.tab;
+        }
+        instance = getInstance(tab.id);
         if ((!instance || !instance.enabled) && request.action !== "auto") {
           // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-          sender.tab.url = sender.url;
-          instance = await buildInstance(sender.tab);
+          //sender.tab.url = sender.url;
+          instance = await buildInstance(tab);
         }
         if (instance) {
           URLI.Action.performAction(request.action, "content-script", instance);
@@ -360,7 +368,7 @@ URLI.Background = function () {
       default:
         break;
     }
-    sendResponse({});
+    //sendResponse({});
   }
 
   /**
@@ -371,13 +379,16 @@ URLI.Background = function () {
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
-  async function messageExternalListener(request, sender, sendResponse) {
+  function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "url-increment-button@roysix", //"decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
         request && (request.action === "increment" || request.action === "decrement")) {
-      switch (request.greeting) {
+      sendResponse({"received": true});
+      //sender.tab = request.tab;
+      messageListener(request, sender);
+/*      switch (request.greeting) {
         case "performAction":
           let instance = getInstance(request.tab.id);
           if (!instance || !instance.enabled) {
@@ -389,8 +400,7 @@ URLI.Background = function () {
           break;
         default:
           break;
-      }
-      sendResponse({});
+      }*/
     }
   }
 
