@@ -49,7 +49,6 @@ URLI.SaveURLs = function () {
   }
 
   async function deleteURL(instance, caller) {
-    console.log("URLI.SaveURLs.deleteURL() - deleting URL url=" + instance.url + ", caller=" + caller);
     const localItems = URLI.Background.getLocalItems(),
           profiles = localItems && localItems.profiles && Array.isArray(localItems.profiles)? localItems.profiles : []; // localItems.profiles;
           // url1 = instance.url.substring(0, instance.selectionStart),
@@ -65,7 +64,7 @@ URLI.SaveURLs = function () {
         // }
         const result = await matchesURL(profiles[i], instance.url);
         if (result.matches) {
-          console.log("URLI.SaveURLs.deleteURL() - Removing url=" + instance.url + ", urlhash1=" + profiles[i].urlhash1);
+          console.log("URLI.SaveURLs.deleteURL() - splicing URL from array...");
           profiles.splice(i, 1);
           break;
         }
@@ -87,7 +86,6 @@ URLI.SaveURLs = function () {
    * @public
    */
   async function matchesURL(profile, url) {
-    console.log("URLI.SaveURLs.matchesURL() - checking this url, profile.urlhash1=" + profile.urlhash1 + ", url=" + url);
     const url1 = url.substring(0, profile.selectionStart),
           url2 = url.slice(-profile.url2length);
     const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);

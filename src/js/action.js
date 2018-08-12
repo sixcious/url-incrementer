@@ -21,7 +21,9 @@ URLI.Action = function () {
   function performAction(action, caller, instance, callback) {
     console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
     let actionPerformed = false;
-    action = prePerformAction(action, caller, instance);
+    const validated = prePerformAction(action, caller, instance);
+    instance = validated.instance;
+    action = validated.action;
     // Perform Action
     switch (action) {
       case "increment":  case "decrement":
@@ -57,6 +59,7 @@ URLI.Action = function () {
   function prePerformAction(action, caller, instance) {
     // Handle AUTO
     if (instance.autoEnabled) {
+      console.log("prePerformAction instance is auto enabled");
       // Get the most recent instance from Background in case auto has been paused
       instance = URLI.Background.getInstance(instance.tabId);
       // Handle autoTimes
@@ -85,10 +88,15 @@ URLI.Action = function () {
         chrome.tabs.onUpdated.addListener(URLI.Background.tabUpdatedListener);
       }
     }
-    return action;
+    return {"instance": instance, "action": action};
   }
 
   function postPerformAction(action, caller, instance, actionPerformed) {
+    // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
+    if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
+      console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
+      URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL});
+    }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     const items = URLI.Background.getItems();
     if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
@@ -139,8 +147,6 @@ URLI.Action = function () {
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       URLI.IncrementDecrement.incrementDecrement(action, instance);
-      // instance.enabled = true;
-      //URLI.Background.setInstance(instance.tabId, instance);
       if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
         URLI.Background.setInstance(instance.tabId, instance);
       }
@@ -238,11 +244,15 @@ URLI.Action = function () {
   function clear(action, caller, instance, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
-    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
+    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.isSkeleton) {
       actionPerformed = true;
     }
     URLI.Background.deleteInstance(instance.tabId);
-    if (caller !== "popupClearBeforeSet") { // Don't reset multi or remove key/mouse listeners if popup clear before set
+    // Skeleton Instances will be deleted only by tabsRemovedListener and no other processing needed
+    if (instance.isSkeleton) {
+      return actionPerformed;
+    }
+    if (caller !== "popupClearBeforeSet" && instance.enabled) { // Don't reset multi or remove key/mouse listeners if popup clear before set
       //instance.multiCount = 0; TODO... multi ?
       const items = URLI.Background.getItems();
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
@@ -309,7 +319,9 @@ URLI.Action = function () {
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
       }
       chrome.tabs.update(instance.tabId, {url: instance.startingURL});
-      URLI.Background.setInstance(instance.tabId, instance);
+      if (instance.enabled) {
+        URLI.Background.setInstance(instance.tabId, instance);
+      }
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
     return actionPerformed;

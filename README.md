@@ -7,11 +7,13 @@ URLI (Extension Mascot / Incrementer Robot):
 
 URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
-This is the first extension/app I ever made, so it's important to me 100% that you are happy with it.
-
-If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
+This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features
+- Keyboard Shortcuts
+- Mouse Button Shortcuts
+- Browser Shortcuts
+- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Auto Incrementing
 - Download Incrementing [Experimental] **
 - Multi Incrementing
@@ -19,13 +21,10 @@ If something isn't working right or if there's something you don't like, please 
 - Date Time Incrementing
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
-- Chrome Shortcuts
-- Internal Keyboard and Mouse Button Shortcuts
-- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Save URLs for faster incrementing. URLs are saved as cryptographic hashes, just like how websites save your passwords
+- Error Skipping
+- Save URLs (Remembers settings for each URL)
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
-- Error Skipping: 404 Page Not Found, 3XX Redirects, 4XX Client Errors, 5XX Server Errors, and any other codes you want
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 

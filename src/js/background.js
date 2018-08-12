@@ -15,7 +15,8 @@ URLI.Background = function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
-    /* key */         "quickEnabled": true, "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyReturn": [6, "KeyB"], "keyAuto": [6, "KeyA"],
+    /* shortcuts */   "quickEnabled": true, "shortcutsMixedMode": false,
+    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyReturn": [6, "KeyB"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseReturn": -1, "mouseAuto": -1,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
@@ -161,7 +162,7 @@ URLI.Background = function () {
       for (let profile of profiles) {
         const result = await URLI.SaveURLs.matchesURL(profile, tab.url);
         if (result.matches) {
-          console.log("URLI.Background.buildInstance() - found a profile for this tab's url, profile.urlhash1=" + profile.urlhash1);
+          console.log("URLI.Background.buildInstance() - found a profile for this tab's url");
           props = buildProps("profile", profile, result);
           break;
         }
@@ -172,15 +173,12 @@ URLI.Background = function () {
       const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
       props = buildProps("items", items_, selectionProps);
     }
-    // // Starting URL (Quick Instances)
-    // const instance = getInstance(tab.id);
-    // if (!instance) {
-    //   setInstance(tabId)
-    // }
+    // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
+    props.startingURL = getInstance(tab.id) && getInstance(tab.id).startingURL ? getInstance(tab.id).startingURL : tab.url;
     // Return newly built instance using props and items:
     return {
-      "enabled": false/*props.profileFound*/, "multiEnabled": false, "toolkitEnabled": false, "autoEnabled": false, "downloadEnabled": false, "autoPaused": false,
-      "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
+      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false, "autoPaused": false,
+      "tabId": tab.id, "url": tab.url, "startingURL": props.startingURL,
       "profileFound": props.profileFound,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
       "leadingZeros": props.leadingZeros,
@@ -315,12 +313,12 @@ URLI.Background = function () {
    * @public
    */
   async function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting + ", sender.tab.id=" + sender.tab.id + ", sender.tab.url=" + sender.tab.url + ", sender.url=" + sender.url);
+    console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
     let instance;
     switch (request.greeting) {
       case "checkInternalShortcuts":
         instance = getInstance(sender.tab.id);
-        if (!instance) {
+        if (!instance || !instance.enabled) {
           sender.tab.url = sender.url;
           instance = await buildInstance(sender.tab);
         }
@@ -336,7 +334,7 @@ URLI.Background = function () {
         break;
       case "performAction":
         instance = getInstance(sender.tab.id);
-        if (!instance && request.action !== "auto") {
+        if ((!instance || !instance.enabled) && request.action !== "auto") {
           // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
           sender.tab.url = sender.url;
           instance = await buildInstance(sender.tab);
@@ -382,7 +380,7 @@ URLI.Background = function () {
       switch (request.greeting) {
         case "performAction":
           let instance = getInstance(request.tab.id);
-          if (!instance) {
+          if (!instance || !instance.enabled) {
             instance = await buildInstance(request.tab);
           }
           if (instance) {
@@ -403,15 +401,16 @@ URLI.Background = function () {
    * @public
    */
   function commandListener(command) {
-    if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "auto" || command === "return" || command === "clear")  {
-      if (!items_.permissionsInternalShortcuts) {
+    if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
+      if (!items_.permissionsInternalShortcuts || items_.browserMixedMode) {
         chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
           if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
             let instance = getInstance(tabs[0].id);
-            if ((command === "increment" || command === "decrement" || command === "next" || command === "prev") || //&& (items_.quickEnabled || (instance && instance.enabled)) ||
+            if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items_.quickEnabled || (instance && instance.enabled))) ||
                 (command === "auto" && instance && instance.autoEnabled) ||
-                ((command === "clear" || command === "return") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled))) {
-              if (!instance) { //&& items_.quickEnabled) {
+                ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+                (command === "return" && instance && instance.startingURL)) {
+              if (items_.quickEnabled && (!instance || !instance.enabled)) {
                 instance = await buildInstance(tabs[0]);
               }
               URLI.Action.performAction(command, "command", instance);
@@ -445,8 +444,8 @@ URLI.Background = function () {
    * @public
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
-    console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated download preview listener is on!");
     if (changeInfo.status === "complete") {
+      console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
       const instance = URLI.Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {
@@ -524,6 +523,7 @@ URLI.Background = function () {
       // Ensure Internal Shortcuts declarativeContent rule is added
       // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
       if (items && items.permissionsInternalShortcuts && !contentScriptListenerAdded) {
+        console.log("URLI.Background.startupListener() - adding content script listener");
         chrome.tabs.onUpdated.addListener(contentScriptListener);
         contentScriptListenerAdded = true;
       }
@@ -544,8 +544,8 @@ URLI.Background = function () {
    * @private
    */
   function contentScriptListener(tabId, changeInfo, tab) {
-    console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated content script listener is on! changeInfo.status=" + changeInfo.status);
     if (changeInfo.status === "loading") {
+      console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
       if (items_.permissionsInternalShortcuts) {
         chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
           if (chrome.runtime.lastError) {

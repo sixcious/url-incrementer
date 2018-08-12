@@ -41,7 +41,7 @@ URLI.Popup = function () {
         instance = backgroundPage_.URLI.Background.getInstance(tabs[0].id);
         items_ = backgroundPage_.URLI.Background.getItems();
         localItems_ = backgroundPage_.URLI.Background.getLocalItems();
-        if (!instance) {
+        if (!instance || !instance.enabled) {
           instance = await backgroundPage_.URLI.Background.buildInstance(tabs[0]);
         }
         _ = JSON.parse(JSON.stringify(instance));
@@ -176,7 +176,7 @@ URLI.Popup = function () {
     if (((action === "increment" || action === "decrement") && (instance.enabled || instance.profileFound)) ||
         ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multiEnabled)) ||
          (action === "next" || action === "prev") ||
-        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.profileFound)) ||
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
       if (items_.popupAnimationsEnabled) {
@@ -205,7 +205,7 @@ URLI.Popup = function () {
     DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items_.permissionsEnhancedMode && items_.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
+    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
     DOM["#download-input"].className = items_.permissionsDownload && instance.downloadEnabled ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
@@ -765,7 +765,8 @@ URLI.Popup = function () {
     else {
       backgroundPage_.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, async function() {
         instance = JSON.parse(JSON.stringify(_));
-        instance.enabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
+        instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
+        instance.enabled = true;
         instance.profileFound = instance.profileSave;
         const precalculateProps = backgroundPage_.URLI.IncrementDecrement.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
