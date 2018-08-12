@@ -223,7 +223,7 @@ URLI.Auto = function () {
         // If download enabled, send a message to the popup to update the download preview (if it's open)
         // Note: Do NOT send this message at Loading because it doesn't refresh properly sometimes (even though the download script runs at document_end)
         if (instance.downloadEnabled) {
-          chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+          chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         }
       }
       // AutoWait (Complete or Loading) :

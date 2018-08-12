@@ -47,8 +47,8 @@ must add text-align center to ul li as FF doesn't seem to center in the options 
 Must use absolute paths (extension base) not relative paths for the file path to the .js file, e.g. /js/script.js, not js/script.js. Backwards compatible with Chrome
 
 #### Unchecked lastError value: Error: Could not establish connection. Receiving end does not exist.
-When using message passing such as chrome.runtime.sendMessage(), you must specify the callback function with a response and check if chrome.runtime.lastError exists
-chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
+When using message passing such as chrome.runtime.sendMessage() to a View that may not exist such as the Popup, you must specify the callback function with a response and check if chrome.runtime.lastError exists
+    chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
 
 #### Unchecked lastError value: Error: Missing host permission for the tab
 When using chrome.tabs.executeScript for the internal shortcuts, can't execute script on browser restricted pages, so check for lastError.

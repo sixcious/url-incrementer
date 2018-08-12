@@ -225,6 +225,10 @@ URLI.Options = function () {
    * @private
    */
   function changeIconColor() {
+    // Firefox Android: chrome.browserAction.setIcon() not supported
+    if (!chrome.browserAction.setIcon) {
+      return;
+    }
     // Possible values may be: dark, light, rainbow, or urli
     chrome.browserAction.setIcon({
       path : {

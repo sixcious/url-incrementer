@@ -224,7 +224,8 @@ URLI.Background = function () {
   }
 
   /**
-   * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time. Note that when the tab is updated, the browser removes the badge.
+   * Sets the browser action badge for this tabId. Can either be temporary or for an indefinite time.
+   * Note that when the tab is updated, the browser removes the badge.
    *
    * @param tabId           the tab ID to set this badge for
    * @param badge           the badge key to set from BROWSER_ACTION_BADGES
@@ -234,6 +235,10 @@ URLI.Background = function () {
    * @public
    */
   function setBadge(tabId, badge, temporary, text, backgroundColor) {
+    // Firefox Android: chrome.browserAction.setBadge* not supported
+    if (!chrome.browserAction.setBadgeText || !chrome.browserAction.setBadgeBackgroundColor) {
+      return;
+    }
     chrome.browserAction.setBadgeText({text: text ? text : BROWSER_ACTION_BADGES[badge].text, tabId: tabId});
     chrome.browserAction.setBadgeBackgroundColor({color: backgroundColor ? backgroundColor : BROWSER_ACTION_BADGES[badge].backgroundColor, tabId: tabId});
     if (temporary) {
@@ -520,7 +525,8 @@ URLI.Background = function () {
     chrome.storage.sync.get(null, function(items) {
       items_ = items;
       // Ensure the chosen toolbar icon is set
-      if (items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
+      // Firefox Android: chrome.browserAction.setIcon() not supported
+      if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
         console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
         chrome.browserAction.setIcon({
           path : {
@@ -590,10 +596,11 @@ URLI.Background = function () {
 }();
 
 // Background Listeners
+// Firefox Android: chrome.commands is unsupported
 chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
-chrome.commands.onCommand.addListener(URLI.Background.commandListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
 chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
+if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); }
 URLI.Background.startupListener();

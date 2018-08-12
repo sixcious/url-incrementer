@@ -333,4 +333,7 @@ var WebExtensionsCommands = function () {
   };
 }();
 
-document.addEventListener("DOMContentLoaded", WebExtensionsCommands.DOMContentLoaded);
+// Firefox Android: browser.commands not supported
+if (typeof chrome !== "undefined" && chrome.commands) {
+  document.addEventListener("DOMContentLoaded", WebExtensionsCommands.DOMContentLoaded);
+}

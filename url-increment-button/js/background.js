@@ -40,7 +40,7 @@ URLIncrementButton.Background = function () {
   function clickListener(tab) {
     //console.log("URLIncrementButton.Background.clickListener() - about to send message with tab.id=" + tab.id);
     chrome.runtime.sendMessage(URL_INCREMENTER_EXTENSION_ID, {"greeting": "performAction", "action": "increment", "tab": tab}, function(response) {
-      if (!response || !response.received) {
+      if (chrome.runtime.lastError || !response || !response.received) {
         console.log("No response, performing standalone action");
         buildInstance(tab);
       }

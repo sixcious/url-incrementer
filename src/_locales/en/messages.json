@@ -233,6 +233,8 @@
   "next_prev_next_label": { "message": "Next" },
   "next_prev_prev_label": { "message": "Prev" },
   "next_prev_keywords_label": { "message": "Keywords" },
+  "next_prev_keywords_next_textarea": { "message": "e.g. pnnext,next page,next,forward,次,&gt;,>,newer" },
+  "next_prev_keywords_prev_textarea": { "message": "e.g. pnprev,previous page,prev,previous,前,&lt;,<,‹,back,older" },
   "next_prev_links_priority_label": { "message": "Links" },
   "next_prev_links_priority_attributes_option": { "message": "Prefer links with attributes like \"rel=next\"" },
   "next_prev_links_priority_innerHTML_option": { "message": "Prefer links with inner HTML like \"Next\" in them" },

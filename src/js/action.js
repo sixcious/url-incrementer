@@ -151,7 +151,7 @@ URLI.Action = function () {
         URLI.Background.setInstance(instance.tabId, instance);
       }
       chrome.tabs.update(instance.tabId, {url: instance.url});
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
     return actionPerformed;
   }
@@ -225,7 +225,7 @@ URLI.Action = function () {
             instance.url = url;
             URLI.Background.setInstance(instance.tabId, instance);
           }
-          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         }
       });
     });
@@ -280,7 +280,7 @@ URLI.Action = function () {
       if (callback) {
         callback(instance);
       } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
       }
     }
     return actionPerformed;
@@ -322,7 +322,7 @@ URLI.Action = function () {
       if (instance.enabled) {
         URLI.Background.setInstance(instance.tabId, instance);
       }
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
     return actionPerformed;
   }
@@ -351,7 +351,7 @@ URLI.Action = function () {
         }
         case "generate-links": {
           //const urls = URLI.IncrementDecrement.precalculateURLs(instance).urls;
-          chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance});
+          chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
           actionPerformed = true;
           break;
         }
@@ -379,7 +379,7 @@ URLI.Action = function () {
       if (callback) {
         callback(instance);
       } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
       }
       actionPerformed = true;
     }
