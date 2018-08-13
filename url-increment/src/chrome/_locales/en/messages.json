@@ -1,0 +1,6 @@
+{
+  "name": { "message": "URL Increment" },
+  "short_name": { "message": "URL Increment" },
+  "description": { "message": "1-Click URL Increment [+] Button for your toolbar. Uses 0 Chrome memory when inactive." },
+  "title": { "message": "Increment URL" }
+}

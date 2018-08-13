@@ -1,0 +1,542 @@
+/* Popup CSS relies on Chromium CSS */
+
+/* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+textarea {
+  overflow-x: hidden;
+}
+
+/* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
+input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
+
+/* chromium/chrome-shared.css Overrides */
+html {
+  height: auto;
+}
+
+/* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
+h3, :-webkit-any(.checkbox, .radio) label input ~ span {
+  -webkit-user-select: initial;
+}
+
+:-webkit-any(.checkbox, .radio) label input ~ span{
+  -webkit-margin-start: 0.3em;
+}
+
+a.button {
+  text-decoration: none;
+}
+
+/* Native elements styles */
+
+body {
+  color: #333333;
+  background: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h3 {
+  display: inline;
+  user-select: initial;
+  color: inherit;
+  font-weight: inherit;
+}
+
+div.table {
+  display: table;
+}
+
+div.row {
+  display: table-row;
+}
+
+div.column {
+  display: table-cell;
+}
+
+div.checkbox  img {
+  margin-left: 3px;
+}
+
+.clear-both {
+  clear: both;
+}
+
+/* Controls CSS */
+
+#controls {
+  margin: 5px;
+}
+
+#controls input[type="image"] {
+  vertical-align: middle; /* Matches hover.css styling */
+  padding: 8px;
+}
+
+#controls input[type="image"]:not(:last-child) {
+  margin-right: 10px;
+}
+
+#controls input[type="image"]:focus {
+  outline: none;
+}
+
+#controls input[type="image"].disabled {
+  opacity: 0.2;
+}
+
+#controls #controls-icons {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+}
+
+/* Setup CSS */
+
+#setup {
+  min-width: 512px;
+  margin: 12px;
+}
+
+#setup .heading {
+  font-weight: bold;
+  /* font-style: italic;*/
+  padding-bottom: 2px;
+  margin-bottom: 0.6em;
+  color: #333333;
+  border-bottom: 1px solid #333333;
+}
+
+#setup input[type="number"] {
+  width: 52px;
+  display: block;
+}
+
+#setup select {
+  display: block;
+}
+
+#setup textarea {
+  width: 100%;
+  color: #777777;
+  word-break: break-all;
+  max-width: 512px;
+  max-height: 90px;
+  min-width: 512px;
+  min-height: 41px;
+}
+
+#setup #custom-urls textarea {
+  min-height: 90px;
+  max-height: 120px;
+}
+
+#setup img {
+  vertical-align: bottom;
+}
+
+#setup div.column {
+  padding-top: 7px;
+}
+
+#setup #custom-urls, #setup #toolkit, #setup #auto, #setup #download {
+  margin-bottom: 24px;
+}
+
+/* increment-decrement */
+
+#setup #increment-decrement #increment-decrement-img-mouse-pointer {
+  margin-bottom: 2px;
+}
+
+#setup #properties {
+  margin-bottom: 16px;
+}
+
+#setup #properties div.column:not(:last-child) {
+  padding-right: 27px;
+}
+
+#setup div.column > label, label.label-display-block {
+  display: block;
+  margin-bottom: 2px;
+}
+
+#setup div.column label.label-display-inline-block {
+  display: inline-block;
+}
+
+#setup #leading-zeros-pad-label, #setup #base-case {
+  font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
+}
+
+#setup #base-case label:not(:last-child) {
+  margin-right: 1em;
+}
+
+/* display inline-block to remove whitespace from link */
+#setup #base-date-format-a {
+  display: inline-block;
+}
+
+#setup #base-date-format-input {
+  width: 128px;
+  height: 1.75em;
+  min-height: 1.75em;
+  margin-top: 8px;
+  margin-left: 12px;
+}
+
+#profile-save, #auto-eta-repeat, #download-experimental {
+  font-style: italic;
+  position: absolute;
+  right: 12px;
+/*  margin-top: -23px;*/
+  margin-top: -16px;
+}
+
+#auto-eta, #auto-repeat {
+  display: inline-block;
+}
+
+#auto-eta {
+  margin-right: 1em;
+}
+
+/* Toolkit */
+
+#toolkit-instructions {
+  font-style: italic;
+}
+
+#toolkit-urli-button-div {
+  vertical-align: top;
+  margin-top: 8px;
+  position: absolute;
+  right: 60px;
+}
+
+#toolkit-urli-button-img {
+  transform: scaleX(-1);
+  cursor: pointer;
+}
+
+#toolkit-generate-links-div {
+  margin-top: 1em;
+}
+
+#toolkit-generate-links-table {
+  margin-top: 1em;
+}
+
+/*#auto-eta-repeat, #auto-repeat-label {
+  color: var(--auto-color);
+}*/
+
+/*
+#download-experimental {
+  color: var(--download-color);
+  margin-top: -16px;
+}
+*/
+
+#auto-eta img, #download-experimental img {
+  margin-bottom: 1px;
+}
+
+#setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+  padding-right: 30px;
+}
+
+#setup #auto #auto-wait-badge {
+  vertical-align: bottom;
+}
+
+#setup #auto #auto-wait-badge .checkbox label {
+  padding: 2px 0;
+}
+
+#setup div.row.two div.column {
+  padding-top: 12px;
+}
+
+#auto-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: var(--auto-color);
+}
+
+#download-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: var(--download-color);
+}
+
+#auto-toggle .tgl-text {
+  color: var(--auto-color);
+}
+
+#download-toggle .tgl-text {
+  color: var(--download-color);
+}
+
+/* cloud-download ireregular padding overrides */
+#controls input[type="image"]#download-input {
+  padding: 4px 8px;
+}
+
+#setup #download-toggle {
+  vertical-align: bottom;
+}
+
+#setup .heading {
+  color: #333333;
+  border-bottom-color: #333333;
+}
+
+#setup #auto .heading {
+  color: var(--auto-color);
+  border-bottom-color: var(--auto-color);
+}
+
+#setup #download .heading {
+  color: var(--download-color);
+  border-bottom-color: var(--download-color);
+  margin: 0;
+}
+
+#auto div.column, #download div.column {
+  padding-top: 3px;
+}
+
+/* download-setup (download-strategy and download-optional columns) */
+
+#download-setup.table {
+  width: 100%;
+  border-bottom: 1px solid var(--download-color);
+}
+
+div.column#download-strategy, div.column#download-optional {  
+  padding-top: 8px;
+  padding-bottom: 12px;
+  width: 50%;
+  position: relative; /* for position absolute help */
+}
+
+#download-strategy-help, #download-optional-help {
+  font-weight: bold;
+  font-size: 0.9em;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  border-bottom: 1px dotted #333333;
+  padding-bottom: 1px;
+}
+
+div.column#download-optional {
+  border-left: 1px solid var(--download-color);
+  padding-left: 12px;
+}
+
+#download-optional-label-div {
+  font-weight: bold;
+  font-style: italic;
+}
+
+#download-strategy-sub-options {
+  height: 100%;
+  min-height: 60px;
+}
+
+#download-extensions label, #download-tags label, #download-attributes label {
+  display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+#download-extensions label span, #download-tags label span, #download-attributes label span {
+  padding-left: 3px;
+}
+
+#download-strategy-select {
+  margin-bottom: 8px;
+}
+
+#download-selector-input {
+  width: 90%;
+  margin-top: 4px;
+}
+
+#download-includes-input, #download-excludes-input {
+  width: 108px;
+}
+
+#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
+  display: inline-block;
+  margin-right: 1px;
+}
+
+/* download-preview-heading and download-preview-checkboxes */
+
+#download-preview-heading {
+  margin: 6px 0;
+}
+
+#download-preview-heading-title {
+  font-weight: bold;
+}
+
+#download-preview-heading-title .success {
+  color: var(--success-color);
+}
+
+#download-preview-heading-title .error {
+  color: var(--error-color);
+}
+
+#download-preview-checkboxes {
+  text-align: right;
+}
+
+#download-preview-checkboxes label:not(:last-child) {
+  margin-right: 8px;
+}
+
+/* ZURB Foundation table styling inspired/derived */
+
+table {
+  border-collapse: collapse;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  max-width: 512px;
+  max-height: 226px;
+  display: block;
+  overflow: auto;
+  word-break: break-all;
+}
+
+table thead, table tbody {
+  border: 1px solid #f1f1f1;
+  background-color: #fefefe;
+}
+
+table thead {
+  background: #f8f8f8;
+  color: #0a0a0a;
+}
+
+table thead tr {
+  background: transparent;
+}
+
+table thead tr th {
+  font-weight: bold;
+  text-align: left;
+}
+
+table thead th, table tbody th, table tbody td {
+  padding: 0.25rem 0.312rem 0.312rem;
+}
+
+table tbody tr:nth-child(even) {
+  border-bottom: 0;
+  background-color: #f1f1f1;
+}
+
+table tr:nth-of-type(even):hover {
+  background-color: #ececec;
+}
+
+table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* table download-preview specific class styles */
+
+table th.check, td.check { min-width: 20px; }
+table th.count, td.count { min-width: 24px; }
+table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
+table th.extension, td.extension { min-width: 34px; }
+table th.filename, td.filename { min-width: 50px; }
+table th.tag, td.tag { min-width: 36px; }
+table th.attribute, td.attribute { min-width: 34px; }
+table th.url, td.url { min-width: 34px; }
+table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
+table td.check img.check-circle { cursor: pointer; } /* check can be clicked to manually select/de-select items */
+
+/* setup-buttons */
+
+#setup #setup-buttons {
+  text-align: center;
+  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
+  height: auto;
+}
+
+#setup #setup-buttons > button:not(:last-child) {
+  margin-right: 12px;
+}
+
+#extra-options {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+}
+
+/* extra-toggles */
+
+#setup #extra-toggles {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+#setup #extra-toggles > div:not(:last-child) {
+  margin-right: 8px;
+}
+
+/* extra-buttons */
+
+#extra-options #options-button img {
+  margin-right: -2px;
+}
+
+#setup #extra-options div:not(:last-child) {
+  margin-right: 16px;
+}
+
+.icon-button, .icon-button label {
+/*  font-size: 0.8em;*/
+  font-weight: bold;
+  cursor: pointer;
+}
+
+img.transparent {
+  background: #333333;
+}
+
+.icon-button, .icon-button img.transparent {
+  transition: 0.6s;
+}
+
+/*.icon-button:hover img.transparent, */.icon-button input:checked + img.transparent {
+  background: #BA1F40;
+}
+
+/*.icon-button:hover span,*/ .icon-button input:checked + img.transparent + span {
+  color: #BA1F40;
+}
+
+#multi-button {
+  float: right;
+  font-size: inherit;
+}
+
+
+/*
+.rainbow-img {
+  background: linear-gradient(
+        !*#1779BA 0%, #1779BA 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #05854D 48%, #05854D 64%, #FF6600 64%, #FF6600 80%, #663399 80%, #663399 100%*!
+        !*#EE5555 0%, #EE5555 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #66BB6B 48%, #66BB6B 64%, #44A5F5 64%, #44A5F5 80%, #663399 80%, #663399 100%*!
+      #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
+    !*#44A5F5 0%, #44A5F5 20%, #EE5555 20%, #EE5555 40%, #FFCC22 40%, #FFCC22 60%, #66BB6B 60%, #66BB6B 80%, #663399 80%, #663399 100%*!
+  );
+}*/
