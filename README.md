@@ -3,7 +3,7 @@
 ![URL Incrementer](_assets/img/darku/128.png?raw=true "URL Incrementer")
 
 URLI (Extension Mascot / Incrementer Robot):
-![URLI](src/img/extras/urli.png?raw=true "URLI")
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196">
 
 URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
