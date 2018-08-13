@@ -38,9 +38,9 @@ input[type='submit'],
 select {
   min-height: 2em;
   min-width: 4em;
-  /* The following platform-specific rule is necessary to get adjacent
-     * buttons, text inputs, and so forth to align on their borders while also
-     * aligning on the text's baselines. */
+/* The following platform-specific rule is necessary to get adjacent
+   * buttons, text inputs, and so forth to align on their borders while also
+   * aligning on the text's baselines. */
   padding-bottom: 1px;
 }
 
@@ -64,7 +64,7 @@ select {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
   linear-gradient(#ededed, #ededed 38%, #dedede);
--moz-linear-gradient(#ededed, #ededed 38%, #dedede);
+  -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
   background-position: right center;
   background-repeat: no-repeat;
 }
@@ -107,7 +107,7 @@ textarea {
   min-height: 2em;
   padding: 3px;
   outline: none;
-  /* For better alignment between adjacent buttons and inputs. */
+/* For better alignment between adjacent buttons and inputs. */
   padding-bottom: 4px;
 }
 
@@ -174,7 +174,7 @@ input[type='radio']:checked::before {
   background-image: -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
   border-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12),
-  inset 0 1px 2px rgba(255, 255, 255, 0.95);
+      inset 0 1px 2px rgba(255, 255, 255, 0.95);
   color: black;
 }
 
@@ -182,8 +182,8 @@ input[type='radio']:checked::before {
 :enabled:hover:-moz-any(select) {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
-  linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
--moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
+      linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
+      -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
 }
 
 /* Active *********************************************************************/
@@ -216,8 +216,8 @@ input[type='radio']:checked::before {
 :enabled:active:-moz-any(select) {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
-  linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
--moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
+      linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
+     -moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
 }
 
 /* Disabled *******************************************************************/
@@ -237,15 +237,15 @@ select:disabled {
   background-image: -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
   border-color: rgba(80, 80, 80, 0.2);
   box-shadow: 0 1px 0 rgba(80, 80, 80, 0.08),
-  inset 0 1px 2px rgba(255, 255, 255, 0.75);
+      inset 0 1px 2px rgba(255, 255, 255, 0.75);
   color: #aaa;
 }
 
 select:disabled {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAASklEQVQY02P4z0AMRGZGMaShwCisyhITG/4jw8RErMr+KyxYiFC0YOF/BeyWIikEKWLA4Ta4QogiPMpACt82QRThVQYUYYWz4BAAGr6Ii6kEPacAAAAASUVORK5CYII=),
-  linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
--moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
+      linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
+      -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
 }
 
 input:disabled:-webkit-any([type='checkbox'],
@@ -350,30 +350,36 @@ input:disabled:-moz-any([type='password'],
  *   </div>
  */
 
-.checkbox label, .radio label {
+:-webkit-any(.checkbox, .radio) label,
+:-moz-any(.checkbox, .radio) label {
+  /* Don't expand horizontally: <http://crbug.com/112091>. */
   align-items: center;
   display: inline-flex;
   padding-bottom: 7px;
   padding-top: 7px;
 }
 
-.checkbox label input, .radio label input {
+:-webkit-any(.checkbox, .radio) label input,
+:-moz-any(.checkbox, .radio) label input{
   flex-shrink: 0;
 }
 
-.checkbox label input ~ span, .radio label input ~ span {
+:-webkit-any(.checkbox, .radio) label input ~ span,
+:-moz-any(.checkbox, .radio) label input ~ span {
   -webkit-margin-start: 0.6em;
   -moz-margin-start: 0.6em;
   user-select: none;
   -moz-user-select: none;
+  /* Make sure long spans wrap at the same horizontal position they start. */
   display: block;
 }
 
-.checkbox label:hover, .radio label:hover {
+:-webkit-any(.checkbox, .radio) label:hover,
+:-moz-any(.checkbox, .radio) label:hover {
   color: black;
 }
 
-label > input:disabled[type='checkbox'] ~ span,
-label > input:disabled[type='radio'] ~ span {
+label > input:disabled:-webkit-any([type='checkbox'], [type='radio']) ~ span,
+label > input:disabled:-moz-any([type='checkbox'], [type='radio']) ~ span {
   color: #999;
 }

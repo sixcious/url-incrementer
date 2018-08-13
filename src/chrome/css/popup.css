@@ -194,8 +194,8 @@ div.checkbox  img {
   font-style: italic;
   position: absolute;
   right: 12px;
-/*  margin-top: -23px;*/
-  margin-top: -16px;
+  margin-top: -23px;
+/*  margin-top: -16px;*/
 }
 
 #auto-eta, #auto-repeat {
@@ -236,12 +236,10 @@ div.checkbox  img {
   color: var(--auto-color);
 }*/
 
-/*
 #download-experimental {
-  color: var(--download-color);
+/*  color: var(--download-color);*/
   margin-top: -16px;
 }
-*/
 
 #auto-eta img, #download-experimental img {
   margin-bottom: 1px;

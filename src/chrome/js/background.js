@@ -263,8 +263,8 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              items_ = STORAGE_DEFAULT_VALUES;
-              localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
+              items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
+              localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
               chrome.runtime.openOptionsPage();
             });
           });
@@ -278,8 +278,8 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              items_ = STORAGE_DEFAULT_VALUES;
-              localItems_ = LOCAL_STORAGE_DEFAULT_VALUES;
+              items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
+              localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
             });
           });
         });
@@ -507,6 +507,7 @@ URLI.Background = function () {
         }
         break;
       default:
+        console.log("change in areaName:" + areaName);
         break;
     }
   }
