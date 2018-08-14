@@ -181,7 +181,7 @@
   "profile_settings_exist_p": { "message": "My Saved URLs" },
   "profile_settings_none_p": { "message": "Aw, you haven't saved any URL Profiles yet. Why not? Just check the Save box at the top of the Setup window before clicking Accept to start saving!" },
   "profile_how_save": { "message": "Important: Your privacy and how URLs are saved" },
-  "profile_how_save_title": { "message": "To ensure your data is as private as possible, URLI encrypts the URLs you save in storage with what's known in cryptography as \"hashes\" and \"salts.\" For more information, view the Help Guide." },
+  "profile_how_save_title": { "message": "To ensure your data is as private as possible, URLI stores irreversible cryptographic hashes of the URLs you save in storage. For more information, view the Help Guide." },
   "profile_preselect_label": { "message": "Always preselect the Save checkbox in Setup" },
   "profile_delete_button": { "message": "Delete This URL" },
   "increment_decrement_settings_h3": { "message": "Increment Decrement Settings" },

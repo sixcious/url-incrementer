@@ -30,10 +30,10 @@ URLI.SaveURLs = function () {
     // Part 2: Put this URL into the profiles array and save it to local storage
     const url1 = instance.url.substring(0, instance.selectionStart),
           url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
-          urlsalt1 = URLI.Encryption.generateSalt(),
-          urlsalt2 = URLI.Encryption.generateSalt(),
-          urlhash1 = await URLI.Encryption.calculateHash(url1, urlsalt1),
-          urlhash2 = await URLI.Encryption.calculateHash(url2, urlsalt2);
+          urlsalt1 = URLI.Cryptography.generateSalt(),
+          urlsalt2 = URLI.Cryptography.generateSalt(),
+          urlhash1 = await URLI.Cryptography.calculateHash(url1, urlsalt1),
+          urlhash2 = await URLI.Cryptography.calculateHash(url2, urlsalt2);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     profiles.unshift({
       "urlhash1": urlhash1,
@@ -55,8 +55,8 @@ URLI.SaveURLs = function () {
           // url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
     if (profiles && profiles.length > 0) {
       for (let i = 0; i < profiles.length; i++) {
-        // const urlhash1 = await URLI.Encryption.calculateHash(url1, profiles[i].urlsalt1);
-        // const urlhash2 = await URLI.Encryption.calculateHash(url2, profiles[i].urlsalt2);
+        // const urlhash1 = await URLI.Cryptography.calculateHash(url1, profiles[i].urlsalt1);
+        // const urlhash2 = await URLI.Cryptography.calculateHash(url2, profiles[i].urlsalt2);
         // if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
         //   console.log("URLI.Action.deleteProfile() - deleting URL url=" + instance.url + ", with urlhash1=" + profiles[i].urlhash1);
         //   profiles.splice(i, 1);
@@ -88,8 +88,8 @@ URLI.SaveURLs = function () {
   async function matchesURL(profile, url) {
     const url1 = url.substring(0, profile.selectionStart),
           url2 = url.slice(-profile.url2length);
-    const urlhash1 = await URLI.Encryption.calculateHash(url1, profile.urlsalt1);
-    const urlhash2 = await URLI.Encryption.calculateHash(url2, profile.urlsalt2);
+    const urlhash1 = await URLI.Cryptography.calculateHash(url1, profile.urlsalt1);
+    const urlhash2 = await URLI.Cryptography.calculateHash(url2, profile.urlsalt2);
     const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
     const selectionParsed = isNaN(profile.base) ? undefined : parseInt(selection, profile.base).toString(profile.base);
     // Test for alphanumeric in the case where url2length is 0 but current url has a part 2

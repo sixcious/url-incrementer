@@ -24,7 +24,6 @@ URLI.Action = function () {
     const validated = prePerformAction(action, caller, instance);
     instance = validated.instance;
     action = validated.action;
-    // Perform Action
     switch (action) {
       case "increment":  case "decrement":
       case "increment1": case "decrement1":

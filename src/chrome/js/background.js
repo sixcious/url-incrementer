@@ -30,7 +30,7 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* saved */    "profilePreselect": true, "profileQuick": true, "profiles": []
+    /* saved */    "profilePreselect": false, "profiles": []
   },
 
   // The browser action badges that will be displayed against the extension icon

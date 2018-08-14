@@ -1,5 +1,5 @@
 /**
- * URL Incrementer Encryption
+ * URL Incrementer Cryptography
  *
  * @author Roy Six
  * @namespace
@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Encryption = function () {
+URLI.Cryptography = function () {
 
   /**
    * Calculates a cryptographic hash. We use the PBKDF2WithHmacSHA512 algorithm and hash.
@@ -20,7 +20,7 @@ URLI.Encryption = function () {
    */
   async function calculateHash(plaintext, salt) {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(plaintext ? plaintext : " "), "PBKDF2", false, ["deriveBits"]);
-    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2u8a(salt), iterations: 1000}, key, 512);
+    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2u8a(salt), iterations: 1337}, key, 512);
     return u8a2str(new Uint8Array(bits));
   }
 

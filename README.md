@@ -46,6 +46,7 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 - Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a separate subfolder (experimental) 3. New Name column in Download Preview Table
 - Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
+- Icons upgraded from Font Awesome 4 to Font Awesome 5
 - Internal Code Enhancements: Caching storage for faster performance
 - Front-End Enhancements: popup.html and options.html rewritten in valid HTML 5
 - Improved page loading speed for popup and options by replacing CSS @imports with HTML links
