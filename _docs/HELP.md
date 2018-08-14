@@ -39,10 +39,11 @@ You can use Multi Incrementing with AUTO and the Toolkit to generate links or op
 ## Date Incrementing
 Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
 
-Important: Each part of the date needs to be separated by a non date-format character (like 2018/01/25 or 2018-01-25 for example) or the format needs to contain only fixed-width date formats without any separators (e.g. "20180125").
-The following formats are variable-width and not allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.
+Important: Each part of the date needs to be separated by a non date-format character (like a `/` or a `-`, 2018/01/25 for example) or the format needs to contain only fixed-width date formats without any separators (e.g. "20180125").
 
-#### Date Selection and Format Examples
+*The following formats are variable-width and are not allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.*
+
+#### Date Selection / Format Examples
 
 Valid Examples:
 
@@ -59,7 +60,7 @@ Invalid Examples:
 
 | Selection   | Format    | Reason                                                                    |
 | ----------  | --------- | ------------------------------------------------------------------------- |
-| /01/25/2018 | mm/dd/yyyy | Format missing leading / and does not match selection |
+| /01/25/2018 | mm/dd/yyyy | Selection has an unnecessary leading / and does not match format |
 | 01-252018   | mm-ddyyyy | Mixed usage of separators and non-separators between date parts           |
 | 1252018     | mddyyyy   | Uses a non fixed-width date part without separators ("m" instead of "mm") |
 | Sept-2018   | Mmm-yyyy  | "Sept" not in supported short month names ("Sep" only is)                 |

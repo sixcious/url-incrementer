@@ -264,7 +264,6 @@
   "base_label": { "message": "Base" },
   "base_option_default": { "message": "(Default)" },
   "base_option_date": { "message": "Date Time" },
-  "base_option_roman": { "message": "Roman Numeral" },
   "base_option_2": { "message": "2 Binary [0-1]" },
   "base_option_3": { "message": "3 Ternary [0-2]" },
   "base_option_4": { "message": "4 Quaternary [0-3]" },

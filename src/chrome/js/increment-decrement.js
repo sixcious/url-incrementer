@@ -177,13 +177,10 @@ URLI.IncrementDecrement = function () {
           interval = instance.interval, leadingZeros = instance.leadingZeros,
           base = instance.base, baseCase = instance.baseCase, dateFormat = instance.baseDateFormat;
     let selectionmod;
-    // Perform the increment or decrement operation depending on the base type (date, roman, alphanumeric)
+    // Perform the increment or decrement operation depending on the base type
     switch(base) {
       case "date":
         selectionmod = incrementDecrementDate(action, selection, interval, dateFormat);
-        break;
-      case "roman":
-        selectionmod = incrementDecrementRoman(action, selection, interval);
         break;
       case "alphanumeric":
       default:
@@ -365,12 +362,6 @@ URLI.IncrementDecrement = function () {
       selectionmod = "DateError";
     }
     return selectionmod;
-  }
-
-  // TODO
-  function incrementDecrementRoman(action, selection, interval) {
-    var numerals = ["I", "V", "X", "L", "C", "D", "M"];
-
   }
 
   /**

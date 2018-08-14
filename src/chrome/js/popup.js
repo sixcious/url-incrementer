@@ -901,8 +901,7 @@ URLI.Popup = function () {
       e.incrementDecrementErrors = [
         // [0] = Selection Errors
         _.base === "date" ?
-          backgroundPage_.URLI.IncrementDecrement.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : "" :
-        _.base === "roman" ? true ? "romanTRUE" : "romanFALSE"
+          backgroundPage_.URLI.IncrementDecrement.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
         :
           _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
           !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
