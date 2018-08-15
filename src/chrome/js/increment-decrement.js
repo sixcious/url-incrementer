@@ -151,10 +151,15 @@ URLI.IncrementDecrement = function () {
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - a fetch() exception was caught:" + e);
-        const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
-        const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-        if (context === "background") { URLI.Background.messageListener(request1, { "tab": { "id": instance.tabId } }, function() {}); URLI.Background.messageListener(request2, { "tab": { "id": instance.tabId } }, function() {}); }
-        else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
+        // const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
+        // const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+        // if (context === "background") { URLI.Background.messageListener(request1, { "tab": { "id": instance.tabId } }, function() {}); URLI.Background.messageListener(request2, { "tab": { "id": instance.tabId } }, function() {}); }
+        // else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
+        const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": "ERR", "instance": instance};
+        if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+        else { chrome.runtime.sendMessage(request); }
+        // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
+        incrementDecrementAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
       });
     } else {
       console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");

@@ -299,10 +299,13 @@ URLI.Action = function () {
     let actionPerformed = false;
     if (instance.startingURL) {
       actionPerformed = true;
-      // TODO: Deal with auto
-      // If Auto is calling return, it is completing a repeat loop
+      // Auto Case 1: If Auto is calling return, it is completing a repeat loop
       if (caller === "auto") {
         instance.autoRepeating = false;
+      }
+      // Auto Case 2: User is performing return while auto is on
+      if (instance.autoEnabled && caller !== "auto") {
+        instance.autoTimes = instance.autoTimesOriginal;
       }
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
