@@ -42,7 +42,8 @@ URLI.Cryptography = function () {
    * @private
    */
   function u8a2str(u8a) {
-    return btoa(String.fromCharCode.apply(null, u8a));
+    //return btoa(String.fromCharCode.apply(null, u8a));
+    return btoa(String.fromCharCode(...u8a));
   }
 
   /**
