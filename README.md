@@ -15,18 +15,15 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 - Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Date Time Incrementing
-- Increment [+] Decrement [-]
 - Next [>] Prev [<]
-- Keyboard Shortcuts
-- Mouse and Touch Shortcuts
-- Browser Shortcuts
+- Keyboard Shortcuts, Mouse and Touch Shortcuts, Browser Shortcuts
 - "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Error Skipping
 - Save URLs (Optional - Remembers settings for each URL)
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
 - Works on Mobile (Firefox for Android)
-- So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more
+- So Many Options: Alphanumeric Incrementing, Custom Bases like Base 62, Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!

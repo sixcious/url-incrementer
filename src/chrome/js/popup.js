@@ -705,7 +705,7 @@ URLI.Popup = function () {
       } else {
         const toolkitInstance = JSON.parse(JSON.stringify(_));
         toolkitInstance.toolkitEnabled = true;
-        const precalculateProps = backgroundPage_.URLI.IncrementDecrement.precalculateURLs(toolkitInstance);
+        const precalculateProps = backgroundPage_.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
         toolkitInstance.urls = precalculateProps.urls;
         toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage_.URLI.Action.performAction("toolkit", "popup", toolkitInstance);
@@ -799,7 +799,7 @@ URLI.Popup = function () {
         instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;
         instance.profileFound = instance.profileSave;
-        const precalculateProps = backgroundPage_.URLI.IncrementDecrement.precalculateURLs(instance);
+        const precalculateProps = backgroundPage_.URLI.IncrementDecrementArray.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage_.URLI.Background.setInstance(instance.tabId, instance);
@@ -932,7 +932,7 @@ URLI.Popup = function () {
       e.incrementDecrementErrors = [
         // [0] = Selection Errors
         _.base === "date" ?
-          backgroundPage_.URLI.IncrementDecrement.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
+          backgroundPage_.URLI.IncrementDecrementDate.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
         :
           _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
           !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :

@@ -28,8 +28,8 @@ The two workarounds are to either get tabs permissions or use the sender.url ins
 #### increment-decrement.js
 lookbehind regex not supported (yet) in Firefox as of Version 61. Chrome supports it starting in Version 62.
 
-#### encryption.js
-if url part 2 is empty in Firefox, we need to do something to handle that... TODO
+#### cryptography.js
+If the plaintext is empty in Firefox, it hangs, so need to check and use a default plaintext
 
 #### options.css
 add body max-width: 420px since by default it goes really wide.

@@ -92,7 +92,7 @@ URLI.IncrementDecrement = function () {
   function incrementDecrement(action, instance) {
     // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't increment the URL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
-      stepThruURLs(action, instance);
+      URLI.IncrementDecrementArray.stepThruURLs(action, instance);
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
     else if (instance.multiEnabled && !/\d/.test(action)) {
@@ -177,15 +177,18 @@ URLI.IncrementDecrement = function () {
    * @private
    */
   function incrementDecrementURL(action, instance) {
-    multiPre(action, instance);
+    URLI.IncrementDecrementMulti.multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
           interval = instance.interval, leadingZeros = instance.leadingZeros,
-          base = instance.base, baseCase = instance.baseCase, dateFormat = instance.baseDateFormat;
+          base = instance.base, baseCase = instance.baseCase, dateFormat = instance.baseDateFormat, baseCustom = instance.baseCustom;
     let selectionmod;
     // Perform the increment or decrement operation depending on the base type
     switch(base) {
       case "date":
-        selectionmod = incrementDecrementDate(action, selection, interval, dateFormat);
+        selectionmod = URLI.IncrementDecrementDate.incrementDecrementDate(action, selection, interval, dateFormat);
+        break;
+      case "custom":
+        selectionmod = incrementDecrementBaseCustom(action, selection, interval, base, baseCustom, leadingZeros);
         break;
       case "alphanumeric":
       default:
@@ -194,7 +197,7 @@ URLI.IncrementDecrement = function () {
     }
     // Append: part 1 of the URL + modified selection + part 2 of the URL. (Note: We can't cache part1 and part2 at the beginning due to multi)
     const urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
-    multiPost(selectionmod, urlmod, instance);
+    URLI.IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
     instance.url = urlmod;
     instance.selection = selectionmod;
   }
@@ -229,261 +232,43 @@ URLI.IncrementDecrement = function () {
     return selectionmod;
   }
 
-  /**
-   * Performs an increment decrement operation on the date selection string.
-   *
-   * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
-   * Patterns - yyyy | yy, mmmm | mmm | mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
-   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh/mm/ss
-   *
-   * @param action
-   * @param selection
-   * @param interval
-   * @param dateFormat
-   * @returns {string | *}
-   * @public
-   */
-  function incrementDecrementDate(action, selection, interval, dateFormat) {
-    console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
-    var selectionmod = dateFormat;
-    try {
-      // Part 1: String to Date
-
-      var mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-      var mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-
-      var regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
-      var matches = dateFormat.match(regexp);
-      var delimiters = "";
-      for (let match of matches) {
-        if (/^(?![ymMdhisl])/.exec(match)) {
-          delimiters += (delimiters ? "|" : "") + match;
-        }
-      }
-
-      var formatparts = [], selectionparts = [];
-      if (delimiters !== "") {
-        var delimitersregexp = new RegExp(delimiters, "g");
-        formatparts = dateFormat.split(delimitersregexp).filter(Boolean);
-        selectionparts = selection.split(delimitersregexp).filter(Boolean);
-      } else {
-        // variable widths:
-        // mmmm, Mmmm, MMMM, m, d, h, i, s, l
-        formatparts = matches;
-        for (var i = 0; i < formatparts.length; i++) {
-          selectionparts[i] = selection.substr(i > 0 ? formatparts[i - 1].length  : 0, formatparts[i].length); // use substr over substring here
-        }
-      }
-      var mapparts = new Map([["y", 2000], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
-      for (let i = 0; i < formatparts.length; i++) {
-        switch(formatparts[i]) {
-          case "yyyy": mapparts.set("y", selectionparts[i]); break;
-          case "yy":   mapparts.set("y", parseInt(selectionparts[i]) > 70 ? "19" + selectionparts[i] : "20" + selectionparts[i]); break;
-          case "mmmm": case "Mmmm": case"MMMM": mapparts.set("m", mmmm.findIndex(m => m === selectionparts[i].toLowerCase()) + 1); break;
-          case "mmm": case"Mmm": case"MMM": mapparts.set("m", mmm.findIndex(m => m === selectionparts[i].toLowerCase()) + 1); break;
-          case "mm":   mapparts.set("m", selectionparts[i]); break;
-          case "m":    mapparts.set("m", selectionparts[i]); break;
-          case "dd":   mapparts.set("d", selectionparts[i]); break;
-          case "d":    mapparts.set("d", selectionparts[i]); break;
-          case "hh":   mapparts.set("h", selectionparts[i]); break;
-          case "h":    mapparts.set("h", selectionparts[i]); break;
-          case "ii":   mapparts.set("i", selectionparts[i]); break;
-          case "i":    mapparts.set("i", selectionparts[i]); break;
-          case "ss":   mapparts.set("s", selectionparts[i]); break;
-          case "s":    mapparts.set("s", selectionparts[i]); break;
-          case "ll":   mapparts.set("l", selectionparts[i]); break;
-          case "l":    mapparts.set("l", selectionparts[i]); break;
-          default: break;
-        }
-      }
-      var date = new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
-
-      // Part 2 Increment:
-      interval = action.startsWith("decrement") ? -interval : interval;
-      // @see https://stackoverflow.com/a/39196460
-      var lowestregexp = /(l|(s|i|h|d|M|m|y(?!.*m))(?!.*M)(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
-      var lowestmatch = lowestregexp.exec(dateFormat)[0];
-      switch(lowestmatch) {
-        case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
-        case "s": date.setSeconds(date.getSeconds() + interval); break;
-        case "i": date.setMinutes(date.getMinutes() + interval); break;
-        case "h": date.setHours(date.getHours() + interval); break;
-        case "d": date.setDate(date.getDate() + interval); break;
-        case "m": case "M": date = new Date(date.getFullYear(), date.getMonth() + interval); break;
-        case "y": date.setFullYear(date.getFullYear() + interval); break;
-        default: break;
-      }
-
-      // Part 3 Date to String:
-      var mapreverse = new Map();
-      mapreverse.set("yyyy", date.getFullYear());
-      mapreverse.set("yy", (date.getFullYear() + "").substring(2));
-      mapreverse.set("mmmm", mmmm[date.getMonth()]);
-      mapreverse.set("Mmmm", mmmm[date.getMonth()][0].toUpperCase() + mmmm[date.getMonth()].substring(1));
-      mapreverse.set("MMMM", mmmm[date.getMonth()].toUpperCase());
-      mapreverse.set("mmm", mmm[date.getMonth()]);
-      mapreverse.set("Mmm", mmm[date.getMonth()][0].toUpperCase() + mmm[date.getMonth()].substring(1));
-      mapreverse.set("MMM", mmm[date.getMonth()].toUpperCase());
-      mapreverse.set("mm", (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
-      mapreverse.set("m", date.getMonth() + 1);
-      mapreverse.set("dd", date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
-      mapreverse.set("d", date.getDate());
-      mapreverse.set("hh", date.getHours() < 10 ? "0" + date.getHours() : date.getHours());
-      mapreverse.set("h", date.getHours());
-      mapreverse.set("ii", date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
-      mapreverse.set("i", date.getMinutes());
-      mapreverse.set("ss", date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds());
-      mapreverse.set("s", date.getSeconds());
-      mapreverse.set("ll", "0".repeat(3 - (date.getMilliseconds() + "").length) + date.getMilliseconds());
-      mapreverse.set("l", date.getMilliseconds());
-      for (let i = 0; i < formatparts.length; i++) {
-        switch (formatparts[i]) {
-          case "yyyy": selectionmod = selectionmod.replace(formatparts[i], date.getFullYear()); break;
-          case "yy":   selectionmod = selectionmod.replace(formatparts[i], (date.getFullYear() + "").substring(2)); break;
-          case "mmmm": selectionmod = selectionmod.replace(formatparts[i], mmmm[date.getMonth()]); break;
-          case "Mmmm": selectionmod = selectionmod.replace(formatparts[i], mmmm[date.getMonth()][0].toUpperCase() + mmmm[date.getMonth()].substring(1)); break;
-          case "MMMM": selectionmod = selectionmod.replace(formatparts[i], mmmm[date.getMonth()].toUpperCase()); break;
-          case "mmm":  selectionmod = selectionmod.replace(formatparts[i], mmm[date.getMonth()]); break;
-          case "Mmm":  selectionmod = selectionmod.replace(formatparts[i], mmm[date.getMonth()][0].toUpperCase() + mmm[date.getMonth()].substring(1)); break;
-          case "MMM":  selectionmod = selectionmod.replace(formatparts[i], mmm[date.getMonth()].toUpperCase()); break;
-          case "mm":   selectionmod = selectionmod.replace(formatparts[i], (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1)); break;
-          case "m":    selectionmod = selectionmod.replace(formatparts[i], date.getMonth() + 1); break;
-          case "dd":   selectionmod = selectionmod.replace(formatparts[i], date.getDate() < 10 ? "0" + date.getDate() : date.getDate()); break;
-          case "d":    selectionmod = selectionmod.replace(formatparts[i], date.getDate()); break;
-          case "hh":   selectionmod = selectionmod.replace(formatparts[i], date.getHours() < 10 ? "0" + date.getHours() : date.getHours()); break;
-          case "h":    selectionmod = selectionmod.replace(formatparts[i], date.getHours()); break;
-          case "ii":   selectionmod = selectionmod.replace(formatparts[i], date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()); break;
-          case "i":    selectionmod = selectionmod.replace(formatparts[i], date.getMinutes()); break;
-          case "ss":   selectionmod = selectionmod.replace(formatparts[i], date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()); break;
-          case "s":    selectionmod = selectionmod.replace(formatparts[i], date.getSeconds()); break;
-          case "ll":   selectionmod = selectionmod.replace(formatparts[i], "0".repeat(3 - (date.getMilliseconds() + "").length) + date.getMilliseconds()); break;
-          case "l":    selectionmod = selectionmod.replace(formatparts[i], date.getMilliseconds()); break;
-          default: break;
-        }
-        // selectionmod = selectionmod.replace(formatparts[i], mapreverse.get(formatparts[i]));
-      }
-    } catch(e) {
-      console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
-      selectionmod = "DateError";
+  function incrementDecrementBaseCustom(action, selection, interval, base, baseCase, leadingZeros) {
+    const set = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let selectionmod = "";
+    let base10num = 0;
+    // Part 1 Decode Base to Decimal
+    for (let i = selection.length - 1, digit = 0; i >= 0; i--, digit++) {
+      const num = set.indexOf(selection[i]);
+      base10num += num * (base ** digit);
+      console.log("num=" + num);
+      console.log("base10num=" + num);
     }
+    console.log("base10num done decode=" + base10num);
+
+    // Increment
+    base10num += action.startsWith("increment") ? interval : -interval;
+
+    // Part 2 Encode Decimal to Base
+    // TODO handle 0 (return set[0])
+    while (base10num > 0) {
+      const remainder = base10num % base;
+      selectionmod = `${set[remainder]}${selectionmod}`;
+      base10num = Math.floor(base10num / base);
+    }
+    console.log("base10num done encode=" + base10num);
+    console.log("selectionmod=" + selectionmod);
     return selectionmod;
   }
 
-  /**
-   * Steps to the next or previous position in the URLs array.
-   * This is used instead of incrementDecrementURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
-   *
-   * @param action   the action (increment moves forward, decrement moves backward in the array)
-   * @param instance the instance containing the URLs array
-   * @private
-   */
-  function stepThruURLs(action, instance) {
-    console.log("URLI.IncrementDecrement.precalculateURLs() - performing increment/decrement on the urls array...");
-    const urlsLength = instance.urls.length;
-    console.log("URLI.IncrementDecrement.precalculateURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-    console.log("URLI.IncrementDecrement.precalculateURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
-    // Get the urlProps object from the next or previous position in the urls array and update the instance
-    const urlProps =
-      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
-        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
-    instance.url = urlProps.urlmod;
-    instance.selection = urlProps.selectionmod;
-  }
+  // Return Public Functions
+  return {
+    findSelection: findSelection,
+    incrementDecrement: incrementDecrement,
+    incrementDecrementAndSkipErrors: incrementDecrementAndSkipErrors
+  };
+}();
 
-  /**
-   * Pre-calculates an array of URLs.
-   *
-   * @param instance
-   * @returns {{urls: Array, currentIndex: number}}
-   * @public
-   */
-  function precalculateURLs(instance) {
-    console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
-    let urls = [], currentIndex = 0;
-    if (instance.toolkitEnabled || instance.customURLs || instance.shuffleURLs) {
-      // Custom URLs are treated the same in all modes
-      if (instance.customURLs) {
-        urls = buildCustomURLs(instance);
-        currentIndex = -1; // Start the index at -1 because 0 will be the first URL in the custom URLs array
-      } else if (instance.toolkitEnabled) {
-        urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
-      } else if (instance.autoEnabled) {
-        urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
-      } else {
-        const shuffleLimit = URLI.Background.getItems().shuffleLimit;
-        const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
-        const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
-        const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
-        currentIndex = urlsDecrement.length;
-        urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
-      }
-    }
-    return {"urls": urls, "currentIndex": currentIndex};
-  }
-
-  function buildURLs(instance, action, limit) {
-    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
-    const urls = [],
-          url = instance.url,
-          selection = instance.selection;
-    // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
-    if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
-      urls.push({"urlmod": url, "selectionmod": selection});
-      limit--;
-    }
-    for (let i = 0; i < limit; i++) {
-      incrementDecrement(action, instance);
-      urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      // Only exit if base is numeric and beyond bounds
-      if (!isNaN(instance.base)) {
-        const selectionint = parseInt(instance.selection, instance.base);
-        if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
-          break;
-        }
-      }
-    }
-    // Reset instance url and selection after calling incrementDecrementURL():
-    instance.url = url;
-    instance.selection = selection;
-    if (instance.shuffleURLs) {
-      shuffle(urls);
-    }
-    return urls;
-  }
-
-  function buildCustomURLs(instance) {
-    const urls = [];
-    for (let url of instance.urls) {
-      // Only need to construct an object the first time TODO: Should we construct the objects this from the get-go in popup's instance.urls array so we don't have to do this?
-      if (instance.autoRepeatCount === 0) {
-        urls.push({"urlmod": url, "selectionmod": ""});
-      } else {
-        urls.push(url);
-      }
-    }
-    if (instance.shuffleURLs) {
-      shuffle(urls);
-    }
-    return urls;
-  }
-
-  /**
-   * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
-   * Note: This function is written by Laurens Holst.
-   *
-   * @param array the array to shuffle
-   * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
-   * @see https://stackoverflow.com/a/12646864
-   * @private
-   */
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
+URLI.IncrementDecrementMulti = function () {
 
   /**
    * Pre-handles a multi-incrementing instance before incrementDecrementURL().
@@ -536,13 +321,278 @@ URLI.IncrementDecrement = function () {
       }
     }
   }
+  // Return Public Functions
+  return {
+    multiPre: multiPre,
+    multiPost: multiPost
+  };
+}();
+
+URLI.IncrementDecrementDate = function () {
+
+  const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  const mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+  /**
+   * Performs an increment decrement operation on the date selection string.
+   *
+   * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
+   * Patterns - yyyy | yy, mmmm | mmm | mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
+   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh/mm/ss
+   *
+   * @param action
+   * @param selection
+   * @param interval
+   * @param dateFormat
+   * @returns {string | *}
+   * @public
+   */
+  function incrementDecrementDate(action, selection, interval, dateFormat) {
+    console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
+    let selection2 = "";
+    try {
+      const parts = URLI.IncrementDecrementDate.splitParts(selection, dateFormat);
+      const date = URLI.IncrementDecrementDate.str2date(parts.strParts, parts.dateFormatParts);
+      const date2 = URLI.IncrementDecrementDate.incdecdate(action, date, dateFormat, interval);
+      selection2 = URLI.IncrementDecrementDate.date2str(date2, dateFormat, parts.dateFormatParts);
+    } catch(e) {
+      console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
+      selection2 = "DateError";
+    }
+    return selection2;
+  }
+
+  function splitParts(str, dateFormat) {
+    const regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
+    const matches = dateFormat.match(regexp);
+    let delimiters = "";
+    for (let match of matches) {
+      if (/^(?![ymMdhisl])/.exec(match)) {
+        delimiters += (delimiters ? "|" : "") + match;
+      }
+    }
+
+    let dateFormatParts = [], strParts = [];
+    if (delimiters !== "") {
+      const delimitersregexp = new RegExp(delimiters, "g");
+      dateFormatParts = dateFormat.split(delimitersregexp).filter(Boolean);
+      strParts = str.split(delimitersregexp).filter(Boolean);
+    } else {
+      // variable widths:
+      // mmmm, Mmmm, MMMM, m, d, h, i, s, l
+      dateFormatParts = matches;
+      for (let i = 0; i < dateFormatParts.length; i++) {
+        strParts[i] = str.substr(i > 0 ? dateFormatParts[i - 1].length  : 0, dateFormatParts[i].length); // use substr over substring here
+      }
+    }
+    return { "dateFormatParts": dateFormatParts, "strParts": strParts };
+  }
+
+  function str2date(strParts, dateFormatParts) {
+    const mapparts = new Map([["y", 2000], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
+    for (let i = 0; i < dateFormatParts.length; i++) {
+      switch(dateFormatParts[i]) {
+        case "yyyy": mapparts.set("y", strParts[i]); break;
+        case "yy":   mapparts.set("y", parseInt(strParts[i]) > 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
+        case "mmmm": case "Mmmm": case"MMMM": mapparts.set("m", mmmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
+        case "mmm": case"Mmm": case"MMM": mapparts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
+        case "mm":   mapparts.set("m", strParts[i]); break;
+        case "m":    mapparts.set("m", strParts[i]); break;
+        case "dd":   mapparts.set("d", strParts[i]); break;
+        case "d":    mapparts.set("d", strParts[i]); break;
+        case "hh":   mapparts.set("h", strParts[i]); break;
+        case "h":    mapparts.set("h", strParts[i]); break;
+        case "ii":   mapparts.set("i", strParts[i]); break;
+        case "i":    mapparts.set("i", strParts[i]); break;
+        case "ss":   mapparts.set("s", strParts[i]); break;
+        case "s":    mapparts.set("s", strParts[i]); break;
+        case "ll":   mapparts.set("l", strParts[i]); break;
+        case "l":    mapparts.set("l", strParts[i]); break;
+        default: break;
+      }
+    }
+    return new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
+  }
+
+  // @see https://stackoverflow.com/a/39196460
+  function incdecdate(action, date, dateFormat, interval) {
+    interval = action.startsWith("increment") ? interval : -interval;
+    const lowestregexp = /(l|(s|i|h|d|M|m|y(?!.*m))(?!.*M)(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
+    const lowestmatch = lowestregexp.exec(dateFormat)[0];
+    switch(lowestmatch) {
+      case "l": date.setMilliseconds(date.getMilliseconds() + interval); break;
+      case "s": date.setSeconds(date.getSeconds() + interval); break;
+      case "i": date.setMinutes(date.getMinutes() + interval); break;
+      case "h": date.setHours(date.getHours() + interval); break;
+      case "d": date.setDate(date.getDate() + interval); break;
+      case "m": case "M": date = new Date(date.getFullYear(), date.getMonth() + interval); break;
+      case "y": date.setFullYear(date.getFullYear() + interval); break;
+      default: break;
+    }
+    return date;
+  }
+
+  function date2str(date, dateFormat, dateFormatParts) {
+    let str = dateFormat;
+    for (let i = 0; i < dateFormatParts.length; i++) {
+      switch (dateFormatParts[i]) {
+        case "yyyy": str = str.replace(dateFormatParts[i], date.getFullYear()); break;
+        case "yy":   str = str.replace(dateFormatParts[i], (date.getFullYear() + "").substring(2)); break;
+        case "mmmm": str = str.replace(dateFormatParts[i], mmmm[date.getMonth()]); break;
+        case "Mmmm": str = str.replace(dateFormatParts[i], mmmm[date.getMonth()][0].toUpperCase() + mmmm[date.getMonth()].substring(1)); break;
+        case "MMMM": str = str.replace(dateFormatParts[i], mmmm[date.getMonth()].toUpperCase()); break;
+        case "mmm":  str = str.replace(dateFormatParts[i], mmm[date.getMonth()]); break;
+        case "Mmm":  str = str.replace(dateFormatParts[i], mmm[date.getMonth()][0].toUpperCase() + mmm[date.getMonth()].substring(1)); break;
+        case "MMM":  str = str.replace(dateFormatParts[i], mmm[date.getMonth()].toUpperCase()); break;
+        case "mm":   str = str.replace(dateFormatParts[i], (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1)); break;
+        case "m":    str = str.replace(dateFormatParts[i], date.getMonth() + 1); break;
+        case "dd":   str = str.replace(dateFormatParts[i], date.getDate() < 10 ? "0" + date.getDate() : date.getDate()); break;
+        case "d":    str = str.replace(dateFormatParts[i], date.getDate()); break;
+        case "hh":   str = str.replace(dateFormatParts[i], date.getHours() < 10 ? "0" + date.getHours() : date.getHours()); break;
+        case "h":    str = str.replace(dateFormatParts[i], date.getHours()); break;
+        case "ii":   str = str.replace(dateFormatParts[i], date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()); break;
+        case "i":    str = str.replace(dateFormatParts[i], date.getMinutes()); break;
+        case "ss":   str = str.replace(dateFormatParts[i], date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()); break;
+        case "s":    str = str.replace(dateFormatParts[i], date.getSeconds()); break;
+        case "ll":   str = str.replace(dateFormatParts[i], "0".repeat(3 - (date.getMilliseconds() + "").length) + date.getMilliseconds()); break;
+        case "l":    str = str.replace(dateFormatParts[i], date.getMilliseconds()); break;
+        default: break;
+      }
+    }
+    return str;
+  }
 
   // Return Public Functions
   return {
-    findSelection: findSelection,
-    incrementDecrement: incrementDecrement,
-    incrementDecrementAndSkipErrors: incrementDecrementAndSkipErrors,
     incrementDecrementDate: incrementDecrementDate,
+    splitParts: splitParts,
+    str2date: str2date,
+    incdecdate: incdecdate,
+    date2str: date2str
+  };
+}();
+
+URLI.IncrementDecrementArray = function () {
+
+    /**
+   * Steps to the next or previous position in the URLs array.
+   * This is used instead of incrementDecrementURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
+   *
+   * @param action   the action (increment moves forward, decrement moves backward in the array)
+   * @param instance the instance containing the URLs array
+   * @public
+   */
+  function stepThruURLs(action, instance) {
+    console.log("URLI.IncrementDecrement.stepThruURLs() - performing increment/decrement on the urls array...");
+    const urlsLength = instance.urls.length;
+    console.log("URLI.IncrementDecrement.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+    console.log("URLI.IncrementDecrement.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+    // Get the urlProps object from the next or previous position in the urls array and update the instance
+    const urlProps =
+      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
+    instance.url = urlProps.urlmod;
+    instance.selection = urlProps.selectionmod;
+  }
+
+  /**
+   * Pre-calculates an array of URLs.
+   *
+   * @param instance
+   * @returns {{urls: Array, currentIndex: number}}
+   * @public
+   */
+  function precalculateURLs(instance) {
+    console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
+    let urls = [], currentIndex = 0;
+    if (instance.toolkitEnabled || instance.customURLs || instance.shuffleURLs) {
+      // Custom URLs are treated the same in all modes
+      if (instance.customURLs) {
+        urls = buildCustomURLs(instance);
+        currentIndex = -1; // Start the index at -1 because 0 will be the first URL in the custom URLs array
+      } else if (instance.toolkitEnabled) {
+        urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
+      } else if (instance.autoEnabled) {
+        urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
+      } else {
+        const shuffleLimit = URLI.Background.getItems().shuffleLimit;
+        const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
+        const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
+        const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
+        currentIndex = urlsDecrement.length;
+        urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
+      }
+    }
+    return {"urls": urls, "currentIndex": currentIndex};
+  }
+
+  function buildURLs(instance, action, limit) {
+    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
+    const urls = [],
+          url = instance.url,
+          selection = instance.selection;
+    // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
+    if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
+      urls.push({"urlmod": url, "selectionmod": selection});
+      limit--;
+    }
+    for (let i = 0; i < limit; i++) {
+      URLI.IncrementDecrement.incrementDecrement(action, instance);
+      urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+      // Only exit if base is numeric and beyond bounds
+      if (!isNaN(instance.base)) {
+        const selectionint = parseInt(instance.selection, instance.base);
+        if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
+          break;
+        }
+      }
+    }
+    // Reset instance url and selection after calling incrementDecrementURL():
+    instance.url = url;
+    instance.selection = selection;
+    if (instance.shuffleURLs) {
+      shuffle(urls);
+    }
+    return urls;
+  }
+
+  function buildCustomURLs(instance) {
+    const urls = [];
+    for (let url of instance.urls) {
+      // Only need to construct an object the first time TODO: Should we construct the objects this from the get-go in popup's instance.urls array so we don't have to do this?
+      if (instance.autoRepeatCount === 0) {
+        urls.push({"urlmod": url, "selectionmod": ""});
+      } else {
+        urls.push(url);
+      }
+    }
+    if (instance.shuffleURLs) {
+      shuffle(urls);
+    }
+    return urls;
+  }
+
+  /**
+   * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
+   * Note: This function is written by Laurens Holst.
+   *
+   * @param array the array to shuffle
+   * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+   * @see https://stackoverflow.com/a/12646864
+   * @private
+   */
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  // Return Public Functions
+  return {
+    stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };
 }();
