@@ -49,7 +49,6 @@ URLI.Popup = function () {
         const downloadPaddingAdjustment = items_.popupButtonSize <= 24 ? 4 : items_.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";
         DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
-        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
         updateSetup();
         // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
         if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
@@ -362,7 +361,9 @@ URLI.Popup = function () {
     // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
     chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
       if (chrome.runtime.lastError) {
-        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
+        const div = document.createElement("div");
+        div.textContent = chrome.i18n.getMessage("download_preview_blocked");
+        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
       } else {
         const code = "URLI.Download.previewDownloadURLs();";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
@@ -428,7 +429,9 @@ URLI.Popup = function () {
             JSON.stringify(downloadExcludes) + ");";
     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
       if (chrome.runtime.lastError) {
-        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_blocked");
+        const div = document.createElement("div");
+        div.textContent = chrome.i18n.getMessage("download_preview_blocked");
+        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
       } else if (results && results[0]) {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
@@ -486,7 +489,9 @@ URLI.Popup = function () {
         downloadPreviewCache.mselecteds = [];
         downloadPreviewCache.munselecteds = [];
       } else {
-        DOM["#download-preview-table-div"].innerHTML = chrome.i18n.getMessage("download_preview_noresults");
+        const div = document.createElement("div");
+        div.textContent = chrome.i18n.getMessage("download_preview_noresults");
+        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
       }
     });
   }
@@ -633,6 +638,32 @@ URLI.Popup = function () {
   function updateToolkitGenerateURLs(urls) {
     if (urls && urls.length > 0) {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
+      const table = document.createElement("table"),
+            thead = document.createElement("thead"),
+            tbody = document.createElement("tbody");
+      let tr = document.createElement("tr"),
+          th = document.createElement("th"),
+          td = document.createElement("td"),
+          a = document.createElement("a"),
+          count = 1;
+
+      thead.appendChild(tr);
+      tr.appendChild(th);
+
+      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
+      thead.style = "background: #f8f8f8; color: #0a0a0a;";
+      tr.style = "background: transparent;";
+      th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
+      th.textContent = chrome.i18n.getMessage("url_label");
+
+      tbody.style = "border: 1px solid #f1f1f1; background-color: #fefefe;";
+      for (let url of urls) {
+
+      }
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      DOM["#toolkit-generate-links-table"].replaceChild(table, DOM["#toolkit-generate-links-table"].firstChild);
+
       let table =
         "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
           "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
@@ -651,9 +682,9 @@ URLI.Popup = function () {
           "</tr>";
       }
       table += "</tbody>" + "</table>";
-      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
+      // DOM["#toolkit-generate-links-table"].innerHTML = table;
       DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table], {"type": "text/html"}));
-      DOM["#toolkit-generate-links-table"].innerHTML = table;
+      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
     }
   }
 

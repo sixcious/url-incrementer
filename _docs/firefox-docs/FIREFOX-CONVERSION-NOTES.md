@@ -95,6 +95,11 @@ Example:
     /* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
     input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
 
+#### Unsafe assignment to innerHTML
+Firefox issues a warning:
+*Warning: Due to both security and performance concerns, this may not be set using dynamic values which have not been adequately sanitized. This can lead to security issues or fairly serious performance degradation.*
+
+To solve this, use DOM manipulation methods (e.g. `document.createElement()` and `document.appendChild()`) and consider using a `DocumentFragment`.
 
 
 ## FIREFOX ANDROID

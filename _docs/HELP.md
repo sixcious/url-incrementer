@@ -128,10 +128,10 @@ Finally, a few websites may not send an error code and instead "swallow" the err
 ## Saving URLs
 To make life easy, you can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. You can also have the Save checkbox always pre-checked in the Options.
 
-After you save a URL, every time you visit it, URLI will operate in "Non-Quick" mode and URLI will apply the same settings you used to increment or decrement.
+After you save a URL, you can jump straight to using shortcuts or buttons to increment on every visit!
 
 #### How Are URLs Saved?
-To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URLs into two parts (meaning we go to the trouble of calculating **two separate hashes and salts for each URL!**).
+To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URLs into two parts (meaning we go to the trouble of calculating **two separate hashes and salts for each URL!**).
 
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 

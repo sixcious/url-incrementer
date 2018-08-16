@@ -64,7 +64,7 @@ select {
   /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==),
   linear-gradient(#ededed, #ededed 38%, #dedede);
--moz-linear-gradient(#ededed, #ededed 38%, #dedede);
+  -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
   background-position: right center;
   background-repeat: no-repeat;
 }

@@ -172,10 +172,10 @@ var WebExtensionsCommands = function () {
   function updateError(that) {
     if (error) {
       DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.add("error");
-      DOM["#web-extensions-commands-error-" + that.dataset.command].innerText = error;
+      DOM["#web-extensions-commands-error-" + that.dataset.command].textContent = error;
     } else {
       DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.remove("error");
-      DOM["#web-extensions-commands-error-" + that.dataset.command].innerText = "";
+      DOM["#web-extensions-commands-error-" + that.dataset.command].textContent = "";
     }
   }
 
@@ -302,7 +302,7 @@ var WebExtensionsCommands = function () {
 
     // // remove error
     // DOM["#web-extensions-commands-input-underline-" + this.dataset.command].classList.remove("error");
-    // DOM["#web-extensions-commands-error-" + this.dataset.command].innerText = "";
+    // DOM["#web-extensions-commands-error-" + this.dataset.command].textContent = "";
   }
 
   /**

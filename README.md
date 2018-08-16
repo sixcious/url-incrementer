@@ -10,22 +10,22 @@ URLI ("yur-lee") increments URLs and other interesting incrementing things. For 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features
-- Keyboard Shortcuts
-- Mouse Button / Touch Shortcuts
-- Browser Shortcuts
-- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
-- Works on Mobile (Firefox for Android)
 - Auto Incrementing
-- Download Incrementing [Experimental] **
+- Download Incrementing [Experimental] ** 
 - Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Date Time Incrementing
 - Increment [+] Decrement [-]
 - Next [>] Prev [<]
+- Keyboard Shortcuts
+- Mouse and Touch Shortcuts
+- Browser Shortcuts
+- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Error Skipping
-- Save URLs (Remembers settings for each URL)
+- Save URLs (Optional - Remembers settings for each URL)
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
+- Works on Mobile (Firefox for Android)
 - So Many Options: Alphanumeric Incrementing, Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 

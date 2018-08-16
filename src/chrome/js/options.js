@@ -317,21 +317,21 @@ URLI.Options = function () {
    */
   function buildSelectProfiles(profiles) {
     if (profiles && profiles.length > 0) {
-      let select = "<select id=\"profiles-select\">",
-          count = 1;
+      const select = document.createElement("select");
+      let count = 1;
+      select.id = "profiles-select";
       for (let profile of profiles) {
-        select +=
-          "<option data-urlhash1=\"" + profile.urlhash1 + "\"" +
-                 " data-urlhash2=\"" + profile.urlhash2 + "\"" + ">" +
-            (count++) +
-            " - hash: " + profile.urlhash1.substring(0, 16) + "..." +
-            " interval: " + (profile.interval < 100000 ? profile.interval : profile.interval.toString().substring(0, 5) + "...") +
-            " base: " + profile.base +
-            " zeros: " + (profile.leadingZeros ? "Y" : "N") +
-          "</option>";
+        const option = document.createElement("option");
+        option.dataset.urlhash1 = profile.urlhash1;
+        option.dataset.urlhash2 = profile.urlhash2;
+        option.textContent = (count++) +
+          " - hash: " + profile.urlhash1.substring(0, 16) + "..." +
+          " interval: " + (profile.interval < 100000 ? profile.interval : profile.interval.toString().substring(0, 5) + "...") +
+          " base: " + profile.base +
+          " zeros: " + (profile.leadingZeros ? "Y" : "N");
+        select.appendChild(option);
       }
-      select += "</select>";
-      DOM["#profile-select-div"].innerHTML = select;
+      DOM["#profile-select-div"].replaceChild(select, DOM["#profile-select-div"].firstChild);
       DOM["#profile-quantity"].textContent = " (" + profiles.length + "):";
     }
   }

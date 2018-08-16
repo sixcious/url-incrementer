@@ -36,14 +36,10 @@ URLI.SaveURLs = function () {
           urlhash2 = await URLI.Cryptography.calculateHash(url2, urlsalt2);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     profiles.unshift({
-      "urlhash1": urlhash1,
-      "urlhash2": urlhash2,
-      "urlsalt1": urlsalt1,
-      "urlsalt2": urlsalt2,
-      "url2length": url2.length,
-      "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
-      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat,
-      "errorSkip": instance.errorSkip, "errorCodes":  instance.errorCodes, "errorCodesCustomEnabled": instance.errorCodesCustomEnabled, "errorCodesCustom": instance.errorCodesCustom
+      "urlhash1": urlhash1, "urlhash2": urlhash2,
+      "urlsalt1": urlsalt1, "urlsalt2": urlsalt2,
+      "url2length": url2.length, "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
+      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "errorSkip": instance.errorSkip
     });
     chrome.storage.local.set({"profiles": profiles});
   }
