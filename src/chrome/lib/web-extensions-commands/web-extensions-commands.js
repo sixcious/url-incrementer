@@ -1,5 +1,5 @@
 /**
- * WebExtensions Commands
+ * WebExtensions Commands UI
  *
  * @author Roy Six
  * @namespace
@@ -133,6 +133,27 @@ var WebExtensionsCommands = function () {
   }
 
   function generateHTML(commands) {
+    const table = document.createElement("div");
+    for (const command of commands) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const column1 = document.createElement("div");
+      const column2 = document.createElement("div");
+      column1.className = "column";
+      column2.className = "column";
+
+      const label = document.createElement("label");
+      label.id = "web-extensions-commands-ui-label-" + command.name;
+      label.className = "web-extensions-commands-ui-label";
+      label.textContent =  (command.name === "_execute_browser_action" || !command.description) ? I18N.commandActivate : command.description;
+      column1.appendChild(label);
+
+      const input = document.createElement("input");
+      input.id = "web-extensions-commands-ui-input";
+      input.type = "text";
+
+    }
+
     let html = "<div class=\"table\">";
     for (const command of commands) {
       html +=

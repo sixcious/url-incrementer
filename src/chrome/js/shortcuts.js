@@ -5,6 +5,9 @@
  * @namespace
  */
 
+
+//if (window.URLI && window.URLI.Shortcuts) { return; }
+
 var URLI = URLI || {};
 
 URLI.Shortcuts = function () {

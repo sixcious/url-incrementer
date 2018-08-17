@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* shortcuts */   "quickEnabled": true, "shortcutsMixedMode": false,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": [6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyReturn": [6, "KeyB"], "keyAuto": [6, "KeyA"],
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseFIncrement": -1, "mouseFDecrement": -1, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseReturn": -1, "mouseAuto": -1,
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseReturn": -1, "mouseAuto": -1,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -564,11 +564,7 @@ URLI.Background = function () {
     if (changeInfo.status === "loading") {
       console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
       if (items_.permissionsInternalShortcuts) {
-        chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(result) {
-          if (chrome.runtime.lastError) {
-            console.log("URLI.Background.contentScriptListener() - shortcuts.js chrome.runtime.lastError=" + chrome.runtime.lastError.message)
-          }
-        });
+        chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
       }
     }
   }
