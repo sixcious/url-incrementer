@@ -8,7 +8,7 @@
 var URLI = URLI || {};
 
 URLI.Cryptography = function () {
-
+//
   /**
    * Calculates a cryptographic hash. We use the PBKDF2 algorithm with an Hmac-SHA512 hash function.
    * For simplicity, we hardcode the algorithm, hash, and iterations. Note: 512 Bits = 64 Bytes = 88 B64 Characters.
