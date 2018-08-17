@@ -1,15 +1,15 @@
 /**
  * WebExtensions Commands UI
- *
+ * @version 1.0
  * @author Roy Six
- * @namespace
  */
 
-var WebExtensionsCommands = function () {
+var WebExtensionsCommandsUI = function () {
 
   const browser = chrome;
 
-  const RESET_INPUT_IMG_PATH = "../img/font-awesome/black/times.png",
+  const DOM_ID = "web-extensions-commands-ui",
+    RESET_INPUT_IMG_PATH = "../img/font-awesome/black/times.png",
     I18N = {
       "commandActivate":     "Activate the extension",     // browser.i18n.getMessage("web_extensions_commands_command_activate")
       "typeShortcut": "Type a shortcut", // browser.i18n.getMessage("web_extensions_commands_type_shortcut")
@@ -70,7 +70,7 @@ var WebExtensionsCommands = function () {
    * @public
    */
   function DOMContentLoaded() {
-    DOM["#web-extensions-commands"] = document.getElementById("web-extensions-commands");
+    DOM["#" + DOM_ID] = document.getElementById(DOM_ID);
     buildKeyboardEventCodeToCommandKeysMap();
     browser.commands.getAll(function(commands) {
       console.log(commands);
@@ -134,47 +134,59 @@ var WebExtensionsCommands = function () {
 
   function generateHTML(commands) {
     const table = document.createElement("div");
+    table.className = "table";
     for (const command of commands) {
       const row = document.createElement("div");
       row.className = "row";
-      const column1 = document.createElement("div");
-      const column2 = document.createElement("div");
-      column1.className = "column";
-      column2.className = "column";
+        const column1 = document.createElement("div");
+        column1.className = "column";
+          const label = document.createElement("label");
+          label.id = DOM_ID + "-label-" + command.name;
+          label.className = DOM_ID + "-label";
+          label.textContent = (command.name === "_execute_browser_action" || !command.description) ? I18N.commandActivate : command.description;
+          //column1.appendChild(label);
+        const column2 = document.createElement("div");
+        column2.className = "column";
+          const input = document.createElement("input");
+          input.id = DOM_ID + "-input-" + command.name;
+          input.className = DOM_ID + "-input";
+          input.type = "text";
+          input.value = command.shortcut;
+          input.placeholder = "";
+          input.dataset.name = command.name;
+          input.dataset.shortcut = command.shortcut;
+          const underline = document.createElement("div");
+          underline.id = DOM_ID + "-underline-" + command.name;
+          underline.className = DOM_ID + "-underline";
+          const error = document.createElement("div");
+          error.id = DOM_ID + "-error-" + command.name;
+          error.className = DOM_ID + "-error";
+          const reset = document.createElement("input");
+          reset.id = DOM_ID + "-reset-" + command.name;
+          reset.className = DOM_ID + "-reset";
+          reset.type = "image";
+          reset.src = RESET_INPUT_IMG_PATH;
+          reset.alt = "reset";
+          reset.width = "16";
+          reset.height = "16";
+          reset.dataset.name = command.name;
 
-      const label = document.createElement("label");
-      label.id = "web-extensions-commands-ui-label-" + command.name;
-      label.className = "web-extensions-commands-ui-label";
-      label.textContent =  (command.name === "_execute_browser_action" || !command.description) ? I18N.commandActivate : command.description;
       column1.appendChild(label);
 
-      const input = document.createElement("input");
-      input.id = "web-extensions-commands-ui-input";
-      input.type = "text";
+      column2.appendChild(input);
+      column2.appendChild(underline);
+      column2.appendChild(error);
+      column2.appendChild(reset);
 
+      row.appendChild(column1);
+      row.appendChild(column2);
+      table.appendChild(row);
     }
-
-    let html = "<div class=\"table\">";
-    for (const command of commands) {
-      html +=
-        "<div class=\"row\">" +
-          "<div class=\"column\">" +
-            "<label id=\"web-extensions-commands-label-" + command.name + "\" class=\"web-extensions-commands-label\">" + ((command.name === "_execute_browser_action" || !command.description) ? I18N.commandActivate : command.description) + "</label>" +
-          "</div>" +
-          "<div class=\"column\">" +
-            "<input type=\"text\" id=\"web-extensions-commands-input-" + command.name + "\" class=\"web-extensions-commands-input\" value=\"" + command.shortcut + "\" data-command=\"" + command.name + "\" data-shortcut=\"" + command.shortcut + "\"  placeholder=\"\"/>" +
-            "<div id='web-extensions-commands-input-underline-" + command.name + "' class='web-extensions-commands-input-underline'></div>" +
-            "<div id='web-extensions-commands-error-" + command.name + "' class='web-extensions-commands-error'></div>" +
-            "<input type=\"image\" id=\"web-extensions-commands-reset-input-" + command.name + "\" class=\"web-extensions-commands-reset-input\" src=\"" + RESET_INPUT_IMG_PATH + "\" alt=\"web-extensions-commands-reset-input\" data-command=\"" + command.name + "\" width=\"16\" height=\"16\"/>" +
-          "</div>" +
-        "</div>";
-    }
-    html += "</div>";
-    DOM["#web-extensions-commands"].innerHTML = html;
+    DOM["#" + DOM_ID].appendChild(table);
   }
 
   function cacheDOM() {
-    const elements = document.querySelectorAll("#web-extensions-commands [id]");
+    const elements = document.querySelectorAll("#" + DOM_ID + " [id]");
     for (let element of elements) {
       DOM["#" + element.id] = element;
     }
@@ -182,21 +194,21 @@ var WebExtensionsCommands = function () {
 
   function addEventListeners(commands) {
     for (const command of commands) {
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("focus", focus);
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("blur", blur);
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
-      DOM["#web-extensions-commands-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
-      DOM["#web-extensions-commands-reset-input-" + command.name].addEventListener("click", click); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("focus", focus);
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("blur", blur);
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
+      DOM["#" + DOM_ID + "-reset-" + command.name].addEventListener("click", click); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
     }
   }
 
   function updateError(that) {
     if (error) {
-      DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.add("error");
-      DOM["#web-extensions-commands-error-" + that.dataset.command].textContent = error;
+      DOM["#" + DOM_ID + "-underline-" + that.dataset.name].classList.add("error");
+      DOM["#" + DOM_ID + "-error-" + that.dataset.name].textContent = error;
     } else {
-      DOM["#web-extensions-commands-input-underline-" + that.dataset.command].classList.remove("error");
-      DOM["#web-extensions-commands-error-" + that.dataset.command].textContent = "";
+      DOM["#" + DOM_ID + "-underline-" + that.dataset.name].classList.remove("error");
+      DOM["#" + DOM_ID + "-error-" + that.dataset.name].textContent = "";
     }
   }
 
@@ -231,7 +243,7 @@ var WebExtensionsCommands = function () {
       updateError(this);
       return;
     }
-    console.log("keyup!" + key + ", " + this.dataset.command + ", " + this.value);
+    console.log("keyup!" + key + ", " + this.dataset.name + ", " + this.value);
     // browser.commands.update({
     //   name: this.dataset.command,
     //   shortcut: this.value
@@ -241,14 +253,13 @@ var WebExtensionsCommands = function () {
   }
 
   function click() {
-    console.log("clicked!" + this.dataset.command);
+    console.log("clicked!" + this.dataset.name);
     // browser.commands.update({
     //   name: this.dataset.command,
     //   shortcut: null
     // });
-    // DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
-    browser.commands.reset(this.dataset.command);
-    DOM["#web-extensions-commands-input-" + this.dataset.command].value = "";
+    browser.commands.reset(this.dataset.name);
+    DOM["#" + DOM_ID + "-input-" + this.dataset.name].value = "";
   }
 
 
@@ -322,8 +333,8 @@ var WebExtensionsCommands = function () {
     ];
 
     // // remove error
-    // DOM["#web-extensions-commands-input-underline-" + this.dataset.command].classList.remove("error");
-    // DOM["#web-extensions-commands-error-" + this.dataset.command].textContent = "";
+    // DOM["#-input-underline-" + this.dataset.command].classList.remove("error");
+    // DOM["#-error-" + this.dataset.command].textContent = "";
   }
 
   /**
@@ -356,5 +367,5 @@ var WebExtensionsCommands = function () {
 
 // Firefox Android: browser.commands not supported
 if (typeof chrome !== "undefined" && chrome.commands) {
-  document.addEventListener("DOMContentLoaded", WebExtensionsCommands.DOMContentLoaded);
+  document.addEventListener("DOMContentLoaded", WebExtensionsCommandsUI.DOMContentLoaded);
 }

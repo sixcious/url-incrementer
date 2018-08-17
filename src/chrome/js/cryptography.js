@@ -15,7 +15,7 @@ URLI.Cryptography = function () {
    *
    * @param text the text to hash
    * @param salt the salt to hash with
-   * @returns {Promise<string>} the hash
+   * @returns {Promise<string>} the hash as a Base 64 encoded string
    * @public
    */
   async function calculateHash(text, salt) {
@@ -27,7 +27,7 @@ URLI.Cryptography = function () {
   /**
    * Generates a random cryptographic salt.
    *
-   * @returns {string} the salt
+   * @returns {string} the salt as a Base 64 encoded string
    * @public
    */
   function generateSalt() {

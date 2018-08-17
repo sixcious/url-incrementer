@@ -446,10 +446,17 @@ URLI.Popup = function () {
           selectedsLength = selecteds.length,
           totalLength = selecteds.length + unselecteds.length;
         // Download Preview Heading Title:
-        DOM["#download-preview-heading-title"].innerHTML =
-          "<div class=\"" + (selectedsLength > 0 ? "success" : "error") + "\">" +
-            chrome.i18n.getMessage("download_preview_set") + "<span id=\"selecteds-length\">" + selectedsLength + "</span>" + chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls") +
-          "</div>";
+        const title = document.createElement("div");
+        title.className = (selectedsLength > 0 ? "success" : "error");
+        const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set"));
+        const titleNode2 = document.createElement("span");
+        titleNode2.id = "selecteds-length";
+        titleNode2.textContent = selectedsLength;
+        const titleNode3 = document.createTextNode(chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls"));
+        title.appendChild(titleNode1);
+        title.appendChild(titleNode2);
+        title.appendChild(titleNode3);
+        DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
         // Download Preview Table and a count index to keep track of current row index:
         let table =
           "<table>" +
