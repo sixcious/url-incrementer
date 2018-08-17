@@ -850,7 +850,7 @@ URLI.Popup = function () {
         }
         // If auto is enabled, ask Auto to start auto timer
         if (instance.autoEnabled) {
-          backgroundPage_.URLI.Auto.startAutoTimer(instance);
+          backgroundPage_.URLI.Auto.startAutoTimer(instance, "popup");
         }
         toggleView.call(DOM["#accept-button"]);
       });

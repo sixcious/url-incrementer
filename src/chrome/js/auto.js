@@ -21,9 +21,14 @@ URLI.Auto = function () {
    * Starts the auto timer for the instance by doing all the necessary start-up work (convenience method).
    *
    * @param instance the instance to start an auto timer for
+   * @param caller   the caller asking to start the auto timer
    * @public
    */
-  function startAutoTimer(instance) {
+  function startAutoTimer(instance, caller) {
+    // Firefox: Avoid dead object error by getting the instance from the Background instead of the Popup's argument
+    if (caller === "popup") {
+      instance = URLI.Background.getInstance(instance.tabId);
+    }
     clearAutoTimeout(instance);
     setAutoTimeout(instance);
     addAutoListener();
