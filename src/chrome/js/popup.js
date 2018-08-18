@@ -374,9 +374,9 @@ URLI.Popup = function () {
             const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
                   downloadTags = DOM["#download-tags-generated"].value.split(","),
                   downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
-            DOM["#download-extensions"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions);
-            DOM["#download-tags"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags);
-            DOM["#download-attributes"].innerHTML = buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes);
+            DOM["#download-extensions"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions), DOM["#download-extensions"].firstChild);
+            DOM["#download-tags"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags), DOM["#download-tags"].firstChild);
+            DOM["#download-attributes"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes), DOM["#download-attributes"].firstChild);
             updateDownloadPreview();
           }
         });
@@ -385,24 +385,29 @@ URLI.Popup = function () {
   }
 
   /**
-   * Builds the Download Preview Checkboxes HTML for the properties (extensions, tags, and attributes). This is only
-   * called by downloadPreviewCompletely().
+   * Builds the Download Preview Checkboxes HTML for the properties (extensions, tags, and attributes).
+   * This is only called by downloadPreviewCompletely().
    *
    * @param properties        all the properties (extensions/tags/attributes)
    * @param checkedProperties only the checked properties (e.g. the instance's checked extensions/tags/attributes)
-   * @returns {string} HTML of the checkboxes
+   * @returns {HTMLElement} the HTML element div containing the checkboxes
    * @private
    */
   function buildDownloadPreviewCheckboxes(properties, checkedProperties) {
-    let html = "";
+    const div = document.createElement("div");
     for (let property of properties) {
-      html +=
-        "<label>" +
-          "<input value=\"" + property + "\" type=\"checkbox\"" + (checkedProperties && checkedProperties.includes(property) ? "checked=\"checked\"" : "") +  "/>" +
-          "<span>" + property + "</span>" +
-        "</label>";
+      const label = document.createElement("label");
+      div.appendChild(label);
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = property;
+      input.checked = checkedProperties && checkedProperties.includes(property) ? "checked" : "";
+      label.appendChild(input);
+      const span = document.createElement("span");
+      span.textContent = property;
+      label.appendChild(span);
     }
-    return html;
+    return div;
   }
 
   /**
@@ -458,6 +463,14 @@ URLI.Popup = function () {
         title.appendChild(titleNode3);
         DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
         // Download Preview Table and a count index to keep track of current row index:
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        table.appendChild(thead);
+        const tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+
+
         let table =
           "<table>" +
             "<thead>" +
@@ -645,52 +658,39 @@ URLI.Popup = function () {
   function updateToolkitGenerateURLs(urls) {
     if (urls && urls.length > 0) {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
-      const table = document.createElement("table"),
-            thead = document.createElement("thead"),
-            tbody = document.createElement("tbody");
-      let tr = document.createElement("tr"),
-          th = document.createElement("th"),
-          td = document.createElement("td"),
-          a = document.createElement("a"),
-          count = 1;
-
-      thead.appendChild(tr);
-      tr.appendChild(th);
-
+      const table = document.createElement("table");
       table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
+      // thead
+      const thead = document.createElement("thead");
       thead.style = "background: #f8f8f8; color: #0a0a0a;";
+      table.appendChild(thead);
+      let tr = document.createElement("tr");
       tr.style = "background: transparent;";
+      thead.appendChild(tr);
+      let th = document.createElement("th");
       th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
       th.textContent = chrome.i18n.getMessage("url_label");
-
+      tr.appendChild(th);
+      // tbody
+      const tbody = document.createElement("tbody");
       tbody.style = "border: 1px solid #f1f1f1; background-color: #fefefe;";
-      for (let url of urls) {
-
-      }
-      table.appendChild(thead);
       table.appendChild(tbody);
-      DOM["#toolkit-generate-links-table"].replaceChild(table, DOM["#toolkit-generate-links-table"].firstChild);
-
-      let table =
-        "<table style='font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;\n'>" +
-          "<thead style='background: #f8f8f8; color: #0a0a0a;'>" +
-            "<tr style='background: transparent;'>" +
-              "<th style='font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;'>URL</th>" +
-            "</tr>" +
-          "</thead>" +
-        "<tbody style='border: 1px solid #f1f1f1; background-color: #fefefe;'>",
-        count = 1;
+      let count = 1;
       for (let url of urls) {
-        table += ((count++ % 2) !== 0 ?
-          "<tr>" : "<tr style='border-bottom: 0; background-color: #f1f1f1;'>") +
-            "<td style='padding: 0.25rem 0.312rem 0.312rem'>" +
-              "<a href=\"" + url.urlmod + "\" target=\"_blank\">" + url.urlmod + "</a>" +
-            "</td>" +
-          "</tr>";
+        let tr = document.createElement("tr");
+        tr.style = (count++ % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
+        tbody.appendChild(tr);
+        let td = document.createElement("td");
+        td.style = "padding: 0.25rem 0.312rem 0.312rem";
+        tr.appendChild(td);
+        let a = document.createElement("a");
+        a.href = url.urlmod;
+        a.target = "_blank";
+        a.textContent = url.urlmod;
+        td.appendChild(a);
       }
-      table += "</tbody>" + "</table>";
-      // DOM["#toolkit-generate-links-table"].innerHTML = table;
-      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table], {"type": "text/html"}));
+      DOM["#toolkit-generate-links-table-div"].replaceChild(table, DOM["#toolkit-generate-links-table-div"].firstChild);
+      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
       DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
     }
   }
