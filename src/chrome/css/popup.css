@@ -511,7 +511,7 @@ img.transparent {
   background: #AAAAAA;
 }
 
-.icon-button, .icon-button img.transparent {
+.icon-button, .icon-button img.transparent, .icon-button img.disabled {
   transition: 0.6s;
 }
 
@@ -523,12 +523,20 @@ img.transparent {
   color: #BA1F40;
 }
 
+/*.icon-button:hover img.transparent, */.icon-button input:checked + img.disabled {
+                                          opacity: 0.4;
+                                        }
+
+/*.icon-button:hover span,*/ .icon-button input:checked + img.disabled + span {
+                               opacity: 1;
+                             }
+
 #multi-button {
   float: right;
   font-size: inherit;
 }
 
-img.disabled {
+#multi-button img.disabled {
 opacity: 0.4;
 }
 
