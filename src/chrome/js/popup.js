@@ -677,8 +677,10 @@ URLI.Popup = function () {
       table.appendChild(tbody);
       let count = 1;
       for (let url of urls) {
+        console.log("count = " + count);
+        console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
         let tr = document.createElement("tr");
-        tr.style = (count++ % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
+        tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
         let td = document.createElement("td");
         td.style = "padding: 0.25rem 0.312rem 0.312rem";
