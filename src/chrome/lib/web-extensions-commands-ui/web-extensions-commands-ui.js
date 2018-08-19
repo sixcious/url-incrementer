@@ -1,5 +1,6 @@
 /**
  * WebExtensions Commands UI
+ *
  * @version 1.0
  * @author Roy Six
  */

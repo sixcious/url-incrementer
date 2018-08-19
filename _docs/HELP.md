@@ -11,7 +11,7 @@
 - [Error Skipping](#error-skipping)
 - [Saving URLs](#saving-urls)
 - [Shuffle URLs](#shuffle-urls)
-
+- [Bases and Custom Bases](#bases-and-custom-bases)
 
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
 
@@ -145,5 +145,22 @@ Because we save URLs just like passwords, the URLs must match exactly for it to 
 Click the Shuffle (crossed-arrows) icon to turn this mode on.
 
 Think of this feature like how you would shuffle a deck of cards. It shuffles the URLs you'll see next. For example, say you start AUTO at page=1 with a Times of 9; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order. We use the Durstenfeld algorithm to perform the shuffling in O(n) time.
+
+
+## Bases and Custom Bases
+Bases are the "types" of numbers we can increment. The extension supports a vast amount of bases.
+
+
+
+The most common bases are:
+- 2 Binary - 0s and 1s! :)
+- 8 Octal
+- 10 Decimal (Default)
+- 16 Hexadecimmal - Extremely popular, Hashing, Cryptography
+- 32 Hexatrigesimal
+- 62
+- 64 Base 64 Extremely popular, Hashing, Cryptography
+
+For a good example showing bases 2-36, please see the Table of Bases on Wikipedia. https://en.wikipedia.org/wiki/Table_of_bases
 
 ## TODO
