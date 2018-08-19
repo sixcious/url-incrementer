@@ -73,7 +73,7 @@ div.checkbox  img {
 
 #controls input[type="image"] {
   vertical-align: middle; /* Matches hover.css styling */
-  padding: 8px;
+  margin: 8px;
 }
 
 #controls input[type="image"]:not(:last-child) {
@@ -508,7 +508,7 @@ table td.check img.check-circle { cursor: pointer; } /* check can be clicked to 
 }
 
 img.transparent {
-  background: #333333;
+  background: #AAAAAA;
 }
 
 .icon-button, .icon-button img.transparent {
@@ -528,9 +528,16 @@ img.transparent {
   font-size: inherit;
 }
 
+img.disabled {
+opacity: 0.4;
+}
 
-/*
-.rainbow-img {
+#controls #increment-input-m, #controls #decrement-input-m {
+  background: #000028;
+}
+
+
+/*.rainbow-img {
   background: linear-gradient(
         !*#1779BA 0%, #1779BA 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #05854D 48%, #05854D 64%, #FF6600 64%, #FF6600 80%, #663399 80%, #663399 100%*!
         !*#EE5555 0%, #EE5555 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #66BB6B 48%, #66BB6B 64%, #44A5F5 64%, #44A5F5 80%, #663399 80%, #663399 100%*!

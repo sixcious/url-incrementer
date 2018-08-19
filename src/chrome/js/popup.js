@@ -65,6 +65,8 @@ URLI.Popup = function () {
     // Add Event Listeners to the DOM elements
     DOM["#increment-input"].addEventListener("click", clickActionButton);
     DOM["#decrement-input"].addEventListener("click", clickActionButton);
+    DOM["#increment-input-m"].addEventListener("click", clickActionButton);
+    DOM["#decrement-input-m"].addEventListener("click", clickActionButton);
     DOM["#increment-input-1"].addEventListener("click", clickActionButton);
     DOM["#decrement-input-1"].addEventListener("click", clickActionButton);
     DOM["#increment-input-2"].addEventListener("click", clickActionButton);
@@ -195,7 +197,9 @@ URLI.Popup = function () {
     DOM["#controls-icons-saved-url"].className = instance.profileFound ? "" : "display-none";
     DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
     DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#increment-input-m"].className =
+    DOM["#decrement-input-m"].className =
     DOM["#increment-input-1"].className =
     DOM["#decrement-input-1"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? items_.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#increment-input-2"].className =
@@ -241,7 +245,7 @@ URLI.Popup = function () {
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
     DOM["#multi-count"].value = instance.multiCount;
-    DOM["#multi-selections"].textContent = instance.multiCount > 0 ? instance.multiCount : "";
+    //DOM["#multi-selections"].textContent = instance.multiCount > 0 ? instance.multiCount : "";
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
     DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
@@ -737,13 +741,15 @@ URLI.Popup = function () {
     const e = setupErrors("multi");
     if (_.multiCount >= 3) {
       DOM["#multi-count"].value = 0;
-      DOM["#multi-selections"].textContent = "";
+      //DOM["#multi-selections"].textContent = "";
+      DOM["#multi-img-1"].className = DOM["#multi-img-2"].className = DOM["#multi-img-3"].className = "disabled";
     } else if (e.incrementDecrementErrorsExist) {
       URLI.UI.generateAlert(e.incrementDecrementErrors);
     } else {
       const multiCountNew = _.multiCount + 1;
       DOM["#multi-count"].value = multiCountNew;
-      DOM["#multi-selections"].textContent = multiCountNew;
+      //DOM["#multi-selections"].textContent = multiCountNew;
+      DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
       _.multi[multiCountNew].selectionStart = _.selectionStart;

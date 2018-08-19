@@ -275,7 +275,7 @@ URLI.Action = function () {
     }
     // for callers like popup that still need the instance, disable all states and reset autoTimes
     else {
-      instance.enabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
+      instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
       instance.autoTimes = instance.autoTimesOriginal;
       if (callback) {
         callback(instance);
