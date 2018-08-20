@@ -537,14 +537,39 @@ URLI.IncrementDecrementArray = function () {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }
-    for (let i = 0; i < limit; i++) {
-      URLI.IncrementDecrement.incrementDecrement(action, instance);
-      urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      // Only exit if base is numeric and beyond bounds
-      if (!isNaN(instance.base)) {
-        const selectionint = parseInt(instance.selection, instance.base);
-        if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
-          break;
+    if (instance.multiEnabled) { // TODO.. multi range incrementing
+      console.log("multi array...");
+      for (let i = 0; i < instance.multi[1].times; i++) {
+        const preurl2 = instance.url;
+        for (let j = 0; j < instance.multi[2].times; j++) {
+          const preurl3 = instance.url;
+          for (let k = 0; k < instance.multi[3].times; k++) {
+            URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
+            urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+            console.log(urls);
+          }
+          instance.multi[3].selection = instance.multi[3].startingSelection;
+          instance.multi[3].selectionStart = instance.multi[3].startingSelectionStart;
+          instance.url = preurl3;
+          URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
+          urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+        }
+        instance.multi[2].selection = instance.multi[2].startingSelection;
+        instance.multi[2].selectionStart = instance.multi[2].startingSelectionStart;
+        instance.url = preurl2;
+        URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
+        urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+      }
+    } else {
+      for (let i = 0; i < limit; i++) {
+        URLI.IncrementDecrement.incrementDecrement(action, instance);
+        urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+        // Only exit if base is numeric and beyond bounds
+        if (!isNaN(instance.base)) {
+          const selectionint = parseInt(instance.selection, instance.base);
+          if (selectionint <= 0 || selectionint >= Number.MAX_SAFE_INTEGER) {
+            break;
+          }
         }
       }
     }

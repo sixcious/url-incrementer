@@ -244,8 +244,10 @@ URLI.Popup = function () {
     DOM["#base-date-format-input"].value = instance.baseDateFormat;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
-    DOM["#multi-count"].value = instance.multiCount;
-    //DOM["#multi-selections"].textContent = instance.multiCount > 0 ? instance.multiCount : "";
+    DOM["#multi-count"].value = instance.multiEnabled ? instance.multiCount : 0;
+    DOM["#multi-img-1"].className = instance.multiEnabled && instance.multiCount >= 1 ? "" : "disabled";
+    DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
+    DOM["#multi-img-3"].className = instance.multiEnabled && instance.multiCount >= 3 ? "" : "disabled";
     // Toolkit Setup:
     DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
     DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
@@ -741,14 +743,12 @@ URLI.Popup = function () {
     const e = setupErrors("multi");
     if (_.multiCount >= 3) {
       DOM["#multi-count"].value = 0;
-      //DOM["#multi-selections"].textContent = "";
       DOM["#multi-img-1"].className = DOM["#multi-img-2"].className = DOM["#multi-img-3"].className = "disabled";
     } else if (e.incrementDecrementErrorsExist) {
       URLI.UI.generateAlert(e.incrementDecrementErrors);
     } else {
       const multiCountNew = _.multiCount + 1;
       DOM["#multi-count"].value = multiCountNew;
-      //DOM["#multi-selections"].textContent = multiCountNew;
       DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
@@ -759,6 +759,7 @@ URLI.Popup = function () {
       _.multi[multiCountNew].baseCase = _.baseCase;
       _.multi[multiCountNew].baseDateFormat = _.baseDateFormat;
       _.multi[multiCountNew].leadingZeros = _.leadingZeros;
+      _.multi[multiCountNew].times = DOM["#auto-toggle-input"].checked ? +DOM["#auto-times-input"].value : DOM["#toolkit-input"].checked ? +DOM["#toolkit-quantity-input"].value : -1;
     }
   }
 
