@@ -38,6 +38,8 @@
 /*  flex: 1;
   display: block;*/
   position: relative;
+  padding: 0;
+  margin: 0;
 }
 
 #web-extensions-commands-ui .web-extensions-commands-ui-input {

@@ -469,14 +469,11 @@ URLI.Popup = function () {
         title.appendChild(titleNode3);
         DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
         // Download Preview Table and a count index to keep track of current row index:
-        const table = document.createElement("table");
-        const thead = document.createElement("thead");
-        table.appendChild(thead);
-        const tr = document.createElement("tr");
-        thead.appendChild(tr);
-
-
-
+        // const table = document.createElement("table");
+        // const thead = document.createElement("thead");
+        // table.appendChild(thead);
+        // const tr = document.createElement("tr");
+        // thead.appendChild(tr);
         let table =
           "<table>" +
             "<thead>" +
@@ -500,7 +497,9 @@ URLI.Popup = function () {
           table += buildDownloadPreviewTR(unselected, false, count++);
         }
         table += "</tbody>" + "</table>";
-        DOM["#download-preview-table-div"].innerHTML = table;
+        //DOM["#download-preview-table-div"].innerHTML = table;
+        //DOM["#download-preview-table-div"].replaceChild(new DOMParser().parseFromString(table, "text/html").body.firstChild, DOM["#download-preview-table-div"].firstChild);
+        DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
         // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);

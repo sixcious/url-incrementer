@@ -15,13 +15,13 @@ URLI.Cryptography = function () {
    *
    * @param text the text to hash
    * @param salt the salt to hash with
-   * @returns {Promise<string>} the hash as a Base 64 encoded string
+   * @returns {Promise<string>} the hash as a base 64 encoded string
    * @public
    */
   async function calculateHash(text, salt) {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text ? text : "gUmMiBeARs"), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
-    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: str2u8a(salt), iterations: 1337}, key, 512);
-    return u8a2str(new Uint8Array(bits));
+    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1337}, key, 512);
+    return u8a2b64(new Uint8Array(bits));
   }
 
   /**
@@ -31,29 +31,29 @@ URLI.Cryptography = function () {
    * @public
    */
   function generateSalt() {
-    return u8a2str(crypto.getRandomValues(new Uint8Array(64)));
+    return u8a2b64(crypto.getRandomValues(new Uint8Array(64)));
   }
 
   /**
    * Converts an 8-bit Unsigned Integer Array to a Base 64 Encoded String.
    *
    * @param u8a the unsigned 8-bit integer array
-   * @returns {string} the string
+   * @returns {string} the base 64 encoded string
    * @private
    */
-  function u8a2str(u8a) {
+  function u8a2b64(u8a) {
     return btoa(String.fromCharCode(...u8a));
   }
 
   /**
    * Converts a Base 64 Encoded String to an 8-bit Unsigned Integer Array.
    *
-   * @param str the string
+   * @param b64 the base 64 encoded string
    * @returns {Uint8Array} the unsigned 8-bit integer array
    * @private
    */
-  function str2u8a(str) {
-    return new Uint8Array([...atob(str)].map(c => c.charCodeAt(0)));
+  function b642u8a(b64) {
+    return new Uint8Array([...atob(b64)].map(c => c.charCodeAt(0)));
   }
 
   // Return Public Functions
