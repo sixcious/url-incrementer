@@ -28,7 +28,7 @@
   "profile_save_label": { "message": "Save" },
   "url_label": { "message": "URL" },
   "leading_zeros_pad_label": { "message": "Pad With Leading Zeros" },
-  "multi_button": { "message": "Multi - Click to increment up to 3 parts of the URL" },
+  "multi_button": { "message": "Multi - Click to increment up to 3 parts of the URL. To do Multi-Range-Incrementing, have AUTO or the Toolkit open first and adjust the Quantity/Times before clicking each part. Otherwise, it will do a Multi-Simultaneous-Increment." },
   "shuffle_urls_button": { "message": "Shuffle URLs" },
   "custom_urls_button": { "message": "Custom URLs" },
   "toolkit_button": { "message": "Toolkit" },
