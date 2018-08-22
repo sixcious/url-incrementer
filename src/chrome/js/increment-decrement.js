@@ -538,59 +538,7 @@ URLI.IncrementDecrementArray = function () {
       limit--;
     }
     if (instance.multiEnabled) { // TODO.. multi range incrementing
-      console.log("multi array...");
-      // for (let i = 0; i < instance.multi[1].times; i++) {
-      //   const preurl2 = instance.url;
-      //   for (let j = 0; j < instance.multi[2].times; j++) {
-      //     const preurl3 = instance.url;
-      //     for (let k = 0; k < instance.multi[3].times; k++) {
-      //       URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
-      //       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      //       console.log(urls);
-      //     }
-      //     instance.multi[3].selection = instance.multi[3].startingSelection;
-      //     instance.multi[3].selectionStart = instance.multi[3].startingSelectionStart;
-      //     instance.url = preurl3;
-      //     URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
-      //     urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      //   }
-      //   instance.multi[2].selection = instance.multi[2].startingSelection;
-      //   instance.multi[2].selectionStart = instance.multi[2].startingSelectionStart;
-      //   instance.url = preurl2;
-      //   URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
-      //   urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-      // }
-      for (let i = 0; i <= instance.multi[1].times; i++) {
-        const preurl2 = instance.url;
-        const press2 = instance.multi[2].selectionStart;
-        for (let j = 0; j <= instance.multi[2].times; j++) {
-          const preurl3 = instance.url;
-          const press3 = instance.multi["3"].selectionStart;
-          console.log("preurl3=" + preurl3);
-          console.log("multi3=" + JSON.stringify(instance.multi[3]));
-          for (let k = 0; k < instance.multi[3].times; k++) {
-            URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
-            urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-          }
-
-          instance.url = preurl3;
-          if (j !== instance.multi[2].times) {
-            URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
-            urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-          }
-          instance.multi[3].selection = instance.multi[3].startingSelection;
-          instance.multi[3].selectionStart = press3;
-        }
-
-        //instance.multi[2].selectionStart = instance.multi[2].startingSelectionStart;
-        instance.url = preurl2;
-        if (i !== instance.multi[1].times) {
-          URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
-          urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
-        }
-        instance.multi[2].selection = instance.multi[2].startingSelection;
-        instance.multi[2].selectionStart = press2;
-      }
+      buildMultiRangeURLs(instance, action, urls);
     } else {
       for (let i = 0; i < limit; i++) {
         URLI.IncrementDecrement.incrementDecrement(action, instance);
@@ -611,6 +559,35 @@ URLI.IncrementDecrementArray = function () {
       shuffle(urls);
     }
     return urls;
+  }
+
+  function buildMultiRangeURLs(instance, action, urls) {
+    for (let i = 0; i <= instance.multi[1].times; i++) {
+      const preurl2 = instance.url;
+      const press2 = instance.multi[2].selectionStart;
+      for (let j = 0; j <= instance.multi[2].times; j++) {
+        const preurl3 = instance.url;
+        const press3 = instance.multi[3].selectionStart;
+        for (let k = 0; k < instance.multi[3].times; k++) {
+          URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
+          urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+        }
+        instance.url = preurl3;
+        if (j !== instance.multi[2].times) {
+          URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
+          urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+        }
+        instance.multi[3].selection = instance.multi[3].startingSelection;
+        instance.multi[3].selectionStart = press3;
+      }
+      instance.url = preurl2;
+      if (i !== instance.multi[1].times) {
+        URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
+        urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+      }
+      instance.multi[2].selection = instance.multi[2].startingSelection;
+      instance.multi[2].selectionStart = press2;
+    }
   }
 
   function buildCustomURLs(instance) {

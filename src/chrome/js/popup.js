@@ -469,37 +469,62 @@ URLI.Popup = function () {
         title.appendChild(titleNode3);
         DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
         // Download Preview Table and a count index to keep track of current row index:
-        // const table = document.createElement("table");
-        // const thead = document.createElement("thead");
-        // table.appendChild(thead);
-        // const tr = document.createElement("tr");
-        // thead.appendChild(tr);
-        let table =
-          "<table>" +
-            "<thead>" +
-              "<tr>" +
-                "<th class=\"check\">&nbsp;</th>" +
-                "<th class=\"count\">&nbsp;</th>" +
-                "<th class=\"thumb\">" + chrome.i18n.getMessage("download_preview_thumb_label") + "</th>" +
-                "<th class=\"filename\">" + chrome.i18n.getMessage("download_preview_filename_label") + "</th>" +
-                "<th class=\"extension\">" + chrome.i18n.getMessage("download_preview_extension_label") + "</th>" +
-                "<th class=\"tag\">" + chrome.i18n.getMessage("download_preview_tag_label") + "</th>" +
-                "<th class=\"attribute\">" + chrome.i18n.getMessage("download_preview_attribute_label") + "</th>" +
-                "<th class=\"url\">" + chrome.i18n.getMessage("download_preview_url_label") + "</th>" +
-              "</tr>" +
-            "</thead>" +
-            "<tbody>",
-            count = 1;
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        table.appendChild(thead);
+        const tr = document.createElement("tr");
+        thead.appendChild(tr);
+        let th;
+        th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
+        th = document.createElement("th"); th.className = "count"; th.textContent = " "; tr.appendChild(th);
+        th = document.createElement("th"); th.className = "thumb"; th.textContent = chrome.i18n.getMessage("download_preview_thumb_label"); tr.appendChild(th);
+        th = document.createElement("th"); th.className = "filename"; th.textContent = chrome.i18n.getMessage("download_preview_filename_label"); tr.appendChild(th);
+        th = document.createElement("th"); th.className = "extension"; th.textContent = chrome.i18n.getMessage("download_preview_extension_label"); tr.appendChild(th);
+        th = document.createElement("th"); th.className = "tag"; th.textContent = chrome.i18n.getMessage("download_preview_tag_label"); tr.appendChild(th);
+        th = document.createElement("th"); th.className = "attribute"; th.textContent = chrome.i18n.getMessage("download_preview_attribute_label"); tr.appendChild(th);
+        th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
+        const tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+        let count = 1;
         for (let selected of selecteds) {
-          table += buildDownloadPreviewTR(selected, true, count++);
+          tbody.appendChild(buildDownloadPreviewTR(selected, true, count++));
         }
         for (let unselected of unselecteds) {
-          table += buildDownloadPreviewTR(unselected, false, count++);
+          tbody.appendChild(buildDownloadPreviewTR(unselected, false, count++));
         }
-        table += "</tbody>" + "</table>";
+        DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
+
+
+
+
+
+        //
+        // let table =
+        //   "<table>" +
+        //     "<thead>" +
+        //       "<tr>" +
+        //         "<th class=\"check\">&nbsp;</th>" +
+        //         "<th class=\"count\">&nbsp;</th>" +
+        //         "<th class=\"thumb\">" + chrome.i18n.getMessage("download_preview_thumb_label") + "</th>" +
+        //         "<th class=\"filename\">" + chrome.i18n.getMessage("download_preview_filename_label") + "</th>" +
+        //         "<th class=\"extension\">" + chrome.i18n.getMessage("download_preview_extension_label") + "</th>" +
+        //         "<th class=\"tag\">" + chrome.i18n.getMessage("download_preview_tag_label") + "</th>" +
+        //         "<th class=\"attribute\">" + chrome.i18n.getMessage("download_preview_attribute_label") + "</th>" +
+        //         "<th class=\"url\">" + chrome.i18n.getMessage("download_preview_url_label") + "</th>" +
+        //       "</tr>" +
+        //     "</thead>" +
+        //     "<tbody>",
+        //     count = 1;
+        // for (let selected of selecteds) {
+        //   table += buildDownloadPreviewTR(selected, true, count++);
+        // }
+        // for (let unselected of unselecteds) {
+        //   table += buildDownloadPreviewTR(unselected, false, count++);
+        // }
+        // table += "</tbody>" + "</table>";
         //DOM["#download-preview-table-div"].innerHTML = table;
         //DOM["#download-preview-table-div"].replaceChild(new DOMParser().parseFromString(table, "text/html").body.firstChild, DOM["#download-preview-table-div"].firstChild);
-        DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
+        //DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
         // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
@@ -522,47 +547,69 @@ URLI.Popup = function () {
   }
 
   /**
-   * Builds the TR (table row) HTML for the download preview table.
+   * Builds the TR (table row) element for the download preview table.
    *
    * @param item       the download preview item
    * @param isSelected true if this download preview item is selected, false if not
    * @param count      the current row index count
-   * @returns {string} HTML of the tr
+   * @returns {Element} the tr element
    * @private
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
-    return "" + // need this empty string for return to concatenate nicely down to the next line
-      "<tr class=\"" + (isSelected ? "selected" : "unselected") +  "\" data-json='" + JSON.stringify(item) + "'>" + // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
-        "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" class=\"hvr-grow check-circle\"/></td>" +
-        "<td class=\"count\">" + (count) + "</td>" +
-        "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
-        "<td class=\"filename\">" + item.filename + "</td>" +
-        "<td class=\"extension\">" + item.extension + "</td>" +
-        "<td class=\"tag\">" + item.tag + "</td>" +
-        "<td class=\"attribute\">" + item.attribute + "</td>" +
-        "<td class=\"url\">" + item.url  + "</td>" +
-      "</tr>";
+    const tr = document.createElement("tr");
+    tr.className = (isSelected ? "selected" : "unselected");
+    tr.dataset.json =JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
+    const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = "16"; check.className = "check-circle hvr-grow";
+    const thumb = buildDownloadPreviewThumb(item);
+    let td;
+    td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);
+    td = document.createElement("td"); td.className = "count"; td.textContent = count; tr.appendChild(td);
+    td = document.createElement("td"); td.className = "thumb"; if (thumb) { td.appendChild(thumb); } tr.appendChild(td);
+    td = document.createElement("td"); td.className = "filename"; td.textContent = item.filename; tr.appendChild(td);
+    td = document.createElement("td"); td.className = "extension"; td.textContent = item.extension; tr.appendChild(td);
+    td = document.createElement("td"); td.className = "tag"; td.textContent = item.tag; tr.appendChild(td);
+    td = document.createElement("td"); td.className = "attribute"; td.textContent = item.attribute; tr.appendChild(td);
+    td = document.createElement("td"); td.className = "url"; td.textContent = item.url; tr.appendChild(td);
+    return tr;
+    // return "" + // need this empty string for return to concatenate nicely down to the next line
+    //   "<tr class=\"" + (isSelected ? "selected" : "unselected") +  "\" data-json='" + JSON.stringify(item) + "'>" + // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
+    //     "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" class=\"hvr-grow check-circle\"/></td>" +
+    //     "<td class=\"count\">" + (count) + "</td>" +
+    //     "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
+    //     "<td class=\"filename\">" + item.filename + "</td>" +
+    //     "<td class=\"extension\">" + item.extension + "</td>" +
+    //     "<td class=\"tag\">" + item.tag + "</td>" +
+    //     "<td class=\"attribute\">" + item.attribute + "</td>" +
+    //     "<td class=\"url\">" + item.url  + "</td>" +
+    //   "</tr>";
   }
 
   /**
-   * Builds the download preview thumb HTML (e.g. an <img> tag).
+   * Builds the download preview thumb element (e.g. an <img> element).
    *
    * @param item the download preview item
-   * @returns {string} HTML of the thumb (e.g. <img> tag)
+   * @returns {Element} the thumb element (e.g. <img>)
    * @private
    */
   function buildDownloadPreviewThumb(item) {
     const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
           VIDEO_EXTENSIONS = ["mp4", "webm"];
-    let html = "";
-    if (item) {
-      if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
-        html = "<img src=\"" + item.url + "\" alt=\"\"/>";
-      } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
-        html = "<video src=\"" + item.url + "\"/>";
-      }
+    let el = undefined;
+    if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
+      el = document.createElement("img"); el.src = item.url; el.alt = "";
+    } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
+      el = document.createElement("video"); el.src = item.url;
     }
-    return html;
+    return el;
+    // let html = "";
+    // if (item) {
+    //   if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
+    //     html = "<img src=\"" + item.url + "\" alt=\"\"/>";
+    //   } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
+    //     html = "<video src=\"" + item.url + "\"/>";
+    //   }
+    // }
+    // return html;
   }
 
   /**
@@ -623,7 +670,8 @@ URLI.Popup = function () {
     if (this.value === "compressed") {
       DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
     } else {
-      let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
+      let elements = document.getElementsByClassName(this.value);
+      // let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
       for (let element of elements) {
         element.style.display = this.checked ? "table-cell" : "none";
       }
