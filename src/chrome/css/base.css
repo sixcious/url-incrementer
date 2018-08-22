@@ -10,9 +10,10 @@
   --return-color: #FFCC22;
   --enhanced-mode-color: #EEBB22;
   --auto-color: #FF6600;
-  --download-color: #663399; /*rebeccapurple*/
+  --download-color: rebeccapurple; /* #663399 */
   --toolkit-color: #000028;
   --skip-color: #000000;
+  --save-color: #FF69B4;
   --success-color: #05854D;
   --error-color: #E6003E;
   --nci-red-color: #BA1F40;
@@ -27,6 +28,10 @@
 
 .display-none {
   display: none;
+}
+
+.clear-both {
+  clear: both;
 }
 
 /* fade css */

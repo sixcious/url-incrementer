@@ -79,12 +79,12 @@ input[type="image"]:focus {
   outline: none;
 }
 
-.clear-both {
-  clear: both;
+input[type="text"].key-input {
+  width: 165px;
 }
 
-.key-input {
-  width: 175px;
+input[type="number"].mouse-clicks-input {
+  width: 35px;
 }
 
 .tooltip {
@@ -108,6 +108,10 @@ input[type="image"]:focus {
 
 /* heading border-bottom-color overrides */
 
+#profile-settings div.heading {
+  border-bottom-color: var(--save-color);
+}
+
 #increment-decrement-settings div.heading {
   border-bottom-color: var(--increment-decrement-color);
 }
@@ -129,6 +133,10 @@ input[type="image"]:focus {
 }
 
 /* heading h3 color overrides */
+
+#profile-settings div.heading h3 {
+  color: var(--save-color);
+}
 
 #increment-decrement-settings div.heading h3 {
   color: var(--increment-decrement-color);
@@ -323,6 +331,24 @@ input[type="image"]:focus {
 }
 
 /* Overrides generateAlert overlay styling so alert is displayed in gap space */
+/*#options .overlay {
+  top: 80%; !* initial *!
+}*/
+
 #options .overlay {
-  top: 80%; /* initial */
+  display: block;
+  text-align: center;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 240px;
+  padding: 10px;
+  margin: -40px 0 0 -120px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 5px;
+  color: #FFFFFF;
+  font-size: 1.2em;
+  transition: all 1.0s ease;
+  transform: scale(0);
 }

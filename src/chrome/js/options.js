@@ -24,7 +24,7 @@ URLI.Options = function () {
         NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
-  let key = [0,""], // Reusable key to stores the key's event modifiers [0] and code [1]
+  let key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
@@ -74,7 +74,7 @@ URLI.Options = function () {
     DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], []); });
     DOM["#key-return-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyReturn": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-return-input"], []); });
     DOM["#key-auto-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyAuto": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-auto-input"], []); });
-    DOM["#mouse-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseIncrement": +this.value}, function() { setMouseEnabled(); }); });
+    DOM["#mouse-increment-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseIncrement": [+this.value, +DOM["#mouse-increment-clicks-input"].value]}, function() { setMouseEnabled(); }); });
     DOM["#mouse-decrement-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseDecrement": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-next-select"].addEventListener("change", function() { chrome.storage.sync.set({"mouseNext": +this.value}, function() { setMouseEnabled(); }); });
     DOM["#mouse-prev-select"].addEventListener("change", function() { chrome.storage.sync.set({"mousePrev": +this.value}, function() { setMouseEnabled(); }); });
@@ -247,7 +247,7 @@ URLI.Options = function () {
    */
   function setKeyEnabled() {
     chrome.storage.sync.get(null, function(items) {
-      const enabled = items.keyIncrement.length !== 0 || items.keyDecrement.length !== 0 || items.keyNext.length !== 0 || items.keyPrev.length !== 0 || items.keyClear.length !== 0 || items.keyReturn.length !== 0 || items.keyAuto.length !== 0;
+      const enabled = items.keyIncrement || items.keyDecrement || items.keyNext || items.keyPrev || items.keyClear || items.keyReturn || items.keyAuto;
       chrome.storage.sync.set({"keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
@@ -277,14 +277,14 @@ URLI.Options = function () {
    */
   function setKey(event) {
     event.preventDefault();
-    // Set key [0] as the event modifiers OR'd together and [1] as the event key code
-    key = [
-      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+    // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
+    key = { "modifiers":
+      (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
+      (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
       (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-      (event.metaKey  ? FLAG_KEY_META  : FLAG_KEY_NONE),  // 1000
-      event.code
-    ];
+      (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
+      "code": event.code
+    };
   }
 
   /**
@@ -299,13 +299,13 @@ URLI.Options = function () {
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
     // Note2: If the key code is in the KEY_MODIFIER_CODE_ARRAY (e.g. Alt, Ctrl), it is not written a second time
     let text = "";
-    if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
+    if (!key) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
-      if ((key[0] & FLAG_KEY_ALT))        { text += "Alt + ";   }
-      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl + ";  }
-      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { text += "Shift + "; }
-      if ((key[0] & FLAG_KEY_META)  >> 3) { text += "Meta + ";  }
-      if (key[1] && !KEY_MODIFIER_CODE_ARRAY.includes(key[1])) { text += key[1]; }
+      if ((key.modifiers & FLAG_KEY_ALT))        { text += "Alt + ";   }
+      if ((key.modifiers & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl + ";  }
+      if ((key.modifiers & FLAG_KEY_SHIFT) >> 2) { text += "Shift + "; }
+      if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += "Meta + ";  }
+      if (key.code && !KEY_MODIFIER_CODE_ARRAY.includes(key.code)) { text += key.code; }
     }
     input.value = text;
   }

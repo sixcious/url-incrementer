@@ -20,19 +20,18 @@ URLI.UI = function () {
    * @public
    */
   function generateAlert(messages, callback) {
-    let div = document.createElement("div"),
-        ul = document.createElement("ul"),
-        li;
+    const div = document.createElement("div"),
+          ul = document.createElement("ul");
     div.classList.add("overlay");
-    for (let message of messages) {
-      li = document.createElement("li");
+    for (const message of messages) {
+      const li = document.createElement("li");
       li.appendChild(document.createTextNode(message));
       ul.appendChild(li);
     }
     div.appendChild(ul);
     document.body.appendChild(div);
     setTimeout(function () { div.classList.add("overlay-visible"); }, 10);
-    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
+    //setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
   }
 
   /**

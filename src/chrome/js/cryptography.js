@@ -19,7 +19,7 @@ URLI.Cryptography = function () {
    * @public
    */
   async function calculateHash(text, salt) {
-    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text ? text : "gUmMiBeARs"), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text ? text : "gummibears"), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
     const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1337}, key, 512);
     return u8a2b64(new Uint8Array(bits));
   }

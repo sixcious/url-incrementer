@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="../lib/ui/generate-alert.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/ui/hover.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/web-extensions-commands-ui/web-extensions-commands-ui.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/generate-alert.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/hover.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/web-extensions-commands-ui.css"/>
     <link type="text/css" rel="stylesheet" href="../css/base.css"/>
     <link type="text/css" rel="stylesheet" href="../css/options.css"/>
     <title>URL Incrementer Options</title>
@@ -85,6 +85,7 @@
                 <option id="mouse-middle-option*increment" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*increment" data-i18n="textContent" value="2"></option>
               </select>
+              <input id="mouse-increment-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -102,6 +103,7 @@
                 <option id="mouse-middle-option*decrement" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*decrement" data-i18n="textContent" value="2"></option>
               </select>
+              <input id="mouse-decrement-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -119,6 +121,7 @@
                 <option id="mouse-middle-option*next" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*next" data-i18n="textContent" value="2"></option>
               </select>
+              <input id="mouse-next-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -136,6 +139,7 @@
                 <option id="mouse-middle-option*prev" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*prev" data-i18n="textContent" value="2">Right</option>
               </select>
+              <input id="mouse-prev-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -153,6 +157,7 @@
                 <option id="mouse-middle-option*clear" data-i18n="textContent" value="1">Middle</option>
                 <option id="mouse-right-option*clear" data-i18n="textContent" value="2">Right</option>
               </select>
+              <input id="mouse-clear-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -170,6 +175,7 @@
                 <option id="mouse-middle-option*return" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*return" data-i18n="textContent" value="2"></option>
               </select>
+              <input id="mouse-return-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -187,6 +193,7 @@
                 <option id="mouse-middle-option*auto" data-i18n="textContent" value="1">Middle</option>
                 <option id="mouse-right-option*auto" data-i18n="textContent" value="2">Right</option>
               </select>
+              <input id="mouse-auto-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
             </div>
           </div>
         </div>
@@ -273,7 +280,7 @@
       </section>
       <section id="profile-settings">
         <div class="heading">
-          <img src="../img/font-awesome/black/bookmark-o.png" alt="" width="16" height="16"/>
+          <img src="../img/font-awesome/5p/heart.png" alt="" width="16" height="16"/>
           <h3 id="profile-settings-h3" data-i18n="textContent"></h3>
         </div>
         <p id="profile-settings-p" data-i18n="textContent"></p>
@@ -656,6 +663,6 @@
     <script src="../js/permissions.js"></script>
     <script src="../js/ui.js"></script>
     <script src="../js/options.js"></script>
-    <script src="../lib/web-extensions-commands-ui/web-extensions-commands-ui.js"></script>
+    <script src="../lib/web-extensions-commands-ui.js"></script>
   </body>
 </html>

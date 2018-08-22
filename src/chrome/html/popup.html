@@ -2,10 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="../lib/chromium/chrome_shared.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/ui/generate-alert.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/ui/hover.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/ui/toggle.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/chromium.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/generate-alert.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/hover.css"/>
+    <link type="text/css" rel="stylesheet" href="../lib/toggle.css"/>
     <link type="text/css" rel="stylesheet" href="../css/base.css"/>
     <link type="text/css" rel="stylesheet" href="../css/popup.css"/>
     <title>URL Incrementer Popup</title>
@@ -34,8 +34,8 @@
         </div>
       </div>
       <div id="controls-icons">
-        <img id="controls-icons-auto-repeat" src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>
-        <img id="controls-icons-saved-url"   src="../img/font-awesome/black/bookmark-o.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>
+<!--        <img id="controls-icons-auto-repeat" src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>-->
+        <img id="controls-icons-saved-url"   src="../img/font-awesome/5p/heart.png" alt="" width="12" height="12" class="display-none" data-i18n="title"/>
       </div>
     </div>
     <div id="setup" class="display-none">
@@ -43,14 +43,11 @@
         <div class="heading">
           <img id="increment-decrement-img-mouse-pointer" src="../img/font-awesome/black/mouse-pointer.png" alt="" width="12" height="12"/>
           <h3 id="increment-decrement-h3" data-i18n="textContent"></h3>
-          <div id="profile-save">
-            <div class="checkbox">
-              <label id="profile-how-save-title" data-i18n="title">
-                <input id="profile-save-input" type="checkbox"/>
-                <img src="../img/font-awesome/black/bookmark-o.png" alt="" width="14" height="14"/>
-                <span id="profile-save-label" data-i18n="textContent"></span>
-              </label>
-            </div>
+          <div id="profile-save" class="hvr-skew-forward icon-button" data-i18n="title">
+            <label id="profile-how-save-title" for="profile-save-input" data-i18n="title">
+              <input id="profile-save-input" type="checkbox" class="display-none"/>
+              <img id="profile-save-img" src="../img/font-awesome/5p/heart-o.png" alt="" width="14" height="14" /> <!--class="transparent"-->
+            </label>
           </div>
         </div>
         <div id="url">
@@ -235,14 +232,11 @@
               <span id="auto-eta-label" data-i18n="textContent"></span>
               <span id="auto-eta-value"></span>
             </div>
-            <div id="auto-repeat">
-              <div class="checkbox">
-                <label>
-                  <input id="auto-repeat-input" type="checkbox"/>
-                  <img src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14"/>
-                  <span id="auto-repeat-label" data-i18n="textContent"></span>
-                </label>
-              </div>
+            <div id="auto-repeat" class="hvr-skew-forward icon-button">
+              <label id="auto-repeat-title" for="auto-repeat-input" data-i18n="title">
+                <input id="auto-repeat-input" type="checkbox" class="display-none"/>
+                <img src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14" /> <!--class="transparent"-->
+              </label>
             </div>
           </div>
         </div>

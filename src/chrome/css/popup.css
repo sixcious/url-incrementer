@@ -8,14 +8,11 @@ textarea {
 /* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
 input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
 
-/* chromium/chrome-shared.css Overrides */
-html {
-  height: auto;
-}
-
 /* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
 h3, :-webkit-any(.checkbox, .radio) label input ~ span {
   -webkit-user-select: initial;
+  -moz-user-select: initial;
+  user-select: initial;
 }
 
 :-webkit-any(.checkbox, .radio) label input ~ span{
@@ -28,14 +25,14 @@ a.button {
 
 /* Native elements styles */
 
-body {
-  color: #333333;
-  background: #FFFFFF;
-}
-
 * {
   margin: 0;
   padding: 0;
+}
+
+body {
+  color: #333333;
+  background: #FFFFFF;
 }
 
 h3 {
@@ -59,10 +56,6 @@ div.column {
 
 div.checkbox  img {
   margin-left: 3px;
-}
-
-.clear-both {
-  clear: both;
 }
 
 /* Controls CSS */
@@ -136,6 +129,7 @@ div.checkbox  img {
 
 #setup img {
   vertical-align: bottom;
+  user-select: none;
 }
 
 #setup div.column {
@@ -149,7 +143,7 @@ div.checkbox  img {
 /* increment-decrement */
 
 #setup #increment-decrement #increment-decrement-img-mouse-pointer {
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 #setup #properties {
@@ -194,8 +188,11 @@ div.checkbox  img {
   font-style: italic;
   position: absolute;
   right: 12px;
-  margin-top: -23px;
-/*  margin-top: -16px;*/
+  margin-top: -16px;
+}
+
+#profile-save {
+  margin-top: 2px;
 }
 
 #auto-eta, #auto-repeat {
@@ -236,10 +233,9 @@ div.checkbox  img {
   color: var(--auto-color);
 }*/
 
-#download-experimental {
-/*  color: var(--download-color);*/
-  margin-top: -16px;
-}
+/*#download-experimental {
+  color: var(--download-color);
+}*/
 
 #auto-eta img, #download-experimental img {
   margin-bottom: 1px;
@@ -534,6 +530,10 @@ img.transparent {
 #multi-button {
   float: right;
   font-size: inherit;
+}
+
+#multi-button img {
+  vertical-align: initial;
 }
 
 #multi-button img.disabled {

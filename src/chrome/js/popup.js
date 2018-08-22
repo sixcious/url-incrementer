@@ -195,7 +195,7 @@ URLI.Popup = function () {
    */
   function updateControls() {
     DOM["#controls-icons-saved-url"].className = instance.profileFound ? "" : "display-none";
-    DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
+    //DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.profileFound ? items_.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-m"].className =
@@ -222,10 +222,14 @@ URLI.Popup = function () {
    */
   function updateSetup(minimal) {
     // Increment Decrement Setup:
-    DOM["#profile-save-input"].checked = instance.profileFound || localItems_.profilePreselect;
-    if (instance.profileFound) {
-      DOM["#profile-save-label"].style.color = "#1779BA";
+    if (instance.profileFound || localItems_.profilePreselect) {
+      DOM["#profile-save-input"].checked = true; // instance.profileFound || localItems_.profilePreselect;
+      DOM["#profile-save-img"].src = DOM["#profile-save-img"].src.replace("-o", "");
     }
+
+    // if (instance.profileFound) {
+    //   DOM["#profile-save-label"].style.color = "#1779BA";
+    // }
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
     DOM["#url-textarea"].focus();

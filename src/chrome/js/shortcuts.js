@@ -76,11 +76,11 @@ URLI.Shortcuts = function () {
    */
   function keyPressed(event, key) {
     console.log("URLI.Shortcuts.keyPressed() - event.code=" + event.code + ", actionKey=" + key);
-    return key && key.length !== 0 && event.code === key[1] &&
-      (!(event.altKey   ^ (key[0] & FLAG_KEY_ALT)       ) &&
-       !(event.ctrlKey  ^ (key[0] & FLAG_KEY_CTRL)  >> 1) &&
-       !(event.shiftKey ^ (key[0] & FLAG_KEY_SHIFT) >> 2) &&
-       !(event.metaKey  ^ (key[0] & FLAG_KEY_META)  >> 3));
+    return key && event.code === key.code &&
+      (!(event.altKey   ^ (key.modifiers & FLAG_KEY_ALT)       ) &&
+       !(event.ctrlKey  ^ (key.modifiers & FLAG_KEY_CTRL)  >> 1) &&
+       !(event.shiftKey ^ (key.modifiers & FLAG_KEY_SHIFT) >> 2) &&
+       !(event.metaKey  ^ (key.modifiers & FLAG_KEY_META)  >> 3));
   }
 
   /**
@@ -92,8 +92,8 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", actionMouse=" + mouse);
-    return event.button === mouse;
+    console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", event.detail=" + event.detail + ", actionMouse=" + mouse);
+    return mouse && event.button === mouse.button && event.detail === mouse.clicks;
   }
 
   // Return Public Functions
