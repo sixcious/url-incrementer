@@ -31,7 +31,6 @@ URLI.Shortcuts = function () {
 
   /**
    * A key up event listener for keyboard shortcuts.
-   * 
    * Listens for increment, decrement, next, prev, clear, and auto keyboard shortcuts.
    * 
    * @param event the key event
@@ -49,7 +48,6 @@ URLI.Shortcuts = function () {
 
   /**
    * A mouse up event listener for mouse button shortcuts.
-   * 
    * Listens for increment, decrement, next, prev, clear, and auto mouse button shortcuts.
    * 
    * @param event the mouse button event
@@ -71,7 +69,7 @@ URLI.Shortcuts = function () {
    * 
    * @param event the key event
    * @param key the action key to check (e.g. increment shortcut key)
-   * @return boolean true if the key event matches the action key, false otherwise
+   * @returns {boolean} true if the key event matches the action key, false otherwise
    * @private
    */
   function keyPressed(event, key) {
@@ -88,7 +86,7 @@ URLI.Shortcuts = function () {
    * 
    * @param event the mouse event
    * @param mouse the action mouse button to check (e.g. increment shortcut mouse button)
-   * @return boolean true if the mouse button event matches the action mouse button, false otherwise
+   * @returns {boolean} true if the mouse button event matches the action mouse button, false otherwise
    * @private
    */
   function mousePressed(event, mouse) {

@@ -1,0 +1,13 @@
+{
+  "BROWSER": { "message": "----- BROWSER -----" },
+  "browser_shortcuts_h3": { "message": "Firefox Shortcuts" },
+  "browser_shortcuts_enable_button": { "message": "Enable Firefox Shortcuts" },
+  "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Firefox Shortcuts" },
+  "browser_shortcuts_p1": { "message": "URLI is currently set to use Firefox Shortcuts." },
+  "browser_shortcuts_p2": { "message": "Firefox Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts to use any key or mouse button you want! (requires permissions)" },
+  "browser_shortcuts_button": { "message": "Configure Firefox Shortcuts" },
+  "one_click_buttons_h3": { "message": "1-Click Increment Decrement Buttons" },
+  "one_click_buttons_p": { "message": "Accessing URLI's buttons requires 2 clicks, but you can add 1-Click buttons to your toolbar! They use 0 Chrome memory when inactive! It's a win-win!" },
+  "one_click_buttons_increment": { "message": "1-Click URL Increment Button for URLI (Chrome Web Store)" },
+  "one_click_buttons_decrement": { "message": "1-Click URL Decrement Button for URLI (Chrome Web Store)" }
+}

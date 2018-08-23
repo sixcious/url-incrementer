@@ -96,11 +96,29 @@ Example:
     input[type=number] { -moz-appearance: textfield; } input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
 
 #### Unsafe assignment to innerHTML
-Firefox issues a warning:
+Firefox issues a warning when doing unsafe innerHTML assignments using variables like this:
+
+        DOM["#download-preview-table-div"].innerHTML = table;
+
 *Warning: Due to both security and performance concerns, this may not be set using dynamic values which have not been adequately sanitized. This can lead to security issues or fairly serious performance degradation.*
 
-To solve this, use DOM manipulation methods (e.g. `document.createElement()` and `document.appendChild()`) and consider using a `DocumentFragment`.
+To solve this problem, use DOM manipulation methods (e.g. `document.createElement()` and `document.appendChild()`) and consider using a `DocumentFragment` (if you need to append multiple *adjacent* sibling elements *without a parent*).
 
+Note: You can also use two other "String to DOM" methods: `DOMParser.parseFromString()` and `Range.createContextualFragment`.
+Firefox won't display a warning, but they are not as fast as the DOM manipulation methods and still vulnerable to XSS (DOMParser won't execute <script> tags but there are other ways).
+Here's one-liner examples on how to use them:
+
+        DOM["#download-preview-table-div"].replaceChild(new DOMParser().parseFromString(table, "text/html").body.firstChild, DOM["#download-preview-table-div"].firstChild);
+        DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
+
+`DOMParser`, in particular, creates a full-blown HTML document (with head and body) is 30% slower in testing for generating a table.
+`Range` creates a `DocumentFragment` and was about 10% slower in speed to `innerHTML`.
+
+In terms of speed and performance, this is how my jsperf testing stacked each approach:
+1. DOM Manipulation Methods
+2. `innerHTML`
+3. `Range.createConextualFragment()`
+4. `DOMParser.parseFromString()`
 
 ## FIREFOX ANDROID
 

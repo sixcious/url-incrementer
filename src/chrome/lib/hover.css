@@ -9,7 +9,7 @@
  */
 
 /* Grow */
-.hvr-grow {
+.hvr-grow, .hvr-grow-2x {
   display: inline-block;
   vertical-align: middle;
   -webkit-transform: perspective(1px) translateZ(0);
@@ -23,6 +23,11 @@
 .hvr-grow:hover/*, .hvr-grow:focus, .hvr-grow:active*/ {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+.hvr-grow-2x:hover {
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 /* Push */

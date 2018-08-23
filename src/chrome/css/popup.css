@@ -192,7 +192,7 @@ div.checkbox  img {
 }
 
 #profile-save {
-  margin-top: 2px;
+  margin-top: -2px;
 }
 
 #auto-eta, #auto-repeat {
@@ -489,12 +489,16 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 /* extra-buttons */
 
-#extra-options #options-button img {
+/*#extra-options #options-button img {
   margin-right: -2px;
-}
+}*/
 
 #setup #extra-options div:not(:last-child) {
-  margin-right: 16px;
+  margin-right: 8px;
+}
+
+.icon-button {
+  padding: 4px;
 }
 
 .icon-button, .icon-button label {
@@ -507,7 +511,7 @@ img.transparent {
   background: #777;
 }
 
-.icon-button, .icon-button img.transparent, .icon-button img.toggle-img {
+.icon-button, .icon-button img.transparent, .icon-button img.checkbox-img {
   transition: 0.6s;
 }
 
@@ -519,17 +523,17 @@ img.transparent {
   color: #BA1F40;
 }*/
 
-/*.icon-button:hover img.transparent, */.icon-button input[type="checkbox"]:not(:checked) + img.toggle-img {
+/*.icon-button:hover img.transparent, */.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img {
                                           opacity: 0.4;
                                         }
 
-/*.icon-button:hover span,*/ .icon-button input:checked + img.toggle-img {
+/*.icon-button:hover span,*/ .icon-button input:checked + img.checkbox-img {
                                opacity: 1;
                              }
-
+/* Multi */
 #multi-button {
   float: right;
-  font-size: inherit;
+  cursor: pointer;
 }
 
 #multi-button img {

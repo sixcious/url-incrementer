@@ -83,6 +83,10 @@
   display: inline-block;
 }
 
+.tgl-outer {
+  margin-bottom: 3px;
+}
+
 .tgl-inner {
   vertical-align: top;
 }
@@ -113,6 +117,7 @@
 
 .tgl-btn {
   margin-left: 2px;
+  margin-bottom: -3px;
 }
 
 .tgl-text {

@@ -14,10 +14,9 @@
                 "clear":     { "description": "Clear [x]" },
                 "return":    { "description": "Return To Start" },
                 "auto":      { "description": "Auto Pause / Resume" }},
-  "minimum_chrome_version": "55",
+  "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.0" } },
   "optional_permissions": ["<all_urls>", "downloads"],
   "options_ui": { "page": "html/options.html", "browser_style": true },
   "permissions": ["activeTab", "storage"],
-  "short_name": "__MSG_short_name__",
-  "applications": { "gecko": { "id": "url-incrementer@roysix", "strict_min_version": "61.0" } }
+  "short_name": "__MSG_short_name__"
 }

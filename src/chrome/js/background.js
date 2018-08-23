@@ -17,13 +17,11 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
     /* shortcuts */   "quickEnabled": true, "shortcutsMixedMode": false,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
-      //[6, "ArrowUp"], "keyDecrement": [6, "ArrowDown"], "keyNext": [6, "ArrowRight"], "keyPrev": [6, "ArrowLeft"], "keyClear": [6, "KeyX"], "keyReturn": [6, "KeyB"], "keyAuto": [6, "KeyA"],
     /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": {"button": -1, "clicks": 2}, "mouseDecrement": {"button": -1, "clicks": 2}, "mouseNext": {"button": -1, "clicks": 2}, "mousePrev": {"button": -1, "clicks": 2}, "mouseClear": {"button": -1, "clicks": 2}, "mouseReturn": {"button": -1, "clicks": 2}, "mouseAuto": {"button": -1, "clicks": 2},
-      //"mouseIncrement": -1, "mouseDecrement": -1, "mouseNext": -1, "mousePrev": -1, "mouseClear": -1, "mouseReturn": -1, "mouseAuto": -1,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
+    /* keywords */    "nextPrevKeywordsNext": ["link@rel=\"next\"", "pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
@@ -32,7 +30,7 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* saved */    "profiles": [], "profilePreselect": false
+    /* saved */ "profiles": [], "profilePreselect": false
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -63,15 +61,10 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  // The sync storage and local storage items caches and a boolean flag indicating if the content scripts listener has been added (to prevent adding multiple listeners)
-//  let items_ = {},
-//      localItems_ = {},
-//      contentScriptListenerAdded = false;
-
   /**
    * Gets the storage default values (SDV).
    *
-   * @return {{}} the storage default values (SDV)
+   * @returns {{}} the storage default values (SDV)
    * @public
    */
   function getSDV() {
@@ -81,7 +74,7 @@ URLI.Background = function () {
   /**
    * Gets the local storage default values (LSDV).
    *
-   * @return {{}} the local storage default values (LSDV)
+   * @returns {{}} the local storage default values (LSDV)
    * @public
    */
   function getLSDV() {
@@ -112,6 +105,7 @@ URLI.Background = function () {
    * @param namespace the storage namespace, either "sync" or "local" (optional)
    * @param key       the storage item key to get or null for all items (optional)
    * @returns {Promise<{}>} the storage items
+   * @public
    */
   function getItems(namespace = "sync", key = null) {
     return new Promise(resolve => {
@@ -124,7 +118,7 @@ URLI.Background = function () {
   /**
    * Gets all the instances.
    *
-   * @return {Map<tabId, instance>} the tab instances
+   * @returns {Map<tabId, instance>} the tab instances
    * @public
    */
   function getInstances() {
@@ -135,7 +129,7 @@ URLI.Background = function () {
    * Gets the instance.
    * 
    * @param tabId the tab id to lookup this instance by
-   * @return instance the tab's instance
+   * @returns instance the tab's instance
    * @public
    */
   function getInstance(tabId) {
@@ -168,7 +162,7 @@ URLI.Background = function () {
    * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
    * 
    * @param tab the tab properties (id, url) to set this instance with
-   * @return instance the newly built instance
+   * @returns instance the newly built instance
    * @public
    */
   async function buildInstance(tab, items, localItems) {

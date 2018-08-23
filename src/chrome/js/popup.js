@@ -83,7 +83,7 @@ URLI.Popup = function () {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
-    DOM["#profile-save-input"].addEventListener("change", function() { DOM["#profile-save-img"].src = "../img/font-awesome/5p/" + (this.checked ? "heart.png" : "heart-o.png"); });
+    DOM["#profile-save-input"].addEventListener("change", function() { DOM["#profile-save-img"].src = "../img/font-awesome/pink/" + (this.checked ? "heart.png" : "heart-o.png"); });
     DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
@@ -462,23 +462,15 @@ URLI.Popup = function () {
           selectedsLength = selecteds.length,
           totalLength = selecteds.length + unselecteds.length;
         // Download Preview Heading Title:
-        const title = document.createElement("div");
-        title.className = (selectedsLength > 0 ? "success" : "error");
-        const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set"));
-        const titleNode2 = document.createElement("span");
-        titleNode2.id = "selecteds-length";
-        titleNode2.textContent = selectedsLength;
-        const titleNode3 = document.createTextNode(chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls"));
-        title.appendChild(titleNode1);
-        title.appendChild(titleNode2);
-        title.appendChild(titleNode3);
+        const title = document.createElement("div"); title.className = (selectedsLength > 0 ? "success" : "error");
+        const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set")); title.appendChild(titleNode1);
+        const titleNode2 = document.createElement("span"); titleNode2.id = "selecteds-length"; titleNode2.textContent = selectedsLength; title.appendChild(titleNode2);
+        const titleNode3 = document.createTextNode(chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls")); title.appendChild(titleNode3);
         DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
         // Download Preview Table and a count index to keep track of current row index:
         const table = document.createElement("table");
-        const thead = document.createElement("thead");
-        table.appendChild(thead);
-        const tr = document.createElement("tr");
-        thead.appendChild(tr);
+        const thead = document.createElement("thead"); table.appendChild(thead);
+        const tr = document.createElement("tr"); thead.appendChild(tr);
         let th;
         th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
         th = document.createElement("th"); th.className = "count"; th.textContent = " "; tr.appendChild(th);
@@ -488,8 +480,7 @@ URLI.Popup = function () {
         th = document.createElement("th"); th.className = "tag"; th.textContent = chrome.i18n.getMessage("download_preview_tag_label"); tr.appendChild(th);
         th = document.createElement("th"); th.className = "attribute"; th.textContent = chrome.i18n.getMessage("download_preview_attribute_label"); tr.appendChild(th);
         th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
-        const tbody = document.createElement("tbody");
-        table.appendChild(tbody);
+        const tbody = document.createElement("tbody"); table.appendChild(tbody);
         let count = 1;
         for (let selected of selecteds) {
           tbody.appendChild(buildDownloadPreviewTR(selected, true, count++));
@@ -498,38 +489,6 @@ URLI.Popup = function () {
           tbody.appendChild(buildDownloadPreviewTR(unselected, false, count++));
         }
         DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
-
-
-
-
-
-        //
-        // let table =
-        //   "<table>" +
-        //     "<thead>" +
-        //       "<tr>" +
-        //         "<th class=\"check\">&nbsp;</th>" +
-        //         "<th class=\"count\">&nbsp;</th>" +
-        //         "<th class=\"thumb\">" + chrome.i18n.getMessage("download_preview_thumb_label") + "</th>" +
-        //         "<th class=\"filename\">" + chrome.i18n.getMessage("download_preview_filename_label") + "</th>" +
-        //         "<th class=\"extension\">" + chrome.i18n.getMessage("download_preview_extension_label") + "</th>" +
-        //         "<th class=\"tag\">" + chrome.i18n.getMessage("download_preview_tag_label") + "</th>" +
-        //         "<th class=\"attribute\">" + chrome.i18n.getMessage("download_preview_attribute_label") + "</th>" +
-        //         "<th class=\"url\">" + chrome.i18n.getMessage("download_preview_url_label") + "</th>" +
-        //       "</tr>" +
-        //     "</thead>" +
-        //     "<tbody>",
-        //     count = 1;
-        // for (let selected of selecteds) {
-        //   table += buildDownloadPreviewTR(selected, true, count++);
-        // }
-        // for (let unselected of unselecteds) {
-        //   table += buildDownloadPreviewTR(unselected, false, count++);
-        // }
-        // table += "</tbody>" + "</table>";
-        //DOM["#download-preview-table-div"].innerHTML = table;
-        //DOM["#download-preview-table-div"].replaceChild(new DOMParser().parseFromString(table, "text/html").body.firstChild, DOM["#download-preview-table-div"].firstChild);
-        //DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
         // After we build the table we need to update the columns again to what the checkboxes were:
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
@@ -561,10 +520,8 @@ URLI.Popup = function () {
    * @private
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
-    const tr = document.createElement("tr");
-    tr.className = (isSelected ? "selected" : "unselected");
-    tr.dataset.json =JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
-    const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = "16"; check.className = "check-circle hvr-grow";
+    const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
+    const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
     const thumb = buildDownloadPreviewThumb(item);
     let td;
     td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);
@@ -576,17 +533,6 @@ URLI.Popup = function () {
     td = document.createElement("td"); td.className = "attribute"; td.textContent = item.attribute; tr.appendChild(td);
     td = document.createElement("td"); td.className = "url"; td.textContent = item.url; tr.appendChild(td);
     return tr;
-    // return "" + // need this empty string for return to concatenate nicely down to the next line
-    //   "<tr class=\"" + (isSelected ? "selected" : "unselected") +  "\" data-json='" + JSON.stringify(item) + "'>" + // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
-    //     "<td class=\"check\"><img src=\"../img/font-awesome/green/check-circle.png\" alt=\"\" width=\"16\" height=\"16\" class=\"hvr-grow check-circle\"/></td>" +
-    //     "<td class=\"count\">" + (count) + "</td>" +
-    //     "<td class=\"thumb\">" + buildDownloadPreviewThumb(item) + "</td>" +
-    //     "<td class=\"filename\">" + item.filename + "</td>" +
-    //     "<td class=\"extension\">" + item.extension + "</td>" +
-    //     "<td class=\"tag\">" + item.tag + "</td>" +
-    //     "<td class=\"attribute\">" + item.attribute + "</td>" +
-    //     "<td class=\"url\">" + item.url  + "</td>" +
-    //   "</tr>";
   }
 
   /**
@@ -606,15 +552,6 @@ URLI.Popup = function () {
       el = document.createElement("video"); el.src = item.url;
     }
     return el;
-    // let html = "";
-    // if (item) {
-    //   if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
-    //     html = "<img src=\"" + item.url + "\" alt=\"\"/>";
-    //   } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
-    //     html = "<video src=\"" + item.url + "\"/>";
-    //   }
-    // }
-    // return html;
   }
 
   /**

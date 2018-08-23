@@ -11,6 +11,7 @@ URLI.NextPrev = function () {
 
   // Keywords are ordered in priority
   // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
+  //"nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"], "nextPrevStartsWithExcludes": ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
   const startsWithExcludes = ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
 
   // urls store important, attributes, and innerHTML links that were found
@@ -27,7 +28,7 @@ URLI.NextPrev = function () {
    * @param keywords   the next or prev keywords list to use
    * @param priority   the link priority to use: attributes or innerHTML
    * @param sameDomain whether to enforce the same domain policy
-   * @return {string} the next or prev url
+   * @returns {string} the next or prev url
    * @public
    */
   function findNextPrevURL(direction, keywords, priority, sameDomain) {
@@ -57,7 +58,7 @@ URLI.NextPrev = function () {
    * @param priority    the link priority to use: attributes or innerHTML
    * @param subpriority the sub priority to use: equals, startsWith, includes
    * @param keywords    the ordered list of keywords sorted in priority
-   * @return {string} the url (if found)
+   * @returns {string} the url (if found)
    * @private
    */
   function traverseResults(priority, subpriority, keywords) {

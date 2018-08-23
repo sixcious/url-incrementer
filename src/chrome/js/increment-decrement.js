@@ -29,7 +29,7 @@ URLI.IncrementDecrement = function () {
    * @param url        the url to find the selection in
    * @param preference the preferred strategy to use to find the selection
    * @param custom     the JSON object with custom regular expression parameters
-   * @return JSON object {selection, selectionStart}
+   * @returns JSON object {selection, selectionStart}
    * @public
    */
   function findSelection(url, preference, custom) {
@@ -516,7 +516,7 @@ URLI.IncrementDecrementArray = function () {
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
-        const shuffleLimit = URLI.Background.getItems().shuffleLimit;
+        const shuffleLimit = instance.shuffleLimit; // URLI.Background.getItems().shuffleLimit;
         const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
         const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];

@@ -48,9 +48,9 @@ URLI.Options = function () {
     }
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greeting": "addContentScriptListener"}); } }) });
-    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greetingt": "removeContentScriptListener"}); } }) });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greeting": "removeContentScriptListener"}); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
-    DOM["#chrome-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
+    DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
     DOM["#key-increment-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
@@ -458,6 +458,7 @@ URLI.Options = function () {
               URLI.Permissions.removeAllPermissions();
               changeIconColor.call(DOM["#icon-color-radio-dark"]);
               populateValuesFromStorage("all");
+              chrome.runtime.sendMessage({"greeting": "removeContentScriptListener"});
               URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
             });
           });
