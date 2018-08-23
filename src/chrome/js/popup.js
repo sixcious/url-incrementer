@@ -39,8 +39,8 @@ URLI.Popup = function () {
       chrome.runtime.getBackgroundPage(async function(backgroundPage) {
         backgroundPage_ = backgroundPage;
         instance = backgroundPage_.URLI.Background.getInstance(tabs[0].id);
-        items_ = backgroundPage_.URLI.Background.getItems();
-        localItems_ = backgroundPage_.URLI.Background.getLocalItems();
+        items_ = await backgroundPage_.URLI.Background.getItems();
+        localItems_ = await backgroundPage_.URLI.Background.getItems("local");
         if (!instance || !instance.enabled) {
           instance = await backgroundPage_.URLI.Background.buildInstance(tabs[0]);
         }
@@ -83,6 +83,7 @@ URLI.Popup = function () {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
+    DOM["#profile-save-input"].addEventListener("change", function() { DOM["#profile-save-img"].src = "../img/font-awesome/5p/" + (this.checked ? "heart.png" : "heart-o.png"); });
     DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });

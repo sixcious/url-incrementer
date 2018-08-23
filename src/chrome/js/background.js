@@ -64,9 +64,9 @@ URLI.Background = function () {
   instances = new Map();
 
   // The sync storage and local storage items caches and a boolean flag indicating if the content scripts listener has been added (to prevent adding multiple listeners)
-  let items_ = {},
-      localItems_ = {},
-      contentScriptListenerAdded = false;
+//  let items_ = {},
+//      localItems_ = {},
+//      contentScriptListenerAdded = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -88,22 +88,37 @@ URLI.Background = function () {
     return LOCAL_STORAGE_DEFAULT_VALUES;
   }
 
-  /**
-   * Gets the sync storage items.
-   *
-   * @returns {{}} the sync storage items
-   */
-  function getItems() {
-    return items_;
-  }
+  // /**
+  //  * Gets the sync storage items.
+  //  *
+  //  * @returns {{}} the sync storage items
+  //  */
+  // function getItems() {
+  //   return items_;
+  // }
+
+  // /**
+  //  * Gets the local storage items.
+  //  *
+  //  * @returns {{}} the local storage items
+  //  */
+  // function getLocalItems() {
+  //   return localItems_;
+  // }
 
   /**
-   * Gets the local storage items.
+   * Gets the storage items via a promise-based wrapper for async/await callers.
    *
-   * @returns {{}} the local storage items
+   * @param namespace the storage namespace, either "sync" or "local" (optional)
+   * @param key       the storage item key to get or null for all items (optional)
+   * @returns {Promise<{}>} the storage items
    */
-  function getLocalItems() {
-    return localItems_;
+  function getItems(namespace = "sync", key = null) {
+    return new Promise(resolve => {
+      chrome.storage[namespace].get(key, items => {
+        key ? resolve(items[key]) : resolve(items);
+      });
+    });
   }
 
   /**
@@ -156,8 +171,10 @@ URLI.Background = function () {
    * @return instance the newly built instance
    * @public
    */
-  async function buildInstance(tab) {
-    const profiles = localItems_.profiles;
+  async function buildInstance(tab, items, localItems) {
+    items = items ? items : await getItems();
+    localItems = localItems ? localItems : await getItems("local");
+    const profiles = localItems.profiles;
     let props;
     // First search for a profile to build an instance from:
     if (profiles && profiles.length > 0) {
@@ -172,8 +189,8 @@ URLI.Background = function () {
     }
     // If no profile found, build using storage items:
     if (!props) {
-      const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items_.selectionPriority, items_.selectionCustom); // selection, selectionStart
-      props = buildProps("items", items_, selectionProps);
+      const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
+      props = buildProps("items", items, selectionProps);
     }
     // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
     props.startingURL = getInstance(tab.id) && getInstance(tab.id).startingURL ? getInstance(tab.id).startingURL : tab.url;
@@ -188,14 +205,14 @@ URLI.Background = function () {
       "base": props.base, "baseCase": props.baseCase, "baseDateFormat": props.baseDateFormat,
       "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
-      "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items_.shuffleLimit,
-      "nextPrevLinksPriority": items_.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items_.nextPrevSameDomainPolicy,
-      "autoAction": items_.autoAction, "autoTimesOriginal": items_.autoTimes, "autoTimes": items_.autoTimes, "autoSeconds": items_.autoSeconds, "autoWait": items_.autoWait, "autoBadge": items_.autoBadge, "autoRepeat": items_.autoRepeat, "autoRepeatCount": 0,
-      "downloadStrategy": items_.downloadStrategy, "downloadExtensions": items_.downloadExtensions, "downloadTags": items_.downloadTags, "downloadAttributes": items_.downloadAttributes, "downloadSelector": items_.downloadSelector,
-      "downloadIncludes": items_.downloadIncludes, "downloadExcludes": items_.downloadExcludes,
-      "downloadMinMB": items_.downloadMinMB, "downloadMaxMB": items_.downloadMaxMB,
-      "downloadPreview": items_.downloadPreview,
-      "toolkitTool": items_.toolkitTool, "toolkitAction": items_.toolkitAction, "toolkitQuantity": items_.toolkitQuantity
+      "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
+      "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
+      "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoRepeat": items.autoRepeat, "autoRepeatCount": 0,
+      "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
+      "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
+      "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
+      "downloadPreview": items.downloadPreview,
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity
     };
   }
 
@@ -265,8 +282,8 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
-              localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
+              //items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
+              //localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
               chrome.runtime.openOptionsPage();
             });
           });
@@ -280,8 +297,8 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
-              localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
+              //items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
+              //localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
             });
           });
         });
@@ -324,18 +341,19 @@ URLI.Background = function () {
     let instance;
     switch (request.greeting) {
       case "checkInternalShortcuts":
+        const items = await getItems();
         instance = getInstance(sender.tab.id);
         if (!instance || !instance.enabled) {
           sender.tab.url = sender.url;
           instance = await buildInstance(sender.tab);
         }
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items_});
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items});
         // Key
-        if (items_.keyEnabled && (items_.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+        if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
         // Mouse
-        if (items_.mouseEnabled && (items_.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+        if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         break;
@@ -371,6 +389,13 @@ URLI.Background = function () {
         if (request.instance && !request.instance.autoEnabled) {
           setBadge(request.tabId, request.badge, request.temporary, request.text, request.backgroundColor);
         }
+        break;
+      case "addContentScriptListener":
+        chrome.tabs.onUpdated.removeListener(contentScriptListener);
+        chrome.tabs.onUpdated.addListener(contentScriptListener);
+        break;
+      case "removeContentScriptListener":
+        chrome.tabs.onUpdated.removeListener(contentScriptListener);
         break;
       default:
         break;
@@ -419,22 +444,23 @@ URLI.Background = function () {
    */
   function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
-      if (!items_.permissionsInternalShortcuts || items_.browserMixedMode) {
-        chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
+      chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
+        const items = await getItems();
+        if (!items.permissionsInternalShortcuts || items.browserMixedMode) {
           if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
             let instance = getInstance(tabs[0].id);
-            if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items_.quickEnabled || (instance && instance.enabled))) ||
+            if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) ||
                 (command === "auto" && instance && instance.autoEnabled) ||
                 ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
                 (command === "return" && instance && instance.startingURL)) {
-              if (items_.quickEnabled && (!instance || !instance.enabled)) {
+              if (items.quickEnabled && (!instance || !instance.enabled)) {
                 instance = await buildInstance(tabs[0]);
               }
               URLI.Action.performAction(command, "command", instance);
             }
           }
-        });
-      }
+        }
+      });
     }
   }
 
@@ -472,47 +498,47 @@ URLI.Background = function () {
     }
   }
 
-  /**
-   * The storage changed listener that listens for changes in both sync and local storage
-   * and then updates the Background's items and localItems storage caches.
-   *
-   * @param changes  Object mapping each key that changed to its corresponding storage.StorageChange for that item
-   * @param areaName the name of the storage area("sync", "local" or "managed") the changes are for
-   * @public
-   */
-  function storageChangedListener(changes, areaName) {
-    switch (areaName) {
-      case "sync":
-        for (const key in changes) {
-          console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
-          if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
-            items_[key] = changes[key].newValue;
-            // We must handle the contentScriptListener depending on the storage change for permissionsInternalShortcuts
-            if (key === "permissionsInternalShortcuts") {
-              if (changes[key].newValue === true && !contentScriptListenerAdded) {
-                chrome.tabs.onUpdated.addListener(contentScriptListener);
-                contentScriptListenerAdded = true;
-              } else if (changes[key].newValue === false) {
-                chrome.tabs.onUpdated.removeListener(contentScriptListener);
-                contentScriptListenerAdded = false;
-              }
-            }
-          }
-        }
-        break;
-      case "local":
-        for (const key in changes) {
-          console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
-          if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
-            localItems_[key] = changes[key].newValue;
-          }
-        }
-        break;
-      default:
-        console.log("change in areaName:" + areaName);
-        break;
-    }
-  }
+  // /**
+  //  * The storage changed listener that listens for changes in both sync and local storage
+  //  * and then updates the Background's items and localItems storage caches.
+  //  *
+  //  * @param changes  Object mapping each key that changed to its corresponding storage.StorageChange for that item
+  //  * @param areaName the name of the storage area("sync", "local" or "managed") the changes are for
+  //  * @public
+  //  */
+  // function storageChangedListener(changes, areaName) {
+  //   switch (areaName) {
+  //     case "sync":
+  //       for (const key in changes) {
+  //         console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
+  //         if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
+  //           items_[key] = changes[key].newValue;
+  //           // We must handle the contentScriptListener depending on the storage change for permissionsInternalShortcuts
+  //           if (key === "permissionsInternalShortcuts") {
+  //             if (changes[key].newValue === true && !contentScriptListenerAdded) {
+  //               chrome.tabs.onUpdated.addListener(contentScriptListener);
+  //               contentScriptListenerAdded = true;
+  //             } else if (changes[key].newValue === false) {
+  //               chrome.tabs.onUpdated.removeListener(contentScriptListener);
+  //               contentScriptListenerAdded = false;
+  //             }
+  //           }
+  //         }
+  //       }
+  //       break;
+  //     case "local":
+  //       for (const key in changes) {
+  //         console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
+  //         if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
+  //           localItems_[key] = changes[key].newValue;
+  //         }
+  //       }
+  //       break;
+  //     default:
+  //       console.log("change in areaName:" + areaName);
+  //       break;
+  //   }
+  // }
 
   /**
    * The extension's background startup listener that is run the first time the extension starts.
@@ -523,10 +549,11 @@ URLI.Background = function () {
    * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
    * @public
    */
-  function startupListener() {
+  async function startupListener() {
+    const items = await getItems();
     console.log("URLI.Background.startupListener()");
-    chrome.storage.sync.get(null, function(items) {
-      items_ = items;
+//    chrome.storage.sync.get(null, function(items) {
+      //items_ = items;
       // Ensure the chosen toolbar icon is set
       // Firefox Android: chrome.browserAction.setIcon() not supported
       if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
@@ -541,15 +568,16 @@ URLI.Background = function () {
       }
       // Ensure Internal Shortcuts declarativeContent rule is added
       // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-      if (items && items.permissionsInternalShortcuts && !contentScriptListenerAdded) {
+      if (items && items.permissionsInternalShortcuts) {
         console.log("URLI.Background.startupListener() - adding content script listener");
+        chrome.tabs.onUpdated.removeListener(contentScriptListener);
         chrome.tabs.onUpdated.addListener(contentScriptListener);
-        contentScriptListenerAdded = true;
+        //contentScriptListenerAdded = true;
       }
-    });
-    chrome.storage.local.get(null, function(localItems) {
-      localItems_ = localItems;
-    });
+//    });
+    // chrome.storage.local.get(null, function(localItems) {
+    //   localItems_ = localItems;
+    // });
   }
 
   /**
@@ -565,9 +593,9 @@ URLI.Background = function () {
   function contentScriptListener(tabId, changeInfo, tab) {
     if (changeInfo.status === "loading") {
       console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
-      if (items_.permissionsInternalShortcuts) {
-        chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
-      }
+      chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
+      // if (items_.permissionsInternalShortcuts) {
+      // }
     }
   }
 
@@ -576,7 +604,7 @@ URLI.Background = function () {
     getSDV: getSDV,
     getLSDV: getLSDV,
     getItems: getItems,
-    getLocalItems: getLocalItems,
+    //getLocalItems: getLocalItems,
     getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,
@@ -589,7 +617,7 @@ URLI.Background = function () {
     commandListener: commandListener,
     tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener,
-    storageChangedListener: storageChangedListener,
+    //storageChangedListener: storageChangedListener,
     startupListener: startupListener
   };
 }();
@@ -600,6 +628,6 @@ chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
-chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
+//chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); }
 URLI.Background.startupListener();

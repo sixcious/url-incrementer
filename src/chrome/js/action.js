@@ -90,14 +90,14 @@ URLI.Action = function () {
     return {"instance": instance, "action": action};
   }
 
-  function postPerformAction(action, caller, instance, actionPerformed) {
+  async function postPerformAction(action, caller, instance, actionPerformed) {
     // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
     if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
       console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
       URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL});
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
-    const items = URLI.Background.getItems();
+    const items = await URLI.Background.getItems();
     if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       if (items.iconFeedbackEnabled) {
         URLI.Background.setBadge(instance.tabId, action, true);

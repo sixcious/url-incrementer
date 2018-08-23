@@ -45,7 +45,7 @@ URLI.SaveURLs = function () {
   }
 
   async function deleteURL(instance, caller) {
-    const localItems = URLI.Background.getLocalItems(),
+    const localItems = await URLI.Background.getItems("local"),
           profiles = localItems && localItems.profiles && Array.isArray(localItems.profiles)? localItems.profiles : []; // localItems.profiles;
           // url1 = instance.url.substring(0, instance.selectionStart),
           // url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
