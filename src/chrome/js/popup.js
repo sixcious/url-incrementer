@@ -50,8 +50,8 @@ URLI.Popup = function () {
         DOM["#download-input"].style = "width:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items_.popupButtonSize + downloadPaddingAdjustment) + "px;";
         DOM["#setup-input"].className = items_.popupAnimationsEnabled ? "hvr-grow" : "";
         updateSetup();
-        // Jump straight to Setup if instance isn't enabled and if the option is set in storage items
-        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound) && items_.popupOpenSetup) {
+        // Jump straight to Setup if instance isn't enabled or a saved URL
+        if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound)) {
           toggleView.call(DOM["#setup-input"]);
         } else {
           toggleView.call(DOM["#accept-button"]);
@@ -812,16 +812,16 @@ URLI.Popup = function () {
         if (instance.profileSave) {
           backgroundPage_.URLI.SaveURLs.saveURL(instance); // TODO
         }
-        // If popup can overwrite increment/decrement settings, write to storage
-        if (instance.enabled && items_.popupSettingsCanOverwrite) {
-          chrome.storage.sync.set({
-            "interval": _.interval,
-            "base": !isNaN(_.base) ? _.base : items_.base, // Don't ever save non Number bases (e.g. Date Time) as the default
-            "baseCase": _.baseCase,
-            "baseDateFormat": _.baseDateFormat,
-            "errorSkip": _.errorSkip
-          });
-        }
+        // // If popup can overwrite increment/decrement settings, write to storage
+        // if (instance.enabled && items_.popupSettingsCanOverwrite) {
+        //   chrome.storage.sync.set({
+        //     "interval": _.interval,
+        //     "base": !isNaN(_.base) ? _.base : items_.base, // Don't ever save non Number bases (e.g. Date Time) as the default
+        //     "baseCase": _.baseCase,
+        //     "baseDateFormat": _.baseDateFormat,
+        //     "errorSkip": _.errorSkip
+        //   });
+        // }
         if (_.autoEnabled) {
           chrome.storage.sync.set({
             "autoAction": _.autoAction,

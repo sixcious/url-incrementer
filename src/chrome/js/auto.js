@@ -197,7 +197,7 @@ URLI.Auto = function () {
    */
   function autoListener(tabId, changeInfo, tab) {
     console.log("URLI.Auto.autoListener() - the chrome.tabs.onUpdated auto listener is on!");
-    // Cache loading and complete for maybe a small performance gain since we need to check multiple times?
+    // Cache loading and complete for maybe a small performance gain since we need to check multiple times
     const loading = changeInfo.status === "loading",
           complete = changeInfo.status === "complete";
     // We only care about loading and complete statuses
@@ -216,8 +216,7 @@ URLI.Auto = function () {
         // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
         if (instance.autoPaused) {
           URLI.Background.setBadge(tabId, "autopause", false);
-        }
-        else if (instance.autoBadge === "times") {
+        } else if (instance.autoBadge === "times") {
           URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes) + "");
         } else {
           URLI.Background.setBadge(tabId, "auto", false);
@@ -254,7 +253,7 @@ URLI.Auto = function () {
           URLI.Action.performAction("clear", "auto", instance);
         }
       }
-    } else if (complete) { // Removes any stray auto listeners that may possibly exist
+    } else if (complete) { // Else this isn't an auto instance tab, removes any stray auto listeners that may possibly exist
       removeAutoListener();
     }
   }
@@ -281,10 +280,13 @@ URLI.Auto = function () {
  */
 URLI.AutoTimer = function (callback, delay) {
 
-  let timerId, start, remaining = delay, wait = false;
+  let timerId,
+      start,
+      remaining = delay,
+      wait = false;
 
   this.pause = function() {
-    window.clearTimeout(timerId);
+    clearTimeout(timerId);
     remaining -= Date.now() - start;
     remaining = remaining < 0 || wait ? delay : remaining;
     console.log("URLI.AutoTimer.pause() - timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
@@ -292,13 +294,13 @@ URLI.AutoTimer = function (callback, delay) {
 
   this.resume = function() {
     start = Date.now();
-    window.clearTimeout(timerId);
-    timerId = wait ? timerId : window.setTimeout(callback, remaining);
+    clearTimeout(timerId);
+    timerId = wait ? timerId : setTimeout(callback, remaining);
     console.log("URLI.AutoTimer.resume() - timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.clear = function() {
-    window.clearTimeout(timerId);
+    clearTimeout(timerId);
   };
 
   this.setWait = function(wait_) {

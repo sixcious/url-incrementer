@@ -15,8 +15,8 @@ URLI.IncrementDecrement = function () {
    * "Prefixes" Preference:
    * Looks for terms and common prefixes that come before numbers, such as
    * page=, pid=, p=, next=, =, and /. Example URLs with prefixes (= and /):
-   * http://www.google.com?page=1234
-   * http://www.google.com/1234
+   * https://www.google.com?page=1234
+   * https://www.google.com/1234
    *
    * "Last Number" Preference:
    * Uses the last number in the url.

@@ -1,8 +1,8 @@
 /*!
- * Hover.css (http://ianlunn.github.io/Hover/)
+ * Hover.css (https://ianlunn.github.io/Hover/)
  * Version: 2.3.1
  * Author: Ian Lunn @IanLunn
- * Author URL: http://ianlunn.co.uk/
+ * Author URL: https://ianlunn.co.uk/
  * Github: https://github.com/IanLunn/Hover
 
  * Hover.css Copyright Ian Lunn 2017. Generated with Sass.
@@ -170,23 +170,4 @@
   animation-timing-function: linear;
   -webkit-animation-iteration-count: 1;
   animation-iteration-count: 1;
-}
-
-/* Skew Forward */
-.hvr-skew-forward {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-property: transform;
-  transition-property: transform;
-  -webkit-transform-origin: 0 100%;
-  transform-origin: 0 100%;
-}
-.hvr-skew-forward:hover/*, .hvr-skew-forward:focus, .hvr-skew-forward:active*/ {
-  -webkit-transform: skew(-10deg);
-  transform: skew(-10deg);
 }

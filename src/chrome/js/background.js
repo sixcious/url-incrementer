@@ -10,14 +10,14 @@ var URLI = URLI || {};
 URLI.Background = function () {
 
   // The sync storage default values
-  // Note: Storage.set can only set top-level JSON objects, do not use nested JSON objects (instead, prefix keys that should be grouped together)
+  // Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
-    /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true, "popupOpenSetup": true, "popupSettingsCanOverwrite": true,
+    /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true,
     /* shortcuts */   "quickEnabled": true, "shortcutsMixedMode": false,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseIncrement": {"button": -1, "clicks": 2}, "mouseDecrement": {"button": -1, "clicks": 2}, "mouseNext": {"button": -1, "clicks": 2}, "mousePrev": {"button": -1, "clicks": 2}, "mouseClear": {"button": -1, "clicks": 2}, "mouseReturn": {"button": -1, "clicks": 2}, "mouseAuto": {"button": -1, "clicks": 2},
+    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseClickSpeed": 500, "mouseIncrement": {"button": 0, "clicks": 4}, "mouseDecrement": {"button": 4, "clicks": 5}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,

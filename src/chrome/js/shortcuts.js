@@ -15,9 +15,13 @@ URLI.Shortcuts = function () {
   const FLAG_KEY_ALT   = 0x1, // 0001
         FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
-        FLAG_KEY_META  = 0x8; // 1000
+        FLAG_KEY_META  = 0x8, // 1000
+        MOUSE_CLICK_SPEED = 400;
 
-  let items_ = {}; // storage items cache
+  let clicks = 0,
+      button = undefined,
+      timeout,
+      items_ = {}; // storage items cache
 
   /**
    * Sets the items storage cache.
@@ -31,7 +35,7 @@ URLI.Shortcuts = function () {
 
   /**
    * A key up event listener for keyboard shortcuts.
-   * Listens for increment, decrement, next, prev, clear, and auto keyboard shortcuts.
+   * Listens for increment, decrement, next, prev, clear, return, and auto keyboard shortcuts.
    * 
    * @param event the key event
    * @public
@@ -48,19 +52,20 @@ URLI.Shortcuts = function () {
 
   /**
    * A mouse up event listener for mouse button shortcuts.
-   * Listens for increment, decrement, next, prev, clear, and auto mouse button shortcuts.
+   * Listens for increment, decrement, next, prev, clear, return, and auto mouse button shortcuts.
    * 
    * @param event the mouse button event
    * @public
    */
   function mouseListener(event) {
-    if      (mousePressed(event, items_.mouseIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
-    else if (mousePressed(event, items_.mouseDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
-    else if (mousePressed(event, items_.mouseNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
-    else if (mousePressed(event, items_.mousePrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
-    else if (mousePressed(event, items_.mouseClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
-    else if (mousePressed(event, items_.mouseReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }
-    else if (mousePressed(event, items_.mouseAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
+    mouseHandler(event);
+    if      (mousePressed(event, items_.mouseIncrement)) { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mouseDecrement)) { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mouseNext))      { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mousePrev))      { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mouseClear))     { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mouseReturn))    { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }, MOUSE_CLICK_SPEED); }
+    else if (mousePressed(event, items_.mouseAuto))      { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }, MOUSE_CLICK_SPEED); }
   }
 
   /**
@@ -90,8 +95,20 @@ URLI.Shortcuts = function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", event.detail=" + event.detail + ", actionMouse=" + mouse);
-    return mouse && event.button === mouse.button && event.detail === mouse.clicks;
+    //console.log("URLI.Shortcuts.mousePressed() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks); //", event.detail=" + event.detail + ", actionMouse=" + mouse);
+    return mouse && event.button === mouse.button && mouse.clicks === clicks;
+  }
+
+  function mouseHandler(event) {
+    clearTimeout(timeout);
+    if (button === event.button || button === undefined) {
+      clicks++;
+      timeout = setTimeout(function() { console.log("clearing clicks!"); clicks = 0; }, MOUSE_CLICK_SPEED);
+    } else {
+      clicks = 0;
+    }
+    console.log("URLI.Shortcuts.mouseHandler() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks);
+    button = event.button;
   }
 
   // Return Public Functions
@@ -116,10 +133,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       document.removeEventListener("keyup", URLI.Shortcuts.keyListener);
       break;
     case "addMouseListener":
-      document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+      document.addEventListener("pointerup", URLI.Shortcuts.mouseListener);
       break;
     case "removeMouseListener":
-      document.removeEventListener("mouseup", URLI.Shortcuts.mouseListener);
+      document.removeEventListener("pointerup", URLI.Shortcuts.mouseListener);
       break;
     default:
       break;

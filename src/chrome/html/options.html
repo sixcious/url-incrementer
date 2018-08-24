@@ -59,8 +59,7 @@
         </div>
         <div class="table">
           <div class="row">
-            <div class="column">
-            </div>
+            <div class="column"></div>
             <div class="column">
               <img id="key-enable-img" src="../img/font-awesome/black/check.png" alt="" width="16" height="16"/>
               <span id="key-label" data-i18n="textContent"></span>
@@ -85,7 +84,7 @@
                 <option id="mouse-middle-option*increment" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*increment" data-i18n="textContent" value="2"></option>
               </select>
-              <input id="mouse-increment-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-increment-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -103,7 +102,7 @@
                 <option id="mouse-middle-option*decrement" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*decrement" data-i18n="textContent" value="2"></option>
               </select>
-              <input id="mouse-decrement-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-decrement-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -121,7 +120,7 @@
                 <option id="mouse-middle-option*next" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*next" data-i18n="textContent" value="2"></option>
               </select>
-              <input id="mouse-next-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-next-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -139,7 +138,7 @@
                 <option id="mouse-middle-option*prev" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*prev" data-i18n="textContent" value="2">Right</option>
               </select>
-              <input id="mouse-prev-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-prev-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -157,7 +156,7 @@
                 <option id="mouse-middle-option*clear" data-i18n="textContent" value="1">Middle</option>
                 <option id="mouse-right-option*clear" data-i18n="textContent" value="2">Right</option>
               </select>
-              <input id="mouse-clear-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-clear-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -175,7 +174,7 @@
                 <option id="mouse-middle-option*return" data-i18n="textContent" value="1"></option>
                 <option id="mouse-right-option*return" data-i18n="textContent" value="2"></option>
               </select>
-              <input id="mouse-return-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-return-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
           <div class="row">
@@ -193,7 +192,7 @@
                 <option id="mouse-middle-option*auto" data-i18n="textContent" value="1">Middle</option>
                 <option id="mouse-right-option*auto" data-i18n="textContent" value="2">Right</option>
               </select>
-              <input id="mouse-auto-clicks-input" class="mouse-clicks-input" type="number" min="0" max="9"/>
+              <input id="mouse-auto-clicks-input" class="mouse-clicks-input" type="number" min="1" max="9"/>
             </div>
           </div>
         </div>
@@ -204,12 +203,12 @@
           <h3 id="one-click-buttons-h3" data-i18n="textContent"></h3>
         </div>
         <p id="one-click-buttons-p" data-i18n="textContent"></p>
-        <a href="https://chrome.google.com/webstore/detail/url-increment-button-for/decebmdlceenceecblpfjanoocfcmjai" target="_blank">
+        <a href="https://chrome.google.com/webstore/detail/url-increment/decebmdlceenceecblpfjanoocfcmjai" target="_blank">
           <img src="../img/font-awesome/blue/plus-circle.png" alt="" width="16" height="16"/>
           <span id="one-click-buttons-increment" data-i18n="textContent"></span>
         </a>
         <p></p>
-        <a href="https://chrome.google.com/webstore/detail/url-decrement-button-for/nnmjbfglinmjnieblelacmlobabcenfk" target="_blank">
+        <a href="https://chrome.google.com/webstore/detail/url-decrement/nnmjbfglinmjnieblelacmlobabcenfk" target="_blank">
           <img src="../img/font-awesome/blue/minus-circle.png" alt="" width="16" height="16"/>
           <span id="one-click-buttons-decrement" data-i18n="textContent"></span>
         </a>
@@ -265,7 +264,7 @@
             <span id="popup-animations-enable-label" data-i18n="textContent"></span>
           </label>
         </div>
-        <div class="checkbox">
+<!--        <div class="checkbox">
           <label>
             <input id="popup-open-setup-input" type="checkbox"/>
             <span id="popup-open-setup-label" data-i18n="textContent"></span>
@@ -276,7 +275,7 @@
             <input id="popup-settings-can-overwrite-input" type="checkbox"/>
             <span id="popup-settings-can-overwrite-label" data-i18n="textContent"></span>
           </label>
-        </div>
+        </div>-->
       </section>
       <section id="profile-settings">
         <div class="heading">
@@ -326,7 +325,7 @@
               </select>
               <div id="selection-custom" class="display-none">
                 <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
-                <textarea id="selection-custom-url-textarea" placeholder="http://www.google.com/search?q=suelle&start=10"></textarea>
+                <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=suelle&start=10"></textarea>
                 <div class="table">
                   <div class="row">
                     <div class="column">
@@ -632,7 +631,7 @@
             <br>
             <span id="version-span" data-i18n="textContent"></span>&nbsp;<span id="manifest-version"></span>
             <br>
-            <a id="website-a" href="http://www.github.com/roysix/url-incrementer" target="_blank" data-i18n="textContent"></a>
+            <a id="website-a" href="https://www.github.com/roysix/url-incrementer" target="_blank" data-i18n="textContent"></a>
             <br>
             <a id="email-a" href="mailto:royxsix@gmail.com?subject=URL%20Incrementer" data-i18n="textContent"></a>
           </div>
