@@ -516,7 +516,7 @@ URLI.IncrementDecrementArray = function () {
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
-        const shuffleLimit = instance.shuffleLimit; // URLI.Background.getItems().shuffleLimit;
+        const shuffleLimit = instance.shuffleLimit; // EXT.Promisify.getItems().shuffleLimit;
         const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
         const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];

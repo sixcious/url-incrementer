@@ -97,7 +97,7 @@ URLI.Action = function () {
       URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL});
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
-    const items = await URLI.Background.getItems();
+    const items = await EXT.Promisify.getItems();
     if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       if (items.iconFeedbackEnabled) {
         URLI.Background.setBadge(instance.tabId, action, true);
@@ -116,7 +116,7 @@ URLI.Action = function () {
    * @returns {boolean}
    */
   function incrementDecrement(action, caller, instance, callback) {
-    const items = URLI.Background.getItems();
+    const items = EXT.Promisify.getItems();
     let actionPerformed = false;
     // Error Skipping:
     if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
@@ -170,7 +170,7 @@ URLI.Action = function () {
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
-      const items = URLI.Background.getItems();
+      const items = EXT.Promisify.getItems();
       if (items.permissionsEnhancedMode) {
         URLI.IncrementDecrement.incrementDecrementAndSkipErrors(action, instance, "background", instance.errorSkip);
       } else {
@@ -207,7 +207,7 @@ URLI.Action = function () {
    */
   function nextPrev(action, caller, instance, callback) {
     let actionPerformed = true;
-    const items = URLI.Background.getItems();
+    const items = EXT.Promisify.getItems();
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
         JSON.stringify(action) + ", " +
@@ -254,7 +254,7 @@ URLI.Action = function () {
     // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete profile
     if (caller !== "popupClearBeforeSet" &&  caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
       //instance.multiCount = 0; TODO... multi ?
-      const items = URLI.Background.getItems();
+      const items = EXT.Promisify.getItems();
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
       }

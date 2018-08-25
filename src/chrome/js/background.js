@@ -17,7 +17,7 @@ URLI.Background = function () {
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true,
     /* shortcuts */   "quickEnabled": true, "shortcutsMixedMode": false,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
-    /* mouse */       "mouseEnabled": false, "mouseQuickEnabled": false, "mouseClickSpeed": 500, "mouseIncrement": {"button": 0, "clicks": 4}, "mouseDecrement": {"button": 4, "clicks": 5}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
+    /* mouse */       "mouseEnabled": true, "mouseQuickEnabled": false, "mouseClickSpeed": 500, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -81,40 +81,6 @@ URLI.Background = function () {
     return LOCAL_STORAGE_DEFAULT_VALUES;
   }
 
-  // /**
-  //  * Gets the sync storage items.
-  //  *
-  //  * @returns {{}} the sync storage items
-  //  */
-  // function getItems() {
-  //   return items_;
-  // }
-
-  // /**
-  //  * Gets the local storage items.
-  //  *
-  //  * @returns {{}} the local storage items
-  //  */
-  // function getLocalItems() {
-  //   return localItems_;
-  // }
-
-  /**
-   * Gets the storage items via a promise-based wrapper for async/await callers.
-   *
-   * @param namespace the storage namespace, either "sync" or "local" (optional)
-   * @param key       the storage item key to get or null for all items (optional)
-   * @returns {Promise<{}>} the storage items
-   * @public
-   */
-  function getItems(namespace = "sync", key = null) {
-    return new Promise(resolve => {
-      chrome.storage[namespace].get(key, items => {
-        key ? resolve(items[key]) : resolve(items);
-      });
-    });
-  }
-
   /**
    * Gets all the instances.
    *
@@ -161,13 +127,15 @@ URLI.Background = function () {
   /**
    * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
    * 
-   * @param tab the tab properties (id, url) to set this instance with
+   * @param tab        the tab properties (id, url) to set this instance with
+   * @param items      the sync storage items
+   * @param localItems the local storage items
    * @returns instance the newly built instance
    * @public
    */
   async function buildInstance(tab, items, localItems) {
-    items = items ? items : await getItems();
-    localItems = localItems ? localItems : await getItems("local");
+    items = items ? items : await EXT.Promisify.getItems();
+    localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
     const profiles = localItems.profiles;
     let props;
     // First search for a profile to build an instance from:
@@ -335,7 +303,7 @@ URLI.Background = function () {
     let instance;
     switch (request.greeting) {
       case "checkInternalShortcuts":
-        const items = await getItems();
+        const items = await EXT.Promisify.getItems();
         instance = getInstance(sender.tab.id);
         if (!instance || !instance.enabled) {
           sender.tab.url = sender.url;
@@ -439,7 +407,7 @@ URLI.Background = function () {
   function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
       chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
-        const items = await getItems();
+        const items = await EXT.Promisify.getItems();
         if (!items.permissionsInternalShortcuts || items.browserMixedMode) {
           if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
             let instance = getInstance(tabs[0].id);
@@ -492,48 +460,6 @@ URLI.Background = function () {
     }
   }
 
-  // /**
-  //  * The storage changed listener that listens for changes in both sync and local storage
-  //  * and then updates the Background's items and localItems storage caches.
-  //  *
-  //  * @param changes  Object mapping each key that changed to its corresponding storage.StorageChange for that item
-  //  * @param areaName the name of the storage area("sync", "local" or "managed") the changes are for
-  //  * @public
-  //  */
-  // function storageChangedListener(changes, areaName) {
-  //   switch (areaName) {
-  //     case "sync":
-  //       for (const key in changes) {
-  //         console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
-  //         if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
-  //           items_[key] = changes[key].newValue;
-  //           // We must handle the contentScriptListener depending on the storage change for permissionsInternalShortcuts
-  //           if (key === "permissionsInternalShortcuts") {
-  //             if (changes[key].newValue === true && !contentScriptListenerAdded) {
-  //               chrome.tabs.onUpdated.addListener(contentScriptListener);
-  //               contentScriptListenerAdded = true;
-  //             } else if (changes[key].newValue === false) {
-  //               chrome.tabs.onUpdated.removeListener(contentScriptListener);
-  //               contentScriptListenerAdded = false;
-  //             }
-  //           }
-  //         }
-  //       }
-  //       break;
-  //     case "local":
-  //       for (const key in changes) {
-  //         console.log("URLI.Background.storageChangedListener() - change in storage." + areaName + "." + key + ", oldValue=" + changes[key].oldValue + ", newValue=" + changes[key].newValue);
-  //         if (changes[key].newValue !== undefined) { // Avoids potential bug with clear > set (e.g. reset, new install)
-  //           localItems_[key] = changes[key].newValue;
-  //         }
-  //       }
-  //       break;
-  //     default:
-  //       console.log("change in areaName:" + areaName);
-  //       break;
-  //   }
-  // }
-
   /**
    * The extension's background startup listener that is run the first time the extension starts.
    * For example, when Chrome is started, when the extension is installed or updated, or when the
@@ -544,7 +470,7 @@ URLI.Background = function () {
    * @public
    */
   async function startupListener() {
-    const items = await getItems();
+    const items = await EXT.Promisify.getItems();
     console.log("URLI.Background.startupListener()");
 //    chrome.storage.sync.get(null, function(items) {
       //items_ = items;
@@ -597,8 +523,6 @@ URLI.Background = function () {
   return {
     getSDV: getSDV,
     getLSDV: getLSDV,
-    getItems: getItems,
-    //getLocalItems: getLocalItems,
     getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,
@@ -611,7 +535,6 @@ URLI.Background = function () {
     commandListener: commandListener,
     tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener,
-    //storageChangedListener: storageChangedListener,
     startupListener: startupListener
   };
 }();
@@ -622,6 +545,5 @@ chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
-//chrome.storage.onChanged.addListener(URLI.Background.storageChangedListener);
 if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); }
 URLI.Background.startupListener();

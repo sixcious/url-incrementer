@@ -27,13 +27,18 @@ URLI.SaveURLs = function () {
     //     }
     //   }
     // }
+    console.log("in saveURL BEFORE calling crypto after calling deleteURL profiles=" + profiles);
     // Part 2: Put this URL into the profiles array and save it to local storage
     const url1 = instance.url.substring(0, instance.selectionStart),
           url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
           urlsalt1 = URLI.Cryptography.generateSalt(),
           urlsalt2 = URLI.Cryptography.generateSalt(),
-          urlhash1 = await URLI.Cryptography.calculateHash(url1, urlsalt1),
-          urlhash2 = await URLI.Cryptography.calculateHash(url2, urlsalt2);
+          urlhash1 = await URLI.Cryptography.calculateHash(url1, urlsalt1);
+    console.log("good so far about to do urlhash2, urlhash1=" + urlhash1);
+    console.log("good so far about to do urlhash2, urlsalt2=" + urlsalt2);
+    console.log("good so far about to do urlhash2, url2=" + url2);
+    const      urlhash2 = await URLI.Cryptography.calculateHash(url2, urlsalt2);
+    console.log("in saveURL after calling crypto, urlhash2=" + urlhash2);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     profiles.unshift({
       "urlhash1": urlhash1, "urlhash2": urlhash2,
@@ -45,7 +50,7 @@ URLI.SaveURLs = function () {
   }
 
   async function deleteURL(instance, caller) {
-    const localItems = await URLI.Background.getItems("local"),
+    const localItems = await EXT.Promisify.getItems("local"),
           profiles = localItems && localItems.profiles && Array.isArray(localItems.profiles)? localItems.profiles : []; // localItems.profiles;
           // url1 = instance.url.substring(0, instance.selectionStart),
           // url2 = instance.url.substring(instance.selectionStart + instance.selection.length);

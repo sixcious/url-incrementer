@@ -1,12 +1,14 @@
 {
   "manifest_version": 2,
   "name": "__MSG_name__",
+  "short_name": "__MSG_short_name__",
+  "description": "__MSG_description__",
   "version": "6.0",
   "default_locale": "en",
-  "description": "__MSG_description__",
   "icons": { "16": "img/icons/dark/16.png", "48": "img/icons/dark/48.png", "128": "img/icons/dark/128.png" },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": { "16": "img/icons/dark/16.png", "24": "img/icons/dark/24.png", "32": "img/icons/dark/32.png" }, "default_popup": "html/popup.html" },
-  "background": { "scripts": ["js/background.js", "js/action.js", "js/increment-decrement.js", "js/auto.js", "js/save-urls.js", "js/cryptography.js"] },
+  "options_ui": { "page": "html/options.html", "browser_style": true },
+  "background": { "scripts": ["js/promisify.js", "js/background.js", "js/action.js", "js/increment-decrement.js", "js/auto.js", "js/save-urls.js", "js/cryptography.js"] },
   "commands": { "increment": { "description": "Increment [+]" },
                 "decrement": { "description": "Decrement [-]" },
                 "next":      { "description": "Next [>]" },
@@ -14,9 +16,7 @@
                 "clear":     { "description": "Clear [x]" },
                 "return":    { "description": "Return To Start" },
                 "auto":      { "description": "Auto Pause / Resume" }},
-  "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.0" } },
-  "optional_permissions": ["<all_urls>", "downloads"],
-  "options_ui": { "page": "html/options.html", "browser_style": true },
   "permissions": ["activeTab", "storage"],
-  "short_name": "__MSG_short_name__"
+  "optional_permissions": ["<all_urls>", "downloads"],
+  "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.0" } }
 }

@@ -195,7 +195,7 @@ var WebExtensionsCommandsUI = function () {
       DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("blur", blur);
       DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
       DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
-      DOM["#" + DOM_ID + "-reset-" + command.name].addEventListener("click", click); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
+      DOM["#" + DOM_ID + "-reset-" + command.name].addEventListener("click", reset); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
     }
   }
 
@@ -241,20 +241,18 @@ var WebExtensionsCommandsUI = function () {
       return;
     }
     console.log("keyup!" + key + ", " + this.dataset.name + ", " + this.value);
-    // browser.commands.update({
-    //   name: this.dataset.command,
-    //   shortcut: this.value
-    // });
+    if (browser.commands.update) {
+      browser.commands.update({
+        name: this.dataset.name,
+        shortcut: this.value
+      });
+    }
     this.dataset.shortcut = this.value;
     this.blur();
   }
 
-  function click() {
-    console.log("clicked!" + this.dataset.name);
-    // browser.commands.update({
-    //   name: this.dataset.command,
-    //   shortcut: null
-    // });
+  function reset() {
+    console.log("reset clicked! for " + this.dataset.name);
     browser.commands.reset(this.dataset.name);
     DOM["#" + DOM_ID + "-input-" + this.dataset.name].value = "";
   }
@@ -330,8 +328,8 @@ var WebExtensionsCommandsUI = function () {
     ];
 
     // // remove error
-    // DOM["#-input-underline-" + this.dataset.command].classList.remove("error");
-    // DOM["#-error-" + this.dataset.command].textContent = "";
+    // DOM["#-input-underline-" + this.dataset.name].classList.remove("error");
+    // DOM["#-error-" + this.dataset.name].textContent = "";
   }
 
   /**

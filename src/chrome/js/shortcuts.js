@@ -19,8 +19,12 @@ URLI.Shortcuts = function () {
         MOUSE_CLICK_SPEED = 400;
 
   let clicks = 0,
+      clicks2 = 0,
       button = undefined,
       timeout,
+      timeout2,
+      timeouts = {}, // Reusable global timeouts for input changes to fire after the user stops typing
+      timeout2Active = false,
       items_ = {}; // storage items cache
 
   /**
@@ -58,6 +62,9 @@ URLI.Shortcuts = function () {
    * @public
    */
   function mouseListener(event) {
+    if (timeout2Active) {
+      event.preventDefault();
+    }
     mouseHandler(event);
     if      (mousePressed(event, items_.mouseIncrement)) { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }, MOUSE_CLICK_SPEED); }
     else if (mousePressed(event, items_.mouseDecrement)) { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }, MOUSE_CLICK_SPEED); }
@@ -66,6 +73,17 @@ URLI.Shortcuts = function () {
     else if (mousePressed(event, items_.mouseClear))     { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }, MOUSE_CLICK_SPEED); }
     else if (mousePressed(event, items_.mouseReturn))    { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }, MOUSE_CLICK_SPEED); }
     else if (mousePressed(event, items_.mouseAuto))      { timeout = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }, MOUSE_CLICK_SPEED); }
+  }
+
+  function mouseDownListener(event) {
+    mouseDownHandler(event);
+    if      (mouseDownPressed(event, items_.mouseIncrement)) { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mouseDecrement)) { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mouseNext))      { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mousePrev))      { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mouseClear))     { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mouseReturn))    { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }, MOUSE_CLICK_SPEED); }
+    else if (mouseDownPressed(event, items_.mouseAuto))      { timeout2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }, MOUSE_CLICK_SPEED); }
   }
 
   /**
@@ -99,6 +117,17 @@ URLI.Shortcuts = function () {
     return mouse && event.button === mouse.button && mouse.clicks === clicks;
   }
 
+  function mouseDownPressed(event, mouse) {
+    console.log("moustdown.pressed event.buttons=" + event.buttons);
+    if (mouse && event.buttons === mouse.button && mouse.clicks === clicks2) {
+      timeout2Active = true;
+    }/* else {
+      timeout2Active = false;
+    }*/
+    return mouse && event.buttons === mouse.button && mouse.clicks === clicks2;
+  }
+
+
   function mouseHandler(event) {
     clearTimeout(timeout);
     if (button === event.button || button === undefined) {
@@ -111,11 +140,39 @@ URLI.Shortcuts = function () {
     button = event.button;
   }
 
+  function mouseDownHandler(event) {
+    clearTimeout(timeout2);
+    console.log("mouseDown() event.buttons=" + event.buttons + ", clicks2=" + clicks2);
+    if (event.buttons === 3) {
+      event.preventDefault();
+      timeout2Active = true;
+      clicks2++;
+      timeout2 = setTimeout(function () {console.log("clearing clicks2!"); clicks2 = 0; }, MOUSE_CLICK_SPEED);
+    } else {
+      clicks2 = 0;
+      timeout2Active = false;
+    }
+  }
+
+  function contextMenuListener(event) {
+
+    if (timeout2Active) {
+      event.preventDefault();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+
   // Return Public Functions
   return {
     setItems: setItems,
     keyListener: keyListener,
-    mouseListener: mouseListener
+    mouseListener: mouseListener,
+    mouseDownListener: mouseDownListener,
+    contextMenuListener: contextMenuListener
   };
 }();
 
@@ -133,7 +190,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       document.removeEventListener("keyup", URLI.Shortcuts.keyListener);
       break;
     case "addMouseListener":
-      document.addEventListener("pointerup", URLI.Shortcuts.mouseListener);
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseListener);
+      document.addEventListener("mousedown", URLI.Shortcuts.mouseDownListener);
+      document.addEventListener("contextmenu", URLI.Shortcuts.contextMenuListener);
       break;
     case "removeMouseListener":
       document.removeEventListener("pointerup", URLI.Shortcuts.mouseListener);
