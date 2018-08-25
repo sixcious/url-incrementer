@@ -18,5 +18,5 @@
                 "auto":      { "description": "Auto Pause / Resume" }},
   "permissions": ["activeTab", "storage"],
   "optional_permissions": ["<all_urls>", "downloads"],
-  "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.0" } }
+  "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.1.0" } }
 }
