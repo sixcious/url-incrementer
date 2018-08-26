@@ -385,6 +385,22 @@ URLI.Options = function () {
     });
   }
 
+  function buildPsaves(psaves) {
+
+  }
+
+  function addPsave() {
+    const psaves = EXT.Promisify.get("local", "psaves");
+    wildcards.push({
+      "type": "start", "length": url.length
+    });
+
+  }
+
+  function deletePsave() {
+
+  }
+
   /**
    * Updates the error codes for error skip by examining if each checkbox is checked (on change event).
    *
