@@ -90,8 +90,10 @@ div.checkbox  img {
 /* Setup CSS */
 
 #setup {
-  min-width: 512px;
-  margin: 12px;
+  /*min-width: 512px;*/
+  width: 516px;
+/*  margin: 12px;*/
+  margin: 16px;
 }
 
 #setup .heading {
@@ -151,7 +153,8 @@ div.checkbox  img {
 }
 
 #setup #properties div.column:not(:last-child) {
-  padding-right: 27px;
+/*  padding-right: 27px;*/
+  padding-right: 24px;
 }
 
 #setup div.column > label, label.label-display-block {
@@ -192,7 +195,8 @@ div.checkbox  img {
 }
 
 #profile-save {
-  margin-top: -2px;
+  right: 8px;
+  margin-top: 2px;
 }
 
 #auto-eta, #auto-repeat {
@@ -471,8 +475,8 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 #extra-options {
   position: absolute;
-  right: 4px;
-  bottom: 3px;
+  right: 0;
+  bottom: 4px;
 }
 
 /* extra-toggles */
@@ -494,11 +498,11 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 }*/
 
 #setup #extra-options div:not(:last-child) {
-  margin-right: 8px;
+/*  margin-right: 8px;*/
 }
 
-.icon-button {
-  padding: 4px;
+.icon-button label {
+  padding: 8px;
 }
 
 .icon-button, .icon-button label {

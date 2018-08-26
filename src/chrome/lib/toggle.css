@@ -84,11 +84,11 @@
 }
 
 .tgl-outer {
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .tgl-inner {
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .tgl + .tgl-btn {
@@ -96,7 +96,10 @@
   height: 1.25em;
   background: #AAAAAA;
   display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 1px;
 }
+
 .tgl-ios:checked + .tgl-btn {
   background: #4285f4;
 }
@@ -122,7 +125,8 @@
 
 .tgl-text {
   display: inline-block;
-  font-size: 1.05em;
+/*  font-size: 1.05em;*/
+  font-size: 1.1em;
   font-weight: bold;
   font-style: italic;
 }

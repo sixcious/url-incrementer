@@ -344,10 +344,12 @@ URLI.Options = function () {
       select.id = "profiles-select";
       for (let profile of profiles) {
         const option = document.createElement("option");
-        option.dataset.urlhash1 = profile.urlhash1;
-        option.dataset.urlhash2 = profile.urlhash2;
-        option.textContent = (count++) +
-          " - hash: " + profile.urlhash1.substring(0, 16) + "..." +
+        // option.dataset.urlhash1 = profile.urlhash1;
+        // option.dataset.urlhash2 = profile.urlhash2;
+        option.dataset.hash = profile.hash;
+        option.textContent = (count++) + " -" +
+          //" hash: " + profile.urlhash1.substring(0, 16) + "..." +
+          " hash: " + profile.hash.substring(0, 16) + "..." +
           " interval: " + (profile.interval < 100000 ? profile.interval : profile.interval.toString().substring(0, 5) + "...") +
           " base: " + profile.base +
           " zeros: " + (profile.leadingZeros ? "Y" : "N");
@@ -361,14 +363,17 @@ URLI.Options = function () {
   function deleteProfile() {
     const select = document.getElementById("profiles-select"), // Dynamically Generated Select, so can't use DOM Cache
           option = select.options[select.selectedIndex],
-          urlhash1 = option.dataset.urlhash1,
-          urlhash2 = option.dataset.urlhash2;
+          hash = option.dataset.hash;
+          // urlhash1 = option.dataset.urlhash1,
+          // urlhash2 = option.dataset.urlhash2;
     chrome.storage.local.get(null, function(localItems) {
       const profiles = localItems.profiles;
       if (profiles && profiles.length > 0) {
         for (let i = 0; i < profiles.length; i++) {
-          if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
-            console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
+          // if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
+          if (profiles[i].hash === hash) {
+            //console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
+            console.log("URLI.Options.deleteProfile() - deleting URL with hash=" + profiles[i].hash);
             profiles.splice(i, 1);
             chrome.storage.local.set({profiles: profiles}, function() {
               populateValuesFromStorage("profiles");

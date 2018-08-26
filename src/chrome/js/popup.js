@@ -871,9 +871,9 @@ URLI.Popup = function () {
       _.startingSelectionStart = +DOM["#selection-start-input"].value;
       _.interval = +DOM["#interval-input"].value;
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
-      _.baseCase = DOM["#base-case-uppercase-input"].checked ? "uppercase" : DOM["#base-case-lowercase-input"].checked ? "lowercase" : undefined;
+      _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked ? DOM["#base-case-lowercase-input"].value : undefined;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
-      _.selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(_.selection, _.base).toString(_.base); // Not in instance? TODO check background buildInstance for this?
+      //_.selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(_.selection, _.base).toString(_.base); // Not in instance? TODO check background buildInstance for this?
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
       _.errorSkip = +DOM["#error-skip-input"].value;
       // Note: _.multi is set in clickMulti()
@@ -933,15 +933,10 @@ URLI.Popup = function () {
       // Increment Decrement Errors
       e.incrementDecrementErrors = [
         // [0] = Selection Errors
-        _.base === "date" ?
-          backgroundPage.URLI.IncrementDecrementDate.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
-        :
-          _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-          !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
-          _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-          !/^[a-z0-9]+$/i.test(_.selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
-          parseInt(_.selection, _.base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
-          isNaN(parseInt(_.selection, _.base)) || _.selection.toUpperCase() !== ("0".repeat(_.selection.length - _.selectionParsed.length) + _.selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+        _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+        !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
+        _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+        backgroundPage.URLI.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom),
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors

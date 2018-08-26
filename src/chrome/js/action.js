@@ -94,7 +94,7 @@ URLI.Action = function () {
     // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
     if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
       console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
-      URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL});
+      URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL, "startingSelection": instance.startingSelection, "startingSelectionStart": instance.startingSelectionStart});
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     const items = await EXT.Promisify.getItems();

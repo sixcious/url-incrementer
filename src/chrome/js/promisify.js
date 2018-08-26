@@ -1,9 +1,13 @@
-
+/**
+ * URL Incrementer Promisify
+ *
+ * @author Roy Six
+ * @namespace
+ */
 
 var EXT = EXT || {};
 
 EXT.Promisify = function () {
-
 
   /**
    * Gets the storage items via a promise-based wrapper for async/await callers.
@@ -21,6 +25,12 @@ EXT.Promisify = function () {
     });
   }
 
+  /**
+   * Gets the background page via a promise-based wrapper for async/await callers.
+   *
+   * @returns {Promise<{}>} the background page
+   * @public
+   */
   function getBackgroundPage() {
     return new Promise(resolve => {
       chrome.runtime.getBackgroundPage(backgroundPage => {
@@ -29,9 +39,15 @@ EXT.Promisify = function () {
     });
   }
 
-  function getTabs() {
+  /**
+   * Gets the queried tabs via a promise-based wrapper for asyn/await callers.
+   *
+   * @param queryInfo the query object to use (optional)
+   * @returns {Promise<{}>} the tabs
+   */
+  function getTabs(queryInfo = {active: true, lastFocusedWindow: true}) {
     return new Promise(resolve => {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, function(tabs) {
+      chrome.tabs.query(queryInfo, tabs => {
         resolve(tabs);
       });
     });

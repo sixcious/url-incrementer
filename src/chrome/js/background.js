@@ -144,7 +144,7 @@ URLI.Background = function () {
         const result = await URLI.SaveURLs.matchesURL(profile, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url");
-          props = buildProps("profile", profile, result);
+          props = buildProps("profile", tab, profile, result);
           break;
         }
       }
@@ -152,19 +152,24 @@ URLI.Background = function () {
     // If no profile found, build using storage items:
     if (!props) {
       const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
-      props = buildProps("items", items, selectionProps);
+      props = buildProps("items", tab, items, selectionProps);
     }
     // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
-    props.startingURL = getInstance(tab.id) && getInstance(tab.id).startingURL ? getInstance(tab.id).startingURL : tab.url;
+    const instance = getInstance(tab.id);
+    if (instance && instance.isSkeleton) {
+      props.startingURL = instance.startingURL;
+      props.startingSelection = instance.startingSelection;
+      props.startingSelectionStart = instance.startingSelectionStart;
+    }
     // Return newly built instance using props and items:
     return {
       "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false, "autoPaused": false,
-      "tabId": tab.id, "url": tab.url, "startingURL": props.startingURL,
+      "tabId": props.tabId, "url": props.url, "startingURL": props.startingURL,
       "profileFound": props.profileFound,
-      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.selection, "startingSelectionStart": props.selectionStart,
+      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.startingSelection, "startingSelectionStart": props.startingSelectionStart,
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
-      "base": props.base, "baseCase": props.baseCase, "baseDateFormat": props.baseDateFormat,
+      "base": props.base, "baseCase": props.baseCase, "baseDateFormat": props.baseDateFormat, "baseCustom": props.baseCustom,
       "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
@@ -182,25 +187,29 @@ URLI.Background = function () {
    * Builds properties for an instance using either a base of a saved URL or storage items.
    *
    * @param via   string indicating how the props are being built ("profile" or "items")
-   * @param base  the base object to build from (saved url or storage items)
-   * @param sbase the selection base object to build from
+   * @param tab   the tab to build from (id and url)
+   * @param object  the base object to build from (saved url or storage items)
+   * @param sobject the selection base object to build from
    * @returns {{}} the built properties from the bases
    * @private
    */
-  function buildProps(via, base, sbase) {
+  function buildProps(via, tab, object, sobject) {
     const props = {};
+    props.tabId = tab.id;
+    props.url = props.startingURL = tab.url;
     props.profileFound = via === "profile";
-    props.selection = sbase.selection;
-    props.selectionStart = props.profileFound ? base.selectionStart : sbase.selectionStart;
-    props.interval = base.interval;
-    props.base = base.base;
-    props.baseCase = base.baseCase;
-    props.baseDateFormat = base.baseDateFormat;
-    props.leadingZeros = props.profileFound ? base.leadingZeros : base.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
-    props.errorSkip = base.errorSkip;
-    props.errorCodes = base.errorCodes;
-    props.errorCodesCustomEnabled = base.errorCodesCustomEnabled;
-    props.errorCodesCustom = base.errorCodesCustom;
+    props.selection = props.startingSelection = sobject.selection;
+    props.selectionStart = props.startingSelectionStart = props.profileFound ? object.selectionStart : sobject.selectionStart;
+    props.interval = object.interval;
+    props.base = object.base;
+    props.baseCase = object.baseCase;
+    props.baseDateFormat = object.baseDateFormat;
+    props.baseCustom = object.baseCustom;
+    props.leadingZeros = props.profileFound ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    props.errorSkip = object.errorSkip;
+    props.errorCodes = object.errorCodes;
+    props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;
+    props.errorCodesCustom = object.errorCodesCustom;
     return props;
   }
 
@@ -472,32 +481,24 @@ URLI.Background = function () {
   async function startupListener() {
     const items = await EXT.Promisify.getItems();
     console.log("URLI.Background.startupListener()");
-//    chrome.storage.sync.get(null, function(items) {
-      //items_ = items;
-      // Ensure the chosen toolbar icon is set
-      // Firefox Android: chrome.browserAction.setIcon() not supported
-      if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
-        console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
-        chrome.browserAction.setIcon({
-          path : {
-            "16": "/img/icons/" + items.iconColor + "/16.png",
-            "24": "/img/icons/" + items.iconColor + "/24.png",
-            "32": "/img/icons/" + items.iconColor + "/32.png"
-          }
-        });
-      }
-      // Ensure Internal Shortcuts declarativeContent rule is added
-      // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-      if (items && items.permissionsInternalShortcuts) {
-        console.log("URLI.Background.startupListener() - adding content script listener");
-        chrome.tabs.onUpdated.removeListener(contentScriptListener);
-        chrome.tabs.onUpdated.addListener(contentScriptListener);
-        //contentScriptListenerAdded = true;
-      }
-//    });
-    // chrome.storage.local.get(null, function(localItems) {
-    //   localItems_ = localItems;
-    // });
+    // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
+    if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
+      console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
+      chrome.browserAction.setIcon({
+        path : {
+          "16": "/img/icons/" + items.iconColor + "/16.png",
+          "24": "/img/icons/" + items.iconColor + "/24.png",
+          "32": "/img/icons/" + items.iconColor + "/32.png"
+        }
+      });
+    }
+    // Ensure Internal Shortcuts declarativeContent rule is added
+    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
+    if (items && items.permissionsInternalShortcuts) {
+      console.log("URLI.Background.startupListener() - adding content script listener");
+      chrome.tabs.onUpdated.removeListener(contentScriptListener);
+      chrome.tabs.onUpdated.addListener(contentScriptListener);
+    }
   }
 
   /**
@@ -514,8 +515,6 @@ URLI.Background = function () {
     if (changeInfo.status === "loading") {
       console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
       chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
-      // if (items_.permissionsInternalShortcuts) {
-      // }
     }
   }
 

@@ -131,6 +131,8 @@
   "selectionstart_invalid_error": { "message": "Selection position must be from URL" },
   "interval_invalid_error": { "message": "Interval has to be between 1 and Max" },
   "error_skip_invalid_error": { "message": "Error Skip has to be between 0 and 100" },
+  "base_invalid_error": { "message": "Select a valid base" },
+  "date_invalid_error": { "message": "Date format doesn't match selection" },
   "toolkit_invalid_error": { "message": "Toolkit configuration missing tool, action, or quantity" },
   "toolkit_open_tabs_too_many_open_error": { "message": "Too many tabs are open in this window (current tabs + quantity exceeds 100), please close some or open a new window" },
   "toolkit_open_tabs_quantity_error": { "message": "Toolkit Open Tabs Quantity must be between 1 and 100" },

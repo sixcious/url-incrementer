@@ -79,6 +79,67 @@ URLI.IncrementDecrement = function () {
     return selectionProps;
   }
 
+  // Called by Popup and SaveURLs TODO
+  function validateSelection(selection, base, baseCase, dateFormat, custom) {
+    let error = "";
+    switch (base) {
+      case "date":
+        const selectionDate = URLI.IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, dateFormat);
+        console.log("selectionDat=" + selectionDate);
+        if (selectionDate !== selection) {
+          error = chrome.i18n.getMessage("date_invalid_error");
+        }
+        break;
+      case "custom":
+        break;
+      default: // Base 2-36
+        if (base < 2 || base > 36) {
+          error = chrome.i18n.getMessage("base_invalid_error");
+        } else if (!/^[a-z0-9]+$/i.test(selection)) {
+          error = chrome.i18n.getMessage("selection_notalphanumeric_error");
+        } else {
+          const selectionInt = parseInt(selection, base);
+          const selectionStr = selectionInt.toString(base);
+          if (selectionInt >= Number.MAX_SAFE_INTEGER) {
+            error = chrome.i18n.getMessage("selection_toolarge_error");
+          } else if ((isNaN(selectionInt)) || (selection.toUpperCase() !== ("0".repeat(selection.length - selectionStr.length) + selectionStr.toUpperCase()))) {
+            error = chrome.i18n.getMessage("selection_base_error");
+          }
+        }
+        break;
+    }
+    return error;
+
+    //POPUP:
+    //         // [0] = Selection Errors
+    //     _.base === "date" ?
+    //       backgroundPage.URLI.IncrementDecrementDate.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
+    //     :
+    //       _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+    //       !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
+    //       _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+    //       !/^[a-z0-9]+$/i.test(_.selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
+    //       parseInt(_.selection, _.base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
+    //       isNaN(parseInt(_.selection, _.base)) || _.selection.toUpperCase() !== ("0".repeat(_.selection.length - _.selectionParsed.length) + _.selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
+
+
+
+
+    // SAVE URLS:
+    // const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
+    // const selectionParsed = isNaN(profile.base) ? undefined : parseInt(selection, profile.base).toString(profile.base);
+    // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
+    // Test base matches selection for same reason
+    // console.log("profile.urlhash1=" + profile.urlhash1);
+    // console.log("urlhash1=" + urlhash1);
+    // const matches = (urlhash1 === profile.urlhash1) &&
+    //   ((urlhash2 === profile.urlhash2) ||
+    // ((profile.url2length === 0) &&
+    //   /^[a-z0-9]+$/i.test(selection) &&
+    //   selectionParsed ? !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) :
+    //   profile.base === "date" && false)); // TODO date base
+  }
+
   /**
    * TODO...
    * Handles an increment or decrement operation, acting as a controller.
@@ -190,7 +251,7 @@ URLI.IncrementDecrement = function () {
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, base, baseCustom, leadingZeros);
         break;
-      case "alphanumeric":
+      // case "alphanumeric":
       default:
         selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
         break;
@@ -263,6 +324,7 @@ URLI.IncrementDecrement = function () {
   // Return Public Functions
   return {
     findSelection: findSelection,
+    validateSelection: validateSelection,
     incrementDecrement: incrementDecrement,
     incrementDecrementAndSkipErrors: incrementDecrementAndSkipErrors
   };
