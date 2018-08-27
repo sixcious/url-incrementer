@@ -102,7 +102,7 @@ URLI.Options = function () {
     //DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#profile-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"profilePreselect": this.checked}); });
     DOM["#profile-delete-button"].addEventListener("click", function() { deleteProfile(); });
-    DOM["#psaves-add-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-block fade-in"; DOM["#psaves-errors"].textContent = ""; });
+    DOM["#psaves-add-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-block fade-in"; DOM["#psaves-url-textarea"].value = DOM["#psaves-errors"].textContent = ""; });
     DOM["#psaves-cancel-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-none"; });
     DOM["#psaves-save-button"].addEventListener("click", function() { addPsave(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
@@ -352,11 +352,13 @@ URLI.Options = function () {
         const option = document.createElement("option");
         option.dataset.hash = asave.hash;
         option.textContent = (count++) + " -" +
-          " hash: " + asave.hash.substring(0, 16) + "..." +
-          " interval: " + (asave.interval < 100000 ? asave.interval : asave.interval.toString().substring(0, 5) + "...") +
-          " base: " + asave.base +
+          " hash: " + asave.hash.substring(0, 10) + "..." +
+          " [" + asave.type + "]" +
+          " sel:" + (asave.type === "exact" ? asave.selectionStart : asave.selectionPriority) +
+          " int: " + (asave.interval < 100000 ? asave.interval : asave.interval.toString().substring(0, 5) + "...") +
+          " base: " + asave.base;
           // " zeros: " + (asave.leadingZeros ? "Y" : "N") +
-          " match: " + (asave.selectionStart ? "exact" : "partial");
+          //" match: " + (asave.selectionStart ? "exact" : "partial");
         select.appendChild(option);
       }
       DOM["#profile-select-div"].replaceChild(select, DOM["#profile-select-div"].firstChild);
@@ -430,7 +432,7 @@ URLI.Options = function () {
         hash = await backgroundPage.URLI.Cryptography.calculateHash(url, salt);
       // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
       psaves.unshift({
-        "hash": hash, "salt": salt, "length": url.length,
+        "hash": hash, "salt": salt, "length": url.length, "type": "partial",
         "selectionPriority": selectionPriority, "selectionCustom": selectionCustom, "interval": interval, "leadingZerosPadByDetection": leadingZerosPadByDetection,
         "base": base, "baseCase": baseCase /*, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom*/, "errorSkip": errorSkip
       });

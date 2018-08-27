@@ -5,33 +5,32 @@
 URLI (Extension Mascot / Incrementer Robot):
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196">
 
-URLI ("yur-lee") increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment and start a custom webpage slideshow! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
+URLI increments URLs and other interesting incrementing things. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently. You can use shortcuts or the UI buttons to increment. Or toggle on AUTO to auto-increment! Download a series of pages while incrementing, or use Download and Auto together for a unique "Auto Incrementer Downloader" (experimental feature)! You can even add super convenient "1-Click" Increment Decrement Button extensions to your toolbar as well. URLI also features Error and Redirection skipping so you can skip past 404 Page Not Founds and other bad URLs until you get to the one you want. You can use URLI to navigate or flip thru image gallery or thumbnail websites, forums, or any site that keeps its URLs organized sequentially in a pattern.
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features
+- Keyboard and Mouse / Touch Shortcuts
+- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store / AMO)
 - Auto Incrementing
 - Download Incrementing [Experimental] ** 
 - Multi Incrementing
 - "The Incrementer's Toolkit" Open up to 100 incremented tabs at once or generate 10,000 incremented links in 1 second!
 - Date Time Incrementing
 - Next [>] Prev [<]
-- Keyboard Shortcuts, Mouse and Touch Shortcuts, Browser Shortcuts
-- "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store)
 - Error Skipping
 - Save URLs (Optional - Remembers settings for each URL)
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
-- Works on Mobile (Firefox for Android)
-- So Many Options: Alphanumeric Incrementing, Custom Bases like Base 62, Change how URLI pre-selects the number to increment... and more
+- So Many Options: Alphanumeric Incrementing, Custom Base Support, Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 # Coming Soon in Version 6.0 (8/28/2018)
 - Support for Firefox and Firefox for Android
-- Touch/Mouse Internal Shortcuts: Swipe Right or Left, Multi-Click/Tap (2, 3, 4)
-- Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. To protect your privacy to the highest standard, URLs will be saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC SHA-512, a randomly generated salt, and a high number of iterations.
+- New Mouse/Touch Shortcuts: Multi-Click / Tap, Hold Left/Right + Click
+- Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in").
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
 - Multi-Incrementing - Increment up to 3 different parts of the URL at the same time or individually. Click the Multi (share icon) near Selection and then click Accept. Additional + - Buttons will show in the UI for simultaneous and individual-part incrementing.
 - Date Time Incrementing - Increment dates and times in URLs like 2018/08/05 and/or 12:30:05

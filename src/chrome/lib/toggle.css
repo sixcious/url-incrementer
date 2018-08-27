@@ -107,7 +107,7 @@
 .tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
   width: 63%;
   height: 175%;
-  top: -38%; /* -42% */
+  top: -40%; /*-38%;*/ /* -42% */
 }
 
 .tgl-ios + .tgl-btn:after {

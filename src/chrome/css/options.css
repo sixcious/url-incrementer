@@ -193,8 +193,12 @@ input[type="number"].mouse-clicks-input {
   font-style: italic;
 }
 
-#profile-settings-buttons, #psaves, #psaves-buttons {
+#profile-settings-buttons{
   margin-top: 2em;
+}
+
+#psaves, #psaves-buttons {
+  margin-top: 1em;
 }
 
 #profile-settings-buttons button:not(:last-child), #psaves-buttons button:not(:last-child) {
