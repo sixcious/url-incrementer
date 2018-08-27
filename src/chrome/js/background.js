@@ -136,7 +136,8 @@ URLI.Background = function () {
   async function buildInstance(tab, items, localItems) {
     items = items ? items : await EXT.Promisify.getItems();
     localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
-    const profiles = localItems.profiles;
+    const profiles = localItems.profiles,
+          psaves = localItems.psaves;
     let props;
     // First search for a profile to build an instance from:
     if (profiles && profiles.length > 0) {
@@ -146,6 +147,18 @@ URLI.Background = function () {
           console.log("URLI.Background.buildInstance() - found a profile for this tab's url");
           props = buildProps("profile", tab, profile, result);
           break;
+        }
+      }
+    }
+    // psave
+    if (!props && psaves && psaves.length > 0) {
+      for (let psave of psaves) {
+        const url = tab.url.substring(0, psave.length);
+        const hash = await URLI.Cryptography.calculateHash(url, psave.salt);
+        if (hash === psave.hash) {
+          console.log("URLI.Background.buildInstance() - found a psave for this tab's url");
+          const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, psave.selectionPriority, psave.selectionCustom); // selection, selectionStart
+          props = buildProps("psave", tab, psave, selectionProps);
         }
       }
     }
@@ -197,15 +210,15 @@ URLI.Background = function () {
     const props = {};
     props.tabId = tab.id;
     props.url = props.startingURL = tab.url;
-    props.profileFound = via === "profile";
+    props.profileFound = via === "profile" || via === "psave";
     props.selection = props.startingSelection = sobject.selection;
-    props.selectionStart = props.startingSelectionStart = props.profileFound ? object.selectionStart : sobject.selectionStart;
+    props.selectionStart = props.startingSelectionStart = via === "profile" ? object.selectionStart : sobject.selectionStart;
     props.interval = object.interval;
     props.base = object.base;
     props.baseCase = object.baseCase;
     props.baseDateFormat = object.baseDateFormat;
     props.baseCustom = object.baseCustom;
-    props.leadingZeros = props.profileFound ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    props.leadingZeros = via === "profile" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
     props.errorSkip = object.errorSkip;
     props.errorCodes = object.errorCodes;
     props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;

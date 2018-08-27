@@ -302,18 +302,28 @@
             <span id="profile-preselect-label" data-i18n="textContent"></span>
           </label>
         </div>
-        <div id="profile-exist">
+        <div>
           <p><span id="profile-settings-exist-p" data-i18n="textContent"></span><span id="profile-quantity"></span></p>
           <div id="profile-select-div"><div></div></div>
-          <button id="profile-delete-button" data-i18n="textContent"></button>
+          <div id="profile-settings-buttons">
+            <button id="profile-delete-button" data-i18n="textContent"></button>
+            <button id="psaves-add-button" data-i18n="textContent"></button>
+          </div>
+        </div>
+<!--
+        <p id="profile-settings-none-p" data-i18n="textContent"></p>
+        <div id="profile-exist">
         </div>
         <div id="profile-none">
-          <p id="profile-settings-none-p" data-i18n="textContent"></p>
-        </div>
-        <button id="psaves-add-button" data-i18n="textContent"></button>
-        <div id="psaves">
-          <textarea id="psaves-url" placeholder="https://wwww.example.com/posts/"></textarea>
-          <button id="psaves-save-button" data-i18n="textContent">Save</button>
+        </div>-->
+        <div id="psaves" class="display-none">
+          <label id="psaves-url-label" for="psaves-url-textarea" data-i18n="textContent" class="display-block"></label>
+          <textarea id="psaves-url-textarea" data-i18n="placeholder"></textarea>
+          <div id="psaves-buttons">
+            <button id="psaves-save-button" data-i18n="textContent"></button>
+            <button id="psaves-cancel-button" data-i18n="textContent"></button>
+            <span id="psaves-errors"></span>
+          </div>
         </div>
       </section>
       <section id="increment-decrement-settings">
@@ -671,6 +681,7 @@
         </div>
       </section>
     </div>
+    <script src="../js/promisify.js"></script>
     <script src="../js/permissions.js"></script>
     <script src="../js/ui.js"></script>
     <script src="../js/options.js"></script>

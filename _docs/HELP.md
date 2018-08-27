@@ -126,7 +126,10 @@ You MUST have Enhanced Mode enabled to use Error Skipping in the following situa
 Finally, a few websites may not send an error code and instead "swallow" the error code, returning HTTP Response Code 200 ("OK") while still displaying a customized error page. Error Skipping won't work on these websites.
 
 ## Saving URLs
-To make life easy, you can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time. It's completely optional ("opt-in"), you can check the Save checkbox if you want to save a URL Profile. You can also have the Save checkbox always pre-checked in the Options.
+To make life easy, you can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time you visit them.
+It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**.
+1. Click the heart icon in Setup if you want to save an *Exact URL* (you can also have the Save checkbox always pre-checked in the Options).
+2. In Options, add a *Partial URL*. This lets you add a less-restrictive partial URL that can be "matched" with several URLs that start with the partial URL you entered.
 
 After you save a URL, you can jump straight to using shortcuts or buttons to increment on every visit!
 
@@ -138,8 +141,11 @@ When you view your saved URLs in Options, you'll see a small part of the hash (i
 #### Where Are The Cryptographic Hashes Saved?
 The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all your other saved settings). We do not save anything outside the extension storage space allotted to us.
 
-#### Recognizing Saved URLs
-Because we save URLs just like passwords, the URLs must match exactly for it to be recognized (except for the part/number you selected to increment). For example, if you save https://www.example.com/abc/page=1 then https://www.example.com/xyz/page=1 will not be recognized because of the difference in abc and xyz.
+#### Exact URLs vs Partial URLs - Which Should I Use?
+Because URLs are saved just like passwords, *Exact URLs* must match exactly for it to be recognized (except for the part/number you selected to increment).
+However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
+For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
+So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
 
 ## Shuffle URLs
 Click the Shuffle (crossed-arrows) icon to turn this mode on.

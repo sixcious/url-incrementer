@@ -193,8 +193,12 @@ input[type="number"].mouse-clicks-input {
   font-style: italic;
 }
 
-#profile-delete-button {
+#profile-settings-buttons, #psaves, #psaves-buttons {
   margin-top: 2em;
+}
+
+#profile-settings-buttons button:not(:last-child), #psaves-buttons button:not(:last-child) {
+  margin-right: 1em;
 }
 
 /* base-case */

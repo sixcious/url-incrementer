@@ -102,6 +102,9 @@ URLI.Options = function () {
     //DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#profile-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"profilePreselect": this.checked}); });
     DOM["#profile-delete-button"].addEventListener("click", function() { deleteProfile(); });
+    DOM["#psaves-add-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-block fade-in"; DOM["#psaves-errors"].textContent = ""; });
+    DOM["#psaves-cancel-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-none"; });
+    DOM["#psaves-save-button"].addEventListener("click", function() { addPsave(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
@@ -161,9 +164,10 @@ URLI.Options = function () {
           DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
         }
         if (values === "all" || values === "profiles") {
-          DOM["#profile-exist"].className = localItems.profiles && localItems.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#profile-none"].className = !localItems.profiles || localItems.profiles.length <= 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
-          buildSelectProfiles(localItems.profiles);
+          //DOM["#profile-exist"].className = localItems.profiles && localItems.profiles.length > 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+          //DOM["#profile-none"].className = !localItems.profiles || localItems.profiles.length <= 0 ? values === "profiles" ? "display-block fade-in" : "display-block" : "display-none";
+          DOM["#profile-delete-button"].className = localItems.psaves && localItems.psaves.length > 0 ? "" : "display-none";
+          buildSelectProfiles(localItems.profiles, localItems.psaves);
         }
         if (values === "all") {
           DOM["#browser-shortcuts-quick-enable-input"].checked = items.quickEnabled;
@@ -337,42 +341,40 @@ URLI.Options = function () {
    *
    * @private
    */
-  function buildSelectProfiles(profiles) {
-    if (profiles && profiles.length > 0) {
+  function buildSelectProfiles(profiles, psaves) {
+    const asaves = profiles && psaves ? profiles.concat(psaves) : profiles ? profiles : psaves;
+    if (asaves && asaves.length > 0) {
       const select = document.createElement("select");
       let count = 1;
       select.id = "profiles-select";
-      for (let profile of profiles) {
+      select.className = "display-block fade-in";
+      for (let asave of asaves) {
         const option = document.createElement("option");
-        // option.dataset.urlhash1 = profile.urlhash1;
-        // option.dataset.urlhash2 = profile.urlhash2;
-        option.dataset.hash = profile.hash;
+        option.dataset.hash = asave.hash;
         option.textContent = (count++) + " -" +
-          //" hash: " + profile.urlhash1.substring(0, 16) + "..." +
-          " hash: " + profile.hash.substring(0, 16) + "..." +
-          " interval: " + (profile.interval < 100000 ? profile.interval : profile.interval.toString().substring(0, 5) + "...") +
-          " base: " + profile.base +
-          " zeros: " + (profile.leadingZeros ? "Y" : "N");
+          " hash: " + asave.hash.substring(0, 16) + "..." +
+          " interval: " + (asave.interval < 100000 ? asave.interval : asave.interval.toString().substring(0, 5) + "...") +
+          " base: " + asave.base +
+          // " zeros: " + (asave.leadingZeros ? "Y" : "N") +
+          " match: " + (asave.selectionStart ? "exact" : "partial");
         select.appendChild(option);
       }
       DOM["#profile-select-div"].replaceChild(select, DOM["#profile-select-div"].firstChild);
-      DOM["#profile-quantity"].textContent = " (" + profiles.length + "):";
+    } else {
+      DOM["#profile-select-div"].replaceChild(document.createElement("div"), DOM["#profile-select-div"].firstChild);
     }
+    DOM["#profile-quantity"].textContent = " (" + asaves.length + "):";
   }
 
   function deleteProfile() {
     const select = document.getElementById("profiles-select"), // Dynamically Generated Select, so can't use DOM Cache
           option = select.options[select.selectedIndex],
           hash = option.dataset.hash;
-          // urlhash1 = option.dataset.urlhash1,
-          // urlhash2 = option.dataset.urlhash2;
     chrome.storage.local.get(null, function(localItems) {
       const profiles = localItems.profiles;
       if (profiles && profiles.length > 0) {
         for (let i = 0; i < profiles.length; i++) {
-          // if (profiles[i].urlhash1 === urlhash1 && profiles[i].urlhash2 === urlhash2) {
           if (profiles[i].hash === hash) {
-            //console.log("URLI.Options.deleteProfile() - deleting URL with urlhash1=" + profiles[i].urlhash1);
             console.log("URLI.Options.deleteProfile() - deleting URL with hash=" + profiles[i].hash);
             profiles.splice(i, 1);
             chrome.storage.local.set({profiles: profiles}, function() {
@@ -382,23 +384,61 @@ URLI.Options = function () {
           }
         }
       }
+      const psaves = localItems.psaves;
+      if (psaves && psaves.length > 0) {
+        for (let i = 0; i < psaves.length; i++) {
+          if (psaves[i].hash === hash) {
+            console.log("URLI.Options.deleteProfile() - deleting URL with hash=" + psaves[i].hash);
+            psaves.splice(i, 1);
+            chrome.storage.local.set({psaves: psaves}, function() {
+              populateValuesFromStorage("profiles");
+            });
+            break;
+          }
+        }
+      }
     });
   }
 
-  function buildPsaves(psaves) {
+  async function addPsave() {
+    const items = await EXT.Promisify.getItems();
+    const url = DOM["#psaves-url-textarea"].value,
+      selectionPriority = items.selectionPriority,
+      selectionCustom = items.selectionCustom,
+      interval = items.interval,
+      leadingZerosPadByDetection = items.leadingZerosPadByDetection,
+      base = items.base,
+      baseCase = items.baseCase,
+      errorSkip = items.errorSkip;
+          // selectionPriority = DOM["#selection-select"].value,
+          // interval = +DOM["#interval-input"].value,
+          // leadingZerosPadByDetection =  DOM["#leading-zeros-pad-by-detection-input"].checked,
+          // base = +DOM["#base-select"].value,
+          // baseCase = DOM["#base-case-lowercase-input"].checked ? "lowercase" : "uppercase",
+          // errorSkip = +DOM["#error-skip-input"].value;
+    selectionCustom.url = "";
+    if (!url || url.length < 0) {
+      DOM["#psaves-errors"].textContent = chrome.i18n.getMessage("psaves_url_error");
+    } else {
+      const psaves = await EXT.Promisify.getItems("local", "psaves");
+      const backgroundPage = await EXT.Promisify.getBackgroundPage();
+      // Part 1: Check if this URL has already been saved, if it has remove the existing saved profile
+      //const profiles = await deleteURL(instance, "saveURL");
+      // Part 2: Put this URL into the profiles array and save it to local storage
 
-  }
-
-  function addPsave() {
-    const psaves = EXT.Promisify.get("local", "psaves");
-    wildcards.push({
-      "type": "start", "length": url.length
-    });
-
-  }
-
-  function deletePsave() {
-
+      const salt = backgroundPage.URLI.Cryptography.generateSalt(),
+        hash = await backgroundPage.URLI.Cryptography.calculateHash(url, salt);
+      // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
+      psaves.unshift({
+        "hash": hash, "salt": salt, "length": url.length,
+        "selectionPriority": selectionPriority, "selectionCustom": selectionCustom, "interval": interval, "leadingZerosPadByDetection": leadingZerosPadByDetection,
+        "base": base, "baseCase": baseCase /*, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom*/, "errorSkip": errorSkip
+      });
+      chrome.storage.local.set({"psaves": psaves}, function() {
+        populateValuesFromStorage("profiles");
+        DOM["#psaves"].className = "display-none";
+      });
+    }
   }
 
   /**
