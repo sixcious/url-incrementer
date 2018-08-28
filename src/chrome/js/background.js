@@ -30,7 +30,7 @@ URLI.Background = function () {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* saved */ "profiles": [], "profilePreselect": false, "saves": [], "psaves": [], "savePrecheck": false,
+    /* saves */ "saves": [], "savePreselect": false
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -136,8 +136,7 @@ URLI.Background = function () {
   async function buildInstance(tab, items, localItems) {
     items = items ? items : await EXT.Promisify.getItems();
     localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
-    const profiles = localItems.profiles,
-          psaves = localItems.psaves;
+    const profiles = localItems.profiles;
     let props;
     // First search for a profile to build an instance from:
     if (profiles && profiles.length > 0) {

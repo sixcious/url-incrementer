@@ -432,7 +432,7 @@ URLI.Options = function () {
         hash = await backgroundPage.URLI.Cryptography.calculateHash(url, salt);
       // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
       psaves.unshift({
-        "hash": hash, "salt": salt, "length": url.length, "type": "partial",
+        "hash": hash, "salt": salt, "urllength": url.length, "type": "partial",
         "selectionPriority": selectionPriority, "selectionCustom": selectionCustom, "interval": interval, "leadingZerosPadByDetection": leadingZerosPadByDetection,
         "base": base, "baseCase": baseCase /*, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom*/, "errorSkip": errorSkip
       });

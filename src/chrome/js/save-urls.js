@@ -49,25 +49,33 @@ URLI.SaveURLs = function () {
     }
   }
 
+  async function matchesURL(profile, url) {
+    return await profile.type === "exact" ? matchesExactURL(profile, url) : profile.type === "partial" ? matchesPartialURL(profile, url): "";
+  }
+
   /**
    * Checks if the saved profile's hashed URL matches the URL.
    *
    * @param profile the saved profile with url hashes to check
    * @param url     the current URL to check
    * @returns {Promise<{matches: boolean, selection: string}>}
-   * @public
+   * @private
    */
-  async function matchesURL(profile, url) {
+  async function matchesExactURL(profile, url) {
     const url1 = url.substring(0, profile.selectionStart),
           url2 = url.substring(url.length - profile.selectionEnd), //url.slice(-profile.url2length);
           hash = await URLI.Cryptography.calculateHash(url1 + url2, profile.salt),
           selection = url.substring(profile.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
     const matches = hash === profile.hash && URLI.IncrementDecrement.validateSelection(selection, profile.base, profile.baseCase, profile.baseDateFormat, profile.baseCustom) === "";
-    return {
-      "matches": matches,
-      "selection": selection
-    };
+    return { "matches": matches, "selection": selection };
+  }
+
+  async function matchesPartialURL(save, url) {
+    const urlp = url.substring(0, save.urllength);
+    const hash = await URLI.Cryptography.calculateHash(urlp, save.salt);
+    const matches = hash === save.hash;
+    return { "matches": matches, "selection": "" }
   }
 
   // Return Public Functions
