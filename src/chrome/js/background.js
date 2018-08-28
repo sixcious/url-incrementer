@@ -125,7 +125,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Builds an instance with default values: either an existing saved profile or by using the storage items defaults.
+   * Builds an instance with default values (from either an existing save or by using the storage items).
    * 
    * @param tab        the tab properties (id, url) to set this instance with
    * @param items      the sync storage items
@@ -136,32 +136,20 @@ URLI.Background = function () {
   async function buildInstance(tab, items, localItems) {
     items = items ? items : await EXT.Promisify.getItems();
     localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
-    const profiles = localItems.profiles;
+    const saves = localItems.saves;
     let props;
-    // First search for a profile to build an instance from:
-    if (profiles && profiles.length > 0) {
-      for (let profile of profiles) {
-        const result = await URLI.SaveURLs.matchesURL(profile, tab.url);
+    // First search for a save to build an instance from:
+    if (saves && saves.length > 0) {
+      for (let save of saves) {
+        const result = await URLI.SaveURLs.matchesURL(save, tab.url);
         if (result.matches) {
-          console.log("URLI.Background.buildInstance() - found a profile for this tab's url");
-          props = buildProps("profile", tab, profile, result);
+          console.log("URLI.Background.buildInstance() - found a " + save.type + " save for this tab's url");
+          props = buildProps(save.type, tab, save, save.type === "exact" ? result : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom));
           break;
         }
       }
     }
-    // psave
-    if (!props && psaves && psaves.length > 0) {
-      for (let psave of psaves) {
-        const url = tab.url.substring(0, psave.length);
-        const hash = await URLI.Cryptography.calculateHash(url, psave.salt);
-        if (hash === psave.hash) {
-          console.log("URLI.Background.buildInstance() - found a psave for this tab's url");
-          const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, psave.selectionPriority, psave.selectionCustom); // selection, selectionStart
-          props = buildProps("psave", tab, psave, selectionProps);
-        }
-      }
-    }
-    // If no profile found, build using storage items:
+    // If no save found, build using storage items:
     if (!props) {
       const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
       props = buildProps("items", tab, items, selectionProps);
@@ -177,7 +165,7 @@ URLI.Background = function () {
     return {
       "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false, "autoPaused": false,
       "tabId": props.tabId, "url": props.url, "startingURL": props.startingURL,
-      "profileFound": props.profileFound,
+      "saveFound": props.saveFound, "saveType": props.saveType,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.startingSelection, "startingSelectionStart": props.startingSelectionStart,
       "leadingZeros": props.leadingZeros,
       "interval": props.interval,
@@ -198,7 +186,7 @@ URLI.Background = function () {
   /**
    * Builds properties for an instance using either a base of a saved URL or storage items.
    *
-   * @param via   string indicating how the props are being built ("profile" or "items")
+   * @param via   string indicating how the props are being built (one of "exact", "partial" (saves), or "items" (storage))
    * @param tab   the tab to build from (id and url)
    * @param object  the base object to build from (saved url or storage items)
    * @param sobject the selection base object to build from
@@ -209,15 +197,16 @@ URLI.Background = function () {
     const props = {};
     props.tabId = tab.id;
     props.url = props.startingURL = tab.url;
-    props.profileFound = via === "profile" || via === "psave";
+    props.saveFound = via === "exact" || via === "partial";
+    props.saveType = via === "items" ? "none" : via;
     props.selection = props.startingSelection = sobject.selection;
-    props.selectionStart = props.startingSelectionStart = via === "profile" ? object.selectionStart : sobject.selectionStart;
+    props.selectionStart = props.startingSelectionStart = via === "exact" ? object.selectionStart : sobject.selectionStart;
     props.interval = object.interval;
     props.base = object.base;
     props.baseCase = object.baseCase;
     props.baseDateFormat = object.baseDateFormat;
     props.baseCustom = object.baseCustom;
-    props.leadingZeros = via === "profile" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    props.leadingZeros = via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
     props.errorSkip = object.errorSkip;
     props.errorCodes = object.errorCodes;
     props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;
@@ -265,8 +254,6 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              //items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
-              //localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
               chrome.runtime.openOptionsPage();
             });
           });
@@ -280,8 +267,6 @@ URLI.Background = function () {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              //items_ = JSON.parse(JSON.stringify(STORAGE_DEFAULT_VALUES));
-              //localItems_ = JSON.parse(JSON.stringify(LOCAL_STORAGE_DEFAULT_VALUES));
             });
           });
         });
@@ -291,7 +276,7 @@ URLI.Background = function () {
       }
       chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
     }
-    // 5.3 - 5.5 only: Storage updates for new features: Toolkit and Profiles
+    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
     else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
       console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.set({
@@ -299,9 +284,8 @@ URLI.Background = function () {
         "toolkitAction": "increment",
         "toolkitQuantity": 1
       });
-      chrome.storage.local.set({
-        "profilePreselect": false,
-        "profiles": []
+      chrome.storage.local.clear(function() {
+        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
       });
       // Remove declarativeContent rule and permission
       if (chrome.declarativeContent) {
@@ -332,11 +316,11 @@ URLI.Background = function () {
         }
         chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items});
         // Key
-        if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+        if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
         }
         // Mouse
-        if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.profileFound)))) {
+        if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
           chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
         }
         break;

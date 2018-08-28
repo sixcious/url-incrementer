@@ -251,7 +251,7 @@ URLI.Action = function () {
     if (instance.isSkeleton) {
       return actionPerformed;
     }
-    // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete profile
+    // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete save
     if (caller !== "popupClearBeforeSet" &&  caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
       //instance.multiCount = 0; TODO... multi ?
       const items = EXT.Promisify.getItems();
@@ -261,8 +261,8 @@ URLI.Action = function () {
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
       }
-      if (instance.profileFound) { // Don't delete saved URLs if the tab is simply being removed or auto clearing
-        instance.profileFound = false;
+      if (instance.saveFound) { // Don't delete saved URLs if the tab is simply being removed or auto clearing
+        instance.saveFound = false;
         URLI.SaveURLs.deleteURL(instance, "clear");
       }
     }

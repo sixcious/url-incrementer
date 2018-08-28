@@ -27,7 +27,7 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-# Coming Soon in Version 6.0 (8/28/2018)
+# Coming Soon in Version 6.0 (9/4/2018)
 - Support for Firefox and Firefox for Android
 - New Mouse/Touch Shortcuts: Multi-Click / Tap, Hold Left/Right + Click
 - Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in").

@@ -108,7 +108,7 @@ input[type="number"].mouse-clicks-input {
 
 /* heading border-bottom-color overrides */
 
-#profile-settings div.heading {
+#saves-settings div.heading {
   border-bottom-color: var(--save-color);
 }
 
@@ -134,7 +134,7 @@ input[type="number"].mouse-clicks-input {
 
 /* heading h3 color overrides */
 
-#profile-settings div.heading h3 {
+#saves-settings div.heading h3 {
   color: var(--save-color);
 }
 
@@ -187,21 +187,21 @@ input[type="number"].mouse-clicks-input {
   cursor: pointer;
 }
 
-/* profile */
+/* saves */
 
-#profile-none {
+/*#saves-settings-none {
   font-style: italic;
-}
+}*/
 
-#profile-settings-buttons{
+#saves-settings-buttons {
   margin-top: 2em;
 }
 
-#psaves, #psaves-buttons {
+#partial-saves, #partial-saves-buttons {
   margin-top: 1em;
 }
 
-#profile-settings-buttons button:not(:last-child), #psaves-buttons button:not(:last-child) {
+#saves-settings-buttons button:not(:last-child), #partial-saves-buttons button:not(:last-child) {
   margin-right: 1em;
 }
 

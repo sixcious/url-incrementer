@@ -34,9 +34,9 @@
         </div>
       </div>
       <div id="controls-icons">
-<!--        <img id="controls-icons-auto-repeat" src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>-->
+<!--        <img id="controls-icons-auto-repeat" src="../img/font-awesome/orange/retweet.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>-->
 <!--        <img id="controls-icons-shuffle" src="../img/font-awesome/red2/shuffle.png" alt="" width="14" height="14" class="display-none" data-i18n="title"/>-->
-        <img id="controls-icons-saved-url"   src="../img/font-awesome/pink/heart.png" alt="" width="12" height="12" class="display-none" data-i18n="title"/>
+        <img id="controls-icons-save-url"   src="../img/font-awesome/pink/heart.png" alt="" width="12" height="12" class="display-none" data-i18n="title"/>
       </div>
     </div>
     <div id="setup" class="display-none">
@@ -44,10 +44,10 @@
         <div class="heading">
           <img id="increment-decrement-img-mouse-pointer" src="../img/font-awesome/black/mouse-pointer.png" alt="" width="12" height="12"/>
           <h3 id="increment-decrement-h3" data-i18n="textContent"></h3>
-          <div id="profile-save" class="hvr-grow-2x icon-button" data-i18n="title">
-            <label id="profile-save-label" for="profile-save-input">
-              <input id="profile-save-input" type="checkbox" class="display-none"/>
-              <img id="profile-save-img" src="../img/font-awesome/pink/heart-o.png" alt="" width="16" height="16"/>
+          <div id="save-url-button" class="hvr-grow-2x icon-button" data-i18n="title">
+            <label id="save-url-label" for="save-url-input">
+              <input id="save-url-input" type="checkbox" class="display-none"/>
+              <img id="save-url-img" src="../img/font-awesome/pink/heart-o.png" alt="" width="16" height="16"/>
             </label>
           </div>
         </div>
@@ -229,12 +229,6 @@
               <span id="auto-eta-label" data-i18n="textContent"></span>
               <span id="auto-eta-value"></span>
             </div>
-            <div id="auto-repeat" class="hvr-grow-2x icon-button">
-              <label id="auto-repeat-title" for="auto-repeat-input" data-i18n="title">
-                <input id="auto-repeat-input" type="checkbox" class="display-none"/>
-                <img src="../img/font-awesome/orange/repeat.png" alt="" width="14" height="14"/>
-              </label>
-            </div>
           </div>
         </div>
         <div class="table">
@@ -406,7 +400,13 @@
         <button id="accept-button" data-i18n="textContent"></button>
         <button id="cancel-button" data-i18n="textContent"></button>
         <div id="extra-options">
-          <div id="shuffle-urls-button" class="hvr-grow-2x icon-button" data-i18n="title">
+          <div id="auto-repeat-button" class="hvr-grow-2x icon-button display-none" data-i18n="title">
+            <label id="auto-repeat-label" for="auto-repeat-input">
+              <input id="auto-repeat-input" type="checkbox" class="display-none"/>
+              <img src="../img/font-awesome/orange/retweet.png" alt="" width="16" height="16" class="checkbox-img"/>
+            </label>
+          </div>
+          <div id="shuffle-urls-button" class="hvr-grow-2x icon-button display-none" data-i18n="title">
             <label id="shuffle-urls-label" for="shuffle-urls-input">
               <input id="shuffle-urls-input" type="checkbox" class="display-none"/>
               <img src="../img/font-awesome/red2/random.png" alt="" width="16" height="16" class="checkbox-img"/>

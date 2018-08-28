@@ -126,18 +126,18 @@ URLI.IncrementDecrement = function () {
 
 
     // SAVE URLS:
-    // const selection = url.substring(profile.selectionStart, profile.url2length > 0 ? url.lastIndexOf(url2) : url.length);
-    // const selectionParsed = isNaN(profile.base) ? undefined : parseInt(selection, profile.base).toString(profile.base);
+    // const selection = url.substring(save.selectionStart, save.url2length > 0 ? url.lastIndexOf(url2) : url.length);
+    // const selectionParsed = isNaN(save.base) ? undefined : parseInt(selection, save.base).toString(save.base);
     // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
     // Test base matches selection for same reason
-    // console.log("profile.urlhash1=" + profile.urlhash1);
+    // console.log("save.urlhash1=" + save.urlhash1);
     // console.log("urlhash1=" + urlhash1);
-    // const matches = (urlhash1 === profile.urlhash1) &&
-    //   ((urlhash2 === profile.urlhash2) ||
-    // ((profile.url2length === 0) &&
+    // const matches = (urlhash1 === save.urlhash1) &&
+    //   ((urlhash2 === save.urlhash2) ||
+    // ((save.url2length === 0) &&
     //   /^[a-z0-9]+$/i.test(selection) &&
-    //   selectionParsed ? !(isNaN(parseInt(selection, profile.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) :
-    //   profile.base === "date" && false)); // TODO date base
+    //   selectionParsed ? !(isNaN(parseInt(selection, save.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) :
+    //   save.base === "date" && false)); // TODO date base
   }
 
   /**

@@ -92,8 +92,8 @@ div.checkbox  img {
 #setup {
   /*min-width: 512px;*/
 /*  width: 516px;*/
-/*  margin: 12px;*/
-  margin: 14px;
+  margin: 12px;
+/*  margin: 14px;*/
 /*  margin: 16px;*/
 }
 
@@ -188,14 +188,14 @@ div.checkbox  img {
   margin-left: 12px;
 }
 
-#profile-save, #auto-eta-repeat, #download-experimental {
+#save-url-button, #auto-eta-repeat, #download-experimental {
   font-style: italic;
   position: absolute;
   right: 12px;
   margin-top: -16px;
 }
 
-#profile-save {
+#save-url-button {
   right: 8px;
   margin-top: 2px;
 }

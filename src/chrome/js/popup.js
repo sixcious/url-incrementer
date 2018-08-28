@@ -34,6 +34,27 @@ URLI.Popup = function () {
     for (let element of ids) {
       DOM["#" + element.id] = element;
     }
+    // Initialize popup content
+    const tabs = await EXT.Promisify.getTabs();
+    backgroundPage = await EXT.Promisify.getBackgroundPage();
+    items = await EXT.Promisify.getItems();
+    localItems = await EXT.Promisify.getItems("local");
+    instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
+    if (!instance || !instance.enabled) {
+      instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
+    }
+    _ = JSON.parse(JSON.stringify(instance));
+    DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+    const downloadPaddingAdjustment = items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
+    DOM["#download-input"].style = "width:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px;";
+    DOM["#setup-input"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+    updateSetup();
+    // Jump straight to Setup if instance isn't enabled or a saved URL
+    if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.saveFound)) {
+      toggleView.call(DOM["#setup-input"]);
+    } else {
+      toggleView.call(DOM["#accept-button"]);
+    }
     // Set i18n (internationalization) text from messages.json
     for (let element of i18ns) {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
@@ -59,7 +80,7 @@ URLI.Popup = function () {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
-    DOM["#profile-save-input"].addEventListener("change", function() { DOM["#profile-save-img"].src = "../img/font-awesome/pink/" + (this.checked ? "heart.png" : "heart-o.png"); });
+    DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/font-awesome/pink/" + (this.checked ? "heart.png" : "heart-o.png"); });
     DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
@@ -85,27 +106,6 @@ URLI.Popup = function () {
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
-    // Initialize popup content
-    const tabs = await EXT.Promisify.getTabs();
-    backgroundPage = await EXT.Promisify.getBackgroundPage();
-    items = await EXT.Promisify.getItems();
-    localItems = await EXT.Promisify.getItems("local");
-    instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
-    if (!instance || !instance.enabled) {
-      instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
-    }
-    _ = JSON.parse(JSON.stringify(instance));
-    DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-    const downloadPaddingAdjustment = items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-    DOM["#download-input"].style = "width:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px;";
-    DOM["#setup-input"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
-    updateSetup();
-    // Jump straight to Setup if instance isn't enabled or a saved URL
-    if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.profileFound)) {
-      toggleView.call(DOM["#setup-input"]);
-    } else {
-      toggleView.call(DOM["#accept-button"]);
-    }
   }
 
   /**
@@ -172,10 +172,10 @@ URLI.Popup = function () {
    */
   function clickActionButton() {
     const action = this.dataset.action;
-    if (((action === "increment" || action === "decrement") && (instance.enabled || instance.profileFound)) ||
+    if (((action === "increment" || action === "decrement") && (instance.enabled || instance.saveFound)) ||
         ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multiEnabled)) ||
          (action === "next" || action === "prev") ||
-        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.profileFound)) ||
+        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound)) ||
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
       if (items.popupAnimationsEnabled) {
@@ -192,10 +192,10 @@ URLI.Popup = function () {
    * @private
    */
   function updateControls() {
-    DOM["#controls-icons-saved-url"].className = instance.profileFound ? "" : "display-none";
+    DOM["#controls-icons-save-url"].className = instance.saveFound ? "" : "display-none";
     //DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
     DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.profileFound ? items.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-m"].className =
     DOM["#decrement-input-m"].className =
     DOM["#increment-input-1"].className =
@@ -206,7 +206,7 @@ URLI.Popup = function () {
     DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.profileFound ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
+    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
     DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
@@ -220,13 +220,13 @@ URLI.Popup = function () {
    */
   function updateSetup(minimal) {
     // Increment Decrement Setup:
-    if (instance.profileFound || localItems.profilePreselect) {
-      DOM["#profile-save-input"].checked = true; // instance.profileFound || localItems.profilePreselect;
-      DOM["#profile-save-img"].src = DOM["#profile-save-img"].src.replace("-o", "");
+    if (instance.saveFound || localItems.savePreselect) {
+      DOM["#save-url-input"].checked = true; // instance.saveFound || localItems.savePreselect;
+      DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
 
-    // if (instance.profileFound) {
-    //   DOM["#profile-save-label"].style.color = "#1779BA";
+    // if (instance.saveFound) {
+    //   DOM["#save-url-label"].style.color = "#1779BA";
     // }
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
@@ -800,14 +800,15 @@ URLI.Popup = function () {
         instance = JSON.parse(JSON.stringify(_));
         instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;
-        instance.profileFound = instance.profileSave;
+        instance.saveFound = instance.saveURL;
         const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
         backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
-        // Profile Save
-        if (instance.profileSave) {
-          backgroundPage.URLI.SaveURLs.saveURL(instance); // TODO
+        // Save URL
+        if (instance.saveURL) {
+          backgroundPage.URLI.SaveURLs.addURL(instance); // TODO
+          instance.saveType = "exact";
         }
         // // If popup can overwrite increment/decrement settings, write to storage
         // if (instance.enabled && items.popupSettingsCanOverwrite) {
@@ -862,7 +863,7 @@ URLI.Popup = function () {
   function setupInputs(caller, tabs) {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement:
-      _.profileSave = DOM["#profile-save-input"].checked;
+      _.saveURL = DOM["#save-url-input"].checked;
       _.url = DOM["#url-textarea"].value;
       _.startingURL = DOM["#url-textarea"].value;
       _.selection = DOM["#selection-input"].value;
