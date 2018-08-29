@@ -139,6 +139,10 @@ div.checkbox  img {
   padding-top: 7px;
 }
 
+#setup #increment-decrement {
+  margin-bottom: 16px;
+}
+
 #setup #custom-urls, #setup #toolkit, #setup #auto, #setup #download {
   margin-bottom: 24px;
 }
@@ -149,9 +153,9 @@ div.checkbox  img {
   margin-bottom: 3px;
 }
 
-#setup #properties {
+/*#setup #properties {
   margin-bottom: 16px;
-}
+}*/
 
 #setup #properties div.column:not(:last-child) {
 /*  padding-right: 27px;*/

@@ -1,5 +1,7 @@
 /* */
 
+/* variables */
+
 :root {
   --increment-decrement-color: #1779BA;
   --increment-decrement-1-color: #004687;
@@ -7,16 +9,16 @@
   --increment-decrement-3-color: #001354;
   --next-prev-color: #05854D;
   --clear-color: #FF0000;
-  --return-color: #FFCC22;
+  --return-to-start-color: #FFCC22;
   --enhanced-mode-color: #EEBB22;
   --auto-color: #FF6600;
   --download-color: rebeccapurple; /* #663399 */
   --toolkit-color: #000028;
-  --skip-color: #000000;
-  --save-color: #FF69B4;
+  --error-skip-color: #000000;
+  --saved-urls-color: #FF69B4;
+  --shuffle-color: #BA1F40;
   --success-color: #05854D;
   --error-color: #E6003E;
-  --shuffle-color: #BA1F40;
   --default-color: #333333;
 }
 

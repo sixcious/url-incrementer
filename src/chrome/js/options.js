@@ -100,11 +100,11 @@ URLI.Options = function () {
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     //DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
     //DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
-    DOM["#save-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
-    DOM["#save-delete-button"].addEventListener("click", function() { deleteURLByHash(); });
-    DOM["#psaves-add-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-block fade-in"; DOM["#psaves-url-textarea"].value = DOM["#psaves-errors"].textContent = ""; });
-    DOM["#psaves-cancel-button"].addEventListener("click", function() { DOM["#psaves"].className = "display-none"; });
-    DOM["#psaves-save-button"].addEventListener("click", function() { addPartialURL(); });
+    DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
+    DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
+    DOM["#saved-urls-add-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-block fade-in"; DOM["#saved-urls-partial-url-textarea"].value = DOM["#saved-urls-partial-errors"].textContent = ""; });
+    DOM["#saved-urls-partial-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-none"; });
+    DOM["#saved-urls-partial-save-button"].addEventListener("click", function() { addSavedURLPartial(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
@@ -163,11 +163,9 @@ URLI.Options = function () {
           DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
           DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
         }
-        if (values === "all" || values === "saves") {
-          //DOM["#saves-exist"].className = localItems.saves && localItems.saves.length > 0 ? values === "saves" ? "display-block fade-in" : "display-block" : "display-none";
-          //DOM["#saves-none"].className = !localItems.saves || localItems.saves.length <= 0 ? values === "saves" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#saves-delete-button"].className = localItems.saves && localItems.saves.length > 0 ? "" : "display-none";
-          buildSavesSelect(localItems.saves);
+        if (values === "all" || values === "savedURLs") {
+          DOM["#saved-urls-delete-button"].className = localItems.saves && localItems.saves.length > 0 ? "fade-in" : "display-none";
+          buildSavedURLsSelect(localItems.saves);
         }
         if (values === "all") {
           DOM["#browser-shortcuts-quick-enable-input"].checked = items.quickEnabled;
@@ -204,7 +202,7 @@ URLI.Options = function () {
           DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
           //DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
           //DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-          DOM["#save-preselect-input"].checked = localItems.savePreselect;
+          DOM["#saved-urls-preselect-input"].checked = localItems.savePreselect;
           DOM["#selection-select"].value = items.selectionPriority;
           DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
           DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -337,15 +335,16 @@ URLI.Options = function () {
   }
 
   /**
-   * Builds out the saved URLs select.
+   * Builds out the saved URLs select HTML.
    *
+   * @param saves the saved URLs to build from
    * @private
    */
-  function buildSavesSelect(saves) {
+  function buildSavedURLsSelect(saves) {
     if (saves && saves.length > 0) {
       const select = document.createElement("select");
       let count = 1;
-      select.id = "saves-select";
+      select.id = "saved-urls-select";
       select.className = "display-block fade-in";
       for (let save of saves) {
         const option = document.createElement("option");
@@ -358,15 +357,15 @@ URLI.Options = function () {
           " base: " + save.base;
         select.appendChild(option);
       }
-      DOM["#saves-select-div"].replaceChild(select, DOM["#saves-select-div"].firstChild);
+      DOM["#saved-urls-select-div"].replaceChild(select, DOM["#saved-urls-select-div"].firstChild);
     } else {
-      DOM["#saves-select-div"].replaceChild(document.createElement("div"), DOM["#saves-select-div"].firstChild);
+      DOM["#saved-urls-select-div"].replaceChild(document.createElement("div"), DOM["#saved-urls-select-div"].firstChild);
     }
-    DOM["#saves-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
+    DOM["#saved-urls-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
   }
 
-  function deleteURLByHash() {
-    const select = document.getElementById("saves-select"), // Dynamically Generated Select, so can't use DOM Cache
+  function deleteSavedURL() {
+    const select = document.getElementById("saved-urls-select"), // Dynamically Generated Select, so can't use DOM Cache
           option = select.options[select.selectedIndex],
           hash = option.dataset.hash;
     chrome.storage.local.get(null, function(localItems) {
@@ -377,7 +376,7 @@ URLI.Options = function () {
             console.log("URLI.Options.deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
             saves.splice(i, 1);
             chrome.storage.local.set({saves: saves}, function() {
-              populateValuesFromStorage("saves");
+              populateValuesFromStorage("savedURLs");
             });
             break;
           }
@@ -386,14 +385,14 @@ URLI.Options = function () {
     });
   }
 
-  async function addPartialURL() {
-    const url = DOM["#psaves-url-textarea"].value;
+  async function addSavedURLPartial() {
+    const url = DOM["#saved-urls-partial-url-textarea"].value;
     if (!url || url.length < 0) {
-      DOM["#psaves-errors"].textContent = chrome.i18n.getMessage("psaves_url_error");
+      DOM["#saved-urls-partial-errors"].textContent = chrome.i18n.getMessage("saved_urls_partial_url_error");
     } else {
       const backgroundPage = await EXT.Promisify.getBackgroundPage();
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.SaveURLs.deleteURL(url, "addPartialURL");
+      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addPartialURL");
       // Part 2: Put this URL into the saves array and save it to local storage
       const salt = backgroundPage.URLI.Cryptography.generateSalt(),
             hash = await backgroundPage.URLI.Cryptography.calculateHash(url, salt),
@@ -403,13 +402,13 @@ URLI.Options = function () {
       }
       // Put this new entry at the end of the array (push) because it's a partial save
       saves.push({
-        "hash": hash, "salt": salt, "urllength": url.length, "type": "partial",
+        "type": "partial", "hash": hash, "salt": salt, "urllength": url.length,
         "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
         "base": items.base, "baseCase": items.baseCase /*, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom*/, "errorSkip": items.errorSkip
       });
       chrome.storage.local.set({"saves": saves}, function() {
-        populateValuesFromStorage("saves");
-        DOM["#psaves"].className = "display-none";
+        populateValuesFromStorage("savedURLs");
+        DOM["#saved-urls-partial"].className = "display-none";
       });
     }
   }

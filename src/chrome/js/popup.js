@@ -727,6 +727,9 @@ URLI.Popup = function () {
    */
   function clickMulti() {
     setupInputs("multi");
+    if (_.selection.startsWith("{" && _.selection.endsWith("}"))) {
+      // TODO multi range
+    }
     const e = setupErrors("multi");
     if (_.multiCount >= 3) {
       DOM["#multi-count"].value = 0;

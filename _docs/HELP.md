@@ -126,12 +126,11 @@ You MUST have Enhanced Mode enabled to use Error Skipping in the following situa
 Finally, a few websites may not send an error code and instead "swallow" the error code, returning HTTP Response Code 200 ("OK") while still displaying a customized error page. Error Skipping won't work on these websites.
 
 ## Saving URLs
-To make life easy, you can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time you visit them.
-It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**.
-1. Click the heart icon in Setup if you want to save an *Exact URL* (you can also have the Save checkbox always pre-checked in the Options).
-2. In Options, add a *Partial URL*. This lets you add a less-restrictive partial URL that can be "matched" with several URLs that start with the partial URL you entered.
-
+You can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time you visit them.
 After you save a URL, you can jump straight to using shortcuts or buttons to increment on every visit!
+It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**.
+1. **Exact URL** - This will only match URLs that are exactly the same except for the part you selected to increment. Click the heart icon in Setup (you can also have it set to always be pre-selected in the Options).
+2. **Partial URL** - This lets you add a less-restrictive partial URL that can be "matched" with several URLs that start with the partial URL you entered. In Options, click the *Add Partial URL...* button.
 
 #### How Are URLs Saved?
 To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URL into two parts (replacing the selection with a different string) before hashing it, making even automated dictionary attempts to decipher them **extremely difficult!**
@@ -150,13 +149,14 @@ So long as any site starts with your partial URL `https://www.site.com/posts`, t
 ## Shuffle URLs
 Click the Shuffle (crossed-arrows) icon to turn this mode on.
 
-Think of this feature like how you would shuffle a deck of cards. It shuffles the URLs you'll see next. For example, say you start AUTO at page=1 with a Times of 9; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order. We use the Durstenfeld algorithm to perform the shuffling in O(n) time.
+Think of this feature like how you would shuffle a deck of cards.
+It shuffles the URLs you'll see next.
+For example, say you start AUTO at page=1 with a Times of 9; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order.
+We use the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) to perform the shuffling in O(n) time.
 
 
 ## Bases and Custom Bases
 Bases are the "types" of numbers we can increment. The extension supports a vast amount of bases.
-
-
 
 The most common bases are:
 - 2 Binary - 0s and 1s! :)
@@ -167,6 +167,6 @@ The most common bases are:
 - 62
 - 64 Base 64 Extremely popular, Hashing, Cryptography
 
-For a good example showing bases 2-36, please see the Table of Bases on Wikipedia. https://en.wikipedia.org/wiki/Table_of_bases
+For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedia](https://en.wikipedia.org/wiki/Table_of_bases).
 
 ## TODO

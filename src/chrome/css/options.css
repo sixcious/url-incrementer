@@ -108,8 +108,8 @@ input[type="number"].mouse-clicks-input {
 
 /* heading border-bottom-color overrides */
 
-#saves-settings div.heading {
-  border-bottom-color: var(--save-color);
+#saved-urls-settings div.heading {
+  border-bottom-color: var(--saved-urls-color);
 }
 
 #increment-decrement-settings div.heading {
@@ -134,8 +134,8 @@ input[type="number"].mouse-clicks-input {
 
 /* heading h3 color overrides */
 
-#saves-settings div.heading h3 {
-  color: var(--save-color);
+#saved-urls-settings div.heading h3 {
+  color: var(--saved-urls-color);
 }
 
 #increment-decrement-settings div.heading h3 {
@@ -193,15 +193,15 @@ input[type="number"].mouse-clicks-input {
   font-style: italic;
 }*/
 
-#saves-settings-buttons {
+#saved-urls-buttons {
   margin-top: 2em;
 }
 
-#partial-saves, #partial-saves-buttons {
+#saved-urls-partial, #saved-urls-partial-buttons {
   margin-top: 1em;
 }
 
-#saves-settings-buttons button:not(:last-child), #partial-saves-buttons button:not(:last-child) {
+#saved-urls-buttons button:not(:last-child), #saved-urls-partial-buttons button:not(:last-child) {
   margin-right: 1em;
 }
 

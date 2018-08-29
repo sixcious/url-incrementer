@@ -263,7 +263,7 @@ URLI.Action = function () {
       }
       if (instance.saveFound) { // Don't delete saved URLs if the tab is simply being removed or auto clearing
         instance.saveFound = false;
-        URLI.SaveURLs.deleteURL(instance, "clear");
+        URLI.SaveURLs.deleteURL(instance.url, "clear");
       }
     }
     if (instance.autoEnabled) {

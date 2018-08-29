@@ -376,7 +376,7 @@ URLI.IncrementDecrementMulti = function () {
         // If this part isn't the last part, adjust the selectionStarts of the other parts that come later in the URL
         for (let i = 1; i <= instance.multiCount; i++) {
           if (i !== instance.multiPart && instance.multi[i].selectionStart > thisPartSelectionStart) {
-            console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance["selectionStart" + i] + " to:" + instance["selectionStart" + i] - urlLengthDiff);
+            console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
             instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
           }
         }
@@ -624,12 +624,26 @@ URLI.IncrementDecrementArray = function () {
   }
 
   function buildMultiRangeURLs(instance, action, urls) {
+    // for (let i = 1; i <= instance.multiCount; i++) {
+    //   for (let j = 2; j <= instance.multiCount; j++) {
+    //     for (let k = 3; k <= instance.multiCount; k++) {
+    //       multiSub(instance, action, urls, "3");
+    //       instance.multi[3].selection = instance.multi[3].startingSelection;
+    //     }
+    //     multiSub(instance, action, urls, "2");
+    //     instance.multi[2].selection = instance.multi[2].startingSelection;
+    //   }
+    //   multiSub(instance, action, urls, "1");
+    //   instance.multi[1].selection = instance.multi[3].startingSelection;
+    // }
+
     for (let i = 0; i <= instance.multi[1].times; i++) {
       const preurl2 = instance.url;
       const press2 = instance.multi[2].selectionStart;
+      const press3 = instance.multi[3].selectionStart;
       for (let j = 0; j <= instance.multi[2].times; j++) {
         const preurl3 = instance.url;
-        const press3 = instance.multi[3].selectionStart;
+        // const press3 = instance.multi[3].selectionStart;
         for (let k = 0; k < instance.multi[3].times; k++) {
           URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
@@ -640,15 +654,26 @@ URLI.IncrementDecrementArray = function () {
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
         }
         instance.multi[3].selection = instance.multi[3].startingSelection;
-        instance.multi[3].selectionStart = press3;
+        // instance.multi[3].selectionStart = press3;
       }
       instance.url = preurl2;
+      instance.multi[2].selection = instance.multi[2].startingSelection;
+      instance.multi[2].selectionStart = press2;
+      instance.multi[3].selectionStart = press3;
       if (i !== instance.multi[1].times) {
         URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
         urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
       }
-      instance.multi[2].selection = instance.multi[2].startingSelection;
-      instance.multi[2].selectionStart = press2;
+      // instance.multi[2].selection = instance.multi[2].startingSelection;
+      //  instance.multi[2].selectionStart = press2;
+      // instance.multi[3].selectionStart = press3;
+    }
+  }
+
+  function multiSub(instance, action, urls, part) {
+    for (let i = 0; i < instance.multi[part].times; i++) {
+      URLI.IncrementDecrement.incrementDecrement(action + part, instance);
+      urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
     }
   }
 

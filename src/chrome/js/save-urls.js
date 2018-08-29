@@ -22,7 +22,7 @@ URLI.SaveURLs = function () {
           hash = await URLI.Cryptography.calculateHash(url1 + url2, salt);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     saves.unshift({
-      "hash": hash, "salt": salt, "selectionEnd": url2.length, "type": "exact", /*"url2length": url2.length,*/
+      "type": "exact", "hash": hash, "salt": salt, "selectionEnd": url2.length, /*"url2length": url2.length,*/
       "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
       "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom, "errorSkip": instance.errorSkip
     });
