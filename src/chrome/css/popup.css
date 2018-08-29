@@ -188,16 +188,16 @@ div.checkbox  img {
   margin-left: 12px;
 }
 
-#save-url-button, #auto-eta-repeat, #download-experimental {
+#increment-decrement-auxiliary, #auto-eta-repeat, #download-experimental {
   font-style: italic;
   position: absolute;
   right: 12px;
   margin-top: -16px;
 }
 
-#save-url-button {
+#increment-decrement-auxiliary {
   right: 8px;
-  margin-top: 2px;
+  margin-top: -19px;
 }
 
 #auto-eta, #auto-repeat {

@@ -209,6 +209,7 @@ URLI.Popup = function () {
     DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
+    DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
     DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
   }
 

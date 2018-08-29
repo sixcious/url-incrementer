@@ -22,7 +22,7 @@ URLI.Background = function () {
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevKeywordsNext": ["link@rel=\"next\"", "pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
-    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", "autoRepeat": false,
+    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", //"autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* fun */         "urli": "loves incrementing for you"
@@ -163,7 +163,7 @@ URLI.Background = function () {
     }
     // Return newly built instance using props and items:
     return {
-      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false, "autoPaused": false,
+      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false,
       "tabId": props.tabId, "url": props.url, "startingURL": props.startingURL,
       "saveFound": props.saveFound, "saveType": props.saveType,
       "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.startingSelection, "startingSelectionStart": props.startingSelectionStart,
@@ -174,7 +174,7 @@ URLI.Background = function () {
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
-      "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoRepeat": items.autoRepeat, "autoRepeatCount": 0,
+      "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoRepeat": false, "autoRepeatCount": 0, "autoPaused": false,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
       "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
       "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
