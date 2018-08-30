@@ -739,7 +739,7 @@ URLI.Popup = function () {
       DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
-      _.multi[multiCountNew].selectionStart = _.range ? _.selectionStart - 1 : _.selectionStart; // -1 from starting {
+      _.multi[multiCountNew].selectionStart = _.multiRange ? _.selectionStart - 1 : _.selectionStart; // -1 from starting {
       _.multi[multiCountNew].startingSelectionStart = _.multi[multiCountNew].selectionStart;
       _.multi[multiCountNew].interval = _.interval;
       _.multi[multiCountNew].base = _.base;
@@ -886,12 +886,15 @@ URLI.Popup = function () {
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
       _.urls = _.customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [];
     }
+    if (caller === "accept" || "toolkit" && _.multiEnabled) {
+
+    }
     if (caller === "multi") {
       const range = /{(.*)-(\d+)}/.exec(_.selection);
       if (range && range [1] && range[2]) {
         _.selection = range[1];
         _.selectionStart++;
-        _.multiTimes = range[2];
+        _.multiTimes = +range[2];
         _.multiRange = range;
       } else {
         _.multiTimes = _.multiRange = undefined;
