@@ -632,31 +632,28 @@ URLI.IncrementDecrementArray = function () {
     //   instance.multi[i + 1] = sorted[i];
     // }
 
-    // for (let i = 1; i < instance.multiCount; i++) {
-    //   if (instance.multi[i].selectionStart > instance.multi[i + 1].selectionStart) {
-    //     const multi = JSON.parse(JSON.stringify(instance.multi[i]));
-    //     instance.multi[i] = JSON.parse(JSON.stringify(instance.multi[i + 1]));
-    //     instance.multi[i + 1] = multi;
-    //   }
-    // }
-
     // Change each multi part's selectionStart to the non-range URL, then update the instance's url to the final non-range URL
     for (let i = 1; i <= instance.multiCount; i++) {
       const urlmod = instance.url.replace(instance.multi[i].range[0], instance.multi[i].range[1]);
       const selectionmod = instance.multi[i].range[1];
       URLI.IncrementDecrementMulti.multiPre(action + i, instance);
       URLI.IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
+      instance.multi[i].startingSelectionStart = instance.multi[i].selectionStart;
       instance.url = urlmod;
     }
+    console.log("instance.multi START BUILD ARRAY after adjust sel tart!!!!")
 
     // Change the urls array first url to the non-range URL
     urls[0] =  { "urlmod": instance.url, "selectionmod": ""};
 
-    // Business as usual: (only works in left to right order... TODO)
+    // Business MODD!
+    const preurl1 = instance.url;
     for (let i = 0; i < instance.multi[1].times; i++) {
-      const preurl2 = instance.url;
+      const press1 = instance.multi[1].selectionStart;
       const press2 = instance.multi[2].selectionStart;
       const press3 = instance.multi[3].selectionStart;
+
+      const preurl2 = instance.url;
       for (let j = 0; j < instance.multi[2].times; j++) {
         const preurl3 = instance.url;
         for (let k = 0; k < instance.multi[3].times - 1; k++) {
@@ -664,6 +661,7 @@ URLI.IncrementDecrementArray = function () {
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
         }
         instance.url = preurl3;
+        instance.multi[2].selectionStart = press2;
         if (j !== instance.multi[2].times - 1) {
           URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
@@ -671,7 +669,10 @@ URLI.IncrementDecrementArray = function () {
         instance.multi[3].selection = instance.multi[3].startingSelection;
       }
       instance.url = preurl2;
+
       instance.multi[2].selection = instance.multi[2].startingSelection;
+
+      instance.multi[1].selectionStart = press1;
       instance.multi[2].selectionStart = press2;
       instance.multi[3].selectionStart = press3;
       if (i !== instance.multi[1].times - 1) {
@@ -679,28 +680,66 @@ URLI.IncrementDecrementArray = function () {
         urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
       }
     }
+    instance.url = preurl1;
+
+
+
+
+
+    // Business as usual: (only works in left to right order... TODO)
+    // for (let i = 0; i < instance.multi[1].times; i++) {
+    //   const preurl2 = instance.url;
+    //   const press2 = instance.multi[2].selectionStart;
+    //   const press3 = instance.multi[3].selectionStart;
+    //   for (let j = 0; j < instance.multi[2].times; j++) {
+    //     const preurl3 = instance.url;
+    //     for (let k = 0; k < instance.multi[3].times - 1; k++) {
+    //       URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
+    //       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+    //     }
+    //     instance.url = preurl3;
+    //     if (j !== instance.multi[2].times - 1) {
+    //       URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
+    //       urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+    //     }
+    //     instance.multi[3].selection = instance.multi[3].startingSelection;
+    //   }
+    //   instance.url = preurl2;
+    //   instance.multi[2].selection = instance.multi[2].startingSelection;
+    //   instance.multi[2].selectionStart = press2;
+    //   instance.multi[3].selectionStart = press3;
+    //   if (i !== instance.multi[1].times - 1) {
+    //     URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
+    //     urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
+    //   }
+    // }
   }
 
   // function buildMultiRangeURLs2(instance, action, urls) {
   //   const multiSelectionMods = {};
   //   for (let i = 1; i <= instance.multiCount; i++) {
-  //     multiSelectionMods[i] = buildMultiSelections();
+  //     multiSelectionMods[i] = buildMultiSelections(instance.multi[i]);
   //   }
   //   let url = instance.url;
   //   for (let i = 1; i <= instance.multiCount; i++) {
   //     for (let ii = 0; ii < instance.multi[1].times; ii++) {
+  //       url = url.replace(instance.multi[1].range[0], multiSelectionMods[1][ii]);
+  //       //urls.push(url);
   //       for (let j = 2; j <= instance.multiCount; j++) {
   //         for (let jj = 0; jj < instance.multi[2].times; jj++) {
   //           url = url.replace(instance.multi[2].range[0], multiSelectionMods[2][jj]);
-  //           urls.push(url);
+  //           //urls.push(url);
   //           for (let k = 3; k <= instance.multiCount; k++) {
   //             for (let kk = 0; kk < instance.multi[3].times; kk++) {
   //               url = url.replace(instance.multi[3].range[0], multiSelectionMods[3][kk]);
   //               urls.push(url);
+  //               url = url.replace(multiSelectionMods[3][kk], instance.multi[3].range[0]);
   //             }
   //           }
+  //           url = url.replace(multiSelectionMods[2][jj], instance.multi[2].range[0]);
   //         }
   //       }
+  //       url = url.replace(multiSelectionMods[1][ii], instance.multi[1].range[0]);
   //     }
   //   }
   // }
