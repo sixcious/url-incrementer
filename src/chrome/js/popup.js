@@ -727,9 +727,6 @@ URLI.Popup = function () {
    */
   function clickMulti() {
     setupInputs("multi");
-    if (_.selection.startsWith("{" && _.selection.endsWith("}"))) {
-      // TODO multi range
-    }
     const e = setupErrors("multi");
     if (_.multiCount >= 3) {
       DOM["#multi-count"].value = 0;
@@ -742,14 +739,15 @@ URLI.Popup = function () {
       DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
-      _.multi[multiCountNew].selectionStart = _.selectionStart;
-      _.multi[multiCountNew].startingSelectionStart = _.selectionStart;
+      _.multi[multiCountNew].selectionStart = _.range ? _.selectionStart - 1 : _.selectionStart; // -1 from starting {
+      _.multi[multiCountNew].startingSelectionStart = _.multi[multiCountNew].selectionStart;
       _.multi[multiCountNew].interval = _.interval;
       _.multi[multiCountNew].base = _.base;
       _.multi[multiCountNew].baseCase = _.baseCase;
       _.multi[multiCountNew].baseDateFormat = _.baseDateFormat;
       _.multi[multiCountNew].leadingZeros = _.leadingZeros;
-      _.multi[multiCountNew].times = DOM["#auto-toggle-input"].checked ? +DOM["#auto-times-input"].value : DOM["#toolkit-input"].checked ? +DOM["#toolkit-quantity-input"].value : -1;
+      _.multi[multiCountNew].times = _.multiTimes; //DOM["#auto-toggle-input"].checked ? +DOM["#auto-times-input"].value : DOM["#toolkit-input"].checked ? +DOM["#toolkit-quantity-input"].value : -1;
+      _.multi[multiCountNew].range = _.multiRange;
     }
   }
 
@@ -887,6 +885,19 @@ URLI.Popup = function () {
       _.customURLs = DOM["#custom-urls-input"].checked;
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
       _.urls = _.customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [];
+    }
+    if (caller === "multi") {
+      const range = /{(.*)-(\d+)}/.exec(_.selection);
+      if (range && range [1] && range[2]) {
+        //_.rangeURL = _.url;
+        //_.url = _.url.replace(range[0], range[1]);
+        _.selection = range[1];
+        _.selectionStart++;
+        _.multiTimes = range[2];
+        _.multiRange = range;
+      } else {
+        _.multiTimes = _.multiRange = undefined;
+      }
     }
     if (caller === "toolkit") {
       // Toolkit:
