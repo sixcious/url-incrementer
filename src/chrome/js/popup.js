@@ -889,8 +889,6 @@ URLI.Popup = function () {
     if (caller === "multi") {
       const range = /{(.*)-(\d+)}/.exec(_.selection);
       if (range && range [1] && range[2]) {
-        //_.rangeURL = _.url;
-        //_.url = _.url.replace(range[0], range[1]);
         _.selection = range[1];
         _.selectionStart++;
         _.multiTimes = range[2];

@@ -599,7 +599,7 @@ URLI.IncrementDecrementArray = function () {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }
-    if (instance.multiEnabled) { // TODO.. multi range incrementing
+    if (instance.multiEnabled && ((instance.multi[1] && instance.multi[1].range) || (instance.multi[2] && instance.multi[2].range)  || (instance.multi[3] && instance.multi[3].range))) { // TODO.. multi range incrementing
       buildMultiRangeURLs(instance, action, urls);
     } else {
       for (let i = 0; i < limit; i++) {
@@ -636,7 +636,10 @@ URLI.IncrementDecrementArray = function () {
     //   multiSub(instance, action, urls, "1");
     //   instance.multi[1].selection = instance.multi[3].startingSelection;
     // }
-
+    for (let i = 1; i <= instance.multiCount; i++) {
+      instance.url = instance.url.replace(instance.multi[i].range[0], instance.multi[i].range[1]);
+    }
+    urls[0] = instance.url;
     for (let i = 0; i <= instance.multi[1].times; i++) {
       const preurl2 = instance.url;
       const press2 = instance.multi[2].selectionStart;
