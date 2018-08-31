@@ -279,10 +279,11 @@ URLI.Background = function () {
     // 5.3 - 5.5 only: Storage and Permission changes for 6.0
     else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
       console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.set({
-        "toolkitTool": "open-tabs",
-        "toolkitAction": "increment",
-        "toolkitQuantity": 1
+      chrome.storage.sync.get(null, function(items) {
+        chrome.storage.sync.set({
+          // TODO
+          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
+        });
       });
       chrome.storage.local.clear(function() {
         chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
@@ -380,9 +381,9 @@ URLI.Background = function () {
    */
   function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "url-increment-button@roysix", //"decebmdlceenceecblpfjanoocfcmjai",
-          URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
-    if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
+    const URL_INCREMENT_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
+          URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
+    if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({"received": true});
       //sender.tab = request.tab;
@@ -409,25 +410,24 @@ URLI.Background = function () {
    * @param command the shortcut command that was performed
    * @public
    */
-  function commandListener(command) {
+  async function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
-      chrome.tabs.query({active: true, lastFocusedWindow: true}, async function(tabs) {
-        const items = await EXT.Promisify.getItems();
-        if (!items.permissionsInternalShortcuts || items.browserMixedMode) {
-          if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
-            let instance = getInstance(tabs[0].id);
-            if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) ||
-                (command === "auto" && instance && instance.autoEnabled) ||
-                ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
-                (command === "return" && instance && instance.startingURL)) {
-              if (items.quickEnabled && (!instance || !instance.enabled)) {
-                instance = await buildInstance(tabs[0]);
-              }
-              URLI.Action.performAction(command, "command", instance);
+      const items = await EXT.Promisify.getItems();
+      if (!items.permissionsInternalShortcuts || items.browserMixedMode) {
+        const tabs = await EXT.Promisify.getTabs();
+        if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
+          let instance = getInstance(tabs[0].id);
+          if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.quickEnabled || (instance && instance.enabled))) ||
+              (command === "auto" && instance && instance.autoEnabled) ||
+              ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
+              (command === "return" && instance && instance.startingURL)) {
+            if (items.quickEnabled && (!instance || !instance.enabled)) {
+              instance = await buildInstance(tabs[0]);
             }
+            URLI.Action.performAction(command, "command", instance);
           }
         }
-      });
+      }
     }
   }
 

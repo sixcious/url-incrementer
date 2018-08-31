@@ -106,6 +106,10 @@ div.checkbox  img {
   border-bottom: 1px solid #333333;
 }
 
+#setup .heading img {
+  margin-bottom: 1px;
+}
+
 #setup input[type="number"] {
   width: 52px;
   display: block;
