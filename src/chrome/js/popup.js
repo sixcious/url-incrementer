@@ -81,15 +81,15 @@ URLI.Popup = function () {
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/font-awesome/pink/" + (this.checked ? "heart.png" : "heart-o.png"); });
-    DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
+    //DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
     DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value !== "date" && +this.value > 10 ? "display-block fade-in" : "display-none"; DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
-    DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
+    DOM["#auto-times-input"].addEventListener("change", Auto.updateAutoETA);
+    DOM["#auto-seconds-input"].addEventListener("change", Auto.updateAutoETA);
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
     DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
     DOM["#download-extensions"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-extensions input", "#download-extensions-generated"); updateDownloadPreview(); });
@@ -310,415 +310,6 @@ URLI.Popup = function () {
     if (items.leadingZerosPadByDetection) {
       DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
     }
-  }
-
-  /**
-   * Updates the Auto ETA time every time the seconds or times is updated by the user or when the instance is updated.
-   *
-   * Calculating the hours/minutes/seconds is based on code written by Vishal @ stackoverflow.com
-   * @see https://stackoverflow.com/a/11486026/988713
-   * @private
-   */
-  function updateAutoETA() {
-    const itimes = +DOM["#auto-times-input"].value,
-          iseconds = +DOM["#auto-seconds-input"].value,
-          time = itimes * iseconds,
-          hours = ~~ (time / 3600),
-          minutes = ~~ ((time % 3600) / 60),
-          seconds = time % 60,
-          fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("auto_eta_hour") : chrome.i18n.getMessage("auto_eta_hours")) : "",
-          fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("auto_eta_minute") : chrome.i18n.getMessage("auto_eta_minutes")) : "",
-          fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("auto_eta_second") : chrome.i18n.getMessage("auto_eta_seconds")) : "";
-    DOM["#auto-eta-value"].textContent =
-      itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
-      instance.autoEnabled ? chrome.i18n.getMessage("auto_eta_done") : chrome.i18n.getMessage("auto_eta_tbd") :
-      time > 86400 ? chrome.i18n.getMessage("auto_eta_day") : fhours + fminutes + fseconds;
-  }
-
-  /**
-   * Changes the affected download options and help text when the download strategy is changed by the user.
-   *
-   * @private
-   */
-  function changeDownloadStrategy() {
-    DOM["#download-extensions"].className = this.value === "extensions" ? "display-block fade-in" : "display-none";
-    DOM["#download-tags"].className = this.value === "tags" ? "display-block fade-in" : "display-none";
-    DOM["#download-attributes"].className = this.value === "attributes" ? "display-block fade-in" : "display-none";
-    DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
-    DOM["#download-strategy-help"].title =
-      this.value === "extensions" ? chrome.i18n.getMessage("download_help_extensions_title") :
-      this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_title") :
-      this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_title") :
-      this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_title") :
-      this.value === "page" ? chrome.i18n.getMessage("download_help_page_title") : "";
-    DOM["#download-strategy-help-label"].textContent = 
-      this.value === "extensions" ? chrome.i18n.getMessage("download_help_extensions_label") :
-      this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_label") :
-      this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_label") :
-      this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_label") :
-      this.value === "page" ? chrome.i18n.getMessage("download_help_page_label") : "";
-  }
-
-  /**
-   * Updates the download preview completely, injecting the script again on the page and getting all the download URLs,
-   * extensions, tags, and attributes. This is only called when the user manually toggles DL on, or when a message is
-   * received from the background to update it (when auto incrementing to update the preview for the new current URL).
-   *
-   * @private
-   */
-  function updateDownloadPreviewCompletely() {
-    // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
-    chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
-      if (chrome.runtime.lastError) {
-        const div = document.createElement("div");
-        div.textContent = chrome.i18n.getMessage("download_preview_blocked");
-        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
-      } else {
-        const code = "URLI.Download.previewDownloadURLs();";
-        chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-          if (results && results[0]) {
-            // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
-            // download preview (e.g. table) in the next method
-            downloadPreviewCache = results[0];
-            const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-                  downloadTags = DOM["#download-tags-generated"].value.split(","),
-                  downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
-            DOM["#download-extensions"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions), DOM["#download-extensions"].firstChild);
-            DOM["#download-tags"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags), DOM["#download-tags"].firstChild);
-            DOM["#download-attributes"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes), DOM["#download-attributes"].firstChild);
-            updateDownloadPreview();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Builds the Download Preview Checkboxes HTML for the properties (extensions, tags, and attributes).
-   * This is only called by downloadPreviewCompletely().
-   *
-   * @param properties        all the properties (extensions/tags/attributes)
-   * @param checkedProperties only the checked properties (e.g. the instance's checked extensions/tags/attributes)
-   * @returns {HTMLElement} the HTML element div containing the checkboxes
-   * @private
-   */
-  function buildDownloadPreviewCheckboxes(properties, checkedProperties) {
-    const div = document.createElement("div");
-    for (let property of properties) {
-      const label = document.createElement("label");
-      div.appendChild(label);
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.value = property;
-      input.checked = checkedProperties && checkedProperties.includes(property) ? "checked" : "";
-      label.appendChild(input);
-      const span = document.createElement("span");
-      span.textContent = property;
-      label.appendChild(span);
-    }
-    return div;
-  }
-
-  /**
-   * Updates the download preview's selected URLs only. This is called each time the user makes a change in the download
-   * strategy, when checking the checkboxes, or when entering text in an input (e.g. includes/excludes filters).
-   *
-   * @private
-   */
-  function updateDownloadPreview() {
-    const downloadStrategy = DOM["#download-strategy-select"].value,
-          downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-          downloadTags = DOM["#download-tags-generated"].value.split(","),
-          downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
-          downloadSelector = DOM["#download-selector-input"].value,
-          downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-          downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-          code = "URLI.Download.findDownloadURLs(" +
-            JSON.stringify(downloadStrategy) + ", " +
-            JSON.stringify(downloadExtensions) + ", " +
-            JSON.stringify(downloadTags) + ", " +
-            JSON.stringify(downloadAttributes) + ", " +
-            JSON.stringify(downloadSelector) + ", " +
-            JSON.stringify(downloadIncludes) + ", " +
-            JSON.stringify(downloadExcludes) + ");";
-    chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
-      if (chrome.runtime.lastError) {
-        const div = document.createElement("div");
-        div.textContent = chrome.i18n.getMessage("download_preview_blocked");
-        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
-      } else if (results && results[0]) {
-        // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
-        // Note: Finding the difference of two arrays of objects code by kaspermoerch
-        // @see https://stackoverflow.com/a/21988249
-        const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL,
-          selecteds = results[0],
-          unselecteds = alls.filter(function(allObj) {
-            return !selecteds.some(function(selectedObj) {
-              return allObj.url === selectedObj.url;
-            });
-          }),
-          selectedsLength = selecteds.length,
-          totalLength = selecteds.length + unselecteds.length;
-        // Download Preview Heading Title:
-        const title = document.createElement("div"); title.className = (selectedsLength > 0 ? "success" : "error");
-        const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set")); title.appendChild(titleNode1);
-        const titleNode2 = document.createElement("span"); titleNode2.id = "selecteds-length"; titleNode2.textContent = selectedsLength; title.appendChild(titleNode2);
-        const titleNode3 = document.createTextNode(chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls")); title.appendChild(titleNode3);
-        DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
-        // Download Preview Table and a count index to keep track of current row index:
-        const table = document.createElement("table");
-        const thead = document.createElement("thead"); table.appendChild(thead);
-        const tr = document.createElement("tr"); thead.appendChild(tr);
-        let th;
-        th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
-        th = document.createElement("th"); th.className = "count"; th.textContent = " "; tr.appendChild(th);
-        th = document.createElement("th"); th.className = "thumb"; th.textContent = chrome.i18n.getMessage("download_preview_thumb_label"); tr.appendChild(th);
-        th = document.createElement("th"); th.className = "filename"; th.textContent = chrome.i18n.getMessage("download_preview_filename_label"); tr.appendChild(th);
-        th = document.createElement("th"); th.className = "extension"; th.textContent = chrome.i18n.getMessage("download_preview_extension_label"); tr.appendChild(th);
-        th = document.createElement("th"); th.className = "tag"; th.textContent = chrome.i18n.getMessage("download_preview_tag_label"); tr.appendChild(th);
-        th = document.createElement("th"); th.className = "attribute"; th.textContent = chrome.i18n.getMessage("download_preview_attribute_label"); tr.appendChild(th);
-        th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
-        const tbody = document.createElement("tbody"); table.appendChild(tbody);
-        let count = 1;
-        for (let selected of selecteds) {
-          tbody.appendChild(buildDownloadPreviewTR(selected, true, count++));
-        }
-        for (let unselected of unselecteds) {
-          tbody.appendChild(buildDownloadPreviewTR(unselected, false, count++));
-        }
-        DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
-        // After we build the table we need to update the columns again to what the checkboxes were:
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-extension-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-url-input"]);
-        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
-        // Reset the manually selected includes and excludes each time the table is rebuilt:
-        downloadPreviewCache.selecteds = selecteds;
-        downloadPreviewCache.unselecteds = unselecteds;
-        downloadPreviewCache.mselecteds = [];
-        downloadPreviewCache.munselecteds = [];
-      } else {
-        const div = document.createElement("div");
-        div.textContent = chrome.i18n.getMessage("download_preview_noresults");
-        DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
-      }
-    });
-  }
-
-  /**
-   * Builds the TR (table row) element for the download preview table.
-   *
-   * @param item       the download preview item
-   * @param isSelected true if this download preview item is selected, false if not
-   * @param count      the current row index count
-   * @returns {Element} the tr element
-   * @private
-   */
-  function buildDownloadPreviewTR(item, isSelected, count) {
-    const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
-    const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
-    const thumb = buildDownloadPreviewThumb(item);
-    let td;
-    td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);
-    td = document.createElement("td"); td.className = "count"; td.textContent = count; tr.appendChild(td);
-    td = document.createElement("td"); td.className = "thumb"; if (thumb) { td.appendChild(thumb); } tr.appendChild(td);
-    td = document.createElement("td"); td.className = "filename"; td.textContent = item.filename; tr.appendChild(td);
-    td = document.createElement("td"); td.className = "extension"; td.textContent = item.extension; tr.appendChild(td);
-    td = document.createElement("td"); td.className = "tag"; td.textContent = item.tag; tr.appendChild(td);
-    td = document.createElement("td"); td.className = "attribute"; td.textContent = item.attribute; tr.appendChild(td);
-    td = document.createElement("td"); td.className = "url"; td.textContent = item.url; tr.appendChild(td);
-    return tr;
-  }
-
-  /**
-   * Builds the download preview thumb element (e.g. an <img> element).
-   *
-   * @param item the download preview item
-   * @returns {Element} the thumb element (e.g. <img>)
-   * @private
-   */
-  function buildDownloadPreviewThumb(item) {
-    const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
-          VIDEO_EXTENSIONS = ["mp4", "webm"];
-    let el = undefined;
-    if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
-      el = document.createElement("img"); el.src = item.url; el.alt = "";
-    } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
-      el = document.createElement("video"); el.src = item.url;
-    }
-    return el;
-  }
-
-  /**
-   * This function is called as the user is typing in a download preview input (e.g. includes/excludes).
-   * We don't want to update the downloadPreview immediately as it's an expensive procedure, so we set a timeout delay.
-   *
-   * @param input the text input (which will be updated later)
-   * @param label the label for the input (which will be updated)
-   * @param style the style to set the input and label
-   * @private
-   */
-  function inputUpdateDownloadPreview(input, label, style) {
-    console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
-    clearTimeout(timeouts[input.id]);
-    timeouts[input.id] = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
-  }
-
-  /**
-   * Updates the input and label styling together. It's used for the download preview text inputs to make
-   * them more "noticeable" when the user has something typed in.
-   *
-   * @param input the text input
-   * @param label the label for the input
-   * @param style the style to set the input and label
-   * @private
-   */
-  function updateInputLabelStyle(input, label, style) {
-    input.style = label.style = input.value ? style : "";
-  }
-
-  /**
-   * Translates checkbox values into a hidden input string which will be used later. This is used by the download
-   * property checkboxes that are dynamically built (e.g. downloadExtensions).
-   *
-   * @param selectorInputs the CSS selector that queries for the checkbox inputs
-   * @param generatedId the hidden input's ID, which will store the generated value of the checkboxes
-   * @private
-   */
-  function translateCheckboxValuesToHiddenInput(selectorInputs, generatedId) {
-    const inputs = document.querySelectorAll(selectorInputs);
-    let generated = "";
-    for (let input of inputs) {
-      if (input.checked) {
-        generated += (generated !== "" ? "," : "") + input.value;
-      }
-    }
-    DOM[generatedId].value = generated;
-  }
-
-  /**
-   * Called each time the download preview table checkboxes are changed. Translates the checkbox values into a hidden
-   * input and then updates the table's styling accordingly.
-   *
-   * @private
-   */
-  function updateDownloadPreviewCheckboxes() {
-    translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
-    if (this.value === "compressed") {
-      DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
-    } else {
-      let elements = document.getElementsByClassName(this.value);
-      // let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
-      for (let element of elements) {
-        element.style.display = this.checked ? "table-cell" : "none";
-      }
-    }
-  }
-
-  // TODO:
-  function updateDownloadSelectedsUnselecteds(event) {
-    const element = event.target;
-    if (element && element.classList.contains("check-circle")) {
-      const parent = element.parentNode.parentNode;
-     // const json = parent.dataset.json;
-      const object = JSON.parse(parent.dataset.json);
-      const isBeingAdded = parent.className === "unselected";
-      const generatedId = isBeingAdded ? "selecteds" : "unselecteds";
-      const otherId = isBeingAdded ? "unselecteds" : "selecteds";
-      parent.className = isBeingAdded ? "selected" : "unselected";
-      if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
-        console.log("pushing into download preview cache" + generatedId);
-        downloadPreviewCache["m" + generatedId].push(object);
-      }
-      downloadPreviewCache["m" + otherId] = downloadPreviewCache["m" + otherId].filter(otherObject => { return otherObject.url !== object.url });
-      const selectedsLengthElement = document.getElementById("selecteds-length");
-      const selectedsLengthNumber = Number(selectedsLengthElement.textContent);
-      const selectedsLengthNumberFinal = isBeingAdded ? selectedsLengthNumber + 1 : selectedsLengthNumber - 1;
-      selectedsLengthElement.textContent = "" + (selectedsLengthNumberFinal);
-      selectedsLengthElement.parentElement.className = selectedsLengthNumberFinal > 0 ? "success" : "error";
-    }
-  }
-
-  /**
-   * Called each time the Generate URLS tool is called to update the table of links and the download button link.
-   *
-   * @param urls the incremented or decremented URLs that were generated
-   * @private
-   */
-  function updateToolkitGenerateURLs(urls) {
-    if (urls && urls.length > 0) {
-      // Table must have similar inline styling from popup.css for the download blob's HTML file:
-      const table = document.createElement("table");
-      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
-      // thead
-      const thead = document.createElement("thead");
-      thead.style = "background: #f8f8f8; color: #0a0a0a;";
-      table.appendChild(thead);
-      let tr = document.createElement("tr");
-      tr.style = "background: transparent;";
-      thead.appendChild(tr);
-      let th = document.createElement("th");
-      th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
-      th.textContent = chrome.i18n.getMessage("url_label");
-      tr.appendChild(th);
-      // tbody
-      const tbody = document.createElement("tbody");
-      tbody.style = "border: 1px solid #f1f1f1; background-color: #fefefe;";
-      table.appendChild(tbody);
-      let count = 1;
-      for (let url of urls) {
-        console.log("count = " + count);
-        console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
-        let tr = document.createElement("tr");
-        tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
-        tbody.appendChild(tr);
-        let td = document.createElement("td");
-        td.style = "padding: 0.25rem 0.312rem 0.312rem";
-        tr.appendChild(td);
-        let a = document.createElement("a");
-        a.href = url.urlmod;
-        a.target = "_blank";
-        a.textContent = url.urlmod;
-        td.appendChild(a);
-      }
-      DOM["#toolkit-generate-links-table-div"].replaceChild(table, DOM["#toolkit-generate-links-table-div"].firstChild);
-      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
-      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
-    }
-  }
-
-  /**
-   * TODO
-   * @private
-   */
-  function toolkit() {
-    URLI.UI.clickHoverCss(this, "hvr-push-click");
-    chrome.tabs.query({currentWindow: true}, function (tabs) {
-      console.log("URLI.Popup.toolkit() - tabs.length=" + tabs.length);
-      setupInputs("toolkit", tabs);
-      const e = setupErrors("toolkit");
-      if (e.toolkitErrorsExist) {
-        URLI.UI.generateAlert(e.toolkitErrors);
-      } else if (e.incrementDecrementErrorsExist) {
-        URLI.UI.generateAlert(e.incrementDecrementErrors);
-      } else {
-        const toolkitInstance = JSON.parse(JSON.stringify(_));
-        toolkitInstance.toolkitEnabled = true;
-        const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
-        toolkitInstance.urls = precalculateProps.urls;
-        toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-        backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance);
-        // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
-        chrome.storage.sync.set({
-          "toolkitTool": _.toolkitTool,
-          "toolkitAction": _.toolkitAction,
-          "toolkitQuantity": _.toolkitQuantity
-        });
-      }
-    });
   }
 
   /**
@@ -1004,6 +595,427 @@ URLI.Popup = function () {
     }
     return e;
   }
+
+  URLI.Popup.Toolkit = function() {
+
+    /**
+     * Called each time the Generate URLS tool is called to update the table of links and the download button link.
+     *
+     * @param urls the incremented or decremented URLs that were generated
+     * @private
+     */
+    function updateToolkitGenerateURLs(urls) {
+      if (urls && urls.length > 0) {
+        // Table must have similar inline styling from popup.css for the download blob's HTML file:
+        const table = document.createElement("table");
+        table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
+        // thead
+        const thead = document.createElement("thead");
+        thead.style = "background: #f8f8f8; color: #0a0a0a;";
+        table.appendChild(thead);
+        let tr = document.createElement("tr");
+        tr.style = "background: transparent;";
+        thead.appendChild(tr);
+        let th = document.createElement("th");
+        th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
+        th.textContent = chrome.i18n.getMessage("url_label");
+        tr.appendChild(th);
+        // tbody
+        const tbody = document.createElement("tbody");
+        tbody.style = "border: 1px solid #f1f1f1; background-color: #fefefe;";
+        table.appendChild(tbody);
+        let count = 1;
+        for (let url of urls) {
+          console.log("count = " + count);
+          console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
+          let tr = document.createElement("tr");
+          tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
+          tbody.appendChild(tr);
+          let td = document.createElement("td");
+          td.style = "padding: 0.25rem 0.312rem 0.312rem";
+          tr.appendChild(td);
+          let a = document.createElement("a");
+          a.href = url.urlmod;
+          a.target = "_blank";
+          a.textContent = url.urlmod;
+          td.appendChild(a);
+        }
+        DOM["#toolkit-generate-links-table-div"].replaceChild(table, DOM["#toolkit-generate-links-table-div"].firstChild);
+        DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
+        DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
+      }
+    }
+
+    /**
+     * TODO
+     * @private
+     */
+    function toolkit() {
+      URLI.UI.clickHoverCss(this, "hvr-push-click");
+      chrome.tabs.query({currentWindow: true}, function (tabs) {
+        console.log("URLI.Popup.toolkit() - tabs.length=" + tabs.length);
+        setupInputs("toolkit", tabs);
+        const e = setupErrors("toolkit");
+        if (e.toolkitErrorsExist) {
+          URLI.UI.generateAlert(e.toolkitErrors);
+        } else if (e.incrementDecrementErrorsExist) {
+          URLI.UI.generateAlert(e.incrementDecrementErrors);
+        } else {
+          const toolkitInstance = JSON.parse(JSON.stringify(_));
+          toolkitInstance.toolkitEnabled = true;
+          const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
+          toolkitInstance.urls = precalculateProps.urls;
+          toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
+          backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance);
+          // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
+          chrome.storage.sync.set({
+            "toolkitTool": _.toolkitTool,
+            "toolkitAction": _.toolkitAction,
+            "toolkitQuantity": _.toolkitQuantity
+          });
+        }
+      });
+    }
+
+  }();
+
+  URLI.Popup.Auto = function() {
+
+    /**
+     * Updates the Auto ETA time every time the seconds or times is updated by the user or when the instance is updated.
+     *
+     * Calculating the hours/minutes/seconds is based on code written by Vishal @ stackoverflow.com
+     * @see https://stackoverflow.com/a/11486026/988713
+     * @private
+     */
+    function updateAutoETA() {
+      const itimes = +DOM["#auto-times-input"].value,
+            iseconds = +DOM["#auto-seconds-input"].value,
+            time = itimes * iseconds,
+            hours = ~~ (time / 3600),
+            minutes = ~~ ((time % 3600) / 60),
+            seconds = time % 60,
+            fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("auto_eta_hour") : chrome.i18n.getMessage("auto_eta_hours")) : "",
+            fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("auto_eta_minute") : chrome.i18n.getMessage("auto_eta_minutes")) : "",
+            fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("auto_eta_second") : chrome.i18n.getMessage("auto_eta_seconds")) : "";
+      DOM["#auto-eta-value"].textContent =
+        itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
+        instance.autoEnabled ? chrome.i18n.getMessage("auto_eta_done") : chrome.i18n.getMessage("auto_eta_tbd") :
+        time > 86400 ? chrome.i18n.getMessage("auto_eta_day") : fhours + fminutes + fseconds;
+    }
+
+    return { updateAutoETA: updateAutoETA };
+  }();
+
+  URLI.Popup.Download = function() {
+
+    /**
+     * Changes the affected download options and help text when the download strategy is changed by the user.
+     *
+     * @private
+     */
+    function changeDownloadStrategy() {
+      DOM["#download-extensions"].className = this.value === "extensions" ? "display-block fade-in" : "display-none";
+      DOM["#download-tags"].className = this.value === "tags" ? "display-block fade-in" : "display-none";
+      DOM["#download-attributes"].className = this.value === "attributes" ? "display-block fade-in" : "display-none";
+      DOM["#download-selector"].className = this.value === "selector" ? "display-block fade-in" : "display-none";
+      DOM["#download-strategy-help"].title =
+        this.value === "extensions" ? chrome.i18n.getMessage("download_help_extensions_title") :
+        this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_title") :
+        this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_title") :
+        this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_title") :
+        this.value === "page" ? chrome.i18n.getMessage("download_help_page_title") : "";
+      DOM["#download-strategy-help-label"].textContent =
+        this.value === "extensions" ? chrome.i18n.getMessage("download_help_extensions_label") :
+        this.value === "tags" ? chrome.i18n.getMessage("download_help_tags_label") :
+        this.value === "attributes" ? chrome.i18n.getMessage("download_help_attributes_label") :
+        this.value === "selector" ? chrome.i18n.getMessage("download_help_selector_label") :
+        this.value === "page" ? chrome.i18n.getMessage("download_help_page_label") : "";
+    }
+
+    /**
+     * Updates the download preview completely, injecting the script again on the page and getting all the download URLs,
+     * extensions, tags, and attributes. This is only called when the user manually toggles DL on, or when a message is
+     * received from the background to update it (when auto incrementing to update the preview for the new current URL).
+     *
+     * @private
+     */
+    function updateDownloadPreviewCompletely() {
+      // Execute the download.js script to find all the URLs, extensions, tags, and attributes:
+      chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
+        if (chrome.runtime.lastError) {
+          const div = document.createElement("div");
+          div.textContent = chrome.i18n.getMessage("download_preview_blocked");
+          DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
+        } else {
+          const code = "URLI.Download.previewDownloadURLs();";
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+            if (results && results[0]) {
+              // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
+              // download preview (e.g. table) in the next method
+              downloadPreviewCache = results[0];
+              const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
+                    downloadTags = DOM["#download-tags-generated"].value.split(","),
+                    downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
+              DOM["#download-extensions"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions), DOM["#download-extensions"].firstChild);
+              DOM["#download-tags"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags), DOM["#download-tags"].firstChild);
+              DOM["#download-attributes"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes), DOM["#download-attributes"].firstChild);
+              updateDownloadPreview();
+            }
+          });
+        }
+      });
+    }
+
+    /**
+     * Builds the Download Preview Checkboxes HTML for the properties (extensions, tags, and attributes).
+     * This is only called by downloadPreviewCompletely().
+     *
+     * @param properties        all the properties (extensions/tags/attributes)
+     * @param checkedProperties only the checked properties (e.g. the instance's checked extensions/tags/attributes)
+     * @returns {HTMLElement} the HTML element div containing the checkboxes
+     * @private
+     */
+    function buildDownloadPreviewCheckboxes(properties, checkedProperties) {
+      const div = document.createElement("div");
+      for (let property of properties) {
+        const label = document.createElement("label");
+        div.appendChild(label);
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = property;
+        input.checked = checkedProperties && checkedProperties.includes(property) ? "checked" : "";
+        label.appendChild(input);
+        const span = document.createElement("span");
+        span.textContent = property;
+        label.appendChild(span);
+      }
+      return div;
+    }
+
+    /**
+     * Updates the download preview's selected URLs only. This is called each time the user makes a change in the download
+     * strategy, when checking the checkboxes, or when entering text in an input (e.g. includes/excludes filters).
+     *
+     * @private
+     */
+    function updateDownloadPreview() {
+      const downloadStrategy = DOM["#download-strategy-select"].value,
+            downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
+            downloadTags = DOM["#download-tags-generated"].value.split(","),
+            downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
+            downloadSelector = DOM["#download-selector-input"].value,
+            downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+            downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
+            code = "URLI.Download.findDownloadURLs(" +
+              JSON.stringify(downloadStrategy) + ", " +
+              JSON.stringify(downloadExtensions) + ", " +
+              JSON.stringify(downloadTags) + ", " +
+              JSON.stringify(downloadAttributes) + ", " +
+              JSON.stringify(downloadSelector) + ", " +
+              JSON.stringify(downloadIncludes) + ", " +
+              JSON.stringify(downloadExcludes) + ");";
+      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
+        if (chrome.runtime.lastError) {
+          const div = document.createElement("div");
+          div.textContent = chrome.i18n.getMessage("download_preview_blocked");
+          DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
+        } else if (results && results[0]) {
+          // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
+          // Note: Finding the difference of two arrays of objects code by kaspermoerch
+          // @see https://stackoverflow.com/a/21988249
+          const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL,
+            selecteds = results[0],
+            unselecteds = alls.filter(function(allObj) {
+              return !selecteds.some(function(selectedObj) {
+                return allObj.url === selectedObj.url;
+              });
+            }),
+            selectedsLength = selecteds.length,
+            totalLength = selecteds.length + unselecteds.length;
+          // Download Preview Heading Title:
+          const title = document.createElement("div"); title.className = (selectedsLength > 0 ? "success" : "error");
+          const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set")); title.appendChild(titleNode1);
+          const titleNode2 = document.createElement("span"); titleNode2.id = "selecteds-length"; titleNode2.textContent = selectedsLength; title.appendChild(titleNode2);
+          const titleNode3 = document.createTextNode(chrome.i18n.getMessage("download_preview_outof") + totalLength + chrome.i18n.getMessage("download_preview_urls")); title.appendChild(titleNode3);
+          DOM["#download-preview-heading-title"].replaceChild(title, DOM["#download-preview-heading-title"].firstChild);
+          // Download Preview Table and a count index to keep track of current row index:
+          const table = document.createElement("table");
+          const thead = document.createElement("thead"); table.appendChild(thead);
+          const tr = document.createElement("tr"); thead.appendChild(tr);
+          let th;
+          th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
+          th = document.createElement("th"); th.className = "count"; th.textContent = " "; tr.appendChild(th);
+          th = document.createElement("th"); th.className = "thumb"; th.textContent = chrome.i18n.getMessage("download_preview_thumb_label"); tr.appendChild(th);
+          th = document.createElement("th"); th.className = "filename"; th.textContent = chrome.i18n.getMessage("download_preview_filename_label"); tr.appendChild(th);
+          th = document.createElement("th"); th.className = "extension"; th.textContent = chrome.i18n.getMessage("download_preview_extension_label"); tr.appendChild(th);
+          th = document.createElement("th"); th.className = "tag"; th.textContent = chrome.i18n.getMessage("download_preview_tag_label"); tr.appendChild(th);
+          th = document.createElement("th"); th.className = "attribute"; th.textContent = chrome.i18n.getMessage("download_preview_attribute_label"); tr.appendChild(th);
+          th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
+          const tbody = document.createElement("tbody"); table.appendChild(tbody);
+          let count = 1;
+          for (let selected of selecteds) {
+            tbody.appendChild(buildDownloadPreviewTR(selected, true, count++));
+          }
+          for (let unselected of unselecteds) {
+            tbody.appendChild(buildDownloadPreviewTR(unselected, false, count++));
+          }
+          DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
+          // After we build the table we need to update the columns again to what the checkboxes were:
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-extension-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-tag-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-attribute-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-url-input"]);
+          updateDownloadPreviewCheckboxes.call(DOM["#download-preview-compressed-input"]);
+          // Reset the manually selected includes and excludes each time the table is rebuilt:
+          downloadPreviewCache.selecteds = selecteds;
+          downloadPreviewCache.unselecteds = unselecteds;
+          downloadPreviewCache.mselecteds = [];
+          downloadPreviewCache.munselecteds = [];
+        } else {
+          const div = document.createElement("div");
+          div.textContent = chrome.i18n.getMessage("download_preview_noresults");
+          DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
+        }
+      });
+    }
+
+    /**
+     * Builds the TR (table row) element for the download preview table.
+     *
+     * @param item       the download preview item
+     * @param isSelected true if this download preview item is selected, false if not
+     * @param count      the current row index count
+     * @returns {Element} the tr element
+     * @private
+     */
+    function buildDownloadPreviewTR(item, isSelected, count) {
+      const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
+      const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
+      const thumb = buildDownloadPreviewThumb(item);
+      let td;
+      td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);
+      td = document.createElement("td"); td.className = "count"; td.textContent = count; tr.appendChild(td);
+      td = document.createElement("td"); td.className = "thumb"; if (thumb) { td.appendChild(thumb); } tr.appendChild(td);
+      td = document.createElement("td"); td.className = "filename"; td.textContent = item.filename; tr.appendChild(td);
+      td = document.createElement("td"); td.className = "extension"; td.textContent = item.extension; tr.appendChild(td);
+      td = document.createElement("td"); td.className = "tag"; td.textContent = item.tag; tr.appendChild(td);
+      td = document.createElement("td"); td.className = "attribute"; td.textContent = item.attribute; tr.appendChild(td);
+      td = document.createElement("td"); td.className = "url"; td.textContent = item.url; tr.appendChild(td);
+      return tr;
+    }
+
+    /**
+     * Builds the download preview thumb element (e.g. an <img> element).
+     *
+     * @param item the download preview item
+     * @returns {Element} the thumb element (e.g. <img>)
+     * @private
+     */
+    function buildDownloadPreviewThumb(item) {
+      const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
+            VIDEO_EXTENSIONS = ["mp4", "webm"];
+      let el = undefined;
+      if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
+        el = document.createElement("img"); el.src = item.url; el.alt = "";
+      } else if (item.tag === "video" || VIDEO_EXTENSIONS.includes(item.extension)) {
+        el = document.createElement("video"); el.src = item.url;
+      }
+      return el;
+    }
+
+    /**
+     * This function is called as the user is typing in a download preview input (e.g. includes/excludes).
+     * We don't want to update the downloadPreview immediately as it's an expensive procedure, so we set a timeout delay.
+     *
+     * @param input the text input (which will be updated later)
+     * @param label the label for the input (which will be updated)
+     * @param style the style to set the input and label
+     * @private
+     */
+    function inputUpdateDownloadPreview(input, label, style) {
+      console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
+      clearTimeout(timeouts[input.id]);
+      timeouts[input.id] = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
+    }
+
+    /**
+     * Updates the input and label styling together. It's used for the download preview text inputs to make
+     * them more "noticeable" when the user has something typed in.
+     *
+     * @param input the text input
+     * @param label the label for the input
+     * @param style the style to set the input and label
+     * @private
+     */
+    function updateInputLabelStyle(input, label, style) {
+      input.style = label.style = input.value ? style : "";
+    }
+
+    /**
+     * Translates checkbox values into a hidden input string which will be used later. This is used by the download
+     * property checkboxes that are dynamically built (e.g. downloadExtensions).
+     *
+     * @param selectorInputs the CSS selector that queries for the checkbox inputs
+     * @param generatedId the hidden input's ID, which will store the generated value of the checkboxes
+     * @private
+     */
+    function translateCheckboxValuesToHiddenInput(selectorInputs, generatedId) {
+      const inputs = document.querySelectorAll(selectorInputs);
+      let generated = "";
+      for (let input of inputs) {
+        if (input.checked) {
+          generated += (generated !== "" ? "," : "") + input.value;
+        }
+      }
+      DOM[generatedId].value = generated;
+    }
+
+    /**
+     * Called each time the download preview table checkboxes are changed. Translates the checkbox values into a hidden
+     * input and then updates the table's styling accordingly.
+     *
+     * @private
+     */
+    function updateDownloadPreviewCheckboxes() {
+      translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
+      if (this.value === "compressed") {
+        DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
+      } else {
+        let elements = document.getElementsByClassName(this.value);
+        // let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
+        for (let element of elements) {
+          element.style.display = this.checked ? "table-cell" : "none";
+        }
+      }
+    }
+
+    // TODO:
+    function updateDownloadSelectedsUnselecteds(event) {
+      const element = event.target;
+      if (element && element.classList.contains("check-circle")) {
+        const parent = element.parentNode.parentNode;
+        const object = JSON.parse(parent.dataset.json);
+        const isBeingAdded = parent.className === "unselected";
+        const generatedId = isBeingAdded ? "selecteds" : "unselecteds";
+        const otherId = isBeingAdded ? "unselecteds" : "selecteds";
+        parent.className = isBeingAdded ? "selected" : "unselected";
+        if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
+          console.log("pushing into download preview cache" + generatedId);
+          downloadPreviewCache["m" + generatedId].push(object);
+        }
+        downloadPreviewCache["m" + otherId] = downloadPreviewCache["m" + otherId].filter(otherObject => { return otherObject.url !== object.url });
+        const selectedsLengthElement = document.getElementById("selecteds-length");
+        const selectedsLengthNumber = Number(selectedsLengthElement.textContent);
+        const selectedsLengthNumberFinal = isBeingAdded ? selectedsLengthNumber + 1 : selectedsLengthNumber - 1;
+        selectedsLengthElement.textContent = "" + (selectedsLengthNumberFinal);
+        selectedsLengthElement.parentElement.className = selectedsLengthNumberFinal > 0 ? "success" : "error";
+      }
+    }
+
+  }();
 
   // Return Public Functions
   return {
