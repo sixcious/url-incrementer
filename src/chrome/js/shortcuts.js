@@ -1,12 +1,12 @@
 /**
- * URL Incrementer Shortcuts
- * 
- * @author Roy Six
- * @namespace
+ * URL Incrementer
+ * shortcut.js
+ * License: LGPL-3.0
+ * Copyleft © 2011-2018 Roy Six
  */
 
-
-// TODO: Prevent from being added multiple times? if (window.URLI && window.URLI.Shortcuts) { return; }
+// TODO: Prevent from being added multiple times?
+if (URLI && URLI.Shortcuts) { throw new Error(); }
 
 var URLI = URLI || {};
 
@@ -93,7 +93,7 @@ URLI.Shortcuts = function () {
   /**
    * A contextmenu event listener that disables the context menu from showing if event.buttons = 3.
    *
-   * @param event the context menu event
+   * @param event the contextmenu event
    * @returns {boolean} false if event.buttons = 3, true otherwise
    * @public
    */
