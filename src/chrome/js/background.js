@@ -329,6 +329,8 @@ URLI.Background = function () {
         let tab;
         // if sender.tab, messageListener, else if request.tab messageExternalListener
         if (sender && sender.tab && sender.tab.id) {
+          //console.log("tab.url=" + sender.tab.url);
+          //console.log("sender.url=" + sender.url);
           tab = sender.tab;
           tab.url = sender.url;
         } else {

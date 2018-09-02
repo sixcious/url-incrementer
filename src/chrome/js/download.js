@@ -7,7 +7,7 @@
 
 var URLI = URLI || {};
 
-URLI.Download = function () {
+URLI.Download = URLI.Download || function () {
 
   // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
   // List derived from Daniel DiPaolo @ stackoverflow.com @see https://stackoverflow.com/a/2725168
