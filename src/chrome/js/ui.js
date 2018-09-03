@@ -31,7 +31,7 @@ URLI.UI = function () {
     div.appendChild(ul);
     document.body.appendChild(div);
     setTimeout(function () { div.classList.add("overlay-visible"); }, 10);
-    //setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
+    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
   }
 
   /**

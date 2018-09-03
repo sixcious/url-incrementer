@@ -1,8 +1,8 @@
 /**
  * URL Incrementer
- * shortcut.js
- * License: LGPL-3.0
- * Copyleft © 2011-2018 Roy Six
+ * @file shortcut.js - internal shortcuts content script
+ * @author Roy Six
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};
@@ -56,7 +56,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
   function mouseupListener(event) {
     clearTimeout(timeouts.mouseup);
     clearTimeout(timeouts.mouseup2);
-    if (!button || event.button === button) {
+    if (event.button === button) {
       clicks++;
       timeouts.mouseup = setTimeout(function() {
         console.log("URLI.Shortcuts.mouseupListener() - timeouts.mouseup resetting clicks");
@@ -134,7 +134,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * @private
    */
   function mousePressed(event, mouse) {
-    return mouse && ((event.button === mouse.button) || (buttons3 && mouse.button === 3)) && mouse.clicks === clicks;
+    return mouse && (mouse.button === 3 ? buttons3 : event.button === mouse.button) && mouse.clicks === clicks;
   }
 
   // Return Public Functions

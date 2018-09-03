@@ -1,4 +1,10 @@
-/* Popup CSS relies on Chromium CSS */
+/**
+ * URL Incrementer
+ * @file popup.css - css for popup.html, relies on chromium.css since popups do not have browser default ui styles
+ * @author Roy Six
+ * @license LGPL-3.0
+ */
+
 
 /* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
@@ -184,16 +190,20 @@ div.checkbox  img {
 }
 
 /* display inline-block to remove whitespace from link */
-#setup #base-date-format-a {
+#setup #base-date-format-a, #setup #base-custom-a {
   display: inline-block;
 }
 
-#setup #base-date-format-input {
+#setup #base-date-format-input, #setup #base-custom-input {
   width: 128px;
   height: 1.75em;
   min-height: 1.75em;
   margin-top: 8px;
   margin-left: 12px;
+}
+
+#setup #base-custom-input {
+  width: 118px;
 }
 
 #increment-decrement-auxiliary, #auto-eta-repeat, #download-experimental {

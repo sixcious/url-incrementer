@@ -66,7 +66,7 @@ URLI.SaveURLs = function () {
           hash = await URLI.Cryptography.calculateHash(url1 + url2, save.salt),
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
-    const matches = hash === save.hash && URLI.IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom) === "";
+    const matches = hash === save.hash && URLI.IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
     return { "matches": matches, "selection": selection };
   }
 

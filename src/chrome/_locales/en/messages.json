@@ -133,6 +133,7 @@
   "interval_invalid_error": { "message": "Interval has to be between 1 and Max" },
   "error_skip_invalid_error": { "message": "Error Skip has to be between 0 and 100" },
   "base_invalid_error": { "message": "Select a valid base" },
+  "base_custom_invalid_error": { "message": "Custom base couldn't be validated against selection" },
   "date_invalid_error": { "message": "Date format doesn't match selection" },
   "toolkit_invalid_error": { "message": "Toolkit configuration missing tool, action, or quantity" },
   "toolkit_open_tabs_too_many_open_error": { "message": "Too many tabs are open in this window (current tabs + quantity exceeds 100), please close some or open a new window" },
@@ -313,5 +314,6 @@
   "base_case_lowercase_label": { "message": "Lowercase" },
   "base_case_uppercase_label": { "message": "Uppercase" },
   "base_date_format_label": { "message": "Format" },
+  "base_custom_label": { "message": "Alphabet" },
   "error_skip_label": { "message": "Error Skip" }
 }

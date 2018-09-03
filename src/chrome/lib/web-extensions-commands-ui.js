@@ -1,8 +1,8 @@
 /**
- * WebExtensions Commands UI
- *
- * @version 1.0
+ * Web Extensions Commands UI
+ * @file web-extensions-commands-ui.js
  * @author Roy Six
+ * @license TBD
  */
 
 var WebExtensionsCommandsUI = function () {

@@ -85,11 +85,11 @@ URLI.Popup = function () {
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
-    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value !== "date" && +this.value > 10 ? "display-block fade-in" : "display-none"; DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none"; });
+    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value !== "date" && this.value !== "custom" && +this.value > 10 ? "display-block fade-in" : "display-none"; DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none"; DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#auto-times-input"].addEventListener("change", Auto.updateAutoETA);
-    DOM["#auto-seconds-input"].addEventListener("change", Auto.updateAutoETA);
+    DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
+    DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
     DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
     DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
     DOM["#download-extensions"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-extensions input", "#download-extensions-generated"); updateDownloadPreview(); });
@@ -245,6 +245,8 @@ URLI.Popup = function () {
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#base-date"].className = instance.base === "date" ? "display-block" : "display-none";
     DOM["#base-date-format-input"].value = instance.baseDateFormat;
+    DOM["#base-custom"].className = instance.base === "custom" ? "display-block" : "display-none";
+    DOM["#base-custom-input"].value = instance.baseCustom;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
     DOM["#multi-count"].value = instance.multiEnabled ? instance.multiCount : 0;
@@ -336,6 +338,7 @@ URLI.Popup = function () {
       _.multi[multiCountNew].base = _.base;
       _.multi[multiCountNew].baseCase = _.baseCase;
       _.multi[multiCountNew].baseDateFormat = _.baseDateFormat;
+      _.multi[multiCountNew].baseCustom = _.baseCustom;
       _.multi[multiCountNew].leadingZeros = _.leadingZeros;
       _.multi[multiCountNew].times = _.multiTimes; //DOM["#auto-toggle-input"].checked ? +DOM["#auto-times-input"].value : DOM["#toolkit-input"].checked ? +DOM["#toolkit-quantity-input"].value : -1;
       _.multi[multiCountNew].range = _.multiRange;
@@ -818,6 +821,7 @@ URLI.Popup = function () {
         //     "base": !isNaN(_.base) ? _.base : items.base, // Don't ever save non Number bases (e.g. Date Time) as the default
         //     "baseCase": _.baseCase,
         //     "baseDateFormat": _.baseDateFormat,
+        //     "baseCustom": _.baseCustom,
         //     "errorSkip": _.errorSkip
         //   });
         // }
@@ -875,6 +879,7 @@ URLI.Popup = function () {
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
       _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked ? DOM["#base-case-lowercase-input"].value : undefined;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
+      _.baseCustom= DOM["#base-custom-input"].value;
       //_.selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(_.selection, _.base).toString(_.base); // Not in instance? TODO check background buildInstance for this?
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
       _.errorSkip = +DOM["#error-skip-input"].value;
@@ -952,7 +957,7 @@ URLI.Popup = function () {
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        backgroundPage.URLI.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom),
+        backgroundPage.URLI.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors

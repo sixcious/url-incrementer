@@ -1,4 +1,9 @@
-/* Options CSS is minimal because Options is set to use Browser UI style */
+/**
+ * URL Incrementer
+ * @file options.css - css for options.html, minimal because options is set to use browser/chrome ui style in manifest.json
+ * @author Roy Six
+ * @license LGPL-3.0
+ */
 
 /* Firefox: Set max-width and margin */
 body {
