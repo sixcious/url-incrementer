@@ -1,7 +1,7 @@
 {
   "name": { "message": "URL Incrementer" },
   "short_name": { "message": "URLI" },
-  "description": { "message": "Increment [+] a URL or go to the Next [>] Page; Supports Auto and Download Incrementing" },
+  "description": { "message": "Increment a URL or go to the Next Page; Supports Auto and Download Incrementing" },
   "title": { "message": "URL Incrementer" },
 
   "BROWSER": { "message": "----- BROWSER -----" },
