@@ -27,7 +27,13 @@
   --default-color: #333333;
 }
 
-/* display css */
+/* native */
+
+img {
+  vertical-align: text-bottom;
+}
+
+/* classes */
 
 .display-block {
   display: block;
@@ -35,6 +41,14 @@
 
 .display-none {
   display: none;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
 }
 
 .clear-both {

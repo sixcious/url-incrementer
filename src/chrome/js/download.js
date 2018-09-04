@@ -10,16 +10,13 @@ var URLI = URLI || {};
 URLI.Download = URLI.Download || function () {
 
   // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
-  // List derived from Daniel DiPaolo @ stackoverflow.com @see https://stackoverflow.com/a/2725168
   const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap", "style"];
-
-  // let items = new Map(); TODO...
 
   /**
    * Finds the current page URL and all URLs, extensions, tags, and attributes on the page to build a
    * download preview.
    *
-   * @returns {*} results, the array of all URLs items, all extensions, all tags, and all attributes
+   * @returns {*} results, the page URL, the array of all URLs items, all extensions, all tags, and all attributes
    * @public
    */
   function previewDownloadURLs() {
@@ -47,7 +44,8 @@ URLI.Download = URLI.Download || function () {
    * @public
    */
   function findDownloadURLs(strategy, extensions, tags, attributes, selector, includes, excludes) {
-    let results = [],
+    const items = new Map(); // intermediate return value, we use a Map to avoid potential duplicate URLs
+    let results = [], // final return value from the map, array because we can't return a map from a content script
         selectorbuilder = "";
     switch (strategy) {
       case "all":
@@ -76,9 +74,9 @@ URLI.Download = URLI.Download || function () {
     }
     try {
       if (strategy === "page") {
-        results = findPageURL(includes, excludes);
+        results = findPageURL(includes, excludes, items);
       } else {
-        results = findDownloadURLsBySelector(strategy, extensions, tags, attributes, selectorbuilder, includes, excludes);
+        results = findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selectorbuilder, includes, excludes, items);
       }
     } catch (e) {
       console.log("URLI.Download.findDownloadURLs() - exception caught:" + e);
@@ -92,26 +90,21 @@ URLI.Download = URLI.Download || function () {
    *
    * @param includes (optional) the array of Strings that must be included in the URL
    * @param excludes (optional) the array of Strings that must be excluded from the URL
+   * @param items      the items map
    * @returns {*} results, the array of results
    * @private
    */
-  function findPageURL(includes, excludes) {
-    const items = new Map(),
-          url = document.location.href;
+  function findPageURL(includes, excludes, items) {
+    const url = document.location.href;
     buildItems(items, undefined, "", url, "page", undefined, undefined, undefined, undefined, includes, excludes);
     return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
-    // if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
-    //   return [{"url": url, "extension": findExtension(url), "tag": "", "attribute": ""}];
-    //   //return [{"url": url, "filenameAndExtension": filenameAndExtension, "filename": filename, "extension": extension, "tag": "", "attribute": ""}];
-    // } else {
-    //   return [];
-    // }
   }
 
   /**
    * Finds all URLs that match the specified strategy and applicable parameters. Performs a query on the page's elements
    * and checks each element to see if it passes the strategy's rules.
    *
+   * @param document   the document to query against (this is a parameter to allow searching thru nested iframes)
    * @param strategy   the download strategy to employ
    * @param extensions (optional) if strategy is extensions: the file extensions to check for
    * @param tags       (optional) if strategy is tags: the HTML tags (e.g. <img>) to check for
@@ -119,12 +112,12 @@ URLI.Download = URLI.Download || function () {
    * @param selector   (optional) if strategy is selector: the CSS selectors to use in querySelectorAll()
    * @param includes   (optional) the array of Strings that must be included in the URLs
    * @param excludes   (optional) the array of Strings that must be excluded from the URLs
+   * @param items      the items map
    * @returns {*} results, the array of results
    * @private
    */
-  function findDownloadURLsBySelector(strategy, extensions, tags, attributes, selector, includes, excludes) {
-    const items = new Map(), // return value, we use a Map to avoid potential duplicate URLs
-          elements = document.querySelectorAll(selector),
+  function findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selector, includes, excludes, items) {
+    const elements = document.querySelectorAll(selector),
           origin = new URL(document.location.href).origin;
     console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (let element of elements) {
@@ -136,13 +129,14 @@ URLI.Download = URLI.Download || function () {
             for (let url of urls) {
               buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
             }
-          } else if (element.tagName && element.tagName.toLowerCase() === "iframe" && attribute && attribute.toLowerCase() === "src") {
+          }
+          // The iframe tag's document can be searched if it's the same origin of this document
+          else if (element.tagName && element.tagName.toLowerCase() === "iframe" && attribute && attribute.toLowerCase() === "src") {
             const url = element[attribute];
             buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
-            console.log("found iframe, origin=" + origin);
-            console.log("found iframe, iframe=" + new URL(url).origin);
-            if (new URL(url).origin === origin) {
-              extractURLsFromIframe(items, element, strategy, extensions, tags, attributes, selector, includes, excludes);
+            console.log("URLI.Download.findDownloadURLsBySelector() - iframe encountered, document origin=" + origin + ", iframe origin=" + new URL(url).origin);
+            if (isValidURL(url) && new URL(url).origin === origin && element.contentWindow && element.contentWindow.document) {
+              findDownloadURLsBySelector(element.contentWindow.document, strategy, extensions, tags, attributes, selector, includes, excludes, items);
             }
           } else {
             const url = element[attribute];
@@ -217,11 +211,6 @@ URLI.Download = URLI.Download || function () {
     return [...properties].sort();
   }
 
-  // TODO
-  function isValidURL(url) {
-    return url && typeof url === "string" && url.trim().length > 0 && !url.startsWith("mailto");
-  }
-
   /**
    * Determines if the URL includes or excludes the terms.
    *
@@ -244,82 +233,11 @@ URLI.Download = URLI.Download || function () {
     return does;
   }
 
-  function findFilenameAndExtension(url) {
-    let filenameAndExtension = "";
-    if (url) {
-      // TODO:
-      // by hayatbiralem
-      // @see https://stackoverflow.com/questions/511761/js-function-to-get-filename-from-url/2480287#comment61576914_17143667
-      filenameAndExtension = url.split('#').shift().split('?').shift().split('/').pop(); // TODO Replace? replace(/a/, ""); //;//.replace(/\..*/, "").replace(/[\W_]+/,"");
-    }
-    return filenameAndExtension;
-
-  }
-
-
-  function findFilename(filenameAndExtension) {
-    let filename = "";
-    if (filenameAndExtension) {
-      filename = filenameAndExtension.split('.').shift();
-    }
-    return filename;
-  }
-
-  /**
-   * Finds the file extension from a URL String.
-   * Regex to find a file extension from a URL is by SteeBono @ stackoverflow.com
-   *
-   * @param url the URL to parse
-   * @returns {string} the file extension (if found)
-   * @see https://stackoverflow.com/a/42841283
-   * @private
-   */
-  function findExtension(filenameAndExtension) {
-    let extension = "";
-    // if (url) {
-    //   const regex = /.+\/{2}.+\/{1}.+(\.\w+)\?*.*/,
-    //         group = 1,
-    //         urlquestion = url.substring(0, url.indexOf("?")),
-    //         urlhash = !urlquestion ? url.substring(0, url.indexOf("#")) : undefined,
-    //         match = regex.exec(urlquestion ? urlquestion : urlhash ? urlhash : url ? url : "");
-    //   if (match && match[group]) {
-    //     extension = match[group].slice(1); // Remove the . (e.g. .jpeg becomes jpeg)
-    //     if (!isValidExtension(extension)) { // If extension is not valid, throw it out
-    //       extension = "";
-    //     }
-    //   }
-    // }
-    if (filenameAndExtension && filenameAndExtension.includes(".")) {
-      extension = filenameAndExtension.split('.').pop();
-      //extension = filenameAndExtension.substr(filenameAndExtension.indexOf(".") + 1);
-      if (!isValidExtension(extension)) { // If extension is not valid, throw it out
-        extension = "";
-      }
-    }
-    return extension;
-  }
-
-  /**
-   * Determines if a potential file extension is valid.
-   * Arbitrary rules: Extensions must be alphanumeric and under 8 characters
-   *
-   * @param extension the extension to check
-   * @returns {boolean} true if the extension is valid, false if not
-   * @private
-   */
-  function isValidExtension(extension) {
-    return extension && extension.trim() !== "" && /^[a-z0-9\\.]+$/i.test(extension) && extension.length <= 8;
-  }
-
   /**
    * Finds the URLs from a CSS inline style.
-   * Regex to find the URL from a CSS style is by Alex Z @ stackoverflow.com
-   * Style properties that can have URLs is by Chad Scira et all @ stackoverflow.com
    *
    * @param style the CSS style
    * @returns {Array} the URLs array extracted from the style, if it exists
-   * @see https://stackoverflow.com/a/34166861
-   * @see https://stackoverflow.com/q/24730939
    * @private
    */
   function extractURLsFromStyle(style) {
@@ -339,18 +257,78 @@ URLI.Download = URLI.Download || function () {
     return urls;
   }
 
-  // TODO: Rewrite findDownloadURLs by selector to accept a document and then rewrite this method...
-  function extractURLsFromIframe(items, iframe, strategy, extensions, tags, attributes, selector, includes, excludes)  {
-    if (iframe) {
-      const elements = iframe.contentWindow.document.querySelectorAll(selector);
-      console.log("URLI.Download.extractURLsFromIframe() - found " + elements.length + " element(s)");
-      for (let element of elements) {
-        for (let attribute of URL_ATTRIBUTES) {
-          const url = element[attribute];
-          buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
-        }
+  /**
+   * Finds the filename joined together with its extension from a URL.
+   *
+   * @param url the URL to parse
+   * @returns {string} the filename and extension joined together
+   * @private
+   */
+  function findFilenameAndExtension(url) {
+    let filenameAndExtension = "";
+    if (url) {
+      filenameAndExtension = url.split('#').shift().split('?').shift().split('/').pop();
+    }
+    return filenameAndExtension;
+  }
+
+  /**
+   * Finds the filename from a string containing a filename and extension joined together.
+   *
+   * @param filenameAndExtension the filename and extension (joined together) to parse
+   * @returns {string} the filename (if found)
+   * @private
+   */
+  function findFilename(filenameAndExtension) {
+    let filename = "";
+    if (filenameAndExtension) {
+      filename = filenameAndExtension.split('.').shift();
+    }
+    return filename;
+  }
+
+  /**
+   * Finds the extension from a string containing a filename and extension joined together.
+   *
+   * @param filenameAndExtension the filename and extension (joined together) to parse
+   * @returns {string} the extension (if found)
+   * @private
+   */
+  function findExtension(filenameAndExtension) {
+    let extension = "";
+    if (filenameAndExtension && filenameAndExtension.includes(".")) {
+      // TODO: Decide on differentiating extensions with multiple periods
+      extension = filenameAndExtension.split('.').pop();
+      //extension = filenameAndExtension.substr(filenameAndExtension.indexOf(".") + 1);
+      if (!isValidExtension(extension)) { // If extension is not valid, throw it out
+        extension = "";
       }
     }
+    return extension;
+  }
+
+  /**
+   * Determines if a potential URL is a valid download URL.
+   * Arbitrary rules: URLs must be Strings and not start with mailto.
+   *
+   * @param url the URL to parse
+   * @returns {boolean} true if the URL is a download URL, false otherwise
+   * @private
+   */
+  function isValidURL(url) {
+    return url && typeof url === "string" && url.trim().length > 0 && !url.startsWith("mailto");
+  }
+
+  /**
+   * Determines if a potential file extension is valid.
+   * Arbitrary rules: Extensions must be alphanumeric and under 8 characters.
+   *
+   * @param extension the extension to check
+   * @returns {boolean} true if the extension is valid, false if not
+   * @private
+   */
+  function isValidExtension(extension) {
+    return extension && extension.trim().length > 0 && /^[a-z0-9\\.]+$/i.test(extension) && extension.length <= 8;
   }
 
   // Return Public Functions

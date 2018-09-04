@@ -371,8 +371,15 @@
           <input id="download-selecteds" type="hidden" value=""/>
           <input id="download-unselecteds" type="hidden" value=""/>
           <div id="download-preview-heading">
-            <div id="download-preview-heading-title"><div></div></div>
-            <div id="download-preview-checkboxes" class="checkbox">
+            <div id="download-preview-heading-title" class="float-left"><div></div></div>
+            <div id="download-subfolder" class="float-right">
+              <label id="download-subfolder-help" for="download-subfolder-input" data-i18n="title">
+                <img src="../img/font-awesome/black/question-circle.png" alt="" width="14" height="14"/>
+                <span id="download-subfolder-label" data-i18n="textContent"></span>
+              </label>
+              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001"/>
+            </div>
+            <div id="download-preview-checkboxes" class="clear-both checkbox">
               <label>
                 <input id="download-preview-thumb-input" value="thumb" type="checkbox"/>
                 <span id="download-preview-thumb-label" data-i18n="textContent"></span>

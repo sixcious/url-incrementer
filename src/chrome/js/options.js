@@ -451,7 +451,7 @@ URLI.Options = function () {
    * @param action the action to perform (test or save)
    * @private
    */
-  function customSelection(action) {
+  async function customSelection(action) {
     const url = DOM["#selection-custom-url-textarea"].value,
           pattern = DOM["#selection-custom-pattern-input"].value,
           flags = DOM["#selection-custom-flags-input"].value,
@@ -484,9 +484,15 @@ URLI.Options = function () {
       if (selectionStart > url.length || selectionStart + selection.length > url.length) {
         throw chrome.i18n.getMessage("selection_custom_matchindex_error");
       }
-      if (!/^[a-z0-9]+$/i.test(url.substring(selectionStart, selectionStart + selection.length))) {
-        throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotalphanumeric_error");
+      // TODO:
+      const backgroundPage = await EXT.Promisify.getBackgroundPage();
+      if (backgroundPage.URLI.IncrementDecrement.validateSelection(selection, base, baseCase, dateFormat, custom, leadingZeros)) {
+        throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
+      // if (!/^[a-z0-9]+$/i.test(url.substring(selectionStart, selectionStart + selection.length))) {
+      //   throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotalphanumeric_error");
+      // }
+
     } catch (e) {
       DOM["#selection-custom-message-span"].textContent = e;
       return;

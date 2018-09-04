@@ -155,7 +155,7 @@ URLI.Action = function () {
             JSON.stringify(action) + ", " +
             JSON.stringify(instance) + ", " +
             "\"content-script\"" + ", " +
-            JSON.parse(instance.errorSkip) + ");";
+            JSON.stringify(instance.errorSkip) + ");";
           // No callback because this will be executing async code and then sending a message back to the background
           chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
         });
@@ -179,7 +179,7 @@ URLI.Action = function () {
         JSON.stringify(action) + ", " +
         JSON.stringify(action === "next" ? items.nextPrevKeywordsNext : items.nextPrevKeywordsPrev) + "," +
         JSON.stringify(items.nextPrevLinksPriority) + ", " +
-        JSON.parse(items.nextPrevSameDomainPolicy) + ");";
+        JSON.stringify(items.nextPrevSameDomainPolicy) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           const url = results[0];
@@ -226,7 +226,7 @@ URLI.Action = function () {
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
       }
-      if (instance.saveFound) { // Don't delete saved URLs if the tab is simply being removed or auto clearing
+      if (!instance.enabled && instance.saveFound) { // Don't delete saved URLs if the instance is also enabled
         instance.saveFound = false;
         URLI.SaveURLs.deleteURL(instance.url, "clear");
       }
@@ -390,9 +390,9 @@ URLI.Action = function () {
             }
             for (let download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
-              const params = download.filenameAndExtension && download.filename && download.extension ? {url: download.url, filename: "folder/" + download.filenameAndExtension} : {url: download.url};
+              const params = instance.downloadSubfolder && download.filenameAndExtension && download.filename && download.extension ? { url: download.url, filename: instance.downloadSubfolder + "/" + download.filenameAndExtension } : { url: download.url};
               chrome.downloads.download(params, function(downloadId) {
-                if (chrome.runtime.lastError) {
+                if (chrome.runtime.lastError && instance.downloadSubfolder) {
                   chrome.downloads.download({url: download.url});
                 }
                 chrome.downloads.search({id: downloadId}, function(results) {
@@ -409,6 +409,15 @@ URLI.Action = function () {
                   }
                 });
               });
+            }
+            // Subfolder Increment after downloads
+            if (instance.downloadSubfolder) {
+              instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+/, function(match) {
+                const matchp1 = (Number(match) + 1) + "";
+                return "0".repeat(match.length - matchp1.length) + matchp1;
+              });
+              console.log("instance.downloadSubfolder=" + instance.downloadSubfolder);
+              URLI.Background.setInstance(instance.tabId, instance);
             }
           }
           if (callback) {

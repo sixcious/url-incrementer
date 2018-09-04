@@ -117,15 +117,16 @@ URLI.Auto = function () {
    * @private
    */
   function setAutoTimeout(instance) {
-    const autoTimer = new URLI.AutoTimer(function() {
+    const autoTimer = new URLI.AutoTimer(async function() {
+      const items = EXT.Promisify.getItems();
       if (instance.autoRepeating) {
-        URLI.Action.performAction("return", "auto", instance);
+        URLI.Action.performAction("return", "auto", instance, items);
       } else if (instance.downloadEnabled) {
-        URLI.Action.performAction("download", "auto", instance, function(instance) {
-          URLI.Action.performAction(instance.autoAction, "auto", instance);
+        URLI.Action.performAction("download", "auto", instance, items, function(instance) {
+          URLI.Action.performAction(instance.autoAction, "auto", instance, items);
         });
       } else {
-        URLI.Action.performAction(instance.autoAction, "auto", instance);
+        URLI.Action.performAction(instance.autoAction, "auto", instance, items);
       }
     }, instance.autoSeconds * 1000);
     autoTimers.set(instance.tabId, autoTimer);
@@ -280,27 +281,27 @@ URLI.Auto = function () {
  */
 URLI.AutoTimer = function (callback, delay) {
 
-  let timerId,
+  let timer,
       start,
       remaining = delay,
       wait = false;
 
   this.pause = function() {
-    clearTimeout(timerId);
+    clearTimeout(timer);
     remaining -= Date.now() - start;
     remaining = remaining < 0 || wait ? delay : remaining;
-    console.log("URLI.AutoTimer.pause() - timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    console.log("URLI.AutoTimer.pause() - timer=" + timer + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.resume = function() {
     start = Date.now();
-    clearTimeout(timerId);
-    timerId = wait ? timerId : setTimeout(callback, remaining);
-    console.log("URLI.AutoTimer.resume() - timerId=" + timerId + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    clearTimeout(timer);
+    timer = wait ? timer : setTimeout(callback, remaining);
+    console.log("URLI.AutoTimer.resume() - timer=" + timer + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.clear = function() {
-    clearTimeout(timerId);
+    clearTimeout(timer);
   };
 
   this.setWait = function(wait_) {

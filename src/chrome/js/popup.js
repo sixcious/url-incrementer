@@ -282,6 +282,7 @@ URLI.Popup = function () {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
     DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
+    DOM["#download-subfolder-input"].value = instance.downloadSubfolder && instance.downloadSubfolder.trim() ? instance.downloadSubfolder : "";
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-filename-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("filename");
     DOM["#download-preview-extension-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("extension");
@@ -942,6 +943,7 @@ URLI.Popup = function () {
       _.downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadMinMB = +DOM["#download-min-mb-input"].value;
       _.downloadMaxMB = +DOM["#download-max-mb-input"].value;
+      _.downloadSubfolder = DOM["#download-subfolder-input"].value.trim();
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
       _.downloadMSelecteds = downloadPreviewCache.mselecteds;
       _.downloadMUnselecteds = downloadPreviewCache.munselecteds;
@@ -999,7 +1001,8 @@ URLI.Popup = function () {
     if (caller === "accept") {
       // Download Errors
       e.downloadErrors = [
-        _.downloadEnabled && !items.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : ""
+        _.downloadEnabled && !items.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : "",
+        _.downloadSubfolder && !/^[a-z0-9_\- \\.]+$/i.test(_.downloadSubfolder) ? chrome.i18n.getMessage("download_subfolder_error") : ""
       ];
       e.downloadErrorsExist = e.downloadErrors.some(error => error !== "");
       if (e.downloadErrorsExist) {

@@ -112,9 +112,9 @@ div.checkbox  img {
   border-bottom: 1px solid #333333;
 }
 
-#setup .heading img {
+/*#setup .heading img {
   margin-bottom: 1px;
-}
+}*/
 
 #setup input[type="number"] {
   width: 52px;
@@ -141,7 +141,7 @@ div.checkbox  img {
 }
 
 #setup img {
-  vertical-align: bottom;
+/*  vertical-align: bottom;*/
   user-select: none;
 }
 
@@ -160,7 +160,7 @@ div.checkbox  img {
 /* increment-decrement */
 
 #setup #increment-decrement #increment-decrement-img-mouse-pointer {
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 /*#setup #properties {
@@ -210,7 +210,7 @@ div.checkbox  img {
   font-style: italic;
   position: absolute;
   right: 12px;
-  margin-top: -16px;
+  margin-top: -17px;
 }
 
 #increment-decrement-auxiliary {
@@ -260,9 +260,9 @@ div.checkbox  img {
   color: var(--download-color);
 }*/
 
-#auto-eta img, #download-experimental img {
+/*#auto-eta img, #download-experimental img {
   margin-bottom: 1px;
-}
+}*/
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 30px;
@@ -348,6 +348,12 @@ div.column#download-strategy, div.column#download-optional {
   border-bottom: 1px dotted #333333;
   padding-bottom: 1px;
 }
+
+/*#download-subfolder-help {
+  font-weight: bold;
+  border-bottom: 1px dotted #333333;
+  padding-bottom: 1px;
+}*/
 
 div.column#download-optional {
   border-left: 1px solid var(--download-color);

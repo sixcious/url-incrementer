@@ -71,10 +71,6 @@ input[type="number"] {
   width: 52px;
 }
 
-img {
-  vertical-align: text-bottom;
-}
-
 input[type="image"] {
   display: inline-block;
   vertical-align: middle;
@@ -282,14 +278,6 @@ input[type="number"].mouse-clicks-input {
 
 #about-floats-div {
   margin-bottom: 17px;
-}
-
-#about-floats-div #name-version-website-div {
-  float: left;
-}
-
-#about-floats-div #reset-options-div {
-  float: right;
 }
 
 /* urli-thank-you */
