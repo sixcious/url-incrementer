@@ -51,8 +51,10 @@ URLI.Options = function () {
     DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greeting": "removeContentScriptListener"}); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
+    DOM["#mixed-shortcuts-mode-input"].addEventListener("change", function () { chrome.storage.sync.set({"shortcutsMixedMode": this.checked}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
+    DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
     DOM["#key-increment-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-decrement-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
@@ -169,10 +171,12 @@ URLI.Options = function () {
         }
         if (values === "all") {
           DOM["#browser-shortcuts-quick-enable-input"].checked = items.quickEnabled;
+          DOM["#mixed-shortcuts-mode-input"].checked = items.shortcutsMixedMode;
           DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
           DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
           DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
           DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
+          DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
           writeInput(DOM["#key-increment-input"], items.keyIncrement);
           writeInput(DOM["#key-decrement-input"], items.keyDecrement);
           writeInput(DOM["#key-next-input"], items.keyNext);

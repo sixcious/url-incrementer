@@ -5,25 +5,41 @@
  * @license TBD
  */
 
-var WebExtensionsCommandsUI = function () {
+/*
+    <div>
+    URLI is currently set to use Firefox Shortcuts. Click on the text boxes and press 1-2 Modifier Keys and 1 normal key. The API requires you to enter at least 1 modifier key.
+    Some valid examples are: Ctrl+Up, Ctrl+Alt+Down, and Alt+Shift+PageUp
+    <br>
+    Modifier Keys: Ctrl, Shift, Alt
+    <br>
+    Normal Keys: A-Z, 0-9, F1-F12, Comma, Period, Home, End, PageUp, PageDown, Space, Insert, Delete, Up, Down, Left, Right
+    <br>
+    Examples: Ctrl+Up, Ctrl+Alt+Up, Shift+PageUp
+    <a href="https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">More Help</a>
+    https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
+    https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
+  </div>
+ */
 
-  const browser = chrome;
+var WebExtensionsCommandsUI = function () {
 
   const DOM_ID = "web-extensions-commands-ui",
     RESET_INPUT_IMG_PATH = "../img/font-awesome/black/times.png",
+    // e.g. consider replacing with browser.i18n.getMessage("web_extensions_commands_command_activate")
     I18N = {
-      "commandActivate":     "Activate the extension",     // browser.i18n.getMessage("web_extensions_commands_command_activate")
-      "typeShortcut": "Type a shortcut", // browser.i18n.getMessage("web_extensions_commands_type_shortcut")
-      "errorIncludeCtrlAlt": "Include either Ctrl or Alt", // browser.i18n.getMessage("web_extensions_commands_error_include_ctrl_alt")
-      "errorUseCtrlAlt": "" //
+      "commandActivate":     "Activate the extension",
+      "typeShortcut":        "Type a shortcut",
+      "errorIncludeCtrlAlt": "Include either Ctrl or Alt",
+      "errorUseCtrlAlt":     "Use either Ctrl or Alt",
+      "errorTypeLetter":     "Type a letter"
     };
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
     KEYBOARDEVENT_CODE_TO_COMMAND_KEYS = new Map(),
-    FLAG_KEY_NONE  = 0x0, // 0000
-    FLAG_KEY_ALT   = 0x1, // 0001
-    FLAG_KEY_CTRL  = 0x2, // 0010
-    FLAG_KEY_SHIFT = 0x4, // 0100
+    // FLAG_KEY_NONE  = 0x0, // 0000
+    // FLAG_KEY_ALT   = 0x1, // 0001
+    // FLAG_KEY_CTRL  = 0x2, // 0010
+    // FLAG_KEY_SHIFT = 0x4, // 0100
     KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
       "Alt", "AltLeft", "AltRight",
       "Control", "ControlLeft", "ControlRight",
@@ -31,36 +47,19 @@ var WebExtensionsCommandsUI = function () {
       "Meta", "MetaLeft", "MetaRight"
     ];
 
-  const medias = new Map([
-    ["MediaTrackNext", "MediaNextTrack"],
-    ["MediaTrackPrevious", "MediaPrevTrack"],
-    ["MediaPlayPause", "MediaPlayPause"],
-    ["MediaStop", "MediaStop"]
-  ]);
+  // const medias = new Map([
+  //   ["MediaTrackNext", "MediaNextTrack"],
+  //   ["MediaTrackPrevious", "MediaPrevTrack"],
+  //   ["MediaPlayPause", "MediaPlayPause"],
+  //   ["MediaStop", "MediaStop"]
+  // ]);
 
 
   let // commands_, // commands cache
-    key = [0,""], // Reusable key to stores the key's event modifiers [0] and code [1]
+    key = { "modifiers": {}, "code": "" }, //[0,""], // Reusable key to stores the key's event modifiers and code
     timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
   let allowed = false;
   let error = "";
-
-  /*
-      <div>
-      URLI is currently set to use Firefox Shortcuts. Click on the text boxes and press 1-2 Modifier Keys and 1 normal key. The API requires you to enter at least 1 modifier key.
-      Some valid examples are: Ctrl+Up, Ctrl+Alt+Down, and Alt+Shift+PageUp
-      <br>
-      Modifier Keys: Ctrl, Shift, Alt
-      <br>
-      Normal Keys: A-Z, 0-9, F1-F12, Comma, Period, Home, End, PageUp, PageDown, Space, Insert, Delete, Up, Down, Left, Right
-      <br>
-      Examples: Ctrl+Up, Ctrl+Alt+Up, Shift+PageUp
-      <a href="https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values">More Help</a>
-      https://developer.mozilla.org/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
-      https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands#Shortcut_values
-    </div>
-   */
-
 
   /**
    * Loads the DOM content needed to display the options page.
@@ -73,9 +72,8 @@ var WebExtensionsCommandsUI = function () {
   function DOMContentLoaded() {
     DOM["#" + DOM_ID] = document.getElementById(DOM_ID);
     buildKeyboardEventCodeToCommandKeysMap();
-    browser.commands.getAll(function(commands) {
-      console.log(commands);
-      // commands_ = commands;
+    browser.commands.getAll(commands => {
+      // console.log(commands);
       generateHTML(commands);
       cacheDOM();
       addEventListeners(commands);
@@ -193,9 +191,9 @@ var WebExtensionsCommandsUI = function () {
     for (const command of commands) {
       DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("focus", focus);
       DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("blur", blur);
-      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keydown", keydown); //function (event) { setKey(event); writeInput(this, key); });
-      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keyup", keyup); //function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
-      DOM["#" + DOM_ID + "-reset-" + command.name].addEventListener("click", reset); //function () { chrome.storage.sync.set({"keyIncrement": []}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], []); });
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keydown", keydown);
+      DOM["#" + DOM_ID + "-input-" + command.name].addEventListener("keyup", keyup);
+      DOM["#" + DOM_ID + "-reset-" + command.name].addEventListener("click", reset);
     }
   }
 
@@ -269,42 +267,42 @@ var WebExtensionsCommandsUI = function () {
    * @private
    */
   function setKey(event) {
+    event.preventDefault();
      error = "";
-     key = [0, ""];
+     //key = [0, ""];
+    key = { "modifiers": {}, "code": "" };
     // Set key [0] as the event modifiers OR'd together and [1] as the event key code
-    const modifier =
-      (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001  1
-      (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010  2
-      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE); // 0100   4
-
-    // 0001
-    // 0010
-    // 0100
+    // const modifiers =
+    //   (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001  1
+    //   (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010  2
+    //   (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE);  // 0100  4
 
 
-    // 0000, 0111
-    // NOT ALLOWED,
-
-    //allowed modifiiers: Alt, Ctrl, Alt+Shift, Ctrl+Shift
+    const modifiers = { "altKey": event.altKey, "ctrlKey": event.ctrlKey, "shiftKey": event.shiftKey, "metaKey": event.metaKey };
     const code = KEYBOARDEVENT_CODE_TO_COMMAND_KEYS.get(event.code);
 
-    // if (modifier === 3) {
-    //   error = "Use either Ctrl or Alt";
+    //allowed modifiiers: Alt, Ctrl, Alt+Shift, Ctrl+Shift
+    // switch (modifiers) {
+    //   case 0: case 4: case 7: // if (!event.altKey && !event.ctrlKey)
+    //     error = I18N.errorIncludeCtrlAlt;
+    //     return;
+    //   case 3: // else if (event.altKey && event.ctrlKey)
+    //     error = I18N.errorUseCtrlAlt;
+    //     return;
+    //   case 1: case 2: case 5: case 6: // else if (!code && (event.altKey || event.ctrlKey ||
+    //     if (!code) {
+    //       error = I18N.errorTypeLetter;
+    //     }
+    //     break;
     // }
-    switch (modifier) {
-      case 0: case 4: case 7:
-        error = "Include either Ctrl or Alt";
-        return;
-        break;
-      case 3:
-        error = "Use either Ctrl or Alt";
-        return;
-        break;
-      case 1: case 2: case 5: case 6:
-        if (!code) {
-          error = "Type a letter";
-        }
-        break;
+    if (!modifiers.altKey && !modifiers.ctrlKey) {
+      error = I18N.errorIncludeCtrlAlt;
+      return;
+    } else if (modifiers.altKey && modifiers.ctrlKey) {
+      error = I18N.errorUseCtrlAlt;
+      return;
+    } else if (!code) {
+      error = I18N.errorTypeLetter;
     }
 
     allowed = !error;
@@ -318,14 +316,15 @@ var WebExtensionsCommandsUI = function () {
     //   return;
     // }
     // allowed = true;
-    key = [
-      // (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
-      // (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
-      // (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-      //event.code
-      modifier,
-      code
-    ];
+    key = { "modifiers": modifiers, "code": code };
+    // key = [
+    //   // (event.altKey   ? FLAG_KEY_ALT   : FLAG_KEY_NONE) | // 0001
+    //   // (event.ctrlKey  ? FLAG_KEY_CTRL  : FLAG_KEY_NONE) | // 0010
+    //   // (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+    //   //event.code
+    //   modifier,
+    //   code
+    // ];
 
     // // remove error
     // DOM["#-input-underline-" + this.dataset.name].classList.remove("error");
@@ -344,12 +343,20 @@ var WebExtensionsCommandsUI = function () {
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
     // Note2: If the key code is in the KEY_MODIFIER_CODE_ARRAY (e.g. Alt, Ctrl), it is not written a second time
     let text = "";
-    if (!key || key.length === 0) { text = chrome.i18n.getMessage("key_notset_option"); }
+    if (!key) { text = browser.i18n.getMessage("key_notset_option"); }
+    // else {
+    //   if ((key.modifiers & FLAG_KEY_ALT))        { text += "Alt+";   }
+    //   if ((key.modifiers & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl+";  }
+    //   if ((key.modifiers & FLAG_KEY_SHIFT) >> 2) { text += "Shift+"; }
+    //   //if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += "Meta+";  }
+    //   if (key.code && !KEY_MODIFIER_CODE_ARRAY.includes(key.code)) { text += key.code; }
+    // }
     else {
-      if ((key[0] & FLAG_KEY_ALT))        { text += "Alt+";   }
-      if ((key[0] & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl+";  }
-      if ((key[0] & FLAG_KEY_SHIFT) >> 2) { text += "Shift+"; }
-      if (key[1] && !KEY_MODIFIER_CODE_ARRAY.includes(key[1])) { text += key[1]; }
+      if (key.modifiers.altKey)   { text += "Alt+";   }
+      if (key.modifiers.ctrlKey)  { text += "Ctrl+";  }
+      if (key.modifiers.shiftKey) { text += "Shift+"; }
+      //if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += "Meta+";  }
+      if (key.code && !KEY_MODIFIER_CODE_ARRAY.includes(key.code)) { text += key.code; }
     }
     input.value = text;
   }
@@ -360,7 +367,12 @@ var WebExtensionsCommandsUI = function () {
   };
 }();
 
+// Chrome: Compatibility to recognize browser namespace
+if (typeof browser === "undefined") {
+  browser = chrome;
+}
+
 // Firefox Android: browser.commands not supported
-if (typeof chrome !== "undefined" && chrome.commands) {
+if (typeof browser !== "undefined" && browser.commands) {
   document.addEventListener("DOMContentLoaded", WebExtensionsCommandsUI.DOMContentLoaded);
 }

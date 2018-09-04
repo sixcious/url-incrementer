@@ -55,7 +55,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    */
   function mouseupListener(event) {
     clearTimeout(timeouts.mouseup);
-    clearTimeout(timeouts.mouseup2);
     if (event.button === button) {
       clicks++;
       timeouts.mouseup = setTimeout(function() {
@@ -81,6 +80,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * @public
    */
   function mousedownListener(event) {
+    clearTimeout(timeouts.mouseup2);
     if (event.buttons === 3) {
       buttons3 = true;
       event.preventDefault(); // Avoid selecting text

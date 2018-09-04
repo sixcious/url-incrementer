@@ -415,7 +415,7 @@ URLI.Background = function () {
   async function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
       const items = await EXT.Promisify.getItems();
-      if (!items.permissionsInternalShortcuts || items.browserMixedMode) {
+      if (!items.permissionsInternalShortcuts || items.shortcutsMixedMode) {
         const tabs = await EXT.Promisify.getTabs();
         if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
           let instance = getInstance(tabs[0].id);

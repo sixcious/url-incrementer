@@ -26,20 +26,6 @@ EXT.Promisify = function () {
   }
 
   /**
-   * Gets the background page via a promise-based wrapper for async/await callers.
-   *
-   * @returns {Promise<{}>} the background page
-   * @public
-   */
-  function getBackgroundPage() {
-    return new Promise(resolve => {
-      chrome.runtime.getBackgroundPage(backgroundPage => {
-        resolve(backgroundPage);
-      });
-    });
-  }
-
-  /**
    * Gets the queried tabs via a promise-based wrapper for asyn/await callers.
    *
    * @param queryInfo the query object to use (optional)
@@ -49,6 +35,20 @@ EXT.Promisify = function () {
     return new Promise(resolve => {
       chrome.tabs.query(queryInfo, tabs => {
         resolve(tabs);
+      });
+    });
+  }
+
+  /**
+   * Gets the background page via a promise-based wrapper for async/await callers.
+   *
+   * @returns {Promise<{}>} the background page
+   * @public
+   */
+  function getBackgroundPage() {
+    return new Promise(resolve => {
+      chrome.runtime.getBackgroundPage(backgroundPage => {
+        resolve(backgroundPage);
       });
     });
   }

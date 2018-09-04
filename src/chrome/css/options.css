@@ -84,14 +84,6 @@ input[type="image"]:focus {
   outline: none;
 }
 
-input[type="text"].key-input {
-  width: 165px;
-}
-
-input[type="number"].mouse-clicks-input {
-  width: 35px;
-}
-
 .tooltip {
   border-bottom: 1px dotted #333;
   padding-bottom: 2px;
@@ -161,6 +153,21 @@ input[type="number"].mouse-clicks-input {
 
 #enhanced-mode div.heading h3 {
   color: var(--enhanced-mode-color);
+}
+
+/* shortcuts */
+
+input[type="text"].key-input {
+  width: 165px;
+}
+
+input[type="number"].mouse-clicks-input {
+  width: 35px;
+}
+
+#mouse-click-speed {
+  text-align: right;
+  margin-bottom: 1em;
 }
 
 /* icon and popup */
