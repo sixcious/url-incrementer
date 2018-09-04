@@ -184,8 +184,8 @@ URLI.IncrementDecrement = function () {
    * @param errorCodeEncountered whether or not an error code has been encountered yet while performing this action
    * @public
    */
-  function incrementDecrementAndSkipErrors(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
-    console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
+  function incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
+    console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
     incrementDecrement(action, instance);
@@ -201,22 +201,22 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - request.url= " + instance.url);
-          console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - response.url=" + response.url);
-          console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
+          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
+          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
+          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
           if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
           else { chrome.runtime.sendMessage(request); }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-          incrementDecrementAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
+          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1, true);
         } else {
-          console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
+          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
           if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
           else { chrome.runtime.sendMessage(request);}
         }
       }).catch(e => {
-        console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - a fetch() exception was caught:" + e);
+        console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
         // const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
         // const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
         // if (context === "background") { URLI.Background.messageListener(request1, { "tab": { "id": instance.tabId } }, function() {}); URLI.Background.messageListener(request2, { "tab": { "id": instance.tabId } }, function() {}); }
@@ -225,10 +225,10 @@ URLI.IncrementDecrement = function () {
         if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
         else { chrome.runtime.sendMessage(request); }
         // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-        incrementDecrementAndSkipErrors(action, instance, context, errorSkipRemaining - 1, true);
+        incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1, true);
       });
     } else {
-      console.log("URLI.IncrementDecrement.incrementDecrementAndSkipErrors() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
       const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
       if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
       else { chrome.runtime.sendMessage(request); }
@@ -340,7 +340,7 @@ URLI.IncrementDecrement = function () {
     findSelection: findSelection,
     validateSelection: validateSelection,
     incrementDecrement: incrementDecrement,
-    incrementDecrementAndSkipErrors: incrementDecrementAndSkipErrors
+    incrementDecrementErrorSkip: incrementDecrementErrorSkip
   };
 }();
 

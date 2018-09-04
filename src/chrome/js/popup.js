@@ -181,7 +181,7 @@ URLI.Popup = function () {
       if (items.popupAnimationsEnabled) {
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
-      backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance);
+      backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance, items);
       // Note: After performing the action, the background sends a message back to popup with the updated instance
     }
   }
@@ -413,7 +413,7 @@ URLI.Popup = function () {
         const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
         toolkitInstance.urls = precalculateProps.urls;
         toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-        backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance);
+        backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
         // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
         chrome.storage.sync.set({
           "toolkitTool": _.toolkitTool,
@@ -800,7 +800,7 @@ URLI.Popup = function () {
     }
     // Else good to go!
     else {
-      backgroundPage.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, async function() {
+      backgroundPage.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
         instance = JSON.parse(JSON.stringify(_));
         instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;

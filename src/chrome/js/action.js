@@ -15,47 +15,15 @@ URLI.Action = function () {
    * @param action   the action (e.g. increment)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
+   * @param items    the storage items (optional)
    * @param callback the function callback (optional)
    * @public
    */
-  function performAction(action, caller, instance, callback) {
+  async function performAction(action, caller, instance, items, callback) {
     console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
+    items = items ? items : await EXT.Promisify.getItems();
     let actionPerformed = false;
-    const validated = prePerformAction(action, caller, instance);
-    instance = validated.instance;
-    action = validated.action;
-    switch (action) {
-      case "increment":  case "decrement":
-      case "increment1": case "decrement1":
-      case "increment2": case "decrement2":
-      case "increment3": case "decrement3":
-        actionPerformed = incrementDecrement(action, caller, instance, callback);
-        break;
-      case "next": case "prev":
-        actionPerformed = nextPrev(action, caller, instance, callback);
-        break;
-      case "clear":
-        actionPerformed = clear(action, caller, instance, callback);
-        break;
-      case "return":
-        actionPerformed = returnToStart(action, caller, instance, callback);
-        break;
-      case "toolkit":
-        actionPerformed = toolkit(action, caller, instance, callback);
-        break;
-      case "auto":
-        actionPerformed = auto(action, caller, instance, callback);
-        break;
-      case "download":
-        actionPerformed = download(action, caller, instance, callback);
-        break;
-      default:
-        break;
-    }
-    postPerformAction(action, caller, instance, actionPerformed);
-  }
-
-  function prePerformAction(action, caller, instance) {
+    // Pre-Perform Action:
     // Handle AUTO
     if (instance.autoEnabled) {
       console.log("prePerformAction instance is auto enabled");
@@ -75,8 +43,6 @@ URLI.Action = function () {
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
         console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
-        // actionPerformed = clear(action, caller, instance, callback);
-        // return;
         action = "clear";
       }
     }
@@ -87,60 +53,64 @@ URLI.Action = function () {
         chrome.tabs.onUpdated.addListener(URLI.Background.tabUpdatedListener);
       }
     }
-    return {"instance": instance, "action": action};
-  }
-
-  async function postPerformAction(action, caller, instance, actionPerformed) {
+    // Action:
+    switch (action) {
+      case "increment":  case "decrement":
+      case "increment1": case "decrement1":
+      case "increment2": case "decrement2":
+      case "increment3": case "decrement3":
+        // Error Skipping:
+        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
+          (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
+          (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
+          actionPerformed = incrementDecrementErrorSkip(action, instance, items);
+        }
+        // Regular:
+        else {
+          actionPerformed = incrementDecrement(action, instance);
+        }
+        break;
+      case "next": case "prev":
+        actionPerformed = nextPrev(action, instance, items);
+        break;
+      case "clear":
+        actionPerformed = clear(caller, instance, items, callback);
+        break;
+      case "return":
+        actionPerformed = returnToStart(caller, instance);
+        break;
+      case "toolkit":
+        actionPerformed = toolkit(instance);
+        break;
+      case "auto":
+        actionPerformed = auto(instance);
+        break;
+      case "download":
+        actionPerformed = download(instance, callback);
+        break;
+      default:
+        break;
+    }
+    // Post-Perform Action:
     // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
     if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
       console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
       URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL, "startingSelection": instance.startingSelection, "startingSelectionStart": instance.startingSelectionStart});
     }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
-    const items = await EXT.Promisify.getItems();
-    if (actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
-      if (items.iconFeedbackEnabled) {
-        URLI.Background.setBadge(instance.tabId, action, true);
-      }
+    if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
+      URLI.Background.setBadge(instance.tabId, action, true);
     }
-  }
-
-  /**
-   * A "super" increment decrement controller that delegates the action to a sub increment / decrement function,
-   * either performing a regular or error skipping increment / decrement action.
-   *
-   * @param action
-   * @param caller
-   * @param instance
-   * @param callback
-   * @returns {boolean}
-   */
-  function incrementDecrement(action, caller, instance, callback) {
-    const items = EXT.Promisify.getItems();
-    let actionPerformed = false;
-    // Error Skipping:
-    if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
-        (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
-        (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
-      actionPerformed = incrementDecrementSkipErrors(action, caller, instance, callback);
-    }
-    // Regular:
-    else {
-      actionPerformed = incrementDecrementRegular(action, caller, instance, callback);
-    }
-    return actionPerformed;
   }
 
   /**
    * Performs a regular increment or decrement action (without error skipping) and then updates the URL.
    *
    * @param action   the action (increment or decrement)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
    * @private
    */
-  function incrementDecrementRegular(action, caller, instance, callback) {
+  function incrementDecrement(action, instance) {
     let actionPerformed = false;
     // If we didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
@@ -159,20 +129,18 @@ URLI.Action = function () {
    * Performs an increment or decrement action while also skipping errors.
    *
    * @param action   the action (increment or decrement)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
+   * @param items    the storage items
    * @private
    */
-  function incrementDecrementSkipErrors(action, caller, instance, callback) {
+  function incrementDecrementErrorSkip(action, instance, items) {
     let actionPerformed = false;
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
-      const items = EXT.Promisify.getItems();
       if (items.permissionsEnhancedMode) {
-        URLI.IncrementDecrement.incrementDecrementAndSkipErrors(action, instance, "background", instance.errorSkip);
+        URLI.IncrementDecrement.incrementDecrementErrorSkip(action, instance, "background", instance.errorSkip);
       } else {
         chrome.tabs.executeScript(instance.tabId, {
           file: "/js/increment-decrement.js",
@@ -181,9 +149,9 @@ URLI.Action = function () {
           // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
           if (chrome.runtime.lastError) {
             console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-            return incrementDecrementRegular(instance, action, caller, callback);
+            return incrementDecrement(action, instance);
           }
-          const code = "URLI.IncrementDecrement.incrementDecrementAndSkipErrors(" +
+          const code = "URLI.IncrementDecrement.incrementDecrementErrorSkip(" +
             JSON.stringify(action) + ", " +
             JSON.stringify(instance) + ", " +
             "\"content-script\"" + ", " +
@@ -200,14 +168,12 @@ URLI.Action = function () {
    * Performs a next or prev action.
    *
    * @param action   the action (e.g. next or prev)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
+   * @param items    the storage items
    * @private
    */
-  function nextPrev(action, caller, instance, callback) {
+  function nextPrev(action, instance, items) {
     let actionPerformed = true;
-    const items = EXT.Promisify.getItems();
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
         JSON.stringify(action) + ", " +
@@ -234,13 +200,13 @@ URLI.Action = function () {
   /**
    * Performs a clear action.
    *
-   * @param action   the action (clear)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
+   * @param items    the storage items
+   * @param callback the function callback (optional) - called by popup clear before set
    * @private
    */
-  function clear(action, caller, instance, callback) {
+  function clear(caller, instance, items, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
     if (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.isSkeleton) {
@@ -254,7 +220,6 @@ URLI.Action = function () {
     // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete save
     if (caller !== "popupClearBeforeSet" &&  caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
       //instance.multiCount = 0; TODO... multi ?
-      const items = EXT.Promisify.getItems();
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
       }
@@ -289,13 +254,11 @@ URLI.Action = function () {
   /**
    * Performs a return action, returning back to the instance's starting URL.
    *
-   * @param action   the action (return)
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
    * @private
    */
-  function returnToStart(action, caller, instance, callback) {
+  function returnToStart(caller, instance) {
     let actionPerformed = false;
     if (instance.startingURL) {
       actionPerformed = true;
@@ -333,34 +296,28 @@ URLI.Action = function () {
   /**
    * Performs a toolkit action. The instance's toolkit tool, action, and quantity are used.
    *
-   * @param action   the action (toolkit)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
    * @private
    */
-  function toolkit(action, caller, instance, callback) {
+  function toolkit(instance) {
     let actionPerformed = false;
-    // If URLI didn't find a selection, we can't increment or decrement
-    if (instance.selection !== "" && instance.selectionStart >= 0) {
-      switch (instance.toolkitTool) {
-        case "open-tabs": {
-          //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
-          for (let url of instance.urls) {
-            chrome.tabs.create({"url": url.urlmod, "active": false});
-          }
-          actionPerformed = true;
-          break;
+    switch (instance.toolkitTool) {
+      case "open-tabs": {
+        //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
+        for (let url of instance.urls) {
+          chrome.tabs.create({"url": url.urlmod, "active": false});
         }
-        case "generate-links": {
-          //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
-          chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-          actionPerformed = true;
-          break;
-        }
-        default:
-          break;
+        actionPerformed = true;
+        break;
       }
+      case "generate-links": {
+        //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
+        chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
+        actionPerformed = true;
+        break;
+      }
+      default:
+        break;
     }
     return actionPerformed;
   }
@@ -368,22 +325,15 @@ URLI.Action = function () {
   /**
    * Performs an auto action (the auto action is either a pause or resume only).
    *
-   * @param action   the action (auto pause/resume)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
    * @private
    */
-  function auto(action, caller, instance, callback) {
+  function auto(instance) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
       URLI.Auto.pauseOrResumeAutoTimer(instance);
       instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
-      if (callback) {
-        callback(instance);
-      } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-      }
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
       actionPerformed = true;
     }
     return actionPerformed;
@@ -392,13 +342,11 @@ URLI.Action = function () {
   /**
    * Performs a download action.
    *
-   * @param action   the action (download)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
-   * @param callback the function callback (optional)
+   * @param callback the function callback (optional) - called by auto
    * @private
    */
-  function download(action, caller, instance, callback) {
+  function download(instance, callback) {
     let actionPerformed = false;
     if (instance.downloadEnabled) {
       actionPerformed = true;

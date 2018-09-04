@@ -21,7 +21,7 @@ URLI.Background = function () {
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* keywords */    "nextPrevKeywordsNext": ["link@rel=\"next\"", "pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
+    /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
     /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", //"autoRepeat": false,
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
@@ -306,10 +306,10 @@ URLI.Background = function () {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
-    let instance;
+    let instance, items;
     switch (request.greeting) {
       case "checkInternalShortcuts":
-        const items = await EXT.Promisify.getItems();
+        items = await EXT.Promisify.getItems();
         instance = getInstance(sender.tab.id);
         if (!instance || !instance.enabled) {
           sender.tab.url = sender.url;
@@ -326,11 +326,11 @@ URLI.Background = function () {
         }
         break;
       case "performAction":
+        items = await EXT.Promisify.getItems();
         let tab;
         // if sender.tab, messageListener, else if request.tab messageExternalListener
+        // Firefox: sender tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
         if (sender && sender.tab && sender.tab.id) {
-          //console.log("tab.url=" + sender.tab.url);
-          //console.log("sender.url=" + sender.url);
           tab = sender.tab;
           tab.url = sender.url;
         } else {
@@ -338,12 +338,10 @@ URLI.Background = function () {
         }
         instance = getInstance(tab.id);
         if ((!instance || !instance.enabled) && request.action !== "auto") {
-          // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-          //sender.tab.url = sender.url;
-          instance = await buildInstance(tab);
+          instance = await buildInstance(tab, items);
         }
         if (instance) {
-          URLI.Action.performAction(request.action, "content-script", instance);
+          URLI.Action.performAction(request.action, "content-script", instance, items);
         }
         break;
       case "incrementDecrementSkipErrors":
@@ -424,9 +422,9 @@ URLI.Background = function () {
               ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
               (command === "return" && instance && instance.startingURL)) {
             if (items.quickEnabled && (!instance || !instance.enabled)) {
-              instance = await buildInstance(tabs[0]);
+              instance = await buildInstance(tabs[0], items);
             }
-            URLI.Action.performAction(command, "command", instance);
+            URLI.Action.performAction(command, "command", instance, items);
           }
         }
       }

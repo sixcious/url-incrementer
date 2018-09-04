@@ -441,7 +441,7 @@ URLI.Options = function () {
     console.log("URLI.Options.updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
     clearTimeout(timeouts[domId]);
     timeouts[domId] = setTimeout(function() {
-      chrome.storage.sync.set({ [storageKey]: DOM["#" + domId].value ? DOM["#" + domId].value.split(/[ ,\n]+/).filter(Boolean) : [] });
+      chrome.storage.sync.set({ [storageKey]: DOM["#" + domId].value ? DOM["#" + domId].value.split(storageKey === "errorCodesCustom" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] });
     }, 1000);
   }
 
