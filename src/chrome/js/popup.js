@@ -85,7 +85,11 @@ URLI.Popup = function () {
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
-    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = this.value !== "date" && this.value !== "custom" && +this.value > 10 ? "display-block fade-in" : "display-none"; DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none"; DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";  });
+    DOM["#base-select"].addEventListener("change", function() {
+      DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
+      DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
+      DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
+    });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
@@ -240,7 +244,7 @@ URLI.Popup = function () {
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
     DOM["#base-select"].value = instance.base;
-    DOM["#base-case"].className = instance.base !== "date" && instance.base > 10 ? "display-block" : "display-none";
+    DOM["#base-case"].className = instance.base > 10 ? "display-block" : "display-none";
     DOM["#base-case-lowercase-input"].checked = instance.baseCase === "lowercase";
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#base-date"].className = instance.base === "date" ? "display-block" : "display-none";
@@ -878,9 +882,9 @@ URLI.Popup = function () {
       _.startingSelectionStart = +DOM["#selection-start-input"].value;
       _.interval = +DOM["#interval-input"].value;
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
-      _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked ? DOM["#base-case-lowercase-input"].value : undefined;
+      _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
-      _.baseCustom= DOM["#base-custom-input"].value;
+      _.baseCustom = DOM["#base-custom-input"].value;
       //_.selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(_.selection, _.base).toString(_.base); // Not in instance? TODO check background buildInstance for this?
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
       _.errorSkip = +DOM["#error-skip-input"].value;

@@ -112,9 +112,16 @@ URLI.Options = function () {
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
     DOM["#interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"interval": +this.value > 0 ? +this.value : 1}); });
     DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
-    DOM["#base-select"].addEventListener("change", function() { DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"base": +this.value}); });
+    DOM["#base-select"].addEventListener("change", function() {
+      DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
+      DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
+      DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
+      chrome.storage.sync.set({"base": +this.value > 10 ? +this.value : this.value});
+    });
     DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#base-date-format-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseDateFormat", "value"); });
+    DOM["#base-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseCustom", "value"); });
     DOM["#shuffle-limit-input"].addEventListener("change", function () { chrome.storage.sync.set({"shuffleLimit": +this.value > 0 ? +this.value : 1}); });
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
@@ -122,9 +129,9 @@ URLI.Options = function () {
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#error-codes-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "errorCodesCustom"); });
-    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsNext"); });
-    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsPrev"); });
+    DOM["#error-codes-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "errorCodesCustom", "array-split-all"); });
+    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsNext", "array-split-nospace"); });
+    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsPrev", "array-split-nospace"); });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
@@ -220,6 +227,10 @@ URLI.Options = function () {
           DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
           DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
           DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+          DOM["#base-date"].className = items.base === "date" ? "display-block" : "display-none";
+          DOM["#base-date-format-input"].value = items.baseDateFormat;
+          DOM["#base-custom"].className = items.base === "custom" ? "display-block" : "display-none";
+          DOM["#base-custom-input"].value = items.baseCustom;
           DOM["#shuffle-limit-input"].value = items.shuffleLimit;
           DOM["#error-skip-input"].value = items.errorSkip;
           DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
@@ -408,7 +419,7 @@ URLI.Options = function () {
       saves.push({
         "type": "partial", "hash": hash, "salt": salt, "urllength": url.length,
         "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
-        "base": items.base, "baseCase": items.baseCase /*, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom*/, "errorSkip": items.errorSkip
+        "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom, "errorSkip": items.errorSkip
       });
       chrome.storage.local.set({"saves": saves}, function() {
         populateValuesFromStorage("savedURLs");
@@ -437,11 +448,14 @@ URLI.Options = function () {
    *
    * @private
    */
-  function updateTextInputDynamically(domId, storageKey) {
+  function updateTextInputDynamically(domId, storageKey, storageValueType) {
     console.log("URLI.Options.updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
     clearTimeout(timeouts[domId]);
     timeouts[domId] = setTimeout(function() {
-      chrome.storage.sync.set({ [storageKey]: DOM["#" + domId].value ? DOM["#" + domId].value.split(storageKey === "errorCodesCustom" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] });
+      chrome.storage.sync.set({ [storageKey]:
+          storageValueType === "value" ? DOM["#" + domId].value :
+          storageValueType.startsWith("array") ? DOM["#" + domId].value ? DOM["#" + domId].value.split(storageValueType === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
+      });
     }, 1000);
   }
 
@@ -485,8 +499,13 @@ URLI.Options = function () {
         throw chrome.i18n.getMessage("selection_custom_matchindex_error");
       }
       // TODO:
-      const backgroundPage = await EXT.Promisify.getBackgroundPage();
-      if (backgroundPage.URLI.IncrementDecrement.validateSelection(selection, base, baseCase, dateFormat, custom, leadingZeros)) {
+      const backgroundPage = await EXT.Promisify.getBackgroundPage(),
+        base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
+        baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked,
+        baseDateFormat = DOM["#base-date-format-input"].value,
+        baseCustom = DOM["#base-custom-input"].value,
+        leadingZeros = selection.startsWith("0") && selection.length > 1;
+      if (backgroundPage.URLI.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros)) {
         throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
       // if (!/^[a-z0-9]+$/i.test(url.substring(selectionStart, selectionStart + selection.length))) {

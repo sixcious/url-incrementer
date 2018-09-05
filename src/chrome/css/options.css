@@ -197,10 +197,6 @@ input[type="number"].mouse-clicks-input {
 
 /* saves */
 
-/*#saves-settings-none {
-  font-style: italic;
-}*/
-
 #saved-urls-buttons {
   margin-top: 2em;
 }
@@ -213,10 +209,31 @@ input[type="number"].mouse-clicks-input {
   margin-right: 1em;
 }
 
-/* base-case */
+/* base */
 
-#base-case .radio label:not(:last-child) {
+#base-case {
+  font-size: 0.9em;
+}
+
+#base-case label:not(:last-child) {
   margin-right: 1em;
+}
+
+/* display inline-block to remove whitespace from link */
+#base-date-format-a, #base-custom-a {
+  display: inline-block;
+}
+
+#base-date-format-input,#base-custom-input {
+  width: 128px;
+  height: 1.75em;
+  min-height: 1.75em;
+  margin-top: 8px;
+  margin-left: 12px;
+}
+
+#base-custom-input {
+  width: 118px;
 }
 
 /* error-skip */
