@@ -428,10 +428,10 @@ URLI.IncrementDecrementDate = function () {
     console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     let selection2 = "";
     try {
-      const parts = URLI.IncrementDecrementDate.splitParts(selection, dateFormat);
-      const date = URLI.IncrementDecrementDate.str2date(parts.strParts, parts.dateFormatParts);
-      const date2 = URLI.IncrementDecrementDate.incdecdate(action, date, dateFormat, interval);
-      selection2 = URLI.IncrementDecrementDate.date2str(date2, dateFormat, parts.dateFormatParts);
+      const parts = splitParts(selection, dateFormat);
+      const date = str2date(parts.strParts, parts.dateFormatParts);
+      const date2 = incdecdate(action, date, dateFormat, interval);
+      selection2 = date2str(date2, dateFormat, parts.dateFormatParts);
     } catch(e) {
       console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
       selection2 = "DateError";
@@ -448,7 +448,6 @@ URLI.IncrementDecrementDate = function () {
         delimiters += (delimiters ? "|" : "") + match;
       }
     }
-
     let dateFormatParts = [], strParts = [];
     if (delimiters !== "") {
       const delimitersregexp = new RegExp(delimiters, "g");
