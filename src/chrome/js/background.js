@@ -479,7 +479,7 @@ URLI.Background = function () {
     console.log("URLI.Background.startupListener()");
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
     if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
-      console.log("URLI.Background.startupListener() - setting chrome.browserAction.setIcon() to " + items.iconColor);
+      console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {
           "16": "/img/icons/" + items.iconColor + "/16.png",

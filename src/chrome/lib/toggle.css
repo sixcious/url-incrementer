@@ -94,7 +94,7 @@
 .tgl + .tgl-btn {
   width: 2.5em;
   height: 1.25em;
-  background: #AAAAAA;
+  background: #BDC1C6; /*#AAAAAA;*/
   display: inline-block;
   vertical-align: middle;
   margin-bottom: 1px;
@@ -108,6 +108,10 @@
   width: 63%;
   height: 175%;
   top: -40%; /*-38%;*/ /* -42% */
+}
+
+.tgl-ios + .tgl-btn:after {
+  background: #fff;
 }
 
 .tgl-ios + .tgl-btn:after {

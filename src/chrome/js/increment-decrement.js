@@ -85,14 +85,14 @@ URLI.IncrementDecrement = function () {
     switch (base) {
       case "date":
         const selectionDate = URLI.IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, dateFormat);
-        console.log("selectionDat=" + selectionDate);
+        console.log("URLI.IncrementDecrement.validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
         if (selectionDate !== selection) {
           error = chrome.i18n.getMessage("date_invalid_error");
         }
         break;
       case "custom":
         const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, custom, leadingZeros);
-        console.log("URLI.IncrementDecrement.validateSelection() - selectionCustom=" + selectionCustom +", selection=" + selection);
+        console.log("URLI.IncrementDecrement.validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
         if (selectionCustom !== selection) {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
         }
@@ -428,7 +428,7 @@ URLI.IncrementDecrementDate = function () {
     console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     let selection2 = "";
     try {
-      const parts = splitParts(selection, dateFormat);
+      const parts = splitdateparts(selection, dateFormat);
       const date = str2date(parts.strParts, parts.dateFormatParts);
       const date2 = incdecdate(action, date, dateFormat, interval);
       selection2 = date2str(date2, dateFormat, parts.dateFormatParts);
@@ -439,7 +439,7 @@ URLI.IncrementDecrementDate = function () {
     return selection2;
   }
 
-  function splitParts(str, dateFormat) {
+  function splitdateparts(str, dateFormat) {
     const regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
     const matches = dateFormat.match(regexp);
     let delimiters = "";
@@ -454,11 +454,11 @@ URLI.IncrementDecrementDate = function () {
       dateFormatParts = dateFormat.split(delimitersregexp).filter(Boolean);
       strParts = str.split(delimitersregexp).filter(Boolean);
     } else {
-      // variable widths:
-      // mmmm, Mmmm, MMMM, m, d, h, i, s, l
+      // Variable widths not allowed without delimiters: mmmm, Mmmm, MMMM, m, d, h, i, s, l
       dateFormatParts = matches;
-      for (let i = 0; i < dateFormatParts.length; i++) {
-        strParts[i] = str.substr(i > 0 ? dateFormatParts[i - 1].length  : 0, dateFormatParts[i].length); // use substr over substring here
+      for (let i = 0, currPos = 0; i < dateFormatParts.length; i++) {
+        strParts[i] = str.substr(currPos, dateFormatParts[i].length);
+        currPos += dateFormatParts[i].length;
       }
     }
     return { "dateFormatParts": dateFormatParts, "strParts": strParts };

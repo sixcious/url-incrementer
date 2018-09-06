@@ -206,7 +206,7 @@ div.checkbox  img {
   width: 118px;
 }
 
-#increment-decrement-auxiliary, #auto-eta-repeat, #download-experimental {
+#increment-decrement-heading-right, #auto-heading-right, #download-experimental {
   font-style: italic;
   position: absolute;
   right: 12px;
@@ -223,7 +223,7 @@ div.checkbox  img {
 }
 
 #auto-eta {
-  margin-right: 1em;
+  margin-left: 1em;
 }
 
 /* Toolkit */
