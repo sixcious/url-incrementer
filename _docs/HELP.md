@@ -19,12 +19,12 @@
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
 
 ## Auto Incrementing
-TODO
+Just toggle on AUTO to start an auto-incrementing session! You can have it also repeat by just clicking the repeat icon. Auto supports pause/resume.
 
-Toggle on AUTO to start an auto-incrementing session.
+Auto can be used with Multi, Shuffle, and Dwonload (e.g. act as an Auto Incrementer Downloader)
 
 ## Download Incrementing (Multi-Page Downloading)
-TODO
+You must first enable Download in the Options to see the Download toggle in the UI.
 
 ## The Incrementer's Toolkit
 This is URLI's own special toolkit and lets you open up to 100 incremented tabs or generate a list of up to 10,000 incremented links at once. Click the Tool icon to open or close it. The toolkit works with the URL and selection you have selected.
@@ -32,9 +32,20 @@ This is URLI's own special toolkit and lets you open up to 100 incremented tabs 
 The toolkit works with both Shuffle Mode on and Multi-Incrementing (it will do a simultaneous multi-increment on the parts selected).
 
 ## Multi Incrementing
-Increment up to 3 different parts of the URL at the same time or individually. Select the part as normal and optionally adjust the interval or base, then click the *Share* icon near Selection. Repeat for each additional part, then click Accept. You'll see a new set of color-coded Increment Decrement buttons allowing you to increment just that part. The regular colored buttons will do a simultaneous increment for all the parts at once.
+Multi supports a ton of features.
+It lets you increment up to 3 parts of the URL individually, simultaneously, or in ranges.
+Select the part as normal and optionally adjust the interval or base, then click the group of +++ icons near Selection.
+Repeat for each additional part, then click Accept.
+You'll see a new set of color-coded Increment Decrement buttons allowing you to increment just that part.
+The regular colored buttons will do a simultaneous increment for all the parts at once.
 
-You can use Multi Incrementing with AUTO and the Toolkit to generate links or open tabs. In these modes, it will do a simultaneous multi-increment on all the parts you selected.
+Here are some of the neat things you can do with Multi:
+1. Multi Selections - This is the most common use case. Select different parts in the URL to increment. You will have a set of + - buttons for each selection.
+2. Multi Intervals - Select the same number multiple times, but change the interval each time. This will let you have multiple buttons that can increment/decrement the selection by different amounts (e.g. a +1 Button, a +10 Button, and a +100 button)!
+3. Multi-Simultaneous Incrementing - If you use Multi with AUTO or the Toolkit, by default all the parts will be incremented simultaneously!
+4. Multi-Range Incrementing - The most complicated multi function allows you to edit the URL and enter ranges for each selection. This performs a "compounded" increment for each part. This also works with AUTO and the Toolkit.
+
+You can use Multi Incrementing with AUTO and the Toolkit to generate links or open tabs. In these modes, it will do a simultaneous multi-increment or a multi-range increment.
 
 ## Date Incrementing
 Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.

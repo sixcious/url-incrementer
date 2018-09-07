@@ -383,18 +383,26 @@ URLI.IncrementDecrementMulti = function () {
       // Update the multi selection part's to the new selection
       instance.multi[instance.multiPart].selection = selectionmod;
       // If after incrementing/decrementing, the url length changed update the other parts' selectionStart
-      if (instance.url && instance.url.length !== urlmod.length) {
+      //if (instance.url && instance.url.length !== urlmod.length) {
         const urlLengthDiff = instance.url.length - urlmod.length; // Handles both positive and negative changes (e.g. URL became shorter or longer)
         const thisPartSelectionStart = instance.multi[instance.multiPart].selectionStart;
         console.log("URLI.IncrementDecrement.multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
-        // If this part isn't the last part, adjust the selectionStarts of the other parts that come later in the URL
         for (let i = 1; i <= instance.multiCount; i++) {
-          if (i !== instance.multiPart && instance.multi[i].selectionStart > thisPartSelectionStart) {
-            console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
-            instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
+          if (i !== instance.multiPart) {
+            // If the i part comes after this part in the URL, adjust the selectionStarts of the i part
+            if (instance.multi[i].selectionStart > thisPartSelectionStart) {
+              console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
+              instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
+            }
+            // Adjust the other multi parts' selections in case they overlap with this multiPart's selection
+            if (instance.multi[i].selectionStart === thisPartSelectionStart && instance.multi[i].selection.length === instance.multi[instance.multiPart].selection.length + urlLengthDiff) {
+              instance.multi[i].selection = selectionmod;
+            } else {
+              instance.multi[i].selection = urlmod.substring(instance.multi[i].selectionStart, instance.multi[i].selectionStart + instance.multi[i].selection.length);
+            }
           }
         }
-      }
+      //}
     }
   }
 
