@@ -128,8 +128,6 @@ URLI.IncrementDecrement = function () {
     //       isNaN(parseInt(_.selection, _.base)) || _.selection.toUpperCase() !== ("0".repeat(_.selection.length - _.selectionParsed.length) + _.selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
 
 
-
-
     // SAVE URLS:
     // const selection = url.substring(save.selectionStart, save.url2length > 0 ? url.lastIndexOf(url2) : url.length);
     // const selectionParsed = isNaN(save.base) ? undefined : parseInt(selection, save.base).toString(save.base);
@@ -181,10 +179,9 @@ URLI.IncrementDecrement = function () {
    * @param instance             the instance containing the URL and parameters used to increment or decrement
    * @param context              the context this method is running in ("background" or "content-script")
    * @param errorSkipRemaining   the number of times left to skip while performing this action
-   * @param errorCodeEncountered whether or not an error code has been encountered yet while performing this action
    * @public
    */
-  function incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining, errorCodeEncountered) {
+  function incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining) {
     console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
@@ -207,8 +204,8 @@ URLI.IncrementDecrement = function () {
           const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
           if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
           else { chrome.runtime.sendMessage(request); }
-          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1, true);
+          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
+          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
         } else {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
@@ -224,8 +221,8 @@ URLI.IncrementDecrement = function () {
         const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": "ERR", "instance": instance};
         if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
         else { chrome.runtime.sendMessage(request); }
-        // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining and setting errorCodeEncountered to true
-        incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1, true);
+        // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
+        incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
       });
     } else {
       console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
@@ -473,29 +470,30 @@ URLI.IncrementDecrementDate = function () {
   }
 
   function str2date(strParts, dateFormatParts) {
-    const mapparts = new Map([["y", 2000], ["m", 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
+    const now = new Date();
+    const mapParts = new Map([["y", now.getFullYear()], ["m", now.getMonth() + 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
     for (let i = 0; i < dateFormatParts.length; i++) {
       switch(dateFormatParts[i]) {
-        case "yyyy": mapparts.set("y", strParts[i]); break;
-        case "yy":   mapparts.set("y", parseInt(strParts[i]) > 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
-        case "mmmm": case "Mmmm": case"MMMM": mapparts.set("m", mmmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
-        case "mmm": case"Mmm": case"MMM": mapparts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
-        case "mm":   mapparts.set("m", strParts[i]); break;
-        case "m":    mapparts.set("m", strParts[i]); break;
-        case "dd":   mapparts.set("d", strParts[i]); break;
-        case "d":    mapparts.set("d", strParts[i]); break;
-        case "hh":   mapparts.set("h", strParts[i]); break;
-        case "h":    mapparts.set("h", strParts[i]); break;
-        case "ii":   mapparts.set("i", strParts[i]); break;
-        case "i":    mapparts.set("i", strParts[i]); break;
-        case "ss":   mapparts.set("s", strParts[i]); break;
-        case "s":    mapparts.set("s", strParts[i]); break;
-        case "ll":   mapparts.set("l", strParts[i]); break;
-        case "l":    mapparts.set("l", strParts[i]); break;
+        case "yyyy": mapParts.set("y", strParts[i]); break;
+        case "yy": const yy = parseInt(strParts[i]); const nowyy = parseInt(now.getFullYear().toString().slice(-2)); const nowbyy = parseInt(now.getFullYear().toString().substring(0, 2)); mapParts.set("y", (nowyy - yy < 0 ? yy - nowyy > 50 ? nowbyy - 1 : nowbyy : nowyy - yy > 50 ? nowbyy + 1 : nowbyy) + strParts[i]); break; //parseInt(strParts[i]) > 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
+        case "mmmm": case "Mmmm": case"MMMM": mapParts.set("m", mmmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
+        case "mmm": case"Mmm": case"MMM": mapParts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
+        case "mm":   mapParts.set("m", strParts[i]); break;
+        case "m":    mapParts.set("m", strParts[i]); break;
+        case "dd":   mapParts.set("d", strParts[i]); break;
+        case "d":    mapParts.set("d", strParts[i]); break;
+        case "hh":   mapParts.set("h", strParts[i]); break;
+        case "h":    mapParts.set("h", strParts[i]); break;
+        case "ii":   mapParts.set("i", strParts[i]); break;
+        case "i":    mapParts.set("i", strParts[i]); break;
+        case "ss":   mapParts.set("s", strParts[i]); break;
+        case "s":    mapParts.set("s", strParts[i]); break;
+        case "ll":   mapParts.set("l", strParts[i]); break;
+        case "l":    mapParts.set("l", strParts[i]); break;
         default: break;
       }
     }
-    return new Date(mapparts.get("y"), mapparts.get("m") - 1, mapparts.get("d"), mapparts.get("h"), mapparts.get("i"), mapparts.get("s"), mapparts.get("l"));
+    return new Date(mapParts.get("y"), mapParts.get("m") - 1, mapParts.get("d"), mapParts.get("h"), mapParts.get("i"), mapParts.get("s"), mapParts.get("l"));
   }
 
   // @see https://stackoverflow.com/a/39196460
