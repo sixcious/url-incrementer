@@ -89,8 +89,8 @@ div.checkbox  img {
 
 #controls #controls-icons {
   position: absolute;
-  top: 1px;
-  right: 3px;
+  top: -4px;
+  right: 4px;
 }
 
 /* Setup CSS */

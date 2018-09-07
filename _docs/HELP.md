@@ -48,15 +48,17 @@ Here are some of the neat things you can do with Multi:
 You can use Multi Incrementing with AUTO and the Toolkit to generate links or open tabs. In these modes, it will do a simultaneous multi-increment or a multi-range increment.
 
 ## Date Incrementing
-Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection! The "smallest" part of the date you selected will then be incremented. For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
+Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection!
+The "smallest" part of the date you selected will then be incremented.
+For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
 
-Important: Each part of the date needs to be separated by a non date-format character (like a `/` or a `-`, 2018/01/25 for example) or the format needs to contain only fixed-width date formats without any separators (e.g. "20180125").
+Important: Each part of the date needs to be separated by a non date-format character (like a `/` or a `-`, e.g. `2018/01/25`) or the format needs to contain only fixed-width date formats without any separators (e.g. `20180125`).
 
-*The following formats are variable-width and are not allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.*
+*The following formats are variable-width and are **not** allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.*
 
-#### Date Selection / Format Examples
+### Date Selection / Format Examples
 
-Valid Examples:
+**Valid Examples**
 
 | Selection  | Format     |
 | ---------  | ---------- |
@@ -67,16 +69,16 @@ Valid Examples:
 | 12:30:05   | hh:ii:ss   |
 | 1-25_12:30 | m-d_hh:ii  |
 
-Invalid Examples:
+**Invalid Examples**
 
-| Selection   | Format    | Reason                                                                    |
-| ----------  | --------- | ------------------------------------------------------------------------- |
+| Selection   | Format     | Reason                                                                    |
+| ----------  | ---------- | ------------------------------------------------------------------------- |
 | /01/25/2018 | mm/dd/yyyy | Selection has an unnecessary leading / and does not match format |
-| 01-252018   | mm-ddyyyy | Mixed usage of separators and non-separators between date parts           |
-| 1252018     | mddyyyy   | Uses a non fixed-width date part without separators ("m" instead of "mm") |
-| Sept-2018   | Mmm-yyyy  | "Sept" not in supported short month names ("Sep" only is)                 |
+| 01-252018   | mm-ddyyyy  | Mixed usage of separators and non-separators between date parts           |
+| 1252018     | mddyyyy    | Uses a non fixed-width date part without separators ("m" instead of "mm") |
+| Sept-2018   | Mmm-yyyy   | "Sept" not in supported short month names ("Sep" only is)                 |
 
-#### Date Formats
+### Date Formats
 This is a table of all the allowable parts you can use in the format.
 
 | Format | Component   | Presentation | Examples   |
@@ -104,8 +106,8 @@ This is a table of all the allowable parts you can use in the format.
 
 * For the `yy` format (2 Digit Year), if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
 
-#### Short and Long Month Names
-Only the the EN-US language is currently supported.
+### Short and Long Month Names
+Only the the en-US language is currently supported.
 
 - Jan - January
 - Feb - February
@@ -125,10 +127,10 @@ This checks if the next URL will return an HTTP error code (like 404) and increm
 
 You may notice a minor delay (~1 second) when incrementing with error skipping due to the time it takes to wait for a response from a server.
 
-#### An Error-Skipping Example
+### An Error-Skipping Example
 You are on page=1 and increment with error skip set to 10. If the next 3 pages (page=2 thru page=4) don't exist, they'll be skipped and you'll be taken to the next valid page, page=5 automatically. If more than 10 consecutive pages don't exist, URLI will "give up" checking since error skip is set to 10, and take you to page=12. You can then manually increment again to repeat the process.
 
-#### Important Note!
+### Important Note!
 You MUST have Enhanced Mode enabled to use Error Skipping in the following situations:
 1. On "Browser Error Pages" (e.g. the website didn't implement an error page, so the browser forwarded you to its own error page)
 2. When using the Popup or 1-Click Buttons
@@ -143,19 +145,19 @@ It's completely optional ("opt-in"); there are two types of URLs you can save: *
 1. **Exact URL** - This will only match URLs that are exactly the same except for the part you selected to increment. Click the heart icon in Setup (you can also have it set to always be pre-selected in the Options).
 2. **Partial URL** - This lets you add a less-restrictive partial URL that can be "matched" with several URLs that start with the partial URL you entered. In Options, click the *Add Partial URL...* button.
 
-#### How Are URLs Saved?
+### Exact URLs vs Partial URLs - Which Should I Use?
+Because URLs are saved just like passwords, **Exact URLs** must match exactly for it to be recognized (except for the part/number you selected to increment).
+However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
+For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
+So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
+
+### How Are URLs Saved?
 To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URL into two parts (replacing the selection with a different string) before hashing it, making even automated dictionary attempts to decipher them **extremely difficult!**
 
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 
-#### Where Are The Cryptographic Hashes Saved?
+### Where Are The Cryptographic Hashes Saved?
 The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all your other saved settings). We do not save anything outside the extension storage space allotted to us.
-
-#### Exact URLs vs Partial URLs - Which Should I Use?
-Because URLs are saved just like passwords, *Exact URLs* must match exactly for it to be recognized (except for the part/number you selected to increment).
-However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
-For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
-So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
 
 ## Shuffle URLs
 Click the Shuffle (crossed-arrows) icon to turn this mode on.
