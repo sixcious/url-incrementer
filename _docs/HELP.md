@@ -4,7 +4,7 @@
 
 - [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
 - [Auto Incrementing](#auto-incrementing)
-- [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multi-page-downloading)
+- [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multiple-page-downloading)
 - [The Incrementer's Toolkit](#the-incrementers-toolkit)
 - [Multi Incrementing](#multi-incrementing)
 - [Date Incrementing](#date-incrementing)
@@ -21,14 +21,15 @@ Infinite Scrolling is the next level of incrementing! But because infinite scrol
 ## Auto Incrementing
 Just toggle on AUTO to start an auto-incrementing session! You can have it also repeat by just clicking the repeat icon. Auto supports pause/resume.
 
-Auto can be used with Multi, Shuffle, and Dwonload (e.g. act as an Auto Incrementer Downloader)
+Auto can be used with Multi, Shuffle, and Download (e.g. act as an Auto Incrementer Downloader)
 
 ## Download Incrementing (Multiple Page Downloading)
 You must first enable Download in the Options to see the Download toggle in the UI.
 You can also have each page's downloads stored in its own subfolder while incrementing. Just note that the file name and extension will be based on the URL, so make sure that the `Name` and `Ext` columns look right before choosing this option.
 
+
 ## The Incrementer's Toolkit
-This is URLI's own special toolkit and lets you open up to 100 incremented tabs or generate a list of up to 10,000 incremented links at once. Click the Tool icon to open or close it. The toolkit works with the URL and selection you have selected.
+This is URLI's own special toolkit used for testing and development that has been made available to you! It lets you open up to 100 incremented tabs or generate a list of up to 10,000 incremented links at once. Click the Tool icon to open or close it. The toolkit works with the URL and selection you have selected.
 
 The toolkit works with both Shuffle Mode on and Multi-Incrementing (it will do a simultaneous multi-increment on the parts selected).
 

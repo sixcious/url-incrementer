@@ -281,27 +281,27 @@ URLI.Auto = function () {
  */
 URLI.AutoTimer = function (callback, delay) {
 
-  let timer,
+  let timeout,
       start,
       remaining = delay,
       wait = false;
 
   this.pause = function() {
-    clearTimeout(timer);
+    clearTimeout(timeout);
     remaining -= Date.now() - start;
     remaining = remaining < 0 || wait ? delay : remaining;
-    console.log("URLI.AutoTimer.pause() - timer=" + timer + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    console.log("URLI.AutoTimer.pause() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.resume = function() {
     start = Date.now();
-    clearTimeout(timer);
-    timer = wait ? timer : setTimeout(callback, remaining);
-    console.log("URLI.AutoTimer.resume() - timer=" + timer + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    clearTimeout(timeout);
+    timeout = wait ? timeout : setTimeout(callback, remaining);
+    console.log("URLI.AutoTimer.resume() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
   };
 
   this.clear = function() {
-    clearTimeout(timer);
+    clearTimeout(timeout);
   };
 
   this.setWait = function(wait_) {
