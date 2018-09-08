@@ -49,7 +49,7 @@ URLI.Options = function () {
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greeting": "addContentScriptListener"}); } }) });
     DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); chrome.runtime.sendMessage({"greeting": "removeContentScriptListener"}); } }) });
-    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"quickEnabled": this.checked}); });
+    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"shortcutsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#mixed-shortcuts-mode-input"].addEventListener("change", function () { chrome.storage.sync.set({"shortcutsMixedMode": this.checked}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -177,7 +177,7 @@ URLI.Options = function () {
           buildSavedURLsSelect(localItems.saves);
         }
         if (values === "all") {
-          DOM["#browser-shortcuts-quick-enable-input"].checked = items.quickEnabled;
+          DOM["#browser-shortcuts-quick-enable-input"].checked = items.shortcutsQuickEnabled;
           DOM["#mixed-shortcuts-mode-input"].checked = items.shortcutsMixedMode;
           DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
           DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;

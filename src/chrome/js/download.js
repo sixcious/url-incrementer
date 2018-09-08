@@ -20,7 +20,7 @@ URLI.Download = URLI.Download || function () {
    * @public
    */
   function previewDownloadURLs() {
-    const  pageURL = findDownloadURLs("page"),//findPageURL(),
+    const  pageURL = findDownloadURLs("page"),
            allURLs = findDownloadURLs("all"),
            allExtensions = findProperties(allURLs, "extension"),
            allTags = findProperties(allURLs, "tag"),
