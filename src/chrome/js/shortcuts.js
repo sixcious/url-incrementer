@@ -38,13 +38,13 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    */
   function keyupListener(event) {
     console.log("URLI.Shortcuts.keyupListener() - event.code=" + event.code);
-    if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }
-    else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }
-    else if (keyPressed(event, items.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }
-    else if (keyPressed(event, items.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }
-    else if (keyPressed(event, items.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }
-    else if (keyPressed(event, items.keyReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }
-    else if (keyPressed(event, items.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }
+    if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyPrev))      { chrome.runtime.sendMessage({greeting: "performAction", action: "prev",      "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear",     "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return",    "shortcut": "key"}); }
+    else if (keyPressed(event, items.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto",      "shortcut": "key"}); }
   }
 
   /**
@@ -64,13 +64,13 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
       clicks = 0;
     }
     console.log("URLI.Shortcuts.mouseupListener() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks);
-    if      (mousePressed(event, items.mouseIncrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mouseDecrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mouseNext))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mousePrev))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "prev"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mouseClear))     { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mouseReturn))    { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return"}); }, items.mouseClickSpeed); }
-    else if (mousePressed(event, items.mouseAuto))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto"}); }, items.mouseClickSpeed); }
+    if      (mousePressed(event, items.mouseIncrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mouseDecrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mouseNext))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mousePrev))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "prev",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mouseClear))     { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear",     "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mouseReturn))    { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return",    "shortcut": "mouse"}); }, items.mouseClickSpeed); }
+    else if (mousePressed(event, items.mouseAuto))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
   }
 
   /**
@@ -149,13 +149,24 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
 
 if (!URLI.Shortcuts.contentScriptExecuted) {
   URLI.Shortcuts.contentScriptExecuted = true;
+  // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
+  chrome.storage.sync.get(null, function(items) {
+    URLI.Shortcuts.setItems(items);
+    // Key
+    if (items.keyEnabled) { //&& (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
+    }
+    // Mouse
+    if (items.mouseEnabled) { //} && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+      document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+      document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
+    }
+  });
   // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
   chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
     switch (request.greeting) {
-      case "setItems":
-        URLI.Shortcuts.setItems(request.items);
-        break;
       case "addKeyListener":
         document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
         document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
@@ -180,21 +191,6 @@ if (!URLI.Shortcuts.contentScriptExecuted) {
         break;
     }
     sendResponse({});
-  });
-//  // Content Script starts by sending a message to check if internal shortcuts should be enabled (e.g. quick shortcuts, saved url, enabled instance)
-//  chrome.runtime.sendMessage({greeting: "checkInternalShortcuts"});
-  chrome.storage.sync.get(null, function(items) {
-    URLI.Shortcuts.setItems(items);
-    // Key
-    if (items.keyEnabled) { //&& (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
-    }
-    // Mouse
-    if (items.mouseEnabled) { //} && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-      document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-      document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-    }
   });
 }
 

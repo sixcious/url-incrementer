@@ -17,6 +17,7 @@
                 "return":    { "description": "Return To Start" },
                 "auto":      { "description": "Auto Pause / Resume" }},
   "permissions": ["activeTab", "storage"],
-  "optional_permissions": ["<all_urls>", "downloads"],
+  "optional_permissions": ["downloads"],
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["js/shortcuts.js"] }],
   "applications": { "gecko": { "id": "urli@url-incrementer", "strict_min_version": "60.1.0" } }
 }

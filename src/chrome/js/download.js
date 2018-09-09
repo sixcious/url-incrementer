@@ -10,7 +10,7 @@ var URLI = URLI || {};
 URLI.Download = URLI.Download || function () {
 
   // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
-  const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "usemap", "style"];
+  const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "style", "usemap"];
 
   /**
    * Finds the current page URL and all URLs, extensions, tags, and attributes on the page to build a

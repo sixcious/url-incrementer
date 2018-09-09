@@ -22,7 +22,7 @@ URLI.Background = function () {
     /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
-    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times", //"autoRepeat": false,
+    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     /* fun */         "urli": "loves incrementing for you"
@@ -61,7 +61,8 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  let makeBackgroundPersistentEnabled = false;
+  // A boolean flag to dynamically make the background temporarily persistent (when an instance is enabled or auto is on)
+  let persistent = false;
 
   /**
    * Gets the storage default values (SDV).
@@ -114,8 +115,8 @@ URLI.Background = function () {
   function setInstance(tabId, instance) {
     // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
     instances.set(tabId, JSON.parse(JSON.stringify(instance)));
-    if (!makeBackgroundPersistentEnabled) {
-      makeBackgroundPersistent();
+    if (!persistent) {
+      makePersistent();
     }
   }
 
@@ -186,37 +187,6 @@ URLI.Background = function () {
       "downloadPreview": items.downloadPreview,
       "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity
     };
-  }
-
-  /**
-   * Builds properties for an instance using either a base of a saved URL or storage items.
-   *
-   * @param via   string indicating how the props are being built (one of "exact", "partial" (saves), or "items" (storage))
-   * @param tab   the tab to build from (id and url)
-   * @param object  the base object to build from (saved url or storage items)
-   * @param sobject the selection base object to build from
-   * @returns {{}} the built properties from the bases
-   * @private
-   */
-  function buildProps(via, tab, object, sobject) {
-    const props = {};
-    props.tabId = tab.id;
-    props.url = props.startingURL = tab.url;
-    props.saveFound = via === "exact" || via === "partial";
-    props.saveType = via === "items" ? "none" : via;
-    props.selection = props.startingSelection = sobject.selection;
-    props.selectionStart = props.startingSelectionStart = via === "exact" ? object.selectionStart : sobject.selectionStart;
-    props.interval = object.interval;
-    props.base = object.base;
-    props.baseCase = object.baseCase;
-    props.baseDateFormat = object.baseDateFormat;
-    props.baseCustom = object.baseCustom;
-    props.leadingZeros = via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
-    props.errorSkip = object.errorSkip;
-    props.errorCodes = object.errorCodes;
-    props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;
-    props.errorCodesCustom = object.errorCodesCustom;
-    return props;
   }
 
   /**
@@ -293,11 +263,6 @@ URLI.Background = function () {
       chrome.storage.local.clear(function() {
         chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
       });
-      // // Remove declarativeContent rule and permission
-      // if (chrome.declarativeContent) {
-      //   chrome.declarativeContent.onPageChanged.removeRules(undefined);
-      // }
-      // chrome.permissions.remove({ permissions: ["declarativeContent"]});
     }
   }
 
@@ -313,23 +278,23 @@ URLI.Background = function () {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
     let instance, items;
     switch (request.greeting) {
-      case "checkInternalShortcuts":
-        items = await EXT.Promisify.getItems();
-        instance = getInstance(sender.tab.id);
-        if (!instance || !instance.enabled) {
-          sender.tab.url = sender.url;
-          instance = await buildInstance(sender.tab);
-        }
-        chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items});
-        // Key
-        if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
-        }
-        // Mouse
-        if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
-        }
-        break;
+      // case "checkInternalShortcuts":
+      //   items = await EXT.Promisify.getItems();
+      //   instance = getInstance(sender.tab.id);
+      //   if (!instance || !instance.enabled) {
+      //     sender.tab.url = sender.url;
+      //     instance = await buildInstance(sender.tab);
+      //   }
+      //   chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items});
+      //   // Key
+      //   if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
+      //   }
+      //   // Mouse
+      //   if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
+      //   }
+      //   break;
       case "performAction":
         items = await EXT.Promisify.getItems();
         let tab;
@@ -342,8 +307,17 @@ URLI.Background = function () {
           tab = request.tab;
         }
         instance = getInstance(tab.id);
-        if ((!instance || !instance.enabled) && request.action !== "auto") {
+        if ((!instance || !instance.enabled)) { // && request.action !== "auto") {
           instance = await buildInstance(tab, items);
+          if (request.shortcut && request.shortcut === "key") {
+            if (!(items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound))))) {
+              instance = undefined;
+            }
+          } else if (request.shortcut && request.shortcut === "mouse") {
+            if (!(items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound))))) {
+              instance = undefined;
+            }
+          }
         }
         if (instance) {
           URLI.Action.performAction(request.action, "content-script", instance, items);
@@ -363,13 +337,6 @@ URLI.Background = function () {
           setBadge(request.tabId, request.badge, request.temporary, request.text, request.backgroundColor);
         }
         break;
-      // case "addContentScriptListener":
-      //   chrome.tabs.onUpdated.removeListener(contentScriptListener);
-      //   chrome.tabs.onUpdated.addListener(contentScriptListener);
-      //   break;
-      // case "removeContentScriptListener":
-      //   chrome.tabs.onUpdated.removeListener(contentScriptListener);
-      //   break;
       default:
         break;
     }
@@ -422,6 +389,7 @@ URLI.Background = function () {
         const tabs = await EXT.Promisify.getTabs();
         if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
           let instance = getInstance(tabs[0].id);
+          // TODO: Check instance.saveFound
           if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.shortcutsQuickEnabled || (instance && instance.enabled))) ||
               (command === "auto" && instance && instance.autoEnabled) ||
               ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
@@ -482,9 +450,6 @@ URLI.Background = function () {
     // Ensure Internal Shortcuts declarativeContent rule is added
     // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
     if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
-      // console.log("URLI.Background.startupListener() - adding content script listener");
-      // chrome.tabs.onUpdated.removeListener(contentScriptListener);
-      // chrome.tabs.onUpdated.addListener(contentScriptListener);
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         let shortcutsjsRule = false;
         for (let rule of rules) {
@@ -509,41 +474,59 @@ URLI.Background = function () {
     }
   }
 
-  // /**
-  //  * The chrome.tabs.onUpdated content script listener that is added if a content script is enabled (e.g. internal shortcuts).
-  //  * Note: This is required for Firefox only because it does not support the chrome.declarativeContent API.
-  //  * When FF gets declarativeContent, consider removing this and switching to dC.
-  //  *
-  //  * @param tabId      the tab ID
-  //  * @param changeInfo the status (either complete or loading)
-  //  * @param tab        the tab object
-  //  * @private
-  //  */
-  // function contentScriptListener(tabId, changeInfo, tab) {
-  //   if (changeInfo.status === "loading") {
-  //     console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
-  //     chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
-  //   }
-  // }
+  /**
+   * Builds properties for an instance using either a base of a saved URL or storage items.
+   *
+   * @param via   string indicating how the props are being built (one of "exact", "partial" (saves), or "items" (storage))
+   * @param tab   the tab to build from (id and url)
+   * @param object  the base object to build from (saved url or storage items)
+   * @param sobject the selection base object to build from
+   * @returns {{}} the built properties from the bases
+   * @private
+   */
+  function buildProps(via, tab, object, sobject) {
+    const props = {};
+    props.tabId = tab.id;
+    props.url = props.startingURL = tab.url;
+    props.saveFound = via === "exact" || via === "partial";
+    props.saveType = via === "items" ? "none" : via;
+    props.selection = props.startingSelection = sobject.selection;
+    props.selectionStart = props.startingSelectionStart = via === "exact" ? object.selectionStart : sobject.selectionStart;
+    props.interval = object.interval;
+    props.base = object.base;
+    props.baseCase = object.baseCase;
+    props.baseDateFormat = object.baseDateFormat;
+    props.baseCustom = object.baseCustom;
+    props.leadingZeros = via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
+    props.errorSkip = object.errorSkip;
+    props.errorCodes = object.errorCodes;
+    props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;
+    props.errorCodesCustom = object.errorCodesCustom;
+    return props;
+  }
 
   /**
-   * TODO
+   * Makes the background persistent by calling chrome.tabs.query() and using a setTimeout() recursively.
+   * If no instance exists when checking for tabs, the recursion stops.
    *
    * @returns {Promise<void>}
    * @private
    */
-  async function makeBackgroundPersistent() {
-    console.log("URLI.Background.makeBackgroundPersistent()");
+  async function makePersistent() {
     const tabs = await EXT.Promisify.getTabs({}),
           tabIds = tabs.map(tab => tab.id);
-    console.log("tabIds=" + tabIds);
-    [...instances.keys()].forEach(function(key) { if (!tabIds.includes(key)) { /*instances.delete(key);*/ URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key));} });
+    console.log("URLI.Background.makePersistent() - tabIds=" + tabIds);
+    [...instances.keys()].forEach(function(key) {
+      if (!tabIds.includes(key)) {
+        URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key));
+      }
+    });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
-      makeBackgroundPersistentEnabled = true;
-      console.log("URLI.Background.makeBackgroundPersistent() - there's an instance!");
-      setTimeout(makeBackgroundPersistent, 3000);
+      persistent = true;
+      console.log("URLI.Background.makePersistent() - making persistent because an instance currently exists");
+      setTimeout(makePersistent, 3000); // Checking every few seconds keep the background persistent
     } else {
-      makeBackgroundPersistentEnabled = false;
+      persistent = false;
     }
   }
 

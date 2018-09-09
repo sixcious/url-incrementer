@@ -243,12 +243,12 @@ URLI.IncrementDecrement = function () {
     URLI.IncrementDecrementMulti.multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
           interval = instance.interval, leadingZeros = instance.leadingZeros,
-          base = instance.base, baseCase = instance.baseCase, dateFormat = instance.baseDateFormat, baseCustom = instance.baseCustom;
+          base = instance.base, baseCase = instance.baseCase, baseDateFormat = instance.baseDateFormat, baseCustom = instance.baseCustom;
     let selectionmod;
     // Perform the increment or decrement operation depending on the base type
     switch(base) {
       case "date":
-        selectionmod = URLI.IncrementDecrementDate.incrementDecrementDate(action, selection, interval, dateFormat);
+        selectionmod = URLI.IncrementDecrementDate.incrementDecrementDate(action, selection, interval, baseDateFormat);
         break;
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
@@ -552,7 +552,7 @@ URLI.IncrementDecrementDate = function () {
 
 URLI.IncrementDecrementArray = function () {
 
-    /**
+  /**
    * Steps to the next or previous position in the URLs array.
    * This is used instead of incrementDecrementURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
    *
@@ -653,13 +653,12 @@ URLI.IncrementDecrementArray = function () {
     // Change the urls array first url to the non-range URL
     urls[0] =  { "urlmod": instance.url, "selectionmod": ""};
 
-    // Build out the multi range urls array
+    // Build out the multi range urls array... this is EXTREMELY complicated
     const preurl1 = instance.url;
     for (let i = 0; i < instance.multi[1].times; i++) {
       const press1 = instance.multi[1].selectionStart;
       const press2 = instance.multi[2].selectionStart;
       const press3 = instance.multi[3].selectionStart;
-
       const preurl2 = instance.url;
       for (let j = 0; j < instance.multi[2].times; j++) {
         const preurl3 = instance.url;
@@ -676,9 +675,7 @@ URLI.IncrementDecrementArray = function () {
         instance.multi[3].selection = instance.multi[3].startingSelection;
       }
       instance.url = preurl2;
-
       instance.multi[2].selection = instance.multi[2].startingSelection;
-
       instance.multi[1].selectionStart = press1;
       instance.multi[2].selectionStart = press2;
       instance.multi[3].selectionStart = press3;

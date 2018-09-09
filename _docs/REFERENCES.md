@@ -3,6 +3,9 @@
 General - How to handle async/await in for loops
 https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795
 
+Background - Dynamically making an event page's background persistent
+https://stackoverflow.com/questions/37017209/how-to-create-a-persistent-background-page-on-demand-google-chrome-extension
+
 Cryptography - PBKDF2 Hashing
 https://timtaubert.de/blog/2015/05/implementing-a-pbkdf2-based-password-storage-scheme-for-firefox-os/
 

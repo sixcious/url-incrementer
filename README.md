@@ -9,8 +9,8 @@ URLI increments URLs and other interesting incrementing things. For example, if 
 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
-# Features
-- Keyboard and Mouse / Touch Shortcuts
+# Features (6.0)
+- Keyboard and Mouse (Touch) Shortcuts
 - "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store / AMO)
 - Auto Incrementing
 - Download Incrementing [Experimental] ** 
@@ -23,29 +23,28 @@ This is the first extension/app I ever made, so it's important to me 100% that y
 - Custom URLs: Enter your own customized list of URLs to increment or play a slideshow with
 - Shuffle URLs: Make it fun and have the next URLs you see be randomized!
 - So Many Options: Alphanumeric Incrementing, Custom Base Support, Change how URLI pre-selects the number to increment... and more
-- Safe, Open Source, Lightweight (Under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
+- Safe, Open Source, Lightweight (0 Memory when inactive and under 190KiB!), No Ads, No Bloat, and No permissions required for most functionality
 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
-# Coming Soon in Version 6.0 (9/4/2018)
+# Coming Soon in Version 6.0 (10/05/2018)
+- Now uses 0 Chrome Memory when inactive!! URLI now ONLY stays in memory while you have an instance enabled or while in AUTO! (Chrome Only)
 - Support for Firefox and Firefox for Android
 - New Mouse/Touch Shortcuts: Multi-Click / Tap, Hold Left/Right + Click
-- Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time. It's completely optional ("opt-in").
+- Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time or have URLI take up memory. It's completely optional ("opt-in").
 - "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
-- Multi-Incrementing - Increment up to 3 different parts of the URL at the same time or individually. Click the Multi (share icon) near Selection and then click Accept. Additional + - Buttons will show in the UI for simultaneous and individual-part incrementing.
+- Multi-Incrementing - Increment up to 3 parts of the URL individually, simultaneously, or in ranges! Click the Multi (+++) icon near Selection and then click Accept. Additional + - Buttons will show in the UI for each part you selected.
 - Date Time Incrementing - Increment dates and times in URLs like 2018/08/05 and/or 12:30:05
 - AUTO Repeat Mode - Loops back to the starting URL and repeats
-- Return to Start Button (Yellow) - Convenient button to return you back to the starting URL 
+- Return to Start Button (Yellow) - Convenient button to return you back to the starting URL (Only for Enabled Instances)
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
-- Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes. Uses the Durstenfeld algorithm to perform the shuffling in O(n) time.
+- Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes.
 - Next Prev Improvements: Adjust the next prev keywords on the Options Page
-- Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Save each URL's downloads in a separate subfolder (experimental) 3. New Name column in Download Preview Table
+- Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Subfolder Support: Save each page's downloads in a separate subfolder that will be incremented (experimental) 3. New Name column in Download Preview Table 4. Nested Iframe support (if the iframe is the same origin)
 - Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
-- Icons upgraded from Font Awesome 4 to Font Awesome 5
-- Internal Code Enhancements: Caching storage for faster performance
-- Front-End Enhancements: popup.html and options.html rewritten in valid HTML 5
-- Improved page loading speed for popup and options by replacing CSS @imports with HTML links
+- Internal Code Enhancements: Rewrite to ECMAScript 6 using let, const, and async/await
+- Page loading speed improvements for popup and options by rewriting them in valid HTML 5 and replacing CSS @imports with HTML links
 
 # What's New in Version 5.5 (7/26/2018)
 - Removed debug statements (apologies!)
