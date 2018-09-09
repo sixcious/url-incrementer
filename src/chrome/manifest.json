@@ -8,7 +8,7 @@
   "icons": { "16": "img/icons/dark/16.png", "48": "img/icons/dark/48.png", "128": "img/icons/dark/128.png" },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": { "16": "img/icons/dark/16.png", "24": "img/icons/dark/24.png", "32": "img/icons/dark/32.png" }, "default_popup": "html/popup.html" },
   "options_ui": { "page": "html/options.html", "chrome_style": true },
-  "background": { "scripts": ["js/promisify.js", "js/background.js", "js/action.js", "js/increment-decrement.js", "js/auto.js", "js/save-urls.js", "js/cryptography.js"], "persistent": true },
+  "background": { "scripts": ["js/promisify.js", "js/background.js", "js/action.js", "js/increment-decrement.js", "js/auto.js", "js/save-urls.js", "js/cryptography.js"], "persistent": false },
   "commands": { "increment": { "suggested_key": { "default": "Ctrl+Shift+Up"},    "description": "Increment [+]" },
                 "decrement": { "suggested_key": { "default": "Ctrl+Shift+Down"},  "description": "Decrement [-]" },
                 "next":      { "suggested_key": { "default": "Ctrl+Shift+Right"}, "description": "Next [>]" },
@@ -17,6 +17,7 @@
                 "return":    { "description": "Return To Start" },
                 "auto":      { "description": "Auto Pause / Resume" }},
   "permissions": ["activeTab", "storage"],
-  "optional_permissions": ["<all_urls>", "downloads"],
+  "optional_permissions": ["<all_urls>", "downloads", "declarativeContent"],
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["js/shortcuts.js"] }],
   "minimum_chrome_version": "55"
 }

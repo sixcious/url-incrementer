@@ -14,9 +14,9 @@ URLI.Permissions = function () {
   const PERMISSIONS = {
     "internalShortcuts": {
       "storageKey": "permissionsInternalShortcuts",
-      "request": {/*permissions: ["declarativeContent"], */origins: ["<all_urls>"]}
-      // "requestConflict": {permissions: ["declarativeContent"]},
-      // "script": {js: ["js/shortcuts.js"]}
+      "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]},
+      "requestConflict": {permissions: ["declarativeContent"]},
+      "script": {js: ["js/shortcuts.js"]}
     },
     "download": {
       "storageKey": "permissionsDownload",
@@ -42,14 +42,14 @@ URLI.Permissions = function () {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
         console.log("URLI.Permissions.requestPermissions() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
-        // if (PERMISSIONS[permission].script) {
-        //   chrome.declarativeContent.onPageChanged.addRules([{
-        //     conditions: [new chrome.declarativeContent.PageStateMatcher()],
-        //     actions: [new chrome.declarativeContent.RequestContentScript(PERMISSIONS[permission].script)]
-        //   }], function(rules) {
-        //     console.log("URLI.Permissions.requestPermissions() - successfully added declarativeContent rules:" + rules);
-        //   });
-        // }
+        if (PERMISSIONS[permission].script) {
+          chrome.declarativeContent.onPageChanged.addRules([{
+            conditions: [new chrome.declarativeContent.PageStateMatcher()],
+            actions: [new chrome.declarativeContent.RequestContentScript(PERMISSIONS[permission].script)]
+          }], function(rules) {
+            console.log("URLI.Permissions.requestPermissions() - successfully added declarativeContent rules:" + rules);
+          });
+        }
         chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
           if (callback) {
             callback(true);
@@ -78,17 +78,17 @@ URLI.Permissions = function () {
    * @public
    */
   function removePermissions(permission, callback) {
-    // // Script:
-    // if (chrome.declarativeContent && PERMISSIONS[permission].script) {
-    //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-    //     for (let rule of rules) {
-    //       if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-    //         console.log("URLI.Permissions.removePermissions() - removing rule " + rule);
-    //         chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
-    //       }
-    //     }
-    //   });
-    // }
+    // Script:
+    if (chrome.declarativeContent && PERMISSIONS[permission].script) {
+      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+        for (let rule of rules) {
+          if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
+            console.log("URLI.Permissions.removePermissions() - removing rule " + rule);
+            chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
+          }
+        }
+      });
+    }
     // Remove:
     chrome.storage.sync.get(null, function(items) {
       // Check for conflicts if another permission is enabled; if conflict, then only remove the request's conflict (not the original request)
@@ -122,10 +122,10 @@ URLI.Permissions = function () {
    * @public
    */
   function removeAllPermissions(callback) {
-    // if (chrome.declarativeContent) {
-    //   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-    // }
-    chrome.permissions.remove({ permissions: [/*"declarativeContent",*/ "downloads"], origins: ["<all_urls>"]}, function(removed) {
+    if (chrome.declarativeContent) {
+      chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
+    }
+    chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) {
       if (removed) {
         console.log("URLI.Permissions.removeAllPermissions() - all permissions successfully removed!");
         if (callback) {

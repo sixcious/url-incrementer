@@ -61,6 +61,8 @@ URLI.Background = function () {
   // Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
+  let makeBackgroundPersistentEnabled = false;
+
   /**
    * Gets the storage default values (SDV).
    *
@@ -112,6 +114,9 @@ URLI.Background = function () {
   function setInstance(tabId, instance) {
     // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
     instances.set(tabId, JSON.parse(JSON.stringify(instance)));
+    if (!makeBackgroundPersistentEnabled) {
+      makeBackgroundPersistent();
+    }
   }
 
   /**
@@ -288,11 +293,11 @@ URLI.Background = function () {
       chrome.storage.local.clear(function() {
         chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
       });
-      // Remove declarativeContent rule and permission
-      if (chrome.declarativeContent) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined);
-      }
-      chrome.permissions.remove({ permissions: ["declarativeContent"]});
+      // // Remove declarativeContent rule and permission
+      // if (chrome.declarativeContent) {
+      //   chrome.declarativeContent.onPageChanged.removeRules(undefined);
+      // }
+      // chrome.permissions.remove({ permissions: ["declarativeContent"]});
     }
   }
 
@@ -358,13 +363,13 @@ URLI.Background = function () {
           setBadge(request.tabId, request.badge, request.temporary, request.text, request.backgroundColor);
         }
         break;
-      case "addContentScriptListener":
-        chrome.tabs.onUpdated.removeListener(contentScriptListener);
-        chrome.tabs.onUpdated.addListener(contentScriptListener);
-        break;
-      case "removeContentScriptListener":
-        chrome.tabs.onUpdated.removeListener(contentScriptListener);
-        break;
+      // case "addContentScriptListener":
+      //   chrome.tabs.onUpdated.removeListener(contentScriptListener);
+      //   chrome.tabs.onUpdated.addListener(contentScriptListener);
+      //   break;
+      // case "removeContentScriptListener":
+      //   chrome.tabs.onUpdated.removeListener(contentScriptListener);
+      //   break;
       default:
         break;
     }
@@ -432,20 +437,6 @@ URLI.Background = function () {
   }
 
   /**
-   * Listen for when tabs are removed and clear the instances if they exist.
-   * 
-   * @param tabId      the tab ID
-   * @param removeInfo information about how the tab is being removed (e.g. window closed)
-   * @public
-   */
-  function tabRemovedListener(tabId, removeInfo) {
-    const instance = URLI.Background.getInstance(tabId);
-    if (instance) {
-      URLI.Action.performAction("clear", "tabRemovedListener", instance);
-    }
-  }
-
-  /**
    * The chrome.tabs.onUpdated listener that is temporarily added (then removed) for certain events.
    *
    * @param tabId      the tab ID
@@ -488,29 +479,71 @@ URLI.Background = function () {
         }
       });
     }
-    // Ensure Internal Shortcuts declarativeContent rule is added
-    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-    if (items && items.permissionsInternalShortcuts) {
-      console.log("URLI.Background.startupListener() - adding content script listener");
-      chrome.tabs.onUpdated.removeListener(contentScriptListener);
-      chrome.tabs.onUpdated.addListener(contentScriptListener);
-    }
+    // // Ensure Internal Shortcuts declarativeContent rule is added
+    // // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
+    // if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
+    //   // console.log("URLI.Background.startupListener() - adding content script listener");
+    //   // chrome.tabs.onUpdated.removeListener(contentScriptListener);
+    //   // chrome.tabs.onUpdated.addListener(contentScriptListener);
+    //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+    //     let shortcutsjsRule = false;
+    //     for (let rule of rules) {
+    //       if (rule.actions[0].js[0] === "js/shortcuts.js") {
+    //         console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
+    //         shortcutsjsRule = true;
+    //         break;
+    //       }
+    //     }
+    //     if (!shortcutsjsRule) {
+    //       console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+    //       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+    //         chrome.declarativeContent.onPageChanged.addRules([{
+    //           conditions: [new chrome.declarativeContent.PageStateMatcher()],
+    //           actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+    //         }], function(rules) {
+    //           console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
+    //         });
+    //       });
+    //     }
+    //   });
+    // }
   }
 
+  // /**
+  //  * The chrome.tabs.onUpdated content script listener that is added if a content script is enabled (e.g. internal shortcuts).
+  //  * Note: This is required for Firefox only because it does not support the chrome.declarativeContent API.
+  //  * When FF gets declarativeContent, consider removing this and switching to dC.
+  //  *
+  //  * @param tabId      the tab ID
+  //  * @param changeInfo the status (either complete or loading)
+  //  * @param tab        the tab object
+  //  * @private
+  //  */
+  // function contentScriptListener(tabId, changeInfo, tab) {
+  //   if (changeInfo.status === "loading") {
+  //     console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
+  //     chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
+  //   }
+  // }
+
   /**
-   * The chrome.tabs.onUpdated content script listener that is added if a content script is enabled (e.g. internal shortcuts).
-   * Note: This is required for Firefox only because it does not support the chrome.declarativeContent API.
-   * When FF gets declarativeContent, consider removing this and switching to dC.
+   * TODO
    *
-   * @param tabId      the tab ID
-   * @param changeInfo the status (either complete or loading)
-   * @param tab        the tab object
+   * @returns {Promise<void>}
    * @private
    */
-  function contentScriptListener(tabId, changeInfo, tab) {
-    if (changeInfo.status === "loading") {
-      console.log("URLI.Background.contentScriptListener() - the chrome.tabs.onUpdated is on!");
-      chrome.tabs.executeScript(tabId, {file: "/js/shortcuts.js", runAt: "document_start"}, function(response) { if (chrome.runtime.lastError) {} });
+  async function makeBackgroundPersistent() {
+    console.log("URLI.Background.makeBackgroundPersistent()");
+    const tabs = await EXT.Promisify.getTabs({}),
+      tabIds = tabs.map(tab => tab.id);
+    console.log("tabIds=" + tabIds);
+    [...instances.keys()].forEach(function(key) { if (!tabIds.includes(key)) { /*instances.delete(key);*/ URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key));} });
+    if ([...instances.values()].some(instance => instance && instance.enabled)) {
+      makeBackgroundPersistentEnabled = true;
+      console.log("URLI.Background.makeBackgroundPersistent() - there's an instance!");
+      setTimeout(makeBackgroundPersistent, 5000);
+    } else {
+      makeBackgroundPersistentEnabled = false;
     }
   }
 
@@ -528,17 +561,14 @@ URLI.Background = function () {
     messageListener: messageListener,
     messageExternalListener: messageExternalListener,
     commandListener: commandListener,
-    tabRemovedListener: tabRemovedListener,
     tabUpdatedListener: tabUpdatedListener,
     startupListener: startupListener
   };
 }();
 
 // Background Listeners
-// Firefox Android: chrome.commands is unsupported
 chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
-chrome.tabs.onRemoved.addListener(URLI.Background.tabRemovedListener);
-if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); }
+if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported
 URLI.Background.startupListener();
