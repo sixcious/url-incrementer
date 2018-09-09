@@ -181,8 +181,21 @@ if (!URLI.Shortcuts.contentScriptExecuted) {
     }
     sendResponse({});
   });
-  // Content Script starts by sending a message to check if internal shortcuts should be enabled (e.g. quick shortcuts, saved url, enabled instance)
-  chrome.runtime.sendMessage({greeting: "checkInternalShortcuts"});
+//  // Content Script starts by sending a message to check if internal shortcuts should be enabled (e.g. quick shortcuts, saved url, enabled instance)
+//  chrome.runtime.sendMessage({greeting: "checkInternalShortcuts"});
+  chrome.storage.sync.get(null, function(items) {
+    URLI.Shortcuts.setItems(items);
+    // Key
+    if (items.keyEnabled) { //&& (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
+    }
+    // Mouse
+    if (items.mouseEnabled) { //} && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+      document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+      document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
+    }
+  });
 }
 
 console.log("URLI.Shortcuts - contentScript executed");

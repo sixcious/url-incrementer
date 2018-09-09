@@ -479,34 +479,34 @@ URLI.Background = function () {
         }
       });
     }
-    // // Ensure Internal Shortcuts declarativeContent rule is added
-    // // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-    // if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
-    //   // console.log("URLI.Background.startupListener() - adding content script listener");
-    //   // chrome.tabs.onUpdated.removeListener(contentScriptListener);
-    //   // chrome.tabs.onUpdated.addListener(contentScriptListener);
-    //   chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-    //     let shortcutsjsRule = false;
-    //     for (let rule of rules) {
-    //       if (rule.actions[0].js[0] === "js/shortcuts.js") {
-    //         console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
-    //         shortcutsjsRule = true;
-    //         break;
-    //       }
-    //     }
-    //     if (!shortcutsjsRule) {
-    //       console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-    //       chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    //         chrome.declarativeContent.onPageChanged.addRules([{
-    //           conditions: [new chrome.declarativeContent.PageStateMatcher()],
-    //           actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-    //         }], function(rules) {
-    //           console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
-    //         });
-    //       });
-    //     }
-    //   });
-    // }
+    // Ensure Internal Shortcuts declarativeContent rule is added
+    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
+    if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
+      // console.log("URLI.Background.startupListener() - adding content script listener");
+      // chrome.tabs.onUpdated.removeListener(contentScriptListener);
+      // chrome.tabs.onUpdated.addListener(contentScriptListener);
+      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+        let shortcutsjsRule = false;
+        for (let rule of rules) {
+          if (rule.actions[0].js[0] === "js/shortcuts.js") {
+            console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
+            shortcutsjsRule = true;
+            break;
+          }
+        }
+        if (!shortcutsjsRule) {
+          console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+            chrome.declarativeContent.onPageChanged.addRules([{
+              conditions: [new chrome.declarativeContent.PageStateMatcher()],
+              actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+            }], function(rules) {
+              console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
+            });
+          });
+        }
+      });
+    }
   }
 
   // /**
@@ -535,13 +535,13 @@ URLI.Background = function () {
   async function makeBackgroundPersistent() {
     console.log("URLI.Background.makeBackgroundPersistent()");
     const tabs = await EXT.Promisify.getTabs({}),
-      tabIds = tabs.map(tab => tab.id);
+          tabIds = tabs.map(tab => tab.id);
     console.log("tabIds=" + tabIds);
     [...instances.keys()].forEach(function(key) { if (!tabIds.includes(key)) { /*instances.delete(key);*/ URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key));} });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       makeBackgroundPersistentEnabled = true;
       console.log("URLI.Background.makeBackgroundPersistent() - there's an instance!");
-      setTimeout(makeBackgroundPersistent, 5000);
+      setTimeout(makeBackgroundPersistent, 3000);
     } else {
       makeBackgroundPersistentEnabled = false;
     }
