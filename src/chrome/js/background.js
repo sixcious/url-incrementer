@@ -216,57 +216,6 @@ URLI.Background = function () {
   }
 
   /**
-   * Listen for installation changes and do storage/extension initialization work.
-   * 
-   * @param details the installation details
-   * @public
-   */
-  function installedListener(details) {
-    // New Installations: Setup storage and open Options Page in a new tab
-    if (details.reason === "install") {
-      console.log("URLI.Background.installedListener() - details.reason === install");
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              chrome.runtime.openOptionsPage();
-            });
-          });
-        });
-      });
-    }
-    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
-    else if (details.reason === "update" && details.previousVersion <= "5.2") {
-      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-            });
-          });
-        });
-      });
-      if (chrome.declarativeContent) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined);
-      }
-      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
-    }
-    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
-    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.get(null, function(items) {
-        chrome.storage.sync.set({
-          // TODO
-          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
-        });
-      });
-      chrome.storage.local.clear(function() {
-        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
-      });
-    }
-  }
-
-  /**
    * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
    * 
    * @param request      the request containing properties to parse (e.g. greeting message)
@@ -475,6 +424,57 @@ URLI.Background = function () {
   }
 
   /**
+   * Listen for installation changes and do storage/extension initialization work.
+   *
+   * @param details the installation details
+   * @public
+   */
+  function installedListener(details) {
+    // New Installations: Setup storage and open Options Page in a new tab
+    if (details.reason === "install") {
+      console.log("URLI.Background.installedListener() - details.reason === install");
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+              chrome.runtime.openOptionsPage();
+            });
+          });
+        });
+      });
+    }
+    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
+    else if (details.reason === "update" && details.previousVersion <= "5.2") {
+      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+            });
+          });
+        });
+      });
+      if (chrome.declarativeContent) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined);
+      }
+      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
+    }
+    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
+    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
+      chrome.storage.sync.get(null, function(items) {
+        chrome.storage.sync.set({
+          // TODO
+          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
+        });
+      });
+      chrome.storage.local.clear(function() {
+        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
+      });
+    }
+  }
+
+  /**
    * Builds properties for an instance using either a base of a saved URL or storage items.
    *
    * @param via   string indicating how the props are being built (one of "exact", "partial" (saves), or "items" (storage))
@@ -554,4 +554,4 @@ chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported
-URLI.Background.startupListener();
+chrome.runtime.onStartup.addListener(URLI.Background.startupListener);
