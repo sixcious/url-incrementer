@@ -202,7 +202,7 @@
   "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment [+] or perform other actions instantly without having to setup or save the URL"},
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
-  "internal_shortcuts_p": { "message": "URLI is currently set to use its internal shortcuts! Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. Left/Middle/Right Mouse Buttons can also be set as shortcuts."},
+  "internal_shortcuts_p": { "message": "URLI is currently set to use its internal shortcuts! Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. Mouse Buttons can also be set. (Right)Left = hold Right, click Left or vice-versa."},
   "mixed_shortcuts_mode_label": { "message": "Allow Chrome Shortcuts (Mixed Mode)" },
   "mixed_shortcuts_mode_help": { "message": "If this is checked, Chrome shortcuts will also work with Internal Shortcuts. This allows you to have two sets of shortcuts (Quick and Non-Quick), for example" },
   "key_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
