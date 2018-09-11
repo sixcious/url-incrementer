@@ -15,7 +15,7 @@ URLI.Background = function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    /* shortcuts */   "shortcutsQuickEnabled": true, "shortcutsMixedMode": false,
+    /* shortcuts */   "shortcutsQuickEnabled": true,
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
     /* mouse */       "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
@@ -216,6 +216,107 @@ URLI.Background = function () {
   }
 
   /**
+   * Listen for installation changes and do storage/extension initialization work.
+   *
+   * @param details the installation details
+   * @public
+   */
+  function installedListener(details) {
+    // New Installations: Setup storage and open Options Page in a new tab
+    if (details.reason === "install") {
+      console.log("URLI.Background.installedListener() - details.reason === install");
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+              chrome.runtime.openOptionsPage();
+            });
+          });
+        });
+      });
+    }
+    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
+    else if (details.reason === "update" && details.previousVersion <= "5.2") {
+      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
+      chrome.storage.sync.clear(function() {
+        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
+          chrome.storage.local.clear(function() {
+            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+            });
+          });
+        });
+      });
+      if (chrome.declarativeContent) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined);
+      }
+      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
+    }
+    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
+    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
+      chrome.storage.sync.get(null, function(items) {
+        chrome.storage.sync.set({
+          // TODO
+          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
+        });
+      });
+      chrome.storage.local.clear(function() {
+        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
+      });
+    }
+  }
+
+  /**
+   * The extension's background startup listener that is run the first time the extension starts.
+   * For example, when Chrome is started, when the extension is installed or updated, or when the
+   * extension is re-enabled after being disabled.
+   *
+   * 1) Caches the sync storage and local storage items into items_ and localItems_
+   * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
+   * @public
+   */
+  async function startupListener() {
+    const items = await EXT.Promisify.getItems();
+    console.log("URLI.Background.startupListener()");
+    // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
+    if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
+      console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
+      chrome.browserAction.setIcon({
+        path : {
+          "16": "/img/icons/" + items.iconColor + "/16.png",
+          "24": "/img/icons/" + items.iconColor + "/24.png",
+          "32": "/img/icons/" + items.iconColor + "/32.png"
+        }
+      });
+    }
+    // Ensure Internal Shortcuts declarativeContent rule is added
+    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
+    if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
+      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+        let shortcutsjsRule = false;
+        for (let rule of rules) {
+          if (rule.actions[0].js[0] === "js/shortcuts.js") {
+            console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
+            shortcutsjsRule = true;
+            break;
+          }
+        }
+        if (!shortcutsjsRule) {
+          console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+            chrome.declarativeContent.onPageChanged.addRules([{
+              conditions: [new chrome.declarativeContent.PageStateMatcher()],
+              actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+            }], function(rules) {
+              console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
+            });
+          });
+        }
+      });
+    }
+  }
+
+  /**
    * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
    * 
    * @param request      the request containing properties to parse (e.g. greeting message)
@@ -227,23 +328,6 @@ URLI.Background = function () {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
     let instance, items;
     switch (request.greeting) {
-      // case "checkInternalShortcuts":
-      //   items = await EXT.Promisify.getItems();
-      //   instance = getInstance(sender.tab.id);
-      //   if (!instance || !instance.enabled) {
-      //     sender.tab.url = sender.url;
-      //     instance = await buildInstance(sender.tab);
-      //   }
-      //   chrome.tabs.sendMessage(instance.tabId, {greeting: "setItems", items: items});
-      //   // Key
-      //   if (items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
-      //   }
-      //   // Mouse
-      //   if (items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      //     chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
-      //   }
-      //   break;
       case "performAction":
         items = await EXT.Promisify.getItems();
         let tab;
@@ -307,21 +391,7 @@ URLI.Background = function () {
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({"received": true});
-      //sender.tab = request.tab;
       messageListener(request, sender);
-/*      switch (request.greeting) {
-        case "performAction":
-          let instance = getInstance(request.tab.id);
-          if (!instance || !instance.enabled) {
-            instance = await buildInstance(request.tab);
-          }
-          if (instance) {
-            URLI.Action.performAction(request.action, "externalExtension", instance);
-          }
-          break;
-        default:
-          break;
-      }*/
     }
   }
 
@@ -334,7 +404,7 @@ URLI.Background = function () {
   async function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
       const items = await EXT.Promisify.getItems();
-      if (!items.permissionsInternalShortcuts || items.shortcutsMixedMode) {
+      if (!items.permissionsInternalShortcuts) {
         const tabs = await EXT.Promisify.getTabs();
         if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
           let instance = getInstance(tabs[0].id);
@@ -370,107 +440,6 @@ URLI.Background = function () {
         chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
       }
       chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
-    }
-  }
-
-  /**
-   * The extension's background startup listener that is run the first time the extension starts.
-   * For example, when Chrome is started, when the extension is installed or updated, or when the
-   * extension is re-enabled after being disabled.
-   *
-   * 1) Caches the sync storage and local storage items into items_ and localItems_
-   * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
-   * @public
-   */
-  async function startupListener() {
-    const items = await EXT.Promisify.getItems();
-    console.log("URLI.Background.startupListener()");
-    // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
-    if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
-      console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
-      chrome.browserAction.setIcon({
-        path : {
-          "16": "/img/icons/" + items.iconColor + "/16.png",
-          "24": "/img/icons/" + items.iconColor + "/24.png",
-          "32": "/img/icons/" + items.iconColor + "/32.png"
-        }
-      });
-    }
-    // Ensure Internal Shortcuts declarativeContent rule is added
-    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-    if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
-      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        let shortcutsjsRule = false;
-        for (let rule of rules) {
-          if (rule.actions[0].js[0] === "js/shortcuts.js") {
-            console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
-            shortcutsjsRule = true;
-            break;
-          }
-        }
-        if (!shortcutsjsRule) {
-          console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-            chrome.declarativeContent.onPageChanged.addRules([{
-              conditions: [new chrome.declarativeContent.PageStateMatcher()],
-              actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-            }], function(rules) {
-              console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
-            });
-          });
-        }
-      });
-    }
-  }
-
-  /**
-   * Listen for installation changes and do storage/extension initialization work.
-   *
-   * @param details the installation details
-   * @public
-   */
-  function installedListener(details) {
-    // New Installations: Setup storage and open Options Page in a new tab
-    if (details.reason === "install") {
-      console.log("URLI.Background.installedListener() - details.reason === install");
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              chrome.runtime.openOptionsPage();
-            });
-          });
-        });
-      });
-    }
-    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
-    else if (details.reason === "update" && details.previousVersion <= "5.2") {
-      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-            });
-          });
-        });
-      });
-      if (chrome.declarativeContent) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined);
-      }
-      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
-    }
-    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
-    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.get(null, function(items) {
-        chrome.storage.sync.set({
-          // TODO
-          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
-        });
-      });
-      chrome.storage.local.clear(function() {
-        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
-      });
     }
   }
 
@@ -541,17 +510,17 @@ URLI.Background = function () {
     buildInstance: buildInstance,
     setBadge: setBadge,
     installedListener: installedListener,
+    startupListener: startupListener,
     messageListener: messageListener,
     messageExternalListener: messageExternalListener,
     commandListener: commandListener,
-    tabUpdatedListener: tabUpdatedListener,
-    startupListener: startupListener
+    tabUpdatedListener: tabUpdatedListener
   };
 }();
 
 // Background Listeners
 chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
+chrome.runtime.onStartup.addListener(URLI.Background.startupListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
 if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported
-chrome.runtime.onStartup.addListener(URLI.Background.startupListener);

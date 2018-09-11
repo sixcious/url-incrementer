@@ -162,7 +162,8 @@ input[type="number"].mouse-clicks-input {
 }
 
 #mouse-click-speed {
-  text-align: right;
+  display: inline-block;
+  margin-left: 3em;
   margin-bottom: 1em;
 }
 

@@ -33,7 +33,7 @@ URLI.Auto = function () {
     setAutoTimeout(instance);
     addAutoListener();
     // Set starting badge with either normal "auto" badge or repeat badge if it has repeated at least 1 or more times
-    if (instance.autoRepeatCount === 0) {
+    if (instance.autoRepeatCount === 0 || instance.autoBadge === "") {
       URLI.Background.setBadge(instance.tabId, "auto", false);
     } else {
       URLI.Background.setBadge(instance.tabId, "autorepeat", false);
@@ -91,9 +91,10 @@ URLI.Auto = function () {
   }
 
   /**
-   * TODO
+   * Repeats the instance's auto timer.
    *
-   * @param instance
+   * @param instance the instance's auto timer to repeat
+   * @private
    */
   function repeatAutoTimer(instance) {
     console.log("URLI.Auto.repeatAutoTimer() - repeating auto timer");

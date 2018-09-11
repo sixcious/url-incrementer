@@ -207,7 +207,7 @@
   "mixed_shortcuts_mode_help": { "message": "If this is checked, Chrome shortcuts will also work with Internal Shortcuts. This allows you to have two sets of shortcuts (Quick and Non-Quick), for example" },
   "key_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
   "mouse_quick_enable_label": { "message": "Enable Quick Mouse Button Shortcuts" },
-  "mouse_click_speed_label": { "message": "Mouse Click Speed" },
+  "mouse_click_speed_label": { "message": "Click Speed" },
   "mouse_click_speed_ms": { "message": "ms" },
   "key_label": { "message": "Key" },
   "mouse_label": { "message": "Mouse" },
