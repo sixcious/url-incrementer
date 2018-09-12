@@ -61,13 +61,13 @@ URLI.Options = function () {
     DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-return-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
     DOM["#key-auto-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-increment-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyIncrement": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-decrement-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyDecrement": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-next-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyNext": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-prev-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyPrev": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-clear-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyClear": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-return-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyReturn": key}, function() { setKeyEnabled(); }); });
-    DOM["#key-auto-input"].addEventListener("keyup", function () { chrome.storage.sync.set({"keyAuto": key}, function() { setKeyEnabled(); }); });
+    DOM["#key-increment-input"].addEventListener("keyup", function () { setKey2(this, "keyIncrement"); });
+    DOM["#key-decrement-input"].addEventListener("keyup", function () { setKey2(this, "keyDecrement"); });
+    DOM["#key-next-input"].addEventListener("keyup", function () { setKey2(this, "keyNext"); });
+    DOM["#key-prev-input"].addEventListener("keyup", function () { setKey2(this, "keyPrev"); });
+    DOM["#key-clear-input"].addEventListener("keyup", function () { setKey2(this, "keyClear"); });
+    DOM["#key-return-input"].addEventListener("keyup", function () { setKey2(this, "keyReturn"); });
+    DOM["#key-auto-input"].addEventListener("keyup", function () { setKey2(this, "keyAuto"); });
     DOM["#key-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyIncrement": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], null); });
     DOM["#key-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDecrement": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-decrement-input"], null); });
     DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], null); });
@@ -312,8 +312,15 @@ URLI.Options = function () {
       (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
       (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
       (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
-      "code": event.code
+      "code": !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : ""
     };
+  }
+
+  function setKey2(input, storageKey) {
+    clearTimeout(timeouts[input.id]);
+    timeouts[input.id] = setTimeout(function() {
+      chrome.storage.sync.set({ [storageKey]: key, function() { setKeyEnabled(); }});
+    }, 1000);
   }
 
   function setMouse(buttonInput, clicksInput, storageKey, updateMouseEnabled) {
@@ -338,11 +345,11 @@ URLI.Options = function () {
     let text = "";
     if (!key) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
-      if ((key.modifiers & FLAG_KEY_ALT))        { text += "Alt + ";   }
-      if ((key.modifiers & FLAG_KEY_CTRL)  >> 1) { text += "Ctrl + ";  }
-      if ((key.modifiers & FLAG_KEY_SHIFT) >> 2) { text += "Shift + "; }
-      if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += "Meta + ";  }
-      if (key.code && !KEY_MODIFIER_CODE_ARRAY.includes(key.code)) { text += key.code; }
+      if ((key.modifiers & FLAG_KEY_ALT))        { text += (text ? " + " : "") + "Alt";    }
+      if ((key.modifiers & FLAG_KEY_CTRL)  >> 1) { text += (text ? " + " : "") + "Ctrl";   }
+      if ((key.modifiers & FLAG_KEY_SHIFT) >> 2) { text += (text ? " + " : "") + "Shift";  }
+      if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += (text ? " + " : "") + "Meta";   }
+      if (key.code)                              { text += (text ? " + " : "") + key.code; }
     }
     input.value = text;
   }
