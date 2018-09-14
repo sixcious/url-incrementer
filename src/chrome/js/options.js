@@ -27,6 +27,67 @@ URLI.Options = function () {
   let key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
+  function shortcuts(items) {
+    // HTML
+    const table = document.getElementById("internal-shortcuts-table");
+    console.log(items.actions);
+    for (const action of items.actions) {
+      const ak = Object.keys(action)[0];
+      const row = document.createElement("div"); row.className = "row";  table.appendChild(row);
+      const column1 = document.createElement("div"); column1.className = "column"; row.appendChild(column1);
+      const label = document.createElement("label"); label.id = "key-" + ak + "-label"; label.htmlFor = "key-" + ak + "-input"; label.dataset.i18n = "textContent"; column1.appendChild(label);
+      const column2 = document.createElement("div"); column2.className = "column"; row.appendChild(column2);
+      const input = document.createElement("input");
+      input.id = "key-" + ak + "-input";
+      input.className = "key-input";
+      input.type = "text";
+      input.readOnly = true;
+      column2.appendChild(input);
+      const clear = document.createElement("input");
+      clear.id = "key-" + ak + "-clear-input";
+      clear.className = "key-clear";
+      clear.type = "image";
+      clear.src = "../img/font-awesome/black/times-circle.png";
+      clear.alt = "key-clear";
+      clear.width = "16";
+      clear.height = "16";
+      column2.appendChild(clear);
+      const column3 = document.createElement("div");
+      column3.className = "column";
+      row.appendChild(column3);
+      const select = document.createElement("select");
+      select.id = "mouse-" + ak + "-select";
+      column3.appendChild(select);
+      const optionids = ["notset", "left", "middle", "right", "right-left"];
+      for (let i = 0, value = -1; i < optionids.length; i++, value++) {
+        const option = document.createElement("option");
+        option.id = "mouse-" + optionids[i] + "-option*" + ak;
+        option.dataset.i18n = "textContent";
+        option.value = value + "";
+        select.appendChild(option);
+      }
+      const clicks = document.createElement("input");
+      clicks.id = "mouse-" + ak + "-clicks-input";
+      clicks.className = "mouse-clicks-input";
+      clicks.type = "number";
+      clicks.min = "1";
+      clicks.max = "9";
+      column3.appendChild(clicks);
+    }
+  }
+
+  function shortcutsEvents(items) {
+    for (const action of items.actions) {
+      const ak = Object.keys(action)[0],
+            av = Object.values(action)[0];
+      DOM["#key-" + ak + "-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
+      DOM["#key-" + ak + "-input"].addEventListener("keyup", function () { setKey2(this, "key" + av); });
+      DOM["#key-" + ak + "-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({["key" + av]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + ak + "-input"], null); });
+      DOM["#mouse-" + ak + "-select"].addEventListener("change", function() { setMouse(this, undefined, "mouse" + av, true); });
+      DOM["#mouse-" + ak + "-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouse" + av, false); });
+    }
+  }
+
   /**
    * Loads the DOM content needed to display the options page.
    * 
@@ -35,7 +96,9 @@ URLI.Options = function () {
    * 
    * @public
    */
-  function DOMContentLoaded() {
+  async function DOMContentLoaded() {
+    const items = await EXT.Promisify.getItems();
+    await shortcuts(items);
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
@@ -49,46 +112,12 @@ URLI.Options = function () {
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"shortcutsQuickEnabled": this.checked}); });
+    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
-    DOM["#key-increment-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-decrement-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-next-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-prev-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-clear-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-return-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-auto-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-    DOM["#key-increment-input"].addEventListener("keyup", function () { setKey2(this, "keyIncrement"); });
-    DOM["#key-decrement-input"].addEventListener("keyup", function () { setKey2(this, "keyDecrement"); });
-    DOM["#key-next-input"].addEventListener("keyup", function () { setKey2(this, "keyNext"); });
-    DOM["#key-prev-input"].addEventListener("keyup", function () { setKey2(this, "keyPrev"); });
-    DOM["#key-clear-input"].addEventListener("keyup", function () { setKey2(this, "keyClear"); });
-    DOM["#key-return-input"].addEventListener("keyup", function () { setKey2(this, "keyReturn"); });
-    DOM["#key-auto-input"].addEventListener("keyup", function () { setKey2(this, "keyAuto"); });
-    DOM["#key-increment-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyIncrement": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-increment-input"], null); });
-    DOM["#key-decrement-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyDecrement": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-decrement-input"], null); });
-    DOM["#key-next-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyNext": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-next-input"], null); });
-    DOM["#key-prev-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyPrev": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-prev-input"], null); });
-    DOM["#key-clear-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyClear": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-clear-input"], null); });
-    DOM["#key-return-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyReturn": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-return-input"], null); });
-    DOM["#key-auto-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({"keyAuto": null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-auto-input"], null); });
-    DOM["#mouse-increment-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseIncrement", true); });
-    DOM["#mouse-decrement-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseDecrement", true); });
-    DOM["#mouse-next-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseNext", true); });
-    DOM["#mouse-prev-select"].addEventListener("change", function() { setMouse(this, undefined, "mousePrev", true); });
-    DOM["#mouse-clear-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseClear", true); });
-    DOM["#mouse-return-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseReturn", true); });
-    DOM["#mouse-auto-select"].addEventListener("change", function() { setMouse(this, undefined, "mouseAuto", true); });
-    DOM["#mouse-increment-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseIncrement", false); });
-    DOM["#mouse-decrement-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseDecrement", false); });
-    DOM["#mouse-next-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseNext", false); });
-    DOM["#mouse-prev-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mousePrev", false); });
-    DOM["#mouse-clear-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseClear", false); });
-    DOM["#mouse-return-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseReturn", false); });
-    DOM["#mouse-auto-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouseAuto", false); });
+    shortcutsEvents(items);
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
@@ -176,7 +205,7 @@ URLI.Options = function () {
           buildSavedURLsSelect(localItems.saves);
         }
         if (values === "all") {
-          DOM["#browser-shortcuts-quick-enable-input"].checked = items.shortcutsQuickEnabled;
+          DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
           DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
           DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
           DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";

@@ -167,6 +167,12 @@ input[type="number"].mouse-clicks-input {
   margin-bottom: 1em;
 }
 
+.clear {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
 /* icon and popup */
 
 .icon-color.radio, #popup-button-size-div {

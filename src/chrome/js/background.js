@@ -15,7 +15,8 @@ URLI.Background = function () {
     /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
     /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    /* shortcuts */   "shortcutsQuickEnabled": true,
+    /* commands */    "commandsQuickEnabled": true,
+    /* actions */     "actions": [{"increment": "Increment"}, {"decrement": "Decrement"}, {"next": "Next"}, {"prev": "Prev"}, {"clear": "Clear"}, {"return": "Return"}, {"auto": "Auto"}],
     /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
     /* mouse */       "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
     /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
@@ -409,11 +410,11 @@ URLI.Background = function () {
         if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
           let instance = getInstance(tabs[0].id);
           // TODO: Check instance.saveFound
-          if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.shortcutsQuickEnabled || (instance && instance.enabled))) ||
+          if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.commandsQuickEnabled || (instance && instance.enabled))) ||
               (command === "auto" && instance && instance.autoEnabled) ||
               ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
               (command === "return" && instance && instance.startingURL)) {
-            if (items.shortcutsQuickEnabled && (!instance || !instance.enabled)) {
+            if (items.commandsQuickEnabled && (!instance || !instance.enabled)) {
               instance = await buildInstance(tabs[0], items);
             }
             URLI.Action.performAction(command, "command", instance, items);
