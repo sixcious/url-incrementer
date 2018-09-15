@@ -129,4 +129,4 @@ In terms of speed and performance, this is how my jsperf testing stacked each ap
 - chrome.browserAction.setBadgeBackground()
 
 #### Iffy:
-- chrome.storage.sync seems to work, but the chrome.storage.onChanged listener for sync does not work
+- chrome.storage.sync seems to work, but it is not officially supported

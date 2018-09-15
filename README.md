@@ -10,7 +10,7 @@ URLI increments URLs and other interesting incrementing things. For example, if 
 This is the first extension/app I ever made, so it's important to me 100% that you are happy with it. If something isn't working right or if there's something you don't like, please let me know via email before leaving a low-rating/review! I'll try my hardest to fix it in the next version. Thank you (times infinity!) for letting URLI play a small part in your Chrome experience!
 
 # Features (6.0)
-- Keyboard and Mouse (Touch) Shortcuts
+- Keyboard and Mouse Shortcuts
 - "1-Click" Increment [+] Decrement [-] Button Extensions for Your Toolbar (Available on the Chrome Web Store / AMO)
 - Auto Incrementing
 - Download Incrementing [Experimental] ** 

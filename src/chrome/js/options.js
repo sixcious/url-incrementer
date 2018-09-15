@@ -49,8 +49,7 @@ URLI.Options = function () {
       clear.type = "image";
       clear.src = "../img/font-awesome/black/times-circle.png";
       clear.alt = "key-clear";
-      clear.width = "16";
-      clear.height = "16";
+      clear.width = clear.height = "18";
       column2.appendChild(clear);
       const column3 = document.createElement("div");
       column3.className = "column";
@@ -81,7 +80,7 @@ URLI.Options = function () {
       const ak = Object.keys(action)[0],
             av = Object.values(action)[0];
       DOM["#key-" + ak + "-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-      DOM["#key-" + ak + "-input"].addEventListener("keyup", function () { setKey2(this, "key" + av); });
+      DOM["#key-" + ak + "-input"].addEventListener("keyup", function (event) { /*setKey(event);*/ key.code = !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : key.code; writeInput(this, key); setKey2(this, "key" + av); });
       DOM["#key-" + ak + "-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({["key" + av]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + ak + "-input"], null); });
       DOM["#mouse-" + ak + "-select"].addEventListener("change", function() { setMouse(this, undefined, "mouse" + av, true); });
       DOM["#mouse-" + ak + "-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouse" + av, false); });

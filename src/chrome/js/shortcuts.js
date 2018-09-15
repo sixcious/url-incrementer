@@ -9,12 +9,19 @@ var URLI = URLI || {};
 
 URLI.Shortcuts = URLI.Shortcuts || function () {
 
-  const FLAG_KEY_ALT   = 0x1, // 0001
+  const FLAG_KEY_NONE  = 0x0, // 0000
+        FLAG_KEY_ALT   = 0x1, // 0001
         FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META  = 0x8; // 1000
-
-  let button = undefined, // the current mouse button on mousedown
+  const KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
+    "Alt", "AltLeft", "AltRight",
+    "Control", "ControlLeft", "ControlRight",
+    "Shift", "ShiftLeft", "ShiftRight",
+    "Meta", "MetaLeft", "MetaRight"
+  ];
+  let key = {},
+      button = undefined, // the current mouse button on mousedown
       buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
       clicks = 0, // current consecutive click count for a single mouse button
       timeouts = {}, // reusable global timeouts for detecting multiple mouse clicks
@@ -30,6 +37,19 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     items = items_;
   }
 
+  function keydownListener(event) {
+    //event.preventDefault();
+    // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
+
+    key = { "modifiers":
+        (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
+        (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
+        (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+        (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
+      "code": !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : ""
+    };
+  }
+
   /**
    * A keyup event listener for keyboard shortcuts.
    *
@@ -38,6 +58,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    */
   function keyupListener(event) {
     console.log("URLI.Shortcuts.keyupListener() - event.code=" + event.code);
+    console.log("key="); console.log(key);
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "key"}); }
@@ -45,6 +66,24 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (keyPressed(event, items.keyClear))     { chrome.runtime.sendMessage({greeting: "performAction", action: "clear",     "shortcut": "key"}); }
     else if (keyPressed(event, items.keyReturn))    { chrome.runtime.sendMessage({greeting: "performAction", action: "return",    "shortcut": "key"}); }
     else if (keyPressed(event, items.keyAuto))      { chrome.runtime.sendMessage({greeting: "performAction", action: "auto",      "shortcut": "key"}); }
+  }
+
+  /**
+   * A mousedown event listener that determines if event.buttons = 3 and stores event.button for the mouseup listener.
+   *
+   * @param event the mousedown event
+   * @public
+   */
+  function mousedownListener(event) {
+    clearTimeout(timeouts.mouseup2);
+    if (event.buttons === 3) {
+      buttons3 = true;
+      event.preventDefault(); // Avoid selecting text
+    } else {
+      buttons3 = false;
+    }
+    console.log("URLI.Shortcuts.mousedownListener() event.buttons=" + event.buttons + ", buttons3=" + buttons3);
+    button = event.button;
   }
 
   /**
@@ -71,24 +110,6 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     else if (mousePressed(event, items.mouseClear))     { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "clear",     "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseReturn))    { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "return",    "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseAuto))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "auto",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
-  }
-
-  /**
-   * A mousedown event listener that determines if event.buttons = 3 and stores event.button for the mouseup listener.
-   *
-   * @param event the mousedown event
-   * @public
-   */
-  function mousedownListener(event) {
-    clearTimeout(timeouts.mouseup2);
-    if (event.buttons === 3) {
-      buttons3 = true;
-      event.preventDefault(); // Avoid selecting text
-    } else {
-      buttons3 = false;
-    }
-    console.log("URLI.Shortcuts.mousedownListener() event.buttons=" + event.buttons + ", buttons3=" + buttons3);
-    button = event.button;
   }
 
   /**
@@ -140,6 +161,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
   // Return Public Functions
   return {
     setItems: setItems,
+    keydownListener: keydownListener,
     keyupListener: keyupListener,
     mouseupListener: mouseupListener,
     mousedownListener: mousedownListener,
@@ -154,12 +176,13 @@ if (!URLI.Shortcuts.contentScriptExecuted) {
     URLI.Shortcuts.setItems(items);
     // Key
     if (items.keyEnabled) { //&& (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
+      document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
       document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
     }
     // Mouse
     if (items.mouseEnabled) { //} && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
       document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
       document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
     }
   });
@@ -168,10 +191,13 @@ if (!URLI.Shortcuts.contentScriptExecuted) {
     console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
     switch (request.greeting) {
       case "addKeyListener":
+        document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
         document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
+        document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
         document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
         break;
       case "removeKeyListener":
+        document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
         document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
         break;
       case "addMouseListener":

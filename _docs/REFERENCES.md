@@ -41,6 +41,12 @@ https://stackoverflow.com/a/34166861
 Content Scripts - Guarding against multiple content script injections
 https://stackoverflow.com/questions/23208134/avoid-dynamically-injecting-the-same-script-multiple-times-when-using-chrome-tab?rq=1
 
-Replace Comments Regex
+Compression - Replacing Comments via Regex
 http://blog.ostermiller.org/find-comment
 /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
+^\s*//.*$
+\s+//.*
+^\s*console.log.*$
+
+Compression - Compressing PNGs (TinyPNG)
+https://tinypng.com/
