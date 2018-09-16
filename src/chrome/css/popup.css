@@ -5,6 +5,10 @@
  * @license LGPL-3.0
  */
 
+.hvr-grow, .hvr-grow-2x {
+  vertical-align: bottom;
+}
+
 /* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
   overflow-x: hidden;
@@ -102,18 +106,25 @@ div.checkbox  img {
 /*  margin: 16px;*/
 }
 
-#setup .heading {
+.heading {
   font-weight: bold;
-  /* font-style: italic;*/
   padding-bottom: 2px;
   margin-bottom: 0.6em;
   color: #333333;
   border-bottom: 1px solid #333333;
 }
 
-/*#setup .heading img {
+.heading-right {
+  font-style: italic;
+  position: absolute;
+  right: 12px;
+  margin-top: -17px;
+}
+
+
+#setup .heading img {
   margin-bottom: 1px;
-}*/
+}
 
 #setup input[type="number"] {
   width: 52px;
@@ -205,25 +216,9 @@ div.checkbox  img {
   width: 118px;
 }
 
-#increment-decrement-heading-right, #auto-heading-right, #download-experimental {
-  font-style: italic;
-  position: absolute;
-  right: 12px;
-  margin-top: -17px;
-}
 
-#increment-decrement-auxiliary {
-  right: 8px;
-  margin-top: -19px;
-}
 
-#auto-eta, #auto-repeat {
-  display: inline-block;
-}
 
-#auto-eta {
-  margin-left: 1em;
-}
 
 /* Toolkit */
 
@@ -250,18 +245,6 @@ div.checkbox  img {
 #toolkit-generate-links-table-div {
   margin-top: 2em;
 }
-
-/*#auto-eta-repeat, #auto-repeat-label {
-  color: var(--auto-color);
-}*/
-
-/*#download-experimental {
-  color: var(--download-color);
-}*/
-
-/*#auto-eta img, #download-experimental img {
-  margin-bottom: 1px;
-}*/
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
   padding-right: 30px;
@@ -521,13 +504,19 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   margin-right: -2px;
 }*/
 
-#setup #extra-options div:not(:last-child) {
-/*  margin-right: 8px;*/
-}
+/*#setup #extra-options div:not(:last-child) {
+  margin-right: 8px;
+}*/
+
+
 
 .icon-button label {
   padding: 8px;
 }
+
+/*.icon-button img {
+  vertical-align: bottom;
+}*/
 
 .icon-button, .icon-button label {
 /*  font-size: 0.8em;*/
@@ -535,29 +524,30 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   cursor: pointer;
 }
 
-img.transparent {
+/*img.transparent {
   background: #777;
-}
+}*/
 
-.icon-button, .icon-button img.transparent, .icon-button img.checkbox-img {
+.icon-button ,.icon-button img.checkbox-img /*,.icon-button img.transparent*/  {
   transition: 0.6s;
 }
 
-/*.icon-button:hover img.transparent, */.icon-button input:checked + img.transparent {
+/*.icon-button:hover img.transparent, .icon-button input:checked + img.transparent {
   background: #000028;
-}
+}*/
 
 /*!*.icon-button:hover span,*! .icon-button input:checked + img.transparent + span {
   color: #BA1F40;
 }*/
 
-/*.icon-button:hover img.transparent, */.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img {
-                                          opacity: 0.4;
-                                        }
+.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img /*, .icon-button:hover img.transparent*/ {
+  opacity: 0.4;
+}
 
-/*.icon-button:hover span,*/ .icon-button input:checked + img.checkbox-img {
-                               opacity: 1;
-                             }
+.icon-button input:checked + img.checkbox-img /*,.icon-button:hover span*/  {
+  opacity: 1;
+}
+
 /* Multi */
 #multi-button {
   float: right;

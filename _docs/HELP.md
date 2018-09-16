@@ -12,6 +12,7 @@
 - [Saving URLs](#saving-urls)
 - [Shuffle URLs](#shuffle-urls)
 - [Bases and Custom Bases](#bases-and-custom-bases)
+- [Report an Issue](#report-an-issue)
 
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
 
@@ -210,4 +211,5 @@ The most common bases are:
 
 For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedia](https://en.wikipedia.org/wiki/Table_of_bases).
 
-## TODO
+## Report an Issue
+Is something not working right, or is there a feature you'd like to see in URLI? Before leaving a review, [please open an issue](https://github.com/roysix/url-incrementer/issues). I'll be notified about it immediately and reply to you as soon as I can!

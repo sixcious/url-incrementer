@@ -22,6 +22,7 @@ URLI.Action = function () {
   async function performAction(action, caller, instance, items, callback) {
     console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
     items = items ? items : await EXT.Promisify.getItems();
+
     let actionPerformed = false;
     // Pre-Perform Action:
     // Handle AUTO
