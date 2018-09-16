@@ -197,7 +197,8 @@ URLI.Popup = function () {
    */
   function updateControls() {
     DOM["#controls-icons-save-url"].className = instance.saveFound ? "" : "display-none";
-    //DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
+    DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
+    DOM["#controls-icons-shuffle"].className = instance.enabled && instance.shuffleURLs ? "" : "display-none";
     DOM["#increment-input"].className = 
     DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-m"].className =
