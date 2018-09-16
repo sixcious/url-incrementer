@@ -200,22 +200,22 @@ URLI.Popup = function () {
     DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
     DOM["#controls-icons-shuffle"].className = instance.enabled && instance.shuffleURLs ? "" : "display-none";
     DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
+    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
     DOM["#increment-input-m"].className =
     DOM["#decrement-input-m"].className =
     DOM["#increment-input-1"].className =
-    DOM["#decrement-input-1"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#decrement-input-1"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#increment-input-2"].className =
-    DOM["#decrement-input-2"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#decrement-input-2"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#increment-input-3"].className =
-    DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#next-input"].className =
-    DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
-    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "disabled";
-    DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
+    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
+    DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
     DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
-    DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow" : "" : "display-none";
+    DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
   }
 
   /**
@@ -992,9 +992,8 @@ URLI.Popup = function () {
       // Auto Errors
       e.autoErrors = [
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
-        _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 1000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
+        _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 100000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
         _.autoEnabled && (_.autoSeconds < 1 || _.autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-        _.autoEnabled && (_.autoSeconds * _.autoTimes > 86400) ? chrome.i18n.getMessage("auto_eta_toohigh_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
       ];
