@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Background
- *
+ * URL Incrementer
+ * @file background.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};
@@ -12,26 +12,26 @@ URLI.Background = function () {
   // The sync storage default values
   // Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
-    /* permissions */ "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
-    /* icon */        "iconColor": "dark", "iconFeedbackEnabled": false,
-    /* popup */       "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    /* commands */    "commandsQuickEnabled": true,
-    /* actions */     "actions": [{"increment": "Increment"}, {"decrement": "Decrement"}, {"next": "Next"}, {"prev": "Prev"}, {"clear": "Clear"}, {"return": "Return"}, {"auto": "Auto"}],
-    /* key */         "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
-    /* mouse */       "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
-    /* inc dec */     "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
-    /* error skip */  "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
-    /* next prev */   "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    /* keywords */    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
-    /* auto */        "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
-    /* download */    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    /* toolkit */     "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
-    /* fun */         "urli": "loves incrementing for you"
+    "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
+    "iconColor": "dark", "iconFeedbackEnabled": false,
+    "popupButtonSize": 32, "popupAnimationsEnabled": true,
+    "actions": [{"increment": "Increment"}, {"decrement": "Decrement"}, {"next": "Next"}, {"prev": "Prev"}, {"clear": "Clear"}, {"return": "Return"}, {"auto": "Auto"}],
+    "commandsQuickEnabled": true,
+    "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
+    "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
+    "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
+    "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
+    "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
+    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
+    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
+    "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
+    "urli": "loves incrementing for you"
   },
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    /* saves */ "saves": [], "savePreselect": false
+    "saves": [], "savePreselect": false
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -107,7 +107,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Sets the instance.
+   * Sets the instance. (This is the only time we need to make the background persistent.)
    * 
    * @param tabId    the tab id to lookup this instance by
    * @param instance the instance to set
@@ -476,8 +476,9 @@ URLI.Background = function () {
   }
 
   /**
-   * Makes the background persistent by calling chrome.tabs.query() and using a setTimeout() recursively.
-   * If no instance exists when checking for tabs, the recursion stops.
+   * Makes the background persistent by calling chrome.tabs.query() repeatedly every few seconds using a setTimeout()
+   * recursively. If no instance exists when checking for tabs, the recursion stops and the background is no longer
+   * made persistent.
    *
    * @returns {Promise<void>}
    * @private
@@ -488,13 +489,13 @@ URLI.Background = function () {
     console.log("URLI.Background.makePersistent() - tabIds=" + tabIds);
     [...instances.keys()].forEach(function(key) {
       if (!tabIds.includes(key)) {
-        URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key));
+        URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key)); // Tab was removed so clear instance
       }
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       persistent = true;
       console.log("URLI.Background.makePersistent() - making persistent because an instance currently exists");
-      setTimeout(makePersistent, 3000); // Checking every few seconds keep the background persistent
+      setTimeout(makePersistent, 3000); // Checking every 3 seconds keeps the background persistent
     } else {
       persistent = false;
     }

@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Next Prev
- * 
+ * URL Incrementer
+ * @file next-prev.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

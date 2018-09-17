@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Popup
- *
+ * URL Incrementer
+ * @file popup.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

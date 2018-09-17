@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Cryptography
- *
+ * URL Incrementer
+ * @file cryptography.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

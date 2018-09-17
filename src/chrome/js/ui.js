@@ -1,8 +1,8 @@
 /**
- * URL Incrementer UI (User Interface)
- * 
+ * URL Incrementer
+ * @file ui.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

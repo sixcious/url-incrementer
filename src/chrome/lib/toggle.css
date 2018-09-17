@@ -1,6 +1,6 @@
 /*
  * Toggle Buttons CSS
- * @mallendeo
+ * Created by @mallendeo
  * https://codepen.io/mallendeo/pen/eLIiG
  */
 
@@ -129,7 +129,6 @@
 
 .tgl-text {
   display: inline-block;
-/*  font-size: 1.05em;*/
   font-size: 1.1em;
   font-weight: bold;
   font-style: italic;

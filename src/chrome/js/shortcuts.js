@@ -1,6 +1,6 @@
 /**
  * URL Incrementer
- * @file shortcut.js - internal shortcuts content script
+ * @file shortcuts.js
  * @author Roy Six
  * @license LGPL-3.0
  */

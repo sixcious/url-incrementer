@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Action
- *
+ * URL Incrementer
+ * @file action.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

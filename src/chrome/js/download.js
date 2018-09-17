@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Download
- *
+ * URL Incrementer
+ * @file download.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};

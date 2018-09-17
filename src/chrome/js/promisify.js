@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Promisify
- *
+ * URL Incrementer
+ * @file promisify.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var EXT = EXT || {};

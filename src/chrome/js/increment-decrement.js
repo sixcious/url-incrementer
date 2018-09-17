@@ -1,8 +1,8 @@
 /**
- * URL Incrementer Increment Decrement
- * 
+ * URL Incrementer
+ * @file increment-decrement.js
  * @author Roy Six
- * @namespace
+ * @license LGPL-3.0
  */
 
 var URLI = URLI || {};
