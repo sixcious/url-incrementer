@@ -104,6 +104,7 @@ URLI.Auto = function () {
     instance.url = instance.startingURL;
     instance.selection = instance.startingSelection;
     instance.selectionStart = instance.startingSelectionStart;
+    instance.urls = [];
     const precalculateProps = URLI.IncrementDecrementArray.precalculateURLs(instance);
     instance.urls = precalculateProps.urls;
     instance.urlsCurrentIndex = precalculateProps.currentIndex;
