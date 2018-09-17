@@ -80,7 +80,7 @@ URLI.Popup = function () {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
-    DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/font-awesome/pink/" + (this.checked ? "heart.png" : "heart-o.png"); });
+    DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); });
     //DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
@@ -213,7 +213,7 @@ URLI.Popup = function () {
     DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#auto-input"].src = instance.autoPaused ? "../img/font-awesome/orange/play-circle.png" : "../img/font-awesome/orange/pause-circle.png";
+    DOM["#auto-input"].src = instance.autoPaused ? "../img/play-circle.png" : "../img/pause-circle.png";
     DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
     DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
   }
@@ -637,7 +637,7 @@ URLI.Popup = function () {
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
     const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
-    const check = document.createElement("img"); check.src = "../img/font-awesome/green/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
+    const check = document.createElement("img"); check.src = "../img/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
     const thumb = buildDownloadPreviewThumb(item);
     let td;
     td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);

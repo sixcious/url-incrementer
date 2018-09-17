@@ -284,9 +284,9 @@ URLI.Background = function () {
       console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {
-          "16": "/img/icons/" + items.iconColor + "/16.png",
-          "24": "/img/icons/" + items.iconColor + "/24.png",
-          "32": "/img/icons/" + items.iconColor + "/32.png"
+          "16": "/img/16-" + items.iconColor + ".png",
+          "24": "/img/24-" + items.iconColor + ".png",
+          "32": "/img/32-" + items.iconColor + ".png"
         }
       });
     }

@@ -30,7 +30,6 @@ URLI.Options = function () {
   function shortcuts(items) {
     // HTML
     const table = document.getElementById("internal-shortcuts-table");
-    console.log(items.actions);
     for (const action of items.actions) {
       const ak = Object.keys(action)[0];
       const row = document.createElement("div"); row.className = "row";  table.appendChild(row);
@@ -47,7 +46,7 @@ URLI.Options = function () {
       clear.id = "key-" + ak + "-clear-input";
       clear.className = "key-clear";
       clear.type = "image";
-      clear.src = "../img/font-awesome/black/times-circle.png";
+      clear.src = "../img/times-circle-2.png";
       clear.alt = "key-clear";
       clear.width = clear.height = "18";
       column2.appendChild(clear);
@@ -289,9 +288,9 @@ URLI.Options = function () {
     // Possible values may be: dark, light, rainbow, or urli
     chrome.browserAction.setIcon({
       path : {
-        "16": "/img/icons/" + this.value + "/16.png",
-        "24": "/img/icons/" + this.value + "/24.png",
-        "32": "/img/icons/" + this.value + "/32.png"
+        "16": "/img/16-" + this.value + ".png",
+        "24": "/img/24-" + this.value + ".png",
+        "32": "/img/32-" + this.value + ".png"
       }
     });
     chrome.storage.sync.set({"iconColor": this.value});

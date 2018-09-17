@@ -44,9 +44,12 @@ https://stackoverflow.com/questions/23208134/avoid-dynamically-injecting-the-sam
 Compression - Replacing Comments via Regex
 http://blog.ostermiller.org/find-comment
 /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
-^\s*//.*$
 \s+//.*
 ^\s*console.log.*$
+
+https://stackoverflow.com/questions/4475042/replacing-multiple-blank-lines-with-one-blank-line-using-regex-search-and-replac
+^(\s*\r\n){2,}
+\r\n
 
 Compression - Compressing PNGs (TinyPNG)
 https://tinypng.com/
