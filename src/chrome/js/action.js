@@ -282,9 +282,7 @@ URLI.Action = function () {
         }
       }
       // URLs Array:
-      if (instance.urls && instance.startingURLsCurrentIndex) {
-        instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
-      }
+      instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
       chrome.tabs.update(instance.tabId, {url: instance.startingURL});
       if (instance.enabled) {
         URLI.Background.setInstance(instance.tabId, instance);
