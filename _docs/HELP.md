@@ -20,9 +20,9 @@
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
 
 ## Auto Incrementing
-Just toggle on AUTO to start an auto-incrementing session! You can have it also repeat by just clicking the repeat icon. Auto supports pause/resume.
+Just toggle on AUTO to start an auto-incrementing session! You can have it also repeat by just clicking the `repeat` icon in the upper-right. Auto supports pause/resume.
 
-Auto can be used with Multi, Shuffle, and Download (e.g. act as an Auto Incrementer Downloader)
+Auto can be used with Multi, Shuffle, and Download (Auto Incrementer Downloader).
 
 ## Download Incrementing (Multiple Page Downloading)
 You must first enable Download in the Options to see the Download toggle in the UI.
@@ -189,27 +189,41 @@ When you view your saved URLs in Options, you'll see a small part of the hash (i
 The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all your other saved settings). We do not save anything outside the extension storage space allotted to us.
 
 ## Shuffle URLs
-Click the Shuffle (crossed-arrows) icon to turn this mode on.
+Click the `crossed-arrows` icon to turn this mode on.
 
 Think of this feature like how you would shuffle a deck of cards.
 It shuffles the URLs you'll see next.
 For example, say you start AUTO at page=1 with a Times of 9; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order.
+
+Adjust the `Shuffle Limit` in the Options to set a max upper bound.
+
 We use the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) to perform the shuffling in O(n) time.
 
+You can turn on Shuffle in Normal, AUTO, or Toolkit modes.
 
 ## Bases and Custom Bases
-Bases are the "types" of numbers we can increment. The extension supports a vast amount of bases.
+Bases are the "types" of numbers we can increment. Think of them like different alphabets. URLI can increment all sorts of bases, even your own made-up custom ones! :)
 
 The most common bases are:
 - 2 Binary - 0s and 1s! :)
 - 8 Octal
-- 10 Decimal (Default)
+- 10 Decimal - The default number system from 0-9
 - 16 Hexadecimmal - Extremely popular, Hashing, Cryptography
-- 32 Hexatrigesimal
+- 32 Hexatrigesimal - The full alphanumeric alphabet from 0-9 and A-Z (After 9, it goes to A, then every letter till Z and back to 0)
 - 62
 - 64 Base 64 Extremely popular, Hashing, Cryptography
 
 For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedia](https://en.wikipedia.org/wiki/Table_of_bases).
+
+
+### Custom Bases
+Change the `Base` to `Custom` and define a custom alphabet.
+Here are some common alphabets you can copy/paste into the `Alphabet` input:
+
+Base 62
+Base 64 (+-)
+Base 64 YouTube
+...
 
 ## Report an Issue
 Is something not working right, or is there a feature you'd like to see in URLI? Before leaving a review, [please open an issue](https://github.com/roysix/url-incrementer/issues). I'll be notified about it immediately and reply to you as soon as I can!

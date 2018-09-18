@@ -1,6 +1,6 @@
 // Replace storage default permissions
 const STORAGE_DEFAULT_VALUES = {
-  /* permissions */ "permissionsInternalShortcuts": true, "permissionsDownload": false, "permissionsEnhancedMode": true,
+  "permissionsInternalShortcuts": true, "permissionsDownload": false, "permissionsEnhancedMode": true,
 };
 
 // Replace URL Increment and URL Decrement extensions IDs

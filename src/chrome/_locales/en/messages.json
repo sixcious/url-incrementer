@@ -211,6 +211,7 @@
   "mouse_click_speed_ms": { "message": "ms" },
   "key_label": { "message": "Key" },
   "mouse_label": { "message": "Mouse" },
+  "mouse_clicks_label": { "message": "Clicks" },
   "key_increment_label": { "message": "Increment [+]" },
   "key_decrement_label": { "message": "Decrement [-]" },
   "key_next_label": { "message": "Next [>]" },
@@ -321,6 +322,6 @@
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_malfunctioning": { "message" : "i'M m4lfUnCt10n1Ng!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C. (Alphanumeric Idea), Adam C. & Will (User Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (The First), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
+  "special_thanks_content": { "message": "NickMWPrince & Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C. (Alphanumeric Idea), Isaac S,, Adam C. & Will (User Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (The First), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
   "special_thanks_you": { "message": "... but most of all you for using URLI!" }
 }

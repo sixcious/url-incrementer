@@ -64,13 +64,16 @@ URLI.Options = function () {
         option.value = value + "";
         select.appendChild(option);
       }
+      const column4 = document.createElement("div");
+      column4.className = "column";
+      row.appendChild(column4);
       const clicks = document.createElement("input");
       clicks.id = "mouse-" + ak + "-clicks-input";
       clicks.className = "mouse-clicks-input";
       clicks.type = "number";
       clicks.min = "1";
       clicks.max = "9";
-      column3.appendChild(clicks);
+      column4.appendChild(clicks);
     }
   }
 
@@ -126,8 +129,8 @@ URLI.Options = function () {
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { URLI.UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
-    //DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
-    //DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
+    DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
+    DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
     DOM["#saved-urls-add-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-block fade-in"; DOM["#saved-urls-partial-url-textarea"].value = DOM["#saved-urls-partial-errors"].textContent = ""; });
@@ -209,35 +212,23 @@ URLI.Options = function () {
           DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
           DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
           DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
-          writeInput(DOM["#key-increment-input"], items.keyIncrement);
-          writeInput(DOM["#key-decrement-input"], items.keyDecrement);
-          writeInput(DOM["#key-next-input"], items.keyNext);
-          writeInput(DOM["#key-prev-input"], items.keyPrev);
-          writeInput(DOM["#key-clear-input"], items.keyClear);
-          writeInput(DOM["#key-return-input"], items.keyReturn);
-          writeInput(DOM["#key-auto-input"], items.keyAuto);
-          DOM["#mouse-increment-select"].value = items.mouseIncrement ? items.mouseIncrement.button : -1;
-          DOM["#mouse-decrement-select"].value = items.mouseDecrement ? items.mouseDecrement.button : -1;
-          DOM["#mouse-next-select"].value = items.mouseNext ? items.mouseNext.button : -1;
-          DOM["#mouse-prev-select"].value = items.mousePrev ? items.mousePrev.button : -1;
-          DOM["#mouse-clear-select"].value = items.mouseClear ? items.mouseClear.button : -1;
-          DOM["#mouse-return-select"].value = items.mouseReturn ? items.mouseReturn.button : -1;
-          DOM["#mouse-auto-select"].value = items.mouseAuto ? items.mouseAuto.button : -1;
-          DOM["#mouse-increment-clicks-input"].value = items.mouseIncrement ? items.mouseIncrement.clicks : 1;
-          DOM["#mouse-decrement-clicks-input"].value = items.mouseDecrement ? items.mouseDecrement.clicks : 1;
-          DOM["#mouse-next-clicks-input"].value = items.mouseNext ? items.mouseNext.clicks : 1;
-          DOM["#mouse-prev-clicks-input"].value = items.mousePrev ? items.mousePrev.clicks : 1;
-          DOM["#mouse-clear-clicks-input"].value = items.mouseClear ? items.mouseClear.clicks : 1;
-          DOM["#mouse-return-clicks-input"].value = items.mouseReturn ? items.mouseReturn.clicks : 1;
-          DOM["#mouse-auto-clicks-input"].value = items.mouseAuto ? items.mouseAuto.clicks : 1;
+          for (const action of items.actions) {
+            const ak = Object.keys(action)[0],
+                  av = ak[0].toUpperCase() + ak.substring(1);
+            console.log("ak=" + ak  + " av = " + av);
+            writeInput(DOM["#key-" + ak + "-input"], items["key" + av]);
+            DOM["#mouse-" + ak + "-select"].value = items["mouse" + av] ? items["mouse" + av].button : -1;
+            DOM["#mouse-" + ak + "-clicks-input"].value = items["mouse" + av] ? items.mouseIncrement.clicks : 1;
+            DOM["#mouse-" + ak + "-clicks-input"].className = DOM["#mouse-" + ak + "-select"].value !== -1 ? "" : "display-none";
+          }
           DOM["#icon-color-radio-" + items.iconColor].checked = true;
           DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
           DOM["#popup-button-size-input"].value = items.popupButtonSize;
           DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
           DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
           DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
-          //DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
-          //DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+          DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
+          DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
           DOM["#saved-urls-preselect-input"].checked = localItems.savePreselect;
           DOM["#selection-select"].value = items.selectionPriority;
           DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
@@ -354,7 +345,7 @@ URLI.Options = function () {
     buttonInput = buttonInput ? buttonInput : DOM["#" + clicksInput.id.replace("clicks-input", "select")];
     clicksInput = clicksInput ? clicksInput : DOM["#" + buttonInput.id.replace("select", "clicks-input")];
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
-    clicksInput.value = mouse ? clicksInput.value : 1;
+    clicksInput.className = mouse ? "display-block fade-in" : "display-none";
     chrome.storage.sync.set({ [storageKey]: mouse}, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
   }
 
@@ -540,10 +531,6 @@ URLI.Options = function () {
       if (backgroundPage.URLI.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros)) {
         throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
-      // if (!/^[a-z0-9]+$/i.test(url.substring(selectionStart, selectionStart + selection.length))) {
-      //   throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotalphanumeric_error");
-      // }
-
     } catch (e) {
       DOM["#selection-custom-message-span"].textContent = e;
       return;
@@ -574,7 +561,6 @@ URLI.Options = function () {
               URLI.Permissions.removeAllPermissions();
               changeIconColor.call(DOM["#icon-color-radio-dark"]);
               populateValuesFromStorage("all");
-              // chrome.runtime.sendMessage({"greeting": "removeContentScriptListener"});
               URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
             });
           });
