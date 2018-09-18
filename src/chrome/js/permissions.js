@@ -9,18 +9,14 @@ var URLI = URLI || {};
 
 URLI.Permissions = function () {
 
-  const DECLARATIVE_CONTENT_ABLE = typeof chrome !== "undefined" && chrome.declarativeContent;
-
   // This object contains all of the extension's optional permissions. Each permission contains:
   // 1) What storage keys to set, 2) The permission request, 3) The permission conflict to use instead if a conflict exists with another permission (optional), and  4) The script (optional)
   const PERMISSIONS = {
-    "internalShortcuts":  DECLARATIVE_CONTENT_ABLE ? {
+    "internalShortcuts": {
       "storageKey": "permissionsInternalShortcuts",
       "request": {permissions: ["declarativeContent"], origins: ["<all_urls>"]},
       "requestConflict": {permissions: ["declarativeContent"]},
       "script": {js: ["js/shortcuts.js"]}
-    } : { // TODO
-      "storageKey": "permissionsInternalShortcuts"
     },
     "download": {
       "storageKey": "permissionsDownload",
@@ -135,10 +131,40 @@ URLI.Permissions = function () {
     });
   }
 
+  /**
+   * Checks that the chrome.declarativeContent rule for internal shortcuts is correctly applied.
+   *
+   * @public
+   */
+  function checkDeclarativeContent() {
+    chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
+      let shortcutsjsRule = false;
+      for (let rule of rules) {
+        if (rule.actions[0].js[0] === "js/shortcuts.js") {
+          console.log("URLI.Permissions.checkDeclarativeContent() - internal shortcuts enabled, found shortcuts.js rule!");
+          shortcutsjsRule = true;
+          break;
+        }
+      }
+      if (!shortcutsjsRule) {
+        console.log("URLI.Permissions.checkDeclarativeContent() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+        chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+          chrome.declarativeContent.onPageChanged.addRules([{
+            conditions: [new chrome.declarativeContent.PageStateMatcher()],
+            actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
+          }], function(rules) {
+            console.log("URLI.Permissions.checkDeclarativeContent() - successfully added declarativeContent rules:" + rules);
+          });
+        });
+      }
+    });
+  }
+
   // Return Public Functions
   return {
     requestPermissions: requestPermissions,
     removePermissions: removePermissions,
-    removeAllPermissions: removeAllPermissions
+    removeAllPermissions: removeAllPermissions,
+    checkDeclarativeContent: checkDeclarativeContent
   };
 }();

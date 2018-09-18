@@ -247,10 +247,7 @@ URLI.Background = function () {
           });
         });
       });
-      if (chrome.declarativeContent) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined);
-      }
-      chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]});
+      URLI.Permissions.removeAllPermissions();
     }
     // 5.3 - 5.5 only: Storage and Permission changes for 6.0
     else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
@@ -272,8 +269,6 @@ URLI.Background = function () {
    * For example, when Chrome is started, when the extension is installed or updated, or when the
    * extension is re-enabled after being disabled.
    *
-   * 1) Caches the sync storage and local storage items into items_ and localItems_
-   * 2) Ensures the toolbar icon and declarativeContent rules are set (due to Chrome sometimes not re-setting them)
    * @public
    */
   async function startupListener() {
@@ -292,28 +287,8 @@ URLI.Background = function () {
     }
     // Ensure Internal Shortcuts declarativeContent rule is added
     // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
-    if (items && items.permissionsInternalShortcuts && chrome.declarativeContent) {
-      chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        let shortcutsjsRule = false;
-        for (let rule of rules) {
-          if (rule.actions[0].js[0] === "js/shortcuts.js") {
-            console.log("URLI.Background.startupListener() - internal shortcuts enabled, found shortcuts.js rule!");
-            shortcutsjsRule = true;
-            break;
-          }
-        }
-        if (!shortcutsjsRule) {
-          console.log("URLI.Background.startupListener() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
-          chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-            chrome.declarativeContent.onPageChanged.addRules([{
-              conditions: [new chrome.declarativeContent.PageStateMatcher()],
-              actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
-            }], function(rules) {
-              console.log("URLI.Background.startupListener() - successfully added declarativeContent rules:" + rules);
-            });
-          });
-        }
-      });
+    if (items && items.permissionsInternalShortcuts) {
+      URLI.Permissions.checkDeclarativeContent();
     }
   }
 
