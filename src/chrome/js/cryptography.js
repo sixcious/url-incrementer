@@ -38,21 +38,21 @@ URLI.Cryptography = function () {
    * Encrypts plaintext into ciphertext using a known password. We use the AES-GCM algorithm with a SHA-256 hash function.
    * For simplicity, we hardcode the algorithm, hash, and password. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
-   * @param plaintext the plaintext to encrypt
+   * @param plaintext the text to encrypt
    * @returns {Promise<{iv: string, ciphertext: string}>}
    * @public
    */
   async function encrypt(plaintext) {
-    const iv = crypto.getRandomValues(new Uint8Array(32));
-    const algorithm = { name: "AES-GCM", iv: iv};
+    const algorithm = { name: "AES-GCM", iv: crypto.getRandomValues(new Uint8Array(64)) };
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["encrypt"]);
     const enc = await crypto.subtle.encrypt(algorithm, key, new TextEncoder().encode(plaintext));
-    return { iv: u8a2b64(iv), ciphertext: u8a2b64(new Uint8Array(enc)) };
+    return { iv: u8a2b64(algorithm.iv), ciphertext: u8a2b64(new Uint8Array(enc)) };
   }
 
   /**
-   * Decrypts ciphertext into plaintext using a known password.
+   * Decrypts ciphertext into plaintext using a known password. Note: Because the password key is hard-coded, this is
+   * not 100% secure, but provides at least a layer of privacy protection.
    *
    * @param ciphertext the text to decrypt
    * @param iv         the initialization vector for the algorithm
@@ -60,7 +60,7 @@ URLI.Cryptography = function () {
    * @public
    */
   async function decrypt(ciphertext, iv) {
-    const algorithm = { name: "AES-GCM", iv: b642u8a(iv)};
+    const algorithm = { name: "AES-GCM", iv: b642u8a(iv) };
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["decrypt"]);
     const dec = await crypto.subtle.decrypt(algorithm, key, b642u8a(ciphertext));

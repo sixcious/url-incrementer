@@ -168,11 +168,12 @@ You MUST have Enhanced Mode enabled to use Error Skipping in the following situa
 Finally, a few websites may not send an error code and instead "swallow" the error code, returning HTTP Response Code 200 ("OK") while still displaying a customized error page. Error Skipping won't work on these websites.
 
 ## Saving URLs
-You can save your favorite URLs and Increment Decrement settings (such as selection and interval) so you don't have to go into Setup each time you visit them.
+You can save your favorite URLs and Increment Decrement settings for each of them (such as selection and interval) so you don't have to go into Setup each time you visit them.
 After you save a URL, you can jump straight to using shortcuts or buttons to increment on every visit!
-It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**.
+It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**. You can also save **Wildcards**.
 1. **Exact URL** - This will only match URLs that are exactly the same except for the part you selected to increment. Click the heart icon in Setup (you can also have it set to always be pre-selected in the Options).
-2. **Partial URL** - This lets you add a less-restrictive partial URL that can be "matched" with several URLs that start with the partial URL you entered. In Options, click the *Add Partial URL...* button.
+2. **Partial URL** - This lets you add a less-restrictive starting partial URL that can be "matched" with several URLs that start with the partial URL you entered. In Options, click the *Add Partial URL...* button.
+3. **Wildcard** - Wildcards can be matched with *any* part of the URL! They can even can be regular expressions. But unlike Exact/Partial URLs, they can be decrypted. In Options, click the *Add Wildcard...* button.
 
 ### Exact URLs vs Partial URLs - Which Should I Use?
 Because URLs are saved just like passwords, **Exact URLs** must match exactly for it to be recognized (except for the part/number you selected to increment).
@@ -181,12 +182,28 @@ For example, say you save a partial URL `https://www.site.com/posts` with an Inc
 So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
 
 ### How Are URLs Saved?
-To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes. We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations. This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes. The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal. We also actually split the URL into two parts (replacing the selection with a different string) before hashing it, making even automated dictionary attempts to decipher them **extremely difficult!**
+To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes.
+We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations.
+This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes.
+The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal.
+We also actually split the URL into two parts (replacing the selection with a different string) before hashing it, making even automated dictionary attempts to decipher them **extremely difficult!**
 
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 
 ### Where Are The Cryptographic Hashes Saved?
-The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space). You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button. Also, if you uninstall the extension, the hashes are also automatically removed (along with all your other saved settings). We do not save anything outside the extension storage space allotted to us.
+The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space).
+You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button.
+Also, if you uninstall the extension, the hashes are also automatically deleted.
+
+### About Wildcards
+Wildcards are stored encrypted; they're never saved in the "plaintext" form you originally entered them in.
+But unlike exact and partial saved URLs, wildcards can be decrypted if someone were to look at URLI's source code and then run the exact decrypt function it uses.
+In most cases though, providing this one small layer of protection will be sufficient for most people's needs.
+The wildcards will never be in clear view on your computer, for example someone couldn't just Ctrl+F your storage space and find a wildcard you entered.
+
+### Your Data Means YOUR Data!
+Many extensions do not bother hashing your saved URLs or encrypting wildcards or even discussing this.
+URLI really cares about your privacy and data!
 
 ## Shuffle URLs
 Click the `crossed-arrows` icon to turn this mode on.

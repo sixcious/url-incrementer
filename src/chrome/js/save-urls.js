@@ -49,7 +49,7 @@ URLI.SaveURLs = function () {
   }
 
   async function matchesURL(save, url) {
-    return await save.type === "exact" ? matchesExactURL(save, url) : save.type === "partial" ? matchesPartialURL(save, url): "";
+    return await save.type === "exact" ? matchesExactURL(save, url) : save.type === "partial" ? matchesPartialURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : "";
   }
 
   /**
@@ -75,6 +75,16 @@ URLI.SaveURLs = function () {
     const hash = await URLI.Cryptography.hash(urlp, save.salt);
     const matches = hash === save.hash;
     return { "matches": matches, "selection": "" }
+  }
+
+  async function matchesWildcard(save, url) {
+    const wildcard = await URLI.Cryptography.decrypt(save.ciphertext, save.iv);
+    const matches = new RegExp(escapeRegExp(wildcard)).exec(url);
+    return { "matches": matches, "selection": "" }
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
   // Return Public Functions
