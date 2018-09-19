@@ -18,7 +18,7 @@ URLI.Cryptography = function () {
    * @returns {Promise<string>} the hash as a base 64 encoded string
    * @public
    */
-  async function calculateHash(text, salt) {
+  async function hash(text, salt) {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
     const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1000}, key, 512);
     return u8a2b64(new Uint8Array(bits));
@@ -30,8 +30,41 @@ URLI.Cryptography = function () {
    * @returns {string} the salt as a base 64 encoded string
    * @public
    */
-  function generateSalt() {
+  function salt() {
     return u8a2b64(crypto.getRandomValues(new Uint8Array(64)));
+  }
+
+  /**
+   * Encrypts plaintext into ciphertext using a known password. We use the AES-GCM algorithm with a SHA-256 hash function.
+   * For simplicity, we hardcode the algorithm, hash, and password. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
+   *
+   * @param plaintext the plaintext to encrypt
+   * @returns {Promise<{iv: string, ciphertext: string}>}
+   * @public
+   */
+  async function encrypt(plaintext) {
+    const iv = crypto.getRandomValues(new Uint8Array(32));
+    const algorithm = { name: "AES-GCM", iv: iv};
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
+    const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["encrypt"]);
+    const enc = await crypto.subtle.encrypt(algorithm, key, new TextEncoder().encode(plaintext));
+    return { iv: u8a2b64(iv), ciphertext: u8a2b64(new Uint8Array(enc)) };
+  }
+
+  /**
+   * Decrypts ciphertext into plaintext using a known password.
+   *
+   * @param ciphertext the text to decrypt
+   * @param iv         the initialization vector for the algorithm
+   * @returns {Promise<*>} the decrypted text
+   * @public
+   */
+  async function decrypt(ciphertext, iv) {
+    const algorithm = { name: "AES-GCM", iv: b642u8a(iv)};
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
+    const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["decrypt"]);
+    const dec = await crypto.subtle.decrypt(algorithm, key, b642u8a(ciphertext));
+    return new TextDecoder().decode(dec);
   }
 
   /**
@@ -58,7 +91,9 @@ URLI.Cryptography = function () {
 
   // Return Public Functions
   return {
-    calculateHash: calculateHash,
-    generateSalt: generateSalt
+    hash: hash,
+    salt: salt,
+    encrypt: encrypt,
+    decrypt: decrypt
   };
 }();

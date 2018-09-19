@@ -249,9 +249,9 @@ URLI.Background = function () {
       });
       URLI.Permissions.removeAllPermissions();
     }
-    // 5.3 - 5.5 only: Storage and Permission changes for 6.0
-    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.5") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.5, actual previousVersion=" + details.previousVersion);
+    // 5.3 - 5.8 only: Storage and Permission changes for 6.0
+    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
+      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.8, actual previousVersion=" + details.previousVersion);
       chrome.storage.sync.get(null, function(items) {
         chrome.storage.sync.set({
           // TODO

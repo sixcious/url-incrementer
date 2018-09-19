@@ -27,7 +27,7 @@ URLI ("yur-lee") increments [+] URLs. For example, if the URL has a "page=1" in 
 ** Download Incrementing is an optional and experimental feature that is designed to be used with Auto. URLI can use its Auto-Incrementing capabilities to offer you a unique and flexible "Auto Incrementer Downloader" (think a simple "Down them all" that runs automatically)! It's still rough around the edges, and very much still in BETA. Thank you for being patient as this feature continues to be improved!
 
 # Special Thanks
-NickMWPrince and Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C. (Alphanumeric Idea), and Adam C. & Will (User Feedback)
+NickMWPrince and Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C (Alphanumeric Idea), and Isaac S, Adam C & Will (Feedback)
 
 ... and most of all you for using URLI!
 

@@ -5,6 +5,7 @@
   "title": { "message": "URL Incrementer" },
 
   "BROWSER": { "message": "----- BROWSER -----" },
+  "6": { "message": "Version 6 now uses 0 Chrome memory when inactive and features: new toolkit mode, new multi increment mode, multi-click mouse shortcuts, return to start button, saved URLs and wildcards, auto repeat and shuffle, increment dates and custom alphabet bases" },
   "browser_shortcuts_h3": { "message": "Chrome Shortcuts" },
   "browser_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
@@ -102,8 +103,8 @@
   "custom_urls_h3": { "message": "Enter a list of custom URLs separated by commas, spaces, or line breaks" },
   "custom_urls_textarea_label": { "message": "URLs" },
   "custom_urls_textarea": { "message": "URLs must include a scheme (i.e. \"https://www.google.com\", not \"www.google.com\")" },
-  "toolkit_h3": { "message": "tH3 1nCr3m3nT3R's t00Lk1T" },
-  "toolkit_instructions": { "message": "Select and configure a tool, then click on the Incrementing Robot to have the work performed."},
+  "toolkit_h3": { "message": "URLI's Toolkit" },
+  "toolkit_instructions": { "message": "Select and configure a tool, then click on URLI to have the work performed."},
   "toolkit_tip": { "message": "If download is enabled, you can generate a list of links, open the HTML file, and then use URLI again or another downloader to download them all!" },
   "toolkit_tool_label": { "message": "Tool" },
   "toolkit_tool_open_tabs_label": { "message": "Open Tabs" },
@@ -189,12 +190,13 @@
   "toolkit_invalid_error": { "message": "Toolkit configuration missing tool, action, or quantity" },
   "toolkit_open_tabs_too_many_open_error": { "message": "Too many tabs are open in this window (current tabs + quantity exceeds 100), please close some or open a new window" },
   "toolkit_open_tabs_quantity_error": { "message": "Toolkit Open Tabs Quantity must be between 1 and 100" },
-  "toolkit_generate_links_quantity_error": { "message": "Toolkit Generate URLS Quantity must be between 1 and 10000" },
+  "toolkit_generate_links_quantity_error": { "message": "Toolkit Generate URLS Quantity must be between 1 and 10,000" },
   "auto_next_prev_error": { "message": "To use Next [>] Prev [<] with Auto, please first enable Enhanced Mode in Options to give URLI permissions" },
-  "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 100000" },
-  "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3600" },
+  "auto_times_invalid_error": { "message": "Auto Times must be between 1 and 100,000" },
+  "auto_seconds_invalid_error": { "message": "Auto Seconds must be between 1 and 3,600" },
+  "auto_shuffle_times_error": { "message": "When using Auto with Shuffle, times can't be greater than 10,000" },
   "auto_download_seconds_error": { "message": "When using Auto with Download, seconds must be at least 5" },
-  "auto_download_repeat_error": { "message": "When using Auto with Download, repeat can't be checked" },
+  "auto_download_repeat_error": { "message": "When using Auto with Download, repeat can't be on" },
   "download_enabled_error": { "message": "Please first enable Download in Options to give URLI permissions" },
   "download_subfolder_error": { "message": "For the Download Subfolder, please only enter [a-z] [0-9] _ - . or space" },
 
@@ -322,6 +324,6 @@
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_malfunctioning": { "message" : "i'M m4lfUnCt10n1Ng!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P. (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C. (Alphanumeric Idea), Isaac S,, Adam C. & Will (User Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (The First), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
-  "special_thanks_you": { "message": "... but most of all you for using URLI!" }
+  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), Isaac S, Adam C & Will (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (Precursor), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
+  "special_thanks_you": { "message": "... and most of all you for using URLI!" }
 }

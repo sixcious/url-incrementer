@@ -24,7 +24,8 @@ URLI.Options = function () {
         NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
         FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
 
-  let key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
+  let backgroundPage = {}, // Background page cache
+      key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   function shortcuts(items) {
@@ -98,6 +99,7 @@ URLI.Options = function () {
    * @public
    */
   async function DOMContentLoaded() {
+    backgroundPage = await EXT.Promisify.getBackgroundPage();
     const items = await EXT.Promisify.getItems();
     await shortcuts(items);
     const ids = document.querySelectorAll("[id]"),
@@ -111,8 +113,8 @@ URLI.Options = function () {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -164,10 +166,10 @@ URLI.Options = function () {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#download-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
-    DOM["#download-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#download-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
+    DOM["#download-disable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
@@ -428,12 +430,11 @@ URLI.Options = function () {
     if (!url || url.length < 0) {
       DOM["#saved-urls-partial-errors"].textContent = chrome.i18n.getMessage("saved_urls_partial_url_error");
     } else {
-      const backgroundPage = await EXT.Promisify.getBackgroundPage();
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
       const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addPartialURL");
       // Part 2: Put this URL into the saves array and save it to local storage
-      const salt = backgroundPage.URLI.Cryptography.generateSalt(),
-            hash = await backgroundPage.URLI.Cryptography.calculateHash(url, salt),
+      const salt = backgroundPage.URLI.Cryptography.salt(),
+            hash = await backgroundPage.URLI.Cryptography.hash(url, salt),
             items = await EXT.Promisify.getItems();
       if (items.selectionCustom && items.selectionCustom.url) {
         items.selectionCustom.url = "";
@@ -522,8 +523,7 @@ URLI.Options = function () {
         throw chrome.i18n.getMessage("selection_custom_matchindex_error");
       }
       // TODO:
-      const backgroundPage = await EXT.Promisify.getBackgroundPage(),
-        base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
+      const base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
         baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked,
         baseDateFormat = DOM["#base-date-format-input"].value,
         baseCustom = DOM["#base-custom-input"].value,
@@ -552,17 +552,15 @@ URLI.Options = function () {
    * @private
    */
   function resetOptions() {
-    chrome.runtime.getBackgroundPage(function(backgroundPage) {
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(backgroundPage.URLI.Background.getLSDV(), function() {
-              console.log("URLI.Options.resetOptions() - removing all permissions...");
-              URLI.Permissions.removeAllPermissions();
-              changeIconColor.call(DOM["#icon-color-radio-dark"]);
-              populateValuesFromStorage("all");
-              URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
-            });
+    chrome.storage.sync.clear(function() {
+      chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
+        chrome.storage.local.clear(function() {
+          chrome.storage.local.set(backgroundPage.URLI.Background.getLSDV(), function() {
+            console.log("URLI.Options.resetOptions() - removing all permissions...");
+            backgroundPage.URLI.Permissions.removeAllPermissions();
+            changeIconColor.call(DOM["#icon-color-radio-dark"]);
+            populateValuesFromStorage("all");
+            URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
           });
         });
       });

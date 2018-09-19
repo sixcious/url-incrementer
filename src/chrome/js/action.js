@@ -31,14 +31,15 @@ URLI.Action = function () {
       // Get the most recent instance from Background in case auto has been paused
       instance = URLI.Background.getInstance(instance.tabId);
       // Handle autoTimes
-      if (!instance.autoPaused) {
-        if (instance.autoAction === action) {
-          instance.autoTimes--;
-        } else if ((instance.autoTimes < instance.autoTimesOriginal) &&
-          ((instance.autoAction === "increment" || instance.autoAction === "decrement") && (action === "increment" || action === "decrement")) ||
-          ((instance.autoAction === "next" || instance.autoAction === "prev") && (action === "next" || action === "prev"))) {
-          instance.autoTimes++;
-        }
+      // if (!instance.autoPaused) {
+      //
+      // }
+      if (instance.autoAction === action) {
+        instance.autoTimes--;
+      } else if ((instance.autoTimes < instance.autoTimesOriginal) &&
+        ((instance.autoAction === "increment" || instance.autoAction === "decrement") && (action === "increment" || action === "decrement")) ||
+        ((instance.autoAction === "next" || instance.autoAction === "prev") && (action === "next" || action === "prev"))) {
+        instance.autoTimes++;
       }
       // Prevents a rare race condition:
       // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
