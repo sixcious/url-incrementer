@@ -19,37 +19,31 @@ Custom Base Encoding / Decoding (Base 62)
 https://medium.com/@harpermaddox/how-to-build-a-custom-url-shortener-5e8b454c58ae
 
 Download - List of all HTML Tag Attributes that can contain URLs
-Daniel DiPaolo
 https://stackoverflow.com/a/2725168
 
 Download - Getting a Filename from a URL
-hayatbiralem
 https://stackoverflow.com/questions/511761/js-function-to-get-filename-from-url/2480287#comment61576914_17143667
 
 Download - Getting an Extension from a Filename from a URL (No longer using due to getting the name separately now too, but still extremely useful)
-SteeBono
 https://stackoverflow.com/a/42841283
 
 Download - List of all style properties that can contain URLs
-Chad Scira et all
 https://stackoverflow.com/q/24730939
 
 Download - Regex to find URLs from inline CSS Styles
-Alex Z
 https://stackoverflow.com/a/34166861
+
+Saved URLs (Wildcards) - Escaping regular expressions
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 
 Content Scripts - Guarding against multiple content script injections
 https://stackoverflow.com/questions/23208134/avoid-dynamically-injecting-the-same-script-multiple-times-when-using-chrome-tab?rq=1
 
 Compression - Replacing Comments via Regex
 http://blog.ostermiller.org/find-comment
-/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
-\s+//.*
-^\s*console.log.*$
 
+Compression - Replacing multiple blank lines with one blank line via Regex
 https://stackoverflow.com/questions/4475042/replacing-multiple-blank-lines-with-one-blank-line-using-regex-search-and-replac
-^(\s*\r\n){2,}
-\r\n
 
 Compression - Compressing PNGs (TinyPNG)
 https://tinypng.com/

@@ -383,19 +383,19 @@ URLI.Options = function () {
    * @param saves the saved URLs to build from
    * @private
    */
-  function buildSavedURLsSelect(saves) {
+  async function buildSavedURLsSelect(saves) {
     if (saves && saves.length > 0) {
       const select = document.createElement("select");
       let count = 1;
       select.id = "saved-urls-select";
       select.className = "display-block fade-in";
       for (let save of saves) {
+        const wildcard = save.type === "wildcard" ? await backgroundPage.URLI.Cryptography.decrypt(save.ciphertext, save.iv) : "";
         const option = document.createElement("option");
-        option.dataset.hash = save.hash;
-        option.textContent = (count++) + " -" +
-          save.type === "wildcard" ? "wildcard:...."  : " hash: " + save.hash.substring(0, 10) + "..." +
-          " [" + save.type + "]" +
-          " sel:" + (save.type === "exact" ? save.selectionStart : save.selectionPriority) +
+        option.dataset.hash = save.type === "wildcard" ? save.ciphertext : save.hash;
+        option.textContent = (count++) + " - " + save.type + ": " +
+          (save.type === "wildcard" ? wildcard.substring(0, 16)  : save.hash.substring(0, 16)) +
+          " sel: " + (save.type === "exact" ? save.selectionStart : save.selectionPriority) +
           " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 5) + "...") +
           " base: " + save.base;
         select.appendChild(option);
@@ -407,25 +407,23 @@ URLI.Options = function () {
     DOM["#saved-urls-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
   }
 
-  function deleteSavedURL() {
+  async function deleteSavedURL() {
     const select = document.getElementById("saved-urls-select"), // Dynamically Generated Select, so can't use DOM Cache
           option = select.options[select.selectedIndex],
-          hash = option.dataset.hash;
-    chrome.storage.local.get(null, function(localItems) {
-      const saves = localItems.saves;
-      if (saves && saves.length > 0) {
-        for (let i = 0; i < saves.length; i++) {
-          if (saves[i].hash === hash) {
-            console.log("URLI.Options.deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
-            saves.splice(i, 1);
-            chrome.storage.local.set({saves: saves}, function() {
-              populateValuesFromStorage("savedURLs");
-            });
-            break;
-          }
+          hash = option.dataset.hash,
+          saves = await EXT.Promisify.getItems("local", "saves");
+    if (saves && saves.length > 0) {
+      for (let i = 0; i < saves.length; i++) {
+        if (saves[i].type === "wildcard" ? saves[i].ciphertext === hash : saves[i].hash === hash) {
+          console.log("URLI.Options.deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
+          saves.splice(i, 1);
+          chrome.storage.local.set({saves: saves}, function() {
+            populateValuesFromStorage("savedURLs");
+          });
+          break;
         }
       }
-    });
+    }
   }
 
   async function addSavedURLPartial() {

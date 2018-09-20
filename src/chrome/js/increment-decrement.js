@@ -611,7 +611,7 @@ URLI.IncrementDecrementArray = function () {
           url = instance.url,
           selection = instance.selection;
     // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
-    if (instance.toolkitEnabled && instance.toolkitTool === "generate-links") {
+    if (instance.toolkitEnabled && instance.toolkitTool === "links") {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }

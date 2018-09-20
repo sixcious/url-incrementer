@@ -25,7 +25,7 @@ URLI.Background = function () {
     "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
+    "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
     "urli": "loves incrementing for you"
   },
 
@@ -255,7 +255,7 @@ URLI.Background = function () {
       chrome.storage.sync.get(null, function(items) {
         chrome.storage.sync.set({
           // TODO
-          "toolkitTool": "open-tabs", "toolkitAction": "increment", "toolkitQuantity": 1
+          "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1
         });
       });
       chrome.storage.local.clear(function() {
@@ -433,7 +433,7 @@ URLI.Background = function () {
     const props = {};
     props.tabId = tab.id;
     props.url = props.startingURL = tab.url;
-    props.saveFound = via === "exact" || via === "partial";
+    props.saveFound = via === "exact" || via === "partial" || via === "wildcard";
     props.saveType = via === "items" ? "none" : via;
     props.selection = props.startingSelection = sobject.selection;
     props.selectionStart = props.startingSelectionStart = via === "exact" ? object.selectionStart : sobject.selectionStart;

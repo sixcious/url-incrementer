@@ -259,8 +259,8 @@ URLI.Popup = function () {
     DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
     DOM["#multi-img-3"].className = instance.multiEnabled && instance.multiCount >= 3 ? "" : "disabled";
     // Toolkit Setup:
-    DOM["#toolkit-tool-open-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-open-tabs-input"].value;
-    DOM["#toolkit-tool-generate-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-generate-links-input"].value;
+    DOM["#toolkit-tool-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-tabs-input"].value;
+    DOM["#toolkit-tool-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-links-input"].value;
     DOM["#toolkit-action-increment-input"].checked = instance.toolkitAction === DOM["#toolkit-action-increment-input"].value;
     DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
@@ -389,13 +389,13 @@ URLI.Popup = function () {
         tr.appendChild(td);
         let a = document.createElement("a");
         a.href = url.urlmod;
-        a.target = "_blank";
+        // a.target = "_blank";
         a.textContent = url.urlmod;
         td.appendChild(a);
       }
-      DOM["#toolkit-generate-links-table-div"].replaceChild(table, DOM["#toolkit-generate-links-table-div"].firstChild);
-      DOM["#toolkit-generate-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
-      DOM["#toolkit-generate-links-div"].className = "display-block fade-in";
+      DOM["#toolkit-links-table-div"].replaceChild(table, DOM["#toolkit-links-table-div"].firstChild);
+      DOM["#toolkit-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
+      DOM["#toolkit-links-div"].className = "display-block fade-in";
     }
   }
 
@@ -914,7 +914,7 @@ URLI.Popup = function () {
       // Toolkit:
       // Note: _.toolkitEnabled = true is set in toolkit()
       _.tabsLength = tabs ? tabs.length : 0;
-      _.toolkitTool = DOM["#toolkit-tool-open-tabs-input"].checked ? DOM["#toolkit-tool-open-tabs-input"].value : DOM["#toolkit-tool-generate-links-input"].checked ? DOM["#toolkit-tool-generate-links-input"].value : undefined;
+      _.toolkitTool = DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
       _.toolkitQuantity = +DOM["#toolkit-quantity-input"].value;
     }
@@ -979,9 +979,9 @@ URLI.Popup = function () {
       // Toolkit Errors
       e.toolkitErrors = [
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
-        _.toolkitTool === "open-tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
-        _.toolkitTool === "open-tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
-        _.toolkitTool === "generate-links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
+        _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
+        _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
+        _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
       ];
       e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");
       if (e.toolkitErrorsExist) {

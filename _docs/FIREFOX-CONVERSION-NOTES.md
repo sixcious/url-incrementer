@@ -1,7 +1,7 @@
 # Firefox Conversion Notes
 
 #### manifest.json
-see manifest.json in _mozilla folder, need to add applications/gecko, remove optional permissions declarativeContent etc.
+Need to add applications/gecko with an ID due to chrome.storage.sync, remove optional permissions declarativeContent, change options_ui chrome_style to browser_style, etc.
 
 #### permissions.js
 must remove second chrome.permissions.request() - this was only added to fix a bug in Chrome that didn't grant a previously enabled origin when a new permission is being requested with that same origin
@@ -29,7 +29,7 @@ The two workarounds are to either get tabs permissions or use the sender.url ins
 lookbehind regex not supported (yet) in Firefox as of Version 61. Chrome supports it starting in Version 62.
 
 #### cryptography.js
-If the plaintext is empty in Firefox, it hangs, so need to check and use a default plaintext
+If the text input to hash() is empty in Firefox, it hangs, so need to check and use a default plaintext
 
 #### options.css
 add body max-width: 420px since by default it goes really wide.

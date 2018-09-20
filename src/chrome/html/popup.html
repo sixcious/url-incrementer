@@ -87,7 +87,7 @@
                   <input id="multi-count" type="hidden" value="0"/> <!-- saves multiCount -->
                 </div>
                 <div class="clear-both"></div>
-                <input id="selection-input" type="text" readonly="readonly"/>
+                <input id="selection-input" type="text" readonly="readonly" spellcheck="false"/>
                 <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
                 <div class="checkbox">
                   <label>
@@ -164,13 +164,13 @@
                   <a id="base-custom-a" href="https://github.com/roysix/url-incrementer/blob/master/_docs/HELP.md#bases-and-custom-bases" target="_blank">
                     <span id="base-custom-label" data-i18n="textContent"></span>
                   </a>
-                  <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ"/>
+                  <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false"/>
                 </div>
                 <div id="base-date" class="display-none">
                   <a id="base-date-format-a" href="https://github.com/roysix/url-incrementer/tree/master/_docs/HELP.md#date-incrementing" target="_blank">
                     <span id="base-date-format-label" data-i18n="textContent"></span>
                   </a>
-                  <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd"/>
+                  <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false"/>
                 </div>
               </div>
             </div>
@@ -199,16 +199,16 @@
               <label id="toolkit-tool-label" data-i18n="textContent"></label>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-open-tabs-input" type="radio" name="toolkit-tool" value="open-tabs"/>
+                  <input id="toolkit-tool-tabs-input" type="radio" name="toolkit-tool" value="tabs"/>
                   <img src="../img/list-alt.png" alt="" width="14" height="14"/>
-                  <span id="toolkit-tool-open-tabs-label" data-i18n="textContent"></span>
+                  <span id="toolkit-tool-tabs-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-generate-links-input" type="radio" name="toolkit-tool" value="generate-links"/>
+                  <input id="toolkit-tool-links-input" type="radio" name="toolkit-tool" value="links"/>
                   <img src="../img/link.png" alt="" width="14" height="14"/>
-                  <span id="toolkit-tool-generate-links-label" data-i18n="textContent"></span>
+                  <span id="toolkit-tool-links-label" data-i18n="textContent"></span>
                 </label>
               </div>
             </div>
@@ -240,9 +240,9 @@
             </div>
           </div>
         </div>
-        <div id="toolkit-generate-links-div" class="display-none">
-          <a id="toolkit-generate-links-download" class="button" data-i18n="textContent" title="url-incremented-links.html" download="url-incremented-links"></a>
-          <div id="toolkit-generate-links-table-div"><div></div></div>
+        <div id="toolkit-links-div" class="display-none">
+          <a id="toolkit-links-download" class="button" data-i18n="textContent" title="url-incremented-links.html" download="url-incremented-links"></a>
+          <div id="toolkit-links-table-div"><div></div></div>
         </div>
       </section>
       <section id="auto">
@@ -324,7 +324,7 @@
                 <div id="download-attributes" class="checkbox"><div></div></div>
                 <div id="download-selector">
                   <label id="download-selector-label">document.querySelectorAll()</label>
-                  <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]"/>
+                  <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]" spellcheck="false"/>
                 </div>
               </div>
             </div>
@@ -373,7 +373,7 @@
                 <img src="../img/question-circle.png" alt="" width="14" height="14"/>
                 <span id="download-subfolder-label" data-i18n="textContent"></span>
               </label>
-              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001"/>
+              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001" spellcheck="false"/>
             </div>
             <div id="download-preview-checkboxes" class="clear-both checkbox">
               <label>

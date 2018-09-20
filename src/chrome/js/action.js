@@ -302,7 +302,7 @@ URLI.Action = function () {
   function toolkit(instance) {
     let actionPerformed = false;
     switch (instance.toolkitTool) {
-      case "open-tabs": {
+      case "tabs": {
         //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
         for (let url of instance.urls) {
           chrome.tabs.create({"url": url.urlmod, "active": false});
@@ -310,7 +310,7 @@ URLI.Action = function () {
         actionPerformed = true;
         break;
       }
-      case "generate-links": {
+      case "links": {
         //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
         chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         actionPerformed = true;
