@@ -135,9 +135,12 @@ URLI.Options = function () {
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
-    DOM["#saved-urls-add-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-block fade-in"; DOM["#saved-urls-partial-url-textarea"].value = DOM["#saved-urls-partial-errors"].textContent = ""; });
+    DOM["#saved-urls-partial-add-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-block fade-in"; DOM["#saved-urls-partial-url-textarea"].value = DOM["#saved-urls-partial-errors"].textContent = ""; });
     DOM["#saved-urls-partial-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-none"; });
     DOM["#saved-urls-partial-save-button"].addEventListener("click", function() { addSavedURLPartial(); });
+    DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
+    DOM["#saved-urls-wildcard-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-none"; });
+    DOM["#saved-urls-wildcard-save-button"].addEventListener("click", function() { addSavedURLWildcard(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
@@ -390,7 +393,7 @@ URLI.Options = function () {
         const option = document.createElement("option");
         option.dataset.hash = save.hash;
         option.textContent = (count++) + " -" +
-          " hash: " + save.hash.substring(0, 10) + "..." +
+          save.type === "wildcard" ? "wildcard:...."  : " hash: " + save.hash.substring(0, 10) + "..." +
           " [" + save.type + "]" +
           " sel:" + (save.type === "exact" ? save.selectionStart : save.selectionPriority) +
           " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 5) + "...") +
@@ -448,6 +451,32 @@ URLI.Options = function () {
       chrome.storage.local.set({"saves": saves}, function() {
         populateValuesFromStorage("savedURLs");
         DOM["#saved-urls-partial"].className = "display-none";
+      });
+    }
+  }
+
+  async function addSavedURLWildcard() {
+    const url = DOM["#saved-urls-wildcard-url-textarea"].value;
+    if (!url || url.length < 0) {
+      DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
+    } else {
+      // Part 1: Check if this URL has already been saved, if it has remove the existing save
+      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addPartialURL");
+      // Part 2: Put this URL into the saves array and save it to local storage
+      const encrypt = await backgroundPage.URLI.Cryptography.encrypt(url),
+        items = await EXT.Promisify.getItems();
+      if (items.selectionCustom && items.selectionCustom.url) {
+        items.selectionCustom.url = "";
+      }
+      // Put this new entry at the end of the array (push) because it's a partial save
+      saves.push({
+        "type": "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
+        "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
+        "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom, "errorSkip": items.errorSkip
+      });
+      chrome.storage.local.set({"saves": saves}, function() {
+        populateValuesFromStorage("savedURLs");
+        DOM["#saved-urls-wildcard"].className = "display-none";
       });
     }
   }
