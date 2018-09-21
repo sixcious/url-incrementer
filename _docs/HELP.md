@@ -168,15 +168,21 @@ You MUST have Enhanced Mode enabled to use Error Skipping in the following situa
 Finally, a few websites may not send an error code and instead "swallow" the error code, returning HTTP Response Code 200 ("OK") while still displaying a customized error page. Error Skipping won't work on these websites.
 
 ## Saving URLs
-You can save your favorite URLs and Increment Decrement settings for each of them (such as selection and interval) so you don't have to go into Setup each time you visit them.
-After you save a URL, you can jump straight to using shortcuts or buttons to increment on every visit!
-It's completely optional ("opt-in"); there are two types of URLs you can save: **Exact URLs** and **Partial URLs**. You can also save **Wildcards**.
-1. **Exact URL** - This will only match URLs that are exactly the same except for the part you selected to increment. Click the heart icon in Setup (you can also have it set to always be pre-selected in the Options).
-2. **Partial URL** - This lets you add a less-restrictive starting partial URL that can be "matched" with several URLs that start with the partial URL you entered. In Options, click the *Add Partial URL...* button.
-3. **Wildcard** - Wildcards can be matched with *any* part of the URL! They can even can be regular expressions. But unlike Exact/Partial URLs, they can be decrypted. In Options, click the *Add Wildcard...* button.
+You can save your favorite `URLs` and Increment Decrement settings for each of them (such as selection, interval, and base).
+To save a URL, in the Popup, click the `heart <3` icon and click Accept after you're done. After you save a URL, you can jump straight to using shortcuts to increment on every subsequent visit, even after closing your browser.
 
-### Exact URLs vs Partial URLs - Which Should I Use?
-Because URLs are saved just like passwords, **Exact URLs** must match exactly for it to be recognized (except for the part/number you selected to increment).
+***Example***: If you save URL `https://www.example.com/page-1`, and chose to increment the `1` then any URL that is exactly like that URL (except for the `1` part) will be recognized.
+
+You can also save `Wildcards` to match multiple URLs. Wildcards are helpful, if for example, you wanted to match just the domain or a small substring of a URL. Wildcards can just be normal text or also be regular expressions.
+To save a Wildcard, in the Options under Saved URLs, click the `Add Wildcard...` button, enter the wildcard, adjust the Increment Decrement settings for it, then click Save.
+
+***Example***: Wildcard `example.com/posts/` with an Interval of `42` will match all URLs that contain `example.com/posts/` and increment them by 42 whenever you visit them.
+
+Saving is completely optional ("opt-in").
+
+
+### Saving URLs vs Saving Wildcards
+URLs are saved just like passwords, must match exactly for it to be recognized (except for the part/number you selected to increment).
 However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
 For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
 So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
@@ -188,20 +194,22 @@ This is a *one-way* process, meaning it is impossible for anyone to "decrypt" th
 The only way anyone can figure out the URLs is if they used brute-force and checked every single possible URL in existence using the same cryptographic hash function and random salt and then checking if the hashes are equal.
 We also actually split the URL into two parts (replacing the selection with a different string) before hashing it, making even automated dictionary attempts to decipher them **extremely difficult!**
 
+Here's a real example of how a saved URL looks:
+`{hash: "", salt: **, selectionStart: 72, selectionEnd: -15, interval: 42, base: 10`
+
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 
 ### Where Are The Cryptographic Hashes Saved?
 The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space).
 You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button.
-Also, if you uninstall the extension, the hashes are also automatically deleted.
+Also, if you uninstall the extension, all your saved data, including the hashes, are automatically deleted.
 
-### About Wildcards
-Wildcards are stored encrypted; they're never saved in the "plaintext" form you originally entered them in.
-But unlike exact and partial saved URLs, wildcards can be decrypted if someone were to look at URLI's source code and then run the exact decrypt function it uses.
+### How Are Wildcards Saved?
+Wildcards are stored as encrypted hashes with a random IV (initialization vector); they're never saved in the "plaintext" form you originally entered them in.
+But unlike the cryptographic hashed URLs, wildcard encrypted hashes can be decrypted if someone were to look at URLI's source code and then run the exact decrypt function and key it uses.
 In most cases though, providing this one small layer of protection will be sufficient for most people's needs.
-The wildcards will never be in clear view on your computer, for example someone couldn't just Ctrl+F your storage space and find a wildcard you entered.
+The wildcards will never be in clear view on your computer. For example, if someone were to search thru your extension storage space, they would only find encrypted hashes, and would need to put additional time and effort in to decrypting them.
 
-### Your Data Means YOUR Data!
 Many extensions do not bother hashing your saved URLs or encrypting wildcards or even discussing this.
 URLI really cares about your privacy and data!
 

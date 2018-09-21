@@ -99,6 +99,12 @@ input[type="image"]:focus {
   margin-left: 4px;
 }
 
+.note {
+  font-style: italic;
+  margin-top: 1em;
+  font-size: 0.9em;
+}
+
 /* heading border-bottom-color overrides */
 
 #saved-urls-settings div.heading {
