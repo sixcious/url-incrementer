@@ -57,7 +57,7 @@ URLI.SaveURLs = function () {
    *
    * @param save the save with url hashes to check
    * @param url  the current URL to check
-   * @returns {Promise<{matches: boolean, selection: string}>}
+   * @returns {Promise<{matches: boolean, selection: {}}>}
    * @private
    */
   async function matchesExactURL(save, url) {
@@ -67,7 +67,7 @@ URLI.SaveURLs = function () {
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
     const matches = hash === save.hash && URLI.IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
-    return { "matches": matches, "selection": selection };
+    return { "matches": matches, "selection": { "selection": selection, "selectionStart": save.selectionStart } };
   }
 
   async function matchesPartialURL(save, url) {

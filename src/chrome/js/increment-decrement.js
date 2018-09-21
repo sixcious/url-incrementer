@@ -420,7 +420,7 @@ URLI.IncrementDecrementDate = function () {
    *
    * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
    * Patterns - yyyy | yy, mmmm | mmm | mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
-   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh/mm/ss
+   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh:mm:ss
    *
    * @param action
    * @param selection
@@ -475,7 +475,7 @@ URLI.IncrementDecrementDate = function () {
     for (let i = 0; i < dateFormatParts.length; i++) {
       switch(dateFormatParts[i]) {
         case "yyyy": mapParts.set("y", strParts[i]); break;
-        case "yy": const yy = parseInt(strParts[i]); const nowyy = parseInt(now.getFullYear().toString().slice(-2)); const nowbyy = parseInt(now.getFullYear().toString().substring(0, 2)); mapParts.set("y", (nowyy - yy < 0 ? yy - nowyy > 50 ? nowbyy - 1 : nowbyy : nowyy - yy > 50 ? nowbyy + 1 : nowbyy) + strParts[i]); break; //parseInt(strParts[i]) > 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
+        case "yy":   mapParts.set("y", parseInt(strParts[i]) >= 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
         case "mmmm": case "Mmmm": case"MMMM": mapParts.set("m", mmmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
         case "mmm": case"Mmm": case"MMM": mapParts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
         case "mm":   mapParts.set("m", strParts[i]); break;

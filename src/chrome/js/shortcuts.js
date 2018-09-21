@@ -169,54 +169,55 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
   };
 }();
 
+// Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
+
 if (!URLI.Shortcuts.contentScriptExecuted) {
   URLI.Shortcuts.contentScriptExecuted = true;
-  // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
   chrome.storage.sync.get(null, function(items) {
-    URLI.Shortcuts.setItems(items);
-    // Key
-    if (items.keyEnabled) { //&& (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
-      document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
-    }
-    // Mouse
-    if (items.mouseEnabled) { //} && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound)))) {
-      document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-      document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-      document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-    }
-  });
-  // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
-  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
-    switch (request.greeting) {
-      case "addKeyListener":
-        document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
-        document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
+    if (items.permissionsInternalShortcuts) {
+      URLI.Shortcuts.setItems(items);
+      if (items.keyEnabled) {
         document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
         document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
-        break;
-      case "removeKeyListener":
-        document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
-        document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
-        break;
-      case "addMouseListener":
-        document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-        document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-        document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-        document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+      }
+      if (items.mouseEnabled) {
         document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+        document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
         document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-        break;
-      case "removeMouseListener":
-        document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-        document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-        document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-        break;
-      default:
-        break;
+      }
+      // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
+      chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+        switch (request.greeting) {
+          case "addKeyListener":
+            document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
+            document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
+            document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
+            document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
+            break;
+          case "removeKeyListener":
+            document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
+            document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
+            break;
+          case "addMouseListener":
+            document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+            document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+            document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
+            document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+            document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+            document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
+            break;
+          case "removeMouseListener":
+            document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
+            document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
+            document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
+            break;
+          default:
+            break;
+        }
+        sendResponse({});
+      });
     }
-    sendResponse({});
   });
 }
 

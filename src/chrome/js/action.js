@@ -93,12 +93,12 @@ URLI.Action = function () {
       default:
         break;
     }
-    // Post-Perform Action:
-    // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
-    if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
-      console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
-      URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL, "startingSelection": instance.startingSelection, "startingSelectionStart": instance.startingSelectionStart});
-    }
+    // // Post-Perform Action:
+    // // Handle Return to Start - Set Skeleton Instance containing startingURL for Quick Shortcut Actions, later retrieved by buildInstance()
+    // if (actionPerformed && !URLI.Background.getInstance(instance.tabId) && (action === "increment" || action === "decrement" || action === "next" || action === "prev")) {
+    //   console.log("URLI.Action.postPerformAction() - setting skeleton instance, startingURL=" + instance.startingURL);
+    //   URLI.Background.setInstance(instance.tabId, {"isSkeleton": true, "tabId": instance.tabId, "startingURL": instance.startingURL, "startingSelection": instance.startingSelection, "startingSelectionStart": instance.startingSelectionStart});
+    // }
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       URLI.Background.setBadge(instance.tabId, action, true);
@@ -211,16 +211,16 @@ URLI.Action = function () {
   function clear(caller, instance, items, callback) {
     let actionPerformed = false;
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
-    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.isSkeleton) {
+    if (instance.enabled || instance.autoEnabled || instance.downloadEnabled /*|| instance.isSkeleton*/) {
       actionPerformed = true;
     }
     URLI.Background.deleteInstance(instance.tabId);
-    // Skeleton Instances will be deleted only by tabsRemovedListener and no other processing needed
-    if (instance.isSkeleton) {
-      return actionPerformed;
-    }
+    // // Skeleton Instances will be deleted only by tabsRemovedListener and no other processing needed
+    // if (instance.isSkeleton) {
+    //   return actionPerformed;
+    // }
     // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete save
-    if (caller !== "popupClearBeforeSet" &&  caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
+    if (caller !== "popupClearBeforeSet" && caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
       //instance.multiCount = 0; TODO... multi ?
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
@@ -262,7 +262,7 @@ URLI.Action = function () {
    */
   function returnToStart(caller, instance) {
     let actionPerformed = false;
-    if (instance.startingURL) {
+    if (instance.enabled && instance.startingURL) {
       actionPerformed = true;
       // Auto Case 1: If Auto is calling return, it is completing a repeat loop
       if (caller === "auto") {

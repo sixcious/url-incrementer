@@ -20,7 +20,7 @@ URLI.Cryptography = function () {
    */
   async function hash(text, salt) {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
-    const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1000}, key, 512);
+    const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1000 }, key, 512);
     return u8a2b64(new Uint8Array(bits));
   }
 
@@ -35,7 +35,7 @@ URLI.Cryptography = function () {
   }
 
   /**
-   * Symmetrically encrypts plaintext into ciphertext. We use the AES-GCM algorithm with a SHA256 hash function.
+   * Encrypts plaintext into ciphertext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
    * The key is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param plaintext the text to encrypt
@@ -51,7 +51,7 @@ URLI.Cryptography = function () {
   }
 
   /**
-   * Symmetrically decrypts ciphertext into plaintext. We use the AES-GCM algorithm with a SHA256 hash function.
+   * Decrypts ciphertext into plaintext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
    * The key is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param ciphertext the text to decrypt

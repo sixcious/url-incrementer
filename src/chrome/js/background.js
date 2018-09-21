@@ -38,8 +38,8 @@ URLI.Background = function () {
   BROWSER_ACTION_BADGES = {
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
     "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
-    "increment1": { "text": "+",    "backgroundColor": "#004687" },
-    "decrement1": { "text": "-",    "backgroundColor": "#004687" },
+    "increment1": { "text": "+",    "backgroundColor": "#1779BA" },
+    "decrement1": { "text": "-",    "backgroundColor": "#1779BA" },
     "increment2": { "text": "+",    "backgroundColor": "#004687" },
     "decrement2": { "text": "-",    "backgroundColor": "#004687" },
     "increment3": { "text": "+",    "backgroundColor": "#001354" },
@@ -144,40 +144,42 @@ URLI.Background = function () {
     items = items ? items : await EXT.Promisify.getItems();
     localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
     const saves = localItems.saves;
-    let props;
+    let via = "items",
+        object = items,
+        selection = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
       for (let save of saves) {
         const result = await URLI.SaveURLs.matchesURL(save, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a " + save.type + " save for this tab's url");
-          props = buildProps(save.type, tab, save, save.type === "exact" ? result : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom));
+          via = save.type;
+          object = save;
+          selection = save.type === "exact" ? result.selection : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
           break;
         }
       }
     }
-    // If no save found, build using storage items:
-    if (!props) {
-      const selectionProps = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom); // selection, selectionStart
-      props = buildProps("items", tab, items, selectionProps);
-    }
-    // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
-    const instance = getInstance(tab.id);
-    if (instance && instance.isSkeleton) {
-      props.startingURL = instance.startingURL;
-      props.startingSelection = instance.startingSelection;
-      props.startingSelectionStart = instance.startingSelectionStart;
-    }
-    // Return newly built instance using props and items:
+    // // TODO... props and starting URL
+    // // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
+    // const instance = getInstance(tab.id);
+    // const props = {};
+    // if (instance && instance.isSkeleton) {
+    //   props.startingURL = instance.startingURL;
+    //   props.startingSelection = instance.startingSelection;
+    //   props.startingSelectionStart = instance.startingSelectionStart;
+    // }
+    // Return the newly built instance using tab, via, selection, object, and items:
     return {
       "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false,
-      "tabId": props.tabId, "url": props.url, "startingURL": props.startingURL,
-      "saveFound": props.saveFound, "saveType": props.saveType,
-      "selection": props.selection, "selectionStart": props.selectionStart, "startingSelection": props.startingSelection, "startingSelectionStart": props.startingSelectionStart,
-      "leadingZeros": props.leadingZeros,
-      "interval": props.interval,
-      "base": props.base, "baseCase": props.baseCase, "baseDateFormat": props.baseDateFormat, "baseCustom": props.baseCustom,
-      "errorSkip": props.errorSkip, "errorCodes": props.errorCodes, "errorCodesCustomEnabled": props.errorCodesCustomEnabled, "errorCodesCustom": props.errorCodesCustom,
+      "tabId": tab.id, "url": tab.url, "startingURL": /*props.startingURL ? props.startingURL : */ tab.url,
+      "saveFound": via === "exact" || via === "partial" || via === "wildcard", "saveType": via === "items" ? "none" : via,
+      "selection": selection.selection, "selectionStart": selection.selectionStart,
+      "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
+      "leadingZeros": via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
+      "interval": object.interval,
+      "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
+      "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
@@ -285,51 +287,32 @@ URLI.Background = function () {
         }
       });
     }
-    // Ensure Internal Shortcuts declarativeContent rule is added
-    // The declarativeContent rule sometimes gets lost when the extension is updated or when the extension is enabled after being disabled
+    // Ensure Internal Shortcuts declarativeContent rule is added (it sometimes gets lost when the extension is updated re-enabled)
     if (items && items.permissionsInternalShortcuts) {
       URLI.Permissions.checkDeclarativeContent();
     }
   }
 
   /**
-   * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts).
+   * Listen for requests from chrome.runtime.sendMessage (e.g. Content Scripts). Note: sender contains tab
    * 
    * @param request      the request containing properties to parse (e.g. greeting message)
-   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param sender       the sender who sent this message, with an identifying tab
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
-    let instance, items;
+    sendResponse({});
+    // Firefox: sender tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+    sender.tab.url = sender.url;
     switch (request.greeting) {
       case "performAction":
-        items = await EXT.Promisify.getItems();
-        let tab;
-        // if sender.tab, messageListener, else if request.tab messageExternalListener
-        // Firefox: sender tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-        if (sender && sender.tab && sender.tab.id) {
-          tab = sender.tab;
-          tab.url = sender.url;
-        } else {
-          tab = request.tab;
-        }
-        instance = getInstance(tab.id);
-        if ((!instance || !instance.enabled)) { // && request.action !== "auto") {
-          instance = await buildInstance(tab, items);
-          if (request.shortcut && request.shortcut === "key") {
-            if (!(items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound))))) {
-              instance = undefined;
-            }
-          } else if (request.shortcut && request.shortcut === "mouse") {
-            if (!(items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.autoEnabled || instance.saveFound))))) {
-              instance = undefined;
-            }
-          }
-        }
-        if (instance) {
-          URLI.Action.performAction(request.action, "content-script", instance, items);
+        const items = await EXT.Promisify.getItems();
+        const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
+        if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
+            (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
+          URLI.Action.performAction(request.action, "shortcuts.js", instance, items);
         }
         break;
       case "incrementDecrementSkipErrors":
@@ -349,25 +332,26 @@ URLI.Background = function () {
       default:
         break;
     }
-    //sendResponse({});
   }
 
   /**
-   * Listen for external requests from external extensions: Increment Button and Decrement Button for URLI.
+   * Listen for external requests from external extensions: URL Increment and URL Decrement. Note: request contains tab.
    *
-   * @param request      the request containing properties to parse (e.g. greeting message)
-   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param request      the request containing properties to parse (e.g. greeting message) and tab
+   * @param sender       the sender who sent this message
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
    * @public
    */
-  function messageExternalListener(request, sender, sendResponse) {
+  async function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
-    const URL_INCREMENT_EXTENSION_ID = "mehmeedmngjlehllbpncbjokegfhnfmg", //"decebmdlceenceecblpfjanoocfcmjai",
+    const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg", //"decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
-        request && (request.action === "increment" || request.action === "decrement")) {
+        request && request.tab && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({"received": true});
-      messageListener(request, sender);
+      const items = await EXT.Promisify.getItems();
+      const instance = getInstance(request.tab.id) || await buildInstance(request.tab, items);
+      URLI.Action.performAction(request.action, "external", instance, items);
     }
   }
 
@@ -382,16 +366,9 @@ URLI.Background = function () {
       const items = await EXT.Promisify.getItems();
       if (!items.permissionsInternalShortcuts) {
         const tabs = await EXT.Promisify.getTabs();
-        if (tabs && tabs[0]) { // for example, tab may not exist if command is called while in popup window
-          let instance = getInstance(tabs[0].id);
-          // TODO: Check instance.saveFound
-          if (((command === "increment" || command === "decrement" || command === "next" || command === "prev") && (items.commandsQuickEnabled || (instance && instance.enabled))) ||
-              (command === "auto" && instance && instance.autoEnabled) ||
-              ((command === "clear") && instance && (instance.enabled || instance.autoEnabled || instance.downloadEnabled)) ||
-              (command === "return" && instance && instance.startingURL)) {
-            if (items.commandsQuickEnabled && (!instance || !instance.enabled)) {
-              instance = await buildInstance(tabs[0], items);
-            }
+        if (tabs && tabs[0]) { // tab may not exist if command is called while in popup window
+          let instance = getInstance(tabs[0].id) || await buildInstance(tabs[0], items);
+          if (items.commandsQuickEnabled || (instance && (instance.enabled || instance.saveFound))) {
             URLI.Action.performAction(command, "command", instance, items);
           }
         }
@@ -420,37 +397,6 @@ URLI.Background = function () {
   }
 
   /**
-   * Builds properties for an instance using either a base of a saved URL or storage items.
-   *
-   * @param via   string indicating how the props are being built (one of "exact", "partial" (saves), or "items" (storage))
-   * @param tab   the tab to build from (id and url)
-   * @param object  the base object to build from (saved url or storage items)
-   * @param sobject the selection base object to build from
-   * @returns {{}} the built properties from the bases
-   * @private
-   */
-  function buildProps(via, tab, object, sobject) {
-    const props = {};
-    props.tabId = tab.id;
-    props.url = props.startingURL = tab.url;
-    props.saveFound = via === "exact" || via === "partial" || via === "wildcard";
-    props.saveType = via === "items" ? "none" : via;
-    props.selection = props.startingSelection = sobject.selection;
-    props.selectionStart = props.startingSelectionStart = via === "exact" ? object.selectionStart : sobject.selectionStart;
-    props.interval = object.interval;
-    props.base = object.base;
-    props.baseCase = object.baseCase;
-    props.baseDateFormat = object.baseDateFormat;
-    props.baseCustom = object.baseCustom;
-    props.leadingZeros = via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && props.selection.charAt(0) === '0' && props.selection.length > 1;
-    props.errorSkip = object.errorSkip;
-    props.errorCodes = object.errorCodes;
-    props.errorCodesCustomEnabled = object.errorCodesCustomEnabled;
-    props.errorCodesCustom = object.errorCodesCustom;
-    return props;
-  }
-
-  /**
    * Makes the background persistent by calling chrome.tabs.query() repeatedly every few seconds using a setTimeout()
    * recursively. If no instance exists when checking for tabs, the recursion stops and the background is no longer
    * made persistent.
@@ -469,7 +415,6 @@ URLI.Background = function () {
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       persistent = true;
-      console.log("URLI.Background.makePersistent() - making persistent because an instance currently exists");
       setTimeout(makePersistent, 3000); // Checking every 3 seconds keeps the background persistent
     } else {
       persistent = false;
@@ -500,4 +445,4 @@ chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
 chrome.runtime.onStartup.addListener(URLI.Background.startupListener);
 chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
 chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
-if (chrome.commands && chrome.commands.onCommand) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported
+if (chrome.commands) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported

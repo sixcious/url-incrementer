@@ -222,18 +222,18 @@ For example, say you start AUTO at page=1 with a Times of 9; every page from pag
 
 Adjust the `Shuffle Limit` in the Options to set a max upper bound.
 
-We use the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) to perform the shuffling in O(n) time.
+We use the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) to perform the shuffling in an extremely efficient O(n) time.
 
 You can turn on Shuffle in Normal, AUTO, or Toolkit modes.
 
 ## Bases and Custom Bases
-Bases are the "types" of numbers we can increment. Think of them like different alphabets. URLI can increment all sorts of bases, even your own made-up custom ones! :)
+Bases are the "types" of numbers we can increment. Think of them like different alphabets. URLI can increment all sorts of bases, even your own made-up custom ones. :)
 
 The most common bases are:
 - 2 Binary - 0s and 1s! :)
-- 8 Octal
-- 10 Decimal - The default number system from 0-9
-- 16 Hexadecimmal - Extremely popular, Hashing, Cryptography
+- 8 Octal - Not commonly used anymore 0-7
+- 10 Decimal - Our default number system from 0-9
+- 16 Hexadecimmal - 0-9 A-F Hex Colors, Hashing, Cryptography
 - 32 Hexatrigesimal - The full alphanumeric alphabet from 0-9 and A-Z (After 9, it goes to A, then every letter till Z and back to 0)
 - 62
 - 64 Base 64 Extremely popular, Hashing, Cryptography

@@ -176,10 +176,12 @@ URLI.Popup = function () {
    */
   function clickActionButton() {
     const action = this.dataset.action;
+    // TODO remove this unnecessary validation...maybe replace it with
     if (((action === "increment" || action === "decrement") && (instance.enabled || instance.saveFound)) ||
         ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multiEnabled)) ||
          (action === "next" || action === "prev") ||
-        ((action === "clear" || action === "return") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound)) ||
+        ((action === "clear") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound)) ||
+         (action === "return" && instance.enabled) ||
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
       if (items.popupAnimationsEnabled) {
@@ -211,7 +213,8 @@ URLI.Popup = function () {
     DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#clear-input"].className = DOM["#return-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
+    DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
+    DOM["#return-input"].className = instance.enabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
     DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/play-circle.png" : "../img/pause-circle.png";
     DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
