@@ -137,13 +137,18 @@ URLI.Popup = function () {
         break;
       case "updatePopupToolkitGenerateURLs":
         if (request.instance && request.instance.tabId === instance.tabId) {
-          updateToolkitGenerateURLs(request.instance.urls);
+          updateToolkitGenerateURLs(request.instance.urls, request.errorSkip);
+        }
+        break;
+      case "updatePopupToolkitGenerateURLsErrorSkip":
+        if (request.instance && request.instance.tabId === instance.tabId) {
+
         }
         break;
       default:
         break;
     }
-    sendResponse({});
+    sendResponse({message: "received"});
   }
 
   /**
@@ -214,7 +219,7 @@ URLI.Popup = function () {
     DOM["#next-input"].className =
     DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
-    DOM["#return-input"].className = instance.enabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
+    DOM["#return-input"].className = instance.enabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/play-circle.png" : "../img/pause-circle.png";
     DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
@@ -406,31 +411,30 @@ URLI.Popup = function () {
    * TODO
    * @private
    */
-  function toolkit() {
+  async function toolkit() {
     URLI.UI.clickHoverCss(this, "hvr-push-click");
-    chrome.tabs.query({currentWindow: true}, function (tabs) {
-      console.log("URLI.Popup.toolkit() - tabs.length=" + tabs.length);
-      setupInputs("toolkit", tabs);
-      const e = setupErrors("toolkit");
-      if (e.toolkitErrorsExist) {
-        URLI.UI.generateAlert(e.toolkitErrors);
-      } else if (e.incrementDecrementErrorsExist) {
-        URLI.UI.generateAlert(e.incrementDecrementErrors);
-      } else {
-        const toolkitInstance = JSON.parse(JSON.stringify(_));
-        toolkitInstance.toolkitEnabled = true;
-        const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
-        toolkitInstance.urls = precalculateProps.urls;
-        toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-        backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
-        // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
-        chrome.storage.sync.set({
-          "toolkitTool": _.toolkitTool,
-          "toolkitAction": _.toolkitAction,
-          "toolkitQuantity": _.toolkitQuantity
-        });
-      }
-    });
+    const tabs = await EXT.Promisify.getTabs({currentWindow: true});
+    console.log("URLI.Popup.toolkit() - tabs.length=" + tabs.length);
+    setupInputs("toolkit", tabs);
+    const e = setupErrors("toolkit");
+    if (e.toolkitErrorsExist) {
+      URLI.UI.generateAlert(e.toolkitErrors);
+    } else if (e.incrementDecrementErrorsExist) {
+      URLI.UI.generateAlert(e.incrementDecrementErrors);
+    } else {
+      const toolkitInstance = JSON.parse(JSON.stringify(_));
+      toolkitInstance.toolkitEnabled = true;
+      const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
+      toolkitInstance.urls = precalculateProps.urls;
+      toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
+      backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
+      // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
+      chrome.storage.sync.set({
+        "toolkitTool": _.toolkitTool,
+        "toolkitAction": _.toolkitAction,
+        "toolkitQuantity": _.toolkitQuantity
+      });
+    }
   }
 
   /**
@@ -982,9 +986,9 @@ URLI.Popup = function () {
       // Toolkit Errors
       e.toolkitErrors = [
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
-        _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_open_tabs_quantity_error") :
-        _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_open_tabs_too_many_open_error") :
-        _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_generate_links_quantity_error") : ""
+        _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
+        _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
+        _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") : ""
       ];
       e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");
       if (e.toolkitErrorsExist) {
@@ -997,6 +1001,7 @@ URLI.Popup = function () {
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
         _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 100000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
         _.autoEnabled && (_.autoSeconds < 1 || _.autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
+        _.autoEnabled && _.shuffleURLs && _.autoTimes > 10000 ? chrome.i18n.getMessage("auto_shuffle_times_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
       ];

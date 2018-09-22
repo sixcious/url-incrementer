@@ -159,6 +159,7 @@ URLI.IncrementDecrement = function () {
       URLI.IncrementDecrementArray.stepThruURLs(action, instance);
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
+    // TODO: Check if range enabled and don't do this
     else if (instance.multiEnabled && !/\d/.test(action)) {
       console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutliCount=" + instance.multiCount);
       for (let i = 1; i <= instance.multiCount; i++) {
