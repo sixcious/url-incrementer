@@ -121,7 +121,7 @@ URLI.Popup = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    sendResponse({received: true});
+    //sendResponse({received: true});
     console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
@@ -136,26 +136,21 @@ URLI.Popup = function () {
           updateDownloadPreviewCompletely();
         }
         break;
-      case "updatePopupToolkitGenerateURLs":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          updateToolkitGenerateURLs(request.instance.urls, request.instance.errorSkip > 0);
-        }
-        break;
-      case "updatePopupToolkitGenerateURLsErrorSkip":
+      case "updatePopupToolkitCrawl":
         console.log(request.tabId);
         console.log(request.id);
         console.log(request.status);
         if (request.tabId === instance.tabId) {
           console.log("request.tabId === instance.tabId");
-          document.getElementById("toolkit-links-table-td-" + request.id).textContent = request.status;
-          DOM["#toolkit-links-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-links-table"].outerHTML], {"type": "text/html"}));
+          document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
+          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
         }
         break;
       default:
         break;
     }
-    // sendResponse({received: true});
-    return true;
+    sendResponse({received: true});
+    //return true;
   }
 
   /**
@@ -367,16 +362,17 @@ URLI.Popup = function () {
   }
 
   /**
-   * Called each time the Generate URLS tool is called to update the table of links and the download button link.
+   * Builds the Toolkit's table of URLs and the download button link when the toolkit tool is "links" or "crawl."
    *
-   * @param urls the incremented or decremented URLs that were generated
+   * @param urls  the incremented or decremented URLs that were generated
+   * @param crawl true if the tool is crawl (to add additional data), false otherwise
    * @private
    */
-  function updateToolkitGenerateURLs(urls, errorSkip) {
+  function buildToolkitURLsTable(urls, crawl) {
     if (urls && urls.length > 0) {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       const table = document.createElement("table");
-      table.id = "toolkit-links-table";
+      table.id = "toolkit-table";
       table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
       // thead
       const thead = document.createElement("thead");
@@ -389,11 +385,10 @@ URLI.Popup = function () {
       th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
       th.textContent = chrome.i18n.getMessage("url_label");
       tr.appendChild(th);
-      if (errorSkip) {
-        console.log ("HELLO!! TH ERROR SKIP!");
+      if (crawl) {
         const th = document.createElement("th");
         th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
-        th.textContent = "Status";// TODO chrome.i18n.getMessage("url_label");
+        th.textContent = chrome.i18n.getMessage("toolkit_response_label");
         tr.appendChild(th);
       }
       // tbody
@@ -405,6 +400,7 @@ URLI.Popup = function () {
         console.log("count = " + count);
         console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
         const tr = document.createElement("tr");
+        tr.id = "toolkit-table-tr-" + (count - 1);
         tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
         const td = document.createElement("td");
@@ -415,18 +411,17 @@ URLI.Popup = function () {
         // a.target = "_blank";
         a.textContent = url.urlmod;
         td.appendChild(a);
-        if (errorSkip) {
+        if (crawl) {
           const td = document.createElement("td");
-          td.id = "toolkit-links-table-td-" + (count - 2);
+          td.id = "toolkit-table-td-" + (count - 2);
           td.style = "padding: 0.25rem 0.312rem 0.312rem";
-          //td.textContent = "";
           tr.appendChild(td);
         }
       }
-      DOM["#toolkit-links-table-div"].replaceChild(table, DOM["#toolkit-links-table-div"].firstChild);
-      DOM["#toolkit-links-table"] = table;
-      DOM["#toolkit-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
-      DOM["#toolkit-links-div"].className = "display-block fade-in";
+      DOM["#toolkit-table"] = table;
+      DOM["#toolkit-table-div"].replaceChild(table, DOM["#toolkit-table-div"].firstChild);
+      DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
+      DOM["#toolkit-table-outer"].className = "display-block fade-in";
     }
   }
 
@@ -450,12 +445,16 @@ URLI.Popup = function () {
       const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
+      if (["crawl", "links"].includes(toolkitInstance.toolkitTool)) {
+        buildToolkitURLsTable(toolkitInstance.urls, toolkitInstance.toolkitTool === "crawl");
+      }
       backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
       chrome.storage.sync.set({
         "toolkitTool": _.toolkitTool,
         "toolkitAction": _.toolkitAction,
-        "toolkitQuantity": _.toolkitQuantity
+        "toolkitQuantity": _.toolkitQuantity,
+        "toolkitSeconds": _.toolkitSeconds
       });
     }
   }
@@ -944,9 +943,10 @@ URLI.Popup = function () {
       // Toolkit:
       // Note: _.toolkitEnabled = true is set in toolkit()
       _.tabsLength = tabs ? tabs.length : 0;
-      _.toolkitTool = DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
+      _.toolkitTool = DOM["#toolkit-tool-crawl-input"].checked ? DOM["#toolkit-tool-crawl-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
       _.toolkitQuantity = +DOM["#toolkit-quantity-input"].value;
+      _.toolkitSeconds = +DOM["#toolkit-seconds-input"].value
     }
     if (caller === "accept") {
       // Auto:
@@ -1008,10 +1008,11 @@ URLI.Popup = function () {
     if (caller === "toolkit") {
       // Toolkit Errors
       e.toolkitErrors = [
-        !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) ? chrome.i18n.getMessage("toolkit_invalid_error") :
+        !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
         _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
-        _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") : ""
+        (_.toolkitTool === "crawl" || _.toolkitTool === "links") && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") :
+        _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") : ""
       ];
       e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");
       if (e.toolkitErrorsExist) {

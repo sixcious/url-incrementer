@@ -384,7 +384,7 @@ input:disabled:-moz-any([type='password'],
   flex-shrink: 0;
 }
 
-.checkbox label input ~ span, .radio label input ~ span {
+.checkbox label input ~ span, .radio label input ~ span, .radio label input ~ img {
   -webkit-margin-start: 0.6em;
   -moz-margin-start: 0.6em;
   user-select: none;

@@ -216,10 +216,6 @@ div.checkbox  img {
   width: 118px;
 }
 
-
-
-
-
 /* Toolkit */
 
 #toolkit-instructions {
@@ -230,7 +226,7 @@ div.checkbox  img {
   vertical-align: top;
   margin-top: 8px;
   position: absolute;
-  right: 60px;
+  right: 16px;
 }
 
 #toolkit-urli-button-img {
@@ -238,11 +234,11 @@ div.checkbox  img {
   cursor: pointer;
 }
 
-#toolkit-links-div {
+#toolkit-table-outer {
   margin-top: 1em;
 }
 
-#toolkit-links-table-div {
+#toolkit-table-div {
   margin-top: 2em;
 }
 

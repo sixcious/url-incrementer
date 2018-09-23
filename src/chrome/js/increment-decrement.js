@@ -175,43 +175,16 @@ URLI.IncrementDecrement = function () {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
-          if (instance.toolkitEnabled) {
-            // instance.urls[instance.urls.length - errorSkipRemaining].status = response.redirected ? "RED" : response.status;
-            // instance.urls[instance.urls.length - errorSkipRemaining].errorSkip = true;
-            chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLsErrorSkip", tabId: instance.tabId, id: instance.urls.length - errorSkipRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
-              if (response.received) {
-                console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - received response from popup, calling this function again");
-                setTimeout(function() { incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1); }, 1000);
-              } else {
-                console.log("no response :(");
-              }
-            });
-          } else {
-            const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
-            if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-            else { chrome.runtime.sendMessage(request); }
-            // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-            incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
-          }
+          const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
+          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+          else { chrome.runtime.sendMessage(request); }
+          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
+          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
         } else {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          //
-          if (instance.toolkitEnabled) {
-            // instance.urls[instance.urls.length - errorSkipRemaining].status = response.redirected ? "RED" : response.status;
-            // instance.urls[instance.urls.length - errorSkipRemaining].errorSkip = false;
-            chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLsErrorSkip", tabId: instance.tabId, id: instance.urls.length - errorSkipRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
-              if (response.received) {
-                console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - received response from popup, calling this function again");
-                setTimeout(function() { incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1); }, 1000);
-              } else {
-                console.log("no response :(");
-              }
-            });
-          } else {
-            const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-            if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-            else { chrome.runtime.sendMessage(request);}
-          }
+          const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+          else { chrome.runtime.sendMessage(request);}
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
@@ -227,13 +200,9 @@ URLI.IncrementDecrement = function () {
       });
     } else {
       console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
-      if (instance.toolkitEnabled) {
-        // TODO? Final URL?
-      } else {
-        const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-        if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-        else { chrome.runtime.sendMessage(request); }
-      }
+      const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+      if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+      else { chrome.runtime.sendMessage(request); }
     }
   }
 
@@ -566,10 +535,10 @@ URLI.IncrementDecrementArray = function () {
    * @public
    */
   function stepThruURLs(action, instance) {
-    console.log("URLI.IncrementDecrement.stepThruURLs() - performing increment/decrement on the urls array...");
+    console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
     const urlsLength = instance.urls.length;
-    console.log("URLI.IncrementDecrement.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-    console.log("URLI.IncrementDecrement.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+    console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+    console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
     // Get the urlProps object from the next or previous position in the urls array and update the instance
     const urlProps =
       (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
@@ -577,6 +546,30 @@ URLI.IncrementDecrementArray = function () {
         instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
+  }
+
+  function crawlURLs(action, instance, context, quantityRemaining) {
+    console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
+    const origin = document.location.origin,
+          urlOrigin = new URL(instance.url).origin;
+    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
+      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+        chrome.runtime.sendMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
+          if (response.received) {
+            console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
+            setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+          } else {
+            console.log("no response :(");
+          }
+        });
+      }).catch(e => {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+      });
+    } else {
+      console.log("URLI.IncrementDecrementArray.crawlURLs() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+    }
   }
 
   /**
@@ -616,7 +609,7 @@ URLI.IncrementDecrementArray = function () {
           url = instance.url,
           selection = instance.selection;
     // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
-    if (instance.toolkitEnabled && instance.toolkitTool === "links") {
+    if (instance.toolkitEnabled && (instance.toolkitTool === "links" || instance.toolkitTool === "crawl")) {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }
@@ -728,6 +721,7 @@ URLI.IncrementDecrementArray = function () {
   // Return Public Functions
   return {
     stepThruURLs: stepThruURLs,
-    precalculateURLs: precalculateURLs
+    crawlURLs: crawlURLs,
+    precalculateURLs: precalculateURLs,
   };
 }();

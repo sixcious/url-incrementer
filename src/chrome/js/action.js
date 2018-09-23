@@ -293,39 +293,33 @@ URLI.Action = function () {
   function toolkit(instance) {
     let actionPerformed = false;
     switch (instance.toolkitTool) {
-      case "tabs": {
-        //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
+      case "tabs":
         for (let url of instance.urls) {
           chrome.tabs.create({"url": url.urlmod, "active": false});
         }
         actionPerformed = true;
         break;
-      }
-      case "links": {
-        //const urls = URLI.IncrementDecrementArray.precalculateURLs(instance).urls;
-        chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLs", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-        if (instance.errorSkip > 0) {
-          chrome.tabs.executeScript(instance.tabId, {
-            file: "/js/increment-decrement.js",
-            runAt: "document_start"
-          }, function () {
-            // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-            if (chrome.runtime.lastError) {
-              console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-              // return incrementDecrement(action, instance);
-            }
-            const code = "URLI.IncrementDecrement.incrementDecrementErrorSkip(" +
-              JSON.stringify(instance.toolkitAction) + ", " +
-              JSON.stringify(instance) + ", " +
-              "\"content-script\"" + ", " +
-              JSON.stringify(instance.toolkitQuantity) + ");";
-            // No callback because this will be executing async code and then sending a message back to the background
-            chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-          });
-        }
+      case "links":
         actionPerformed = true;
         break;
-      }
+      case "crawl":
+        chrome.tabs.executeScript(instance.tabId, {
+          file: "/js/increment-decrement.js",
+          runAt: "document_start"
+        }, function () {
+          // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+          if (chrome.runtime.lastError) {
+            console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+          }
+          const code = "URLI.IncrementDecrementArray.crawlURLs(" +
+            JSON.stringify(instance.toolkitAction) + ", " +
+            JSON.stringify(instance) + ", " +
+            "\"content-script\"" + ", " +
+            JSON.stringify(instance.toolkitQuantity) + ");";
+          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+        });
+        actionPerformed = true;
+        break;
       default:
         break;
     }
