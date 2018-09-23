@@ -121,7 +121,8 @@ URLI.Popup = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Popup.messageListener() - request.greeting=" + request + " sender=" + sender);
+    sendResponse({received: true});
+    console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
         if (request.instance && request.instance.tabId === instance.tabId) {
@@ -137,18 +138,24 @@ URLI.Popup = function () {
         break;
       case "updatePopupToolkitGenerateURLs":
         if (request.instance && request.instance.tabId === instance.tabId) {
-          updateToolkitGenerateURLs(request.instance.urls, request.errorSkip);
+          updateToolkitGenerateURLs(request.instance.urls, request.instance.errorSkip > 0);
         }
         break;
       case "updatePopupToolkitGenerateURLsErrorSkip":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-
+        console.log(request.tabId);
+        console.log(request.id);
+        console.log(request.status);
+        if (request.tabId === instance.tabId) {
+          console.log("request.tabId === instance.tabId");
+          document.getElementById("toolkit-links-table-td-" + request.id).textContent = request.status;
+          DOM["#toolkit-links-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-links-table"].outerHTML], {"type": "text/html"}));
         }
         break;
       default:
         break;
     }
-    sendResponse({message: "received"});
+    // sendResponse({received: true});
+    return true;
   }
 
   /**
@@ -365,43 +372,59 @@ URLI.Popup = function () {
    * @param urls the incremented or decremented URLs that were generated
    * @private
    */
-  function updateToolkitGenerateURLs(urls) {
+  function updateToolkitGenerateURLs(urls, errorSkip) {
     if (urls && urls.length > 0) {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       const table = document.createElement("table");
+      table.id = "toolkit-links-table";
       table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
       // thead
       const thead = document.createElement("thead");
       thead.style = "background: #f8f8f8; color: #0a0a0a;";
       table.appendChild(thead);
-      let tr = document.createElement("tr");
+      const tr = document.createElement("tr");
       tr.style = "background: transparent;";
       thead.appendChild(tr);
-      let th = document.createElement("th");
+      const th = document.createElement("th");
       th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
       th.textContent = chrome.i18n.getMessage("url_label");
       tr.appendChild(th);
+      if (errorSkip) {
+        console.log ("HELLO!! TH ERROR SKIP!");
+        const th = document.createElement("th");
+        th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
+        th.textContent = "Status";// TODO chrome.i18n.getMessage("url_label");
+        tr.appendChild(th);
+      }
       // tbody
       const tbody = document.createElement("tbody");
       tbody.style = "border: 1px solid #f1f1f1; background-color: #fefefe;";
       table.appendChild(tbody);
       let count = 1;
-      for (let url of urls) {
+      for (const url of urls) {
         console.log("count = " + count);
         console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
-        let tr = document.createElement("tr");
+        const tr = document.createElement("tr");
         tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
-        let td = document.createElement("td");
+        const td = document.createElement("td");
         td.style = "padding: 0.25rem 0.312rem 0.312rem";
         tr.appendChild(td);
-        let a = document.createElement("a");
+        const a = document.createElement("a");
         a.href = url.urlmod;
         // a.target = "_blank";
         a.textContent = url.urlmod;
         td.appendChild(a);
+        if (errorSkip) {
+          const td = document.createElement("td");
+          td.id = "toolkit-links-table-td-" + (count - 2);
+          td.style = "padding: 0.25rem 0.312rem 0.312rem";
+          //td.textContent = "";
+          tr.appendChild(td);
+        }
       }
       DOM["#toolkit-links-table-div"].replaceChild(table, DOM["#toolkit-links-table-div"].firstChild);
+      DOM["#toolkit-links-table"] = table;
       DOM["#toolkit-links-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
       DOM["#toolkit-links-div"].className = "display-block fade-in";
     }

@@ -114,33 +114,6 @@ URLI.IncrementDecrement = function () {
         break;
     }
     return error;
-
-    //POPUP:
-    //         // [0] = Selection Errors
-    //     _.base === "date" ?
-    //       backgroundPage.URLI.IncrementDecrementDate.incrementDecrementDate("increment", _.selection, 0, _.baseDateFormat) !== _.selection ? chrome.i18n.getMessage("date_invalid_error") : ""
-    //     :
-    //       _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-    //       !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
-    //       _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-    //       !/^[a-z0-9]+$/i.test(_.selection) ? chrome.i18n.getMessage("selection_notalphanumeric_error") :
-    //       parseInt(_.selection, _.base) >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("selection_toolarge_error") :
-    //       isNaN(parseInt(_.selection, _.base)) || _.selection.toUpperCase() !== ("0".repeat(_.selection.length - _.selectionParsed.length) + _.selectionParsed.toUpperCase()) ? chrome.i18n.getMessage("selection_base_error") : "",
-
-
-    // SAVE URLS:
-    // const selection = url.substring(save.selectionStart, save.url2length > 0 ? url.lastIndexOf(url2) : url.length);
-    // const selectionParsed = isNaN(save.base) ? undefined : parseInt(selection, save.base).toString(save.base);
-    // Test for alphanumeric in the case where url2length is 0 but current url has a part 2
-    // Test base matches selection for same reason
-    // console.log("save.urlhash1=" + save.urlhash1);
-    // console.log("urlhash1=" + urlhash1);
-    // const matches = (urlhash1 === save.urlhash1) &&
-    //   ((urlhash2 === save.urlhash2) ||
-    // ((save.url2length === 0) &&
-    //   /^[a-z0-9]+$/i.test(selection) &&
-    //   selectionParsed ? !(isNaN(parseInt(selection, save.base)) || selection.toUpperCase() !== ("0".repeat(selection.length - selectionParsed.length) + selectionParsed.toUpperCase())) :
-    //   save.base === "date" && false)); // TODO date base
   }
 
   /**
@@ -202,16 +175,43 @@ URLI.IncrementDecrement = function () {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
-          const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-          else { chrome.runtime.sendMessage(request); }
-          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
+          if (instance.toolkitEnabled) {
+            // instance.urls[instance.urls.length - errorSkipRemaining].status = response.redirected ? "RED" : response.status;
+            // instance.urls[instance.urls.length - errorSkipRemaining].errorSkip = true;
+            chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLsErrorSkip", tabId: instance.tabId, id: instance.urls.length - errorSkipRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
+              if (response.received) {
+                console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - received response from popup, calling this function again");
+                setTimeout(function() { incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1); }, 1000);
+              } else {
+                console.log("no response :(");
+              }
+            });
+          } else {
+            const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
+            if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+            else { chrome.runtime.sendMessage(request); }
+            // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
+            incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
+          }
         } else {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-          else { chrome.runtime.sendMessage(request);}
+          //
+          if (instance.toolkitEnabled) {
+            // instance.urls[instance.urls.length - errorSkipRemaining].status = response.redirected ? "RED" : response.status;
+            // instance.urls[instance.urls.length - errorSkipRemaining].errorSkip = false;
+            chrome.runtime.sendMessage({greeting: "updatePopupToolkitGenerateURLsErrorSkip", tabId: instance.tabId, id: instance.urls.length - errorSkipRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
+              if (response.received) {
+                console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - received response from popup, calling this function again");
+                setTimeout(function() { incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1); }, 1000);
+              } else {
+                console.log("no response :(");
+              }
+            });
+          } else {
+            const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+            if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+            else { chrome.runtime.sendMessage(request);}
+          }
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
@@ -227,9 +227,13 @@ URLI.IncrementDecrement = function () {
       });
     } else {
       console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
-      const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-      if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-      else { chrome.runtime.sendMessage(request); }
+      if (instance.toolkitEnabled) {
+        // TODO? Final URL?
+      } else {
+        const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
+        if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
+        else { chrome.runtime.sendMessage(request); }
+      }
     }
   }
 

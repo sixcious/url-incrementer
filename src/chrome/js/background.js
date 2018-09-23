@@ -9,8 +9,7 @@ var URLI = URLI || {};
 
 URLI.Background = function () {
 
-  // The sync storage default values
-  // Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
+  // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     "iconColor": "dark", "iconFeedbackEnabled": false,
@@ -58,8 +57,7 @@ URLI.Background = function () {
     "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
   },
 
-  // The individual tab instances in Background memory
-  // Note: We never save instances in storage due to URLs being a privacy concern
+  // The individual tab instances in Background memory. Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
   // A boolean flag to dynamically make the background temporarily persistent (when an instance is enabled or auto is on)
@@ -160,15 +158,6 @@ URLI.Background = function () {
         }
       }
     }
-    // // TODO... props and starting URL
-    // // StartingURL: Check if a skeleton instance exists only containing the Starting URL, otherwise use tab.url (for Quick Shortcuts)
-    // const instance = getInstance(tab.id);
-    // const props = {};
-    // if (instance && instance.isSkeleton) {
-    //   props.startingURL = instance.startingURL;
-    //   props.startingSelection = instance.startingSelection;
-    //   props.startingSelectionStart = instance.startingSelectionStart;
-    // }
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
       "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false,
