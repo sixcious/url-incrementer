@@ -24,7 +24,7 @@ URLI.Background = function () {
     "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1,
+    "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1, "toolkitSeconds": 3,
     "urli": "loves incrementing for you"
   },
 
@@ -177,7 +177,7 @@ URLI.Background = function () {
       "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
       "downloadMinMB": items.downloadMinMB, "downloadMaxMB": items.downloadMaxMB,
       "downloadPreview": items.downloadPreview,
-      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds
     };
   }
 
@@ -292,7 +292,6 @@ URLI.Background = function () {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
-    sendResponse({});
     // Firefox: sender tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
     sender.tab.url = sender.url;
     switch (request.greeting) {
@@ -337,7 +336,7 @@ URLI.Background = function () {
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
-      sendResponse({"received": true});
+      sendResponse({received: true});
       const items = await EXT.Promisify.getItems();
       const instance = getInstance(request.tab.id) || await buildInstance(request.tab, items);
       URLI.Action.performAction(request.action, "external", instance, items);

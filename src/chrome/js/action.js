@@ -303,6 +303,8 @@ URLI.Action = function () {
         actionPerformed = true;
         break;
       case "crawl":
+        instance.url = instance.urls[0].urlmod;
+        instance.selection = instance.urls[0].selectionmod;
         chrome.tabs.executeScript(instance.tabId, {
           file: "/js/increment-decrement.js",
           runAt: "document_start"

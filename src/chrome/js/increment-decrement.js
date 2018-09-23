@@ -556,8 +556,8 @@ URLI.IncrementDecrementArray = function () {
     if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        chrome.runtime.sendMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status}, function(response) {
-          if (response.received) {
+        chrome.runtime.sendMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds}, function(response) {
+          if (response && response.received && quantityRemaining - 1 > 0) {
             console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
             setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
           } else {
@@ -628,12 +628,12 @@ URLI.IncrementDecrementArray = function () {
         }
       }
     }
-    // Reset instance url and selection after calling incrementDecrementURL():
-    instance.url = url;
-    instance.selection = selection;
     if (instance.shuffleURLs) {
       shuffle(urls);
     }
+    // Reset instance url and selection after calling incrementDecrement():
+    instance.url = url;
+    instance.selection = selection;
     return urls;
   }
 

@@ -215,7 +215,6 @@ if (!URLI.Shortcuts.contentScriptExecuted) {
           default:
             break;
         }
-        sendResponse({});
       });
     }
   });

@@ -121,7 +121,6 @@ URLI.Popup = function () {
    * @public
    */
   function messageListener(request, sender, sendResponse) {
-    //sendResponse({received: true});
     console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
@@ -144,13 +143,14 @@ URLI.Popup = function () {
           console.log("request.tabId === instance.tabId");
           document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
           DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+          DOM["#toolkit-percentage-value"].textContent = Math.floor(((request.quantity - request.quantityRemaining) / request.quantity) * 100) + "%";
+          updateETA(request.quantityRemaining * request.seconds, DOM["#toolkit-eta-value"], true);
+          sendResponse({received: true});
         }
         break;
       default:
         break;
     }
-    sendResponse({received: true});
-    //return true;
   }
 
   /**
@@ -269,11 +269,13 @@ URLI.Popup = function () {
     DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
     DOM["#multi-img-3"].className = instance.multiEnabled && instance.multiCount >= 3 ? "" : "disabled";
     // Toolkit Setup:
+    DOM["#toolkit-tool-crawl-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-crawl-input"].value;
     DOM["#toolkit-tool-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-tabs-input"].value;
     DOM["#toolkit-tool-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-links-input"].value;
     DOM["#toolkit-action-increment-input"].checked = instance.toolkitAction === DOM["#toolkit-action-increment-input"].value;
     DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
+    DOM["#toolkit-seconds-input"].value = instance.toolkitSeconds;
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled;
     DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
@@ -387,7 +389,7 @@ URLI.Popup = function () {
       tr.appendChild(th);
       if (crawl) {
         const th = document.createElement("th");
-        th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
+        th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
         th.textContent = chrome.i18n.getMessage("toolkit_response_label");
         tr.appendChild(th);
       }
@@ -421,6 +423,7 @@ URLI.Popup = function () {
       DOM["#toolkit-table"] = table;
       DOM["#toolkit-table-div"].replaceChild(table, DOM["#toolkit-table-div"].firstChild);
       DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
+      DOM["#toolkit-table-crawl"].className = crawl ? "display-block" : "display-none";
       DOM["#toolkit-table-outer"].className = "display-block fade-in";
     }
   }
@@ -445,8 +448,12 @@ URLI.Popup = function () {
       const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-      if (["crawl", "links"].includes(toolkitInstance.toolkitTool)) {
-        buildToolkitURLsTable(toolkitInstance.urls, toolkitInstance.toolkitTool === "crawl");
+      if (toolkitInstance.toolkitTool === "crawl") {
+        DOM["#toolkit-percentage-value"].textContent = 0 + "%";
+        updateETA(toolkitInstance.toolkitQuantity * toolkitInstance.toolkitSeconds, DOM["#toolkit-eta-value"], true);
+        buildToolkitURLsTable(toolkitInstance.urls, true);
+      } else if (toolkitInstance.toolkitTool === "links") {
+        buildToolkitURLsTable(toolkitInstance.urls, false);
       }
       backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
@@ -459,6 +466,10 @@ URLI.Popup = function () {
     }
   }
 
+  function updateAutoETA() {
+    updateETA(+DOM["#auto-times-input"].value * +DOM["#auto-seconds-input"].value, DOM["#auto-eta-value"], instance.autoEnabled);
+  }
+
   /**
    * Updates the Auto ETA time every time the seconds or times is updated by the user or when the instance is updated.
    *
@@ -466,20 +477,17 @@ URLI.Popup = function () {
    * @see https://stackoverflow.com/a/11486026/988713
    * @private
    */
-  function updateAutoETA() {
-    const itimes = +DOM["#auto-times-input"].value,
-          iseconds = +DOM["#auto-seconds-input"].value,
-          time = itimes * iseconds,
-          hours = ~~ (time / 3600),
+  function updateETA(time, eta, enabled) {
+    const hours = ~~ (time / 3600),
           minutes = ~~ ((time % 3600) / 60),
           seconds = time % 60,
-          fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("auto_eta_hour") : chrome.i18n.getMessage("auto_eta_hours")) : "",
-          fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("auto_eta_minute") : chrome.i18n.getMessage("auto_eta_minutes")) : "",
-          fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("auto_eta_second") : chrome.i18n.getMessage("auto_eta_seconds")) : "";
-    DOM["#auto-eta-value"].textContent =
-      itimes < 0 || iseconds < 0 || (!hours && !minutes && !seconds) ?
-      instance.autoEnabled ? chrome.i18n.getMessage("auto_eta_done") : chrome.i18n.getMessage("auto_eta_tbd") :
-      time > 86400 ? chrome.i18n.getMessage("auto_eta_day") : fhours + fminutes + fseconds;
+          fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("eta_hour") : chrome.i18n.getMessage("eta_hours")) : "",
+          fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("eta_minute") : chrome.i18n.getMessage("eta_minutes")) : "",
+          fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("eta_second") : chrome.i18n.getMessage("eta_seconds")) : "";
+    eta.textContent =
+      time <= 0 || (!hours && !minutes && !seconds) ?
+      enabled ? chrome.i18n.getMessage("eta_done") : chrome.i18n.getMessage("eta_tbd") :
+      time > 86400 ? chrome.i18n.getMessage("eta_day") : fhours + fminutes + fseconds;
   }
 
   /**
