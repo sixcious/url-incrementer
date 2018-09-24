@@ -138,19 +138,38 @@ URLI.Popup = function () {
           updateDownloadPreviewCompletely();
         }
         break;
-      case "updatePopupToolkitCrawl":
-        if (request.tabId === instance.tabId) {
-          console.log("request.tabId === instance.tabId");
-          document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
-          document.getElementById("toolkit-table-tr-" + request.id).className = "toolkit-table-crawl-" + (request.status === 200 ? "ok" : "notok");
-          DOM["#toolkit-percentage-value"].textContent = Math.floor(((request.quantity - request.quantityRemaining) / request.quantity) * 100) + "%";
-          updateETA(request.quantityRemaining * request.seconds, DOM["#toolkit-eta-value"], true);
-          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
-          sendResponse({received: true});
-        }
-        break;
+      // case "updatePopupToolkitCrawl":
+      //   if (request.tabId === instance.tabId) {
+      //     console.log("request.tabId === instance.tabId");
+      //     document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
+      //     document.getElementById("toolkit-table-tr-" + request.id).className = "toolkit-table-crawl-" + (request.status === 200 ? "ok" : "notok");
+      //     DOM["#toolkit-percentage-value"].textContent = Math.floor(((request.quantity - request.quantityRemaining) / request.quantity) * 100) + "%";
+      //     updateETA(request.quantityRemaining * (request.seconds + 1), DOM["#toolkit-eta-value"], true);
+      //     DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+      //     sendResponse({received: true});
+      //   }
+      //   break;
       default:
         break;
+    }
+  }
+
+  function connectListener(port) {
+    if (port.name === "updatePopupToolkitCrawl") {
+      port.onMessage.addListener(function(message, sender) {
+        if (message.greeting === "updatePopupToolkitCrawl" && message.tabId === instance.tabId) {
+          console.log("message.tabId === instance.tabId");
+          document.getElementById("toolkit-table-td-" + message.id).textContent = message.status;
+          document.getElementById("toolkit-table-tr-" + message.id).className = "toolkit-table-crawl-" + (message.status === 200 ? "ok" : "notok");
+          DOM["#toolkit-percentage-value"].textContent = Math.floor(((message.quantity - message.quantityRemaining) / message.quantity) * 100) + "%";
+          updateETA(message.quantityRemaining * (message.seconds + 1), DOM["#toolkit-eta-value"], true);
+          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+          port.postMessage({received: true, quantityRemaining: message.quantityRemaining});
+          if (message.quantityRemaining <= 0) {
+            port.disconnect();
+          }
+        }
+      });
     }
   }
 
@@ -454,7 +473,7 @@ URLI.Popup = function () {
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
       if (toolkitInstance.toolkitTool === "crawl") {
         DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-        updateETA(toolkitInstance.toolkitQuantity * toolkitInstance.toolkitSeconds, DOM["#toolkit-eta-value"], true);
+        updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
         buildToolkitURLsTable(toolkitInstance.urls, true);
       } else if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
@@ -1063,10 +1082,12 @@ URLI.Popup = function () {
   // Return Public Functions
   return {
     DOMContentLoaded: DOMContentLoaded,
-    messageListener: messageListener
+    messageListener: messageListener,
+    connectListener: connectListener
   };
 }();
 
 // Popup Listeners
 document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);
 chrome.runtime.onMessage.addListener(URLI.Popup.messageListener);
+chrome.runtime.onConnect.addListener(URLI.Popup.connectListener);

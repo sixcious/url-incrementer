@@ -548,7 +548,42 @@ URLI.IncrementDecrementArray = function () {
     instance.selection = urlProps.selectionmod;
   }
 
-  function crawlURLs(action, instance, context, quantityRemaining) {
+  // function crawlURLs(action, instance, context, quantityRemaining) {
+  //   console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
+  //   const origin = document.location.origin,
+  //         urlOrigin = new URL(instance.url).origin;
+  //   // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+  //   if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
+  //     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+  //     fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+  //        chrome.runtime.sendMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds}, function(response) {
+  //         if (response && response.received && quantityRemaining - 1 > 0) {
+  //           console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
+  //           setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+  //         } else {
+  //           console.log("no response :(");
+  //         }
+  //       });
+  //     }).catch(e => {
+  //       console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+  //     });
+  //   } else {
+  //     console.log("URLI.IncrementDecrementArray.crawlURLs() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+  //   }
+  // }
+
+  function startCrawl(action, instance, context, quantityRemaining) {
+    let port = chrome.runtime.connect({name: "updatePopupToolkitCrawl"});
+    port.onMessage.addListener(function(message, sender) {
+      if (message && message.received && message.quantityRemaining > 0) {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
+        setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, message.quantityRemaining, port); }, instance.toolkitSeconds * 1000);
+      }
+    });
+    crawlURLs(action, instance, context, quantityRemaining, port);
+  }
+
+  function crawlURLs(action, instance, context, quantityRemaining, port) {
     console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
     const origin = document.location.origin,
           urlOrigin = new URL(instance.url).origin;
@@ -556,14 +591,7 @@ URLI.IncrementDecrementArray = function () {
     if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        chrome.runtime.sendMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds}, function(response) {
-          if (response && response.received && quantityRemaining - 1 > 0) {
-            console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
-            setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
-          } else {
-            console.log("no response :(");
-          }
-        });
+         port.postMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds});
       }).catch(e => {
         console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
       });
@@ -721,6 +749,7 @@ URLI.IncrementDecrementArray = function () {
   // Return Public Functions
   return {
     stepThruURLs: stepThruURLs,
+    startCrawl: startCrawl,
     crawlURLs: crawlURLs,
     precalculateURLs: precalculateURLs,
   };

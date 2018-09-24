@@ -234,12 +234,28 @@ div.checkbox  img {
   cursor: pointer;
 }
 
-#toolkit-table-outer {
+#toolkit-table-outer, #toolkit-table-div, #toolkit-percentage-eta-checkboxes {
   margin-top: 1em;
 }
 
-#toolkit-table-div {
-  margin-top: 2em;
+
+
+#toolkit-percentage {
+  display: inline-block;
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+#toolkit-eta {
+  display: inline-block;
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+#toolkit-checkboxes {
+  text-align: right;
+  float: right;
+
 }
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
