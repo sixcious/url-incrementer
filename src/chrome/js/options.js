@@ -20,9 +20,7 @@ URLI.Options = function () {
           "Control", "ControlLeft", "ControlRight",
           "Shift", "ShiftLeft", "ShiftRight",
           "Meta", "MetaLeft", "MetaRight"
-        ],
-        NUMBERS = ["oN3", "tW0", "thR33", "f0uR", "f1V3", "s1X", "s3VeN", "e1GhT", "n1N3", "t3N"],
-        FACES = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"];
+        ];
 
   let backgroundPage = {}, // Background page cache
       key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
@@ -600,11 +598,13 @@ URLI.Options = function () {
    * @private
    */
   function clickURLI() {
-    const face = " " + FACES[Math.floor(Math.random() * FACES.length)],
+    const numbers = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"],
+          faces =   ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"],
+          face = " " + faces[Math.floor(Math.random() * faces.length)],
           value = +this.dataset.value + 1;
     this.dataset.value = value + "";
     URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
-    URLI.UI.generateAlert([value <= 10 ? NUMBERS[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_malfunctioning") + face]);
+    URLI.UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   // Return Public Functions

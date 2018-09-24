@@ -91,6 +91,9 @@ URLI.Popup = function () {
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
+    DOM["#toolkit-table-crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-cell"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-notok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-notok").forEach(el => el.style.display = style); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -136,15 +139,13 @@ URLI.Popup = function () {
         }
         break;
       case "updatePopupToolkitCrawl":
-        console.log(request.tabId);
-        console.log(request.id);
-        console.log(request.status);
         if (request.tabId === instance.tabId) {
           console.log("request.tabId === instance.tabId");
           document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
-          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+          document.getElementById("toolkit-table-tr-" + request.id).className = "toolkit-table-crawl-" + (request.status === 200 ? "ok" : "notok");
           DOM["#toolkit-percentage-value"].textContent = Math.floor(((request.quantity - request.quantityRemaining) / request.quantity) * 100) + "%";
           updateETA(request.quantityRemaining * request.seconds, DOM["#toolkit-eta-value"], true);
+          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
           sendResponse({received: true});
         }
         break;
@@ -389,6 +390,7 @@ URLI.Popup = function () {
       tr.appendChild(th);
       if (crawl) {
         const th = document.createElement("th");
+        th.className = "toolkit-table-response";
         th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
         th.textContent = chrome.i18n.getMessage("toolkit_response_label");
         tr.appendChild(th);
@@ -403,6 +405,7 @@ URLI.Popup = function () {
         console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
         const tr = document.createElement("tr");
         tr.id = "toolkit-table-tr-" + (count - 1);
+        tr.className = "response-tbd";
         tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
         const td = document.createElement("td");
@@ -416,6 +419,7 @@ URLI.Popup = function () {
         if (crawl) {
           const td = document.createElement("td");
           td.id = "toolkit-table-td-" + (count - 2);
+          td.className = "toolkit-table-response";
           td.style = "padding: 0.25rem 0.312rem 0.312rem";
           tr.appendChild(td);
         }

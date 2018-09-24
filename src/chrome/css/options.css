@@ -376,9 +376,10 @@ input[type="number"].mouse-clicks-input {
 }
 
 /* Overrides generateAlert overlay styling so alert is displayed in gap space */
-/*#options .overlay {
-  top: 80%; !* initial *!
-}*/
+#options .overlay {
+  top: 80%; /* initial */
+}
+/*
 
 #options .overlay {
   display: block;
@@ -396,4 +397,4 @@ input[type="number"].mouse-clicks-input {
   font-size: 1.2em;
   transition: all 1.0s ease;
   transform: scale(0);
-}
+}*/

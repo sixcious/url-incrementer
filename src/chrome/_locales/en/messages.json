@@ -127,6 +127,9 @@
   "toolkit_seconds_label": { "message": "Crawl Speed"},
   "toolkit_response_label": { "message": "Response"},
   "toolkit_table_download": { "message": "Download Table (HTML File)"},
+  "toolkit_table_crawl_response_label": { "message": "Response"},
+  "toolkit_table_crawl_ok_label": { "message": "200"},
+  "toolkit_table_crawl_notok_label": { "message": "Not 200"},
   "toolkit_crawling_label": { "message": "Crawling... " },
   "toolkit_percentage_complete_label": { "message": "Complete" },
   "auto_label": { "message": "Auto" },
@@ -336,7 +339,7 @@
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
-  "urli_click_malfunctioning": { "message" : "i'M m4lfUnCt10n1Ng!" },
+  "urli_click_tickles": { "message" : "That tickles!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
   "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), Isaac S, Adam C & Will (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (Precursor), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
   "special_thanks_you": { "message": "... and most of all you for using URLI!" }
