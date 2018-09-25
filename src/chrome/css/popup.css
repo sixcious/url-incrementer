@@ -253,8 +253,7 @@ div.checkbox  img {
 }
 
 #toolkit-checkboxes {
-  text-align: right;
-  float: right;
+  display: inline-block;
 
 }
 
