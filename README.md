@@ -5,7 +5,7 @@
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently.
 
 # Features (for 6.0 - October 2018)
-- Uses 0 Chrome Memory When Inactive
+- Uses 0 Chrome Memory When Inactive (6.0)
 - Keyboard and Mouse Shortcuts (Customizable)
 - 1-Click Increment Decrement Button Extensions for Your Toolbar (Available on the Chrome Web Store / AMO)
 - "URLI's Developer Toolkit" [Experimental] ** Crawl up to 1,000 incremented URLs, open up to 100 incremented tabs at once, or generate 10,000 incremented links in 1 second

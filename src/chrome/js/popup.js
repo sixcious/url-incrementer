@@ -158,7 +158,7 @@ URLI.Popup = function () {
     if (port.name === "updatePopupToolkitCrawl") {
       port.onMessage.addListener(function(message, sender) {
         if (message.greeting === "updatePopupToolkitCrawl" && message.tabId === instance.tabId) {
-          console.log("message.tabId === instance.tabId");
+          // console.log("message.tabId === instance.tabId");
           document.getElementById("toolkit-table-td-" + message.id).textContent = message.status;
           document.getElementById("toolkit-table-tr-" + message.id).className = "toolkit-table-crawl-" + (message.status === 200 ? "ok" : "notok");
           DOM["#toolkit-percentage-value"].textContent = Math.floor(((message.quantity - message.quantityRemaining) / message.quantity) * 100) + "%";
@@ -420,8 +420,6 @@ URLI.Popup = function () {
       table.appendChild(tbody);
       let count = 1;
       for (const url of urls) {
-        console.log("count = " + count);
-        console.log("(count++ % 2) !== 0" + ((count % 2) !== 0));
         const tr = document.createElement("tr");
         tr.id = "toolkit-table-tr-" + (count - 1);
         tr.className = "response-tbd";
