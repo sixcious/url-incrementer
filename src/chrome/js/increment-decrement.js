@@ -548,6 +548,8 @@ URLI.IncrementDecrementArray = function () {
     instance.selection = urlProps.selectionmod;
   }
 
+  //sendMessage Crawl:
+  //
   // function crawlURLs(action, instance, context, quantityRemaining) {
   //   console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
   //   const origin = document.location.origin,
@@ -632,76 +634,46 @@ URLI.IncrementDecrementArray = function () {
     } else { return document.createElement("table");}
   }
 
-  // Crawl Tab:
-  function startCrawl(action, instance, context, quantityRemaining) {
-    console.log("HELLO start crawl??" + instance.urls.length);
-    var div = document.createElement("div");
-    div.style = "position: absolute; left: 0; top: 0; z-index: 2147483647";
-    var download = document.createElement("a");
-    download.id = "toolkit-table-download";
-    download.download = "urli-toolkit-table";
-    div.appendChild(download);
-  // <a id="toolkit-table-download" class="button" data-i18n="textContent" title="urli-toolkit-table.html" download="urli-toolkit-table"></a>
-    var percentage = document.createElement("span");
-    percentage.id = "toolkit-percentage-value";
-    div.appendChild(percentage);
-    div.appendChild(buildToolkitURLsTable(instance.urls, true));
-    document.body.appendChild(div);
-    crawlURLs(action, instance, context, quantityRemaining);
-  }
-
-  // Crawl Tab:
-  function crawlURLs(action, instance, context, quantityRemaining) {
-    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
-    const origin = document.location.origin,
-      urlOrigin = new URL(instance.url).origin;
-    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
-      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        const id = instance.toolkitQuantity - quantityRemaining;
-        const status = response.redirected ? "RED" : response.status;
-        const quantity =  instance.toolkitQuantity;
-        // const quantityRemaining = quantityRemaining - 1;
-        const seconds = instance.toolkitSeconds;
-        document.getElementById("toolkit-table-td-" + id).textContent = status;
-        document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
-        document.getElementById("toolkit-percentage-value").textContent = Math.floor(((id) / quantity) * 100) + "%";
-        // updateETA(quantityRemaining * (seconds + 1), DOM["#toolkit-eta-value"], true);
-        document.getElementById("toolkit-table-download").href = URL.createObjectURL(new Blob([document.getElementById("toolkit-table").outerHTML], {"type": "text/html"}));
-
-        setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
-        // port.postMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds});
-      }).catch(e => {
-        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
-      });
-    } else {
-      console.log("URLI.IncrementDecrementArray.crawlURLs() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
-    }
-  }
-
-  // // Crawl Port:
-  // function startCrawl(action, instance, context, quantityRemaining) {
-  //   let port = chrome.runtime.connect({name: "updatePopupToolkitCrawl"});
-  //   port.onMessage.addListener(function(message, sender) {
-  //     if (message && message.received && message.quantityRemaining > 0) {
-  //       console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
-  //       setTimeout(function() { stepThruURLs(action, instance); crawlURLs(action, instance, context, message.quantityRemaining, port); }, instance.toolkitSeconds * 1000);
-  //     }
-  //   });
-  //   crawlURLs(action, instance, context, quantityRemaining, port);
+  // // Crawl Tab:
+  // function startCrawl(instance, context, quantityRemaining) {
+  //   console.log("HELLO start crawl??" + instance.urls.length);
+  //   var div = document.createElement("div");
+  //   div.style = "position: absolute; left: 0; top: 0; z-index: 2147483647";
+  //   var download = document.createElement("a");
+  //   download.id = "toolkit-table-download";
+  //   download.download = "urli-toolkit-table";
+  //   div.appendChild(download);
+  // // <a id="toolkit-table-download" class="button" data-i18n="textContent" title="urli-toolkit-table.html" download="urli-toolkit-table"></a>
+  //   var percentage = document.createElement("span");
+  //   percentage.id = "toolkit-percentage-value";
+  //   div.appendChild(percentage);
+  //   div.appendChild(buildToolkitURLsTable(instance.urls, true));
+  //   document.body.appendChild(div);
+  //   crawlURLs(instance, context, quantityRemaining);
   // }
-
-  // Crawl Port:
-  // function crawlURLs(action, instance, context, quantityRemaining, port) {
+  //
+  // // Crawl Tab:
+  // function crawlURLs(instance, context, quantityRemaining) {
   //   // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
   //   const origin = document.location.origin,
-  //         urlOrigin = new URL(instance.url).origin;
+  //     urlOrigin = new URL(instance.url).origin;
   //   // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
   //   if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
   //     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
   //     fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-  //        port.postMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds});
+  //       const id = instance.toolkitQuantity - quantityRemaining;
+  //       const status = response.redirected ? "RED" : response.status;
+  //       const quantity =  instance.toolkitQuantity;
+  //       // const quantityRemaining = quantityRemaining - 1;
+  //       const seconds = instance.toolkitSeconds;
+  //       document.getElementById("toolkit-table-td-" + id).textContent = status;
+  //       document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
+  //       document.getElementById("toolkit-percentage-value").textContent = Math.floor(((id) / quantity) * 100) + "%";
+  //       // updateETA(quantityRemaining * (seconds + 1), DOM["#toolkit-eta-value"], true);
+  //       document.getElementById("toolkit-table-download").href = URL.createObjectURL(new Blob([document.getElementById("toolkit-table").outerHTML], {"type": "text/html"}));
+  //
+  //       setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+  //       // port.postMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds});
   //     }).catch(e => {
   //       console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
   //     });
@@ -709,6 +681,36 @@ URLI.IncrementDecrementArray = function () {
   //     console.log("URLI.IncrementDecrementArray.crawlURLs() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
   //   }
   // }
+
+  // Crawl Port:
+  function startCrawl(instance, context, quantityRemaining) {
+    let port = chrome.runtime.connect({name: "updatePopupToolkitCrawl"});
+    port.onMessage.addListener(function(message, sender) {
+      if (message && message.received && message.quantityRemaining > 0) {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - received response from popup, calling this function again in " + instance.toolkitSeconds + " seconds");
+        setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, message.quantityRemaining, port); }, instance.toolkitSeconds * 1000);
+      }
+    });
+    crawlURLs(instance, context, quantityRemaining, port);
+  }
+
+  // Crawl Port:
+  function crawlURLs(instance, context, quantityRemaining, port) {
+    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
+    const origin = document.location.origin,
+          urlOrigin = new URL(instance.url).origin;
+    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    if ((context === "background" || (origin === urlOrigin)) && quantityRemaining > 0) {
+      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+         port.postMessage({greeting: "updatePopupToolkitCrawl", tabId: instance.tabId, id: instance.toolkitQuantity - quantityRemaining, status: response.redirected ? "RED" : response.status, quantity: instance.toolkitQuantity, quantityRemaining: quantityRemaining - 1, seconds: instance.toolkitSeconds});
+      }).catch(e => {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+      });
+    } else {
+      console.log("URLI.IncrementDecrementArray.crawlURLs() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+    }
+  }
 
   /**
    * Pre-calculates an array of URLs.

@@ -18,6 +18,7 @@ URLI.Popup = function () {
       backgroundPage = {}, // Background page cache
       downloadPreviewCache = {}, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
+      //port;
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -33,27 +34,6 @@ URLI.Popup = function () {
     // Cache DOM elements
     for (let element of ids) {
       DOM["#" + element.id] = element;
-    }
-    // Initialize popup content
-    const tabs = await EXT.Promisify.getTabs();
-    backgroundPage = await EXT.Promisify.getBackgroundPage();
-    items = await EXT.Promisify.getItems();
-    localItems = await EXT.Promisify.getItems("local");
-    instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
-    if (!instance || !instance.enabled) {
-      instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
-    }
-    _ = JSON.parse(JSON.stringify(instance));
-    DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-    const downloadPaddingAdjustment = items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-    DOM["#download-input"].style = "width:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px;";
-    DOM["#setup-input"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
-    updateSetup();
-    // Jump straight to Setup if instance isn't enabled or a saved URL
-    if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.saveFound)) {
-      toggleView.call(DOM["#setup-input"]);
-    } else {
-      toggleView.call(DOM["#accept-button"]);
     }
     // Set i18n (internationalization) text from messages.json
     for (let element of i18ns) {
@@ -113,6 +93,32 @@ URLI.Popup = function () {
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
+
+    // Initialize popup content
+    const tabs = await EXT.Promisify.getTabs();
+    backgroundPage = await EXT.Promisify.getBackgroundPage();
+    items = await EXT.Promisify.getItems();
+    localItems = await EXT.Promisify.getItems("local");
+    instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
+    if (instance && instance.toolkitEnabled) {
+      crawlWindow(instance);
+      return;
+    }
+    if (!instance || !instance.enabled) {
+      instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
+    }
+    _ = JSON.parse(JSON.stringify(instance));
+    DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+    const downloadPaddingAdjustment = items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
+    DOM["#download-input"].style = "width:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px;";
+    DOM["#setup-input"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+    updateSetup();
+    // Jump straight to Setup if instance isn't enabled or a saved URL
+    if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.saveFound)) {
+      toggleView.call(DOM["#setup-input"]);
+    } else {
+      toggleView.call(DOM["#accept-button"]);
+    }
   }
 
   /**
@@ -149,12 +155,18 @@ URLI.Popup = function () {
       //     sendResponse({received: true});
       //   }
       //   break;
+      case "crawlWindow":
+console.log("crawlWindow message!");
+        crawlWindow(request.instance);
+        break;
       default:
         break;
     }
   }
 
   function connectListener(port) {
+    //port = port_;
+    window.addEventListener("beforeunload", function() { if (port) { port.disconnect(); } });
     if (port.name === "updatePopupToolkitCrawl") {
       port.onMessage.addListener(function(message, sender) {
         if (message.greeting === "updatePopupToolkitCrawl" && message.tabId === instance.tabId) {
@@ -171,6 +183,36 @@ URLI.Popup = function () {
         }
       });
     }
+  }
+
+  // public TODO
+  function crawlWindow(instance_) {
+    console.log("crawlWindow instance urls length" + instance_.urls.length);
+    _ = instance = instance_;
+    DOM["#toolkit-percentage-value"].textContent = 0 + "%";
+    updateETA(_.toolkitQuantity * (_.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+    buildToolkitURLsTable(_.urls, true);
+    //updateSetup();
+    //updateSetup();
+    DOM["#setup"].className = "display-block";
+    DOM["#toolkit"].className = "display-block";
+    DOM["#toolkit-table"].className = "display-block";
+    DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
+    DOM["#setup-buttons"].className = "display-none";
+    chrome.tabs.executeScript(instance.tabId, {
+      file: "/js/increment-decrement.js",
+      runAt: "document_start"
+    }, function () {
+      // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+      if (chrome.runtime.lastError) {
+        console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+      }
+      const code = "URLI.IncrementDecrementArray.startCrawl(" +
+        JSON.stringify(instance) + ", " +
+        "\"content-script\"" + ", " +
+        JSON.stringify(instance.toolkitQuantity) + ");";
+      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+    });
   }
 
   /**
@@ -470,13 +512,17 @@ URLI.Popup = function () {
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
       if (toolkitInstance.toolkitTool === "crawl") {
-        DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-        updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-        buildToolkitURLsTable(toolkitInstance.urls, true);
+
+        // DOM["#toolkit-percentage-value"].textContent = 0 + "%";
+        // updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+        // buildToolkitURLsTable(toolkitInstance.urls, true);
       } else if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
       backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
+      if (toolkitInstance.toolkitTool === "crawl") {
+        window.close();
+      }
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
       chrome.storage.sync.set({
         "toolkitTool": _.toolkitTool,
@@ -1081,7 +1127,8 @@ URLI.Popup = function () {
   return {
     DOMContentLoaded: DOMContentLoaded,
     messageListener: messageListener,
-    connectListener: connectListener
+    connectListener: connectListener,
+    crawlWindow: crawlWindow
   };
 }();
 

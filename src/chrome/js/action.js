@@ -316,7 +316,6 @@ URLI.Action = function () {
       //       console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
       //     }
       //     const code = "URLI.IncrementDecrementArray.crawlURLs(" +
-      //       JSON.stringify(instance.toolkitAction) + ", " +
       //       JSON.stringify(instance) + ", " +
       //       "\"content-script\"" + ", " +
       //       JSON.stringify(instance.toolkitQuantity) + ");";
@@ -338,7 +337,6 @@ URLI.Action = function () {
       //       console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
       //     }
       //     const code = "URLI.IncrementDecrementArray.startCrawl(" +
-      //       JSON.stringify(instance.toolkitAction) + ", " +
       //       JSON.stringify(instance) + ", " +
       //       "\"content-script\"" + ", " +
       //       JSON.stringify(instance.toolkitQuantity) + ");";
@@ -348,33 +346,54 @@ URLI.Action = function () {
       //   break;
 
       // Window Crawl:
-      // case "crawl":
-      //   chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup"}, function(window) {
-      //     console.log(window);
-      //   });
-      //   break;
-
-      // Tab Crawl:
       case "crawl":
         instance.url = instance.urls[0].urlmod;
         instance.selection = instance.urls[0].selectionmod;
-        chrome.tabs.executeScript(instance.tabId, {
-          file: "/js/increment-decrement.js",
-          runAt: "document_start"
-        }, function () {
-          // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-          if (chrome.runtime.lastError) {
-            console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-          }
-          const code = "URLI.IncrementDecrementArray.startCrawl(" +
-            JSON.stringify(instance.toolkitAction) + ", " +
-            JSON.stringify(instance) + ", " +
-            "\"content-script\"" + ", " +
-            JSON.stringify(instance.toolkitQuantity) + ");";
-          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+        chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
+          URLI.Background.setInstance(window.tabs[0].id, instance);
+           // chrome.runtime.sendMessage({greeting: "crawlWindow", instance: instance}, function(response) {
+
+              // chrome.tabs.executeScript(instance.tabId, {
+              //   file: "/js/increment-decrement.js",
+              //   runAt: "document_start"
+              // }, function () {
+              //   // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+              //   if (chrome.runtime.lastError) {
+              //     console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+              //   }
+              //   const code = "URLI.IncrementDecrementArray.startCrawl(" +
+              //     JSON.stringify(instance) + ", " +
+              //     "\"content-script\"" + ", " +
+              //     JSON.stringify(instance.toolkitQuantity) + ");";
+              //   chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+            //});
         });
-        actionPerformed = true;
+actionPerformed = true;
         break;
+
+      // Tab Crawl:
+      // case "crawl":
+      //   instance.url = instance.urls[0].urlmod;
+      //   instance.selection = instance.urls[0].selectionmod;
+      //   chrome.tabs.executeScript(instance.tabId, {
+      //     file: "/js/increment-decrement.js",
+      //     runAt: "document_start"
+      //   }, function () {
+      //     // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+      //     if (chrome.runtime.lastError) {
+      //       console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+      //     }
+      //     const code = "URLI.IncrementDecrementArray.startCrawl(" +
+      //       JSON.stringify(instance) + ", " +
+      //       "\"content-script\"" + ", " +
+      //       JSON.stringify(instance.toolkitQuantity) + ");";
+      //     chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+      //   });
+      //   actionPerformed = true;
+      //   break;
+
+
+
       default:
         break;
     }
