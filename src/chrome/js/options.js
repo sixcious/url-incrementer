@@ -103,11 +103,11 @@ URLI.Options = function () {
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
-    for (let element of ids) {
+    for (const element of ids) {
       DOM["#" + element.id] = element;
     }
     // Set i18n (internationalization) text from messages.json
-    for (let element of i18ns) {
+    for (const element of i18ns) {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements

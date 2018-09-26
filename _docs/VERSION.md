@@ -4,10 +4,10 @@
 - Support for Firefox and Firefox for Android
 - Now uses 0 Chrome Memory when inactive (e.g. when you haven't enabled it for a tab)! (Chrome Only)
 - New Multi-Click Mouse Shortcuts
-- "The Incrementer's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
+- "URLI's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
 - Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time or have URLI take up memory. It's completely optional ("opt-in").
 - Multi-Incrementing - Increment up to 3 parts of the URL individually, simultaneously, or in ranges! Click the Multi (+++) icon near Selection and then click Accept. Additional + - Buttons will show in the UI for each part you selected.
-- Date Time Incrementing - Increment dates and times in URLs like "2018/01/25" and/or 12:30:05
+- Date Time Incrementing - Increment dates and times in URLs like "2018/01/25"
 - AUTO Repeat Mode - Loops back to the starting URL and repeats
 - Custom URLs - Enter a list of your favorite URLs and have URLI go to them. Increment takes you to the next URL, Decrement takes you to the previous URL. Works with AUTO so you can TRULY have a custom web page slideshow, and you can loop through them... repeatedly with repeat mode! 
 - Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes.
@@ -17,6 +17,7 @@
 - Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
 - Page loading speed improvements for popup and options by rewriting them in valid HTML 5 and replacing CSS @imports with HTML links
+- File Size Dropped 50Kib from ~176KiB to ~125Kib!
 - Internal Code Enhancements: Rewrite to ECMAScript 6 using let, const, and async/await
 
 # What's New in Version 5.8 (9/16/2018)

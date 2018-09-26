@@ -18,7 +18,7 @@ URLI.Background = function () {
     "commandsQuickEnabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
     "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
-    "selectionPriority": "prefixes", "interval": 1, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "shuffleLimit": 1000, "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
+    "interval": 1, "shuffleLimit": 1000, "leadingZerosPadByDetection": true, "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "selectionPriority": "prefixes", "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
@@ -112,8 +112,7 @@ URLI.Background = function () {
    * @public
    */
   function setInstance(tabId, instance) {
-    // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
-    instances.set(tabId, JSON.parse(JSON.stringify(instance)));
+    instances.set(tabId, JSON.parse(JSON.stringify(instance))); // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
     if (!persistent) {
       makePersistent();
     }
@@ -292,8 +291,7 @@ URLI.Background = function () {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
-    // Firefox: sender tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-    sender.tab.url = sender.url;
+    sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
     switch (request.greeting) {
       case "performAction":
         const items = await EXT.Promisify.getItems();
@@ -354,8 +352,8 @@ URLI.Background = function () {
       const items = await EXT.Promisify.getItems();
       if (!items.permissionsInternalShortcuts) {
         const tabs = await EXT.Promisify.getTabs();
-        if (tabs && tabs[0]) { // tab may not exist if command is called while in popup window
-          let instance = getInstance(tabs[0].id) || await buildInstance(tabs[0], items);
+        if (tabs && tabs[0]) { // The tab may not exist if command is called while in popup window
+          const instance = getInstance(tabs[0].id) || await buildInstance(tabs[0], items);
           if (items.commandsQuickEnabled || (instance && (instance.enabled || instance.saveFound))) {
             URLI.Action.performAction(command, "command", instance, items);
           }

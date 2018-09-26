@@ -199,7 +199,7 @@ URLI.IncrementDecrement = function () {
         incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
       });
     } else {
-      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "context-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "content-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
       const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
       if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
       else { chrome.runtime.sendMessage(request); }

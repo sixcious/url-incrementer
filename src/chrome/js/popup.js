@@ -30,13 +30,14 @@ URLI.Popup = function () {
    */
   async function DOMContentLoaded() {
     const ids = document.querySelectorAll("[id]"),
-          i18ns = document.querySelectorAll("[data-i18n]");
+          i18ns = document.querySelectorAll("[data-i18n]"),
+          buttons = document.querySelectorAll("#controls input");
     // Cache DOM elements
-    for (let element of ids) {
+    for (const element of ids) {
       DOM["#" + element.id] = element;
     }
     // Set i18n (internationalization) text from messages.json
-    for (let element of i18ns) {
+    for (const element of i18ns) {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
@@ -94,7 +95,7 @@ URLI.Popup = function () {
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
 
-    // Initialize popup content
+    // Initialize popup content (1-time only)
     const tabs = await EXT.Promisify.getTabs();
     backgroundPage = await EXT.Promisify.getBackgroundPage();
     items = await EXT.Promisify.getItems();
@@ -108,13 +109,15 @@ URLI.Popup = function () {
       instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
     }
     _ = JSON.parse(JSON.stringify(instance));
-    DOM["#increment-input"].style = DOM["#decrement-input"].style = DOM["#increment-input-1"].style = DOM["#decrement-input-1"].style = DOM["#increment-input-2"].style = DOM["#decrement-input-2"].style = DOM["#increment-input-3"].style = DOM["#decrement-input-3"].style = DOM["#clear-input"].style = DOM["#return-input"].style = DOM["#setup-input"].style = DOM["#next-input"].style = DOM["#prev-input"].style = DOM["#auto-input"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-    const downloadPaddingAdjustment = items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8; // cloud-download.png is an irregular shape and needs adjustment
-    DOM["#download-input"].style = "width:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px; height:" + (items.popupButtonSize + downloadPaddingAdjustment) + "px;";
-    DOM["#setup-input"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+
+    for (const button of buttons) {
+      button.className = items.popupAnimationsEnabled ? "hvr-grow": "";
+      button.style.width = button.style.height = items.popupButtonSize + "px";
+    }
+    DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px"; // cloud-download.png is an irregular shape and needs adjustment
     updateSetup();
     // Jump straight to Setup if instance isn't enabled or a saved URL
-    if ((!instance.enabled && !instance.autoEnabled && !instance.downloadEnabled && !instance.saveFound)) {
+    if ((!instance.enabled && !instance.saveFound)) {
       toggleView.call(DOM["#setup-input"]);
     } else {
       toggleView.call(DOM["#accept-button"]);
@@ -188,7 +191,7 @@ console.log("crawlWindow message!");
   // public TODO
   function crawlWindow(instance_) {
     console.log("crawlWindow instance urls length" + instance_.urls.length);
-    _ = instance = instance_;
+    instance = _ = instance_;
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
     updateETA(_.toolkitQuantity * (_.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
     buildToolkitURLsTable(_.urls, true);
@@ -199,20 +202,64 @@ console.log("crawlWindow message!");
     DOM["#toolkit-table"].className = "display-block";
     DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
     DOM["#setup-buttons"].className = "display-none";
-    chrome.tabs.executeScript(instance.tabId, {
-      file: "/js/increment-decrement.js",
-      runAt: "document_start"
-    }, function () {
-      // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-      if (chrome.runtime.lastError) {
-        console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-      }
-      const code = "URLI.IncrementDecrementArray.startCrawl(" +
-        JSON.stringify(instance) + ", " +
-        "\"content-script\"" + ", " +
-        JSON.stringify(instance.toolkitQuantity) + ");";
-      chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-    });
+    backgroundPage.URLI.Background.deleteInstance(instance.tabId);
+    crawlURLs(instance, "background", instance.toolkitQuantity);
+
+
+    // No execute script...
+    // chrome.tabs.executeScript(instance.tabId, {
+    //   file: "/js/increment-decrement.js",
+    //   runAt: "document_start"
+    // }, function () {
+    //   // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
+    //   if (chrome.runtime.lastError) {
+    //     console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
+    //   }
+    //   const code = "URLI.IncrementDecrementArray.startCrawl(" +
+    //     JSON.stringify(instance) + ", " +
+    //     "\"content-script\"" + ", " +
+    //     JSON.stringify(instance.toolkitQuantity) + ");";
+    //   chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
+    // });
+  }
+
+  function crawlURLs(instance, context, quantityRemaining) {
+    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
+    // const origin = document.location.origin,
+    //   urlOrigin = new URL(instance.url).origin;
+    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    if (/*(context === "background" || (origin === urlOrigin)) && */quantityRemaining > 0) {
+      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+        setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+        const id = instance.toolkitQuantity - quantityRemaining;
+        const status = response.redirected ? "RED" : response.status;
+        const quantity =  instance.toolkitQuantity;
+        document.getElementById("toolkit-table-td-" + id).textContent = status;
+        document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
+        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - quantityRemaining) / quantity) * 100) + "%";
+        updateETA(quantityRemaining * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+        DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+      }).catch(e => {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+      });
+    } else {
+      console.log("URLI.IncrementDecrementArray.crawlURLs() - we have exhausted the quantityRemaining");
+    }
+  }
+
+  function stepThruURLs(action, instance) {
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
+    const urlsLength = instance.urls.length;
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+    // Get the urlProps object from the next or previous position in the urls array and update the instance
+    const urlProps =
+      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
+    instance.url = urlProps.urlmod;
+    instance.selection = urlProps.selectionmod;
   }
 
   /**
@@ -239,17 +286,17 @@ console.log("crawlWindow message!");
   }
 
   /**
-   * Performs the action based on the button if the requirements are met (e.g. instance is enabled).
+   * Performs the action based on the button if the requirements are met (e.g. the instance is enabled).
+   * Note: After performing the action, the background sends a message back to popup with the updated instance, so no
+   * callback function is needed in performAction().
    * 
    * @private
    */
   function clickActionButton() {
     const action = this.dataset.action;
-    // TODO remove this unnecessary validation...maybe replace it with
-    if (((action === "increment" || action === "decrement") && (instance.enabled || instance.saveFound)) ||
-        ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && (instance.enabled && instance.multiEnabled)) ||
+    if (((action === "increment" || action === "decrement" || action === "clear") && (instance.enabled || instance.saveFound)) ||
+        ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && instance.multiEnabled) ||
          (action === "next" || action === "prev") ||
-        ((action === "clear") && (instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound)) ||
          (action === "return" && instance.enabled) ||
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
@@ -257,37 +304,37 @@ console.log("crawlWindow message!");
         URLI.UI.clickHoverCss(this, "hvr-push-click");
       }
       backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance, items);
-      // Note: After performing the action, the background sends a message back to popup with the updated instance
     }
   }
 
   /**
    * Updates the control images based on whether the instance is enabled.
+   * Note: update styles, not classNames, to avoid issues with hvr-push-click being cleared too fast after a click.
    * 
    * @private
    */
   function updateControls() {
-    DOM["#controls-icons-save-url"].className = instance.saveFound ? "" : "display-none";
-    DOM["#controls-icons-auto-repeat"].className = instance.autoEnabled && instance.autoRepeat ? "" : "display-none";
+    DOM["#controls-icons-save-url"].style.display = instance.saveFound ? "" : "none";
+    DOM["#controls-icons-auto-repeat"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#controls-icons-shuffle"].className = instance.enabled && instance.shuffleURLs ? "" : "display-none";
-    DOM["#increment-input"].className = 
-    DOM["#decrement-input"].className = instance.multiEnabled ? "display-none" : instance.enabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click"  : "" : instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev") ? "display-none" : "disabled";
-    DOM["#increment-input-m"].className =
-    DOM["#decrement-input-m"].className =
-    DOM["#increment-input-1"].className =
-    DOM["#decrement-input-1"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#increment-input-2"].className =
-    DOM["#decrement-input-2"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#increment-input-3"].className =
-    DOM["#decrement-input-3"].className = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#next-input"].className =
-    DOM["#prev-input"].className = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#clear-input"].className = instance.enabled || instance.autoEnabled || instance.downloadEnabled || instance.saveFound ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "disabled";
-    DOM["#return-input"].className = instance.enabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
-    DOM["#auto-input"].className = instance.autoEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
+    DOM["#increment-input"].style.display =
+    DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
+    DOM["#increment-input-m"].style.display =
+    DOM["#decrement-input-m"].style.display =
+    DOM["#increment-input-1"].style.display =
+    DOM["#decrement-input-1"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
+    DOM["#increment-input-2"].style.display =
+    DOM["#decrement-input-2"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
+    DOM["#increment-input-3"].style.display =
+    DOM["#decrement-input-3"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
+    DOM["#next-input"].style.display =
+    DOM["#prev-input"].style.display = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
+    DOM["#clear-input"].style.opacity = DOM["#increment-input"].style.opacity = DOM["#decrement-input"].style.opacity = instance.enabled || instance.saveFound ? 1 : 0.2;
+    DOM["#return-input"].style.display = instance.enabled ? "" : "none";
+    DOM["#auto-input"].style.display = instance.autoEnabled ? "" : "none";
     DOM["#auto-input"].src = instance.autoPaused ? "../img/play-circle.png" : "../img/pause-circle.png";
     DOM["#auto-input"].title = chrome.i18n.getMessage(instance.autoPaused ? "auto_resume_input" : "auto_pause_input");
-    DOM["#download-input"].className = items.permissionsDownload && instance.downloadEnabled ? items.popupAnimationsEnabled ? "hvr-grow hvr-push-click" : "" : "display-none";
+    DOM["#download-input"].style.display = items.permissionsDownload && instance.downloadEnabled ? "" : "none";
   }
 
   /**
@@ -299,20 +346,16 @@ console.log("crawlWindow message!");
   function updateSetup(minimal) {
     // Increment Decrement Setup:
     if (instance.saveFound || localItems.savePreselect) {
-      DOM["#save-url-input"].checked = true; // instance.saveFound || localItems.savePreselect;
+      DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
-
-    // if (instance.saveFound) {
-    //   DOM["#save-url-label"].style.color = "#1779BA";
-    // }
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
     DOM["#url-textarea"].focus();
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
     if (minimal) {
-      return;
+      return; // e.g. just switching from controls to setup, no need to recalculate the below again
     }
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
@@ -395,7 +438,8 @@ console.log("crawlWindow message!");
   }
 
   /**
-   * TODO
+   * Handles the click multi button event, performing validation on the selection and then saving the multi instance.
+   *
    * @private
    */
   function clickMulti() {
@@ -493,6 +537,7 @@ console.log("crawlWindow message!");
 
   /**
    * TODO
+   *
    * @private
    */
   async function toolkit() {
@@ -516,13 +561,19 @@ console.log("crawlWindow message!");
         // DOM["#toolkit-percentage-value"].textContent = 0 + "%";
         // updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
         // buildToolkitURLsTable(toolkitInstance.urls, true);
+        // buildToolkitURLsTable(toolkitInstance.urls, false);
+        // toolkitInstance.url = toolkitInstance.urls[0].urlmod;
+        // toolkitInstance.selection = toolkitInstance.urls[0].selectionmod;
+        // chrome.windows.create({url: URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})), type: "popup", width: 550, height: 550});
+
+
       } else if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
       backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
-      if (toolkitInstance.toolkitTool === "crawl") {
-        window.close();
-      }
+      // if (toolkitInstance.toolkitTool === "crawl") {
+      //   window.close();
+      // }
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
       chrome.storage.sync.set({
         "toolkitTool": _.toolkitTool,
@@ -533,12 +584,15 @@ console.log("crawlWindow message!");
     }
   }
 
+  /**
+   * TODO...
+   */
   function updateAutoETA() {
     updateETA(+DOM["#auto-times-input"].value * +DOM["#auto-seconds-input"].value, DOM["#auto-eta-value"], instance.autoEnabled);
   }
 
   /**
-   * Updates the Auto ETA time every time the seconds or times is updated by the user or when the instance is updated.
+   * Updates the Auto or Toolkit ETA times every time the seconds or times is updated by the user or when the instance is updated.
    *
    * Calculating the hours/minutes/seconds is based on code written by Vishal @ stackoverflow.com
    * @see https://stackoverflow.com/a/11486026/988713
@@ -924,17 +978,17 @@ console.log("crawlWindow message!");
           backgroundPage.URLI.SaveURLs.addURL(instance); // TODO
           instance.saveType = "exact";
         }
-        // // If popup can overwrite increment/decrement settings, write to storage
-        // if (instance.enabled && items.popupSettingsCanOverwrite) {
-        //   chrome.storage.sync.set({
-        //     "interval": _.interval,
-        //     "base": !isNaN(_.base) ? _.base : items.base, // Don't ever save non Number bases (e.g. Date Time) as the default
-        //     "baseCase": _.baseCase,
-        //     "baseDateFormat": _.baseDateFormat,
-        //     "baseCustom": _.baseCustom,
-        //     "errorSkip": _.errorSkip
-        //   });
-        // }
+        // If popup can overwrite increment/decrement settings, write to storage
+        if (instance.enabled && items.popupSettingsCanOverwrite) {
+          chrome.storage.sync.set({
+            "interval": _.interval,
+            "base": !isNaN(_.base) ? _.base : items.base, // Don't ever save non Number bases (e.g. Date Time) as the default
+            "baseCase": _.baseCase,
+            "baseDateFormat": _.baseDateFormat,
+            "baseCustom": _.baseCustom,
+            "errorSkip": _.errorSkip
+          });
+        }
         if (_.autoEnabled) {
           chrome.storage.sync.set({
             "autoAction": _.autoAction,

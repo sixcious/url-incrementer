@@ -271,7 +271,7 @@ URLI.Auto = function () {
 }();
 
 /**
- * The AutoTimer that contains the internal setTimeout with pause and resume capabilities.
+ * The AutoTimer that contains the internal timeout with pause and resume capabilities.
  * It also contains a "wait" state to keep it from setting a timeout before the page has fully loaded,
  * if the user checked the "Wait for the page to fully load" checkbox.
  * 

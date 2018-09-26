@@ -31,9 +31,6 @@ URLI.Action = function () {
       // Get the most recent instance from Background in case auto has been paused
       instance = URLI.Background.getInstance(instance.tabId);
       // Handle autoTimes
-      // if (!instance.autoPaused) {
-      //
-      // }
       if (instance.autoAction === action) {
         instance.autoTimes--;
       } else if ((instance.autoTimes < instance.autoTimesOriginal) &&
@@ -231,7 +228,7 @@ URLI.Action = function () {
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
       URLI.Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
     }
-    // for callers like popup that still need the instance, disable all states and reset autoTimes
+    // For callers like popup that still need the instance, disable all states and reset autoTimes
     else {
       instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
       instance.autoTimes = instance.autoTimesOriginal;
@@ -294,7 +291,7 @@ URLI.Action = function () {
     let actionPerformed = false;
     switch (instance.toolkitTool) {
       case "tabs":
-        for (let url of instance.urls) {
+        for (const url of instance.urls) {
           chrome.tabs.create({"url": url.urlmod, "active": false});
         }
         actionPerformed = true;
@@ -347,10 +344,11 @@ URLI.Action = function () {
 
       // Window Crawl:
       case "crawl":
-        instance.url = instance.urls[0].urlmod;
-        instance.selection = instance.urls[0].selectionmod;
         chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
-          URLI.Background.setInstance(window.tabs[0].id, instance);
+          instance.tabId = window.tabs[0].id;
+          instance.url = instance.urls[0].urlmod;
+          instance.selection = instance.urls[0].selectionmod;
+          URLI.Background.setInstance(instance.tabId, instance);
            // chrome.runtime.sendMessage({greeting: "crawlWindow", instance: instance}, function(response) {
 
               // chrome.tabs.executeScript(instance.tabId, {

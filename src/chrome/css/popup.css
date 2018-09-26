@@ -86,9 +86,9 @@ div.checkbox  img {
   outline: none;
 }
 
-#controls input[type="image"].disabled {
+/*#controls input[type="image"].disabled {
   opacity: 0.2;
-}
+}*/
 
 #controls #controls-icons {
   position: absolute;
