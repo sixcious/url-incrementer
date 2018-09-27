@@ -18,7 +18,6 @@ URLI.Popup = function () {
       backgroundPage = {}, // Background page cache
       downloadPreviewCache = {}, // Download Preview Cache
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
-      //port;
 
   /**
    * Loads the DOM content needed to display the popup page.
@@ -146,116 +145,9 @@ URLI.Popup = function () {
           updateDownloadPreviewCompletely();
         }
         break;
-      // case "updatePopupToolkitCrawl":
-      //   if (request.tabId === instance.tabId) {
-      //     console.log("request.tabId === instance.tabId");
-      //     document.getElementById("toolkit-table-td-" + request.id).textContent = request.status;
-      //     document.getElementById("toolkit-table-tr-" + request.id).className = "toolkit-table-crawl-" + (request.status === 200 ? "ok" : "notok");
-      //     DOM["#toolkit-percentage-value"].textContent = Math.floor(((request.quantity - request.quantityRemaining) / request.quantity) * 100) + "%";
-      //     updateETA(request.quantityRemaining * (request.seconds + 1), DOM["#toolkit-eta-value"], true);
-      //     DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
-      //     sendResponse({received: true});
-      //   }
-      //   break;
-      case "crawlWindow":
-console.log("crawlWindow message!");
-        crawlWindow(request.instance);
-        break;
       default:
         break;
     }
-  }
-
-  function connectListener(port) {
-    //port = port_;
-    window.addEventListener("beforeunload", function() { if (port) { port.disconnect(); } });
-    if (port.name === "updatePopupToolkitCrawl") {
-      port.onMessage.addListener(function(message, sender) {
-        if (message.greeting === "updatePopupToolkitCrawl" && message.tabId === instance.tabId) {
-          // console.log("message.tabId === instance.tabId");
-          document.getElementById("toolkit-table-td-" + message.id).textContent = message.status;
-          document.getElementById("toolkit-table-tr-" + message.id).className = "toolkit-table-crawl-" + (message.status === 200 ? "ok" : "notok");
-          DOM["#toolkit-percentage-value"].textContent = Math.floor(((message.quantity - message.quantityRemaining) / message.quantity) * 100) + "%";
-          updateETA(message.quantityRemaining * (message.seconds + 1), DOM["#toolkit-eta-value"], true);
-          DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
-          port.postMessage({received: true, quantityRemaining: message.quantityRemaining});
-          if (message.quantityRemaining <= 0) {
-            port.disconnect();
-          }
-        }
-      });
-    }
-  }
-
-  // public TODO
-  function crawlWindow() {
-    console.log("crawlWindow instance urls length" + instance.urls.length);
-    DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-    buildToolkitURLsTable(instance.urls, true);
-    DOM["#setup"].className = "display-block";
-    DOM["#toolkit"].className = "display-block";
-    DOM["#toolkit-table"].className = "display-block";
-    DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
-    DOM["#setup-buttons"].className = "display-none";
-    backgroundPage.URLI.Background.deleteInstance(instance.tabId);
-    crawlURLs(instance, "background", instance.toolkitQuantity);
-
-
-    // No execute script...
-    // chrome.tabs.executeScript(instance.tabId, {
-    //   file: "/js/increment-decrement.js",
-    //   runAt: "document_start"
-    // }, function () {
-    //   // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-    //   if (chrome.runtime.lastError) {
-    //     console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-    //   }
-    //   const code = "URLI.IncrementDecrementArray.startCrawl(" +
-    //     JSON.stringify(instance) + ", " +
-    //     "\"content-script\"" + ", " +
-    //     JSON.stringify(instance.toolkitQuantity) + ");";
-    //   chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-    // });
-  }
-
-  function crawlURLs(instance, context, quantityRemaining) {
-    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
-    // const origin = document.location.origin,
-    //   urlOrigin = new URL(instance.url).origin;
-    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if (quantityRemaining > 0) {
-      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
-        const id = instance.toolkitQuantity - quantityRemaining;
-        const status = response.redirected ? "RED" : response.status;
-        const quantity =  instance.toolkitQuantity;
-        document.getElementById("toolkit-table-td-" + id).textContent = status;
-        document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
-        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - quantityRemaining) / quantity) * 100) + "%";
-        updateETA(quantityRemaining * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-        DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
-      }).catch(e => {
-        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
-      });
-    } else {
-      console.log("URLI.IncrementDecrementArray.crawlURLs() - we have exhausted the quantityRemaining");
-    }
-  }
-
-  function stepThruURLs(action, instance) {
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
-    const urlsLength = instance.urls.length;
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
-    // Get the urlProps object from the next or previous position in the urls array and update the instance
-    const urlProps =
-      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
-        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
-    instance.url = urlProps.urlmod;
-    instance.selection = urlProps.selectionmod;
   }
 
   /**
@@ -553,7 +445,6 @@ console.log("crawlWindow message!");
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
       if (toolkitInstance.toolkitTool === "crawl") {
-
         // DOM["#toolkit-percentage-value"].textContent = 0 + "%";
         // updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
         // buildToolkitURLsTable(toolkitInstance.urls, true);
@@ -561,8 +452,6 @@ console.log("crawlWindow message!");
         // toolkitInstance.url = toolkitInstance.urls[0].urlmod;
         // toolkitInstance.selection = toolkitInstance.urls[0].selectionmod;
         // chrome.windows.create({url: URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})), type: "popup", width: 550, height: 550});
-
-
       } else if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
@@ -579,6 +468,61 @@ console.log("crawlWindow message!");
       });
     }
   }
+
+  // public TODO
+  function crawlWindow() {
+    console.log("crawlWindow instance urls length" + instance.urls.length);
+    DOM["#toolkit-percentage-value"].textContent = 0 + "%";
+    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+    buildToolkitURLsTable(instance.urls, true);
+    DOM["#setup"].className = "display-block";
+    DOM["#toolkit"].className = "display-block";
+    DOM["#toolkit-table"].className = "display-block";
+    DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
+    DOM["#setup-buttons"].className = "display-none";
+    crawlURLs(instance, "background", instance.toolkitQuantity);
+    backgroundPage.URLI.Background.deleteInstance(instance.tabId);
+  }
+
+  function crawlURLs(instance, context, quantityRemaining) {
+    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
+    // const origin = document.location.origin,
+    //   urlOrigin = new URL(instance.url).origin;
+    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    if (quantityRemaining > 0) {
+      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
+        setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+        const id = instance.toolkitQuantity - quantityRemaining;
+        const status = response.redirected ? "RED" : response.status;
+        const quantity =  instance.toolkitQuantity;
+        document.getElementById("toolkit-table-td-" + id).textContent = status;
+        document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
+        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - quantityRemaining) / quantity) * 100) + "%";
+        updateETA(quantityRemaining * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+        DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+      }).catch(e => {
+        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+      });
+    } else {
+      console.log("URLI.IncrementDecrementArray.crawlURLs() - we have exhausted the quantityRemaining");
+    }
+  }
+
+  function stepThruURLs(action, instance) {
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
+    const urlsLength = instance.urls.length;
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+    // Get the urlProps object from the next or previous position in the urls array and update the instance
+    const urlProps =
+      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
+        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
+    instance.url = urlProps.urlmod;
+    instance.selection = urlProps.selectionmod;
+  }
+
 
   /**
    * TODO...
@@ -1176,13 +1120,10 @@ console.log("crawlWindow message!");
   // Return Public Functions
   return {
     DOMContentLoaded: DOMContentLoaded,
-    messageListener: messageListener,
-    connectListener: connectListener,
-    crawlWindow: crawlWindow
+    messageListener: messageListener
   };
 }();
 
 // Popup Listeners
 document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);
 chrome.runtime.onMessage.addListener(URLI.Popup.messageListener);
-chrome.runtime.onConnect.addListener(URLI.Popup.connectListener);

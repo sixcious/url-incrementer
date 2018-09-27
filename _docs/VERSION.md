@@ -4,7 +4,7 @@
 - Support for Firefox and Firefox for Android
 - Now uses 0 Chrome Memory when inactive (e.g. when you haven't enabled it for a tab)! (Chrome Only)
 - New Multi-Click Mouse Shortcuts
-- "URLI's Toolkit" - 1. Open a range of up to 100 incremented tabs in your browser or 2. Generate a list of incremented URL links and download them as an HTML file for easy navigation!
+- "URLI's Toolkit" - Crawl up to 1,000 URLs, Open up to 100 incremented tabs, or generate a list of up to 10,000 incremented links!
 - Save URLs - Save your favorite URLs' settings (selection, interval, and so on) so you don't have to go into Setup each time or have URLI take up memory. It's completely optional ("opt-in").
 - Multi-Incrementing - Increment up to 3 parts of the URL individually, simultaneously, or in ranges! Click the Multi (+++) icon near Selection and then click Accept. Additional + - Buttons will show in the UI for each part you selected.
 - Date Time Incrementing - Increment dates and times in URLs like "2018/01/25"
@@ -16,8 +16,8 @@
 - Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Subfolder Support: Save each page's downloads in a separate subfolder that will be incremented (experimental) 3. New Name column in Download Preview Table 4. Nested Iframe support (if the iframe is the same origin)
 - Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
-- Page loading speed improvements for popup and options by rewriting them in valid HTML 5 and replacing CSS @imports with HTML links
-- File Size Dropped 50Kib from ~176KiB to ~125Kib!
+- Page loading speed improvements for popup and options by rewriting them in valid HTML 5, using defer for JS scripts, and replacing CSS @imports with HTML links
+- File Size Dropped 50Kib from ~176KiB to ~126Kib!
 - Internal Code Enhancements: Rewrite to ECMAScript 6 using let, const, and async/await
 
 # What's New in Version 5.8 (9/16/2018)
