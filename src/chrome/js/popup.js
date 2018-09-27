@@ -101,15 +101,14 @@ URLI.Popup = function () {
     items = await EXT.Promisify.getItems();
     localItems = await EXT.Promisify.getItems("local");
     instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
-    if (instance && instance.toolkitEnabled) {
-      crawlWindow(instance);
+    if (instance && instance.toolkitEnabled && instance.toolkitTool === "crawl") {
+      crawlWindow();
       return;
     }
     if (!instance || !instance.enabled) {
       instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
     }
     _ = JSON.parse(JSON.stringify(instance));
-
     for (const button of buttons) {
       button.className = items.popupAnimationsEnabled ? "hvr-grow": "";
       button.style.width = button.style.height = items.popupButtonSize + "px";
@@ -189,14 +188,11 @@ console.log("crawlWindow message!");
   }
 
   // public TODO
-  function crawlWindow(instance_) {
-    console.log("crawlWindow instance urls length" + instance_.urls.length);
-    instance = _ = instance_;
+  function crawlWindow() {
+    console.log("crawlWindow instance urls length" + instance.urls.length);
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-    updateETA(_.toolkitQuantity * (_.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-    buildToolkitURLsTable(_.urls, true);
-    //updateSetup();
-    //updateSetup();
+    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+    buildToolkitURLsTable(instance.urls, true);
     DOM["#setup"].className = "display-block";
     DOM["#toolkit"].className = "display-block";
     DOM["#toolkit-table"].className = "display-block";
@@ -228,7 +224,7 @@ console.log("crawlWindow message!");
     // const origin = document.location.origin,
     //   urlOrigin = new URL(instance.url).origin;
     // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if (/*(context === "background" || (origin === urlOrigin)) && */quantityRemaining > 0) {
+    if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
