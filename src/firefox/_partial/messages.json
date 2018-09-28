@@ -1,4 +1,4 @@
-
+// Replace BROWSER specific messages
   "BROWSER": { "message": "----- BROWSER -----" },
   "browser_shortcuts_h3": { "message": "Firefox Shortcuts" },
   "browser_shortcuts_enable_button": { "message": "Enable Firefox Shortcuts" },

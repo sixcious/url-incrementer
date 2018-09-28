@@ -74,6 +74,7 @@ URLI.Popup = function () {
     DOM["#toolkit-table-crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-cell"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
     DOM["#toolkit-table-crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
     DOM["#toolkit-table-crawl-notok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-notok").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-download-button"].addEventListener("click", function() { const a = document.createElement("a"), blob = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})); a.href = blob; a.download = "url-incremented-links"; a.dispatchEvent(new MouseEvent("click")); setTimeout(function() { URL.revokeObjectURL(blob); }, 1000); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -411,13 +412,12 @@ URLI.Popup = function () {
           const td = document.createElement("td");
           td.id = "toolkit-table-td-" + (count - 2);
           td.className = "toolkit-table-response";
-          td.style = "padding: 0.25rem 0.312rem 0.312rem";
+          td.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
           tr.appendChild(td);
         }
       }
       DOM["#toolkit-table"] = table;
       DOM["#toolkit-table-div"].replaceChild(table, DOM["#toolkit-table-div"].firstChild);
-      DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([table.outerHTML], {"type": "text/html"}));
       DOM["#toolkit-table-crawl"].className = crawl ? "display-block" : "display-none";
       DOM["#toolkit-table-outer"].className = "display-block fade-in";
     }
@@ -445,13 +445,7 @@ URLI.Popup = function () {
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
       if (toolkitInstance.toolkitTool === "crawl") {
-        // DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-        // updateETA(toolkitInstance.toolkitQuantity * (toolkitInstance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-        // buildToolkitURLsTable(toolkitInstance.urls, true);
-        // buildToolkitURLsTable(toolkitInstance.urls, false);
-        // toolkitInstance.url = toolkitInstance.urls[0].urlmod;
-        // toolkitInstance.selection = toolkitInstance.urls[0].selectionmod;
-        // chrome.windows.create({url: URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})), type: "popup", width: 550, height: 550});
+        //
       } else if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
@@ -494,13 +488,16 @@ URLI.Popup = function () {
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
         const id = instance.toolkitQuantity - quantityRemaining;
-        const status = response.redirected ? "RED" : response.status;
+        const status = response.redirected ? "RED" : response.status === 200 ? "OK" : response.status;
         const quantity =  instance.toolkitQuantity;
-        document.getElementById("toolkit-table-td-" + id).textContent = status;
-        document.getElementById("toolkit-table-tr-" + id).className = "toolkit-table-crawl-" + (status === 200 ? "ok" : "notok");
+        const tr = document.getElementById("toolkit-table-tr-" + id);
+        const td = document.getElementById("toolkit-table-td-" + id);
+        tr.className = "toolkit-table-crawl-" + (status === "OK" ? "ok" : "notok");
+        td.textContent = status;
+        td.style.color = status === "OK" ? "#05854D" : "#E6003E";
         DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - quantityRemaining) / quantity) * 100) + "%";
         updateETA(quantityRemaining * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-        DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+        //DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
       }).catch(e => {
         console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
       });

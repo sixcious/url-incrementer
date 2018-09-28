@@ -238,7 +238,9 @@ div.checkbox  img {
   margin-top: 1em;
 }
 
-
+#toolkit-table-download-button {
+  cursor: pointer;
+}
 
 #toolkit-percentage {
   display: inline-block;
