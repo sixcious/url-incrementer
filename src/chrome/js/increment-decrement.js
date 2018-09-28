@@ -51,32 +51,24 @@ URLI.IncrementDecrement = function () {
             mafir = refir.exec(url),
             macus = recus ? recus.exec(url) : undefined;
       console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
-      selectionProps =
-        preference === "prefixes" ?
-          mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
-          mater ? {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1} :
-          mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
-          malas ? {selection: malas[0], selectionStart: malas.index} :
-          {selection: "", selectionStart: -1} :
-        preference === "lastnumber" ?
-          malas ? {selection: malas[0], selectionStart: malas.index} :
-          {selection: "", selectionStart: -1} :
-        preference === "firstnumber" ?
-          mafir ? {selection: mafir[0], selectionStart: mafir.index} :
-          {selection: "", selectionStart: -1} :
-        preference === "custom" ?
-          macus && macus[custom.group] ? {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index} :
-          mapag ? {selection: mapag[0].substring(5), selectionStart: mapag.index + 5} :
-          mater ? {selection: mater[0].substring(mater[1].length), selectionStart: mater.index + mater[1].length} :
-          mapre ? {selection: mapre[0].substring(1), selectionStart: mapre.index + 1} :
-          malas ? {selection: malas[0], selectionStart: malas.index} :
-          {selection: "", selectionStart: -1} :
-        {selection: "", selectionStart: -1};
+      if (preference === "custom") {
+        if (macus && macus[custom.group]) { selectionProps = {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index}; }
+      }
+      if (preference === "prefixes" || !selectionProps) {
+        if (mapag) { selectionProps = {selection: mapag[0].substring(5), selectionStart: mapag.index + 5}; }
+        else if (mater) { selectionProps = {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1}; }
+        else if (mapre) { selectionProps = {selection: mapre[0].substring(1), selectionStart: mapre.index + 1}; }
+      }
+      if (preference === "lastnumber" || !selectionProps) {
+        if (malas) { selectionProps = {selection: malas[0], selectionStart: malas.index}; }
+      }
+      if (preference === "firstnumber" || !selectionProps) {
+        if (mafir) { selectionProps = {selection: mafir[0], selectionStart: mafir.index}; }
+      }
     } catch(e) {
       console.log("URLI.IncrementDecrement.findSelection() - exception encountered:" + e);
-      selectionProps = {selection: "", selectionStart: -1};
     }
-    return selectionProps;
+    return selectionProps || {selection: "", selectionStart: -1};
   }
 
   // Called by Popup and SaveURLs TODO
