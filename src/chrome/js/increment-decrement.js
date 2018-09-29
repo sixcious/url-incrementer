@@ -13,34 +13,34 @@ URLI.IncrementDecrement = function () {
    * Finds a selection in the url to increment or decrement depending on the preference:
    * "prefixes" (e.g. page=1 /1 =1), "lastnumber", "firstnumber", or "custom".
    *
-   * @param url        the url to find the selection in
-   * @param preference the preferred strategy to use to find the selection
-   * @param custom     the object with custom regular expression parameters
+   * @param url             the url to find the selection in
+   * @param preference      the preferred strategy to use to find the selection
+   * @param selectionCustom the object with custom regular expression parameters
    * @returns {selection, selectionStart} or an empty selection if no selection found
    * @public
    */
-  function findSelection(url, preference, custom) {
+  function findSelection(url, preference, selectionCustom) {
     let selectionProps;
     try {
-      if (preference === "custom" && custom) {
-        const macus = new RegExp(custom.pattern, custom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
-        if (macus && macus[custom.group]) { selectionProps = {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index}; }
+      if (preference === "custom" && selectionCustom) {
+        const custom = new RegExp(selectionCustom.pattern, selectionCustom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
+        if (custom && custom[selectionCustom.group]) { selectionProps = {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
       }
       if (preference === "prefixes" || (!selectionProps && preference === "custom")) {
-        const mapag = /page=\d+/i.exec(url); // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/i
-        const mater = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // RegExp to find the last number with a common terms like "id=" TODO: replace with lookbehind regex /(?<=p|id|next)=(\d+)/i
-        const mapre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
-        if (mapag) { selectionProps = {selection: mapag[0].substring(5), selectionStart: mapag.index + 5}; }
-        else if (mater) { selectionProps = {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1}; }
-        else if (mapre) { selectionProps = {selection: mapre[0].substring(1), selectionStart: mapre.index + 1}; }
+        const page = /page=\d+/i.exec(url); // page= TODO: Lookbehind /(?<=page)=(\d+)/i
+        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= TODO: Lookbehind /(?<=p|id|next)=(\d+)/i
+        const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
+        if (page) { selectionProps = {selection: page[0].substring(5), selectionStart: page.index + 5}; }
+        else if (terms) { selectionProps = {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
+        else if (prefixes) { selectionProps = {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
       }
       if (preference === "lastnumber" || (!selectionProps && preference !== "firstnumber")) {
-        const malas = /\d+(?!.*\d+)/.exec(url);
-        if (malas) { selectionProps = {selection: malas[0], selectionStart: malas.index}; }
+        const last = /\d+(?!.*\d+)/.exec(url);
+        if (last) { selectionProps = {selection: last[0], selectionStart: last.index}; }
       }
       if (preference === "firstnumber" || !selectionProps) {
-        const mafir = /\d+/.exec(url);
-        if (mafir) { selectionProps = {selection: mafir[0], selectionStart: mafir.index}; }
+        const first = /\d+/.exec(url);
+        if (first) { selectionProps = {selection: first[0], selectionStart: first.index}; }
       }
     } catch(e) {
       console.log("URLI.IncrementDecrement.findSelection() - exception encountered:" + e);
@@ -126,7 +126,7 @@ URLI.IncrementDecrement = function () {
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
     console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     incrementDecrement(action, instance);
-    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+    // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (errorSkipRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
@@ -141,7 +141,9 @@ URLI.IncrementDecrement = function () {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
-          URLI.Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
+          if (!instance.autoEnabled) {
+            URLI.Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
+          }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
           incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
         } else {
@@ -151,7 +153,9 @@ URLI.IncrementDecrement = function () {
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
-        URLI.Background.setBadge(instance.tabId, "skip", true, "ERR");
+        if (!instance.autoEnabled) {
+          URLI.Background.setBadge(instance.tabId, "skip", true, "ERR");
+        }
         // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
       });

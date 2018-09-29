@@ -310,13 +310,6 @@ URLI.Background = function () {
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
         }
         break;
-      case "setBadge":
-        if (request.instance && !request.instance.autoEnabled) {
-          setBadge(request.tabId, request.badge, request.temporary, request.text, request.backgroundColor);
-        }
-        break;
-      default:
-        break;
     }
   }
 
