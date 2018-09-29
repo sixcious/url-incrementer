@@ -10,59 +10,36 @@ var URLI = URLI || {};
 URLI.IncrementDecrement = function () {
 
   /**
-   * Finds a selection in the url to increment or decrement depending on the preference.
-   *
-   * "Prefixes" Preference:
-   * Looks for terms and common prefixes that come before numbers, such as
-   * page=, pid=, p=, next=, =, and /. Example URLs with prefixes (= and /):
-   * https://www.google.com?page=1234
-   * https://www.google.com/1234
-   *
-   * "Last Number" Preference:
-   * Uses the last number in the url.
-   *
-   * "First Number": Preference:
-   * Uses the first number in the url.
-   *
-   * If no numbers exist in the URL, returns an empty selection.
+   * Finds a selection in the url to increment or decrement depending on the preference:
+   * "prefixes" (e.g. page=1 /1 =1), "lastnumber", "firstnumber", or "custom".
    *
    * @param url        the url to find the selection in
    * @param preference the preferred strategy to use to find the selection
-   * @param custom     the JSON object with custom regular expression parameters
-   * @returns JSON object {selection, selectionStart}
+   * @param custom     the object with custom regular expression parameters
+   * @returns {selection, selectionStart} or an empty selection if no selection found
    * @public
    */
   function findSelection(url, preference, custom) {
     let selectionProps;
     try {
-      // Regular Expressions:
-      // Firefox: Lookbehind is not supported yet in FF as of Version 61 (Supported in Chrome 62+) so using convoluted alternatives, lookbehinds are in comments below
-      const repag = /page=\d+/i, // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/i
-            reter = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i, // RegExp to find the last number with a common terms like "id=" TODO: replace with lookbehind regex /(?<=p|id|next)=(\d+)/i
-            repre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/, // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
-            relas = /\d+(?!.*\d+)/, // RegExg to find the last number in the url
-            refir = /\d+/, // RegExg to find the first number in the url
-            recus = preference === "custom" && custom ? new RegExp(custom.pattern, custom.flags) : undefined, // RegExp Custom (if set by user) TODO: Validate custom regex with current url for alphanumeric selection
-      // Matches:
-            mapag = repag.exec(url),
-            mater = reter.exec(url),
-            mapre = repre.exec(url),
-            malas = relas.exec(url),
-            mafir = refir.exec(url),
-            macus = recus ? recus.exec(url) : undefined;
-      console.log("URLI.IncrementDecrement.findSelection() - matches: pag=" + mapag + ", ter=" + mater + ", pre=" + mapre + ", las=" + malas + ", fir=" + mafir + ", cus=" + macus);
-      if (preference === "custom") {
+      if (preference === "custom" && custom) {
+        const macus = new RegExp(custom.pattern, custom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
         if (macus && macus[custom.group]) { selectionProps = {selection: macus[custom.group].substring(custom.index), selectionStart: macus.index + custom.index}; }
       }
-      if (preference === "prefixes" || !selectionProps) {
+      if (preference === "prefixes" || (!selectionProps && preference === "custom")) {
+        const mapag = /page=\d+/i.exec(url); // RegExp to find a number with "page=" TODO: replace with lookbehind regex /(?<=page)=(\d+)/i
+        const mater = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // RegExp to find the last number with a common terms like "id=" TODO: replace with lookbehind regex /(?<=p|id|next)=(\d+)/i
+        const mapre = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // RegExp to find the last number with a prefix (= or /) TODO: Don't capture the = or / so substring(1) is no longer needed
         if (mapag) { selectionProps = {selection: mapag[0].substring(5), selectionStart: mapag.index + 5}; }
         else if (mater) { selectionProps = {selection: mater[0].substring(mater[1].length + 1), selectionStart: mater.index + mater[1].length + 1}; }
         else if (mapre) { selectionProps = {selection: mapre[0].substring(1), selectionStart: mapre.index + 1}; }
       }
-      if (preference === "lastnumber" || !selectionProps) {
+      if (preference === "lastnumber" || (!selectionProps && preference !== "firstnumber")) {
+        const malas = /\d+(?!.*\d+)/.exec(url);
         if (malas) { selectionProps = {selection: malas[0], selectionStart: malas.index}; }
       }
       if (preference === "firstnumber" || !selectionProps) {
+        const mafir = /\d+/.exec(url);
         if (mafir) { selectionProps = {selection: mafir[0], selectionStart: mafir.index}; }
       }
     } catch(e) {
@@ -143,17 +120,14 @@ URLI.IncrementDecrement = function () {
    *
    * @param action               the action to perform (increment or decrement)
    * @param instance             the instance containing the URL and parameters used to increment or decrement
-   * @param context              the context this method is running in ("background" or "content-script")
    * @param errorSkipRemaining   the number of times left to skip while performing this action
    * @public
    */
-  function incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining) {
+  function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
     console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
-    const origin = document.location.origin,
-          urlOrigin = new URL(instance.url).origin;
     incrementDecrement(action, instance);
     // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
-    if ((context === "background" || (origin === urlOrigin)) && errorSkipRemaining > 0) {
+    if (errorSkipRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
@@ -167,34 +141,24 @@ URLI.IncrementDecrement = function () {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
-          const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": response.redirected ? "RED" : response.status + "", "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-          else { chrome.runtime.sendMessage(request); }
+          URLI.Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-          incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
+          incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
         } else {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-          if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-          else { chrome.runtime.sendMessage(request);}
+          URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {});
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
-        // const request1 = {greeting: "setBadgeSkipErrors", "errorCode": "ERR", "instance": instance};
-        // const request2 = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-        // if (context === "background") { URLI.Background.messageListener(request1, { "tab": { "id": instance.tabId } }, function() {}); URLI.Background.messageListener(request2, { "tab": { "id": instance.tabId } }, function() {}); }
-        // else { chrome.runtime.sendMessage(request1); chrome.runtime.sendMessage(request2); }
-        const request = { "greeting": "setBadge", "badge": "skip", "temporary": true, "text": "ERR", "instance": instance};
-        if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-        else { chrome.runtime.sendMessage(request); }
+        URLI.Background.setBadge(instance.tabId, "skip", true, "ERR");
         // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-        incrementDecrementErrorSkip(action, instance, context, errorSkipRemaining - 1);
+        incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
       });
     } else {
-      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - " + (context === "content-script" && origin !== urlOrigin ? "the instance's URL origin does not match this page's URL origin" : "we have exhausted the errorSkip attempts") + ". aborting and updating tab ");
+      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
       const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-      if (context === "background") { URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {}); }
-      else { chrome.runtime.sendMessage(request); }
+      URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {});
     }
   }
 

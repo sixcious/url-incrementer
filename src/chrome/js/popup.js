@@ -71,9 +71,10 @@ URLI.Popup = function () {
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
-    DOM["#toolkit-table-crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-cell"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-crawl-notok-input"].addEventListener("change", function() { const style = this.checked ? "none" : "table-row"; document.querySelectorAll(".toolkit-table-crawl-notok").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-error").forEach(el => el.style.display = style); });
+    DOM["#toolkit-table-crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-redirected").forEach(el => el.style.display = style); });
     DOM["#toolkit-table-download-button"].addEventListener("click", function() { const a = document.createElement("a"), blob = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})); a.href = blob; a.download = "url-incremented-links"; a.dispatchEvent(new MouseEvent("click")); setTimeout(function() { URL.revokeObjectURL(blob); }, 1000); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
@@ -467,59 +468,40 @@ URLI.Popup = function () {
   function crawlWindow() {
     console.log("crawlWindow instance urls length" + instance.urls.length);
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds), DOM["#toolkit-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
     DOM["#setup"].className = "display-block";
     DOM["#toolkit"].className = "display-block";
     DOM["#toolkit-table"].className = "display-block";
     DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
     DOM["#setup-buttons"].className = "display-none";
-    crawlURLs(instance, "background", instance.toolkitQuantity);
+    crawlURLs(instance.toolkitQuantity);
     backgroundPage.URLI.Background.deleteInstance(instance.tabId);
   }
 
-  function crawlURLs(instance, context, quantityRemaining) {
-    // console.log("URLI.IncrementDecrementArray.crawlURLs() - quantityRemaining=" + quantityRemaining);
-    // const origin = document.location.origin,
-    //   urlOrigin = new URL(instance.url).origin;
-    // Unless the context is background (e.g. Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
+  function crawlURLs(quantityRemaining) {
+    const quantity =  instance.toolkitQuantity;
+    const id = quantity - quantityRemaining;
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        setTimeout(function() { stepThruURLs("increment", instance); crawlURLs(instance, context, quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
-        const id = instance.toolkitQuantity - quantityRemaining;
-        const status = response.redirected ? "RED" : response.status === 200 ? "OK" : response.status;
-        const quantity =  instance.toolkitQuantity;
+      fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         const tr = document.getElementById("toolkit-table-tr-" + id);
         const td = document.getElementById("toolkit-table-td-" + id);
-        tr.className = "toolkit-table-crawl-" + (status === "OK" ? "ok" : "notok");
+        const status = response.redirected ? "Redirected" : response.status === 200 ? "OK" : response.status;
+        tr.className = "toolkit-table-crawl-" + (status === "Redirected" ? "redirected" : status === "OK" ? "ok" : "error");
+        td.style.color = status === "Redirected" ? "#663399" : status === "OK" ? "#05854D" : "#E6003E";
         td.textContent = status;
-        td.style.color = status === "OK" ? "#05854D" : "#E6003E";
-        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - quantityRemaining) / quantity) * 100) + "%";
-        updateETA(quantityRemaining * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
-        //DOM["#toolkit-table-download"].href = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"}));
+        instance.toolkitQuantityRemaining--;
+        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
+        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds), DOM["#toolkit-eta-value"], true);
       }).catch(e => {
         console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
       });
+      setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
     } else {
       console.log("URLI.IncrementDecrementArray.crawlURLs() - we have exhausted the quantityRemaining");
     }
   }
-
-  function stepThruURLs(action, instance) {
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
-    const urlsLength = instance.urls.length;
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
-    // Get the urlProps object from the next or previous position in the urls array and update the instance
-    const urlProps =
-      (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
-        instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
-    instance.url = urlProps.urlmod;
-    instance.selection = urlProps.selectionmod;
-  }
-
 
   /**
    * TODO...
@@ -1011,15 +993,14 @@ URLI.Popup = function () {
       _.tabsLength = tabs ? tabs.length : 0;
       _.toolkitTool = DOM["#toolkit-tool-crawl-input"].checked ? DOM["#toolkit-tool-crawl-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
-      _.toolkitQuantity = +DOM["#toolkit-quantity-input"].value;
+      _.toolkitQuantity = _.toolkitQuantityRemaining = +DOM["#toolkit-quantity-input"].value;
       _.toolkitSeconds = +DOM["#toolkit-seconds-input"].value
     }
     if (caller === "accept") {
       // Auto:
       _.autoEnabled = DOM["#auto-toggle-input"].checked;
       _.autoAction = DOM["#auto-action-select"].value;
-      _.autoTimes = _.customURLs && _.urls && _.urls.length > 0 ? _.urls.length : +DOM["#auto-times-input"].value;
-      _.autoTimesOriginal = _.customURLs && _.urls && _.urls.length > 0 ? _.urls.length : +DOM["#auto-times-input"].value; // store the original autoTimes for reference as we are going to decrement autoTimes
+      _.autoTimes = _.autoTimesOriginal = _.customURLs && _.urls && _.urls.length > 0 ? _.urls.length : +DOM["#auto-times-input"].value; // store the original autoTimes for reference as we are going to decrement autoTimes
       _.autoSeconds = +DOM["#auto-seconds-input"].value;
       _.autoWait = DOM["#auto-wait-input"].checked;
       _.autoBadge = DOM["#auto-badge-input"].checked ? "times" : "";
@@ -1077,6 +1058,7 @@ URLI.Popup = function () {
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
         _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
+        _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
         (_.toolkitTool === "crawl" || _.toolkitTool === "links") && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") :
         _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") : ""
       ];

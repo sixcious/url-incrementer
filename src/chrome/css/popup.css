@@ -242,21 +242,30 @@ div.checkbox  img {
   cursor: pointer;
 }
 
-#toolkit-percentage {
+#toolkit-percentage, #toolkit-eta {
   display: inline-block;
-  color: var(--error-color);
-  font-weight: bold;
-}
-
-#toolkit-eta {
-  display: inline-block;
-  color: var(--error-color);
+  color: var(--auto-color);
   font-weight: bold;
 }
 
 #toolkit-checkboxes {
-  display: inline-block;
+  font-weight: bold;
+}
 
+#toolkit-checkboxes label {
+  margin-right: 1em;
+}
+
+#toolkit-table-crawl-ok-label {
+  color: var(--success-color);
+}
+
+#toolkit-table-crawl-error-label {
+  color: var(--error-color);
+}
+
+#toolkit-table-crawl-redirected-label {
+  color: var(--download-color);
 }
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {

@@ -61,7 +61,7 @@ URLI.Action = function () {
         // Error Skipping:
         if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
           (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
-          (!(caller === "popupClickActionButton" || caller === "auto" || caller === "externalExtension") || items.permissionsEnhancedMode)) {
+          (items.permissionsEnhancedMode)) {
           actionPerformed = incrementDecrementErrorSkip(action, instance, items);
         }
         // Regular:
@@ -106,7 +106,7 @@ URLI.Action = function () {
    */
   function incrementDecrement(action, instance) {
     let actionPerformed = false;
-    // If we didn't find a selection, we can't increment or decrement
+    // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       URLI.IncrementDecrement.incrementDecrement(action, instance);
@@ -132,28 +132,7 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      console.log("URLI.Action.incrementDecrementSkipErrors() - performing error skipping, about to execute increment-decrement.js script...");
-      if (items.permissionsEnhancedMode) {
-        URLI.IncrementDecrement.incrementDecrementErrorSkip(action, instance, "background", instance.errorSkip);
-      } else {
-        chrome.tabs.executeScript(instance.tabId, {
-          file: "/js/increment-decrement.js",
-          runAt: "document_start"
-        }, function () {
-          // This covers a very rare case where the user might be trying to increment the domain and where we lose permissions to execute the script. Fallback to doing a normal increment/decrement operation
-          if (chrome.runtime.lastError) {
-            console.log("URLI.Action.incrementDecrementSkipErrors() - chrome.runtime.lastError.message:" + chrome.runtime.lastError.message);
-            return incrementDecrement(action, instance);
-          }
-          const code = "URLI.IncrementDecrement.incrementDecrementErrorSkip(" +
-            JSON.stringify(action) + ", " +
-            JSON.stringify(instance) + ", " +
-            "\"content-script\"" + ", " +
-            JSON.stringify(instance.errorSkip) + ");";
-          // No callback because this will be executing async code and then sending a message back to the background
-          chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_start"});
-        });
-      }
+      URLI.IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
     }
     return actionPerformed;
   }
@@ -288,28 +267,22 @@ URLI.Action = function () {
    * @private
    */
   function toolkit(instance) {
-    let actionPerformed = false;
+    let actionPerformed = true;
     switch (instance.toolkitTool) {
+      case "crawl":
+        if (chrome.windows && chrome.windows.create) { // Firefox Android: chrome.windows not supported
+          chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
+            instance.tabId = window.tabs[0].id;
+            URLI.Background.setInstance(instance.tabId, instance);
+          });
+        } else {
+          // TODO
+        }
+        break;
       case "tabs":
         for (const url of instance.urls) {
           chrome.tabs.create({"url": url.urlmod, "active": false});
         }
-        actionPerformed = true;
-        break;
-      case "links":
-        actionPerformed = true;
-        break;
-      // Window Crawl:
-      case "crawl":
-        chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
-          instance.tabId = window.tabs[0].id;
-          // instance.url = instance.urls[0].urlmod;
-          // instance.selection = instance.urls[0].selectionmod;
-          URLI.Background.setInstance(instance.tabId, instance);
-        });
-        actionPerformed = true;
-        break;
-      default:
         break;
     }
     return actionPerformed;
