@@ -220,11 +220,11 @@ input[type="number"].mouse-clicks-input {
   margin-top: 2em;
 }
 
-#saved-urls-partial, #saved-urls-partial-buttons, #saved-urls-wildcard, #saved-urls-wildcard-buttons {
+#saved-urls-wildcard, #saved-urls-wildcard-buttons {
   margin-top: 1em;
 }
 
-#saved-urls-buttons button:not(:last-child), #saved-urls-partial-buttons button:not(:last-child), #saved-urls-wildcard-buttons button:not(:last-child) {
+#saved-urls-buttons button:not(:last-child), #saved-urls-wildcard-buttons button:not(:last-child) {
   margin-right: 1em;
 }
 

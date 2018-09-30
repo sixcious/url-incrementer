@@ -9,10 +9,10 @@ var URLI = URLI || {};
 
 URLI.SaveURLs = function () {
 
-  const URL_SEPARATOR = "-_-";
+  //const URL_SEPARATOR = "-_-"; TODO use this?
 
   async function addURL(instance) {
-    console.log("URLI.SaveURLs.saveURL() - saving a URL to local storage...");
+    console.log("URLI.SaveURLs.addURL() - saving a URL to local storage...");
     // Part 1: Check if this URL has already been saved, if it has remove the existing save
     const saves = await deleteURL(instance.url, "addURL");
     // Part 2: Put this URL into the saves array and save it to local storage
@@ -22,7 +22,7 @@ URLI.SaveURLs = function () {
           hash = await URLI.Cryptography.hash(url1 + url2, salt);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     saves.unshift({
-      "type": "exact", "hash": hash, "salt": salt, "selectionEnd": url2.length, /*"url2length": url2.length,*/
+      "type": "url", "hash": hash, "salt": salt, "selectionEnd": url2.length, /*"url2length": url2.length,*/
       "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
       "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom, "errorSkip": instance.errorSkip
     });
@@ -41,7 +41,7 @@ URLI.SaveURLs = function () {
         }
       }
     }
-    if (caller === "addURL" || caller === "addPartialURL") {
+    if (caller === "addURL" || caller === "addWildcard") {
       return saves;
     } else {
       chrome.storage.local.set({"saves": saves});
@@ -49,7 +49,7 @@ URLI.SaveURLs = function () {
   }
 
   async function matchesURL(save, url) {
-    return await save.type === "exact" ? matchesExactURL(save, url) : save.type === "partial" ? matchesPartialURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : "";
+    return await save.type === "url" ? matchesExactURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : "";
   }
 
   /**
@@ -68,13 +68,6 @@ URLI.SaveURLs = function () {
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
     const matches = hash === save.hash && URLI.IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
     return { "matches": matches, "selection": { "selection": selection, "selectionStart": save.selectionStart } };
-  }
-
-  async function matchesPartialURL(save, url) {
-    const urlp = url.substring(0, save.urllength);
-    const hash = await URLI.Cryptography.hash(urlp, save.salt);
-    const matches = hash === save.hash;
-    return { "matches": matches, "selection": "" }
   }
 
   async function matchesWildcard(save, url) {

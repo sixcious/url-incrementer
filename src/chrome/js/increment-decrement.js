@@ -148,8 +148,11 @@ URLI.IncrementDecrement = function () {
           incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
         } else {
           console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-          URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {});
+          chrome.tabs.update(instance.tabId, {url: instance.url});
+          if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+            URLI.Background.setInstance(instance.tabId, instance);
+          }
+          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         }
       }).catch(e => {
         console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
@@ -161,8 +164,11 @@ URLI.IncrementDecrement = function () {
       });
     } else {
       console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
-      const request = {greeting: "incrementDecrementSkipErrors", "instance": instance};
-      URLI.Background.messageListener(request, { "tab": { "id": instance.tabId } }, function() {});
+      chrome.tabs.update(instance.tabId, {url: instance.url});
+      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+        URLI.Background.setInstance(instance.tabId, instance);
+      }
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
   }
 
@@ -382,7 +388,7 @@ URLI.IncrementDecrementDate = function () {
     const regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
     const matches = dateFormat.match(regexp);
     let delimiters = "";
-    for (let match of matches) {
+    for (const match of matches) {
       if (/^(?![ymMdhisl])/.exec(match)) {
         delimiters += (delimiters ? "|" : "") + match;
       }
@@ -623,7 +629,7 @@ URLI.IncrementDecrementArray = function () {
 
   function buildCustomURLs(instance) {
     const urls = [];
-    for (let url of instance.urls) {
+    for (const url of instance.urls) {
       // Only need to construct an object the first time TODO: Should we construct the objects this from the get-go in popup's instance.urls array so we don't have to do this?
       if (instance.autoRepeatCount === 0) {
         urls.push({"urlmod": url, "selectionmod": ""});

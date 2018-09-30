@@ -77,7 +77,7 @@ URLI.Permissions = function () {
     // Script:
     if (chrome.declarativeContent && PERMISSIONS[permission].script) {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
-        for (let rule of rules) {
+        for (const rule of rules) {
           if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
             console.log("URLI.Permissions.removePermissions() - removing rule " + rule);
             chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
@@ -139,7 +139,7 @@ URLI.Permissions = function () {
   function checkDeclarativeContent() {
     chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
       let shortcutsjsRule = false;
-      for (let rule of rules) {
+      for (const rule of rules) {
         if (rule.actions[0].js[0] === "js/shortcuts.js") {
           console.log("URLI.Permissions.checkDeclarativeContent() - internal shortcuts enabled, found shortcuts.js rule!");
           shortcutsjsRule = true;

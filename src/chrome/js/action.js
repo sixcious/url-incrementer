@@ -149,7 +149,6 @@ URLI.Action = function () {
     let actionPerformed = true;
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "URLI.NextPrev.findNextPrevURL(" +
-        JSON.stringify(action) + ", " +
         JSON.stringify(action === "next" ? items.nextPrevKeywordsNext : items.nextPrevKeywordsPrev) + "," +
         JSON.stringify(items.nextPrevLinksPriority) + ", " +
         JSON.stringify(items.nextPrevSameDomainPolicy) + ");";
@@ -337,7 +336,7 @@ URLI.Action = function () {
                 //     return download.url !== selected;
                 //   });
                 // });
-                // for (let selected of instance.downloadSelecteds) {
+                // for (const selected of instance.downloadSelecteds) {
                 //   downloads.push({"url": selected});
                 // }
                 downloads.push(...instance.downloadMSelecteds);
@@ -354,7 +353,7 @@ URLI.Action = function () {
               //downloadPreviewCache[otherId] = downloadPreviewCache[otherId].filter((object, index) => index === downloadPreviewCache[otherId].findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
               //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
             }
-            for (let download of downloads) {
+            for (const download of downloads) {
               console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
               const params = instance.downloadSubfolder && download.filenameAndExtension && download.filename && download.extension ? { url: download.url, filename: instance.downloadSubfolder + "/" + download.filenameAndExtension } : { url: download.url};
               chrome.downloads.download(params, function(downloadId) {

@@ -599,7 +599,7 @@ URLI.Popup = function () {
    */
   function buildDownloadPreviewCheckboxes(properties, checkedProperties) {
     const div = document.createElement("div");
-    for (let property of properties) {
+    for (const property of properties) {
       const label = document.createElement("label");
       div.appendChild(label);
       const input = document.createElement("input");
@@ -675,10 +675,10 @@ URLI.Popup = function () {
         th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
         const tbody = document.createElement("tbody"); table.appendChild(tbody);
         let count = 1;
-        for (let selected of selecteds) {
+        for (const selected of selecteds) {
           tbody.appendChild(buildDownloadPreviewTR(selected, true, count++));
         }
-        for (let unselected of unselecteds) {
+        for (const unselected of unselecteds) {
           tbody.appendChild(buildDownloadPreviewTR(unselected, false, count++));
         }
         DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
@@ -786,7 +786,7 @@ URLI.Popup = function () {
   function translateCheckboxValuesToHiddenInput(selectorInputs, generatedId) {
     const inputs = document.querySelectorAll(selectorInputs);
     let generated = "";
-    for (let input of inputs) {
+    for (const input of inputs) {
       if (input.checked) {
         generated += (generated !== "" ? "," : "") + input.value;
       }
@@ -807,7 +807,7 @@ URLI.Popup = function () {
     } else {
       let elements = document.getElementsByClassName(this.value);
       // let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
-      for (let element of elements) {
+      for (const element of elements) {
         element.style.display = this.checked ? "table-cell" : "none";
       }
     }
@@ -895,7 +895,7 @@ URLI.Popup = function () {
         // Save URL
         if (instance.saveURL) {
           backgroundPage.URLI.SaveURLs.addURL(instance); // TODO
-          instance.saveType = "exact";
+          instance.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled && items.popupSettingsCanOverwrite) {
@@ -1045,6 +1045,7 @@ URLI.Popup = function () {
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
+        _.errorSkip > 0 && !items.permissionsEnhancedMode && caller !== "toolkit" ? chrome.i18n.getMessage("error_skip_permissions_error") :
         _.errorSkip < 0 || _.errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
       ];
       e.incrementDecrementErrorsExist = e.incrementDecrementErrors.some(error => error !== "");
@@ -1085,7 +1086,7 @@ URLI.Popup = function () {
     if (caller === "accept") {
       // Download Errors
       e.downloadErrors = [
-        _.downloadEnabled && !items.permissionsDownload ? chrome.i18n.getMessage("download_enabled_error") : "",
+        _.downloadEnabled && !items.permissionsDownload ? chrome.i18n.getMessage("download_permissions_error") : "",
         _.downloadSubfolder && !/^[a-z0-9_\- \\.]+$/i.test(_.downloadSubfolder) ? chrome.i18n.getMessage("download_subfolder_error") : ""
       ];
       e.downloadErrorsExist = e.downloadErrors.some(error => error !== "");

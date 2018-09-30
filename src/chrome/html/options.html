@@ -187,24 +187,7 @@
       <div id="saved-urls-select-div"><div></div></div>
       <div id="saved-urls-buttons">
         <button id="saved-urls-delete-button" data-i18n="textContent"></button>
-        <button id="saved-urls-partial-add-button" data-i18n="textContent"></button>
         <button id="saved-urls-wildcard-add-button" data-i18n="textContent"></button>
-      </div>
-      <div id="saved-urls-partial" class="display-none">
-        <p id="saved-urls-partial-instructions-p" data-i18n="textContent"></p>
-        <div class="row">
-          <div class="column">
-            <label id="saved-urls-partial-url-label" for="saved-urls-partial-url-textarea" data-i18n="textContent" class="display-block"></label>
-          </div>
-          <div class="column">
-            <textarea id="saved-urls-partial-url-textarea" spellcheck="false" data-i18n="placeholder"></textarea>
-            <div id="saved-urls-partial-buttons">
-              <button id="saved-urls-partial-save-button" data-i18n="textContent"></button>
-              <button id="saved-urls-partial-cancel-button" data-i18n="textContent"></button>
-              <span id="saved-urls-partial-errors"></span>
-            </div>
-          </div>
-        </div>
       </div>
       <div id="saved-urls-wildcard" class="display-none">
         <p id="saved-urls-wildcard-instructions-p" data-i18n="textContent"></p>
@@ -431,7 +414,10 @@
                 <input id="error-codes-custom-input" type="text" placeholder="e.g. 404, 302, 500" spellcheck="false"/>
               </div>
             </div>
-            <div id="error-skip-disclaimer" class="note" data-i18n="textContent"></div>
+            <p class="note">
+              <img src="../img/exclamation-circle.png" alt="" width="16" height="16"/>
+              <span id="error-skip-disclaimer" class="note" data-i18n="textContent"></span>
+            </p>
           </div>
         </div>
       </div>

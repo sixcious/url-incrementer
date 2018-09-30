@@ -50,17 +50,17 @@ URLI.Download = URLI.Download || function () {
     switch (strategy) {
       case "all":
       case "extensions": // Noticed issues with using a selectorbuilder based on the extensions so go with all for this for now
-        for (let urlattribute of URL_ATTRIBUTES) {
+        for (const urlattribute of URL_ATTRIBUTES) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
         }
         break;
       case "tags":
-        for (let tag of tags) {
+        for (const tag of tags) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + tag;
         }
         break;
       case "attributes":
-        for (let attribute of attributes) {
+        for (const attribute of attributes) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + attribute + "]";
         }
         break;
@@ -120,13 +120,13 @@ URLI.Download = URLI.Download || function () {
     const elements = document.querySelectorAll(selector),
           origin = new URL(document.location.href).origin;
     console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
-    for (let element of elements) {
-      for (let attribute of URL_ATTRIBUTES) {
+    for (const element of elements) {
+      for (const attribute of URL_ATTRIBUTES) {
         if (element[attribute]) {
           // The style attribute might contain multiple URLs
           if (attribute && attribute.toLowerCase() === "style") {
             const urls = extractURLsFromStyle(element.style);
-            for (let url of urls) {
+            for (const url of urls) {
               buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
             }
           }
@@ -202,7 +202,7 @@ URLI.Download = URLI.Download || function () {
   function findProperties(items, property) {
     const properties = new Set();
     if (items) {
-      for (let item of items) {
+      for (const item of items) {
         if (item && item[property]) {
           properties.add(item[property]);
         }
@@ -223,7 +223,7 @@ URLI.Download = URLI.Download || function () {
   function doesIncludeOrExclude(url, terms, doesInclude) {
     let does = true;
     if (terms && terms.length > 0) {
-      for (let term of terms) {
+      for (const term of terms) {
         if (term && doesInclude ? !url.includes(term) : url.includes(term)) {
           does = false;
           break;
@@ -245,7 +245,7 @@ URLI.Download = URLI.Download || function () {
     if (style) {
       const URL_STYLE_PROPERTIES =  ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
             regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
-      for (let property of URL_STYLE_PROPERTIES) {
+      for (const property of URL_STYLE_PROPERTIES) {
         if (style[property]) {
           const match = regex.exec(style[property]);
           const url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?

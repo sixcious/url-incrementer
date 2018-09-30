@@ -24,7 +24,7 @@ URLI.Background = function () {
     "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1, "toolkitSeconds": 3,
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1,
     "urli": "loves incrementing for you"
   },
 
@@ -146,13 +146,13 @@ URLI.Background = function () {
         selection = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
-      for (let save of saves) {
+      for (const save of saves) {
         const result = await URLI.SaveURLs.matchesURL(save, tab.url);
         if (result.matches) {
           console.log("URLI.Background.buildInstance() - found a " + save.type + " save for this tab's url");
           via = save.type;
           object = save;
-          selection = save.type === "exact" ? result.selection : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
+          selection = save.type === "url" ? result.selection : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
           break;
         }
       }
@@ -161,10 +161,10 @@ URLI.Background = function () {
     return {
       "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false,
       "tabId": tab.id, "url": tab.url, "startingURL": /*props.startingURL ? props.startingURL : */ tab.url,
-      "saveFound": via === "exact" || via === "partial" || via === "wildcard", "saveType": via === "items" ? "none" : via,
+      "saveFound": via === "url" || via === "wildcard", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
       "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
-      "leadingZeros": via === "exact" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
+      "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
@@ -292,24 +292,13 @@ URLI.Background = function () {
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
     sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-    switch (request.greeting) {
-      case "performAction":
-        const items = await EXT.Promisify.getItems();
-        const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
-        if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
-            (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
-          URLI.Action.performAction(request.action, "shortcuts.js", instance, items);
-        }
-        break;
-      case "incrementDecrementSkipErrors":
-        if (request.instance) {
-          chrome.tabs.update(request.instance.tabId, {url: request.instance.url});
-          if (request.instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-            URLI.Background.setInstance(request.instance.tabId, request.instance);
-          }
-          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: request.instance});
-        }
-        break;
+    if (request && request.greeting === "performAction") {
+      const items = await EXT.Promisify.getItems();
+      const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
+      if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
+        (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
+        URLI.Action.performAction(request.action, "shortcuts.js", instance, items);
+      }
     }
   }
 

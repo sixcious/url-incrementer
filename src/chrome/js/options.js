@@ -133,9 +133,6 @@ URLI.Options = function () {
     DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
-    DOM["#saved-urls-partial-add-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-block fade-in"; DOM["#saved-urls-partial-url-textarea"].value = DOM["#saved-urls-partial-errors"].textContent = ""; });
-    DOM["#saved-urls-partial-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-partial"].className = "display-none"; });
-    DOM["#saved-urls-partial-save-button"].addEventListener("click", function() { addSavedURLPartial(); });
     DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
     DOM["#saved-urls-wildcard-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-none"; });
     DOM["#saved-urls-wildcard-save-button"].addEventListener("click", function() { addSavedURLWildcard(); });
@@ -387,13 +384,13 @@ URLI.Options = function () {
       let count = 1;
       select.id = "saved-urls-select";
       select.className = "display-block fade-in";
-      for (let save of saves) {
+      for (const save of saves) {
         const wildcard = save.type === "wildcard" ? await backgroundPage.URLI.Cryptography.decrypt(save.ciphertext, save.iv) : "";
         const option = document.createElement("option");
         option.dataset.hash = save.type === "wildcard" ? save.ciphertext : save.hash;
         option.textContent = (count++) + " - " + save.type + ": " +
-          (save.type === "wildcard" ? wildcard.substring(0, 16)  : save.hash.substring(0, 16)) +
-          " sel: " + (save.type === "exact" ? save.selectionStart : save.selectionPriority) +
+          (save.type === "url" ? save.hash.substring(0, 16) : wildcard.substring(0, 16))  +
+          " sel: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
           " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 5) + "...") +
           " base: " + save.base;
         select.appendChild(option);
@@ -424,47 +421,20 @@ URLI.Options = function () {
     }
   }
 
-  async function addSavedURLPartial() {
-    const url = DOM["#saved-urls-partial-url-textarea"].value;
-    if (!url || url.length < 0) {
-      DOM["#saved-urls-partial-errors"].textContent = chrome.i18n.getMessage("saved_urls_partial_url_error");
-    } else {
-      // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addPartialURL");
-      // Part 2: Put this URL into the saves array and save it to local storage
-      const salt = backgroundPage.URLI.Cryptography.salt(),
-            hash = await backgroundPage.URLI.Cryptography.hash(url, salt),
-            items = await EXT.Promisify.getItems();
-      if (items.selectionCustom && items.selectionCustom.url) {
-        items.selectionCustom.url = "";
-      }
-      // Put this new entry at the end of the array (push) because it's a partial save
-      saves.push({
-        "type": "partial", "hash": hash, "salt": salt, "urllength": url.length,
-        "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
-        "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom, "errorSkip": items.errorSkip
-      });
-      chrome.storage.local.set({"saves": saves}, function() {
-        populateValuesFromStorage("savedURLs");
-        DOM["#saved-urls-partial"].className = "display-none";
-      });
-    }
-  }
-
   async function addSavedURLWildcard() {
     const url = DOM["#saved-urls-wildcard-url-textarea"].value;
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
     } else {
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addPartialURL");
+      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addWildcard");
       // Part 2: Put this URL into the saves array and save it to local storage
       const encrypt = await backgroundPage.URLI.Cryptography.encrypt(url),
         items = await EXT.Promisify.getItems();
       if (items.selectionCustom && items.selectionCustom.url) {
         items.selectionCustom.url = "";
       }
-      // Put this new entry at the end of the array (push) because it's a partial save
+      // Put this new entry at the end of the array (push) because it's a wildcard
       saves.push({
         "type": "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
         "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
