@@ -60,7 +60,7 @@ URLI.Background = function () {
   // The individual tab instances in Background memory. Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  // A boolean flag to dynamically make the background temporarily persistent (when an instance is enabled or auto is on)
+  // A boolean flag to dynamically make the background temporarily persistent (when an instance is enabled)
   let persistent = false;
 
   /**
@@ -105,7 +105,7 @@ URLI.Background = function () {
   }
 
   /**
-   * Sets the instance. (This is the only time we need to make the background persistent.)
+   * Sets the instance. (Note: This is the only time we need to make the background persistent.)
    * 
    * @param tabId    the tab id to lookup this instance by
    * @param instance the instance to set
@@ -212,44 +212,27 @@ URLI.Background = function () {
    * @param details the installation details
    * @public
    */
-  function installedListener(details) {
+  async function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
-    if (details.reason === "install") {
-      console.log("URLI.Background.installedListener() - details.reason === install");
-      chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              chrome.runtime.openOptionsPage();
-            });
-          });
-        });
-      });
-    }
     // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
-    else if (details.reason === "update" && details.previousVersion <= "5.2") {
-      console.log("URLI.Background.installedListener() - details.reason === update, previousVersion <= 5.2, actual previousVersion=" + details.previousVersion);
+    // 5.3 - 5.8 only: Storage and Permission changes for 6.0
+    if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
+      console.log("URLI.Background.installedListener() - details.reason=" + details.reason);
+      const items = details.previousVersion >= "5.3" ? await EXT.Promisify.getItems() : undefined;
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
+              if (details.reason === "install") {
+                chrome.runtime.openOptionsPage();
+              } else if (details.previousVersion <= "5.2") {
+                URLI.Permissions.removeAllPermissions();
+              } else if (details.previousVersion >= "5.3") {
+                // TODO items
+              }
             });
           });
         });
-      });
-      URLI.Permissions.removeAllPermissions();
-    }
-    // 5.3 - 5.8 only: Storage and Permission changes for 6.0
-    else if (details.reason === "update" && details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
-      console.log("URLI.Background.installedListener() - details.reason === update, details.previousVersion 5.3 - 5.8, actual previousVersion=" + details.previousVersion);
-      chrome.storage.sync.get(null, function(items) {
-        chrome.storage.sync.set({
-          // TODO
-          "toolkitTool": "tabs", "toolkitAction": "increment", "toolkitQuantity": 1
-        });
-      });
-      chrome.storage.local.clear(function() {
-        chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES);
       });
     }
   }
@@ -365,9 +348,8 @@ URLI.Background = function () {
   }
 
   /**
-   * Makes the background persistent by calling chrome.tabs.query() repeatedly every few seconds using a setTimeout()
-   * recursively. If no instance exists when checking for tabs, the recursion stops and the background is no longer
-   * made persistent.
+   * Makes the background persistent by calling chrome.tabs.query() every few seconds using a setTimeout() recursively.
+   * If no instance exists when checking for tabs, the recursion stops and the background is no longer made persistent.
    *
    * @returns {Promise<void>}
    * @private
