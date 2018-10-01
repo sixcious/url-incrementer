@@ -159,8 +159,8 @@ URLI.Background = function () {
     }
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
-      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "multiEnabled": false, "toolkitEnabled": false,
-      "tabId": tab.id, "url": tab.url, "startingURL": /*props.startingURL ? props.startingURL : */ tab.url,
+      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
+      "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "saveFound": via === "url" || via === "wildcard", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
       "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,

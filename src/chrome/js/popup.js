@@ -468,7 +468,7 @@ URLI.Popup = function () {
   function crawlWindow() {
     console.log("crawlWindow instance urls length" + instance.urls.length);
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds), DOM["#toolkit-eta-value"], true);
+    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
     DOM["#setup"].className = "display-block";
     DOM["#toolkit"].className = "display-block";
@@ -493,7 +493,7 @@ URLI.Popup = function () {
         td.textContent = status;
         instance.toolkitQuantityRemaining--;
         DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
-        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds), DOM["#toolkit-eta-value"], true);
+        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
       }).catch(e => {
         console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
       });
