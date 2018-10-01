@@ -12,8 +12,8 @@ URLI.Action = function () {
   /**
    * Performs an action.
    *
-   * @param action   the action (e.g. increment)
-   * @param caller   String indicating who called this function (e.g. command, popup, content script)
+   * @param action   the action (e.g. "increment")
+   * @param caller   String indicating who called this function (e.g. command, popup, message)
    * @param instance the instance for this tab
    * @param items    the storage items (optional)
    * @param callback the function callback (optional)

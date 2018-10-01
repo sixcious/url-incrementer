@@ -13,13 +13,14 @@ URLI.IncrementDecrement = function () {
    * Finds a selection in the url to increment or decrement depending on the preference:
    * "prefixes" (e.g. page=1 /1 =1), "lastnumber", "firstnumber", or "custom".
    *
-   * @param url             the url to find the selection in
-   * @param preference      the preferred strategy to use to find the selection
-   * @param selectionCustom the object with custom regular expression parameters
+   * @param url               the url to find the selection in
+   * @param preference        the preferred strategy to use to find the selection
+   * @param selectionCustom   the object with custom regular expression parameters
+   * @param previousException true if this function encountered a previous exception, false otherwise
    * @returns {selection, selectionStart} or an empty selection if no selection found
    * @public
    */
-  function findSelection(url, preference, selectionCustom) {
+  function findSelection(url, preference, selectionCustom, previousException) {
     let selectionProps;
     try {
       if (preference === "custom" && selectionCustom) {
@@ -44,6 +45,9 @@ URLI.IncrementDecrement = function () {
       }
     } catch(e) {
       console.log("URLI.IncrementDecrement.findSelection() - exception encountered:" + e);
+      if (!previousException) {
+        return findSelection(url, "firstnumber", selectionCustom, true);
+      }
     }
     return selectionProps || {selection: "", selectionStart: -1};
   }

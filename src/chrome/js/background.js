@@ -280,7 +280,7 @@ URLI.Background = function () {
       const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
       if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
         (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
-        URLI.Action.performAction(request.action, "shortcuts.js", instance, items);
+        URLI.Action.performAction(request.action, "message", instance, items);
       }
     }
   }

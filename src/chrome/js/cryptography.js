@@ -36,7 +36,7 @@ URLI.Cryptography = function () {
 
   /**
    * Encrypts plaintext into ciphertext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
-   * The password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
+   * The key/password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param plaintext the text to encrypt
    * @returns {Promise<{iv: string, ciphertext: string}>} the iv and ciphertext as base 64 encoded strings
@@ -52,7 +52,7 @@ URLI.Cryptography = function () {
 
   /**
    * Decrypts ciphertext into plaintext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
-   * The password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
+   * The key/password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param ciphertext the text to decrypt
    * @param iv         the initialization vector for the algorithm

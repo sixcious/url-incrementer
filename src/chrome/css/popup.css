@@ -563,11 +563,13 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 }*/
 
 .icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img /*, .icon-button:hover img.transparent*/ {
-  opacity: 0.4;
+  opacity: 0.35;
+  /*filter: grayscale(100%);*/
 }
 
 .icon-button input:checked + img.checkbox-img /*,.icon-button:hover span*/  {
   opacity: 1;
+  /*filter: grayscale(0%);*/
 }
 
 /* Multi */
