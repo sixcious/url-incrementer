@@ -147,7 +147,9 @@ URLI.Popup = function () {
           updateDownloadPreviewCompletely();
         }
         break;
-      default:
+      case "crawlPopupNoWindow":
+        instance = request.instance;
+        crawlWindow();
         break;
     }
   }
@@ -445,15 +447,10 @@ URLI.Popup = function () {
       const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-      if (toolkitInstance.toolkitTool === "crawl") {
-        //
-      } else if (toolkitInstance.toolkitTool === "links") {
+      if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
       backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
-      // if (toolkitInstance.toolkitTool === "crawl") {
-      //   window.close();
-      // }
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
       chrome.storage.sync.set({
         "toolkitTool": _.toolkitTool,
@@ -466,7 +463,7 @@ URLI.Popup = function () {
 
   // public TODO
   function crawlWindow() {
-    console.log("crawlWindow instance urls length" + instance.urls.length);
+    console.log("URLI.Popup.crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
     updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
@@ -495,11 +492,11 @@ URLI.Popup = function () {
         DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
         updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
       }).catch(e => {
-        console.log("URLI.IncrementDecrementArray.crawlURLs() - a fetch() exception was caught:" + e);
+        console.log("URLI.Popup.crawlURLs() - a fetch() exception was caught:" + e);
       });
       setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
     } else {
-      console.log("URLI.IncrementDecrementArray.crawlURLs() - we have exhausted the quantityRemaining");
+      console.log("URLI.Popup.crawlURLs() - we have exhausted the quantityRemaining");
     }
   }
 

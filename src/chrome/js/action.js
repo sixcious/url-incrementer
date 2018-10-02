@@ -275,7 +275,7 @@ URLI.Action = function () {
             URLI.Background.setInstance(instance.tabId, instance);
           });
         } else {
-          // TODO
+          chrome.runtime.sendMessage({greeting: "crawlPopupNoWindow", instance: instance});
         }
         break;
       case "tabs":
