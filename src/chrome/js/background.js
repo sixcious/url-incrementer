@@ -206,10 +206,30 @@ URLI.Background = function () {
   }
 
   /**
+   * The chrome.tabs.onUpdated listener that is temporarily added (then removed) for certain events.
+   *
+   * @param tabId      the tab ID
+   * @param changeInfo the status (either complete or loading)
+   * @param tab        the tab object
+   * @public
+   */
+  function tabUpdatedListener(tabId, changeInfo, tab) {
+    if (changeInfo.status === "complete") {
+      console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
+      const instance = URLI.Background.getInstance(tabId);
+      // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
+      if (instance && instance.downloadEnabled && !instance.autoEnabled) {
+        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+      }
+      chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
+    }
+  }
+
+  /**
    * Listen for installation changes and do storage/extension initialization work.
    *
    * @param details the installation details
-   * @public
+   * @private
    */
   async function installedListener(details) {
     // New Installations: Setup storage and open Options Page in a new tab
@@ -241,7 +261,7 @@ URLI.Background = function () {
    * For example, when Chrome is started, when the extension is installed or updated, or when the
    * extension is re-enabled after being disabled.
    *
-   * @public
+   * @private
    */
   async function startupListener() {
     console.log("URLI.Background.startupListener()");
@@ -269,7 +289,7 @@ URLI.Background = function () {
    * @param request      the request containing properties to parse (e.g. greeting message)
    * @param sender       the sender who sent this message, with an identifying tab
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
-   * @public
+   * @private
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
@@ -290,7 +310,7 @@ URLI.Background = function () {
    * @param request      the request containing properties to parse (e.g. greeting message) and tab
    * @param sender       the sender who sent this message
    * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
-   * @public
+   * @private
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
@@ -309,7 +329,7 @@ URLI.Background = function () {
    * Listen for commands (Browser Extension shortcuts) and perform the command's action.
    * 
    * @param command the shortcut command that was performed
-   * @public
+   * @private
    */
   async function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
@@ -323,26 +343,6 @@ URLI.Background = function () {
           }
         }
       }
-    }
-  }
-
-  /**
-   * The chrome.tabs.onUpdated listener that is temporarily added (then removed) for certain events.
-   *
-   * @param tabId      the tab ID
-   * @param changeInfo the status (either complete or loading)
-   * @param tab        the tab object
-   * @public
-   */
-  function tabUpdatedListener(tabId, changeInfo, tab) {
-    if (changeInfo.status === "complete") {
-      console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
-      const instance = URLI.Background.getInstance(tabId);
-      // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
-      if (instance && instance.downloadEnabled && !instance.autoEnabled) {
-        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
-      }
-      chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
     }
   }
 
@@ -370,6 +370,13 @@ URLI.Background = function () {
     }
   }
 
+  // Background Listeners
+  chrome.runtime.onInstalled.addListener(installedListener);
+  chrome.runtime.onStartup.addListener(startupListener);
+  chrome.runtime.onMessage.addListener(messageListener);
+  chrome.runtime.onMessageExternal.addListener(messageExternalListener);
+  if (chrome.commands) { chrome.commands.onCommand.addListener(commandListener); } // Firefox Android: chrome.commands is unsupported
+
   // Return Public Functions
   return {
     getSDV: getSDV,
@@ -380,18 +387,6 @@ URLI.Background = function () {
     deleteInstance: deleteInstance,
     buildInstance: buildInstance,
     setBadge: setBadge,
-    installedListener: installedListener,
-    startupListener: startupListener,
-    messageListener: messageListener,
-    messageExternalListener: messageExternalListener,
-    commandListener: commandListener,
     tabUpdatedListener: tabUpdatedListener
   };
 }();
-
-// Background Listeners
-chrome.runtime.onInstalled.addListener(URLI.Background.installedListener);
-chrome.runtime.onStartup.addListener(URLI.Background.startupListener);
-chrome.runtime.onMessage.addListener(URLI.Background.messageListener);
-chrome.runtime.onMessageExternal.addListener(URLI.Background.messageExternalListener);
-if (chrome.commands) { chrome.commands.onCommand.addListener(URLI.Background.commandListener); } // Firefox Android: chrome.commands is unsupported

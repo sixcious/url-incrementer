@@ -22,10 +22,7 @@ URLI.Popup = function () {
   /**
    * Loads the DOM content needed to display the popup page.
    * 
-   * DOMContentLoaded will fire when the DOM is loaded. Unlike the conventional
-   * "load", it does not wait for images and media.
-   * 
-   * @public
+   * @private
    */
   async function DOMContentLoaded() {
     const ids = document.querySelectorAll("[id]"),
@@ -121,36 +118,6 @@ URLI.Popup = function () {
       toggleView.call(DOM["#setup-input"]);
     } else {
       toggleView.call(DOM["#accept-button"]);
-    }
-  }
-
-  /**
-   * Listen for requests from chrome.runtime.sendMessage (Background)
-   * 
-   * @param request      the request containing properties to parse (e.g. greeting message)
-   * @param sender       the sender who sent this message, with an identifying tabId
-   * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
-   * @public
-   */
-  function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
-    switch (request.greeting) {
-      case "updatePopupInstance":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          instance = request.instance;
-          updateControls();
-          updateSetup();
-        }
-        break;
-      case "updatePopupDownloadPreview":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          updateDownloadPreviewCompletely();
-        }
-        break;
-      case "crawlPopupNoWindow":
-        instance = request.instance;
-        crawlWindow();
-        break;
     }
   }
 
@@ -1094,13 +1061,36 @@ URLI.Popup = function () {
     return e;
   }
 
-  // Return Public Functions
-  return {
-    DOMContentLoaded: DOMContentLoaded,
-    messageListener: messageListener
-  };
-}();
+  /**
+   * Listen for requests from chrome.runtime.sendMessage (Background)
+   *
+   * @param request      the request containing properties to parse (e.g. greeting message)
+   * @param sender       the sender who sent this message, with an identifying tabId
+   * @param sendResponse the optional callback function (e.g. for a reply back to the sender)
+   * @private
+   */
+  function messageListener(request, sender, sendResponse) {
+    console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
+    switch (request.greeting) {
+      case "updatePopupInstance":
+        if (request.instance && request.instance.tabId === instance.tabId) {
+          instance = request.instance;
+          updateControls();
+          updateSetup();
+        }
+        break;
+      case "updatePopupDownloadPreview":
+        if (request.instance && request.instance.tabId === instance.tabId) {
+          updateDownloadPreviewCompletely();
+        }
+        break;
+      case "crawlPopupNoWindow":
+        instance = request.instance;
+        crawlWindow();
+        break;
+    }
+  }
 
-// Popup Listeners
-document.addEventListener("DOMContentLoaded", URLI.Popup.DOMContentLoaded);
-chrome.runtime.onMessage.addListener(URLI.Popup.messageListener);
+  DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+  chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
+}();

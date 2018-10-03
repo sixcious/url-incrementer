@@ -14,12 +14,14 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
         FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META  = 0x8; // 1000
+
   const KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
     "Alt", "AltLeft", "AltRight",
     "Control", "ControlLeft", "ControlRight",
     "Shift", "ShiftLeft", "ShiftRight",
     "Meta", "MetaLeft", "MetaRight"
   ];
+
   let key = {},
       button = undefined, // the current mouse button on mousedown
       buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
@@ -37,6 +39,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     items = items_;
   }
 
+  // TODO
   function keydownListener(event) {
     //event.preventDefault();
     // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
@@ -54,7 +57,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * A keyup event listener for keyboard shortcuts.
    *
    * @param event the keyup event
-   * @public
+   * @private
    */
   function keyupListener(event) {
     console.log("URLI.Shortcuts.keyupListener() - event.code=" + event.code);
@@ -90,7 +93,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * A mouseup event listener for mouse button shortcuts.
    *
    * @param event the mouseup event
-   * @public
+   * @private
    */
   function mouseupListener(event) {
     clearTimeout(timeouts.mouseup);
@@ -117,7 +120,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    *
    * @param event the contextmenu event
    * @returns {boolean} false if event.buttons = 3, true otherwise
-   * @public
+   * @private
    */
   function contextmenuListener(event) {
     if (buttons3) {
@@ -158,66 +161,55 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     return mouse && (mouse.button === 3 ? buttons3 : event.button === mouse.button) && mouse.clicks === clicks;
   }
 
-  // Return Public Functions
-  return {
-    setItems: setItems,
-    keydownListener: keydownListener,
-    keyupListener: keyupListener,
-    mouseupListener: mouseupListener,
-    mousedownListener: mousedownListener,
-    contextmenuListener: contextmenuListener
-  };
-}();
-
-// Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
-
-if (!URLI.Shortcuts.contentScriptExecuted) {
-  URLI.Shortcuts.contentScriptExecuted = true;
-  chrome.storage.sync.get(null, function(items) {
-    if (items.permissionsInternalShortcuts) {
-      URLI.Shortcuts.setItems(items);
-      if (items.keyEnabled) {
-        document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
-        document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
-      }
-      if (items.mouseEnabled) {
-        document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-        document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-        document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-      }
-      // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
-      chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
-        switch (request.greeting) {
-          case "addKeyListener":
-            document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
-            document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
-            document.addEventListener("keydown", URLI.Shortcuts.keydownListener);
-            document.addEventListener("keyup", URLI.Shortcuts.keyupListener);
-            break;
-          case "removeKeyListener":
-            document.removeEventListener("keydown", URLI.Shortcuts.keydownListener);
-            document.removeEventListener("keyup", URLI.Shortcuts.keyupListener);
-            break;
-          case "addMouseListener":
-            document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-            document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-            document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-            document.addEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-            document.addEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-            document.addEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-            break;
-          case "removeMouseListener":
-            document.removeEventListener("mouseup", URLI.Shortcuts.mouseupListener);
-            document.removeEventListener("mousedown", URLI.Shortcuts.mousedownListener);
-            document.removeEventListener("contextmenu", URLI.Shortcuts.contextmenuListener);
-            break;
-          default:
-            break;
+  // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
+  if (!this.contentScriptExecuted) {
+    this.contentScriptExecuted = true;
+    chrome.storage.sync.get(null, function(items) {
+      if (items.permissionsInternalShortcuts) {
+        setItems(items);
+        if (items.keyEnabled) {
+          document.addEventListener("keydown", keydownListener);
+          document.addEventListener("keyup", keyupListener);
         }
-      });
-    }
-  });
-}
+        if (items.mouseEnabled) {
+          document.addEventListener("mousedown", mousedownListener);
+          document.addEventListener("mouseup", mouseupListener);
+          document.addEventListener("contextmenu", contextmenuListener);
+        }
+        // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
+        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+          console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+          switch (request.greeting) {
+            case "addKeyListener":
+              document.removeEventListener("keydown", keydownListener);
+              document.removeEventListener("keyup", keyupListener);
+              document.addEventListener("keydown", keydownListener);
+              document.addEventListener("keyup", keyupListener);
+              break;
+            case "removeKeyListener":
+              document.removeEventListener("keydown", keydownListener);
+              document.removeEventListener("keyup", keyupListener);
+              break;
+            case "addMouseListener":
+              document.removeEventListener("mouseup", mouseupListener);
+              document.removeEventListener("mousedown", mousedownListener);
+              document.removeEventListener("contextmenu", contextmenuListener);
+              document.addEventListener("mouseup", mouseupListener);
+              document.addEventListener("mousedown", mousedownListener);
+              document.addEventListener("contextmenu", contextmenuListener);
+              break;
+            case "removeMouseListener":
+              document.removeEventListener("mouseup", mouseupListener);
+              document.removeEventListener("mousedown", mousedownListener);
+              document.removeEventListener("contextmenu", contextmenuListener);
+              break;
+            default:
+              break;
+          }
+        });
+      }
+    });
+  }
 
-console.log("URLI.Shortcuts - contentScript executed");
+  console.log("URLI.Shortcuts - contentScript executed");
+}();

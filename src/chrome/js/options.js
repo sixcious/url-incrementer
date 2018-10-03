@@ -94,7 +94,7 @@ URLI.Options = function () {
    * DOMContentLoaded will fire when the DOM is loaded. Unlike the conventional
    * "load", it does not wait for images and media.
    * 
-   * @public
+   * @private
    */
   async function DOMContentLoaded() {
     backgroundPage = await EXT.Promisify.getBackgroundPage();
@@ -577,10 +577,5 @@ URLI.Options = function () {
     URLI.UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
-  // Return Public Functions
-  return {
-    DOMContentLoaded: DOMContentLoaded
-  };
+  DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 }();
-
-document.addEventListener("DOMContentLoaded", URLI.Options.DOMContentLoaded);
