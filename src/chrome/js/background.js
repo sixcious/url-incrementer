@@ -22,10 +22,9 @@ URLI.Background = function () {
     "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
     "nextPrevKeywordsNext": ["pnnext", "next page", "next", "forward", "次", "&gt;", ">", "newer"], "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "前", "&lt;", "<", "‹", "back", "older"],
-    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "times",
+    "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadMinMB": null, "downloadMaxMB": null, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1,
-    "urli": "loves incrementing for you"
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1
   },
 
   // The local storage default values
@@ -218,7 +217,7 @@ URLI.Background = function () {
     // 5.3 - 5.8 only: Storage and Permission changes for 6.0
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("URLI.Background.installedListener() - details.reason=" + details.reason);
-      const items = details.previousVersion >= "5.3" ? await EXT.Promisify.getItems() : undefined;
+      const items = details.previousVersion && details.previousVersion >= "5.3" ? await EXT.Promisify.getItems() : undefined;
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
@@ -245,8 +244,8 @@ URLI.Background = function () {
    * @public
    */
   async function startupListener() {
-    const items = await EXT.Promisify.getItems();
     console.log("URLI.Background.startupListener()");
+    const items = await EXT.Promisify.getItems();
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
     if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
       console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
@@ -294,7 +293,7 @@ URLI.Background = function () {
    * @public
    */
   async function messageExternalListener(request, sender, sendResponse) {
-    console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + " sender.id=" + sender.id);
+    console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
     const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg", //"decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&

@@ -20,15 +20,12 @@ URLI.Action = function () {
    * @public
    */
   async function performAction(action, caller, instance, items, callback) {
-    console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller + ", instance=" + instance);
+    console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller);
     items = items ? items : await EXT.Promisify.getItems();
-
     let actionPerformed = false;
     // Pre-Perform Action:
-    // Handle AUTO
     if (instance.autoEnabled) {
-      console.log("prePerformAction instance is auto enabled");
-      // Get the most recent instance from Background in case auto has been paused
+      // In case auto has been paused, get the most recent instance from Background
       instance = URLI.Background.getInstance(instance.tabId);
       // Handle autoTimes
       if (instance.autoAction === action) {
@@ -38,14 +35,12 @@ URLI.Action = function () {
         ((instance.autoAction === "next" || instance.autoAction === "prev") && (action === "next" || action === "prev"))) {
         instance.autoTimes++;
       }
-      // Prevents a rare race condition:
-      // If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
+      // Prevents a rare race condition: If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
         console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
         action = "clear";
       }
     }
-    // Handle DOWNLOAD
     if (instance.downloadEnabled) {
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (!instance.autoEnabled && (["increment", "decrement", "next", "prev"].includes(action))) {
@@ -275,7 +270,7 @@ URLI.Action = function () {
             URLI.Background.setInstance(instance.tabId, instance);
           });
         } else {
-          chrome.runtime.sendMessage({greeting: "crawlPopupNoWindow", instance: instance});
+          chrome.runtime.sendMessage({greeting: "crawlPopupNoWindow", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         }
         break;
       case "tabs":

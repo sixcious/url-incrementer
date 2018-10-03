@@ -197,7 +197,7 @@ URLI.IncrementDecrement = function () {
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
         break;
-      // case "alphanumeric":
+      // case 2-36
       default:
         selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
         break;

@@ -29,7 +29,7 @@ URLI.NextPrev = function () {
    * @public
    */
   function findNextPrevURL(keywords, priority, sameDomain) {
-    console.log("URLI.NextPrev.findNextPrevURL() - direction=" + direction);
+    console.log("URLI.NextPrev.findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
             { "priority": "important", "subpriority": "relAttribute" },

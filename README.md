@@ -11,7 +11,7 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - "URLI's Developer Toolkit" [Experimental] ** Crawl up to 1,000 incremented URLs, open up to 100 incremented tabs at once, or generate 10,000 incremented links in 1 second
 - Auto Incrementing
 - Download Incrementing [Experimental] ***
-- Multi Incrementing
+- Multi Incrementing: Increment up to 3 parts of the URL separately, simultaneously, or in ranges
 - Date Time Incrementing
 - Custom Base Incrementing (e.g. Base 64 or define your own alphabet)
 - Alphanumeric Incrementing (Base 2-36)
