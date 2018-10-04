@@ -159,6 +159,30 @@ var Shortcuts = (() => {
     return mouse && (mouse.button === 3 ? buttons3 : event.button === mouse.button) && mouse.clicks === clicks;
   }
 
+  function addKeyListener() {
+    removeKeyListener();
+    document.addEventListener("keydown", keydownListener);
+    document.addEventListener("keyup", keyupListener);
+  }
+
+  function removeKeyListener() {
+    document.removeEventListener("keydown", keydownListener);
+    document.removeEventListener("keyup", keyupListener);
+  }
+
+  function addMouseListener() {
+    removeMouseListener();
+    document.addEventListener("mouseup", mouseupListener);
+    document.addEventListener("mousedown", mousedownListener);
+    document.addEventListener("contextmenu", contextmenuListener);
+  }
+
+  function removeMouseListener() {
+    document.removeEventListener("mouseup", mouseupListener);
+    document.removeEventListener("mousedown", mousedownListener);
+    document.removeEventListener("contextmenu", contextmenuListener);
+  }
+
   // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
   if (!this.contentScriptExecuted) {
     this.contentScriptExecuted = true;
@@ -166,43 +190,22 @@ var Shortcuts = (() => {
       if (items.permissionsInternalShortcuts) {
         setItems(items);
         if (items.keyEnabled) {
-          document.addEventListener("keydown", keydownListener);
-          document.addEventListener("keyup", keyupListener);
+          addKeyListener();
         }
         if (items.mouseEnabled) {
-          document.addEventListener("mousedown", mousedownListener);
-          document.addEventListener("mouseup", mouseupListener);
-          document.addEventListener("contextmenu", contextmenuListener);
+          addMouseListener();
         }
         // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
           console.log("chrome.runtime.onMessage() - request.greeting=" + request.greeting);
-          switch (request.greeting) {
-            case "addKeyListener":
-              document.removeEventListener("keydown", keydownListener);
-              document.removeEventListener("keyup", keyupListener);
-              document.addEventListener("keydown", keydownListener);
-              document.addEventListener("keyup", keyupListener);
-              break;
-            case "removeKeyListener":
-              document.removeEventListener("keydown", keydownListener);
-              document.removeEventListener("keyup", keyupListener);
-              break;
-            case "addMouseListener":
-              document.removeEventListener("mouseup", mouseupListener);
-              document.removeEventListener("mousedown", mousedownListener);
-              document.removeEventListener("contextmenu", contextmenuListener);
-              document.addEventListener("mouseup", mouseupListener);
-              document.addEventListener("mousedown", mousedownListener);
-              document.addEventListener("contextmenu", contextmenuListener);
-              break;
-            case "removeMouseListener":
-              document.removeEventListener("mouseup", mouseupListener);
-              document.removeEventListener("mousedown", mousedownListener);
-              document.removeEventListener("contextmenu", contextmenuListener);
-              break;
-            default:
-              break;
+          if (request.greeting === "addKeyListener") {
+            addKeyListener();
+          } else if (request.greeting === "removeKeyListener") {
+            removeKeyListener();
+          } else if (request.greeting === "addMouseListener") {
+            addMouseListener();
+          } else if (request.greeting === "removeMouseListener") {
+            removeMouseListener();
           }
         });
       }
