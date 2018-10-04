@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Action = function () {
+var Action = (() => {
 
   /**
    * Performs an action.
@@ -20,13 +18,13 @@ URLI.Action = function () {
    * @public
    */
   async function performAction(action, caller, instance, items, callback) {
-    console.log("URLI.Action.performAction() - action=" + action + ", caller=" + caller);
-    items = items ? items : await EXT.Promisify.getItems();
+    console.log("performAction() - action=" + action + ", caller=" + caller);
+    items = items ? items : await Promisify.getItems();
     let actionPerformed = false;
     // Pre-Perform Action:
     if (instance.autoEnabled) {
       // In case auto has been paused, get the most recent instance from Background
-      instance = URLI.Background.getInstance(instance.tabId);
+      instance = Background.getInstance(instance.tabId);
       // Handle autoTimes
       if (instance.autoAction === action) {
         instance.autoTimes--;
@@ -37,14 +35,14 @@ URLI.Action = function () {
       }
       // Prevents a rare race condition: If the user tries to manually perform the auto action when times is at 0 but before the page has loaded and auto has cleared itself
       if (instance.autoTimes < 0) {
-        console.log("URLI.Action.performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
+        console.log("performAction() - auto rare race condition encountered, about to clear. instance.autoTimes=" + instance.autoTimes);
         action = "clear";
       }
     }
     if (instance.downloadEnabled) {
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (!instance.autoEnabled && (["increment", "decrement", "next", "prev"].includes(action))) {
-        chrome.tabs.onUpdated.addListener(URLI.Background.tabUpdatedListener);
+        chrome.tabs.onUpdated.addListener(Background.tabUpdatedListener);
       }
     }
     // Action:
@@ -88,7 +86,7 @@ URLI.Action = function () {
     // // Post-Perform Action:
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
-      URLI.Background.setBadge(instance.tabId, action, true);
+      Background.setBadge(instance.tabId, action, true);
     }
   }
 
@@ -104,9 +102,9 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      URLI.IncrementDecrement.incrementDecrement(action, instance);
+      IncrementDecrement.incrementDecrement(action, instance);
       if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        URLI.Background.setInstance(instance.tabId, instance);
+        Background.setInstance(instance.tabId, instance);
       }
       chrome.tabs.update(instance.tabId, {url: instance.url});
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
@@ -127,7 +125,7 @@ URLI.Action = function () {
     // If URLI didn't find a selection, we can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      URLI.IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
+      IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
     }
     return actionPerformed;
   }
@@ -143,7 +141,7 @@ URLI.Action = function () {
   function nextPrev(action, instance, items) {
     let actionPerformed = true;
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
-      const code = "URLI.NextPrev.findNextPrevURL(" +
+      const code = "NextPrev.findNextPrevURL(" +
         JSON.stringify(action === "next" ? items.nextPrevKeywordsNext : items.nextPrevKeywordsPrev) + "," +
         JSON.stringify(items.nextPrevLinksPriority) + ", " +
         JSON.stringify(items.nextPrevSameDomainPolicy) + ");";
@@ -153,9 +151,9 @@ URLI.Action = function () {
           chrome.tabs.update(instance.tabId, {url: url});
           // Only save next prev instances that are auto enabled and doing auto next or prev:
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
-            console.log("URLI.Action.nextPrev() - setting instance in background");
+            console.log("nextPrev() - setting instance in background");
             instance.url = url;
-            URLI.Background.setInstance(instance.tabId, instance);
+            Background.setInstance(instance.tabId, instance);
           }
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         }
@@ -179,7 +177,7 @@ URLI.Action = function () {
     if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
       actionPerformed = true;
     }
-    URLI.Background.deleteInstance(instance.tabId);
+    Background.deleteInstance(instance.tabId);
     // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete save
     if (caller !== "popupClearBeforeSet" && caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
       //instance.multiCount = 0; TODO... multi ?
@@ -191,15 +189,15 @@ URLI.Action = function () {
       }
       if (!instance.enabled && instance.saveFound) { // Don't delete saved URLs if the instance is also enabled
         instance.saveFound = false;
-        URLI.SaveURLs.deleteURL(instance.url, "clear");
+        SaveURLs.deleteURL(instance.url, "clear");
       }
     }
     if (instance.autoEnabled) {
-      URLI.Auto.stopAutoTimer(instance, caller);
+      Auto.stopAutoTimer(instance, caller);
     }
     // Handle AUTO Repeat
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
-      URLI.Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
+      Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
     }
     // For callers like popup that still need the instance, disable all states and reset autoTimes
     else {
@@ -247,7 +245,7 @@ URLI.Action = function () {
       instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
       chrome.tabs.update(instance.tabId, {url: instance.startingURL});
       if (instance.enabled) {
-        URLI.Background.setInstance(instance.tabId, instance);
+        Background.setInstance(instance.tabId, instance);
       }
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
@@ -267,7 +265,7 @@ URLI.Action = function () {
         if (chrome.windows && chrome.windows.create) { // Firefox Android: chrome.windows not supported
           chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
             instance.tabId = window.tabs[0].id;
-            URLI.Background.setInstance(instance.tabId, instance);
+            Background.setInstance(instance.tabId, instance);
           });
         } else {
           chrome.runtime.sendMessage({greeting: "crawlPopupNoWindow", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
@@ -291,8 +289,8 @@ URLI.Action = function () {
   function auto(instance) {
     let actionPerformed = false;
     if (instance && instance.autoEnabled) {
-      URLI.Auto.pauseOrResumeAutoTimer(instance);
-      instance = URLI.Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
+      Auto.pauseOrResumeAutoTimer(instance);
+      instance = Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
       actionPerformed = true;
     }
@@ -311,7 +309,7 @@ URLI.Action = function () {
     if (instance.downloadEnabled) {
       actionPerformed = true;
       chrome.tabs.executeScript(instance.tabId, {file: "/js/download.js", runAt: "document_end"}, function() {
-        const code = "URLI.Download.findDownloadURLs(" +
+        const code = "Download.findDownloadURLs(" +
           JSON.stringify(instance.downloadStrategy) + ", " +
           JSON.stringify(instance.downloadExtensions) + ", " +
           JSON.stringify(instance.downloadTags) + ", " +
@@ -349,7 +347,7 @@ URLI.Action = function () {
               //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
             }
             for (const download of downloads) {
-              console.log("URLI.Action.download() - downloading url=" + download.url + " ... ");
+              console.log("download() - downloading url=" + download.url + " ... ");
               const params = instance.downloadSubfolder && download.filenameAndExtension && download.filename && download.extension ? { url: download.url, filename: instance.downloadSubfolder + "/" + download.filenameAndExtension } : { url: download.url};
               chrome.downloads.download(params, function(downloadId) {
                 if (chrome.runtime.lastError && instance.downloadSubfolder) {
@@ -363,7 +361,7 @@ URLI.Action = function () {
                         (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * bytesInAMegabyte) > downloadItem.totalBytes : false) ||
                         (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * bytesInAMegabyte) < downloadItem.totalBytes : false)
                       )) {
-                      console.log("URLI.Action.download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB bytes=" + (instance.downloadMinMB * bytesInAMegabyte) + " or instance.MaxMB bytes=" + (instance.downloadMaxMB * bytesInAMegabyte));
+                      console.log("download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB bytes=" + (instance.downloadMinMB * bytesInAMegabyte) + " or instance.MaxMB bytes=" + (instance.downloadMaxMB * bytesInAMegabyte));
                       chrome.downloads.cancel(downloadId);
                     }
                   }
@@ -377,7 +375,7 @@ URLI.Action = function () {
                 return "0".repeat(match.length - matchp1.length) + matchp1;
               });
               console.log("instance.downloadSubfolder=" + instance.downloadSubfolder);
-              URLI.Background.setInstance(instance.tabId, instance);
+              Background.setInstance(instance.tabId, instance);
             }
           }
           if (callback) {
@@ -393,4 +391,4 @@ URLI.Action = function () {
   return {
     performAction: performAction
   };
-}();
+})();

@@ -29,14 +29,6 @@
   for (let i = 0; i <= 9; i++) { MAP.set(i + "", i + ""); MAP.set("Digit" + i, i + ""); }
   for (let i = 1; i <= 12; i++) { MAP.set("F" + i, "F" + i); }
 
-  function DOMContentLoaded() {
-    browser.commands.getAll(commands => {
-      generateHTML(commands);
-      cacheDOM();
-      addEventListeners(commands);
-    });
-  }
-
   function generateHTML(commands) {
     DOM["#" + DOM_ID] = document.getElementById(DOM_ID);
     const table = document.createElement("div");
@@ -150,27 +142,23 @@
       updateError(this);
       return;
     }
-    if (browser.commands.update) {
-      browser.commands.getAll(commands => {
-        // Check for and clear other command collisions and then update this command
-        const collisions = commands.filter(command => command.name !== this.dataset.name && command.shortcut === this.value.replace(/\s+\+\s+/g, "+"));
-        for (const collision of collisions) {
-          clear.call(DOM["#" + DOM_ID + "-clear-" + collision.name]);
-        }
-        browser.commands.update({
-          name: this.dataset.name,
-          shortcut: this.value
-        });
+    browser.commands.getAll(commands => {
+      // Check for and clear other command collisions and then update this command
+      const collisions = commands.filter(command => command.name !== this.dataset.name && command.shortcut === this.value.replace(/\s+\+\s+/g, "+"));
+      for (const collision of collisions) {
+        clear.call(DOM["#" + DOM_ID + "-clear-" + collision.name]);
+      }
+      browser.commands.update({
+        name: this.dataset.name,
+        shortcut: this.value
       });
-    }
+    });
     this.dataset.shortcut = this.value;
     this.blur();
   }
 
   function clear() {
-    if (browser.commands.reset) {
-      browser.commands.reset(this.dataset.name);
-    }
+    browser.commands.reset(this.dataset.name);
     DOM["#" + DOM_ID + "-input-" + this.dataset.name].value = "";
     DOM["#" + DOM_ID + "-input-" + this.dataset.name].dataset.shortcut = "";
   }
@@ -189,7 +177,11 @@
 
   // Firefox Android: browser.commands is currently unsupported
   if (typeof browser !== "undefined" && browser.commands) {
-    document.addEventListener("DOMContentLoaded", DOMContentLoaded);
+    browser.commands.getAll(commands => {
+      generateHTML(commands);
+      cacheDOM();
+      addEventListeners(commands);
+    });
   }
 
 })();

@@ -5,21 +5,19 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.SaveURLs = function () {
+var SaveURLs = (() => {
 
   //const URL_SEPARATOR = "-_-"; TODO use this?
 
   async function addURL(instance) {
-    console.log("URLI.SaveURLs.addURL() - saving a URL to local storage...");
+    console.log("addURL() - saving a URL to local storage...");
     // Part 1: Check if this URL has already been saved, if it has remove the existing save
     const saves = await deleteURL(instance.url, "addURL");
     // Part 2: Put this URL into the saves array and save it to local storage
     const url1 = instance.url.substring(0, instance.selectionStart),
           url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
-          salt = URLI.Cryptography.salt(),
-          hash = await URLI.Cryptography.hash(url1 + url2, salt);
+          salt = Cryptography.salt(),
+          hash = await Cryptography.hash(url1 + url2, salt);
     // Put this new entry at the beginning of the array (unshift) as it's more likely to be used than older ones
     saves.unshift({
       "type": "url", "hash": hash, "salt": salt, "selectionEnd": url2.length, /*"url2length": url2.length,*/
@@ -30,12 +28,12 @@ URLI.SaveURLs = function () {
   }
 
   async function deleteURL(url, caller) {
-    const saves = await EXT.Promisify.getItems("local", "saves");
+    const saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
         const result = await matchesURL(saves[i], url);
         if (result.matches) {
-          console.log("URLI.SaveURLs.deleteURL() - splicing URL from saves array...");
+          console.log("deleteURL() - splicing URL from saves array...");
           saves.splice(i, 1);
           break;
         }
@@ -63,15 +61,15 @@ URLI.SaveURLs = function () {
   async function matchesExactURL(save, url) {
     const url1 = url.substring(0, save.selectionStart),
           url2 = url.substring(url.length - save.selectionEnd), //url.slice(-save.url2length);
-          hash = await URLI.Cryptography.hash(url1 + url2, save.salt),
+          hash = await Cryptography.hash(url1 + url2, save.salt),
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
-    const matches = hash === save.hash && URLI.IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
+    const matches = hash === save.hash && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
     return { "matches": matches, "selection": { "selection": selection, "selectionStart": save.selectionStart } };
   }
 
   async function matchesWildcard(save, url) {
-    const wildcard = await URLI.Cryptography.decrypt(save.ciphertext, save.iv);
+    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv);
     const matches = new RegExp(escapeRegExp(wildcard)).exec(url);
     return { "matches": matches, "selection": "" }
   }
@@ -86,4 +84,4 @@ URLI.SaveURLs = function () {
     deleteURL: deleteURL,
     matchesURL: matchesURL
   };
-}();
+})();

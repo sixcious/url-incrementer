@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Download = URLI.Download || function () {
+var Download = (() => {
 
   // A list of all attributes that can contain URLs (Note the following URL attributes are deprecated in HTML5: background, classid, codebase, longdesc, profile)
   const URL_ATTRIBUTES = ["action", "cite", "data", "formaction", "href", "icon", "manifest", "poster", "src", "style", "usemap"];
@@ -79,7 +77,7 @@ URLI.Download = URLI.Download || function () {
         results = findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selectorbuilder, includes, excludes, items);
       }
     } catch (e) {
-      console.log("URLI.Download.findDownloadURLs() - exception caught:" + e);
+      console.log("findDownloadURLs() - exception caught:" + e);
       results = [];
     }
     return results;
@@ -119,7 +117,7 @@ URLI.Download = URLI.Download || function () {
   function findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selector, includes, excludes, items) {
     const elements = document.querySelectorAll(selector),
           origin = new URL(document.location.href).origin;
-    console.log("URLI.Download.findDownloadURLsBySelector() - found " + elements.length + " element(s)");
+    console.log("findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (const element of elements) {
       for (const attribute of URL_ATTRIBUTES) {
         if (element[attribute]) {
@@ -134,7 +132,7 @@ URLI.Download = URLI.Download || function () {
           else if (element.tagName && element.tagName.toLowerCase() === "iframe" && attribute && attribute.toLowerCase() === "src") {
             const url = element[attribute];
             buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
-            console.log("URLI.Download.findDownloadURLsBySelector() - iframe encountered, document origin=" + origin + ", iframe origin=" + new URL(url).origin);
+            console.log("findDownloadURLsBySelector() - iframe encountered, document origin=" + origin + ", iframe origin=" + new URL(url).origin);
             if (isValidURL(url) && new URL(url).origin === origin && element.contentWindow && element.contentWindow.document) {
               findDownloadURLsBySelector(element.contentWindow.document, strategy, extensions, tags, attributes, selector, includes, excludes, items);
             }
@@ -249,7 +247,7 @@ URLI.Download = URLI.Download || function () {
         if (style[property]) {
           const match = regex.exec(style[property]);
           const url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
-          console.log("URLI.Download.extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
+          console.log("extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
           urls.push(url);
         }
       }
@@ -336,4 +334,4 @@ URLI.Download = URLI.Download || function () {
     previewDownloadURLs: previewDownloadURLs,
     findDownloadURLs: findDownloadURLs
   };
-}();
+})();

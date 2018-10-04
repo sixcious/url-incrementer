@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.NextPrev = function () {
+var NextPrev = (() => {
 
   // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
   const startsWithExcludes = ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
@@ -29,7 +27,7 @@ URLI.NextPrev = function () {
    * @public
    */
   function findNextPrevURL(keywords, priority, sameDomain) {
-    console.log("URLI.NextPrev.findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
+    console.log("findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
             { "priority": "important", "subpriority": "relAttribute" },
@@ -63,7 +61,7 @@ URLI.NextPrev = function () {
     for (const keyword of keywords) {
       if (urls[priority][subpriority].has(keyword)) {
         url = urls[priority][subpriority].get(keyword);
-        console.log("URLI.NextPrev.traverseResults() - a next/prev Link was found:" +  priority + " - " + subpriority + " - " + keyword + " - " + url);
+        console.log("traverseResults() - a next/prev Link was found:" +  priority + " - " + subpriority + " - " + keyword + " - " + url);
         break;
       }
     }
@@ -144,4 +142,4 @@ URLI.NextPrev = function () {
   return {
     findNextPrevURL: findNextPrevURL
   };
-}();
+})();

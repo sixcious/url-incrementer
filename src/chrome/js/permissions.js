@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Permissions = function () {
+var Permissions = (() => {
 
   // This object contains all of the extension's optional permissions. Each permission contains:
   // 1) What storage keys to set, 2) The permission request, 3) The permission conflict to use instead if a conflict exists with another permission (optional), and  4) The script (optional)
@@ -41,13 +39,13 @@ URLI.Permissions = function () {
   function requestPermissions(permission, callback) {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
-        console.log("URLI.Permissions.requestPermissions() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+        console.log("requestPermissions() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
         if (PERMISSIONS[permission].script) {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
             actions: [new chrome.declarativeContent.RequestContentScript(PERMISSIONS[permission].script)]
           }], function(rules) {
-            console.log("URLI.Permissions.requestPermissions() - successfully added declarativeContent rules:" + rules);
+            console.log("requestPermissions() - successfully added declarativeContent rules:" + rules);
           });
         }
         chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
@@ -79,7 +77,7 @@ URLI.Permissions = function () {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         for (const rule of rules) {
           if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-            console.log("URLI.Permissions.removePermissions() - removing rule " + rule);
+            console.log("removePermissions() - removing rule " + rule);
             chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
           }
         }
@@ -93,13 +91,13 @@ URLI.Permissions = function () {
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
           if (removed) {
-            console.log("URLI.Permissions.removePermissions() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+            console.log("removePermissions() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
           }
         });
       } else if (PERMISSIONS[permission].requestConflict) {
         chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) {
           if (removed) {
-            console.log("URLI.Permissions.removePermissions() - conflict encountered, successfully removed permission request conflict:" + PERMISSIONS[permission].requestConflict.permissions + ", origins:" + PERMISSIONS[permission].requestConflict.origins);
+            console.log("removePermissions() - conflict encountered, successfully removed permission request conflict:" + PERMISSIONS[permission].requestConflict.permissions + ", origins:" + PERMISSIONS[permission].requestConflict.origins);
           }
         });
       }
@@ -123,7 +121,7 @@ URLI.Permissions = function () {
     }
     chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) {
       if (removed) {
-        console.log("URLI.Permissions.removeAllPermissions() - all permissions successfully removed!");
+        console.log("removeAllPermissions() - all permissions successfully removed!");
         if (callback) {
           callback(true);
         }
@@ -141,19 +139,19 @@ URLI.Permissions = function () {
       let shortcutsjsRule = false;
       for (const rule of rules) {
         if (rule.actions[0].js[0] === "js/shortcuts.js") {
-          console.log("URLI.Permissions.checkDeclarativeContent() - internal shortcuts enabled, found shortcuts.js rule!");
+          console.log("checkDeclarativeContent() - internal shortcuts enabled, found shortcuts.js rule!");
           shortcutsjsRule = true;
           break;
         }
       }
       if (!shortcutsjsRule) {
-        console.log("URLI.Permissions.checkDeclarativeContent() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
+        console.log("checkDeclarativeContent() - oh no, something went wrong. internal shortcuts enabled, but shortcuts.js rule not found!");
         chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
             actions: [new chrome.declarativeContent.RequestContentScript({js: ["js/shortcuts.js"]})]
           }], function(rules) {
-            console.log("URLI.Permissions.checkDeclarativeContent() - successfully added declarativeContent rules:" + rules);
+            console.log("checkDeclarativeContent() - successfully added declarativeContent rules:" + rules);
           });
         });
       }
@@ -167,4 +165,4 @@ URLI.Permissions = function () {
     removeAllPermissions: removeAllPermissions,
     checkDeclarativeContent: checkDeclarativeContent
   };
-}();
+})();

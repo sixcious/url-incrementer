@@ -95,8 +95,8 @@ var Options = (() => {
    * @private
    */
   async function DOMContentLoaded() {
-    backgroundPage = await EXT.Promisify.getBackgroundPage();
-    const items = await EXT.Promisify.getItems();
+    backgroundPage = await Promisify.getBackgroundPage();
+    const items = await Promisify.getItems();
     await shortcuts(items);
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
@@ -109,8 +109,8 @@ var Options = (() => {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -162,10 +162,10 @@ var Options = (() => {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#download-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
-    DOM["#download-disable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { backgroundPage.URLI.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#download-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
+    DOM["#download-disable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
@@ -383,7 +383,7 @@ var Options = (() => {
       select.id = "saved-urls-select";
       select.className = "display-block fade-in";
       for (const save of saves) {
-        const wildcard = save.type === "wildcard" ? await backgroundPage.URLI.Cryptography.decrypt(save.ciphertext, save.iv) : "";
+        const wildcard = save.type === "wildcard" ? await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv) : "";
         const option = document.createElement("option");
         option.dataset.hash = save.type === "wildcard" ? save.ciphertext : save.hash;
         option.textContent = (count++) + " - " + save.type + ": " +
@@ -404,7 +404,7 @@ var Options = (() => {
     const select = document.getElementById("saved-urls-select"), // Dynamically Generated Select, so can't use DOM Cache
           option = select.options[select.selectedIndex],
           hash = option.dataset.hash,
-          saves = await EXT.Promisify.getItems("local", "saves");
+          saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
         if (saves[i].type === "wildcard" ? saves[i].ciphertext === hash : saves[i].hash === hash) {
@@ -425,10 +425,10 @@ var Options = (() => {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
     } else {
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.URLI.SaveURLs.deleteURL(url, "addWildcard");
+      const saves = await backgroundPage.SaveURLs.deleteURL(url, "addWildcard");
       // Part 2: Put this URL into the saves array and save it to local storage
-      const encrypt = await backgroundPage.URLI.Cryptography.encrypt(url),
-        items = await EXT.Promisify.getItems();
+      const encrypt = await backgroundPage.Cryptography.encrypt(url),
+        items = await Promisify.getItems();
       if (items.selectionCustom && items.selectionCustom.url) {
         items.selectionCustom.url = "";
       }
@@ -521,7 +521,7 @@ var Options = (() => {
         baseDateFormat = DOM["#base-date-format-input"].value,
         baseCustom = DOM["#base-custom-input"].value,
         leadingZeros = selection.startsWith("0") && selection.length > 1;
-      if (backgroundPage.URLI.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros)) {
+      if (backgroundPage.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros)) {
         throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
     } catch (e) {
@@ -546,11 +546,11 @@ var Options = (() => {
    */
   function resetOptions() {
     chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
+      chrome.storage.sync.set(backgroundPage.Background.getSDV(), function() {
         chrome.storage.local.clear(function() {
-          chrome.storage.local.set(backgroundPage.URLI.Background.getLSDV(), function() {
+          chrome.storage.local.set(backgroundPage.Background.getLSDV(), function() {
             console.log("resetOptions() - removing all permissions...");
-            backgroundPage.URLI.Permissions.removeAllPermissions();
+            backgroundPage.Permissions.removeAllPermissions();
             changeIconColor.call(DOM["#icon-color-radio-dark"]);
             populateValuesFromStorage("all");
             UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);

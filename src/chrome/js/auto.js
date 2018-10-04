@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Auto = function () {
+var Auto = (() => {
 
   // The instance auto timers in Background memory
   // Note: We have a separate map to store all the instances' auto timers instead of storing each auto timer in the
@@ -27,16 +25,16 @@ URLI.Auto = function () {
   function startAutoTimer(instance, caller) {
     // Firefox: Avoid dead object error by getting the instance from the Background instead of the Popup's argument
     if (caller === "popup") {
-      instance = URLI.Background.getInstance(instance.tabId);
+      instance = Background.getInstance(instance.tabId);
     }
     clearAutoTimeout(instance);
     setAutoTimeout(instance);
     addAutoListener();
     // Set starting badge with either normal "auto" badge or repeat badge if it has repeated at least 1 or more times
     if (instance.autoRepeatCount === 0 || instance.autoBadge === "") {
-      URLI.Background.setBadge(instance.tabId, "auto", false);
+      Background.setBadge(instance.tabId, "auto", false);
     } else {
-      URLI.Background.setBadge(instance.tabId, "autorepeat", false);
+      Background.setBadge(instance.tabId, "autorepeat", false);
     }
   }
 
@@ -54,9 +52,9 @@ URLI.Auto = function () {
     if (caller !== "tabRemovedListener") {
       // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
       if (caller !== "popupClearBeforeSet" && !instance.autoRepeat) { // Don't do any badge setting if auto repeat is on
-        URLI.Background.setBadge(instance.tabId, "clear", true);
+        Background.setBadge(instance.tabId, "clear", true);
       } else {
-        URLI.Background.setBadge(instance.tabId, "default", false);
+        Background.setBadge(instance.tabId, "default", false);
       }
     }
   }
@@ -73,19 +71,19 @@ URLI.Auto = function () {
       if (!instance.autoPaused) {
         autoTimer.pause();
         instance.autoPaused = true;
-        URLI.Background.setBadge(instance.tabId, "autopause", false);
+        Background.setBadge(instance.tabId, "autopause", false);
       } else {
         autoTimer.resume();
         instance.autoPaused = false;
         if (instance.autoRepeating) { // The small window when the auto timer is repeating (REP), always show the autorepeat badge
-          URLI.Background.setBadge(instance.tabId, "autorepeat", false);
+          Background.setBadge(instance.tabId, "autorepeat", false);
         } else  if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use normal "auto" badge at start even if badge is times
-          URLI.Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
+          Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
         } else { // All other conditions, show the normal auto badge
-          URLI.Background.setBadge(instance.tabId, "auto", false);
+          Background.setBadge(instance.tabId, "auto", false);
         }
       }
-      URLI.Background.setInstance(instance.tabId, instance); // necessary: update instance.autoPaused boolean state
+      Background.setInstance(instance.tabId, instance); // necessary: update instance.autoPaused boolean state
       autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
     }
   }
@@ -97,7 +95,7 @@ URLI.Auto = function () {
    * @private
    */
   function repeatAutoTimer(instance) {
-    console.log("URLI.Auto.repeatAutoTimer() - repeating auto timer");
+    console.log("repeatAutoTimer() - repeating auto timer");
     instance.autoRepeating = true;
     instance.autoRepeatCount++;
     instance.autoTimes = instance.autoTimesOriginal;
@@ -105,10 +103,10 @@ URLI.Auto = function () {
     instance.selection = instance.startingSelection;
     instance.selectionStart = instance.startingSelectionStart;
     instance.urls = [];
-    const precalculateProps = URLI.IncrementDecrementArray.precalculateURLs(instance);
+    const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
     instance.urls = precalculateProps.urls;
     instance.urlsCurrentIndex = precalculateProps.currentIndex;
-    URLI.Background.setInstance(instance.tabId, instance);
+    Background.setInstance(instance.tabId, instance);
     startAutoTimer(instance);
   }
 
@@ -119,16 +117,16 @@ URLI.Auto = function () {
    * @private
    */
   function setAutoTimeout(instance) {
-    const autoTimer = new URLI.AutoTimer(async function() {
-      const items = EXT.Promisify.getItems();
+    const autoTimer = new AutoTimer(async function() {
+      const items = await Promisify.getItems();
       if (instance.autoRepeating) {
-        URLI.Action.performAction("return", "auto", instance, items);
+        Action.performAction("return", "auto", instance, items);
       } else if (instance.downloadEnabled) {
-        URLI.Action.performAction("download", "auto", instance, items, function(instance) {
-          URLI.Action.performAction(instance.autoAction, "auto", instance, items);
+        Action.performAction("download", "auto", instance, items, function(instance) {
+          Action.performAction(instance.autoAction, "auto", instance, items);
         });
       } else {
-        URLI.Action.performAction(instance.autoAction, "auto", instance, items);
+        Action.performAction(instance.autoAction, "auto", instance, items);
       }
     }, instance.autoSeconds * 1000);
     autoTimers.set(instance.tabId, autoTimer);
@@ -182,7 +180,7 @@ URLI.Auto = function () {
    * @private
    */
   function removeAutoListener() {
-    if (![...URLI.Background.getInstances().values()].some(instance => instance && instance.autoEnabled)) {
+    if (![...Background.getInstances().values()].some(instance => instance && instance.autoEnabled)) {
       chrome.tabs.onUpdated.removeListener(autoListener);
       autoListenerAdded = false;
     }
@@ -199,7 +197,7 @@ URLI.Auto = function () {
    * @private
    */
   function autoListener(tabId, changeInfo, tab) {
-    console.log("URLI.Auto.autoListener() - the chrome.tabs.onUpdated auto listener is on!");
+    console.log("autoListener() - the chrome.tabs.onUpdated auto listener is on!, changeInfo.status=" + changeInfo.status);
     // Cache loading and complete for maybe a small performance gain since we need to check multiple times
     const loading = changeInfo.status === "loading",
           complete = changeInfo.status === "complete";
@@ -207,7 +205,7 @@ URLI.Auto = function () {
     if (!loading && !complete) {
       return;
     }
-    const instance = URLI.Background.getInstance(tabId);
+    const instance = Background.getInstance(tabId);
     // If auto is enabled for this instance
     if (instance && instance.autoEnabled) {
       // Loading Only:
@@ -218,11 +216,11 @@ URLI.Auto = function () {
         }
         // Set the "AUTO" Browser Action Badge as soon as we can (loading). This needs to be done each time the tab is updated
         if (instance.autoPaused) {
-          URLI.Background.setBadge(tabId, "autopause", false);
+          Background.setBadge(tabId, "autopause", false);
         } else if (instance.autoBadge === "times") {
-          URLI.Background.setBadge(tabId, "autotimes", false, (instance.autoTimes) + "");
+          Background.setBadge(tabId, "autotimes", false, (instance.autoTimes) + "");
         } else {
-          URLI.Background.setBadge(tabId, "auto", false);
+          Background.setBadge(tabId, "auto", false);
         }
       }
       // Complete Only:
@@ -243,7 +241,7 @@ URLI.Auto = function () {
         if (instance.autoPaused) {
           // Clear the instance if auto is paused but the times count is at 0 or less (TODO: is this really needed, we need to treat paused differently?)
           if (instance.autoTimes <= 0) {
-            URLI.Action.performAction("clear", "auto", instance);
+            Action.performAction("clear", "auto", instance);
           }
         }
         // If autoTimes is still greater than 0, set the auto timeout, else clear the instance
@@ -253,12 +251,54 @@ URLI.Auto = function () {
           setAutoTimeout(instance);
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
-          URLI.Action.performAction("clear", "auto", instance);
+          Action.performAction("clear", "auto", instance);
         }
       }
     } else if (complete) { // Else this isn't an auto instance tab, removes any stray auto listeners that may possibly exist
       removeAutoListener();
     }
+  }
+
+  /**
+   * The AutoTimer that contains the internal timeout with pause and resume capabilities.
+   * It also contains a "wait" state to keep it from setting a timeout before the page has fully loaded,
+   * if the user checked the "Wait for the page to fully load" checkbox.
+   *
+   * This function is based on code written by Tim Down.
+   *
+   * @param callback the function callback
+   * @param delay    the delay for the timeout
+   * @private
+   */
+  function AutoTimer(callback, delay) {
+    let timeout,
+      start,
+      remaining = delay,
+      wait = false;
+
+    this.pause = function() {
+      clearTimeout(timeout);
+      remaining -= Date.now() - start;
+      remaining = remaining < 0 || wait ? delay : remaining;
+      console.log("pause() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    };
+
+    this.resume = function() {
+      start = Date.now();
+      clearTimeout(timeout);
+      timeout = wait ? timeout : setTimeout(callback, remaining);
+      console.log("resume() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
+    };
+
+    this.clear = function() {
+      clearTimeout(timeout);
+    };
+
+    this.setWait = function(wait_) {
+      wait = wait_;
+    };
+
+    this.resume();
   }
 
   // Return Public Functions
@@ -268,47 +308,4 @@ URLI.Auto = function () {
     pauseOrResumeAutoTimer: pauseOrResumeAutoTimer,
     repeatAutoTimer: repeatAutoTimer
   };
-}();
-
-/**
- * The AutoTimer that contains the internal timeout with pause and resume capabilities.
- * It also contains a "wait" state to keep it from setting a timeout before the page has fully loaded,
- * if the user checked the "Wait for the page to fully load" checkbox.
- * 
- * This function is based on code written by Tim Down @ stackoverflow.com.
- *
- * @param callback the function callback
- * @param delay    the delay for the timeout
- * @see https://stackoverflow.com/a/3969760
- */
-URLI.AutoTimer = function (callback, delay) {
-
-  let timeout,
-      start,
-      remaining = delay,
-      wait = false;
-
-  this.pause = function() {
-    clearTimeout(timeout);
-    remaining -= Date.now() - start;
-    remaining = remaining < 0 || wait ? delay : remaining;
-    console.log("URLI.AutoTimer.pause() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
-  };
-
-  this.resume = function() {
-    start = Date.now();
-    clearTimeout(timeout);
-    timeout = wait ? timeout : setTimeout(callback, remaining);
-    console.log("URLI.AutoTimer.resume() - timeout=" + timeout + " start=" + start + " delay=" + delay + " remaining=" + remaining + " wait=" + wait);
-  };
-
-  this.clear = function() {
-    clearTimeout(timeout);
-  };
-
-  this.setWait = function(wait_) {
-    wait = wait_;
-  };
-
-  this.resume();
-};
+})();

@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Background = function () {
+var Background = (() => {
 
   // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
@@ -59,7 +57,7 @@ URLI.Background = function () {
   // The individual tab instances in Background memory. Note: We never save instances in storage due to URLs being a privacy concern
   instances = new Map();
 
-  // A boolean flag to dynamically make the background temporarily persistent (when an instance is enabled)
+  // A boolean flag to dynamically make the background temporarily persistent when an instance is enabled
   let persistent = false;
 
   /**
@@ -137,21 +135,21 @@ URLI.Background = function () {
    * @public
    */
   async function buildInstance(tab, items, localItems) {
-    items = items ? items : await EXT.Promisify.getItems();
-    localItems = localItems ? localItems : await EXT.Promisify.getItems("local");
+    items = items ? items : await Promisify.getItems();
+    localItems = localItems ? localItems : await Promisify.getItems("local");
     const saves = localItems.saves;
     let via = "items",
         object = items,
-        selection = URLI.IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+        selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
       for (const save of saves) {
-        const result = await URLI.SaveURLs.matchesURL(save, tab.url);
+        const result = await SaveURLs.matchesURL(save, tab.url);
         if (result.matches) {
-          console.log("URLI.Background.buildInstance() - found a " + save.type + " save for this tab's url");
+          console.log("buildInstance() - found a " + save.type + " save for this tab's url");
           via = save.type;
           object = save;
-          selection = save.type === "url" ? result.selection : URLI.IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
+          selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
           break;
         }
       }
@@ -215,8 +213,8 @@ URLI.Background = function () {
    */
   function tabUpdatedListener(tabId, changeInfo, tab) {
     if (changeInfo.status === "complete") {
-      console.log("URLI.Background.tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
-      const instance = URLI.Background.getInstance(tabId);
+      console.log("tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
+      const instance = Background.getInstance(tabId);
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (instance && instance.downloadEnabled && !instance.autoEnabled) {
         chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
@@ -236,8 +234,8 @@ URLI.Background = function () {
     // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
     // 5.3 - 5.8 only: Storage and Permission changes for 6.0
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
-      console.log("URLI.Background.installedListener() - details.reason=" + details.reason);
-      const items = details.previousVersion && details.previousVersion >= "5.3" ? await EXT.Promisify.getItems() : undefined;
+      console.log("installedListener() - details.reason=" + details.reason);
+      const items = details.previousVersion && details.previousVersion >= "5.3" ? await Promisify.getItems() : undefined;
       chrome.storage.sync.clear(function() {
         chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
           chrome.storage.local.clear(function() {
@@ -245,7 +243,7 @@ URLI.Background = function () {
               if (details.reason === "install") {
                 chrome.runtime.openOptionsPage();
               } else if (details.previousVersion <= "5.2") {
-                URLI.Permissions.removeAllPermissions();
+                Permissions.removeAllPermissions();
               } else if (details.previousVersion >= "5.3") {
                 // TODO items
               }
@@ -264,11 +262,11 @@ URLI.Background = function () {
    * @private
    */
   async function startupListener() {
-    console.log("URLI.Background.startupListener()");
-    const items = await EXT.Promisify.getItems();
+    console.log("startupListener()");
+    const items = await Promisify.getItems();
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
     if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
-      console.log("URLI.Background.startupListener() - setting browserAction icon to " + items.iconColor);
+      console.log("startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {
           "16": "/img/16-" + items.iconColor + ".png",
@@ -279,7 +277,7 @@ URLI.Background = function () {
     }
     // Ensure Internal Shortcuts declarativeContent rule is added (it sometimes gets lost when the extension is updated re-enabled)
     if (items && items.permissionsInternalShortcuts) {
-      URLI.Permissions.checkDeclarativeContent();
+      Permissions.checkDeclarativeContent();
     }
   }
 
@@ -292,14 +290,14 @@ URLI.Background = function () {
    * @private
    */
   async function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Background.messageListener() - request.greeting=" + request.greeting);
+    console.log("messageListener() - request.greeting=" + request.greeting);
     sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
     if (request && request.greeting === "performAction") {
-      const items = await EXT.Promisify.getItems();
+      const items = await Promisify.getItems();
       const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
       if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
         (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
-        URLI.Action.performAction(request.action, "message", instance, items);
+        Action.performAction(request.action, "message", instance, items);
       }
     }
   }
@@ -313,15 +311,15 @@ URLI.Background = function () {
    * @private
    */
   async function messageExternalListener(request, sender, sendResponse) {
-    console.log("URLI.Background.messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
+    console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
     const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg", //"decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({received: true});
-      const items = await EXT.Promisify.getItems();
+      const items = await Promisify.getItems();
       const instance = getInstance(request.tab.id) || await buildInstance(request.tab, items);
-      URLI.Action.performAction(request.action, "external", instance, items);
+      Action.performAction(request.action, "external", instance, items);
     }
   }
 
@@ -333,13 +331,13 @@ URLI.Background = function () {
    */
   async function commandListener(command) {
     if (command === "increment" || command === "decrement" || command === "next" || command === "prev" || command === "clear" || command === "return" || command === "auto")  {
-      const items = await EXT.Promisify.getItems();
+      const items = await Promisify.getItems();
       if (!items.permissionsInternalShortcuts) {
-        const tabs = await EXT.Promisify.getTabs();
+        const tabs = await Promisify.getTabs();
         if (tabs && tabs[0]) { // The tab may not exist if command is called while in popup window
           const instance = getInstance(tabs[0].id) || await buildInstance(tabs[0], items);
           if (items.commandsQuickEnabled || (instance && (instance.enabled || instance.saveFound))) {
-            URLI.Action.performAction(command, "command", instance, items);
+            Action.performAction(command, "command", instance, items);
           }
         }
       }
@@ -354,12 +352,12 @@ URLI.Background = function () {
    * @private
    */
   async function makePersistent() {
-    const tabs = await EXT.Promisify.getTabs({}),
+    const tabs = await Promisify.getTabs({}),
           tabIds = tabs.map(tab => tab.id);
-    console.log("URLI.Background.makePersistent() - tabIds=" + tabIds);
+    console.log("makePersistent() - tabIds=" + tabIds);
     [...instances.keys()].forEach(function(key) {
       if (!tabIds.includes(key)) {
-        URLI.Action.performAction("clear", "tabRemovedListener", getInstance(key)); // Tab was removed so clear instance
+        Action.performAction("clear", "tabRemovedListener", getInstance(key)); // Tab was removed so clear instance
       }
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
@@ -389,4 +387,4 @@ URLI.Background = function () {
     setBadge: setBadge,
     tabUpdatedListener: tabUpdatedListener
   };
-}();
+})();

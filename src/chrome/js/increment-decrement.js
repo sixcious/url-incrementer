@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.IncrementDecrement = function () {
+var IncrementDecrement = (() => {
 
   /**
    * Finds a selection in the url to increment or decrement depending on the preference:
@@ -44,7 +42,7 @@ URLI.IncrementDecrement = function () {
         if (first) { selectionProps = {selection: first[0], selectionStart: first.index}; }
       }
     } catch(e) {
-      console.log("URLI.IncrementDecrement.findSelection() - exception encountered:" + e);
+      console.log("findSelection() - exception encountered:" + e);
       if (!previousException) {
         return findSelection(url, "firstnumber", selectionCustom, true);
       }
@@ -57,15 +55,15 @@ URLI.IncrementDecrement = function () {
     let error = "";
     switch (base) {
       case "date":
-        const selectionDate = URLI.IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, dateFormat);
-        console.log("URLI.IncrementDecrement.validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
+        const selectionDate = IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, dateFormat);
+        console.log("validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
         if (selectionDate !== selection) {
           error = chrome.i18n.getMessage("date_invalid_error");
         }
         break;
       case "custom":
         const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, custom, leadingZeros);
-        console.log("URLI.IncrementDecrement.validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
+        console.log("validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
         if (selectionCustom !== selection) {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
         }
@@ -102,7 +100,7 @@ URLI.IncrementDecrement = function () {
   function incrementDecrement(action, instance) {
     // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't increment the URL
     if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
-      URLI.IncrementDecrementArray.stepThruURLs(action, instance);
+      IncrementDecrementArray.stepThruURLs(action, instance);
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
     // TODO: Check if range enabled and don't do this
@@ -128,7 +126,7 @@ URLI.IncrementDecrement = function () {
    * @public
    */
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
-    console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
+    console.log("incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     incrementDecrement(action, instance);
     // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (errorSkipRemaining > 0) {
@@ -142,35 +140,35 @@ URLI.IncrementDecrement = function () {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
             (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - request.url= " + instance.url);
-          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - response.url=" + response.url);
-          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
+          console.log("incrementDecrementErrorSkip() - request.url= " + instance.url);
+          console.log("incrementDecrementErrorSkip() - response.url=" + response.url);
+          console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
           if (!instance.autoEnabled) {
-            URLI.Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
+            Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
           }
           // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
           incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
         } else {
-          console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
+          console.log("incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
           chrome.tabs.update(instance.tabId, {url: instance.url});
           if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-            URLI.Background.setInstance(instance.tabId, instance);
+            Background.setInstance(instance.tabId, instance);
           }
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         }
       }).catch(e => {
-        console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
+        console.log("incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
         if (!instance.autoEnabled) {
-          URLI.Background.setBadge(instance.tabId, "skip", true, "ERR");
+          Background.setBadge(instance.tabId, "skip", true, "ERR");
         }
         // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
       });
     } else {
-      console.log("URLI.IncrementDecrement.incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
+      console.log("incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
       chrome.tabs.update(instance.tabId, {url: instance.url});
       if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        URLI.Background.setInstance(instance.tabId, instance);
+        Background.setInstance(instance.tabId, instance);
       }
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
@@ -184,7 +182,7 @@ URLI.IncrementDecrement = function () {
    * @private
    */
   function incrementDecrementURL(action, instance) {
-    URLI.IncrementDecrementMulti.multiPre(action, instance);
+    IncrementDecrementMulti.multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
           interval = instance.interval, leadingZeros = instance.leadingZeros,
           base = instance.base, baseCase = instance.baseCase, baseDateFormat = instance.baseDateFormat, baseCustom = instance.baseCustom;
@@ -192,7 +190,7 @@ URLI.IncrementDecrement = function () {
     // Perform the increment or decrement operation depending on the base type
     switch(base) {
       case "date":
-        selectionmod = URLI.IncrementDecrementDate.incrementDecrementDate(action, selection, interval, baseDateFormat);
+        selectionmod = IncrementDecrementDate.incrementDecrementDate(action, selection, interval, baseDateFormat);
         break;
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
@@ -204,7 +202,7 @@ URLI.IncrementDecrement = function () {
     }
     // Append: part 1 of the URL + modified selection + part 2 of the URL. (Note: We can't cache part1 and part2 at the beginning due to multi)
     const urlmod = url.substring(0, selectionStart) + selectionmod + url.substring(selectionStart + selection.length);
-    URLI.IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
+    IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
     instance.url = urlmod;
     instance.selection = selectionmod;
   }
@@ -283,9 +281,9 @@ URLI.IncrementDecrement = function () {
     incrementDecrement: incrementDecrement,
     incrementDecrementErrorSkip: incrementDecrementErrorSkip
   };
-}();
+})();
 
-URLI.IncrementDecrementMulti = function () {
+var IncrementDecrementMulti = (() => {
 
   /**
    * Pre-handles a multi-incrementing instance before incrementDecrementURL().
@@ -327,12 +325,12 @@ URLI.IncrementDecrementMulti = function () {
       //if (instance.url && instance.url.length !== urlmod.length) {
         const urlLengthDiff = instance.url.length - urlmod.length; // Handles both positive and negative changes (e.g. URL became shorter or longer)
         const thisPartSelectionStart = instance.multi[instance.multiPart].selectionStart;
-        console.log("URLI.IncrementDecrement.multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
+        console.log("multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
         for (let i = 1; i <= instance.multiCount; i++) {
           if (i !== instance.multiPart) {
             // If the i part comes after this part in the URL, adjust the selectionStarts of the i part
             if (instance.multi[i].selectionStart > thisPartSelectionStart) {
-              console.log("URLI.IncrementDecrement.multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
+              console.log("multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
               instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
             }
             // Adjust the other multi parts' selections in case they overlap with this multiPart's selection
@@ -352,9 +350,9 @@ URLI.IncrementDecrementMulti = function () {
     multiPre: multiPre,
     multiPost: multiPost
   };
-}();
+})();
 
-URLI.IncrementDecrementDate = function () {
+var IncrementDecrementDate = (() => {
 
   const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
   const mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
@@ -374,7 +372,7 @@ URLI.IncrementDecrementDate = function () {
    * @public
    */
   function incrementDecrementDate(action, selection, interval, dateFormat) {
-    console.log("URLI.IncrementDecrement.incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
+    console.log("incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     let selection2 = "";
     try {
       const parts = splitdateparts(selection, dateFormat);
@@ -382,7 +380,7 @@ URLI.IncrementDecrementDate = function () {
       const date2 = incdecdate(action, date, dateFormat, interval);
       selection2 = date2str(date2, dateFormat, parts.dateFormatParts);
     } catch(e) {
-      console.log("URLI.Background.IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
+      console.log("IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
       selection2 = "DateError";
     }
     return selection2;
@@ -492,9 +490,9 @@ URLI.IncrementDecrementDate = function () {
   return {
     incrementDecrementDate: incrementDecrementDate
   };
-}();
+})();
 
-URLI.IncrementDecrementArray = function () {
+var IncrementDecrementArray = (() => {
 
   /**
    * Steps to the next or previous position in the URLs array.
@@ -505,10 +503,10 @@ URLI.IncrementDecrementArray = function () {
    * @public
    */
   function stepThruURLs(action, instance) {
-    // console.log("URLI.IncrementDecrementArray.stepThruURLs() - performing increment/decrement on the urls array...");
+    // console.log("stepThruURLs() - performing increment/decrement on the urls array...");
     const urlsLength = instance.urls.length;
-   // console.log("URLI.IncrementDecrementArray.stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-   // console.log("URLI.IncrementDecrementArray.stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
+   // console.log("stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
+   // console.log("stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
     // Get the urlProps object from the next or previous position in the urls array and update the instance
     const urlProps =
       (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
@@ -526,7 +524,7 @@ URLI.IncrementDecrementArray = function () {
    * @public
    */
   function precalculateURLs(instance) {
-    console.log("URLI.IncrementDecrement.precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
+    console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
     if (instance.toolkitEnabled || instance.customURLs || instance.shuffleURLs) {
       // Custom URLs are treated the same in all modes
@@ -538,7 +536,7 @@ URLI.IncrementDecrementArray = function () {
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
-        const shuffleLimit = instance.shuffleLimit; // EXT.Promisify.getItems().shuffleLimit;
+        const shuffleLimit = instance.shuffleLimit; // Promisify.getItems().shuffleLimit;
         const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
         const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
@@ -550,7 +548,7 @@ URLI.IncrementDecrementArray = function () {
   }
 
   function buildURLs(instance, action, limit) {
-    console.log("URLI.IncrementDecrement.buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
+    console.log("buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
     const urls = [],
           url = instance.url,
           selection = instance.selection;
@@ -563,7 +561,7 @@ URLI.IncrementDecrementArray = function () {
       buildMultiRangeURLs(instance, action, urls);
     } else {
       for (let i = 0; i < limit; i++) {
-        URLI.IncrementDecrement.incrementDecrement(action, instance);
+        IncrementDecrement.incrementDecrement(action, instance);
         urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
         // Only exit if base is numeric and beyond bounds
         if (!isNaN(instance.base)) {
@@ -588,8 +586,8 @@ URLI.IncrementDecrementArray = function () {
     for (let i = 1; i <= instance.multiCount; i++) {
       const urlmod = instance.url.replace(instance.multi[i].range[0], instance.multi[i].range[1]);
       const selectionmod = instance.multi[i].range[1];
-      URLI.IncrementDecrementMulti.multiPre(action + i, instance);
-      URLI.IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
+      IncrementDecrementMulti.multiPre(action + i, instance);
+      IncrementDecrementMulti.multiPost(selectionmod, urlmod, instance);
       instance.multi[i].startingSelectionStart = instance.multi[i].selectionStart;
       instance.url = urlmod;
     }
@@ -607,13 +605,13 @@ URLI.IncrementDecrementArray = function () {
       for (let j = 0; j < instance.multi[2].times; j++) {
         const preurl3 = instance.url;
         for (let k = 0; k < instance.multi[3].times - 1; k++) {
-          URLI.IncrementDecrement.incrementDecrement(action + "3", instance);
+          IncrementDecrement.incrementDecrement(action + "3", instance);
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
         }
         instance.url = preurl3;
         instance.multi[2].selectionStart = press2;
         if (j !== instance.multi[2].times - 1) {
-          URLI.IncrementDecrement.incrementDecrement(action + "2", instance);
+          IncrementDecrement.incrementDecrement(action + "2", instance);
           urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
         }
         instance.multi[3].selection = instance.multi[3].startingSelection;
@@ -624,7 +622,7 @@ URLI.IncrementDecrementArray = function () {
       instance.multi[2].selectionStart = press2;
       instance.multi[3].selectionStart = press3;
       if (i !== instance.multi[1].times - 1) {
-        URLI.IncrementDecrement.incrementDecrement(action + "1", instance);
+        IncrementDecrement.incrementDecrement(action + "1", instance);
         urls.push({"urlmod": instance.url, "selectionmod": instance.selection});
       }
     }
@@ -669,4 +667,4 @@ URLI.IncrementDecrementArray = function () {
     stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs,
   };
-}();
+})();

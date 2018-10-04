@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Shortcuts = URLI.Shortcuts || function () {
+var Shortcuts = (() => {
 
   const FLAG_KEY_NONE  = 0x0, // 0000
         FLAG_KEY_ALT   = 0x1, // 0001
@@ -60,7 +58,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
    * @private
    */
   function keyupListener(event) {
-    console.log("URLI.Shortcuts.keyupListener() - event.code=" + event.code);
+    console.log("keyupListener() - event.code=" + event.code);
     console.log("key="); console.log(key);
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "key"}); }
@@ -85,7 +83,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     } else {
       buttons3 = false;
     }
-    console.log("URLI.Shortcuts.mousedownListener() event.buttons=" + event.buttons + ", buttons3=" + buttons3);
+    console.log("mousedownListener() event.buttons=" + event.buttons + ", buttons3=" + buttons3);
     button = event.button;
   }
 
@@ -100,12 +98,12 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     if (event.button === button) {
       clicks++;
       timeouts.mouseup = setTimeout(function() {
-        console.log("URLI.Shortcuts.mouseupListener() - timeouts.mouseup resetting clicks");
+        console.log("mouseupListener() - timeouts.mouseup resetting clicks");
         clicks = 0; }, items.mouseClickSpeed);
     } else {
       clicks = 0;
     }
-    console.log("URLI.Shortcuts.mouseupListener() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks);
+    console.log("mouseupListener() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks);
     if      (mousePressed(event, items.mouseIncrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseDecrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseNext))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
@@ -178,7 +176,7 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
         }
         // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-          console.log("URLI.Shortcuts.chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+          console.log("chrome.runtime.onMessage() - request.greeting=" + request.greeting);
           switch (request.greeting) {
             case "addKeyListener":
               document.removeEventListener("keydown", keydownListener);
@@ -211,5 +209,5 @@ URLI.Shortcuts = URLI.Shortcuts || function () {
     });
   }
 
-  console.log("URLI.Shortcuts - contentScript executed");
-}();
+  console.log("shortcuts.js contentScript executed");
+})();

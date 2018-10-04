@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var EXT = EXT || {};
-
-EXT.Promisify = function () {
+var Promisify = (() => {
 
   /**
    * Gets the storage items via a promise-based wrapper for async/await callers.
@@ -59,4 +57,4 @@ EXT.Promisify = function () {
     getTabs: getTabs,
     getBackgroundPage: getBackgroundPage
   };
-}();
+})();

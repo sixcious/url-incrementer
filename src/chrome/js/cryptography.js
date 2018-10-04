@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Cryptography = function () {
+var Cryptography = (() => {
 
   /**
    * Calculates a cryptographic hash. We use the PBKDF2 algorithm with an Hmac-SHA512 hash function.
@@ -96,4 +94,4 @@ URLI.Cryptography = function () {
     encrypt: encrypt,
     decrypt: decrypt
   };
-}();
+})();

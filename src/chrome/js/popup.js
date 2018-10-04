@@ -92,17 +92,17 @@ var Popup = (() => {
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
 
     // Initialize popup content (1-time only)
-    const tabs = await EXT.Promisify.getTabs();
-    backgroundPage = await EXT.Promisify.getBackgroundPage();
-    items = await EXT.Promisify.getItems();
-    localItems = await EXT.Promisify.getItems("local");
-    instance = backgroundPage.URLI.Background.getInstance(tabs[0].id);
+    const tabs = await Promisify.getTabs();
+    backgroundPage = await Promisify.getBackgroundPage();
+    items = await Promisify.getItems();
+    localItems = await Promisify.getItems("local");
+    instance = backgroundPage.Background.getInstance(tabs[0].id);
     if (instance && instance.toolkitEnabled && instance.toolkitTool === "crawl") {
       crawlWindow();
       return;
     }
     if (!instance || !instance.enabled) {
-      instance = await backgroundPage.URLI.Background.buildInstance(tabs[0], items, localItems);
+      instance = await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
     }
     _ = JSON.parse(JSON.stringify(instance));
     for (const button of buttons) {
@@ -160,7 +160,7 @@ var Popup = (() => {
       if (items.popupAnimationsEnabled) {
         UI.clickHoverCss(this, "hvr-push-click");
       }
-      backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance, items);
+      backgroundPage.Action.performAction(action, "popupClickActionButton", instance, items);
     }
   }
 
@@ -398,7 +398,7 @@ var Popup = (() => {
    */
   async function toolkit() {
     UI.clickHoverCss(this, "hvr-push-click");
-    const tabs = await EXT.Promisify.getTabs({currentWindow: true});
+    const tabs = await Promisify.getTabs({currentWindow: true});
     console.log("toolkit() - tabs.length=" + tabs.length);
     setupInputs("toolkit", tabs);
     const e = setupErrors("toolkit");
@@ -409,13 +409,13 @@ var Popup = (() => {
     } else {
       const toolkitInstance = JSON.parse(JSON.stringify(_));
       toolkitInstance.toolkitEnabled = true;
-      const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(toolkitInstance);
+      const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
       if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
-      backgroundPage.URLI.Action.performAction("toolkit", "popup", toolkitInstance, items);
+      backgroundPage.Action.performAction("toolkit", "popup", toolkitInstance, items);
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
       chrome.storage.sync.set({
         "toolkitTool": _.toolkitTool,
@@ -438,7 +438,7 @@ var Popup = (() => {
     DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
     DOM["#setup-buttons"].className = "display-none";
     crawlURLs(instance.toolkitQuantity);
-    backgroundPage.URLI.Background.deleteInstance(instance.tabId);
+    backgroundPage.Background.deleteInstance(instance.tabId);
   }
 
   function crawlURLs(quantityRemaining) {
@@ -531,7 +531,7 @@ var Popup = (() => {
         div.textContent = chrome.i18n.getMessage("download_preview_blocked");
         DOM["#download-preview-table-div"].replaceChild(div, DOM["#download-preview-table-div"].firstChild);
       } else {
-        const code = "URLI.Download.previewDownloadURLs();";
+        const code = "Download.previewDownloadURLs();";
         chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function (results) {
           if (results && results[0]) {
             // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
@@ -590,7 +590,7 @@ var Popup = (() => {
           downloadSelector = DOM["#download-selector-input"].value,
           downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
           downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-          code = "URLI.Download.findDownloadURLs(" +
+          code = "Download.findDownloadURLs(" +
             JSON.stringify(downloadStrategy) + ", " +
             JSON.stringify(downloadExtensions) + ", " +
             JSON.stringify(downloadTags) + ", " +
@@ -845,18 +845,18 @@ var Popup = (() => {
     }
     // Else good to go!
     else {
-      backgroundPage.URLI.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
+      backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
         instance = JSON.parse(JSON.stringify(_));
         instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;
         instance.saveFound = instance.saveURL;
-        const precalculateProps = backgroundPage.URLI.IncrementDecrementArray.precalculateURLs(instance);
+        const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
-        backgroundPage.URLI.Background.setInstance(instance.tabId, instance);
+        backgroundPage.Background.setInstance(instance.tabId, instance);
         // Save URL
         if (instance.saveURL) {
-          backgroundPage.URLI.SaveURLs.addURL(instance); // TODO
+          backgroundPage.SaveURLs.addURL(instance); // TODO
           instance.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage
@@ -903,7 +903,7 @@ var Popup = (() => {
         }
         // If auto is enabled, ask Auto to start auto timer
         if (instance.autoEnabled) {
-          backgroundPage.URLI.Auto.startAutoTimer(instance, "popup");
+          backgroundPage.Auto.startAutoTimer(instance, "popup");
         }
         toggleView.call(DOM["#accept-button"]);
       });
@@ -1003,7 +1003,7 @@ var Popup = (() => {
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        backgroundPage.URLI.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
+        backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
@@ -1068,24 +1068,18 @@ var Popup = (() => {
    * @private
    */
   function messageListener(request, sender, sendResponse) {
-    console.log("messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
-    switch (request.greeting) {
-      case "updatePopupInstance":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          instance = request.instance;
-          updateControls();
-          updateSetup();
-        }
-        break;
-      case "updatePopupDownloadPreview":
-        if (request.instance && request.instance.tabId === instance.tabId) {
-          updateDownloadPreviewCompletely();
-        }
-        break;
-      case "crawlPopupNoWindow":
+    console.log("messageListener() - request.greeting=" + request.greeting);
+    if (request.instance && request.instance.tabId === instance.tabId) {
+      if (request.greeting === "updatePopupInstance") {
+        instance = request.instance;
+        updateControls();
+        updateSetup();
+      } else if (request.greeting === "updatePopupDownloadPreview") {
+        updateDownloadPreviewCompletely();
+      } else if (request.greeting === "crawlPopupNoWindow") {
         instance = request.instance;
         crawlWindow();
-        break;
+      }
     }
   }
 

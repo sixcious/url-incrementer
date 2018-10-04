@@ -25,6 +25,11 @@ https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string
 Custom Base Encoding / Decoding (Base 62)
 https://medium.com/@harpermaddox/how-to-build-a-custom-url-shortener-5e8b454c58ae
 
+## Auto
+
+AutoTimer with Pause / Resume
+https://stackoverflow.com/a/3969760
+
 ## Download
 
 List of all HTML Tag Attributes that can contain URLs
