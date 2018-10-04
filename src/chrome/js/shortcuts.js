@@ -13,13 +13,6 @@ var Shortcuts = (() => {
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META  = 0x8; // 1000
 
-  const KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
-    "Alt", "AltLeft", "AltRight",
-    "Control", "ControlLeft", "ControlRight",
-    "Shift", "ShiftLeft", "ShiftRight",
-    "Meta", "MetaLeft", "MetaRight"
-  ];
-
   let key = {},
       button = undefined, // the current mouse button on mousedown
       buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
@@ -37,19 +30,19 @@ var Shortcuts = (() => {
     items = items_;
   }
 
-  // TODO
-  function keydownListener(event) {
-    //event.preventDefault();
-    // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
-
-    key = { "modifiers":
-        (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
-        (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
-        (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-        (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
-      "code": !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : ""
-    };
-  }
+  // // TODO
+  // function keydownListener(event) {
+  //   //event.preventDefault();
+  //   // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
+  //
+  //   key = { "modifiers":
+  //       (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
+  //       (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
+  //       (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
+  //       (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
+  //     "code": event.code
+  //   };
+  // }
 
   /**
    * A keyup event listener for keyboard shortcuts.
@@ -159,27 +152,47 @@ var Shortcuts = (() => {
     return mouse && (mouse.button === 3 ? buttons3 : event.button === mouse.button) && mouse.clicks === clicks;
   }
 
+  /**
+   * Adds the key listeners.
+   *
+   * @private
+   */
   function addKeyListener() {
     removeKeyListener();
-    document.addEventListener("keydown", keydownListener);
+    //document.addEventListener("keydown", keydownListener);
     document.addEventListener("keyup", keyupListener);
   }
 
+  /**
+   * Removes the key listeners.
+   *
+   * @private
+   */
   function removeKeyListener() {
-    document.removeEventListener("keydown", keydownListener);
+    //document.removeEventListener("keydown", keydownListener);
     document.removeEventListener("keyup", keyupListener);
   }
 
+  /**
+   * Adds the mouse listeners.
+   *
+   * @private
+   */
   function addMouseListener() {
     removeMouseListener();
-    document.addEventListener("mouseup", mouseupListener);
     document.addEventListener("mousedown", mousedownListener);
+    document.addEventListener("mouseup", mouseupListener);
     document.addEventListener("contextmenu", contextmenuListener);
   }
 
+  /**
+   * Removes the mouse listeners.
+   *
+   * @private
+   */
   function removeMouseListener() {
-    document.removeEventListener("mouseup", mouseupListener);
     document.removeEventListener("mousedown", mousedownListener);
+    document.removeEventListener("mouseup", mouseupListener);
     document.removeEventListener("contextmenu", contextmenuListener);
   }
 

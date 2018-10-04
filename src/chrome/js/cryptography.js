@@ -42,7 +42,7 @@ var Cryptography = (() => {
    */
   async function encrypt(plaintext) {
     const algorithm = { name: "AES-GCM", iv: crypto.getRandomValues(new Uint8Array(64)) };
-    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("urli <3's you! :)"));
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["encrypt"]);
     const encryption = await crypto.subtle.encrypt(algorithm, key, new TextEncoder().encode(plaintext));
     return { iv: u8a2b64(algorithm.iv), ciphertext: u8a2b64(new Uint8Array(encryption)) };
@@ -59,7 +59,7 @@ var Cryptography = (() => {
    */
   async function decrypt(ciphertext, iv) {
     const algorithm = { name: "AES-GCM", iv: b642u8a(iv) };
-    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("urli <3's you! :)"));
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("password"));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["decrypt"]);
     const decryption = await crypto.subtle.decrypt(algorithm, key, b642u8a(ciphertext));
     return new TextDecoder().decode(decryption);

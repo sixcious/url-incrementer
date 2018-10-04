@@ -99,7 +99,7 @@ var Action = (() => {
    */
   function incrementDecrement(action, instance) {
     let actionPerformed = false;
-    // If URLI didn't find a selection, we can't increment or decrement
+    // If no selection was found, can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       IncrementDecrement.incrementDecrement(action, instance);
@@ -122,7 +122,7 @@ var Action = (() => {
    */
   function incrementDecrementErrorSkip(action, instance, items) {
     let actionPerformed = false;
-    // If URLI didn't find a selection, we can't increment or decrement
+    // If no selection was found, can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
