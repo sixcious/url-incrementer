@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Options = function () {
+var Options = (() => {
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
         FLAG_KEY_NONE  = 0x0, // 0000
@@ -126,7 +124,7 @@ URLI.Options = function () {
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { chrome.storage.sync.set({"popupButtonSize": +this.value});
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
-    DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { URLI.UI.clickHoverCss(this, "hvr-push-click"); } });
+    DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
@@ -410,7 +408,7 @@ URLI.Options = function () {
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
         if (saves[i].type === "wildcard" ? saves[i].ciphertext === hash : saves[i].hash === hash) {
-          console.log("URLI.Options.deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
+          console.log("deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
           saves.splice(i, 1);
           chrome.storage.local.set({saves: saves}, function() {
             populateValuesFromStorage("savedURLs");
@@ -468,7 +466,7 @@ URLI.Options = function () {
    * @private
    */
   function updateTextInputDynamically(domId, storageKey, storageValueType) {
-    console.log("URLI.Options.updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
+    console.log("updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
     clearTimeout(timeouts[domId]);
     timeouts[domId] = setTimeout(function() {
       chrome.storage.sync.set({ [storageKey]:
@@ -551,11 +549,11 @@ URLI.Options = function () {
       chrome.storage.sync.set(backgroundPage.URLI.Background.getSDV(), function() {
         chrome.storage.local.clear(function() {
           chrome.storage.local.set(backgroundPage.URLI.Background.getLSDV(), function() {
-            console.log("URLI.Options.resetOptions() - removing all permissions...");
+            console.log("resetOptions() - removing all permissions...");
             backgroundPage.URLI.Permissions.removeAllPermissions();
             changeIconColor.call(DOM["#icon-color-radio-dark"]);
             populateValuesFromStorage("all");
-            URLI.UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
+            UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
           });
         });
       });
@@ -573,9 +571,9 @@ URLI.Options = function () {
           face = " " + faces[Math.floor(Math.random() * faces.length)],
           value = +this.dataset.value + 1;
     this.dataset.value = value + "";
-    URLI.UI.clickHoverCss(this, "hvr-buzz-out-click");
-    URLI.UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    UI.clickHoverCss(this, "hvr-buzz-out-click");
+    UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
-}();
+})();

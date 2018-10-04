@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.Popup = function () {
+var Popup = (() => {
 
   const DOM = {}; // Map to cache DOM elements: key=id, value=element
 
@@ -160,7 +158,7 @@ URLI.Popup = function () {
          (action === "auto" && instance.autoEnabled) ||
          (action === "download" && instance.downloadEnabled)) {
       if (items.popupAnimationsEnabled) {
-        URLI.UI.clickHoverCss(this, "hvr-push-click");
+        UI.clickHoverCss(this, "hvr-push-click");
       }
       backgroundPage.URLI.Action.performAction(action, "popupClickActionButton", instance, items);
     }
@@ -308,7 +306,7 @@ URLI.Popup = function () {
       DOM["#multi-count"].value = 0;
       DOM["#multi-img-1"].className = DOM["#multi-img-2"].className = DOM["#multi-img-3"].className = "disabled";
     } else if (e.incrementDecrementErrorsExist) {
-      URLI.UI.generateAlert(e.incrementDecrementErrors);
+      UI.generateAlert(e.incrementDecrementErrors);
     } else {
       const multiCountNew = _.multiCount + 1;
       DOM["#multi-count"].value = multiCountNew;
@@ -399,15 +397,15 @@ URLI.Popup = function () {
    * @private
    */
   async function toolkit() {
-    URLI.UI.clickHoverCss(this, "hvr-push-click");
+    UI.clickHoverCss(this, "hvr-push-click");
     const tabs = await EXT.Promisify.getTabs({currentWindow: true});
-    console.log("URLI.Popup.toolkit() - tabs.length=" + tabs.length);
+    console.log("toolkit() - tabs.length=" + tabs.length);
     setupInputs("toolkit", tabs);
     const e = setupErrors("toolkit");
     if (e.toolkitErrorsExist) {
-      URLI.UI.generateAlert(e.toolkitErrors);
+      UI.generateAlert(e.toolkitErrors);
     } else if (e.incrementDecrementErrorsExist) {
-      URLI.UI.generateAlert(e.incrementDecrementErrors);
+      UI.generateAlert(e.incrementDecrementErrors);
     } else {
       const toolkitInstance = JSON.parse(JSON.stringify(_));
       toolkitInstance.toolkitEnabled = true;
@@ -430,7 +428,7 @@ URLI.Popup = function () {
 
   // public TODO
   function crawlWindow() {
-    console.log("URLI.Popup.crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
+    console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
     DOM["#toolkit-percentage-value"].textContent = 0 + "%";
     updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
@@ -459,11 +457,11 @@ URLI.Popup = function () {
         DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
         updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
       }).catch(e => {
-        console.log("URLI.Popup.crawlURLs() - a fetch() exception was caught:" + e);
+        console.log("crawlURLs() - a fetch() exception was caught:" + e);
       });
       setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
     } else {
-      console.log("URLI.Popup.crawlURLs() - we have exhausted the quantityRemaining");
+      console.log("crawlURLs() - we have exhausted the quantityRemaining");
     }
   }
 
@@ -721,7 +719,7 @@ URLI.Popup = function () {
    * @private
    */
   function inputUpdateDownloadPreview(input, label, style) {
-    console.log("URLI.Popup.inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
+    console.log("inputUpdateDownloadPreview() - about to clearTimeout and setTimeout");
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() { updateDownloadPreview(); updateInputLabelStyle(input, label, style); }, 1000);
   }
@@ -836,13 +834,13 @@ URLI.Popup = function () {
     // Generate alerts if not validated
     if (!validated) {
       if (e.downloadErrorsExist) {
-        URLI.UI.generateAlert(e.downloadErrors);
+        UI.generateAlert(e.downloadErrors);
       } else if (e.autoErrorsExist) {
-        URLI.UI.generateAlert(e.autoErrors);
+        UI.generateAlert(e.autoErrors);
       } else if (e.incrementDecrementErrorsExist) {
-        URLI.UI.generateAlert(e.incrementDecrementErrors);
+        UI.generateAlert(e.incrementDecrementErrors);
       } else {
-        URLI.UI.generateAlert([chrome.i18n.getMessage("oops_error")]);
+        UI.generateAlert([chrome.i18n.getMessage("oops_error")]);
       }
     }
     // Else good to go!
@@ -1070,7 +1068,7 @@ URLI.Popup = function () {
    * @private
    */
   function messageListener(request, sender, sendResponse) {
-    console.log("URLI.Popup.messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
+    console.log("messageListener() - request.greeting=" + request.greeting + " sender=" + sender);
     switch (request.greeting) {
       case "updatePopupInstance":
         if (request.instance && request.instance.tabId === instance.tabId) {
@@ -1093,4 +1091,4 @@ URLI.Popup = function () {
 
   DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
-}();
+})();

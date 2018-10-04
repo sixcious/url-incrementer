@@ -5,9 +5,7 @@
  * @license LGPL-3.0
  */
 
-var URLI = URLI || {};
-
-URLI.UI = function () {
+var UI = (() => {
 
   /**
    * Generates an alert to display messages.
@@ -52,4 +50,4 @@ URLI.UI = function () {
     generateAlert: generateAlert,
     clickHoverCss: clickHoverCss
   };
-}();
+})();
