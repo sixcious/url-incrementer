@@ -12,7 +12,7 @@ var Background = (() => {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     "iconColor": "dark", "iconFeedbackEnabled": false,
     "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    "actions": [{"increment": "Increment"}, {"decrement": "Decrement"}, {"next": "Next"}, {"prev": "Prev"}, {"clear": "Clear"}, {"return": "Return"}, {"auto": "Auto"}],
+    "shortcuts": ["increment", "decrement", "next", "prev", "clear", "return", "auto"],
     "commandsQuickEnabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
     "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,

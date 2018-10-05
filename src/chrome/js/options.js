@@ -24,80 +24,14 @@ var Options = (() => {
       key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
-  function shortcuts(items) {
-    // HTML
-    const table = document.getElementById("internal-shortcuts-table");
-    for (const action of items.actions) {
-      const ak = Object.keys(action)[0];
-      const row = document.createElement("div"); row.className = "row";  table.appendChild(row);
-      const column1 = document.createElement("div"); column1.className = "column"; row.appendChild(column1);
-      const label = document.createElement("label"); label.id = "key-" + ak + "-label"; label.htmlFor = "key-" + ak + "-input"; label.dataset.i18n = "textContent"; column1.appendChild(label);
-      const column2 = document.createElement("div"); column2.className = "column"; row.appendChild(column2);
-      const input = document.createElement("input");
-      input.id = "key-" + ak + "-input";
-      input.className = "key-input";
-      input.type = "text";
-      input.readOnly = true;
-      column2.appendChild(input);
-      const clear = document.createElement("input");
-      clear.id = "key-" + ak + "-clear-input";
-      clear.className = "key-clear";
-      clear.type = "image";
-      clear.src = "../img/times-circle-2.png";
-      clear.alt = "key-clear";
-      clear.width = clear.height = "18";
-      column2.appendChild(clear);
-      const column3 = document.createElement("div");
-      column3.className = "column";
-      row.appendChild(column3);
-      const select = document.createElement("select");
-      select.id = "mouse-" + ak + "-select";
-      column3.appendChild(select);
-      const optionids = ["notset", "left", "middle", "right", "right-left"];
-      for (let i = 0, value = -1; i < optionids.length; i++, value++) {
-        const option = document.createElement("option");
-        option.id = "mouse-" + optionids[i] + "-option*" + ak;
-        option.dataset.i18n = "textContent";
-        option.value = value + "";
-        select.appendChild(option);
-      }
-      const column4 = document.createElement("div");
-      column4.className = "column";
-      row.appendChild(column4);
-      const clicks = document.createElement("input");
-      clicks.id = "mouse-" + ak + "-clicks-input";
-      clicks.className = "mouse-clicks-input";
-      clicks.type = "number";
-      clicks.min = "1";
-      clicks.max = "9";
-      column4.appendChild(clicks);
-    }
-  }
-
-  function shortcutsEvents(items) {
-    for (const action of items.actions) {
-      const ak = Object.keys(action)[0],
-            av = Object.values(action)[0];
-      DOM["#key-" + ak + "-input"].addEventListener("keydown", function (event) { setKey(event); writeInput(this, key); });
-      DOM["#key-" + ak + "-input"].addEventListener("keyup", function (event) { /*setKey(event);*/ key.code = !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : key.code; writeInput(this, key); setKey2(this, "key" + av); });
-      DOM["#key-" + ak + "-clear-input"].addEventListener("click", function () { chrome.storage.sync.set({["key" + av]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + ak + "-input"], null); });
-      DOM["#mouse-" + ak + "-select"].addEventListener("change", function() { setMouse(this, undefined, "mouse" + av, true); });
-      DOM["#mouse-" + ak + "-clicks-input"].addEventListener("change", function() { setMouse(undefined, this, "mouse" + av, false); });
-    }
-  }
-
   /**
    * Loads the DOM content needed to display the options page.
-   * 
-   * DOMContentLoaded will fire when the DOM is loaded. Unlike the conventional
-   * "load", it does not wait for images and media.
    * 
    * @private
    */
   async function DOMContentLoaded() {
+    await shortcuts();
     backgroundPage = await Promisify.getBackgroundPage();
-    const items = await Promisify.getItems();
-    await shortcuts(items);
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
@@ -116,7 +50,6 @@ var Options = (() => {
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
-    shortcutsEvents(items);
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
@@ -174,94 +107,146 @@ var Options = (() => {
     populateValuesFromStorage("all");
   }
 
+  async function shortcuts() {
+    const shortcuts = await Promisify.getItems("sync", "shortcuts");
+    const table = document.getElementById("internal-shortcuts-table");
+    for (const shortcut of shortcuts) {
+      const row = document.createElement("div"); row.className = "row";  table.appendChild(row);
+      const column1 = document.createElement("div"); column1.className = "column"; row.appendChild(column1);
+      const label = document.createElement("label"); label.id = "key-" + shortcut + "-label"; label.htmlFor = "key-" + shortcut + "-input"; label.dataset.i18n = "textContent"; column1.appendChild(label);
+      const column2 = document.createElement("div"); column2.className = "column"; row.appendChild(column2);
+      const input = document.createElement("input");
+      input.id = "key-" + shortcut + "-input";
+      input.className = "key-input";
+      input.type = "text";
+      input.readOnly = true;
+      column2.appendChild(input);
+      const clear = document.createElement("input");
+      clear.id = "key-" + shortcut + "-clear";
+      clear.className = "key-clear";
+      clear.type = "image";
+      clear.src = "../img/times-circle-2.png";
+      clear.alt = "key-clear";
+      clear.width = clear.height = "18";
+      column2.appendChild(clear);
+      const column3 = document.createElement("div");
+      column3.className = "column";
+      row.appendChild(column3);
+      const select = document.createElement("select");
+      select.id = "mouse-" + shortcut + "-select";
+      column3.appendChild(select);
+      const optionids = ["notset", "left", "middle", "right", "right-left"];
+      for (let i = 0, value = -1; i < optionids.length; i++, value++) {
+        const option = document.createElement("option");
+        option.id = "mouse-" + optionids[i] + "-option*" + shortcut;
+        option.dataset.i18n = "textContent";
+        option.value = value + "";
+        select.appendChild(option);
+      }
+      const column4 = document.createElement("div");
+      column4.className = "column";
+      row.appendChild(column4);
+      const clicks = document.createElement("input");
+      clicks.id = "mouse-" + shortcut + "-clicks";
+      clicks.className = "mouse-clicks";
+      clicks.type = "number";
+      clicks.min = "1";
+      clicks.max = "9";
+      column4.appendChild(clicks);
+      // Event Listeners:
+      input.addEventListener("keydown", function (event) { setKeyDown(event); writeInput(this, key); });
+      input.addEventListener("keyup", function (event) { key.code = !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : key.code; writeInput(this, key); setKey(this); });
+      clear.addEventListener("click", function () { chrome.storage.sync.set({[getStorageKey(this)]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + shortcut + "-input"], null); });
+      select.addEventListener("change", function() { setMouse(this, undefined, true); });
+      clicks.addEventListener("change", function() { setMouse(undefined, this, false); });
+    }
+  }
+
   /**
    * Populates the options form values from the extension storage.
    *
    * @param values which values to populate, e.g. "all" for all or "xyz" for only xyz values (with fade-in effect)
    * @private
    */
-  function populateValuesFromStorage(values) {
-    chrome.storage.sync.get(null, function(items) {
-      chrome.storage.local.get(null, function(localItems) {
-        if (values === "all" || values === "internalShortcuts") {
-          DOM["#browser-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
-        }
-        if (values === "all" || values === "download") {
-          DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
-        }
-        if (values === "all" || values === "enhancedMode") {
-          DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-          DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
-        }
-        if (values === "all" || values === "savedURLs") {
-          DOM["#saved-urls-delete-button"].className = localItems.saves && localItems.saves.length > 0 ? "fade-in" : "display-none";
-          buildSavedURLsSelect(localItems.saves);
-        }
-        if (values === "all") {
-          DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
-          DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
-          DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
-          DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
-          DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
-          DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
-          for (const action of items.actions) {
-            const ak = Object.keys(action)[0],
-                  av = ak[0].toUpperCase() + ak.substring(1);
-            console.log("ak=" + ak  + " av = " + av);
-            writeInput(DOM["#key-" + ak + "-input"], items["key" + av]);
-            DOM["#mouse-" + ak + "-select"].value = items["mouse" + av] ? items["mouse" + av].button : -1;
-            DOM["#mouse-" + ak + "-clicks-input"].value = items["mouse" + av] ? items.mouseIncrement.clicks : 1;
-            DOM["#mouse-" + ak + "-clicks-input"].className = DOM["#mouse-" + ak + "-select"].value !== -1 ? "" : "display-none";
-          }
-          DOM["#icon-color-radio-" + items.iconColor].checked = true;
-          DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
-          DOM["#popup-button-size-input"].value = items.popupButtonSize;
-          DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
-          DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
-          DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
-          DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
-          DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
-          DOM["#saved-urls-preselect-input"].checked = localItems.savePreselect;
-          DOM["#selection-select"].value = items.selectionPriority;
-          DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
-          DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
-          DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
-          DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
-          DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
-          DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
-          DOM["#interval-input"].value = items.interval;
-          DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
-          DOM["#base-select"].value = items.base;
-          DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
-          DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
-          DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
-          DOM["#base-date"].className = items.base === "date" ? "display-block" : "display-none";
-          DOM["#base-date-format-input"].value = items.baseDateFormat;
-          DOM["#base-custom"].className = items.base === "custom" ? "display-block" : "display-none";
-          DOM["#base-custom-input"].value = items.baseCustom;
-          DOM["#shuffle-limit-input"].value = items.shuffleLimit;
-          DOM["#error-skip-input"].value = items.errorSkip;
-          DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
-          DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
-          DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
-          DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
-          DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
-          DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
-          DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
-          DOM["#next-prev-keywords-next-textarea"].value = items.nextPrevKeywordsNext;
-          DOM["#next-prev-keywords-prev-textarea"].value = items.nextPrevKeywordsPrev;
-          DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
-          DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
-          DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-        }
-      });
-    });
+  async function populateValuesFromStorage(values) {
+    const items = await Promisify.getItems();
+    if (values === "all" || values === "internalShortcuts") {
+      DOM["#browser-shortcuts"].className = !items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#internal-shortcuts"].className = items.permissionsInternalShortcuts ? values === "internalShortcuts" ? "display-block fade-in" : "display-block" : "display-none";
+    }
+    if (values === "all" || values === "download") {
+      DOM["#download-disable-button"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#download-enable-button"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#download-settings-enable"].className = items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#download-settings-disable"].className = !items.permissionsDownload ? values === "download" ? "display-block fade-in" : "display-block" : "display-none";
+    }
+    if (values === "all" || values === "enhancedMode") {
+      DOM["#enhanced-mode-disable-button"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#enhanced-mode-enable-button"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#enhanced-mode-enable"].className = items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+      DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
+    }
+    if (values === "all" || values === "savedURLs") {
+      const localItems = await Promisify.getItems("local");
+      DOM["#saved-urls-delete-button"].className = localItems.saves && localItems.saves.length > 0 ? "fade-in" : "display-none";
+      DOM["#saved-urls-preselect-input"].checked = localItems.savePreselect;
+      buildSavedURLsSelect(localItems.saves);
+    }
+    if (values === "all") {
+      DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
+      DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
+      DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
+      DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
+      DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
+      DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
+      for (const shortcut of items.shortcuts) {
+        const keyStorageKey = getStorageKey(DOM["#key-" + shortcut + "-input"]),
+              mouseStorageKey = getStorageKey(DOM["#mouse-" + shortcut + "-select"]);
+        writeInput(DOM["#key-" + shortcut + "-input"], items[keyStorageKey]);
+        DOM["#mouse-" + shortcut + "-select"].value = items[mouseStorageKey] ? items[mouseStorageKey].button : -1;
+        DOM["#mouse-" + shortcut + "-clicks"].value = items[mouseStorageKey] ? items[mouseStorageKey].clicks : 1;
+        DOM["#mouse-" + shortcut + "-clicks"].className = items[mouseStorageKey] ? "" : "display-none";
+      }
+      DOM["#icon-color-radio-" + items.iconColor].checked = true;
+      DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
+      DOM["#popup-button-size-input"].value = items.popupButtonSize;
+      DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
+      DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
+      DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
+      DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
+      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
+      DOM["#selection-select"].value = items.selectionPriority;
+      DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
+      DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
+      DOM["#selection-custom-pattern-input"].value = items.selectionCustom.pattern;
+      DOM["#selection-custom-flags-input"].value = items.selectionCustom.flags;
+      DOM["#selection-custom-group-input"].value = items.selectionCustom.group;
+      DOM["#selection-custom-index-input"].value = items.selectionCustom.index;
+      DOM["#interval-input"].value = items.interval;
+      DOM["#leading-zeros-pad-by-detection-input"].checked = items.leadingZerosPadByDetection;
+      DOM["#base-select"].value = items.base;
+      DOM["#base-case"].className = items.base > 10 ? "display-block" : "display-none";
+      DOM["#base-case-lowercase-input"].checked = items.baseCase === "lowercase";
+      DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
+      DOM["#base-date"].className = items.base === "date" ? "display-block" : "display-none";
+      DOM["#base-date-format-input"].value = items.baseDateFormat;
+      DOM["#base-custom"].className = items.base === "custom" ? "display-block" : "display-none";
+      DOM["#base-custom-input"].value = items.baseCustom;
+      DOM["#shuffle-limit-input"].value = items.shuffleLimit;
+      DOM["#error-skip-input"].value = items.errorSkip;
+      DOM["#error-codes-404-input"].checked = items.errorCodes.includes("404");
+      DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
+      DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
+      DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
+      DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
+      DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
+      DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
+      DOM["#next-prev-keywords-next-textarea"].value = items.nextPrevKeywordsNext;
+      DOM["#next-prev-keywords-prev-textarea"].value = items.nextPrevKeywordsPrev;
+      DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
+      DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
+      DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
+    }
   }
 
   /**
@@ -320,7 +305,7 @@ var Options = (() => {
    * @param event the key event fired
    * @private
    */
-  function setKey(event) {
+  function setKeyDown(event) {
     event.preventDefault();
     // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
     key = { "modifiers":
@@ -332,19 +317,34 @@ var Options = (() => {
     };
   }
 
-  function setKey2(input, storageKey) {
+  function setKey(input) {
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
-      chrome.storage.sync.set({ [storageKey]: key, function() { setKeyEnabled(); }});
+      chrome.storage.sync.set({ [getStorageKey(input)]: key, function() { setKeyEnabled(); }});
     }, 1000);
   }
 
-  function setMouse(buttonInput, clicksInput, storageKey, updateMouseEnabled) {
-    buttonInput = buttonInput ? buttonInput : DOM["#" + clicksInput.id.replace("clicks-input", "select")];
-    clicksInput = clicksInput ? clicksInput : DOM["#" + buttonInput.id.replace("select", "clicks-input")];
+  function setMouse(buttonInput, clicksInput, updateMouseEnabled) {
+    buttonInput = buttonInput ? buttonInput : DOM["#" + clicksInput.id.replace("clicks", "select")];
+    clicksInput = clicksInput ? clicksInput : DOM["#" + buttonInput.id.replace("select", "clicks")];
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
+    console.log(mouse);
     clicksInput.className = mouse ? "display-block fade-in" : "display-none";
-    chrome.storage.sync.set({ [storageKey]: mouse}, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
+    chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse}, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
+  }
+
+  /**
+   * Gets the storage key from an input. e.g. "key-increment-input" returns the string "keyIncrement".
+   *
+   * @param input the input with a string ID
+   * @returns {string} the storage key based on the input's ID
+   * @private
+   */
+  function getStorageKey(input) {
+    const regex = /(.*)-(.*)-/.exec(input.id); // e.g. "key-increment-input"
+    const storageKey =  regex[1] + regex[2][0].toUpperCase() + regex[2].substring(1); // e.g. "keyIncrement"
+    console.log("storageKey=" + storageKey);
+    return storageKey;
   }
 
   /**
