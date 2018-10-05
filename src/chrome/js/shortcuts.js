@@ -7,14 +7,12 @@
 
 var Shortcuts = (() => {
 
-  const FLAG_KEY_NONE  = 0x0, // 0000
-        FLAG_KEY_ALT   = 0x1, // 0001
+  const FLAG_KEY_ALT   = 0x1, // 0001
         FLAG_KEY_CTRL  = 0x2, // 0010
         FLAG_KEY_SHIFT = 0x4, // 0100
         FLAG_KEY_META  = 0x8; // 1000
 
-  let key = {},
-      button = undefined, // the current mouse button on mousedown
+  let button = undefined, // the current mouse button on mousedown
       buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
       clicks = 0, // current consecutive click count for a single mouse button
       timeouts = {}, // reusable global timeouts for detecting multiple mouse clicks
@@ -24,25 +22,11 @@ var Shortcuts = (() => {
    * Sets the items storage cache.
    *
    * @param items_ the storage items
-   * @public
+   * @private
    */
   function setItems(items_) {
     items = items_;
   }
-
-  // // TODO
-  // function keydownListener(event) {
-  //   //event.preventDefault();
-  //   // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
-  //
-  //   key = { "modifiers":
-  //       (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
-  //       (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
-  //       (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-  //       (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
-  //     "code": event.code
-  //   };
-  // }
 
   /**
    * A keyup event listener for keyboard shortcuts.
@@ -52,7 +36,6 @@ var Shortcuts = (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code);
-    console.log("key="); console.log(key);
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "key"}); }
@@ -66,7 +49,7 @@ var Shortcuts = (() => {
    * A mousedown event listener that determines if event.buttons = 3 and stores event.button for the mouseup listener.
    *
    * @param event the mousedown event
-   * @public
+   * @private
    */
   function mousedownListener(event) {
     clearTimeout(timeouts.mouseup2);
@@ -159,7 +142,6 @@ var Shortcuts = (() => {
    */
   function addKeyListener() {
     removeKeyListener();
-    //document.addEventListener("keydown", keydownListener);
     document.addEventListener("keyup", keyupListener);
   }
 
@@ -169,7 +151,6 @@ var Shortcuts = (() => {
    * @private
    */
   function removeKeyListener() {
-    //document.removeEventListener("keydown", keydownListener);
     document.removeEventListener("keyup", keyupListener);
   }
 
@@ -224,6 +205,5 @@ var Shortcuts = (() => {
       }
     });
   }
-
-  console.log("shortcuts.js contentScript executed");
+  console.log("shortcuts.js content script executed");
 })();

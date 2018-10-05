@@ -24,10 +24,11 @@ var Promisify = (() => {
   }
 
   /**
-   * Gets the queried tabs via a promise-based wrapper for asyn/await callers.
+   * Gets the queried tabs via a promise-based wrapper for async/await callers.
    *
    * @param queryInfo the query object to use (optional)
    * @returns {Promise<{}>} the tabs
+   * @public
    */
   function getTabs(queryInfo = {active: true, lastFocusedWindow: true}) {
     return new Promise(resolve => {
