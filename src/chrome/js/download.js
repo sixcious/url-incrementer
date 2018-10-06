@@ -18,11 +18,11 @@ var Download = (() => {
    * @public
    */
   function previewDownloadURLs() {
-    const  pageURL = findDownloadURLs("page"),
-           allURLs = findDownloadURLs("all"),
-           allExtensions = findProperties(allURLs, "extension"),
-           allTags = findProperties(allURLs, "tag"),
-           allAttributes = findProperties(allURLs, "attribute");
+    const pageURL = findDownloadURLs("page"),
+          allURLs = findDownloadURLs("all"),
+          allExtensions = findProperties(allURLs, "extension"),
+          allTags = findProperties(allURLs, "tag"),
+          allAttributes = findProperties(allURLs, "attribute");
     return { "pageURL": pageURL, "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
   }
 
@@ -93,7 +93,7 @@ var Download = (() => {
    * @private
    */
   function findPageURL(includes, excludes, items) {
-    const url = document.location.href;
+    const url = window.location.href;
     buildItems(items, undefined, "", url, "page", undefined, undefined, undefined, undefined, includes, excludes);
     return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
   }
@@ -116,7 +116,7 @@ var Download = (() => {
    */
   function findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selector, includes, excludes, items) {
     const elements = document.querySelectorAll(selector),
-          origin = new URL(document.location.href).origin;
+          origin = new URL(window.location.href).origin;
     console.log("findDownloadURLsBySelector() - found " + elements.length + " element(s)");
     for (const element of elements) {
       for (const attribute of URL_ATTRIBUTES) {

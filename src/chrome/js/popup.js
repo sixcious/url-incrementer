@@ -18,11 +18,11 @@ var Popup = (() => {
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
-   * Loads the DOM content needed to display the popup page.
+   * Starts after the HTML has been parsed.
    * 
    * @private
    */
-  async function DOMContentLoaded() {
+  async function start() {
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]"),
           buttons = document.querySelectorAll("#controls input");
@@ -321,7 +321,7 @@ var Popup = (() => {
       _.multi[multiCountNew].baseDateFormat = _.baseDateFormat;
       _.multi[multiCountNew].baseCustom = _.baseCustom;
       _.multi[multiCountNew].leadingZeros = _.leadingZeros;
-      _.multi[multiCountNew].times = _.multiTimes; //DOM["#auto-toggle-input"].checked ? +DOM["#auto-times-input"].value : DOM["#toolkit-input"].checked ? +DOM["#toolkit-quantity-input"].value : -1;
+      _.multi[multiCountNew].times = _.multiTimes;
       _.multi[multiCountNew].range = _.multiRange;
     }
   }
@@ -1083,6 +1083,6 @@ var Popup = (() => {
     }
   }
 
-  DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
+  start(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 })();

@@ -8,17 +8,7 @@
 var Options = (() => {
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
-        FLAG_KEY_NONE  = 0x0, // 0000
-        FLAG_KEY_ALT   = 0x1, // 0001
-        FLAG_KEY_CTRL  = 0x2, // 0010
-        FLAG_KEY_SHIFT = 0x4, // 0100
-        FLAG_KEY_META  = 0x8, // 1000
-        KEY_MODIFIER_CODE_ARRAY = [ // An array of the KeyboardEvent.code modifiers
-          "Alt", "AltLeft", "AltRight",
-          "Control", "ControlLeft", "ControlRight",
-          "Shift", "ShiftLeft", "ShiftRight",
-          "Meta", "MetaLeft", "MetaRight"
-        ];
+        KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]); // A map of the KeyboardEvent.key modifiers and their bits
 
   let backgroundPage = {}, // Background page cache
       key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
@@ -55,7 +45,7 @@ var Options = (() => {
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
-    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { chrome.storage.sync.set({"popupButtonSize": +this.value});
+    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { setNumber(this, "popupButtonSize");
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
@@ -70,7 +60,7 @@ var Options = (() => {
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
-    DOM["#interval-input"].addEventListener("change", function () { chrome.storage.sync.set({"interval": +this.value > 0 ? +this.value : 1}); });
+    DOM["#interval-input"].addEventListener("change", function () { if (+this.value > 0) { setNumber(this, "interval");} });
     DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
@@ -82,8 +72,8 @@ var Options = (() => {
     DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-date-format-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseDateFormat", "value"); });
     DOM["#base-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseCustom", "value"); });
-    DOM["#shuffle-limit-input"].addEventListener("change", function () { chrome.storage.sync.set({"shuffleLimit": +this.value > 0 ? +this.value : 1}); });
-    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { chrome.storage.sync.set({"errorSkip": +this.value }); } });
+    DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { setNumber(this, "shuffleLimit"); } });
+    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { setNumber(this, "errorSkip"); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
@@ -148,14 +138,14 @@ var Options = (() => {
       row.appendChild(column4);
       const clicks = document.createElement("input");
       clicks.id = "mouse-" + shortcut + "-clicks";
-      clicks.className = "mouse-clicks";
+      //clicks.className = "mouse-clicks";
       clicks.type = "number";
       clicks.min = "1";
       clicks.max = "9";
       column4.appendChild(clicks);
       // Event Listeners:
       input.addEventListener("keydown", function (event) { setKeyDown(event); writeInput(this, key); });
-      input.addEventListener("keyup", function (event) { key.code = !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : key.code; writeInput(this, key); setKey(this); });
+      input.addEventListener("keyup", function (event) { key.code = !KEY_MODIFIERS.has(event.key) ? event.code : key.code; writeInput(this, key); setKey(this); });
       clear.addEventListener("click", function () { chrome.storage.sync.set({[getStorageKey(this)]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + shortcut + "-input"], null); });
       select.addEventListener("change", function() { setMouse(this, undefined, true); });
       clicks.addEventListener("change", function() { setMouse(undefined, this, false); });
@@ -205,7 +195,7 @@ var Options = (() => {
         writeInput(DOM["#key-" + shortcut + "-input"], items[keyStorageKey]);
         DOM["#mouse-" + shortcut + "-select"].value = items[mouseStorageKey] ? items[mouseStorageKey].button : -1;
         DOM["#mouse-" + shortcut + "-clicks"].value = items[mouseStorageKey] ? items[mouseStorageKey].clicks : 1;
-        DOM["#mouse-" + shortcut + "-clicks"].className = items[mouseStorageKey] ? "" : "display-none";
+        DOM["#mouse-" + shortcut + "-clicks"].className = items[mouseStorageKey] ? "display-block fade-in" : "display-none";
       }
       DOM["#icon-color-radio-" + items.iconColor].checked = true;
       DOM["#icon-feedback-enable-input"].checked = items.iconFeedbackEnabled;
@@ -309,11 +299,11 @@ var Options = (() => {
     event.preventDefault();
     // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
     key = { "modifiers":
-      (event.altKey ? FLAG_KEY_ALT : FLAG_KEY_NONE) | // 0001
-      (event.ctrlKey ? FLAG_KEY_CTRL : FLAG_KEY_NONE) | // 0010
-      (event.shiftKey ? FLAG_KEY_SHIFT : FLAG_KEY_NONE) | // 0100
-      (event.metaKey ? FLAG_KEY_META : FLAG_KEY_NONE),  // 1000
-      "code": !KEY_MODIFIER_CODE_ARRAY.includes(event.code) ? event.code : ""
+      (event.altKey   ? KEY_MODIFIERS.get("Alt") :     0x0) | // 0001
+      (event.ctrlKey  ? KEY_MODIFIERS.get("Control") : 0x0) | // 0010
+      (event.shiftKey ? KEY_MODIFIERS.get("Shift") :   0x0) | // 0100
+      (event.metaKey  ? KEY_MODIFIERS.get("Meta") :    0x0),  // 1000
+      "code": !KEY_MODIFIERS.has(event.key) ? event.code : "" // Checking event.key is easier than event.code for the modifiers since code contains left/right separately
     };
   }
 
@@ -357,14 +347,14 @@ var Options = (() => {
   function writeInput(input, key) {
     // Write the input value based on the key event modifier bits and key code
     // Note1: KeyboardEvent.code will output the text-representation of the key code, e.g.  the key "A" would output "KeyA"
-    // Note2: If the key code is in the KEY_MODIFIER_CODE_ARRAY (e.g. Alt, Ctrl), it is not written a second time
+    // Note2: If the key's code is a modifier (e.g. Alt, Ctrl), it is not written
     let text = "";
     if (!key) { text = chrome.i18n.getMessage("key_notset_option"); }
     else {
-      if ((key.modifiers & FLAG_KEY_ALT))        { text += (text ? " + " : "") + "Alt";    }
-      if ((key.modifiers & FLAG_KEY_CTRL)  >> 1) { text += (text ? " + " : "") + "Ctrl";   }
-      if ((key.modifiers & FLAG_KEY_SHIFT) >> 2) { text += (text ? " + " : "") + "Shift";  }
-      if ((key.modifiers & FLAG_KEY_META)  >> 3) { text += (text ? " + " : "") + "Meta";   }
+      if ((key.modifiers & KEY_MODIFIERS.get("Alt")))          { text += (text ? " + " : "") + "Alt";    }
+      if ((key.modifiers & KEY_MODIFIERS.get("Control")) >> 1) { text += (text ? " + " : "") + "Ctrl";   }
+      if ((key.modifiers & KEY_MODIFIERS.get("Shift"))   >> 2) { text += (text ? " + " : "") + "Shift";  }
+      if ((key.modifiers & KEY_MODIFIERS.get("Meta"))    >> 3) { text += (text ? " + " : "") + "Meta";   }
       if (key.code)                              { text += (text ? " + " : "") + key.code; }
     }
     input.value = text;
@@ -474,6 +464,13 @@ var Options = (() => {
           storageValueType.startsWith("array") ? DOM["#" + domId].value ? DOM["#" + domId].value.split(storageValueType === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
       });
     }, 1000);
+  }
+
+  // TODO
+  function setNumber(input, storageKey) {
+    const value = +DOM["#" + input.id].value;
+    clearTimeout(timeouts[input.id]);
+    timeouts[input.id] = setTimeout(function() { chrome.storage.sync.set({[storageKey]: value});}, 1000);
   }
 
   /**

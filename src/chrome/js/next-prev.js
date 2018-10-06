@@ -78,7 +78,7 @@ var NextPrev = (() => {
   function buildURLs(keywords, sameDomain) {
     // Note: The following DOM elements contain links: link, a, area, and base
     const elements = document.querySelectorAll("link[href], a[href], area[href]"),
-          hostname = document.location.hostname;
+          hostname = window.location.hostname;
     parseElements(keywords, elements, hostname, sameDomain);
   }
 

@@ -7,10 +7,7 @@
 
 var Shortcuts = (() => {
 
-  const FLAG_KEY_ALT   = 0x1, // 0001
-        FLAG_KEY_CTRL  = 0x2, // 0010
-        FLAG_KEY_SHIFT = 0x4, // 0100
-        FLAG_KEY_META  = 0x8; // 1000
+  const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]); // A map of the KeyboardEvent.key modifiers and their bits
 
   let button = undefined, // the current mouse button on mousedown
       buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
@@ -116,10 +113,10 @@ var Shortcuts = (() => {
    */
   function keyPressed(event, key) {
     return key && event.code === key.code &&
-      (!(event.altKey   ^ (key.modifiers & FLAG_KEY_ALT)       ) &&
-       !(event.ctrlKey  ^ (key.modifiers & FLAG_KEY_CTRL)  >> 1) &&
-       !(event.shiftKey ^ (key.modifiers & FLAG_KEY_SHIFT) >> 2) &&
-       !(event.metaKey  ^ (key.modifiers & FLAG_KEY_META)  >> 3));
+      (!(event.altKey   ^ (key.modifiers & KEY_MODIFIERS.get("Alt"))         ) &&
+       !(event.ctrlKey  ^ (key.modifiers & KEY_MODIFIERS.get("Control")) >> 1) &&
+       !(event.shiftKey ^ (key.modifiers & KEY_MODIFIERS.get("Shift"))   >> 2) &&
+       !(event.metaKey  ^ (key.modifiers & KEY_MODIFIERS.get("Meta"))    >> 3));
   }
 
   /**
