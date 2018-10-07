@@ -400,3 +400,15 @@ label > input:disabled[type='checkbox'] ~ span,
 label > input:disabled[type='radio'] ~ span {
   color: #999;
 }
+
+/* chromium.css overrides */
+/* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
+h3, :-webkit-any(.checkbox, .radio) label input ~ span {
+  -webkit-user-select: initial;
+  -moz-user-select: initial;
+  user-select: initial;
+}
+
+:-webkit-any(.checkbox, .radio) label input ~ span {
+  -webkit-margin-start: 0.3em;
+}

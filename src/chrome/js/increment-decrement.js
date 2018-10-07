@@ -25,15 +25,15 @@ var IncrementDecrement = (() => {
         const custom = new RegExp(selectionCustom.pattern, selectionCustom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
         if (custom && custom[selectionCustom.group]) { selectionProps = {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
       }
-      if (preference === "prefixes" || (!selectionProps && preference === "custom")) {
-        const page = /page=\d+/i.exec(url); // page= TODO: Lookbehind /(?<=page)=(\d+)/i
-        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= TODO: Lookbehind /(?<=p|id|next)=(\d+)/i
+      if (preference === "prefixes" || (preference === "custom" && !selectionProps)) {
+        const page = /page=\d+/i.exec(url); // page= Lookbehind /(?<=page)=(\d+)/i
+        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= Lookbehind /(?<=p|id|next)=(\d+)/i
         const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
         if (page) { selectionProps = {selection: page[0].substring(5), selectionStart: page.index + 5}; }
         else if (terms) { selectionProps = {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
         else if (prefixes) { selectionProps = {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
       }
-      if (preference === "lastnumber" || (!selectionProps && preference !== "firstnumber")) {
+      if (preference === "lastnumber" || (preference !== "firstnumber" && !selectionProps)) {
         const last = /\d+(?!.*\d+)/.exec(url);
         if (last) { selectionProps = {selection: last[0], selectionStart: last.index}; }
       }
@@ -50,19 +50,30 @@ var IncrementDecrement = (() => {
     return selectionProps || {selection: "", selectionStart: -1};
   }
 
-  // Called by Popup and SaveURLs TODO
-  function validateSelection(selection, base, baseCase, dateFormat, custom, leadingZeros) {
+  /**
+   * Validates the selection against the base and other parameters. Called by Popup and SaveURLs.
+   *
+   * @param selection      the selection
+   * @param base           the base
+   * @param baseCase       the base case if the base is alphanumeric (11-36)
+   * @param baseDateFormat the date format if the base is a date
+   * @param baseCustom     the custom alphabet if the base is custom
+   * @param leadingZeros   TODO
+   * @returns {string} an empty string if validation passed, or an error message if validation failed
+   * @public
+   */
+  function validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros) {
     let error = "";
     switch (base) {
       case "date":
-        const selectionDate = IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, dateFormat);
+        const selectionDate = IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, baseDateFormat);
         console.log("validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
         if (selectionDate !== selection) {
           error = chrome.i18n.getMessage("date_invalid_error");
         }
         break;
       case "custom":
-        const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, custom, leadingZeros);
+        const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, baseCustom, leadingZeros);
         console.log("validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
         if (selectionCustom !== selection) {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
@@ -88,7 +99,6 @@ var IncrementDecrement = (() => {
   }
 
   /**
-   * TODO...
    * Handles an increment or decrement operation, acting as a controller.
    * The exact operation is dependant on the instance and can be a step thru URLs array or
    * incrementing / decrementing a URL depending on the the state of multi.
@@ -116,7 +126,7 @@ var IncrementDecrement = (() => {
     }
   }
 
-    /**
+  /**
    * Increments or decrements a URL using an instance object that contains the URL
    * while performing error skipping.
    *
@@ -128,9 +138,9 @@ var IncrementDecrement = (() => {
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
     console.log("incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
     incrementDecrement(action, instance);
-    // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions), we check that the current page's origin matches the instance's URL origin as we otherwise cannot use fetch due to CORS
     if (errorSkipRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+      // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
             ((instance.errorCodes && (
@@ -150,10 +160,10 @@ var IncrementDecrement = (() => {
           incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
         } else {
           console.log("incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          chrome.tabs.update(instance.tabId, {url: instance.url});
           if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
             Background.setInstance(instance.tabId, instance);
           }
+          chrome.tabs.update(instance.tabId, {url: instance.url});
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
         }
       }).catch(e => {
@@ -166,10 +176,10 @@ var IncrementDecrement = (() => {
       });
     } else {
       console.log("incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
-      chrome.tabs.update(instance.tabId, {url: instance.url});
       if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
         Background.setInstance(instance.tabId, instance);
       }
+      chrome.tabs.update(instance.tabId, {url: instance.url});
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
     }
   }

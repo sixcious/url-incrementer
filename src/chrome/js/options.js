@@ -9,19 +9,19 @@ var Options = (() => {
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
         KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]); // A map of the KeyboardEvent.key modifiers and their bits
+  const shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
 
   let backgroundPage = {}, // Background page cache
       key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
-   * Loads the DOM content needed to display the options page.
-   * 
+   * Initializes the Options window.
+   *
    * @private
    */
-  async function DOMContentLoaded() {
-    await shortcuts();
-    backgroundPage = await Promisify.getBackgroundPage();
+  async function init() {
+    buildShortcuts();
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
@@ -45,7 +45,7 @@ var Options = (() => {
     DOM["#icon-color-radio-rainbow"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
-    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { setNumber(this, "popupButtonSize");
+    DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { saveInput(this, "popupButtonSize", "number");
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
@@ -60,7 +60,7 @@ var Options = (() => {
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
-    DOM["#interval-input"].addEventListener("change", function () { if (+this.value > 0) { setNumber(this, "interval");} });
+    DOM["#interval-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "interval", "number");} });
     DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
@@ -70,18 +70,18 @@ var Options = (() => {
     });
     DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
     DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#base-date-format-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseDateFormat", "value"); });
-    DOM["#base-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "baseCustom", "value"); });
-    DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { setNumber(this, "shuffleLimit"); } });
-    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { setNumber(this, "errorSkip"); } });
+    DOM["#base-date-format-input"].addEventListener("input", function() { saveInput(this, "baseDateFormat", "value"); });
+    DOM["#base-custom-input"].addEventListener("input", function() { saveInput(this, "baseCustom", "value"); });
+    DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "shuffleLimit", "number"); } });
+    DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { saveInput(this, "errorSkip", "number"); } });
     DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
-    DOM["#error-codes-custom-input"].addEventListener("input", function() { updateTextInputDynamically(this.id, "errorCodesCustom", "array-split-all"); });
-    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsNext", "array-split-nospace"); });
-    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { updateTextInputDynamically(this.id, "nextPrevKeywordsPrev", "array-split-nospace"); });
+    DOM["#error-codes-custom-input"].addEventListener("input", function() { saveInput(this, "errorCodesCustom", "array-split-all"); });
+    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsNext", "array-split-nospace"); });
+    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsPrev", "array-split-nospace"); });
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
@@ -95,10 +95,15 @@ var Options = (() => {
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
     // Populate all values from storage
     populateValuesFromStorage("all");
+    backgroundPage = await Promisify.getBackgroundPage();
   }
 
-  async function shortcuts() {
-    const shortcuts = await Promisify.getItems("sync", "shortcuts");
+  /**
+   * TODO
+   *
+   * @private
+   */
+  function buildShortcuts() {
     const table = document.getElementById("internal-shortcuts-table");
     for (const shortcut of shortcuts) {
       const row = document.createElement("div"); row.className = "row";  table.appendChild(row);
@@ -455,22 +460,16 @@ var Options = (() => {
    *
    * @private
    */
-  function updateTextInputDynamically(domId, storageKey, storageValueType) {
-    console.log("updateTextInputDynamically() - about to clearTimeout and setTimeout... domId=" + domId + ", storageKey=" + storageKey);
-    clearTimeout(timeouts[domId]);
-    timeouts[domId] = setTimeout(function() {
-      chrome.storage.sync.set({ [storageKey]:
-          storageValueType === "value" ? DOM["#" + domId].value :
-          storageValueType.startsWith("array") ? DOM["#" + domId].value ? DOM["#" + domId].value.split(storageValueType === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
+  function saveInput(input, storageKey, type) {
+    console.log("saveInput() - about to clearTimeout and setTimeout... input.id=" + input.id + ", storageKey=" + storageKey +", type=" + type);
+    clearTimeout(timeouts[input.id]);
+    timeouts[input.id] = setTimeout(function() {
+      chrome.storage.sync.set({[storageKey]:
+        type === "number" ? +input.value :
+        type === "value" ? input.value :
+        type.startsWith("array") ? input.value ? input.value.split(type === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
       });
     }, 1000);
-  }
-
-  // TODO
-  function setNumber(input, storageKey) {
-    const value = +DOM["#" + input.id].value;
-    clearTimeout(timeouts[input.id]);
-    timeouts[input.id] = setTimeout(function() { chrome.storage.sync.set({[storageKey]: value});}, 1000);
   }
 
   /**
@@ -572,5 +571,5 @@ var Options = (() => {
     UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
-  DOMContentLoaded(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+  init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 })();

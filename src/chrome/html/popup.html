@@ -10,66 +10,66 @@
   <head>
     <meta charset="UTF-8">
     <title>URL Incrementer</title>
-    <link type="text/css" rel="stylesheet" href="../lib/chromium.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/hover.css"/>
-    <link type="text/css" rel="stylesheet" href="../lib/toggle.css"/>
-    <link type="text/css" rel="stylesheet" href="../css/base.css"/>
-    <link type="text/css" rel="stylesheet" href="../css/popup.css"/>
+    <link rel="stylesheet" href="../lib/chromium.css">
+    <link rel="stylesheet" href="../lib/hover.css">
+    <link rel="stylesheet" href="../lib/toggle.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/popup.css">
+    <script src="../js/ui.js" async></script>
     <script src="../js/promisify.js" defer></script>
-    <script src="../js/ui.js" defer></script>
     <script src="../js/popup.js" defer></script>
   </head>
   <body id="popup">
     <div id="controls" class="display-none">
       <div class="table">
         <div class="row">
-          <div class="column"> <input id="auto-input"        type="image" alt="auto-input"        src="../img/pause-circle.png"         width="32" height="32"                   data-action="auto"/>       </div>
-          <div class="column"> <input id="download-input"    type="image" alt="download-input"    src="../img/cloud-download.png"       width="32" height="32" data-i18n="title" data-action="download"/>   </div>
-          <div class="column"> <input id="prev-input"        type="image" alt="prev-input"        src="../img/chevron-circle-left.png"  width="32" height="32" data-i18n="title" data-action="prev"/>       </div>
-          <div class="column"> <input id="next-input"        type="image" alt="next-input"        src="../img/chevron-circle-right.png" width="32" height="32" data-i18n="title" data-action="next"/>       </div>
-          <div class="column"> <input id="increment-input"   type="image" alt="increment-input"   src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment"/>  </div>
-          <div class="column"> <input id="decrement-input"   type="image" alt="decrement-input"   src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement"/>  </div>
-          <div class="column"> <input id="increment-input-m" type="image" alt="increment-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment"/>  </div>
-          <div class="column"> <input id="decrement-input-m" type="image" alt="decrement-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="decrement"/>  </div>
-          <div class="column"> <input id="increment-input-1" type="image" alt="increment-input-1" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment1"/> </div>
-          <div class="column"> <input id="decrement-input-1" type="image" alt="decrement-input-1" src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement1"/> </div>
-          <div class="column"> <input id="increment-input-2" type="image" alt="increment-input-2" src="../img/plus-circle-2.png"        width="32" height="32" data-i18n="title" data-action="increment2"/> </div>
-          <div class="column"> <input id="decrement-input-2" type="image" alt="decrement-input-2" src="../img/minus-circle-2.png"       width="32" height="32" data-i18n="title" data-action="decrement2"/> </div>
-          <div class="column"> <input id="increment-input-3" type="image" alt="increment-input-3" src="../img/plus-circle-3.png"        width="32" height="32" data-i18n="title" data-action="increment3"/> </div>
-          <div class="column"> <input id="decrement-input-3" type="image" alt="decrement-input-3" src="../img/minus-circle-3.png"       width="32" height="32" data-i18n="title" data-action="decrement3"/> </div>
-          <div class="column"> <input id="clear-input"       type="image" alt="clear-input"       src="../img/times-circle.png"         width="32" height="32" data-i18n="title" data-action="clear"/>      </div>
-          <div class="column"> <input id="return-input"      type="image" alt="return-input"      src="../img/arrow-circle-left.png"    width="32" height="32" data-i18n="title" data-action="return"/>     </div>
-          <div class="column"> <input id="setup-input"       type="image" alt="setup-input"       src="../img/pencil-square.png"        width="32" height="32" data-i18n="title"/>                          </div>
+          <div class="column"> <input id="auto-input"        type="image" alt="auto-input"        src="../img/pause-circle.png"         width="32" height="32"                   data-action="auto">       </div>
+          <div class="column"> <input id="download-input"    type="image" alt="download-input"    src="../img/cloud-download.png"       width="32" height="32" data-i18n="title" data-action="download">   </div>
+          <div class="column"> <input id="prev-input"        type="image" alt="prev-input"        src="../img/chevron-circle-left.png"  width="32" height="32" data-i18n="title" data-action="prev">       </div>
+          <div class="column"> <input id="next-input"        type="image" alt="next-input"        src="../img/chevron-circle-right.png" width="32" height="32" data-i18n="title" data-action="next">       </div>
+          <div class="column"> <input id="increment-input"   type="image" alt="increment-input"   src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment">  </div>
+          <div class="column"> <input id="decrement-input"   type="image" alt="decrement-input"   src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement">  </div>
+          <div class="column"> <input id="increment-input-m" type="image" alt="increment-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment">  </div>
+          <div class="column"> <input id="decrement-input-m" type="image" alt="decrement-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="decrement">  </div>
+          <div class="column"> <input id="increment-input-1" type="image" alt="increment-input-1" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment1"> </div>
+          <div class="column"> <input id="decrement-input-1" type="image" alt="decrement-input-1" src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement1"> </div>
+          <div class="column"> <input id="increment-input-2" type="image" alt="increment-input-2" src="../img/plus-circle-2.png"        width="32" height="32" data-i18n="title" data-action="increment2"> </div>
+          <div class="column"> <input id="decrement-input-2" type="image" alt="decrement-input-2" src="../img/minus-circle-2.png"       width="32" height="32" data-i18n="title" data-action="decrement2"> </div>
+          <div class="column"> <input id="increment-input-3" type="image" alt="increment-input-3" src="../img/plus-circle-3.png"        width="32" height="32" data-i18n="title" data-action="increment3"> </div>
+          <div class="column"> <input id="decrement-input-3" type="image" alt="decrement-input-3" src="../img/minus-circle-3.png"       width="32" height="32" data-i18n="title" data-action="decrement3"> </div>
+          <div class="column"> <input id="clear-input"       type="image" alt="clear-input"       src="../img/times-circle.png"         width="32" height="32" data-i18n="title" data-action="clear">      </div>
+          <div class="column"> <input id="return-input"      type="image" alt="return-input"      src="../img/arrow-circle-left.png"    width="32" height="32" data-i18n="title" data-action="return">     </div>
+          <div class="column"> <input id="setup-input"       type="image" alt="setup-input"       src="../img/pencil-square.png"        width="32" height="32" data-i18n="title">                          </div>
         </div>
       </div>
       <div id="controls-icons">
-        <img id="controls-icons-auto-repeat" src="../img/retweet.png" alt="auto-repeat" width="12" height="12" data-i18n="title"/>
-        <img id="controls-icons-shuffle"     src="../img/random.png"  alt="shuffle"     width="12" height="12" data-i18n="title"/>
-        <img id="controls-icons-save-url"    src="../img/heart.png"   alt="saved-url"   width="12" height="12" data-i18n="title"/>
+        <img id="controls-icons-auto-repeat" src="../img/retweet.png" alt="auto-repeat" width="12" height="12" data-i18n="title">
+        <img id="controls-icons-shuffle"     src="../img/random.png"  alt="shuffle"     width="12" height="12" data-i18n="title">
+        <img id="controls-icons-save-url"    src="../img/heart.png"   alt="saved-url"   width="12" height="12" data-i18n="title">
       </div>
     </div>
     <div id="setup" class="display-none">
       <section id="increment-decrement">
         <div class="heading">
-          <img id="increment-decrement-img-mouse-pointer" src="../img/mouse-pointer.png" alt="" width="12" height="12"/>
+          <img id="increment-decrement-img-mouse-pointer" src="../img/mouse-pointer.png" alt="" width="12" height="12">
           <h3 id="increment-decrement-h3" data-i18n="textContent"></h3>
           <div class="heading-right">
-            <div id="auto-repeat-button" class="hvr-grow-2x icon-button" data-i18n="title">
+            <div id="auto-repeat-button" class="hvr-grow icon-button" data-i18n="title">
               <label id="auto-repeat-label" for="auto-repeat-input">
-                <input id="auto-repeat-input" type="checkbox" class="display-none"/>
-                <img src="../img/retweet.png" alt="" width="16" height="16" class="checkbox-img"/>
+                <input id="auto-repeat-input" type="checkbox" class="display-none">
+                <img src="../img/retweet.png" alt="" width="16" height="16" class="checkbox-img">
               </label>
             </div>
-            <div id="shuffle-urls-button" class="hvr-grow-2x icon-button" data-i18n="title">
+            <div id="shuffle-urls-button" class="hvr-grow icon-button" data-i18n="title">
               <label id="shuffle-urls-label" for="shuffle-urls-input">
-                <input id="shuffle-urls-input" type="checkbox" class="display-none"/>
-                <img src="../img/random.png" alt="" width="16" height="16" class="checkbox-img"/>
+                <input id="shuffle-urls-input" type="checkbox" class="display-none">
+                <img src="../img/random.png" alt="" width="16" height="16" class="checkbox-img">
               </label>
             </div>
-            <div id="save-url-button" class="hvr-grow-2x icon-button" data-i18n="title">
+            <div id="save-url-button" class="hvr-grow icon-button" data-i18n="title">
               <label id="save-url-label" for="save-url-input">
-                <input id="save-url-input" type="checkbox" class="display-none"/>
-                <img id="save-url-img" src="../img/heart-o.png" alt="" width="16" height="16"/>
+                <input id="save-url-input" type="checkbox" class="display-none">
+                <img id="save-url-img" src="../img/heart-o.png" alt="" width="16" height="16">
               </label>
             </div>
           </div>
@@ -84,30 +84,30 @@
               <div id="selection" class="column">
                 <label id="selection-label" for="selection-input" data-i18n="textContent" class="label-display-inline-block"></label>
                 <div id="multi-button" class="hvr-grow" data-i18n="title">
-                  <img id="multi-img-1" src="../img/plus-circle.png" width="14" height="14" class="disabled"/>
-                  <img id="multi-img-2" src="../img/plus-circle-2.png" width="14" height="14" class="disabled"/>
-                  <img id="multi-img-3" src="../img/plus-circle-3.png" width="14" height="14" class="disabled"/>
-                  <input id="multi-count" type="hidden" value="0"/> <!-- saves multiCount -->
+                  <img id="multi-img-1" src="../img/plus-circle.png" width="14" height="14" class="disabled">
+                  <img id="multi-img-2" src="../img/plus-circle-2.png" width="14" height="14" class="disabled">
+                  <img id="multi-img-3" src="../img/plus-circle-3.png" width="14" height="14" class="disabled">
+                  <input id="multi-count" type="hidden" value="0"> <!-- saves multiCount -->
                 </div>
                 <div class="clear-both"></div>
-                <input id="selection-input" type="text" readonly="readonly" spellcheck="false"/>
-                <input id="selection-start-input" type="hidden" value="-1"/> <!-- saves selectionStart -->
+                <input id="selection-input" type="text" readonly="readonly" spellcheck="false">
+                <input id="selection-start-input" type="hidden" value="-1"> <!-- saves selectionStart -->
                 <div class="checkbox">
                   <label>
-                    <input id="leading-zeros-input" type="checkbox"/>
+                    <input id="leading-zeros-input" type="checkbox">
                     <span id="leading-zeros-pad-label" data-i18n="textContent"></span>
                   </label>
                 </div>
               </div>
               <div id="interval" class="column">
                 <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
-                <input id="interval-input" type="number" min="1"/>
+                <input id="interval-input" type="number" min="1">
               </div>
               <div id="error-skip" class="column">
                 <div id="error-skip-description" data-i18n="title">
                   <label id="error-skip-label" for="error-skip-input" class="label-display-block" data-i18n="textContent"></label>
                 </div>
-                <input id="error-skip-input" type="number" min="0" max="100"/>
+                <input id="error-skip-input" type="number" min="0" max="100">
               </div>
               <div id="base" class="column">
                 <label id="base-label" for="base-select" data-i18n="textContent"></label>
@@ -154,11 +154,11 @@
                 <div id="base-case" class="display-none">
                   <div class="radio">
                     <label>
-                      <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
+                      <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase">
                       <span id="base-case-lowercase-label" data-i18n="textContent"></span>
                     </label>
                     <label>
-                      <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
+                      <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase">
                       <span id="base-case-uppercase-label" data-i18n="textContent"></span>
                     </label>
                   </div>
@@ -167,13 +167,13 @@
                   <a id="base-custom-a" href="https://github.com/roysix/url-incrementer/blob/master/_docs/HELP.md#bases-and-custom-bases" target="_blank">
                     <span id="base-custom-label" data-i18n="textContent"></span>
                   </a>
-                  <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false"/>
+                  <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false">
                 </div>
                 <div id="base-date" class="display-none">
                   <a id="base-date-format-a" href="https://github.com/roysix/url-incrementer/tree/master/_docs/HELP.md#date-incrementing" target="_blank">
                     <span id="base-date-format-label" data-i18n="textContent"></span>
                   </a>
-                  <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false"/>
+                  <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false">
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@
       </section>
       <section id="custom" class="display-none">
         <div class="heading">
-          <img src="../img/check.png" alt="" width="14" height="14"/>
+          <img src="../img/check.png" alt="" width="14" height="14">
           <h3 id="custom-urls-h3" data-i18n="textContent"></h3>
         </div>
         <div id="custom-urls">
@@ -192,7 +192,7 @@
       </section>
       <section id="toolkit" class="display-none">
         <div class="heading">
-          <img src="../img/wrench.png" alt="" width="15" height="15"/>
+          <img src="../img/wrench.png" alt="" width="15" height="15">
           <h3 id="toolkit-h3" data-i18n="textContent"></h3>
         </div>
         <div id="toolkit-instructions" data-i18n="textContent"></div>
@@ -202,22 +202,22 @@
               <label id="toolkit-tool-label" data-i18n="textContent"></label>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-crawl-input" type="radio" name="toolkit-tool" value="crawl"/>
-                  <img src="../img/star.png" alt="" width="14" height="14"/>
+                  <input id="toolkit-tool-crawl-input" type="radio" name="toolkit-tool" value="crawl">
+                  <img src="../img/star.png" alt="" width="14" height="14">
                   <span id="toolkit-tool-crawl-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-tabs-input" type="radio" name="toolkit-tool" value="tabs"/>
-                  <img src="../img/list-alt.png" alt="" width="14" height="14"/>
+                  <input id="toolkit-tool-tabs-input" type="radio" name="toolkit-tool" value="tabs">
+                  <img src="../img/list-alt.png" alt="" width="14" height="14">
                   <span id="toolkit-tool-tabs-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="toolkit-tool-links-input" type="radio" name="toolkit-tool" value="links"/>
-                  <img src="../img/link.png" alt="" width="14" height="14"/>
+                  <input id="toolkit-tool-links-input" type="radio" name="toolkit-tool" value="links">
+                  <img src="../img/link.png" alt="" width="14" height="14">
                   <span id="toolkit-tool-links-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -226,30 +226,30 @@
               <label id="toolkit-action-label" data-i18n="textContent"></label>
               <div class="radio">
                 <label>
-                  <input id="toolkit-action-increment-input" type="radio" name="toolkit-action" value="increment"/>
-                  <img src="../img/plus-circle.png" alt="" width="14" height="14"/>
+                  <input id="toolkit-action-increment-input" type="radio" name="toolkit-action" value="increment">
+                  <img src="../img/plus-circle.png" alt="" width="14" height="14">
                   <span id="toolkit-action-increment-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input id="toolkit-action-decrement-input" type="radio" name="toolkit-action" value="decrement"/>
-                  <img src="../img/minus-circle.png" alt="" width="14" height="14"/>
+                  <input id="toolkit-action-decrement-input" type="radio" name="toolkit-action" value="decrement">
+                  <img src="../img/minus-circle.png" alt="" width="14" height="14">
                   <span id="toolkit-action-decrement-label" data-i18n="textContent"></span>
                 </label>
               </div>
             </div>
             <div id="toolkit-quantity" class="column">
               <label id="toolkit-quantity-label" for="toolkit-quantity-input" data-i18n="textContent"></label>
-              <input id="toolkit-quantity-input" type="number" min="1" max="10000"/>
+              <input id="toolkit-quantity-input" type="number" min="1" max="10000">
             </div>
             <div id="toolkit-seconds" class="column">
               <label id="toolkit-seconds-label" for="toolkit-seconds-input" data-i18n="textContent"></label>
-              <input id="toolkit-seconds-input" type="number" min="1" max="600"/>
+              <input id="toolkit-seconds-input" type="number" min="1" max="600">
             </div>
             <div class="column">
               <div id="toolkit-urli-button-div" class="hvr-grow">
-                <img id="toolkit-urli-button-img" src="../img/urli.png" alt="" width="96" height="96"/>
+                <img id="toolkit-urli-button-img" src="../img/urli.png" alt="" width="96" height="96">
               </div>
             </div>
           </div>
@@ -266,19 +266,19 @@
             </div>
             <div id="toolkit-checkboxes" class="checkbox">
               <label>
-                <input id="toolkit-table-crawl-response-input" type="checkbox" value="response" checked="checked"/>
+                <input id="toolkit-table-crawl-response-input" type="checkbox" value="response" checked="checked">
                 <span id="toolkit-table-crawl-response-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="toolkit-table-crawl-ok-input" type="checkbox" value="ok" checked="checked"/>
+                <input id="toolkit-table-crawl-ok-input" type="checkbox" value="ok" checked="checked">
                 <span id="toolkit-table-crawl-ok-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="toolkit-table-crawl-error-input" type="checkbox" value="error" checked="checked"/>
+                <input id="toolkit-table-crawl-error-input" type="checkbox" value="error" checked="checked">
                 <span id="toolkit-table-crawl-error-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="toolkit-table-crawl-redirected-input" type="checkbox" value="redirected" checked="checked"/>
+                <input id="toolkit-table-crawl-redirected-input" type="checkbox" value="redirected" checked="checked">
                 <span id="toolkit-table-crawl-redirected-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -289,10 +289,10 @@
       </section>
       <section id="auto">
         <div class="heading">
-          <img src="../img/refresh.png" alt="" width="16" height="16"/>
+          <img src="../img/refresh.png" alt="" width="16" height="16">
           <h3 id="auto-h3" data-i18n="textContent"></h3>
           <div class="heading-right">
-            <img src="../img/clock-o.png" alt="" width="14" height="14"/>
+            <img src="../img/clock-o.png" alt="" width="14" height="14">
             <span id="eta-label*auto" data-i18n="textContent"></span>
             <span id="auto-eta-value"></span>
           </div>
@@ -310,22 +310,22 @@
             </div>
             <div id="auto-times" class="column">
               <label id="auto-times-label" for="auto-times-input" data-i18n="textContent"></label>
-              <input id="auto-times-input" type="number" min="1" max="100000"/>
+              <input id="auto-times-input" type="number" min="1" max="100000">
             </div>
             <div id="auto-seconds" class="column">
               <label id="auto-seconds-label" for="auto-seconds-input" data-i18n="textContent"></label>
-              <input id="auto-seconds-input" type="number" min="1" max="3600"/>
+              <input id="auto-seconds-input" type="number" min="1" max="3600">
             </div>
             <div id="auto-wait-badge" class="column">
               <div class="checkbox">
                 <label>
-                  <input id="auto-wait-input" type="checkbox"/>
+                  <input id="auto-wait-input" type="checkbox">
                   <span id="auto-wait-label" data-i18n="textContent"></span>
                 </label>
               </div>
               <div class="checkbox">
                 <label>
-                  <input id="auto-badge-input" type="checkbox"/>
+                  <input id="auto-badge-input" type="checkbox">
                   <span id="auto-badge-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -335,10 +335,10 @@
       </section>
       <section id="download">
         <div class="heading">
-          <img src="../img/cloud-download.png" alt="" width="18" height="18"/>
+          <img src="../img/cloud-download.png" alt="" width="18" height="18">
           <h3 id="download-h3" data-i18n="textContent"></h3>
           <div class="heading-right">
-            <img src="../img/flask.png" alt="" width="13" height="13"/>
+            <img src="../img/flask.png" alt="" width="13" height="13">
             <span id="download-experimental-label" data-i18n="textContent"></span>
           </div>
         </div>
@@ -346,7 +346,7 @@
           <div class="row">
             <div id="download-strategy" class="column">
               <label id="download-strategy-help" title="">
-                <img src="../img/question-circle.png" alt="" width="12" height="12"/>
+                <img src="../img/question-circle.png" alt="" width="12" height="12">
                 <span id="download-strategy-help-label"></span>
               </label>
               <label id="download-strategy-label" for="download-strategy-select" data-i18n="textContent"></label>
@@ -358,35 +358,35 @@
                 <option id="download-strategy-option-page" value="page" data-i18n="textContent"></option>
               </select>
               <div id="download-strategy-sub-options">
-                <input id="download-extensions-generated" type="hidden" value=""/>
-                <input id="download-tags-generated" type="hidden" value=""/>
-                <input id="download-attributes-generated" type="hidden" value=""/>
+                <input id="download-extensions-generated" type="hidden" value="">
+                <input id="download-tags-generated" type="hidden" value="">
+                <input id="download-attributes-generated" type="hidden" value="">
                 <div id="download-extensions" class="checkbox"><div></div></div>
                 <div id="download-tags" class="checkbox"><div></div></div>
                 <div id="download-attributes" class="checkbox"><div></div></div>
                 <div id="download-selector">
                   <label id="download-selector-label">document.querySelectorAll()</label>
-                  <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]" spellcheck="false"/>
+                  <input id="download-selector-input" type="text" placeholder="e.g. [src*='.jpg' i],[href*='.jpg' i]" spellcheck="false">
                 </div>
               </div>
             </div>
             <div id="download-optional" class="column">
               <div id="download-optional-label-div">
-                <img src="../img/filter.png" alt="" width="12" height="12"/>
+                <img src="../img/filter.png" alt="" width="12" height="12">
                 <span id="download-optional-label" data-i18n="textContent"></span>
               </div>
               <label id="download-optional-help" data-i18n="title">
-                <img src="../img/question-circle.png" alt="" width="12" height="12"/>
+                <img src="../img/question-circle.png" alt="" width="12" height="12">
                 <span id="download-optional-help-label" data-i18n="textContent"></span>
               </label>
               <div class="row">
                 <div id="download-includes" class="column">
                   <label id="download-includes-label" for="download-includes-input" data-i18n="textContent"></label>
-                  <input id="download-includes-input" type="text" placeholder="e.g. /img/large/" spellcheck="false"/>
+                  <input id="download-includes-input" type="text" placeholder="e.g. /img/large/" spellcheck="false">
                 </div>
                 <div id="download-excludes" class="column">
                   <label id="download-excludes-label" for="download-excludes-input" data-i18n="textContent"></label>
-                  <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/" spellcheck="false"/>
+                  <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/" spellcheck="false">
                 </div>
               </div>
               <div class="row two">
@@ -405,45 +405,45 @@
           </div>
         </div>
         <div id="download-preview">
-          <input id="download-preview-checkboxes-generated" type="hidden" value=""/>
-          <input id="download-selecteds" type="hidden" value=""/>
-          <input id="download-unselecteds" type="hidden" value=""/>
+          <input id="download-preview-checkboxes-generated" type="hidden" value="">
+          <input id="download-selecteds" type="hidden" value="">
+          <input id="download-unselecteds" type="hidden" value="">
           <div id="download-preview-heading">
             <div id="download-preview-heading-title" class="float-left"><div></div></div>
             <div id="download-subfolder" class="float-right">
               <label id="download-subfolder-help" for="download-subfolder-input" data-i18n="title">
-                <img src="../img/question-circle.png" alt="" width="14" height="14"/>
+                <img src="../img/question-circle.png" alt="" width="14" height="14">
                 <span id="download-subfolder-label" data-i18n="textContent"></span>
               </label>
-              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001" spellcheck="false"/>
+              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001" spellcheck="false">
             </div>
             <div id="download-preview-checkboxes" class="clear-both checkbox">
               <label>
-                <input id="download-preview-thumb-input" value="thumb" type="checkbox"/>
+                <input id="download-preview-thumb-input" value="thumb" type="checkbox">
                 <span id="download-preview-thumb-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-filename-input" value="filename" type="checkbox"/>
+                <input id="download-preview-filename-input" value="filename" type="checkbox">
                 <span id="download-preview-filename-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-extension-input" value="extension" type="checkbox"/>
+                <input id="download-preview-extension-input" value="extension" type="checkbox">
                 <span id="download-preview-extension-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-tag-input" value="tag" type="checkbox"/>
+                <input id="download-preview-tag-input" value="tag" type="checkbox">
                 <span id="download-preview-tag-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-attribute-input" value="attribute" type="checkbox"/>
+                <input id="download-preview-attribute-input" value="attribute" type="checkbox">
                 <span id="download-preview-attribute-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-url-input" value="url" type="checkbox"/>
+                <input id="download-preview-url-input" value="url" type="checkbox">
                 <span id="download-preview-url-label" data-i18n="textContent"></span>
               </label>
               <label>
-                <input id="download-preview-compressed-input" value="compressed" type="checkbox"/>
+                <input id="download-preview-compressed-input" value="compressed" type="checkbox">
                 <span id="download-preview-compressed-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -455,18 +455,18 @@
         <div id="extra-toggles">
           <div id="auto-toggle" class="tgl-outer">
             <label class="tgl-inner" for="auto-toggle-input">
-              <img id="auto-toggle-img" src="../img/refresh.png" alt="" width="16" height="16"/>
+              <img id="auto-toggle-img" src="../img/refresh.png" alt="" width="16" height="16">
               <span id="auto-toggle-span" class="tgl-text" data-i18n="textContent"></span>
             </label>
-            <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" value="0"/>
+            <input class="tgl tgl-ios" id="auto-toggle-input" type="checkbox" value="0">
             <label class="tgl-btn" for="auto-toggle-input"></label>
           </div>
           <div id="download-toggle" class="tgl-outer">
             <label class="tgl-inner" for="download-toggle-input">
-              <img id="download-toggle-img" src="../img/cloud-download.png" alt="" width="17" height="17"/>
+              <img id="download-toggle-img" src="../img/cloud-download.png" alt="" width="17" height="17">
               <span id="download-toggle-span" class="tgl-text" data-i18n="textContent"></span>
             </label>
-            <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" value="0"/>
+            <input class="tgl tgl-ios" id="download-toggle-input" type="checkbox" value="0">
             <label class="tgl-btn" for="download-toggle-input"></label>
           </div>
         </div>
@@ -476,26 +476,26 @@
           <div class="display-none">
             <div id="custom-urls-button" class="hvr-skew-forward icon-button" data-i18n="title">
               <label id="custom-urls-label" for="custom-urls-input">
-                <input id="custom-urls-input" type="checkbox" class="display-none"/>
-                <img src="../img/check.png" alt="" width="16" height="16"/>
+                <input id="custom-urls-input" type="checkbox" class="display-none">
+                <img src="../img/check.png" alt="" width="16" height="16">
               </label>
             </div>
           </div>
-          <div id="toolkit-button" class="hvr-grow-2x icon-button" data-i18n="title">
+          <div id="toolkit-button" class="hvr-grow icon-button" data-i18n="title">
             <label id="toolkit-label" for="toolkit-input">
-              <input id="toolkit-input" type="checkbox" class="display-none"/>
-              <img src="../img/wrench.png" alt="" width="16" height="16"/>
+              <input id="toolkit-input" type="checkbox" class="display-none">
+              <img src="../img/wrench.png" alt="" width="16" height="16">
             </label>
           </div>
-          <div id="options-button" class="hvr-grow-2x icon-button" data-i18n="title">
+          <div id="options-button" class="hvr-grow icon-button" data-i18n="title">
             <label>
-              <img src="../img/gear.png" alt="" width="16" height="16"/>
+              <img src="../img/gear.png" alt="" width="16" height="16">
             </label>
           </div>
-          <div id="help-button" class="hvr-grow-2x icon-button" data-i18n="title">
+          <div id="help-button" class="hvr-grow icon-button" data-i18n="title">
               <a href="https://github.com/roysix/url-incrementer/tree/master/_docs/HELP.md" target="_blank">
                 <label>
-                  <img src="../img/question.png" alt="" width="16" height="16"/>
+                  <img src="../img/question.png" alt="" width="16" height="16">
                 </label>
               </a>
           </div>

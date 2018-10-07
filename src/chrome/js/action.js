@@ -42,7 +42,17 @@ var Action = (() => {
     if (instance.downloadEnabled) {
       // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
       if (!instance.autoEnabled && (["increment", "decrement", "next", "prev"].includes(action))) {
-        chrome.tabs.onUpdated.addListener(Background.tabUpdatedListener);
+        chrome.tabs.onUpdated.addListener(function tabUpdatedListener(tabId, changeInfo, tab) {
+          if (changeInfo.status === "complete") {
+            console.log("tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
+            const instance = Background.getInstance(tabId);
+            // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
+            if (instance && instance.downloadEnabled && !instance.autoEnabled) {
+              chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
+            }
+            chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
+          }
+        });
       }
     }
     // Action:
@@ -148,13 +158,13 @@ var Action = (() => {
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           const url = results[0];
-          chrome.tabs.update(instance.tabId, {url: url});
           // Only save next prev instances that are auto enabled and doing auto next or prev:
           if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
             console.log("nextPrev() - setting instance in background");
             instance.url = url;
             Background.setInstance(instance.tabId, instance);
           }
+          chrome.tabs.update(instance.tabId, {url: url});
           chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
         }
       });
@@ -243,10 +253,10 @@ var Action = (() => {
       }
       // URLs Array:
       instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
-      chrome.tabs.update(instance.tabId, {url: instance.startingURL});
       if (instance.enabled) {
         Background.setInstance(instance.tabId, instance);
       }
+      chrome.tabs.update(instance.tabId, {url: instance.startingURL});
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
     return actionPerformed;

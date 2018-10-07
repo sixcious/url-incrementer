@@ -10,41 +10,41 @@
   <head>
     <meta charset="UTF-8">
     <title>URL Incrementer</title>
-    <link type="text/css" rel="stylesheet" href="../lib/hover.css"/>
-    <link type="text/css" rel="stylesheet" href="../css/base.css"/>
-    <link type="text/css" rel="stylesheet" href="../css/options.css"/>
+    <link rel="stylesheet" href="../lib/hover.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/options.css">
+    <script src="../js/ui.js" async></script>
     <script src="../js/promisify.js" defer></script>
-    <script src="../js/ui.js" defer></script>
     <script src="../js/options.js" defer></script>
   </head>
   <body id="options">
     <section id="browser-shortcuts">
       <div class="heading">
-        <img src="../img/browser.png" alt="" width="16" height="16"/>
-        <img src="../img/keyboard-o.png" alt="" width="18" height="18"/>
+        <img src="../img/browser.png" alt="" width="16" height="16">
+        <img src="../img/keyboard-o.png" alt="" width="18" height="18">
         <h3 id="browser-shortcuts-h3" data-i18n="textContent"></h3>
         <button id="internal-shortcuts-enable-button" data-i18n="textContent"></button>
       </div>
       <p id="browser-shortcuts-p1" data-i18n="textContent"></p>
       <div class="checkbox">
         <label id="help-quick-shortcuts*browser" class="tooltip-alt" data-i18n="title">
-          <input id="browser-shortcuts-quick-enable-input" type="checkbox"/>
+          <input id="browser-shortcuts-quick-enable-input" type="checkbox">
           <span id="browser-shortcuts-quick-enable-label" data-i18n="textContent"></span>
-          <img src="../img/question-circle.png" alt="" width="16" height="16"/>
+          <img src="../img/question-circle.png" alt="" width="16" height="16">
         </label>
       </div>
       <p>
         <button id="browser-shortcuts-button" data-i18n="textContent"></button>
       </p>
       <p id="browser-shortcuts-p2-note" class="note">
-        <img src="../img/info-circle.png" alt="" width="16" height="16"/>
+        <img src="../img/info-circle.png" alt="" width="16" height="16">
         <span id="browser-shortcuts-p2" data-i18n="textContent"></span>
       </p>
     </section>
     <section id="internal-shortcuts">
       <div class="heading">
-        <img src="../img/mouse-pointer.png" alt="" width="16" height="16"/>
-        <img src="../img/keyboard-o.png" alt="" width="18" height="18"/>
+        <img src="../img/mouse-pointer.png" alt="" width="16" height="16">
+        <img src="../img/keyboard-o.png" alt="" width="18" height="18">
         <h3 id="internal-shortcuts-h3" data-i18n="textContent"></h3>
         <button id="browser-shortcuts-enable-button" data-i18n="textContent"></button>
       </div>
@@ -64,7 +64,7 @@
         </label>
         <div id="mouse-click-speed">
           <label id="mouse-click-speed-label" for="mouse-click-speed-input" data-i18n="textContent"></label>
-          <input id="mouse-click-speed-input" type="number" min="100" step="100" max="1000"/>
+          <input id="mouse-click-speed-input" type="number" min="100" step="100" max="1000">
           <span id="mouse-click-speed-ms" data-i18n="textContent"></span>
         </div>
       </div>
@@ -72,11 +72,11 @@
         <div class="row">
           <div class="column"></div>
           <div class="column">
-            <img id="key-enable-img" src="../img/check.png" alt="" width="16" height="16"/>
+            <img id="key-enable-img" src="../img/check.png" alt="" width="16" height="16">
             <span id="key-label" data-i18n="textContent"></span>
           </div>
           <div class="column">
-            <img id="mouse-enable-img" src="../img/check.png" alt="" width="16" height="16"/>
+            <img id="mouse-enable-img" src="../img/check.png" alt="" width="16" height="16">
             <span id="mouse-label" data-i18n="textContent"></span>
           </div>
           <div class="column">
@@ -87,87 +87,87 @@
     </section>
     <section id="one-click-buttons">
       <div class="heading">
-        <img src="../img/browser-store.png" alt="" height="25"/>
+        <img src="../img/browser-store.png" alt="" height="25">
         <h3 id="one-click-buttons-h3" data-i18n="textContent"></h3>
       </div>
       <p id="one-click-buttons-p" data-i18n="textContent"></p>
       <a href="https://chrome.google.com/webstore/detail/url-increment/decebmdlceenceecblpfjanoocfcmjai" target="_blank">
-        <img src="../img/plus-circle.png" alt="" width="16" height="16"/>
+        <img src="../img/plus-circle.png" alt="" width="16" height="16">
         <span id="one-click-buttons-increment" data-i18n="textContent"></span>
       </a>
       <p></p>
       <a href="https://chrome.google.com/webstore/detail/url-decrement/nnmjbfglinmjnieblelacmlobabcenfk" target="_blank">
-        <img src="../img/minus-circle.png" alt="" width="16" height="16"/>
+        <img src="../img/minus-circle.png" alt="" width="16" height="16">
         <span id="one-click-buttons-decrement" data-i18n="textContent"></span>
       </a>
     </section>
     <section id="icon-settings">
       <div class="heading">
-        <img src="../img/128-dark.png" alt="" width="16" height="16"/>
+        <img src="../img/128-dark.png" alt="" width="16" height="16">
         <h3 id="icon-settings-h3" data-i18n="textContent"></h3>
       </div>
       <div class="icon-color radio">
         <label id="icon-color-label" data-i18n="textContent"></label>
         <label>
-          <input id="icon-color-radio-dark" value="dark" name="icon-color" type="radio"/>
-          <img src="../img/32-dark.png" alt="" width="16" height="16"/>
+          <input id="icon-color-radio-dark" value="dark" name="icon-color" type="radio">
+          <img src="../img/32-dark.png" alt="" width="16" height="16">
           <span id="icon-color-label-dark" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="icon-color-radio-light" value="light" name="icon-color" type="radio"/>
-          <img src="../img/32-light.png" alt="" width="16" height="16"/>
+          <input id="icon-color-radio-light" value="light" name="icon-color" type="radio">
+          <img src="../img/32-light.png" alt="" width="16" height="16">
           <span id="icon-color-label-light" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="icon-color-radio-rainbow" value="rainbow" name="icon-color" type="radio"/>
-          <img src="../img/32-rainbow.png" alt="" width="16" height="16"/>
+          <input id="icon-color-radio-rainbow" value="rainbow" name="icon-color" type="radio">
+          <img src="../img/32-rainbow.png" alt="" width="16" height="16">
           <span id="icon-color-label-rainbow" data-i18n="textContent"></span>
         </label>
         <label id="icon-color-radio-urli-unlock">
-          <input id="icon-color-radio-urli" value="urli" name="icon-color" type="radio"/>
-          <img src="../img/32-urli.png" alt="" width="16" height="16"/>
+          <input id="icon-color-radio-urli" value="urli" name="icon-color" type="radio">
+          <img src="../img/32-urli.png" alt="" width="16" height="16">
           <span id="icon-color-label-urli" data-i18n="textContent"></span>
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input id="icon-feedback-enable-input" type="checkbox"/>
+          <input id="icon-feedback-enable-input" type="checkbox">
           <span id="icon-feedback-enable-label" data-i18n="textContent"></span>
         </label>
       </div>
     </section>
     <section id="popup-settings">
       <div class="heading">
-        <img src="../img/window-restore.png" alt="" width="16" height="16"/>
+        <img src="../img/window-restore.png" alt="" width="16" height="16">
         <h3 id="popup-settings-h3" data-i18n="textContent"></h3>
       </div>
       <div id="popup-button-size-div">
         <label id="popup-button-size-label" data-i18n="textContent"></label>
-        <input id="popup-button-size-input" type="number" min="16" max="64"/>&nbsp;px
-        <input id="popup-button-size-img" type="image" src="../img/plus-circle.png" alt="popup-button-size-img"/>
+        <input id="popup-button-size-input" type="number" min="16" max="64">&nbsp;px
+        <input id="popup-button-size-img" type="image" src="../img/plus-circle.png" alt="popup-button-size-img">
       </div>
       <div class="checkbox">
         <label>
-          <input id="popup-animations-enable-input" type="checkbox"/>
+          <input id="popup-animations-enable-input" type="checkbox">
           <span id="popup-animations-enable-label" data-i18n="textContent"></span>
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input id="popup-open-setup-input" type="checkbox"/>
+          <input id="popup-open-setup-input" type="checkbox">
           <span id="popup-open-setup-label" data-i18n="textContent"></span>
         </label>
       </div>
       <div class="checkbox">
         <label>
-          <input id="popup-settings-can-overwrite-input" type="checkbox"/>
+          <input id="popup-settings-can-overwrite-input" type="checkbox">
           <span id="popup-settings-can-overwrite-label" data-i18n="textContent"></span>
         </label>
       </div>
     </section>
     <section id="saved-urls-settings">
       <div class="heading">
-        <img src="../img/heart.png" alt="" width="16" height="16"/>
+        <img src="../img/heart.png" alt="" width="16" height="16">
         <h3 id="saved-urls-settings-h3" data-i18n="textContent"></h3>
       </div>
       <p id="saved-urls-settings-p" data-i18n="textContent"></p>
@@ -179,7 +179,7 @@
       </div>
       <div class="checkbox">
         <label>
-          <input id="saved-urls-preselect-input" type="checkbox"/>
+          <input id="saved-urls-preselect-input" type="checkbox">
           <span id="saved-urls-preselect-label" data-i18n="textContent"></span>
         </label>
       </div>
@@ -208,8 +208,8 @@
     </section>
     <section id="increment-decrement-settings">
       <div class="heading">
-        <img src="../img/plus-circle.png" alt="" width="16" height="16"/>
-        <img src="../img/minus-circle.png" alt="" width="16" height="16"/>
+        <img src="../img/plus-circle.png" alt="" width="16" height="16">
+        <img src="../img/minus-circle.png" alt="" width="16" height="16">
         <h3 id="increment-decrement-settings-h3" data-i18n="textContent"></h3>
       </div>
       <p id="increment-decrement-settings-p" data-i18n="textContent"></p>
@@ -232,21 +232,21 @@
                 <div class="row">
                   <div class="column">
                     <label id="selection-custom-pattern-label" for="selection-custom-pattern-input" data-i18n="textContent" class="display-block"></label>
-                    /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+" spellcheck="false"/>/
+                    /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+" spellcheck="false">/
                   </div>
                   <div class="column">
                     <label id="selection-custom-flags-label" for="selection-custom-flags-input" data-i18n="textContent" class="display-block"></label>
-                    <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi" spellcheck="false"/>
+                    <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi" spellcheck="false">
                   </div>
                 </div>
                 <div class="row">
                   <div class="column">
                     <label id="selection-custom-group-label" for="selection-custom-group-input" data-i18n="textContent" class="display-block"></label>
-                    <input id="selection-custom-group-input" type="number" value="0" min="0"/>
+                    <input id="selection-custom-group-input" type="number" value="0" min="0">
                   </div>
                   <div class="column">
                     <label id="selection-custom-index-label" for="selection-custom-index-input" data-i18n="textContent" class="display-block"></label>
-                    <input id="selection-custom-index-input" type="number" value="0" min="0"/>
+                    <input id="selection-custom-index-input" type="number" value="0" min="0">
                   </div>
                 </div>
               </div>
@@ -264,7 +264,7 @@
             <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
           </div>
           <div class="column">
-            <input id="interval-input" type="number" min="1"/>
+            <input id="interval-input" type="number" min="1">
           </div>
         </div>
         <div class="row">
@@ -274,7 +274,7 @@
           <div class="column">
             <div class="checkbox">
               <label>
-                <input id="leading-zeros-pad-by-detection-input" type="checkbox"/>
+                <input id="leading-zeros-pad-by-detection-input" type="checkbox">
                 <span id="leading-zeros-pad-by-detection-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -328,11 +328,11 @@
             <div id="base-case" class="display-none">
               <div class="radio">
                 <label>
-                  <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase"/>
+                  <input id="base-case-lowercase-input" type="radio" name="base-case" value="lowercase">
                   <span id="base-case-lowercase-label" data-i18n="textContent"></span>
                 </label>
                 <label>
-                  <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase"/>
+                  <input id="base-case-uppercase-input" type="radio" name="base-case" value="uppercase">
                   <span id="base-case-uppercase-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -341,13 +341,13 @@
               <a id="base-custom-a" href="https://github.com/roysix/url-incrementer/blob/master/_docs/HELP.md#bases-and-custom-bases" target="_blank">
                 <span id="base-custom-label" data-i18n="textContent"></span>
               </a>
-              <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false"/>
+              <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false">
             </div>
             <div id="base-date" class="display-none">
               <a id="base-date-format-a" href="https://github.com/roysix/url-incrementer/tree/master/_docs/HELP.md#date-incrementing" target="_blank">
                 <span id="base-date-format-label" data-i18n="textContent"></span>
               </a>
-              <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false"/>
+              <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false">
             </div>
           </div>
         </div>
@@ -356,7 +356,7 @@
             <label id="shuffle-limit-label" for="shuffle-limit-input" data-i18n="textContent"></label>
           </div>
           <div class="column">
-            <input id="shuffle-limit-input" type="number" min="1" max="10000"/>
+            <input id="shuffle-limit-input" type="number" min="1" max="10000">
           </div>
         </div>
         <div class="row">
@@ -364,7 +364,7 @@
             <label id="error-skip-label" data-i18n="textContent"></label>
           </div>
           <div class="column">
-            <input id="error-skip-input" type="number" min="0" max="100"/>
+            <input id="error-skip-input" type="number" min="0" max="100">
             <div id="error-skip-description" class="tooltip link" data-i18n="title">
               <a href="https://github.com/roysix/url-incrementer/blob/master/_docs/HELP.md#error-skipping" target="_blank">
                 <img src="../img/question-circle.png" alt="" width="16" height="16">
@@ -376,13 +376,13 @@
                 <div class="row">
                   <div class="column">
                     <label>
-                      <input id="error-codes-404-input" value="404" type="checkbox"/>
+                      <input id="error-codes-404-input" value="404" type="checkbox">
                       <span id="error-codes-404-label" data-i18n="textContent"></span>
                     </label>
                   </div>
                   <div class="column">
                     <label>
-                      <input id="error-codes-3XX-input" value="3XX" type="checkbox"/>
+                      <input id="error-codes-3XX-input" value="3XX" type="checkbox">
                       <span id="error-codes-3XX-label" data-i18n="textContent"></span>
                     </label>
                   </div>
@@ -390,13 +390,13 @@
                 <div class="row">
                   <div class="column">
                     <label>
-                      <input id="error-codes-4XX-input" value="4XX" type="checkbox"/>
+                      <input id="error-codes-4XX-input" value="4XX" type="checkbox">
                       <span id="error-codes-4XX-label" data-i18n="textContent"></span>
                     </label>
                   </div>
                   <div class="column">
                     <label>
-                      <input id="error-codes-5XX-input" value="5XX" type="checkbox"/>
+                      <input id="error-codes-5XX-input" value="5XX" type="checkbox">
                       <span id="error-codes-5XX-label" data-i18n="textContent"></span>
                     </label>
                   </div>
@@ -404,18 +404,18 @@
                 <div class="row">
                   <div class="column">
                     <label>
-                      <input id="error-codes-custom-enabled-input" type="checkbox"/>
+                      <input id="error-codes-custom-enabled-input" type="checkbox">
                       <span id="error-codes-custom-enabled-label" data-i18n="textContent"></span>
                     </label>
                   </div>
                 </div>
               </div>
               <div id="error-codes-custom">
-                <input id="error-codes-custom-input" type="text" placeholder="e.g. 404, 302, 500" spellcheck="false"/>
+                <input id="error-codes-custom-input" type="text" placeholder="e.g. 404, 302, 500" spellcheck="false">
               </div>
             </div>
             <p class="note">
-              <img src="../img/exclamation-circle.png" alt="" width="16" height="16"/>
+              <img src="../img/exclamation-circle.png" alt="" width="16" height="16">
               <span id="error-skip-disclaimer" class="note" data-i18n="textContent"></span>
             </p>
           </div>
@@ -424,8 +424,8 @@
     </section>
     <section id="next-prev-settings">
       <div class="heading">
-        <img src="../img/chevron-circle-left.png" alt="" width="16" height="16"/>
-        <img src="../img/chevron-circle-right.png" alt="" width="16" height="16"/>
+        <img src="../img/chevron-circle-left.png" alt="" width="16" height="16">
+        <img src="../img/chevron-circle-right.png" alt="" width="16" height="16">
         <h3 id="next-prev-settings-h3" data-i18n="textContent"></h3>
       </div>
       <p id="next-prev-settings-p" data-i18n="textContent"></p>
@@ -434,7 +434,7 @@
           <div class="column">
             <label id="next-prev-keywords-next-label" for="next-prev-keywords-next-textarea">
               <span id="next-prev-next-label" data-i18n="textContent"></span>
-              <br/>
+              <br>
               <span id="next-prev-keywords-label*next" data-i18n="textContent"></span>
             </label>
           </div>
@@ -446,7 +446,7 @@
           <div class="column">
             <label id="next-prev-keywords-prev-label" for="next-prev-keywords-prev-textarea">
               <span id="next-prev-prev-label" data-i18n="textContent"></span>
-              <br/>
+              <br>
               <span id="next-prev-keywords-label*prev" data-i18n="textContent"></span>
             </label>
           </div>
@@ -472,7 +472,7 @@
           <div class="column">
             <div class="checkbox">
               <label>
-                <input id="next-prev-same-domain-policy-enable-input" type="checkbox"/>
+                <input id="next-prev-same-domain-policy-enable-input" type="checkbox">
                 <span id="next-prev-same-domain-policy-enable-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -485,7 +485,7 @@
           <div class="column">
             <div class="checkbox">
               <label>
-                <input id="next-prev-popup-buttons-input" type="checkbox"/>
+                <input id="next-prev-popup-buttons-input" type="checkbox">
                 <span id="next-prev-popup-buttons-description-label" data-i18n="textContent"></span>
               </label>
             </div>
@@ -495,17 +495,17 @@
     </section>
     <section id="auto-settings">
       <div class="heading">
-        <img src="../img/refresh.png" alt="" width="16" height="16"/>
+        <img src="../img/refresh.png" alt="" width="16" height="16">
         <h3 id="auto-settings-h3" data-i18n="textContent"></h3>
       </div>
       <p id="auto-settings-p" data-i18n="textContent"></p>
     </section>
     <section id="download-settings">
       <div class="heading">
-        <img id="download-cloud-download" src="../img/cloud-download.png" alt="" width="19" height="19"/>
+        <img id="download-cloud-download" src="../img/cloud-download.png" alt="" width="19" height="19">
         <h3 id="download-settings-h3" data-i18n="textContent"></h3>
         <div id="download-experimental">
-          <img id="download-experimental-flask" src="../img/flask.png" alt="" width="11" height="11"/>
+          <img id="download-experimental-flask" src="../img/flask.png" alt="" width="11" height="11">
           <span id="download-experimental-label" data-i18n="textContent"></span>
         </div>
         <button id="download-enable-button" data-i18n="textContent"></button>
@@ -514,21 +514,21 @@
       <div id="download-settings-disable">
         <p id="download-disable-p" data-i18n="textContent"></p>
         <p>
-          <img src="../img/exclamation-circle.png" alt="" width="16" height="16"/>
+          <img src="../img/exclamation-circle.png" alt="" width="16" height="16">
           <span id="download-experimental-disclaimer" class="note" data-i18n="textContent"></span>
         </p>
       </div>
       <div id="download-settings-enable">
         <p id="download-enable-p" data-i18n="textContent"></p>
         <p>
-          <img src="../img/exclamation-circle.png" alt="" width="16" height="16"/>
+          <img src="../img/exclamation-circle.png" alt="" width="16" height="16">
           <span id="download-settings-disclaimer" class="note" data-i18n="textContent"></span>
         </p>
       </div>
     </section>
     <section id="enhanced-mode">
       <div class="heading">
-        <img src="../img/star.png" alt="" width="16" height="16"/>
+        <img src="../img/star.png" alt="" width="16" height="16">
         <h3 id="enhanced-mode-h3" data-i18n="textContent"></h3>
         <button id="enhanced-mode-enable-button" data-i18n="textContent"></button>
         <button id="enhanced-mode-disable-button" data-i18n="textContent"></button>
@@ -542,7 +542,7 @@
     </section>
     <section id="about">
       <div class="heading">
-        <img src="../img/info-circle.png" alt="" width="16" height="16"/>
+        <img src="../img/info-circle.png" alt="" width="16" height="16">
         <h3 id="about-h3" data-i18n="textContent"></h3>
       </div>
       <div id="about-floats-div">
@@ -563,7 +563,7 @@
       <div class="table">
         <div class="row">
           <div class="column">
-            <input id="urli-input" type="image" src="../img/urli.png" alt="urli-input" width="96" height="96" class="hvr-grow" data-value="0"/>
+            <input id="urli-input" type="image" src="../img/urli.png" alt="urli-input" width="96" height="96" class="hvr-grow" data-value="0">
           </div>
           <div id="urli-thank-you" class="column">
             <div id="urli-thank-you-rainbow" class="rainbow-underline" data-i18n="textContent"></div>

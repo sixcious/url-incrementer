@@ -204,26 +204,6 @@ var Background = (() => {
   }
 
   /**
-   * The chrome.tabs.onUpdated listener that is temporarily added (then removed) for certain events.
-   *
-   * @param tabId      the tab ID
-   * @param changeInfo the status (either complete or loading)
-   * @param tab        the tab object
-   * @public
-   */
-  function tabUpdatedListener(tabId, changeInfo, tab) {
-    if (changeInfo.status === "complete") {
-      console.log("tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
-      const instance = Background.getInstance(tabId);
-      // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
-      if (instance && instance.downloadEnabled && !instance.autoEnabled) {
-        chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
-      }
-      chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
-    }
-  }
-
-  /**
    * Listen for installation changes and do storage/extension initialization work.
    *
    * @param details the installation details
@@ -384,7 +364,6 @@ var Background = (() => {
     setInstance: setInstance,
     deleteInstance: deleteInstance,
     buildInstance: buildInstance,
-    setBadge: setBadge,
-    tabUpdatedListener: tabUpdatedListener
+    setBadge: setBadge
   };
 })();

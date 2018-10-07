@@ -18,11 +18,11 @@ var Popup = (() => {
       timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
 
   /**
-   * Starts after the HTML has been parsed.
+   * Initializes the Popup window.
    * 
    * @private
    */
-  async function start() {
+  async function init() {
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]"),
           buttons = document.querySelectorAll("#controls input");
@@ -90,7 +90,6 @@ var Popup = (() => {
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
-
     // Initialize popup content (1-time only)
     const tabs = await Promisify.getTabs();
     backgroundPage = await Promisify.getBackgroundPage();
@@ -1084,5 +1083,5 @@ var Popup = (() => {
   }
 
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
-  start(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+  init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 })();
