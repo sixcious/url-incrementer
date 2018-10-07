@@ -1,20 +1,26 @@
 /**
  * URL Incrementer
- * @file save-urls.js
+ * @file saves.js
  * @author Roy Six
  * @license LGPL-3.0
  */
 
-var SaveURLs = (() => {
+var Saves = (() => {
 
   //const URL_SEPARATOR = "-_-"; TODO use this?
 
+  /**
+   * Adds a saved URL.
+   *
+   * @param instance the instance's URL and settings to save
+   * @public
+   */
   async function addURL(instance) {
     console.log("addURL() - saving a URL to local storage...");
     // Part 1: Check if this URL has already been saved, if it has remove the existing save
-    const saves = await deleteURL(instance.url, "addURL");
     // Part 2: Put this URL into the saves array and save it to local storage
-    const url1 = instance.url.substring(0, instance.selectionStart),
+    const saves = await deleteURL(instance.url, "addURL"),
+          url1 = instance.url.substring(0, instance.selectionStart),
           url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
           salt = Cryptography.salt(),
           hash = await Cryptography.hash(url1 + url2, salt);
@@ -27,6 +33,13 @@ var SaveURLs = (() => {
     chrome.storage.local.set({"saves": saves});
   }
 
+  /**
+   * Deletes a saved URL or wildcard by a plaintext URL.
+   *
+   * @param url    the plaintext URL to lookup this save by
+   * @param caller the caller who is calling this function
+   * @returns {Promise<{}>} the new saves array after deleting the save
+   */
   async function deleteURL(url, caller) {
     const saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
@@ -46,19 +59,15 @@ var SaveURLs = (() => {
     }
   }
 
-  async function matchesURL(save, url) {
-    return await save.type === "url" ? matchesExactURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : "";
-  }
-
   /**
-   * Checks if the saved URL matches the URL.
+   * Tests if a saved URL matches a plaintext URL.
    *
-   * @param save the save with url hashes to check
-   * @param url  the current URL to check
+   * @param save the saved URL
+   * @param url  the plaintext URL
    * @returns {Promise<{matches: boolean, selection: {}}>}
-   * @private
+   * @public
    */
-  async function matchesExactURL(save, url) {
+  async function matchesURL(save, url) {
     const url1 = url.substring(0, save.selectionStart),
           url2 = url.substring(url.length - save.selectionEnd), //url.slice(-save.url2length);
           hash = await Cryptography.hash(url1 + url2, save.salt),
@@ -68,12 +77,27 @@ var SaveURLs = (() => {
     return { "matches": matches, "selection": { "selection": selection, "selectionStart": save.selectionStart } };
   }
 
+  /**
+   * Tests if a saved wildcard matches a plaintext URL.
+   *
+   * @param save the saved wildcard
+   * @param url  the plaintext URL
+   * @returns {Promise<{matches: RegExpExecArray}>}
+   * @public
+   */
   async function matchesWildcard(save, url) {
     const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv);
     const matches = new RegExp(escapeRegExp(wildcard)).exec(url);
-    return { "matches": matches, "selection": "" }
+    return { matches: matches };
   }
 
+  /**
+   * Escapes a regular expression string.
+   *
+   * @param string the regular expression string to escape
+   * @returns {string} the escaped string
+   * @private
+   */
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
@@ -82,6 +106,7 @@ var SaveURLs = (() => {
   return {
     addURL: addURL,
     deleteURL: deleteURL,
-    matchesURL: matchesURL
+    matchesURL: matchesURL,
+    matchesWildcard: matchesWildcard
   };
 })();

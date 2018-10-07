@@ -51,7 +51,7 @@ var IncrementDecrement = (() => {
   }
 
   /**
-   * Validates the selection against the base and other parameters. Called by Popup and SaveURLs.
+   * Validates the selection against the base and other parameters. Called by Popup and Saves.
    *
    * @param selection      the selection
    * @param base           the base

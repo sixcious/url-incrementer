@@ -4,7 +4,6 @@
  * @author Roy Six
  * @license LGPL-3.0
  */
-
 var Background = (() => {
 
   // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
@@ -12,7 +11,6 @@ var Background = (() => {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     "iconColor": "dark", "iconFeedbackEnabled": false,
     "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    "shortcuts": ["increment", "decrement", "next", "prev", "clear", "return", "auto"],
     "commandsQuickEnabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyB"}, "keyAuto": {"modifiers": 6, "code": "KeyA"},
     "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
@@ -144,7 +142,7 @@ var Background = (() => {
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
       for (const save of saves) {
-        const result = await SaveURLs.matchesURL(save, tab.url);
+        const result = await save.type === "url" ? Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? Saves.matchesWildcard(save, tab.url) : "";
         if (result.matches) {
           console.log("buildInstance() - found a " + save.type + " save for this tab's url");
           via = save.type;

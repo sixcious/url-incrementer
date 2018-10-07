@@ -199,7 +199,7 @@ var Action = (() => {
       }
       if (!instance.enabled && instance.saveFound) { // Don't delete saved URLs if the instance is also enabled
         instance.saveFound = false;
-        SaveURLs.deleteURL(instance.url, "clear");
+        Saves.deleteURL(instance.url, "clear");
       }
     }
     if (instance.autoEnabled) {

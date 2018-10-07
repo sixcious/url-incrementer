@@ -279,8 +279,8 @@ var Popup = (() => {
   }
 
   /**
-   * Handle the URL selection on select events. Saves the selectionStart
-   * to a hidden input and updates the selection input to the selected text and
+   * Handle the URL selection on select events. Stores the selectionStart
+   * in a hidden input and updates the selection input to the selected text and
    * checks the leading zeros checkbox based on leading zeros present.
    * 
    * @private
@@ -855,7 +855,7 @@ var Popup = (() => {
         backgroundPage.Background.setInstance(instance.tabId, instance);
         // Save URL
         if (instance.saveURL) {
-          backgroundPage.SaveURLs.addURL(instance); // TODO
+          backgroundPage.Saves.addURL(instance); // TODO
           instance.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage

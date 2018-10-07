@@ -194,7 +194,7 @@ var Options = (() => {
       DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
       DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
       DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
-      for (const shortcut of items.shortcuts) {
+      for (const shortcut of shortcuts) {
         const keyStorageKey = getStorageKey(DOM["#key-" + shortcut + "-input"]),
               mouseStorageKey = getStorageKey(DOM["#mouse-" + shortcut + "-select"]);
         writeInput(DOM["#key-" + shortcut + "-input"], items[keyStorageKey]);
@@ -420,7 +420,7 @@ var Options = (() => {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
     } else {
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.SaveURLs.deleteURL(url, "addWildcard");
+      const saves = await backgroundPage.Saves.deleteURL(url, "addWildcard");
       // Part 2: Put this URL into the saves array and save it to local storage
       const encrypt = await backgroundPage.Cryptography.encrypt(url),
         items = await Promisify.getItems();
