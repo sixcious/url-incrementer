@@ -35,22 +35,6 @@ var Popup = (() => {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#increment-input"].addEventListener("click", clickActionButton);
-    DOM["#decrement-input"].addEventListener("click", clickActionButton);
-    DOM["#increment-input-m"].addEventListener("click", clickActionButton);
-    DOM["#decrement-input-m"].addEventListener("click", clickActionButton);
-    DOM["#increment-input-1"].addEventListener("click", clickActionButton);
-    DOM["#decrement-input-1"].addEventListener("click", clickActionButton);
-    DOM["#increment-input-2"].addEventListener("click", clickActionButton);
-    DOM["#decrement-input-2"].addEventListener("click", clickActionButton);
-    DOM["#increment-input-3"].addEventListener("click", clickActionButton);
-    DOM["#decrement-input-3"].addEventListener("click", clickActionButton);
-    DOM["#clear-input"].addEventListener("click", clickActionButton);
-    DOM["#return-input"].addEventListener("click", clickActionButton);
-    DOM["#next-input"].addEventListener("click", clickActionButton);
-    DOM["#prev-input"].addEventListener("click", clickActionButton);
-    DOM["#download-input"].addEventListener("click", clickActionButton);
-    DOM["#auto-input"].addEventListener("click", clickActionButton);
     DOM["#setup-input"].addEventListener("click", toggleView);
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
@@ -107,6 +91,7 @@ var Popup = (() => {
     for (const button of buttons) {
       button.className = items.popupAnimationsEnabled ? "hvr-grow": "";
       button.style.width = button.style.height = items.popupButtonSize + "px";
+      button.addEventListener("click", clickActionButton);
     }
     DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px"; // cloud-download.png is an irregular shape and needs adjustment
     updateSetup();
@@ -171,6 +156,7 @@ var Popup = (() => {
    */
   function updateControls() {
     DOM["#controls-icons-save-url"].style.display = instance.saveFound ? "" : "none";
+    DOM["#controls-icons-save-url"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "controls_icons_save_wildcard" : "controls_icons_save_url");
     DOM["#controls-icons-auto-repeat"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#controls-icons-shuffle"].className = instance.enabled && instance.shuffleURLs ? "" : "display-none";
     DOM["#increment-input"].style.display =

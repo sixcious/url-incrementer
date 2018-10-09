@@ -83,6 +83,7 @@
   "return_input": { "message": "Return To Start" },
   "setup_input": { "message": "Setup" },
   "controls_icons_save_url": { "message": "This is a Saved URL" },
+  "controls_icons_save_wildcard": { "message": "This is a Saved Wildcard" },
   "controls_icons_auto_repeat": { "message": "Auto Repeating" },
   "controls_icons_shuffle": { "message": "Shuffling URLs" },
   "increment_decrement_h3": { "message": "Select the part of the URL to Increment or Decrement" },

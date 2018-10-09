@@ -4,6 +4,7 @@
  * @author Roy Six
  * @license LGPL-3.0
  */
+
 var Background = (() => {
 
   // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
@@ -142,7 +143,7 @@ var Background = (() => {
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
       for (const save of saves) {
-        const result = await save.type === "url" ? Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? Saves.matchesWildcard(save, tab.url) : "";
+        const result = save.type === "url" ? await Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? await Saves.matchesWildcard(save, tab.url) : "";
         if (result.matches) {
           console.log("buildInstance() - found a " + save.type + " save for this tab's url");
           via = save.type;
@@ -208,9 +209,7 @@ var Background = (() => {
    * @private
    */
   async function installedListener(details) {
-    // New Installations: Setup storage and open Options Page in a new tab
-    // Update Installations Old Versions (5.2 and Below): Reset storage and remove all permissions for a clean slate
-    // 5.3 - 5.8 only: Storage and Permission changes for 6.0
+    // install: Open Options Page, lt 5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
       const items = details.previousVersion && details.previousVersion >= "5.3" ? await Promisify.getItems() : undefined;
@@ -223,7 +222,7 @@ var Background = (() => {
               } else if (details.previousVersion <= "5.2") {
                 Permissions.removeAllPermissions();
               } else if (details.previousVersion >= "5.3") {
-                // TODO items
+                chrome.storage.sync.set({"TODO": items.keyEnabled}); // TODO items
               }
             });
           });

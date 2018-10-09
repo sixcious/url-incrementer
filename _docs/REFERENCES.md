@@ -67,7 +67,3 @@ https://stackoverflow.com/questions/4475042/replacing-multiple-blank-lines-with-
 
 Compressing PNGs (TinyPNG)
 https://tinypng.com/
-
-## Notes
-
-1. Avoid using Messaging (`chrome.runtime.sendMessage()` and `chrome.runtime.port.message`) for long running periods of times (e.g. crawling for hours). Doing so causes the entire Chrome browser to shut down unexpectedly    
