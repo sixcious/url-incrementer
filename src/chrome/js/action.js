@@ -22,6 +22,7 @@ var Action = (() => {
     items = items ? items : await Promisify.getItems();
     let actionPerformed = false;
     // Pre-Perform Action:
+    // Handle Auto:
     if (instance.autoEnabled) {
       // In case auto has been paused, get the most recent instance from Background
       instance = Background.getInstance(instance.tabId);
@@ -39,21 +40,15 @@ var Action = (() => {
         action = "clear";
       }
     }
-    if (instance.downloadEnabled) {
-      // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
-      if (!instance.autoEnabled && (["increment", "decrement", "next", "prev"].includes(action))) {
-        chrome.tabs.onUpdated.addListener(function tabUpdatedListener(tabId, changeInfo, tab) {
-          if (changeInfo.status === "complete") {
-            console.log("tabUpdatedListener() - the chrome.tabs.onUpdated listener is on (download preview)!");
-            const instance = Background.getInstance(tabId);
-            // If download enabled auto not enabled, send a message to the popup to update the download preview (if it's open)
-            if (instance && instance.downloadEnabled && !instance.autoEnabled) {
-              chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance});
-            }
-            chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
-          }
-        });
-      }
+    // If download enabled and the action is updating the tab, send a message to the popup to update the download preview (assuming it's open)
+    if (instance.downloadEnabled && ["increment", "decrement", "next", "prev"].includes(action)) {
+      chrome.tabs.onUpdated.addListener(function downloadPreviewListener(tabId, changeInfo, tab) {
+        if (changeInfo.status === "complete") { // Send this message at "complete" because it doesn't refresh properly at "loading" sometimes (even though the download script runs at document_end)
+          console.log("downloadPreviewListener() - the chrome.tabs.onUpdated download preview listener is on!");
+          chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
+          chrome.tabs.onUpdated.removeListener(downloadPreviewListener);
+        }
+      });
     }
     // Action:
     switch (action) {
@@ -61,16 +56,7 @@ var Action = (() => {
       case "increment1": case "decrement1":
       case "increment2": case "decrement2":
       case "increment3": case "decrement3":
-        // Error Skipping:
-        if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
-          (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
-          (items.permissionsEnhancedMode)) {
-          actionPerformed = incrementDecrementErrorSkip(action, instance, items);
-        }
-        // Regular:
-        else {
-          actionPerformed = incrementDecrement(action, instance);
-        }
+        actionPerformed = incrementDecrement(action, instance, items);
         break;
       case "next": case "prev":
         actionPerformed = nextPrev(action, instance, items);
@@ -101,41 +87,33 @@ var Action = (() => {
   }
 
   /**
-   * Performs a regular increment or decrement action (without error skipping) and then updates the URL.
-   *
-   * @param action   the action (increment or decrement)
-   * @param instance the instance for this tab
-   * @private
-   */
-  function incrementDecrement(action, instance) {
-    let actionPerformed = false;
-    // If no selection was found, can't increment or decrement
-    if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
-      actionPerformed = true;
-      IncrementDecrement.incrementDecrement(action, instance);
-      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        Background.setInstance(instance.tabId, instance);
-      }
-      chrome.tabs.update(instance.tabId, {url: instance.url});
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-    }
-    return actionPerformed;
-  }
-
-  /**
-   * Performs an increment or decrement action while also skipping errors.
+   * Performs an increment or decrement action (with or without error skipping) and then updates the URL.
    *
    * @param action   the action (increment or decrement)
    * @param instance the instance for this tab
    * @param items    the storage items
    * @private
    */
-  function incrementDecrementErrorSkip(action, instance, items) {
+  function incrementDecrement(action, instance, items) {
     let actionPerformed = false;
     // If no selection was found, can't increment or decrement
     if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
-      IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
+      // Error Skipping:
+      if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
+          (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
+          (items.permissionsEnhancedMode)) {
+        IncrementDecrement.incrementDecrementErrorSkip(action, instance, instance.errorSkip);
+      }
+      // Regular:
+      else {
+        IncrementDecrement.incrementDecrement(action, instance);
+        if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+          Background.setInstance(instance.tabId, instance);
+        }
+        chrome.tabs.update(instance.tabId, {url: instance.url});
+        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
+      }
     }
     return actionPerformed;
   }

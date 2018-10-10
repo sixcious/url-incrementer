@@ -160,6 +160,7 @@ input[type="image"]:focus {
 
 input[type="text"].key-input {
   width: 165px;
+  margin-right: 4px;
 }
 
 /*input[type="image"].key-clear {

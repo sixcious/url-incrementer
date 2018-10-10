@@ -223,14 +223,14 @@ var Auto = (() => {
           Background.setBadge(tabId, "auto", false);
         }
       }
-      // Complete Only:
-      if (complete) {
-        // If download enabled, send a message to the popup to update the download preview (if it's open)
-        // Note: Do NOT send this message at Loading because it doesn't refresh properly sometimes (even though the download script runs at document_end)
-        if (instance.downloadEnabled) {
-          chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-        }
-      }
+      // // Complete Only:
+      // if (complete) {
+      //   // If download enabled, send a message to the popup to update the download preview (if it's open)
+      //   // Note: Do NOT send this message at Loading because it doesn't refresh properly sometimes (even though the download script runs at document_end)
+      //   if (instance.downloadEnabled) {
+      //     chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
+      //   }
+      // }
       // AutoWait (Complete or Loading) :
       if (instance.autoWait ? complete : loading) {
         // If autoWait is on, we now set the wait boolean to false indicating a pause/resume (e.g. start) can start the timeout

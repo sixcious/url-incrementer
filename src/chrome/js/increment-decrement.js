@@ -15,39 +15,36 @@ var IncrementDecrement = (() => {
    * @param preference        the preferred strategy to use to find the selection
    * @param selectionCustom   the object with custom regular expression parameters
    * @param previousException true if this function encountered a previous exception, false otherwise
-   * @returns {selection, selectionStart} or an empty selection if no selection found
+   * @returns {*} - {selection, selectionStart} or an empty selection if no selection found
    * @public
    */
   function findSelection(url, preference, selectionCustom, previousException) {
-    let selectionProps;
     try {
       if (preference === "custom" && selectionCustom) {
         const custom = new RegExp(selectionCustom.pattern, selectionCustom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
-        if (custom && custom[selectionCustom.group]) { selectionProps = {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
+        if (custom && custom[selectionCustom.group]) { return {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
       }
-      if (preference === "prefixes" || (preference === "custom" && !selectionProps)) {
+      if (preference === "prefixes" || preference === "custom") {
         const page = /page=\d+/i.exec(url); // page= Lookbehind /(?<=page)=(\d+)/i
+        if (page) { return {selection: page[0].substring(5), selectionStart: page.index + 5}; }
         const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= Lookbehind /(?<=p|id|next)=(\d+)/i
+        if (terms) { return {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
         const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
-        if (page) { selectionProps = {selection: page[0].substring(5), selectionStart: page.index + 5}; }
-        else if (terms) { selectionProps = {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
-        else if (prefixes) { selectionProps = {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
+        if (prefixes) { return {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
       }
-      if (preference === "lastnumber" || (preference !== "firstnumber" && !selectionProps)) {
+      if (preference === "lastnumber" || preference === "prefixes" || preference === "custom") {
         const last = /\d+(?!.*\d+)/.exec(url);
-        if (last) { selectionProps = {selection: last[0], selectionStart: last.index}; }
+        if (last) { return {selection: last[0], selectionStart: last.index}; }
       }
-      if (preference === "firstnumber" || !selectionProps) {
+      if (preference === "firstnumber") {
         const first = /\d+/.exec(url);
-        if (first) { selectionProps = {selection: first[0], selectionStart: first.index}; }
+        if (first) { return {selection: first[0], selectionStart: first.index}; }
       }
     } catch(e) {
       console.log("findSelection() - exception encountered:" + e);
-      if (!previousException) {
-        return findSelection(url, "firstnumber", selectionCustom, true);
-      }
+      if (!previousException) { return findSelection(url, "firstnumber", selectionCustom, true); }
     }
-    return selectionProps || {selection: "", selectionStart: -1};
+    return {selection: "", selectionStart: -1};
   }
 
   /**
