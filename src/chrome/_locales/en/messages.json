@@ -10,10 +10,10 @@
   "browser_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
   "browser_shortcuts_p1": { "message": "URLI is set to use Chrome Shortcuts." },
-  "browser_shortcuts_p2": { "message": "Chrome Shortcuts support limited keys, but you can enable URLI's way better Internal Shortcuts to use any key or mouse shortcuts! (requires permissions)" },
+  "browser_shortcuts_p2": { "message": "Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts to use any key or even the mouse! (requires permissions)" },
   "browser_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
   "one_click_buttons_h3": { "message": "1-Click Increment Decrement Buttons" },
-  "one_click_buttons_p": { "message": "Accessing URLI's buttons requires 2 clicks, but you can add 1-Click buttons to your toolbar! They use 0 Chrome memory when inactive! It's a win-win!" },
+  "one_click_buttons_p": { "message": "Accessing URLI's buttons requires 2 clicks, but you can add 1-Click buttons to your toolbar! They use 0 Chrome memory when inactive!" },
   "one_click_buttons_increment": { "message": "1-Click URL Increment Button for URLI (Chrome Web Store)" },
   "one_click_buttons_decrement": { "message": "1-Click URL Decrement Button for URLI (Chrome Web Store)" },
 

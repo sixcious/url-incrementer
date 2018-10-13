@@ -155,10 +155,10 @@ var Popup = (() => {
    * @private
    */
   function updateControls() {
-    DOM["#controls-icons-save-url"].style.display = instance.saveFound ? "" : "none";
     DOM["#controls-icons-save-url"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "controls_icons_save_wildcard" : "controls_icons_save_url");
+    DOM["#controls-icons-save-url"].style.display = instance.saveFound ? "" : "none";
     DOM["#controls-icons-auto-repeat"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
-    DOM["#controls-icons-shuffle"].className = instance.enabled && instance.shuffleURLs ? "" : "display-none";
+    DOM["#controls-icons-shuffle"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
     DOM["#increment-input"].style.display =
     DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
     DOM["#increment-input-m"].style.display =
@@ -191,6 +191,8 @@ var Popup = (() => {
       DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
+    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
+    DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
     DOM["#url-textarea"].focus();
@@ -210,7 +212,6 @@ var Popup = (() => {
     DOM["#base-custom"].className = instance.base === "custom" ? "display-block" : "display-none";
     DOM["#base-custom-input"].value = instance.baseCustom;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
-    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
     DOM["#multi-count"].value = instance.multiEnabled ? instance.multiCount : 0;
     DOM["#multi-img-1"].className = instance.multiEnabled && instance.multiCount >= 1 ? "" : "disabled";
     DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
@@ -231,7 +232,6 @@ var Popup = (() => {
     DOM["#auto-seconds-input"].value = instance.autoSeconds;
     DOM["#auto-wait-input"].checked = instance.autoWait;
     DOM["#auto-badge-input"].checked = instance.autoBadge === "times";
-    DOM["#auto-repeat-input"].checked = instance.autoRepeat;
     updateAutoETA();
     // Download Setup:
     DOM["#download-toggle"].style = items.permissionsDownload ? "" : "display: none;";

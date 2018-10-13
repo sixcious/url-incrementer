@@ -94,7 +94,7 @@
 .tgl + .tgl-btn {
   width: 2.5em;
   height: 1.25em;
-  background: #BDC1C6; /*#AAAAAA;*/
+  background: #BDC1C6;
   display: inline-block;
   vertical-align: middle;
   margin-bottom: 1px;
@@ -110,9 +110,9 @@
   top: -40%; /*-38%;*/ /* -42% */
 }
 
-.tgl-ios + .tgl-btn:after {
+/*.tgl-ios + .tgl-btn:after {
   background: #fff;
-}
+}*/
 
 .tgl-ios + .tgl-btn:after {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 0 rgba(0, 0, 0, 0.08);
@@ -132,4 +132,6 @@
   font-size: 1.1em;
   font-weight: bold;
   font-style: italic;
+  letter-spacing: -0.5px;
+  margin-left: -1px;
 }

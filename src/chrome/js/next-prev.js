@@ -8,10 +8,10 @@
 var NextPrev = (() => {
 
   // startsWithExcludes helps better prioritize some keywords (e.g. we prefer an "includes" "prev" over a "startsWith" "back")
-  const startsWithExcludes = ["&gt;", ">", "new", "&lt;", "<", "‹", "back", "old"],
+  //const startsWithExcludes = ["&gt;", ">", "new", "newer", "&lt;", "<", "‹", "back", "old", "older"],
 
   // urls store important, attributes, and innerHTML links that were found
-  urls = {
+  const urls = {
     "important":  { "relAttribute": new Map() },
     "attributes": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
     "innerHTML":  { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
@@ -30,13 +30,11 @@ var NextPrev = (() => {
     console.log("findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
           algorithms = [ // note: the order matters, the highest priority algorithms are first when they are iterated below
-            { "priority": "important", "subpriority": "relAttribute" },
-            { "priority": priority,    "subpriority": "equals"       },
-            { "priority": priority2,   "subpriority": "equals"       },
-            { "priority": priority,    "subpriority": "startsWith"   },
-            { "priority": priority2,   "subpriority": "startsWith"   },
-            { "priority": priority,    "subpriority": "includes"     },
-            { "priority": priority2,   "subpriority": "includes"     }
+            { "priority": "important", "subpriority": ["relAttribute"] },
+            { "priority": priority,    "subpriority": ["equals"]       },
+            { "priority": priority2,   "subpriority": ["equals"]       },
+            { "priority": priority,    "subpriority": ["startsWith", "includes"] },
+            { "priority": priority2,   "subpriority": ["startsWith", "includes"] }
           ];
     buildURLs(keywords, sameDomain);
     for (const algorithm of algorithms) {
@@ -56,16 +54,16 @@ var NextPrev = (() => {
    * @returns {string} the url (if found)
    * @private
    */
-  function traverseResults(priority, subpriority, keywords) {
-    let url = "";
+  function traverseResults(priority, subpriorities, keywords) {
     for (const keyword of keywords) {
-      if (urls[priority][subpriority].has(keyword)) {
-        url = urls[priority][subpriority].get(keyword);
-        console.log("traverseResults() - a next/prev Link was found:" +  priority + " - " + subpriority + " - " + keyword + " - " + url);
-        break;
+      for (const subpriority of subpriorities) {
+        if (urls[priority][subpriority].has(keyword)) {
+          console.log("traverseResults() - a next/prev Link was found:" +  priority + " - " + subpriority + " - " + keyword + " - " + url);
+          return urls[priority][subpriority].get(keyword);
+        }
       }
     }
-    return url;
+    return undefined;
   }
 
   /**
@@ -103,6 +101,7 @@ var NextPrev = (() => {
           continue;
         }
       } catch (e) {
+        console.log("parseElements() - exception caught:" + e);
         continue;
       }
       parseText(keywords, "innerHTML", element.href, element.innerHTML.trim().toLowerCase(), "");

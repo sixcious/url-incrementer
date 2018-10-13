@@ -167,8 +167,7 @@ var Action = (() => {
     }
     Background.deleteInstance(instance.tabId);
     // If caller is not a manual clear by the user, don't remove key/mouse listeners or reset multi or delete save
-    if (caller !== "popupClearBeforeSet" && caller !== "tabRemovedListener" && caller !== "auto" /*&& instance.enabled*/) {
-      //instance.multiCount = 0; TODO... multi ?
+    if (caller !== "popupClearBeforeSet" && caller !== "tabRemovedListener" && caller !== "auto") {
       if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeKeyListener"});
       }
@@ -187,15 +186,14 @@ var Action = (() => {
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
       Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
     }
-    // For callers like popup that still need the instance, disable all states and reset autoTimes
-    else {
-      instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = false;
-      instance.autoTimes = instance.autoTimesOriginal;
-      if (callback) {
-        callback(instance);
-      } else {
-        chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
-      }
+    // For callers like popup that still need the instance, disable all states and reset autoTimes and multiCount
+    instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = instance.autoRepeat = instance.shuffleURLs = false;
+    instance.autoTimes = instance.autoTimesOriginal;
+    instance.multiCount = 0;
+    if (callback) {
+      callback(instance);
+    } else {
+      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
     return actionPerformed;
   }
