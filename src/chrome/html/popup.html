@@ -203,7 +203,7 @@
               <div class="radio">
                 <label>
                   <input id="toolkit-tool-crawl-input" type="radio" name="toolkit-tool" value="crawl">
-                  <img src="../img/star.png" alt="" width="14" height="14">
+                  <img src="../img/spider.png" alt="" width="14" height="14">
                   <span id="toolkit-tool-crawl-label" data-i18n="textContent"></span>
                 </label>
               </div>
@@ -255,36 +255,8 @@
           </div>
         </div>
         <div id="toolkit-table-outer" class="display-none">
-          <div id="toolkit-table-crawl" class="display-none">
-            <div id="toolkit-percentage">
-              <span id="toolkit-crawled-label" data-i18n="textContent"></span>
-              <span id="toolkit-percentage-value"></span>
-            </div>
-            <div id="toolkit-eta">
-              <span id="eta-label*toolkit" data-i18n="textContent"></span>
-              <span id="toolkit-eta-value"></span>
-            </div>
-            <div id="toolkit-checkboxes" class="checkbox">
-              <label>
-                <input id="toolkit-table-crawl-response-input" type="checkbox" value="response" checked="checked">
-                <span id="toolkit-table-crawl-response-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="toolkit-table-crawl-ok-input" type="checkbox" value="ok" checked="checked">
-                <span id="toolkit-table-crawl-ok-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="toolkit-table-crawl-error-input" type="checkbox" value="error" checked="checked">
-                <span id="toolkit-table-crawl-error-label" data-i18n="textContent"></span>
-              </label>
-              <label>
-                <input id="toolkit-table-crawl-redirected-input" type="checkbox" value="redirected" checked="checked">
-                <span id="toolkit-table-crawl-redirected-label" data-i18n="textContent"></span>
-              </label>
-            </div>
-          </div>
           <div id="toolkit-table-div"><div></div></div>
-          <button id="toolkit-table-download-button" data-i18n="textContent" title="urli-toolkit-table.html"></button>
+          <button id="toolkit-table-download-button" title="urli-toolkit-links.html" data-i18n="textContent"></button>
         </div>
       </section>
       <section id="auto">
@@ -500,6 +472,43 @@
               </a>
           </div>
         </div>
+      </div>
+    </div>
+    <div id="crawl" class="display-none">
+      <div class="heading">
+        <img src="../img/spider.png" alt="" width="15" height="15">
+        <h3 id="crawl-h3" data-i18n="textContent"></h3>
+      </div>
+      <div id="crawl-instructions" data-i18n="textContent"></div>
+      <div id="crawl-percentage">
+        <span id="crawl-percentage-label" data-i18n="textContent"></span>
+        <span id="crawl-percentage-value"></span>
+      </div>
+      <div id="crawl-eta">
+        <span id="eta-label*crawl" data-i18n="textContent"></span>
+        <span id="crawl-eta-value"></span>
+      </div>
+      <div id="crawl-checkboxes" class="checkbox">
+        <label>
+          <input id="crawl-response-input" type="checkbox" value="response" checked="checked">
+          <span id="crawl-response-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked">
+          <span id="crawl-ok-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-error-input" type="checkbox" value="error" checked="checked">
+          <span id="crawl-error-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked">
+          <span id="crawl-redirected-label" data-i18n="textContent"></span>
+        </label>
+      </div>
+      <div id="crawl-table-outer" class="display-none">
+        <div id="crawl-table-div"><div></div></div>
+        <button id="crawl-table-download-button" title="urli-crawl-links.html" data-i18n="textContent"></button>
       </div>
     </div>
   </body>

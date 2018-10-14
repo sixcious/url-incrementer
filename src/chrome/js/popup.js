@@ -43,18 +43,19 @@ var Popup = (() => {
     //DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
-    DOM["#url-textarea"].addEventListener("select", selectURL); // "select" event is relatively new and the best event for this
+    DOM["#url-textarea"].addEventListener("select", selectURL);
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
-    DOM["#toolkit-table-crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-error").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-redirected").forEach(el => el.style.display = style); });
-    DOM["#toolkit-table-download-button"].addEventListener("click", function() { const a = document.createElement("a"), blob = URL.createObjectURL(new Blob([DOM["#toolkit-table"].outerHTML], {"type": "text/html"})); a.href = blob; a.download = "url-incremented-links"; a.dispatchEvent(new MouseEvent("click")); setTimeout(function() { URL.revokeObjectURL(blob); }, 1000); });
+    DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
+    DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
+    DOM["#crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
+    DOM["#crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
+    DOM["#crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-error").forEach(el => el.style.display = style); });
+    DOM["#crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-redirected").forEach(el => el.style.display = style); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -79,14 +80,7 @@ var Popup = (() => {
     backgroundPage = await Promisify.getBackgroundPage();
     items = await Promisify.getItems();
     localItems = await Promisify.getItems("local");
-    instance = backgroundPage.Background.getInstance(tabs[0].id);
-    if (instance && instance.toolkitEnabled && instance.toolkitTool === "crawl") {
-      crawlWindow();
-      return;
-    }
-    if (!instance || !instance.enabled) {
-      instance = await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
-    }
+    instance = backgroundPage.Background.getInstance(tabs[0].id) || await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
     _ = JSON.parse(JSON.stringify(instance));
     for (const button of buttons) {
       button.className = items.popupAnimationsEnabled ? "hvr-grow": "";
@@ -95,8 +89,10 @@ var Popup = (() => {
     }
     DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px"; // cloud-download.png is an irregular shape and needs adjustment
     updateSetup();
-    // Jump straight to Setup if instance isn't enabled or a saved URL
-    if ((!instance.enabled && !instance.saveFound)) {
+    // 3 Popup Views: Crawl Window if instance is toolkit crawl, Setup if instance not enabled/saved URL, or Controls if instance enabled/saved URL
+    if (instance.toolkitEnabled && instance.toolkitTool === "crawl") {
+      crawlWindow();
+    } else if ((!instance.enabled && !instance.saveFound)) {
       toggleView.call(DOM["#setup-input"]);
     } else {
       toggleView.call(DOM["#accept-button"]);
@@ -320,9 +316,10 @@ var Popup = (() => {
    */
   function buildToolkitURLsTable(urls, crawl) {
     if (urls && urls.length > 0) {
+      const id = crawl ? "crawl-table" : "toolkit-table";
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       const table = document.createElement("table");
-      table.id = "toolkit-table";
+      table.id = id;
       table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
       // thead
       const thead = document.createElement("thead");
@@ -349,7 +346,7 @@ var Popup = (() => {
       let count = 1;
       for (const url of urls) {
         const tr = document.createElement("tr");
-        tr.id = "toolkit-table-tr-" + (count - 1);
+        tr.id = id + "-tr-" + (count - 1);
         tr.className = "response-tbd";
         tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
@@ -363,16 +360,15 @@ var Popup = (() => {
         td.appendChild(a);
         if (crawl) {
           const td = document.createElement("td");
-          td.id = "toolkit-table-td-" + (count - 2);
+          td.id = id + "-td-" + (count - 2);
           td.className = "toolkit-table-response";
           td.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
           tr.appendChild(td);
         }
       }
-      DOM["#toolkit-table"] = table;
-      DOM["#toolkit-table-div"].replaceChild(table, DOM["#toolkit-table-div"].firstChild);
-      DOM["#toolkit-table-crawl"].className = crawl ? "display-block" : "display-none";
-      DOM["#toolkit-table-outer"].className = "display-block fade-in";
+      DOM["#" + id] = table;
+      DOM["#" + id + "-div"].replaceChild(table, DOM["#" + id + "-div"].firstChild);
+      DOM["#" + id + "-outer"].className = "display-block fade-in";
     }
   }
 
@@ -411,42 +407,49 @@ var Popup = (() => {
     }
   }
 
-  // public TODO
+  // TODO
+  function toolkitTableDownload() {
+    const a = document.createElement("a"),
+          blob = URL.createObjectURL(new Blob([DOM["#" + this.id.replace("-download-button", "")].outerHTML], {"type": "text/html"}));
+    a.href = blob;
+    a.download = this.title.replace(".html", "");
+    a.dispatchEvent(new MouseEvent("click"));
+    setTimeout(function() { URL.revokeObjectURL(blob); }, 1000);
+  }
+
+  // TODO
   function crawlWindow() {
     console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
-    DOM["#toolkit-percentage-value"].textContent = 0 + "%";
-    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+    DOM["#crawl"].className = "display-block";
+    DOM["#crawl-percentage-value"].textContent = 0 + "%";
+    updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
-    DOM["#setup"].className = "display-block";
-    DOM["#toolkit"].className = "display-block";
-    DOM["#toolkit-table"].className = "display-block";
-    DOM["#increment-decrement"].className = DOM["#auto"].className = DOM["#download"].className = "display-none";
-    DOM["#setup-buttons"].className = "display-none";
     crawlURLs(instance.toolkitQuantity);
     backgroundPage.Background.deleteInstance(instance.tabId);
   }
 
+  // TODO
   function crawlURLs(quantityRemaining) {
     const quantity =  instance.toolkitQuantity;
     const id = quantity - quantityRemaining;
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        const tr = document.getElementById("toolkit-table-tr-" + id);
-        const td = document.getElementById("toolkit-table-td-" + id);
+        const tr = document.getElementById("crawl-table-tr-" + id);
+        const td = document.getElementById("crawl-table-td-" + id);
         const status = response.redirected ? "Redirected" : response.status === 200 ? "OK" : response.status;
-        tr.className = "toolkit-table-crawl-" + (status === "Redirected" ? "redirected" : status === "OK" ? "ok" : "error");
+        tr.className = "crawl-table-" + (status === "Redirected" ? "redirected" : status === "OK" ? "ok" : "error");
         td.style.color = status === "Redirected" ? "#663399" : status === "OK" ? "#05854D" : "#E6003E";
         td.textContent = status;
         instance.toolkitQuantityRemaining--;
-        DOM["#toolkit-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
-        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#toolkit-eta-value"], true);
+        DOM["#crawl-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
+        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
       }).catch(e => {
         console.log("crawlURLs() - a fetch() exception was caught:" + e);
       });
       setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
     } else {
-      console.log("crawlURLs() - we have exhausted the quantityRemaining");
+      console.log("crawlURLs() - exhausted the quantityRemaining");
     }
   }
 
@@ -910,7 +913,6 @@ var Popup = (() => {
       _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
       _.baseCustom = DOM["#base-custom-input"].value;
-      //_.selectionParsed = isNaN(DOM["#base-select"].value) ? undefined : parseInt(_.selection, _.base).toString(_.base); // Not in instance? TODO check background buildInstance for this?
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
       _.errorSkip = +DOM["#error-skip-input"].value;
       // Note: _.multi is set in clickMulti()
@@ -920,11 +922,8 @@ var Popup = (() => {
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
       _.urls = _.customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [];
     }
-    if (caller === "accept" || "toolkit" && _.multiEnabled) {
-
-    }
     if (caller === "multi") {
-      const range = /{(.*)-(\d+)}/.exec(_.selection);
+      const range = /\[(.*)-(\d+)]/.exec(_.selection);
       if (range && range [1] && range[2]) {
         _.selection = range[1];
         _.selectionStart++;
