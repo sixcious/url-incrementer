@@ -40,7 +40,6 @@ var Popup = (() => {
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); });
-    //DOM["#custom-urls-input"].addEventListener("change", function() { DOM["#increment-decrement"].className = !this.checked ? "display-block fade-in" : "display-none"; DOM["#custom"].className = this.checked ? "display-block fade-in" : "display-none";  });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL);
@@ -151,10 +150,10 @@ var Popup = (() => {
    * @private
    */
   function updateControls() {
-    DOM["#controls-icons-save-url"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "controls_icons_save_wildcard" : "controls_icons_save_url");
-    DOM["#controls-icons-save-url"].style.display = instance.saveFound ? "" : "none";
-    DOM["#controls-icons-auto-repeat"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
-    DOM["#controls-icons-shuffle"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
+    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "save_wildcard_icon" : "save_url_icon");
+    DOM["#save-url-icon"].style.display = instance.saveFound ? "" : "none";
+    DOM["#auto-repeat-icon"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
+    DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
     DOM["#increment-input"].style.display =
     DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
     DOM["#increment-input-s"].style.display =
@@ -843,7 +842,7 @@ var Popup = (() => {
     else {
       backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
         instance = JSON.parse(JSON.stringify(_));
-        instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
+        //instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;
         instance.saveFound = instance.saveURL;
         const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(instance);
@@ -856,7 +855,7 @@ var Popup = (() => {
           instance.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage
-        if (instance.enabled && items.popupSettingsCanOverwrite) {
+        if (instance.enabled) {
           chrome.storage.sync.set({
             "interval": _.interval,
             "base": !isNaN(_.base) ? _.base : items.base, // Don't ever save non Number bases (e.g. Date Time) as the default
@@ -926,9 +925,7 @@ var Popup = (() => {
       // Note: _.multi is set in clickMulti()
       _.multiCount = +DOM["#multi-count"].value;
       _.multiEnabled = _.multiCount >= 2 && _.multiCount <= 3;
-      _.customURLs = DOM["#custom-urls-input"].checked;
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
-      _.urls = _.customURLs && DOM["#custom-urls-textarea"].value ? DOM["#custom-urls-textarea"].value.split(/[ ,\n]+/).filter(Boolean) : [];
     }
     if (caller === "multi") {
       const range = /\[(.*)-(\d+)]/.exec(_.selection);
@@ -955,7 +952,7 @@ var Popup = (() => {
       // Auto:
       _.autoEnabled = DOM["#auto-toggle-input"].checked;
       _.autoAction = DOM["#auto-action-select"].value;
-      _.autoTimes = _.autoTimesOriginal = _.customURLs && _.urls && _.urls.length > 0 ? _.urls.length : +DOM["#auto-times-input"].value; // store the original autoTimes for reference as we are going to decrement autoTimes
+      _.autoTimes = _.autoTimesOriginal = +DOM["#auto-times-input"].value; // store the original autoTimes for reference as we are going to decrement autoTimes
       _.autoSeconds = +DOM["#auto-seconds-input"].value;
       _.autoWait = DOM["#auto-wait-input"].checked;
       _.autoBadge = DOM["#auto-badge-input"].checked ? "times" : "";

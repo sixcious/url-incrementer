@@ -105,12 +105,11 @@ var IncrementDecrement = (() => {
    * @public
    */
   function incrementDecrement(action, instance) {
-    // If Custom URLs or Shuffle URLs, use the urls array to increment or decrement, don't increment the URL
-    if ((instance.customURLs || instance.shuffleURLs) && instance.urls && instance.urls.length > 0) {
+    // If there is a urls array, step thru it, don't increment the URL (shuffle, multi range will have a urls array)
+    if (instance.urls && instance.urls.length > 0) {
       IncrementDecrementArray.stepThruURLs(action, instance);
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
-    // TODO: Check if range enabled and don't do this
     else if (instance.multiEnabled && !/\d/.test(action)) {
       console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutliCount=" + instance.multiCount);
       for (let i = 1; i <= instance.multiCount; i++) {
@@ -517,7 +516,7 @@ var IncrementDecrementArray = (() => {
     // Get the urlProps object from the next or previous position in the urls array and update the instance
     const urlProps =
       (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled || instance.customURLs ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
         instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
@@ -533,12 +532,9 @@ var IncrementDecrementArray = (() => {
   function precalculateURLs(instance) {
     console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
-    if (instance.toolkitEnabled || instance.customURLs || instance.shuffleURLs) {
+    if (instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
       // Custom URLs are treated the same in all modes
-      if (instance.customURLs) {
-        urls = buildCustomURLs(instance);
-        currentIndex = -1; // Start the index at -1 because 0 will be the first URL in the custom URLs array
-      } else if (instance.toolkitEnabled) {
+      if (instance.toolkitEnabled) {
         urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
@@ -634,22 +630,6 @@ var IncrementDecrementArray = (() => {
       }
     }
     instance.url = preurl1;
-  }
-
-  function buildCustomURLs(instance) {
-    const urls = [];
-    for (const url of instance.urls) {
-      // Only need to construct an object the first time TODO: Should we construct the objects this from the get-go in popup's instance.urls array so we don't have to do this?
-      if (instance.autoRepeatCount === 0) {
-        urls.push({"urlmod": url, "selectionmod": ""});
-      } else {
-        urls.push(url);
-      }
-    }
-    if (instance.shuffleURLs) {
-      shuffle(urls);
-    }
-    return urls;
   }
 
   /**

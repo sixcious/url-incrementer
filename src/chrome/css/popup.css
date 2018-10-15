@@ -158,11 +158,6 @@ div.checkbox  img {
   min-height: 41px;
 }
 
-#setup #custom-urls textarea {
-  min-height: 90px;
-  max-height: 120px;
-}
-
 #setup img {
   user-select: none;
 }
@@ -175,7 +170,7 @@ div.checkbox  img {
   margin-bottom: 16px;
 }
 
-#setup #custom-urls, #setup #toolkit, #setup #auto, #setup #download {
+#setup #toolkit, #setup #auto, #setup #download {
   margin-bottom: 24px;
 }
 

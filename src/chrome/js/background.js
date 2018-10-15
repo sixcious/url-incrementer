@@ -156,7 +156,7 @@ var Background = (() => {
     }
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
-      "enabled": false, "incrementDecrementEnabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
+      "enabled": false, /*"incrementDecrementEnabled": false,*/ "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "saveFound": via === "url" || via === "wildcard", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
@@ -166,7 +166,8 @@ var Background = (() => {
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
-      "urls": [], "customURLs": false, "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
+      "urls": [],
+      "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
       "autoAction": items.autoAction, "autoTimesOriginal": items.autoTimes, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoRepeat": false, "autoRepeatCount": 0, "autoPaused": false,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
@@ -332,7 +333,7 @@ var Background = (() => {
   async function makePersistent() {
     const tabs = await Promisify.getTabs({}),
           tabIds = tabs.map(tab => tab.id);
-    console.log("makePersistent() - tabIds=" + tabIds);
+    // console.log("makePersistent() - tabIds=" + tabIds);
     [...instances.keys()].forEach(function(key) {
       if (!tabIds.includes(key)) {
         Action.performAction("clear", "tabRemovedListener", getInstance(key)); // Tab was removed so clear instance

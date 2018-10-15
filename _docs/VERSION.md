@@ -9,14 +9,14 @@
 - Multi-Incrementing - Increment up to 3 parts of the URL individually, simultaneously, or in ranges! Click the Multi (+++) icon near Selection and then click Accept. Additional + - Buttons will show in the UI for each part you selected.
 - Date Time Incrementing - Increment dates and times in URLs like "2018/01/25"
 - AUTO Repeat Mode - Loops back to the starting URL and repeats
-- Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, Custom URL, and Toolkit modes.
+- Shuffle URLs - Shuffles the next URLs you'll see in random order, like shuffling a deck of cards! Works in Normal, AUTO, and Toolkit modes.
 - Return to Start Button (Yellow) - Convenient button to return you back to the starting URL (Only for Enabled Instances)
-- Next Prev Improvements: You can change the next prev keywords on the Options Page
+- Next Prev Improvements: You can adjust the next prev keywords on the Options Page
 - Download Features: 1. Manually select/un-select items to download by clicking the green checkboxes (applies only to the current URL you're on) 2. Subfolder Support: Save each page's downloads in a separate subfolder that will be incremented (experimental) 3. New Name column in Download Preview Table 4. Nested Iframe support (if the iframe is the same origin)
-- Error Skipping: Now works when you're on Browser Error Pages (Enhanced Mode only)
+- Error Skipping: Requires Enhanced Mode. Now also works when you're on Browser Error Pages
 - Help Guide: Click the ? in the Setup UI for detailed help guide on all the features
-- Page loading speed improvements for popup and options by rewriting them in valid HTML 5, using defer for JS scripts, and replacing CSS @imports with HTML links
-- File Size Dropped 50Kib from ~176KiB to ~126Kib!
+- Page loading speed improvements for popup and options by rewriting them in valid HTML 5, using async/defer for JS scripts, and replacing CSS @imports with HTML links
+- File Size Dropped 50Kib from ~176KiB to ~126Kib
 - Internal Code Enhancements: Rewrite to ECMAScript 6 using let, const, and async/await
 
 # Version 5.8 (9/16/2018)

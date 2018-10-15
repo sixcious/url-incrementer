@@ -96,8 +96,8 @@ var Action = (() => {
    */
   function incrementDecrement(action, instance, items) {
     let actionPerformed = false;
-    // If no selection was found, can't increment or decrement
-    if (instance.customURLs || (instance.selection !== "" && instance.selectionStart >= 0)) {
+    // If not stepping thru URLs or no selection was found, can't increment or decrement
+    if ((instance.urls && instance.urls.length > 0) || (instance.selection !== "" && instance.selectionStart >= 0)) {
       actionPerformed = true;
       // Error Skipping:
       if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||

@@ -8,8 +8,8 @@
 var Options = (() => {
 
   const DOM = {}, // Map to cache DOM elements: key=id, value=element
-        KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]); // A map of the KeyboardEvent.key modifiers and their bits
-  const shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
+        KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]), // A map of the KeyboardEvent.key modifiers and their bits
+        shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
 
   let backgroundPage = {}, // Background page cache
       key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
@@ -50,8 +50,6 @@ var Options = (() => {
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
-    DOM["#popup-settings-can-overwrite-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupSettingsCanOverwrite": this.checked}); });
-    DOM["#popup-open-setup-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupOpenSetup": this.checked}); });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
     DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
@@ -208,8 +206,6 @@ var Options = (() => {
       DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
       DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
       DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
-      DOM["#popup-open-setup-input"].checked = items.popupOpenSetup;
-      DOM["#popup-settings-can-overwrite-input"].checked = items.popupSettingsCanOverwrite;
       DOM["#selection-select"].value = items.selectionPriority;
       DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
       DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;

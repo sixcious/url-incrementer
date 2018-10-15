@@ -14,8 +14,7 @@
 - [Bases and Custom Bases](#bases-and-custom-bases)
 - [Report an Issue](#report-an-issue)
 
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli2.svg?sanitize=true" width="196" height="196" align="right">
-(This img is currently broken on purpose.)
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
 
 ## Infinite Scrolling (Scroll Incrementing)
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
@@ -31,18 +30,11 @@ You can also have each page's downloads stored in its own subfolder while increm
 
 
 ## URLI's Toolkit
-This is URLI's own special toolkit used for testing and development that has been "unlocked" and made available to you !
+This is URLI's own special toolkit used for testing and development that has been "unlocked" and made available to you!
 It lets you open up to 100 incremented tabs or generate a list of up to 10,000 incremented links at once.
 Click the Tool icon to open or close it. The toolkit works with the URL and selection you have selected.
 
 ### Crawling URLs
-
-Important: You must keep the Popup Window open because this is an asynchronous operation that messages back to the Popup continually. URLI will check and make sure if the Popup is still open before fetching the next URL, and if it detects the Popup has closed, it will stop crawling. There is no "Stop Crawling" button, because if you want ever want to stop while a crawl is in progress, just simply close the popup window!
-
-Tips to be happy! :)
-1. Open a new Chrome Window just for crawling. You must leave the Chrome Window alone while URLI is crawling (e.g. do not attempt to switch or open a new tab). Please open another Chrome Window and continue your browsing/tabbing in the second window.
-2. Right Click > Inspect anywhere on the Popup to open the Chrome Developer's Window. This will help keep the popup open in case you accidentally click outside of it on the tab.
-
 TODO
 
 The toolkit works with both Shuffle Mode on and Multi-Incrementing (it will do a simultaneous multi-increment on the parts selected).
@@ -260,7 +252,6 @@ Here are some common alphabets you can copy/paste into the `Alphabet` input:
 
 Base 62
 Base 64 (+-)
-Base 64 YouTube
 ...
 
 ## Report an Issue
