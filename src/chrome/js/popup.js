@@ -52,10 +52,10 @@ var Popup = (() => {
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
-    DOM["#crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".toolkit-table-response").forEach(el => el.style.display = style); });
-    DOM["#crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-ok").forEach(el => el.style.display = style); });
-    DOM["#crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-error").forEach(el => el.style.display = style); });
-    DOM["#crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".toolkit-table-crawl-redirected").forEach(el => el.style.display = style); });
+    DOM["#crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".crawl-table-response").forEach(el => el.style.display = style); });
+    DOM["#crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-ok").forEach(el => el.style.display = style); });
+    DOM["#crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-error").forEach(el => el.style.display = style); });
+    DOM["#crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-redirected").forEach(el => el.style.display = style); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -132,7 +132,7 @@ var Popup = (() => {
   function clickActionButton() {
     const action = this.dataset.action;
     if (((action === "increment" || action === "decrement" || action === "clear") && (instance.enabled || instance.saveFound)) ||
-        ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && instance.multiEnabled) ||
+        ((action === "increment1" || action === "decrement1" || action === "increment2" || action === "decrement2" || action === "increment3" || action === "decrement3") && instance.multiEnabled && !instance.multiRangeEnabled) ||
          (action === "next" || action === "prev") ||
          (action === "return" && instance.enabled) ||
          (action === "auto" && instance.autoEnabled) ||
@@ -157,14 +157,22 @@ var Popup = (() => {
     DOM["#controls-icons-shuffle"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
     DOM["#increment-input"].style.display =
     DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
-    DOM["#increment-input-m"].style.display =
-    DOM["#decrement-input-m"].style.display =
+    DOM["#increment-input-s"].style.display =
+    DOM["#decrement-input-s"].style.display =
+    DOM["#increment-span-s"].style.display =
+    DOM["#decrement-span-s"].style.display =
     DOM["#increment-input-1"].style.display =
-    DOM["#decrement-input-1"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
+    DOM["#decrement-input-1"].style.display =
+    DOM["#increment-span-1"].style.display =
+    DOM["#decrement-span-1"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
     DOM["#increment-input-2"].style.display =
-    DOM["#decrement-input-2"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
+    DOM["#decrement-input-2"].style.display =
+    DOM["#increment-span-2"].style.display =
+    DOM["#decrement-span-2"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
     DOM["#increment-input-3"].style.display =
-    DOM["#decrement-input-3"].style.display = instance.enabled && instance.multiEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
+    DOM["#decrement-input-3"].style.display =
+    DOM["#increment-span-3"].style.display =
+    DOM["#decrement-span-3"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
     DOM["#next-input"].style.display =
     DOM["#prev-input"].style.display = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
     DOM["#clear-input"].style.opacity = DOM["#increment-input"].style.opacity = DOM["#decrement-input"].style.opacity = instance.enabled || instance.saveFound ? 1 : 0.2;
@@ -334,9 +342,9 @@ var Popup = (() => {
       tr.appendChild(th);
       if (crawl) {
         const th = document.createElement("th");
-        th.className = "toolkit-table-response";
+        th.className = "crawl-table-response";
         th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
-        th.textContent = chrome.i18n.getMessage("toolkit_response_label");
+        th.textContent = chrome.i18n.getMessage("crawl_response_label");
         tr.appendChild(th);
       }
       // tbody
@@ -355,13 +363,13 @@ var Popup = (() => {
         tr.appendChild(td);
         const a = document.createElement("a");
         a.href = url.urlmod;
-        // a.target = "_blank";
+        a.target = "_blank";
         a.textContent = url.urlmod;
         td.appendChild(a);
         if (crawl) {
           const td = document.createElement("td");
           td.id = id + "-td-" + (count - 2);
-          td.className = "toolkit-table-response";
+          td.className = "crawl-table-response";
           td.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
           tr.appendChild(td);
         }
@@ -799,7 +807,7 @@ var Popup = (() => {
     setupInputs("accept");
     const e = setupErrors("accept");
     /* Validated Rules:
-      1. Auto is NOT enabled, Download is NOT enabled: Check if errors exist, else validated
+      1. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
       2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
       3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
       4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
@@ -929,8 +937,9 @@ var Popup = (() => {
         _.selectionStart++;
         _.multiTimes = +range[2];
         _.multiRange = range;
+        _.multiRangeEnabled = true;
       } else {
-        _.multiTimes = _.multiRange = undefined;
+        _.multiTimes = _.multiRange = _.multiRangeEnabled = undefined;
       }
     }
     if (caller === "toolkit") {
@@ -984,10 +993,11 @@ var Popup = (() => {
       // Increment Decrement Errors
       e.incrementDecrementErrors = [
         // [0] = Selection Errors
+        caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
+        caller === "accept" && _.multiEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
@@ -1028,8 +1038,6 @@ var Popup = (() => {
       if (e.autoErrorsExist) {
         e.autoErrors.unshift(chrome.i18n.getMessage("oops_error"));
       }
-    }
-    if (caller === "accept") {
       // Download Errors
       e.downloadErrors = [
         _.downloadEnabled && !items.permissionsDownload ? chrome.i18n.getMessage("download_permissions_error") : "",
@@ -1062,6 +1070,8 @@ var Popup = (() => {
         updateDownloadPreviewCompletely();
       } else if (request.greeting === "crawlPopupNoWindow") {
         instance = request.instance;
+        DOM["#setup"].style.display = "none";
+        DOM["#crawl"].style.width = DOM["#crawl"].style.height = "550px";
         crawlWindow();
       }
     }

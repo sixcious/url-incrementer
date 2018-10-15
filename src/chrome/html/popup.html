@@ -29,14 +29,14 @@
           <div class="column"> <input id="next-input"        type="image" alt="next-input"        src="../img/chevron-circle-right.png" width="32" height="32" data-i18n="title" data-action="next">       </div>
           <div class="column"> <input id="increment-input"   type="image" alt="increment-input"   src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment">  </div>
           <div class="column"> <input id="decrement-input"   type="image" alt="decrement-input"   src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement">  </div>
-          <div class="column"> <input id="increment-input-m" type="image" alt="increment-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment">  </div>
-          <div class="column"> <input id="decrement-input-m" type="image" alt="decrement-input-m" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="decrement">  </div>
-          <div class="column"> <input id="increment-input-1" type="image" alt="increment-input-1" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment1"> </div>
-          <div class="column"> <input id="decrement-input-1" type="image" alt="decrement-input-1" src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement1"> </div>
-          <div class="column"> <input id="increment-input-2" type="image" alt="increment-input-2" src="../img/plus-circle-2.png"        width="32" height="32" data-i18n="title" data-action="increment2"> </div>
-          <div class="column"> <input id="decrement-input-2" type="image" alt="decrement-input-2" src="../img/minus-circle-2.png"       width="32" height="32" data-i18n="title" data-action="decrement2"> </div>
-          <div class="column"> <input id="increment-input-3" type="image" alt="increment-input-3" src="../img/plus-circle-3.png"        width="32" height="32" data-i18n="title" data-action="increment3"> </div>
-          <div class="column"> <input id="decrement-input-3" type="image" alt="decrement-input-3" src="../img/minus-circle-3.png"       width="32" height="32" data-i18n="title" data-action="decrement3"> </div>
+          <div class="column"> <input id="increment-input-s" type="image" alt="increment-input-s" src="../img/plus-circle-s.png"        width="32" height="32" data-i18n="title" data-action="increment">  <span id="increment-span-s">S</span> </div>
+          <div class="column"> <input id="decrement-input-s" type="image" alt="decrement-input-s" src="../img/minus-circle-s.png"       width="32" height="32" data-i18n="title" data-action="decrement">  <span id="decrement-span-s">S</span> </div>
+          <div class="column"> <input id="increment-input-1" type="image" alt="increment-input-1" src="../img/plus-circle.png"          width="32" height="32" data-i18n="title" data-action="increment1"> <span id="increment-span-1">1</span> </div>
+          <div class="column"> <input id="decrement-input-1" type="image" alt="decrement-input-1" src="../img/minus-circle.png"         width="32" height="32" data-i18n="title" data-action="decrement1"> <span id="decrement-span-1">1</span> </div>
+          <div class="column"> <input id="increment-input-2" type="image" alt="increment-input-2" src="../img/plus-circle-2.png"        width="32" height="32" data-i18n="title" data-action="increment2"> <span id="increment-span-2">2</span> </div>
+          <div class="column"> <input id="decrement-input-2" type="image" alt="decrement-input-2" src="../img/minus-circle-2.png"       width="32" height="32" data-i18n="title" data-action="decrement2"> <span id="decrement-span-2">2</span> </div>
+          <div class="column"> <input id="increment-input-3" type="image" alt="increment-input-3" src="../img/plus-circle-3.png"        width="32" height="32" data-i18n="title" data-action="increment3"> <span id="increment-span-3">3</span> </div>
+          <div class="column"> <input id="decrement-input-3" type="image" alt="decrement-input-3" src="../img/minus-circle-3.png"       width="32" height="32" data-i18n="title" data-action="decrement3"> <span id="decrement-span-3">3</span> </div>
           <div class="column"> <input id="clear-input"       type="image" alt="clear-input"       src="../img/times-circle.png"         width="32" height="32" data-i18n="title" data-action="clear">      </div>
           <div class="column"> <input id="return-input"      type="image" alt="return-input"      src="../img/arrow-circle-left.png"    width="32" height="32" data-i18n="title" data-action="return">     </div>
           <div class="column"> <input id="setup-input"       type="image" alt="setup-input"       src="../img/pencil-square.png"        width="32" height="32" data-i18n="title">                          </div>
@@ -478,15 +478,25 @@
       <div class="heading">
         <img src="../img/spider.png" alt="" width="15" height="15">
         <h3 id="crawl-h3" data-i18n="textContent"></h3>
+        <div class="heading-right">
+          <span id="crawl-percentage-label" data-i18n="textContent"></span>
+          <span id="crawl-percentage-value"></span>
+          <img src="../img/clock-o.png" alt="" width="14" height="14">
+          <span id="eta-label*crawl" data-i18n="textContent"></span>
+          <span id="crawl-eta-value"></span>
+        </div>
       </div>
-      <div id="crawl-instructions" data-i18n="textContent"></div>
-      <div id="crawl-percentage">
-        <span id="crawl-percentage-label" data-i18n="textContent"></span>
-        <span id="crawl-percentage-value"></span>
-      </div>
-      <div id="crawl-eta">
-        <span id="eta-label*crawl" data-i18n="textContent"></span>
-        <span id="crawl-eta-value"></span>
+      <div class="table">
+        <div class="row">
+          <div class="column">
+            <div id="crawl-urli-button-div" class="hvr-grow">
+              <img id="crawl-urli-button-img" src="../img/urli.png" alt="" width="64" height="64">
+            </div>
+          </div>
+          <div class="column">
+            <div id="crawl-instructions" data-i18n="textContent"></div>
+          </div>
+        </div>
       </div>
       <div id="crawl-checkboxes" class="checkbox">
         <label>

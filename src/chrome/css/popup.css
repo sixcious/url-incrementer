@@ -5,9 +5,9 @@
  * @license LGPL-3.0
  */
 
-.hvr-grow, .hvr-grow-2x {
+/*.hvr-grow, .hvr-grow-2x {
   vertical-align: bottom;
-}
+}*/
 
 /* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
@@ -81,6 +81,35 @@ div.checkbox  img {
   right: 4px;
 }
 
+#controls .column {
+  position: relative;
+}
+
+#controls .column span {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 16px;
+}
+
+#controls #increment-span-1, #controls #decrement-span-1 {
+  color: var(--increment-decrement-1-color);
+}
+
+#controls #increment-span-2, #controls #decrement-span-2 {
+  color: var(--increment-decrement-2-color);
+}
+
+#controls #increment-span-3, #controls #decrement-span-3 {
+  color: var(--increment-decrement-3-color);
+}
+
+#controls #increment-span-s, #controls #decrement-span-s {
+  color: var(--increment-decrement-s-color);
+}
+
 /* Setup CSS */
 
 #setup {
@@ -106,7 +135,7 @@ div.checkbox  img {
   margin-top: -17px;
 }
 
-#setup .heading-right img {
+.heading-right img {
   margin-bottom: 1px;
 }
 
@@ -199,7 +228,7 @@ div.checkbox  img {
   width: 118px;
 }
 
-/* Toolkit */
+/* toolkit */
 
 #toolkit-instructions {
   font-style: italic;
@@ -217,37 +246,34 @@ div.checkbox  img {
   cursor: pointer;
 }
 
-#toolkit-table-outer, #toolkit-table-div, #toolkit-percentage-eta-checkboxes {
+#toolkit-table-outer, #toolkit-table-div, #crawl-table-outer, #crawl-table-div, #crawl-percentage-eta-checkboxes {
   margin-top: 1em;
 }
 
-#toolkit-table-download-button {
+#toolkit-table-download-button, #crawl-table-download-button {
   cursor: pointer;
 }
 
-#toolkit-percentage, #toolkit-eta {
+#crawl-percentage, #crawl-eta {
   display: inline-block;
   color: var(--auto-color);
   font-weight: bold;
 }
 
-#toolkit-checkboxes {
+#crawl-checkboxes label {
   font-weight: bold;
-}
-
-#toolkit-checkboxes label {
   margin-right: 1em;
 }
 
-#toolkit-table-crawl-ok-label {
+#crawl-ok-label {
   color: var(--success-color);
 }
 
-#toolkit-table-crawl-error-label {
+#crawl-error-label {
   color: var(--error-color);
 }
 
-#toolkit-table-crawl-redirected-label {
+#crawl-redirected-label {
   color: var(--download-color);
 }
 
@@ -535,6 +561,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 .icon-button ,.icon-button img.checkbox-img /*,.icon-button img.transparent*/  {
   transition: 0.6s;
+  vertical-align: bottom;
 }
 
 /*.icon-button:hover img.transparent, .icon-button input:checked + img.transparent {
@@ -571,6 +598,15 @@ opacity: 0.4;
 
 #controls #increment-input-m, #controls #decrement-input-m {
   background: #000028;
+}
+
+/* Crawl */
+#crawl {
+  margin: 12px;
+}
+
+#crawl .heading-right {
+  color: var(--auto-color);
 }
 
 

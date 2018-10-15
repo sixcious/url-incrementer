@@ -564,7 +564,7 @@ var IncrementDecrementArray = (() => {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }
-    if (instance.multiEnabled && ((instance.multi[1] && instance.multi[1].range) || (instance.multi[2] && instance.multi[2].range)  || (instance.multi[3] && instance.multi[3].range))) { // TODO.. multi range incrementing
+    if (instance.multiEnabled && instance.multiRangeEnabled) {
       buildMultiRangeURLs(instance, action, urls);
     } else {
       for (let i = 0; i < limit; i++) {

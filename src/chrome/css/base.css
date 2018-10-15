@@ -9,9 +9,10 @@
 
 :root {
   --increment-decrement-color: #1779BA;
-  --increment-decrement-1-color: #004687;
+  --increment-decrement-1-color: #1779BA;
   --increment-decrement-2-color: #004687;
   --increment-decrement-3-color: #001354;
+  --increment-decrement-s-color: #000028;
   --next-prev-color: #05854D;
   --clear-color: #FF0000;
   --return-to-start-color: #FFCC22;
