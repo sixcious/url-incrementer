@@ -5,10 +5,6 @@
  * @license LGPL-3.0
  */
 
-/*.hvr-grow, .hvr-grow-2x {
-  vertical-align: bottom;
-}*/
-
 /* Firefox: Add overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
   overflow-x: hidden;
@@ -17,10 +13,6 @@ textarea {
 /* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
 input[type=number] { -moz-appearance: textfield; }
 input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
-
-a.button {
-  text-decoration: none;
-}
 
 /* Native elements styles */
 
@@ -90,7 +82,6 @@ div.checkbox  img {
   top: 4px;
   right: 4px;
   font-weight: bold;
-  font-style: italic;
   font-size: 16px;
 }
 
