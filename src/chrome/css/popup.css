@@ -224,8 +224,6 @@ div.checkbox  img {
 #toolkit-urli-button-div {
   vertical-align: top;
   margin-top: 8px;
-  position: absolute;
-  right: 16px;
 }
 
 #toolkit-urli-button-img {
@@ -252,6 +250,10 @@ div.checkbox  img {
   margin-right: 1em;
 }
 
+#crawl-info-label {
+  color: var(--info-color);
+}
+
 #crawl-ok-label {
   color: var(--success-color);
 }
@@ -262,6 +264,10 @@ div.checkbox  img {
 
 #crawl-redirected-label {
   color: var(--download-color);
+}
+
+#crawl-exception-label {
+  color: var(--saved-urls-color);
 }
 
 #setup #toolkit div.column:not(:last-child), #setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {

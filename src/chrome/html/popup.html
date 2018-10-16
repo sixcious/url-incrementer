@@ -482,11 +482,15 @@
       </div>
       <div id="crawl-checkboxes" class="checkbox">
         <label>
-          <input id="crawl-response-input" type="checkbox" value="response" checked="checked">
+          <input id="crawl-response-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-response">
           <span id="crawl-response-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked">
+          <input id="crawl-info-input" type="checkbox" value="info" checked="checked">
+          <span id="crawl-info-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked" data-selector="crawl-table-ok">
           <span id="crawl-ok-label" data-i18n="textContent"></span>
         </label>
         <label>
@@ -496,6 +500,10 @@
         <label>
           <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked">
           <span id="crawl-redirected-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-exception-input" type="checkbox" value="exception" checked="checked">
+          <span id="crawl-exception-label" data-i18n="textContent"></span>
         </label>
       </div>
       <div id="crawl-table-outer" class="display-none">
