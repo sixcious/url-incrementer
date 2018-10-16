@@ -123,64 +123,6 @@ var IncrementDecrement = (() => {
   }
 
   /**
-   * Increments or decrements a URL using an instance object that contains the URL
-   * while performing error skipping.
-   *
-   * @param action               the action to perform (increment or decrement)
-   * @param instance             the instance containing the URL and parameters used to increment or decrement
-   * @param errorSkipRemaining   the number of times left to skip while performing this action
-   * @public
-   */
-  function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
-    console.log("incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
-    incrementDecrement(action, instance);
-    if (errorSkipRemaining > 0) {
-      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions)
-      fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        if (response && response.status &&
-            ((instance.errorCodes && (
-            (instance.errorCodes.includes("404") && response.status === 404) ||
-            (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) || // Note: 301,302,303,307,308 return response.status of 200 and must be checked by response.redirected
-            (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
-            (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
-            (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
-            (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("incrementDecrementErrorSkip() - request.url= " + instance.url);
-          console.log("incrementDecrementErrorSkip() - response.url=" + response.url);
-          console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
-          if (!instance.autoEnabled) {
-            Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
-          }
-          // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-          incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
-        } else {
-          console.log("incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
-          if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-            Background.setInstance(instance.tabId, instance);
-          }
-          chrome.tabs.update(instance.tabId, {url: instance.url});
-          chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
-        }
-      }).catch(e => {
-        console.log("incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
-        if (!instance.autoEnabled) {
-          Background.setBadge(instance.tabId, "skip", true, "ERR");
-        }
-        // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
-        incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
-      });
-    } else {
-      console.log("incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
-      if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
-        Background.setInstance(instance.tabId, instance);
-      }
-      chrome.tabs.update(instance.tabId, {url: instance.url});
-      chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance});
-    }
-  }
-
-  /**
    * Increments or decrements a URL using an instance object that contains the URL.
    *
    * @param action   the action to perform (increment or decrement)
@@ -284,8 +226,7 @@ var IncrementDecrement = (() => {
   return {
     findSelection: findSelection,
     validateSelection: validateSelection,
-    incrementDecrement: incrementDecrement,
-    incrementDecrementErrorSkip: incrementDecrementErrorSkip
+    incrementDecrement: incrementDecrement
   };
 })();
 
