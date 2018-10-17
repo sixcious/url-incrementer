@@ -59,7 +59,7 @@ var NextPrev = (() => {
         }
       }
     }
-    return undefined;
+    return "";
   }
 
   /**

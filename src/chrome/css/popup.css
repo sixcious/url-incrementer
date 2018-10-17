@@ -241,7 +241,6 @@ div.checkbox  img {
 
 #crawl-checkboxes label {
   font-weight: bold;
-  margin-right: 1em;
 }
 
 #crawl-info-label {
@@ -339,7 +338,7 @@ div.column#download-strategy, div.column#download-optional {
   position: relative; /* for position absolute help */
 }
 
-#download-strategy-help, #download-optional-help {
+#download-strategy-help, #download-optional-help, #download-subfolder-help {
   font-weight: bold;
   font-size: 0.9em;
   position: absolute;
@@ -354,6 +353,11 @@ div.column#download-strategy, div.column#download-optional {
   border-bottom: 1px dotted #333333;
   padding-bottom: 1px;
 }*/
+
+#download-subfolder {
+  position: relative; /* for position absolute help */
+  margin-top: 1em;
+}
 
 div.column#download-optional {
   border-left: 1px solid var(--download-color);
@@ -389,13 +393,8 @@ div.column#download-optional {
   margin-top: 4px;
 }
 
-#download-includes-input, #download-excludes-input {
+#download-includes-input, #download-excludes-input, #download-subfolder-input {
   width: 108px;
-}
-
-#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keeps MB next to input */
-  display: inline-block;
-  margin-right: 1px;
 }
 
 /* download-preview-heading and download-preview-checkboxes */
@@ -416,12 +415,12 @@ div.column#download-optional {
   color: var(--error-color);
 }
 
-#download-preview-checkboxes {
+/*#download-preview-checkboxes {
   text-align: right;
-}
+}*/
 
-#download-preview-checkboxes label:not(:last-child) {
-  margin-right: 8px;
+#download-preview-checkboxes label:not(:last-child), #crawl-checkboxes label:not(:last-child) {
+  margin-right: 1em
 }
 
 /* ZURB Foundation table styling inspired/derived */
@@ -601,6 +600,11 @@ opacity: 0.4;
   font-weight: bold;
   font-style: italic;
   text-align: right;
+}
+
+#crawl-table {
+  max-width: none;
+  max-height: none;
 }
 
 #crawl-tip, #crawl-help {

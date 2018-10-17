@@ -351,17 +351,16 @@
                   <input id="download-excludes-input" type="text" placeholder="e.g. /img/thumbs/" spellcheck="false">
                 </div>
               </div>
-              <div class="row two">
-                <div id="download-min-mb" class="column">
-                  <label id="download-min-mb-label" for="download-min-mb-input" data-i18n="textContent"></label>
-                  <input id="download-min-mb-input" type="number" min="0" max="9999" step="any">
-                  <span id="download-megabytes-label*min" data-i18n="textContent"></span>
+              <div id="download-subfolder">
+                <div id="download-subfolder-label-div">
+                  <img src="../img/folder-open.png" alt="" width="12" height="12">
+                  <span id="download-subfolder-label" data-i18n="textContent"></span>
                 </div>
-                <div id="download-max-mb" class="column">
-                  <label id="download-max-mb-label" for="download-max-mb-input" data-i18n="textContent"></label>
-                  <input id="download-max-mb-input" type="number" min="0" max="9999" step="any">
-                  <span id="download-megabytes-label*max" data-i18n="textContent"></span>
-                </div>
+                <label id="download-subfolder-help" data-i18n="title">
+                  <img src="../img/question-circle.png" alt="" width="12" height="12">
+                  <span id="download-subfolder-help-label" data-i18n="textContent"></span>
+                </label>
+                <input id="download-subfolder-input" type="text" placeholder="e.g. folder_001" spellcheck="false">
               </div>
             </div>
           </div>
@@ -371,13 +370,8 @@
           <input id="download-selecteds" type="hidden" value="">
           <input id="download-unselecteds" type="hidden" value="">
           <div id="download-preview-heading">
-            <div id="download-preview-heading-title" class="float-left"><div></div></div>
-            <div id="download-subfolder" class="float-right">
-              <label id="download-subfolder-help" for="download-subfolder-input" data-i18n="title">
-                <img src="../img/question-circle.png" alt="" width="14" height="14">
-                <span id="download-subfolder-label" data-i18n="textContent"></span>
-              </label>
-              <input id="download-subfolder-input" type="text" placeholder="e.g. Subfolder001" spellcheck="false">
+            <div id="download-preview-heading-title">
+              <div></div>
             </div>
             <div id="download-preview-checkboxes" class="clear-both checkbox">
               <label>

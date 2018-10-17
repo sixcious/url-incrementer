@@ -249,8 +249,6 @@ var Popup = (() => {
     DOM["#download-selector-input"].value = instance.downloadSelector;
     DOM["#download-includes-input"].value = instance.downloadIncludes && Array.isArray(instance.downloadIncludes) ? instance.downloadIncludes.join(",") : "";
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
-    DOM["#download-min-mb-input"].value = instance.downloadMinMB && instance.downloadMinMB > 0 ? instance.downloadMinMB : "";
-    DOM["#download-max-mb-input"].value = instance.downloadMaxMB && instance.downloadMaxMB > 0 ? instance.downloadMaxMB : "";
     DOM["#download-subfolder-input"].value = instance.downloadSubfolder && instance.downloadSubfolder.trim() ? instance.downloadSubfolder : "";
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-filename-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("filename");
@@ -450,6 +448,7 @@ var Popup = (() => {
   // TODO
   function crawlWindow() {
     console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
+    instance.toolkitQuantity = instance.toolkitQuantityRemaining = instance.urls.length; // In case urls array is shorter than quantity, e.g. decrement reaching 0
     DOM["#crawl"].className = "display-block";
     DOM["#crawl-percentage-value"].textContent = 0 + "%";
     DOM["#crawl-urls-remaining"].textContent = 0;
@@ -884,7 +883,6 @@ var Popup = (() => {
     else {
       backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
         instance = JSON.parse(JSON.stringify(_));
-        //instance.incrementDecrementEnabled = !e.incrementDecrementErrorsExist && instance.autoEnabled ? (instance.autoAction !== "next" && instance.autoAction !== "prev") : !e.incrementDecrementErrorsExist;
         instance.enabled = true;
         instance.saveFound = instance.saveURL;
         const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(instance);
@@ -926,8 +924,6 @@ var Popup = (() => {
             "downloadSelector": _.downloadSelector,
             "downloadIncludes": _.downloadIncludes,
             "downloadExcludes": _.downloadExcludes,
-            "downloadMinMB": _.downloadMinMB,
-            "downloadMaxMB": _.downloadMaxMB,
             "downloadPreview": _.downloadPreview
           });
         }
@@ -1017,8 +1013,6 @@ var Popup = (() => {
       _.downloadSelector = DOM["#download-selector-input"].value;
       _.downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
-      _.downloadMinMB = +DOM["#download-min-mb-input"].value;
-      _.downloadMaxMB = +DOM["#download-max-mb-input"].value;
       _.downloadSubfolder = DOM["#download-subfolder-input"].value.trim();
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
       _.downloadMSelecteds = downloadPreviewCache.mselecteds;

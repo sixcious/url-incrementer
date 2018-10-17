@@ -33,4 +33,4 @@ NickMWPrince and Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C 
 
 ... and most of all you for using URLI!
 
-Copyright © 2018 Roy Six
+Copyright © 2011 - 2018 Roy Six

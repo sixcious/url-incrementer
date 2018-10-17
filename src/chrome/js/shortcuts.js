@@ -33,6 +33,9 @@ var Shortcuts = (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code);
+    if (event && event.target && (event.target.nodeName === "TEXTAREA" || (event.target === "INPUT" && (event.target.type === "text")))) { // TODO
+      return;
+    }
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyDecrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "key"}); }
     else if (keyPressed(event, items.keyNext))      { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "key"}); }
@@ -112,7 +115,7 @@ var Shortcuts = (() => {
    * @private
    */
   function keyPressed(event, key) {
-    return key && event.code === key.code &&
+    return allowed && key && event.code === key.code &&
       (!(event.altKey   ^ (key.modifiers & KEY_MODIFIERS.get("Alt"))         ) &&
        !(event.ctrlKey  ^ (key.modifiers & KEY_MODIFIERS.get("Control")) >> 1) &&
        !(event.shiftKey ^ (key.modifiers & KEY_MODIFIERS.get("Shift"))   >> 2) &&

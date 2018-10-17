@@ -264,9 +264,9 @@ var Auto = (() => {
    */
   function AutoTimer(callback, delay) {
     let timeout,
-      start,
-      remaining = delay,
-      wait = false;
+        start,
+        remaining = delay,
+        wait = false;
 
     this.pause = function() {
       clearTimeout(timeout);

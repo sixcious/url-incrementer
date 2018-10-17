@@ -107,7 +107,7 @@ var Action = (() => {
   }
 
   /**
-   * Performs an increment or decrement action (with or without error skipping) and then updates the URL.
+   * Performs an increment or decrement action; if error skipping is enabled, delegates to another function.
    *
    * @param action   the action (increment or decrement)
    * @param instance the instance for this tab
@@ -135,8 +135,7 @@ var Action = (() => {
   }
 
   /**
-   * Increments or decrements a URL using an instance object that contains the URL
-   * while performing error skipping.
+   * Performs an increment or decrement action with error skipping.
    *
    * @param action               the action to perform (increment or decrement)
    * @param instance             the instance containing the URL and parameters used to increment or decrement
@@ -362,16 +361,8 @@ var Action = (() => {
             let downloads = results[0];
             // If this is the starting URL, handle the manually selected and unselected items the user specified
             if (instance.url === instance.startingURL) {
-              // Selecteds: Remove duplicates first and then add to downloads
+              // Selecteds: Add any selecteds to downloads
               if (instance.downloadMSelecteds && instance.downloadMSelecteds.length > 0) {
-                // instance.downloadSelecteds = instance.downloadSelecteds.filter(function(selected) {
-                //   return downloads.some(function(download) {
-                //     return download.url !== selected;
-                //   });
-                // });
-                // for (const selected of instance.downloadSelecteds) {
-                //   downloads.push({"url": selected});
-                // }
                 downloads.push(...instance.downloadMSelecteds);
               }
               // Unselecteds: Remove any unselectds from downloads
@@ -382,9 +373,6 @@ var Action = (() => {
                   });
                 });
               }
-              // TODO remove duplicates if exist (they shouldn't)?
-              //downloadPreviewCache[otherId] = downloadPreviewCache[otherId].filter((object, index) => index === downloadPreviewCache[otherId].findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
-              //const uniqueArray = arrayOfObjects.filter((object,index) => index === arrayOfObjects.findIndex(obj => JSON.stringify(obj) === JSON.stringify(object)));
             }
             for (const download of downloads) {
               console.log("download() - downloading url=" + download.url + " ... ");
@@ -393,19 +381,6 @@ var Action = (() => {
                 if (chrome.runtime.lastError && instance.downloadSubfolder) {
                   chrome.downloads.download({url: download.url});
                 }
-                chrome.downloads.search({id: downloadId}, function(results) {
-                  const downloadItem = results ? results[0] : undefined;
-                  if (downloadItem) {
-                    const bytesInAMegabyte = 1048576;
-                    if (downloadItem.totalBytes > 0 && (
-                        (!isNaN(instance.downloadMinMB) && instance.downloadMinMB > 0 ? (instance.downloadMinMB * bytesInAMegabyte) > downloadItem.totalBytes : false) ||
-                        (!isNaN(instance.downloadMaxMB) && instance.downloadMaxMB > 0 ? (instance.downloadMaxMB * bytesInAMegabyte) < downloadItem.totalBytes : false)
-                      )) {
-                      console.log("download() - canceling download because downloadItem.totalbytes=" + downloadItem.totalBytes + " and instance.MinMB bytes=" + (instance.downloadMinMB * bytesInAMegabyte) + " or instance.MaxMB bytes=" + (instance.downloadMaxMB * bytesInAMegabyte));
-                      chrome.downloads.cancel(downloadId);
-                    }
-                  }
-                });
               });
             }
             // Subfolder Increment after downloads
@@ -414,7 +389,6 @@ var Action = (() => {
                 const matchp1 = (Number(match) + 1) + "";
                 return "0".repeat(match.length - matchp1.length) + matchp1;
               });
-              console.log("instance.downloadSubfolder=" + instance.downloadSubfolder);
               Background.setInstance(instance.tabId, instance);
             }
           }
