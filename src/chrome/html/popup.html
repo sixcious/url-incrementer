@@ -461,23 +461,15 @@
         <img src="../img/spider.png" alt="" width="15" height="15">
         <h3 id="crawl-h3" data-i18n="textContent"></h3>
         <div class="heading-right">
+          <span id="crawl-urls-remaining"></span>
+          /
+          <span id="crawl-urls-total"></span>
+          URLs
           <span id="crawl-percentage-label" data-i18n="textContent"></span>
           <span id="crawl-percentage-value"></span>
           <img src="../img/clock-o.png" alt="" width="14" height="14">
           <span id="eta-label*crawl" data-i18n="textContent"></span>
           <span id="crawl-eta-value"></span>
-        </div>
-      </div>
-      <div class="table">
-        <div class="row">
-          <div class="column">
-            <div id="crawl-urli-button-div" class="hvr-grow">
-              <img id="crawl-urli-button-img" src="../img/urli.png" alt="" width="64" height="64">
-            </div>
-          </div>
-          <div class="column">
-            <div id="crawl-instructions" data-i18n="textContent"></div>
-          </div>
         </div>
       </div>
       <div id="crawl-checkboxes" class="checkbox">
@@ -486,29 +478,49 @@
           <span id="crawl-response-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-info-input" type="checkbox" value="info" checked="checked">
+          <input id="crawl-code-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-code">
+          <span id="crawl-code-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-info-input" type="checkbox" value="info" checked="checked" data-type="table-row" data-selector="crawl-table-info">
           <span id="crawl-info-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked" data-selector="crawl-table-ok">
+          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked" data-type="table-row" data-selector="crawl-table-ok">
           <span id="crawl-ok-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-error-input" type="checkbox" value="error" checked="checked">
+          <input id="crawl-error-input" type="checkbox" value="error" checked="checked" data-type="table-row" data-selector="crawl-table-error">
           <span id="crawl-error-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked">
+          <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked" data-type="table-row" data-selector="crawl-table-redirected">
           <span id="crawl-redirected-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-exception-input" type="checkbox" value="exception" checked="checked">
+          <input id="crawl-exception-input" type="checkbox" value="exception" checked="checked" data-type="table-row" data-selector="crawl-table-exception">
           <span id="crawl-exception-label" data-i18n="textContent"></span>
         </label>
       </div>
       <div id="crawl-table-outer" class="display-none">
         <div id="crawl-table-div"><div></div></div>
         <button id="crawl-table-download-button" title="urli-crawl-links.html" data-i18n="textContent"></button>
+      </div>
+      <div id="crawl-urli-tip" class="table">
+        <div class="row">
+          <div class="column">
+            <div id="crawl-urli-button-div">
+              <img id="crawl-urli-button-img" src="../img/urli.png" alt="" width="64" height="64">
+            </div>
+          </div>
+          <div class="column">
+            <div id="crawl-tip" data-i18n="textContent"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <img src="../img/heart.png" alt="heart" width="16" height="16">
+        <span id="crawl-help" data-i18n="textContent"></span>
       </div>
     </div>
   </body>

@@ -54,11 +54,7 @@ var Popup = (() => {
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
-    DOM["#crawl-checkboxes"].addEventListener("change", function() { updateCrawlTable.call(this); }); // TODO...
-    // DOM["#crawl-response-input"].addEventListener("change", function() { const style = this.checked ? "table-cell" : "none"; document.querySelectorAll(".crawl-table-response").forEach(el => el.style.display = style); });
-    // DOM["#crawl-ok-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-ok").forEach(el => el.style.display = style); });
-    // DOM["#crawl-error-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-error").forEach(el => el.style.display = style); });
-    // DOM["#crawl-redirected-input"].addEventListener("change", function() { const style = this.checked ? "table-row" : "none"; document.querySelectorAll(".crawl-table-redirected").forEach(el => el.style.display = style); });
+    DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -77,6 +73,7 @@ var Popup = (() => {
     DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    //DOM["#download-preview-checkboxes"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
     // Initialize popup content (1-time only)
     const tabs = await Promisify.getTabs();
@@ -353,13 +350,8 @@ var Popup = (() => {
         const th2 = document.createElement("th");
         th2.className = "crawl-table-code";
         th2.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
-        th2.textContent = "Code";
+        th2.textContent = chrome.i18n.getMessage("crawl_code_label");
         tr.appendChild(th2);
-        const th3 = document.createElement("th");
-        th3.className = "crawl-table-text";
-        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
-        th3.textContent = "Text";
-        tr.appendChild(th3);
       }
       // tbody
       const tbody = document.createElement("tbody");
@@ -391,11 +383,6 @@ var Popup = (() => {
           td2.className = "crawl-table-code";
           td2.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
           tr.appendChild(td2);
-          const td3 = document.createElement("td");
-          td3.id = id + "-td-text-" + (count - 2);
-          td3.className = "crawl-table-text";
-          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
-          tr.appendChild(td3);
         }
       }
       DOM["#" + id] = table;
@@ -453,10 +440,11 @@ var Popup = (() => {
     setTimeout(function() { URL.revokeObjectURL(blob); }, 1000);
   }
 
+  // TODO
   function updateCrawlTable() {
-    console.log("hello?" + this.checked);
-    const style = this.checked ? this.dataset.type : "none";
-    document.querySelectorAll("." + this.dataset.selector).forEach(el => el.style.display = style);
+    const checkbox = event.target;
+    const style = checkbox.checked ? checkbox.dataset.type : "none";
+    document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);
   }
 
   // TODO
@@ -464,6 +452,8 @@ var Popup = (() => {
     console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
     DOM["#crawl"].className = "display-block";
     DOM["#crawl-percentage-value"].textContent = 0 + "%";
+    DOM["#crawl-urls-remaining"].textContent = 0;
+    DOM["#crawl-urls-total"].textContent = instance.toolkitQuantity;
     updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
     crawlURLs(instance.toolkitQuantity);
@@ -487,27 +477,22 @@ var Popup = (() => {
           }
         }
         console.log(response.type);
-        console.log(response.body);
-        console.log(response.bodyUsed);
-        console.log(response.url);
         status = response.status;
-        statusText = response.statusText;
-        result = response.redirected ? "Redirected" : response.ok ? "OK" : status >= 100 && status <= 199 ? "Info" : "Error";
+        //statusText = response.statusText;
+        result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "oK" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
       }).catch(e => {
-        status = "";
-        statusText = e;
-        result = "Exception";
+        status = e;
+        result = chrome.i18n.getMessage("crawl_exception_label");
       }).finally(() => {
         const tr = document.getElementById("crawl-table-tr-" + id);
         const td1 = document.getElementById("crawl-table-td-response-" + id);
         const td2 = document.getElementById("crawl-table-td-code-" + id);
-        const td3 = document.getElementById("crawl-table-td-text-" + id);
         tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
-        td1.style.color = td2.style.color = td3.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
+        td1.style.color = td2.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
         td1.textContent = result;
-        td2.textContent = status;
-        td3.textContent = statusText;
+        td2.textContent = status;// + (statusText ? " (" + statusText + ")" : "");
         instance.toolkitQuantityRemaining--;
+        DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
         DOM["#crawl-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
         updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
       });

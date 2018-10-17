@@ -602,6 +602,17 @@ opacity: 0.4;
   color: var(--auto-color);
 }
 
+#crawl-tip, #crawl-help {
+  font-style: italic;
+}
+
+#crawl-urli-button-img {
+  vertical-align: top;
+}
+
+#crawl-urli-tip {
+  margin: 1em 0;
+}
 
 /*.rainbow-img {
   background: linear-gradient(
@@ -611,3 +622,4 @@ opacity: 0.4;
     !*#44A5F5 0%, #44A5F5 20%, #EE5555 20%, #EE5555 40%, #FFCC22 40%, #FFCC22 60%, #66BB6B 60%, #66BB6B 80%, #663399 80%, #663399 100%*!
   );
 }*/
+
