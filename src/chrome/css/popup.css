@@ -239,12 +239,6 @@ div.checkbox  img {
   cursor: pointer;
 }
 
-#crawl-percentage, #crawl-eta {
-  display: inline-block;
-  color: var(--auto-color);
-  font-weight: bold;
-}
-
 #crawl-checkboxes label {
   font-weight: bold;
   margin-right: 1em;
@@ -600,6 +594,13 @@ opacity: 0.4;
 
 #crawl .heading-right {
   color: var(--auto-color);
+}
+
+#crawl-percentage {
+  color: var(--auto-color);
+  font-weight: bold;
+  font-style: italic;
+  text-align: right;
 }
 
 #crawl-tip, #crawl-help {

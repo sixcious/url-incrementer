@@ -318,7 +318,7 @@
   "auto_settings_h3": { "message": "Auto" },
   "auto_settings_p": { "message": "Relax and let URLI auto-increment! Start Auto anytime by toggling it in the Popup. It supports multiple tabs at the same time, pause/resume, and repeat." },
   "toolkit_settings_h3": { "message": "URLI's Toolkit" },
-  "toolkit_settings_p": { "message": "Intended only to help test URLI, but unlocked for you to use as a non-standard feature! Crawl URLs, open tabs, or generate links. Click the wrench in the Popup to open." },
+  "toolkit_settings_p": { "message": "Originally made to test URLI, but unlocked for you to use as a non-standard feature! Crawl URLs, open tabs, or generate links. Click the wrench in the Popup to open." },
   "download_settings_h3": { "message": "Download" },
   "download_experimental_label": { "message": "EXPERIMENTAL" },
   "download_enable_button": { "message": "Enable Download" },
