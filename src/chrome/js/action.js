@@ -219,6 +219,11 @@ var Action = (() => {
    */
   function clear(caller, instance, items, callback) {
     let actionPerformed = false;
+    // Handle AUTO Repeat
+    if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
+      Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
+      return actionPerformed;
+    }
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
     if (instance.enabled || instance.autoEnabled || instance.downloadEnabled) {
       actionPerformed = true;
@@ -239,10 +244,6 @@ var Action = (() => {
     }
     if (instance.autoEnabled) {
       Auto.stopAutoTimer(instance, caller);
-    }
-    // Handle AUTO Repeat
-    if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
-      Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
     }
     // For callers like popup that still need the instance, disable all states and reset autoTimes and multiCount
     instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = instance.autoRepeat = instance.shuffleURLs = false;

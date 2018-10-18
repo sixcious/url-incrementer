@@ -603,8 +603,8 @@ opacity: 0.4;
 }
 
 #crawl-table {
-  max-width: none;
-  max-height: none;
+  max-width: none;/*
+  max-height: none;*/
 }
 
 #crawl-tip, #crawl-help {
