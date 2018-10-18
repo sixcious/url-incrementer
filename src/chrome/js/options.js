@@ -378,8 +378,8 @@ var Options = (() => {
         const option = document.createElement("option");
         option.dataset.hash = save.type === "wildcard" ? save.ciphertext : save.hash;
         option.textContent = (count++) + " - " + save.type + ": " +
-          (save.type === "url" ? save.hash.substring(0, 16) : wildcard.substring(0, 16))  +
-          " sel: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
+          (save.type === "url" ? save.hash.substring(0, 16) : wildcard.substring(0, 16))  + "..." +
+          " select: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
           " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 5) + "...") +
           " base: " + save.base;
         select.appendChild(option);

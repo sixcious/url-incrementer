@@ -85,21 +85,22 @@ var Saves = (() => {
    * @public
    */
   async function matchesWildcard(save, url) {
-    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv);
-    const matches = new RegExp(escapeRegExp(wildcard)).exec(url);
+    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv),
+          isRegExp = wildcard.startsWith("/") && wildcard.endsWith("/") && wildcard.length > 1,
+          matches = isRegExp ? new RegExp(wildcard.slice(1, -1)).exec(url) : url.includes(wildcard);
     return { matches: matches };
   }
 
-  /**
-   * Escapes a regular expression string.
-   *
-   * @param string the regular expression string to escape
-   * @returns {string} the escaped string
-   * @private
-   */
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  }
+  // /**
+  //  * Escapes a regular expression string.
+  //  *
+  //  * @param string the regular expression string to escape
+  //  * @returns {string} the escaped string
+  //  * @private
+  //  */
+  // function escapeRegExp(string) {
+  //   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  // }
 
   // Return Public Functions
   return {

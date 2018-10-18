@@ -157,9 +157,7 @@ var Action = (() => {
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
               (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
-          console.log("incrementDecrementErrorSkip() - request.url= " + instance.url);
-          console.log("incrementDecrementErrorSkip() - response.url=" + response.url);
-          console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status);
+          console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status + ", response.redirected=" + response.redirected + ", response.ok=" + response.ok);
           if (!instance.autoEnabled) {
             Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
           }

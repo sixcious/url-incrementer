@@ -32,8 +32,10 @@ var Shortcuts = (() => {
    * @private
    */
   function keyupListener(event) {
-    console.log("keyupListener() - event.code=" + event.code);
-    if (event && event.target && (event.target.nodeName === "TEXTAREA" || (event.target === "INPUT" && (event.target.type === "text")))) { // TODO
+    console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
+    const nodeName = event.target && event.target.nodeName ? event.target.nodeName.toUpperCase() : undefined;
+    if (nodeName === "INPUT" || nodeName === "TEXTAREA") {
+      console.log("keyupListener() - exiting because nodeName=" + nodeName);
       return;
     }
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
@@ -59,7 +61,7 @@ var Shortcuts = (() => {
     } else {
       buttons3 = false;
     }
-    console.log("mousedownListener() event.buttons=" + event.buttons + ", buttons3=" + buttons3);
+    console.log("mousedownListener() - event.buttons=" + event.buttons + ", buttons3=" + buttons3);
     button = event.button;
   }
 
@@ -115,7 +117,7 @@ var Shortcuts = (() => {
    * @private
    */
   function keyPressed(event, key) {
-    return allowed && key && event.code === key.code &&
+    return key && event.code === key.code &&
       (!(event.altKey   ^ (key.modifiers & KEY_MODIFIERS.get("Alt"))         ) &&
        !(event.ctrlKey  ^ (key.modifiers & KEY_MODIFIERS.get("Control")) >> 1) &&
        !(event.shiftKey ^ (key.modifiers & KEY_MODIFIERS.get("Shift"))   >> 2) &&
@@ -192,14 +194,11 @@ var Shortcuts = (() => {
         // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
           console.log("chrome.runtime.onMessage() - request.greeting=" + request.greeting);
-          if (request.greeting === "addKeyListener") {
-            addKeyListener();
-          } else if (request.greeting === "removeKeyListener") {
-            removeKeyListener();
-          } else if (request.greeting === "addMouseListener") {
-            addMouseListener();
-          } else if (request.greeting === "removeMouseListener") {
-            removeMouseListener();
+          switch (request.greeting) {
+            case "addKeyListener": addKeyListener(); break;
+            case "removeKeyListener": removeKeyListener(); break;
+            case "addMouseListener": addMouseListener(); break;
+            case "removeMouseListener": removeMouseListener(); break;
           }
         });
       }
