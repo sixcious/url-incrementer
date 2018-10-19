@@ -382,14 +382,14 @@ var Action = (() => {
                 }
               });
             }
-            // Subfolder Increment after downloads
-            if (instance.downloadSubfolder) {
-              instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+/, function(match) {
-                const matchp1 = (Number(match) + 1) + "";
-                return "0".repeat(match.length - matchp1.length) + matchp1;
-              });
-              Background.setInstance(instance.tabId, instance);
-            }
+          }
+          // Subfolder Increment after downloads
+          if (instance.downloadSubfolder) {
+            instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+/, function(match) {
+              const matchp1 = (Number(match) + 1) + "";
+              return "0".repeat(match.length - matchp1.length) + matchp1;
+            });
+            Background.setInstance(instance.tabId, instance);
           }
           if (callback) {
             callback(instance);

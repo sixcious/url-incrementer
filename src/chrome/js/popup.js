@@ -24,8 +24,7 @@ var Popup = (() => {
    */
   async function init() {
     const ids = document.querySelectorAll("[id]"),
-          i18ns = document.querySelectorAll("[data-i18n]"),
-          buttons = document.querySelectorAll("#controls input");
+          i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
     for (const element of ids) {
       DOM["#" + element.id] = element;
@@ -73,15 +72,15 @@ var Popup = (() => {
     DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    //DOM["#download-preview-checkboxes"].addEventListener("change", updateDownloadPreviewCheckboxes);
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
     // Initialize popup content (1-time only)
     const tabs = await Promisify.getTabs();
-    backgroundPage = await Promisify.getBackgroundPage();
     items = await Promisify.getItems();
     localItems = await Promisify.getItems("local");
+    backgroundPage = await Promisify.getBackgroundPage();
     instance = backgroundPage.Background.getInstance(tabs[0].id) || await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
     _ = JSON.parse(JSON.stringify(instance));
+    const buttons = document.querySelectorAll("#controls input");
     for (const button of buttons) {
       button.className = items.popupAnimationsEnabled ? "hvr-grow": "";
       button.style.width = button.style.height = items.popupButtonSize + "px";
@@ -157,10 +156,14 @@ var Popup = (() => {
     DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
     DOM["#increment-input"].style.display =
     DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
+    DOM["#increment-input-r"].style.display =
+    DOM["#decrement-input-r"].style.display =
+    DOM["#increment-span-r"].style.display =
+    DOM["#decrement-span-r"].style.display = instance.enabled && instance.multiEnabled && instance.multiRangeEnabled ? "" : "none";
     DOM["#increment-input-s"].style.display =
     DOM["#decrement-input-s"].style.display =
     DOM["#increment-span-s"].style.display =
-    DOM["#decrement-span-s"].style.display =
+    DOM["#decrement-span-s"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled /*&& instance.multiCount >= 1*/ ? "" : "none";
     DOM["#increment-input-1"].style.display =
     DOM["#decrement-input-1"].style.display =
     DOM["#increment-span-1"].style.display =
@@ -256,7 +259,7 @@ var Popup = (() => {
     DOM["#download-preview-tag-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("tag");
     DOM["#download-preview-attribute-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("attribute");
     DOM["#download-preview-url-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("url");
-    DOM["#download-preview-compressed-input"].checked = instance.downloadPreview  && instance.downloadPreview.includes("compressed");
+    DOM["#download-preview-compressed-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("compressed");
     translateCheckboxValuesToHiddenInput("#download-preview-checkboxes input", "#download-preview-checkboxes-generated");
     changeDownloadStrategy.call(DOM["#download-strategy-select"]);
     updateInputLabelStyle(DOM["#download-selector-input"], DOM["#download-selector-label"], "font-weight: bold; color: rebeccapurple");
@@ -301,7 +304,7 @@ var Popup = (() => {
       DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
-      _.multi[multiCountNew].selectionStart = _.multiRange ? _.selectionStart - 1 : _.selectionStart; // -1 from starting {
+      _.multi[multiCountNew].selectionStart = _.multiRange ? _.selectionStart - 1 : _.selectionStart; // -1 from starting [
       _.multi[multiCountNew].startingSelectionStart = _.multi[multiCountNew].selectionStart;
       _.multi[multiCountNew].interval = _.interval;
       _.multi[multiCountNew].base = _.base;
@@ -888,6 +891,10 @@ var Popup = (() => {
         const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(instance);
         instance.urls = precalculateProps.urls;
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
+        // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
+        if (instance.autoEnabled && instance.urls && instance.urls.length > 0) {
+          instance.autoTimes = instance.urls.length;
+        }
         backgroundPage.Background.setInstance(instance.tabId, instance);
         // Save URL
         if (instance.saveURL) {

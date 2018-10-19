@@ -175,7 +175,7 @@ var Auto = (() => {
   }
 
   /**
-   * Removes the auto listener (only if there isn't any other instance that still has auto enabled).
+   * Removes the auto listener (only if there isn't any instance that still has auto enabled).
    *
    * @private
    */

@@ -86,6 +86,10 @@ div.checkbox  img {
   font-size: 16px;
 }
 
+#controls #increment-span-r, #controls #decrement-span-r, #controls #increment-span-s, #controls #decrement-span-s  {
+  color: var(--increment-decrement-m-color);
+}
+
 #controls #increment-span-1, #controls #decrement-span-1 {
   color: var(--increment-decrement-1-color);
 }
@@ -96,10 +100,6 @@ div.checkbox  img {
 
 #controls #increment-span-3, #controls #decrement-span-3 {
   color: var(--increment-decrement-3-color);
-}
-
-#controls #increment-span-s, #controls #decrement-span-s {
-  color: var(--increment-decrement-s-color);
 }
 
 /* Setup CSS */

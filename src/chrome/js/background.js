@@ -36,8 +36,8 @@ var Background = (() => {
   BROWSER_ACTION_BADGES = {
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
     "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
-    "increment1": { "text": "+",    "backgroundColor": "#1779BA" },
-    "decrement1": { "text": "-",    "backgroundColor": "#1779BA" },
+    "increment1": { "text": "+",    "backgroundColor": "#4AACED" },
+    "decrement1": { "text": "-",    "backgroundColor": "#4AACED" },
     "increment2": { "text": "+",    "backgroundColor": "#004687" },
     "decrement2": { "text": "-",    "backgroundColor": "#004687" },
     "increment3": { "text": "+",    "backgroundColor": "#001354" },

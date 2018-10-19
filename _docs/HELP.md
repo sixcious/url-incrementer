@@ -2,6 +2,7 @@
 
 ![URL Incrementer](../_assets/img/darku/128.png?raw=true "URL Incrementer")
 
+- [Problems?](#problems)
 - [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
 - [Auto Incrementing](#auto-incrementing)
 - [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multiple-page-downloading)
@@ -12,9 +13,11 @@
 - [Saving URLs](#saving-urls)
 - [Shuffle URLs](#shuffle-urls)
 - [Bases and Custom Bases](#bases-and-custom-bases)
-- [Report an Issue](#report-an-issue)
 
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
+
+## Problems?
+Is something not working right, or is there a feature missing that you'd like to see in URLI? Before leaving a low rating or review, [please open an issue](https://github.com/roysix/url-incrementer/issues). I'll be notified about it immediately and reply to you with a fix as soon as I can!
 
 ## Infinite Scrolling (Scroll Incrementing)
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
@@ -253,6 +256,3 @@ Here are some common alphabets you can copy/paste into the `Alphabet` input:
 Base 62
 Base 64 (+-)
 ...
-
-## Report an Issue
-Is something not working right, or is there a feature you'd like to see in URLI? Before leaving a review, [please open an issue](https://github.com/roysix/url-incrementer/issues). I'll be notified about it immediately and reply to you as soon as I can!

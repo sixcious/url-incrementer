@@ -25,9 +25,9 @@ var IncrementDecrement = (() => {
         if (custom && custom[selectionCustom.group]) { return {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
       }
       if (preference === "prefixes" || preference === "custom") {
-        const page = /page=\d+/i.exec(url); // page= Lookbehind /(?<=page)=(\d+)/i
+        const page = /page=\d+/i.exec(url); // page= lookbehind regex: /(?<=page)=(\d+)/i
         if (page) { return {selection: page[0].substring(5), selectionStart: page.index + 5}; }
-        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= Lookbehind /(?<=p|id|next)=(\d+)/i
+        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= lookbehind regex: /(?<=p|id|next)=(\d+)/i
         if (terms) { return {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
         const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
         if (prefixes) { return {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
