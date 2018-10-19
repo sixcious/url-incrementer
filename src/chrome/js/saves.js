@@ -59,6 +59,18 @@ var Saves = (() => {
   }
 
   /**
+   * TODO
+   *
+   * @param save
+   * @param url
+   * @returns {Promise<{matches: boolean, selection: {}}>}
+   * @public
+   */
+  async function matchesSave(save, url) {
+    return save.type === "url" ? matchesURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : save.type === "regexp" ? matchesRegExp(save, url) : false;
+  }
+
+  /**
    * Tests if a saved URL matches a plaintext URL.
    *
    * @param save the saved URL
@@ -86,8 +98,13 @@ var Saves = (() => {
    */
   async function matchesWildcard(save, url) {
     const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv),
-          isRegExp = wildcard.startsWith("/") && wildcard.endsWith("/") && wildcard.length > 1,
-          matches = isRegExp ? new RegExp(wildcard.slice(1, -1)).exec(url) : url.includes(wildcard);
+          matches = url.includes(wildcard);
+    return { matches: matches };
+  }
+
+  async function matchesRegExp(save, url) {
+    const regexp = await Cryptography.decrypt(save.ciphertext, save.id),
+          matches = new RegExp(regexp).exec(url);
     return { matches: matches };
   }
 
@@ -106,7 +123,6 @@ var Saves = (() => {
   return {
     addURL: addURL,
     deleteURL: deleteURL,
-    matchesURL: matchesURL,
-    matchesWildcard: matchesWildcard
+    matchesSave: matchesSave
   };
 })();

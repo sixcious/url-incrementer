@@ -415,17 +415,19 @@ var Options = (() => {
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
     } else {
+      const isRegExp = url.startsWith("/") && url.endsWith("/") && url.length > 1,
+            furl = isRegExp ? url.slice(1, -1) : url;
       // Part 1: Check if this URL has already been saved, if it has remove the existing save
-      const saves = await backgroundPage.Saves.deleteURL(url, "addWildcard");
+      const saves = await backgroundPage.Saves.deleteURL(furl, "addWildcard");
       // Part 2: Put this URL into the saves array and save it to local storage
-      const encrypt = await backgroundPage.Cryptography.encrypt(url),
+      const encrypt = await backgroundPage.Cryptography.encrypt(furl),
         items = await Promisify.getItems();
       if (items.selectionCustom && items.selectionCustom.url) {
         items.selectionCustom.url = "";
       }
       // Put this new entry at the end of the array (push) because it's a wildcard
       saves.push({
-        "type": "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
+        "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
         "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
         "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom, "errorSkip": items.errorSkip
       });

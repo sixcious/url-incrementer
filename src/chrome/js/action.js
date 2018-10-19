@@ -25,7 +25,7 @@ var Action = (() => {
     // Handle Auto:
     if (instance.autoEnabled) {
       // In case auto has been paused, get the most recent instance from Background
-      instance = Background.getInstance(instance.tabId);
+      instance = Background.getInstance(instance.tabId) || instance;
       // Handle autoTimes
       if (instance.autoAction === action) {
         instance.autoTimes--;

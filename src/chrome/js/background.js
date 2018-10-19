@@ -146,7 +146,7 @@ var Background = (() => {
     // First search for a save to build an instance from:
     if (saves && saves.length > 0) {
       for (const save of saves) {
-        const result = save.type === "url" ? await Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? await Saves.matchesWildcard(save, tab.url) : "";
+        const result = save.type === "url" ? await Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? await Saves.matchesWildcard(save, tab.url) : {};
         if (result.matches) {
           console.log("buildInstance() - found a " + save.type + " save for this tab's url");
           via = save.type;
