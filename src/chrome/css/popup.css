@@ -193,6 +193,10 @@ div.checkbox  img {
   display: inline-block;
 }
 
+#setup #selection-input { /* Firefox: Needs this or else the input width is a little shorter */
+  width: 100%;
+}
+
 #setup #leading-zeros-pad-label, #setup #base-case {
   font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 }
@@ -598,7 +602,7 @@ opacity: 0.4;
   color: var(--auto-color);
   font-weight: bold;
   font-style: italic;
-  text-align: right;
+/*  text-align: right;*/
 }
 
 #crawl-table {

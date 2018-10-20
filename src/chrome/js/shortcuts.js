@@ -33,7 +33,7 @@ var Shortcuts = (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
-    const nodeName = event.target && event.target.nodeName ? event.target.nodeName.toUpperCase() : undefined;
+    const nodeName = event.target && event.target.nodeName ? event.target.nodeName.toUpperCase() : "";
     if (nodeName === "INPUT" || nodeName === "TEXTAREA") {
       console.log("keyupListener() - exiting because nodeName=" + nodeName);
       return;

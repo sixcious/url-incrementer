@@ -400,7 +400,6 @@ var Popup = (() => {
   async function toolkit() {
     UI.clickHoverCss(this, "hvr-push-click");
     const tabs = await Promisify.getTabs({currentWindow: true});
-    console.log("toolkit() - tabs.length=" + tabs.length);
     setupInputs("toolkit", tabs);
     const e = setupErrors("toolkit");
     if (e.toolkitErrorsExist) {
@@ -1120,3 +1119,11 @@ var Popup = (() => {
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
   init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 })();
+
+
+
+chrome.tabs.executeScript( {
+  code: "window.getSelection().toString();"
+}, function(selection) {
+  console.log( "window.getSelection():" +  selection);
+});

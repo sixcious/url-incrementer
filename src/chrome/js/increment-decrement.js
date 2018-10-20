@@ -480,7 +480,7 @@ var IncrementDecrementArray = (() => {
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
-        const shuffleLimit = instance.shuffleLimit; // Promisify.getItems().shuffleLimit;
+        const shuffleLimit = instance.shuffleLimit;
         const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
         const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
@@ -496,7 +496,7 @@ var IncrementDecrementArray = (() => {
     const urls = [],
           url = instance.url,
           selection = instance.selection;
-    // If Toolkit Generate URLs first include the original URL for completeness and include it in the limit
+    // If Toolkit crawl or links, first include the original URL for completeness and include it in the limit count
     if (instance.toolkitEnabled && (instance.toolkitTool === "links" || instance.toolkitTool === "crawl")) {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
@@ -593,6 +593,6 @@ var IncrementDecrementArray = (() => {
   // Return Public Functions
   return {
     stepThruURLs: stepThruURLs,
-    precalculateURLs: precalculateURLs,
+    precalculateURLs: precalculateURLs
   };
 })();
