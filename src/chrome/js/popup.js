@@ -159,23 +159,23 @@ var Popup = (() => {
     DOM["#increment-input-r"].style.display =
     DOM["#decrement-input-r"].style.display =
     DOM["#increment-span-r"].style.display =
-    DOM["#decrement-span-r"].style.display = instance.enabled && instance.multiEnabled && instance.multiRangeEnabled ? "" : "none";
+    DOM["#decrement-span-r"].style.display = instance.multiEnabled && instance.multiRangeEnabled && !(instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
     DOM["#increment-input-s"].style.display =
     DOM["#decrement-input-s"].style.display =
     DOM["#increment-span-s"].style.display =
-    DOM["#decrement-span-s"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled /*&& instance.multiCount >= 1*/ ? "" : "none";
+    DOM["#decrement-span-s"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !(instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
     DOM["#increment-input-1"].style.display =
     DOM["#decrement-input-1"].style.display =
     DOM["#increment-span-1"].style.display =
-    DOM["#decrement-span-1"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
+    DOM["#decrement-span-1"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
     DOM["#increment-input-2"].style.display =
     DOM["#decrement-input-2"].style.display =
     DOM["#increment-span-2"].style.display =
-    DOM["#decrement-span-2"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
+    DOM["#decrement-span-2"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
     DOM["#increment-input-3"].style.display =
     DOM["#decrement-input-3"].style.display =
     DOM["#increment-span-3"].style.display =
-    DOM["#decrement-span-3"].style.display = instance.enabled && instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
+    DOM["#decrement-span-3"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
     DOM["#next-input"].style.display =
     DOM["#prev-input"].style.display = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
     DOM["#clear-input"].style.opacity = DOM["#increment-input"].style.opacity = DOM["#decrement-input"].style.opacity = instance.enabled || instance.saveFound ? 1 : 0.2;
@@ -1037,7 +1037,7 @@ var Popup = (() => {
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        caller === "accept" && _.multiEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
+        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros), // Don't validate selection in accept/toolkit if multi range enabled due to brackets
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
