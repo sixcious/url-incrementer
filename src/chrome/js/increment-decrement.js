@@ -111,7 +111,6 @@ var IncrementDecrement = (() => {
     }
     // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
     else if (instance.multiEnabled && !/\d/.test(action)) {
-      console.log("instance.multiEnabled=" + instance.multiEnabled + ", instance.mutliCount=" + instance.multiCount);
       for (let i = 1; i <= instance.multiCount; i++) {
         incrementDecrementURL(action + i, instance);
       }

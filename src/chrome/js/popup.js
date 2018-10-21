@@ -1119,11 +1119,3 @@ var Popup = (() => {
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
   init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
 })();
-
-
-
-chrome.tabs.executeScript( {
-  code: "window.getSelection().toString();"
-}, function(selection) {
-  console.log( "window.getSelection():" +  selection);
-});

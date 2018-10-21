@@ -360,7 +360,6 @@ input[type="number"].mouse-clicks-input {
   margin-top: 8px;
 }
 
-/* Colors derived from Rainbow color palette by Icon Bunny @ Iconscout https://iconscout.com/icon/rainbow-97 */
 .rainbow-underline:after {
   content: '';
   display: block;

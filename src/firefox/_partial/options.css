@@ -1,4 +1,9 @@
-/* Replace options overlay position css */
+/* Override rainbow-underline:after background */
+.rainbow-underline:after {
+  background: linear-gradient(to right, #BE0575 0%, #F62336 24%, #FF6611 25%, #FF6611 49%, #FF6611 50%, #FFEC4A 74%, #008AFB 75%, #203FB6 100%);
+}
+
+/* Replace options overlay position */
 #options .overlay {
   position: absolute;
   top: initial;

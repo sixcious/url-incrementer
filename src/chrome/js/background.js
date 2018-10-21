@@ -29,15 +29,21 @@ var Background = (() => {
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
+    "urls.": [], "wildcards.": [], "regexps": [], "savePreselect.": false,
+    "urls": [], "patterns": [], "savePreselect..": false,
     "saves": [], "savePreselect": false
   },
 
   // The browser action badges that will be displayed against the extension icon
   BROWSER_ACTION_BADGES = {
+    "incrementr": { "text": "+",    "backgroundColor": "#4AACED" },
+    "decrementr": { "text": "-",    "backgroundColor": "#4AACED" },
+    "increments": { "text": "+",    "backgroundColor": "#4AACED" },
+    "decrements": { "text": "-",    "backgroundColor": "#4AACED" },
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
     "decrement":  { "text": "-",    "backgroundColor": "#1779BA" },
-    "increment1": { "text": "+",    "backgroundColor": "#4AACED" },
-    "decrement1": { "text": "-",    "backgroundColor": "#4AACED" },
+    "increment1": { "text": "+",    "backgroundColor": "#1779BA" },
+    "decrement1": { "text": "-",    "backgroundColor": "#1779BA" },
     "increment2": { "text": "+",    "backgroundColor": "#004687" },
     "decrement2": { "text": "-",    "backgroundColor": "#004687" },
     "increment3": { "text": "+",    "backgroundColor": "#001354" },
@@ -144,16 +150,15 @@ var Background = (() => {
         object = items,
         selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
-    if (saves && saves.length > 0) {
-      for (const save of saves) {
-        const result = save.type === "url" ? await Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? await Saves.matchesWildcard(save, tab.url) : {};
-        if (result.matches) {
-          console.log("buildInstance() - found a " + save.type + " save for this tab's url");
-          via = save.type;
-          object = save;
-          selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
-          break;
-        }
+    for (const save of saves) {
+      //const result = save.type === "url" ? await Saves.matchesURL(save, tab.url) : save.type === "wildcard" ? await Saves.matchesWildcard(save, tab.url) : {};
+      const result = await Saves.matchesSave(save, tab.url);
+      if (result.matches) {
+        console.log("buildInstance() - found a " + save.type + " save for this tab's url");
+        via = save.type;
+        object = save;
+        selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
+        break;
       }
     }
     // Return the newly built instance using tab, via, selection, object, and items:
