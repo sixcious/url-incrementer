@@ -384,23 +384,3 @@ input[type="number"].mouse-clicks-input {
 #options .overlay {
   top: 80%;
 }
-
-
-/*
-#options .overlay {
-  display: block;
-  text-align: center;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  width: 240px;
-  padding: 10px;
-  margin: -40px 0 0 -120px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 5px;
-  color: #FFFFFF;
-  font-size: 1.2em;
-  transition: all 1.0s ease;
-  transform: scale(0);
-}*/

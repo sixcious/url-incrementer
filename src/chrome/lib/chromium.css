@@ -212,7 +212,6 @@ input[type='radio']:checked::before {
     input[type='radio'],
     :-webkit-any(
         button,
-        .button,
         input[type='button'],
         input[type='submit']):not(.custom-appearance)),
 :enabled:hover:-moz-any(
@@ -403,12 +402,12 @@ label > input:disabled[type='radio'] ~ span {
 
 /* chromium.css overrides */
 /* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
-h3, :-webkit-any(.checkbox, .radio) label input ~ span {
+h3, .checkbox label input ~ span, .radio label input ~ span, .radio label input ~ img {
   -webkit-user-select: initial;
   -moz-user-select: initial;
   user-select: initial;
 }
 
-:-webkit-any(.checkbox, .radio) label input ~ span {
+.checkbox label input ~ span, .radio label input ~ span {
   -webkit-margin-start: 0.3em;
 }

@@ -1,3 +1,6 @@
+// Replace Extension description message
+"description": { "message": "[Experimental] Increment a URL or go to the Next Page. Supports Auto and Download Incrementing." },
+
 // Replace BROWSER specific messages
   "BROWSER": { "message": "----- BROWSER -----" },
   "browser_shortcuts_h3": { "message": "Firefox Shortcuts" },

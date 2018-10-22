@@ -2,7 +2,7 @@
 
 ![URL Incrementer](../_assets/img/darku/128.png?raw=true "URL Incrementer")
 
-- [Problems?](#problems)
+- [Help and Support](#help-and-support)
 - [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
 - [Auto Incrementing](#auto-incrementing)
 - [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multiple-page-downloading)
@@ -16,8 +16,8 @@
 
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
 
-## Problems?
-Is something not working right, or is there a feature missing that you'd like to see in URLI? Before leaving a low rating or review, [please open an issue](https://github.com/roysix/url-incrementer/issues). I'll be notified about it immediately and reply to you with a fix as soon as I can!
+## Help and Support
+Is something not working right, or is there a feature that you'd like to see in URLI? Before leaving a low rating or review, [please open an issue](https://github.com/roysix/url-incrementer/issues) on GitHub. I'll be notified about it immediately and reply to you with a fix as soon as I can!
 
 ## Infinite Scrolling (Scroll Incrementing)
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
