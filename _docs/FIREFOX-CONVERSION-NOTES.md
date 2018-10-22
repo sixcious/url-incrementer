@@ -6,7 +6,8 @@ Need to add applications/gecko with an ID due to chrome.storage.sync, remove opt
 #### permissions.js
 must remove second chrome.permissions.request() - this was only added to fix a bug in Chrome that didn't grant a previously enabled origin when a new permission is being requested with that same origin
 declarativeContent not supported. must remove all references to declarativeContent
-must use something like chrome.tabs.onupdated listener and chrome.tabs.executeScript instead for internal shortcuts
+must use something like chrome.tabs.onupdated listener and chrome.tabs.executeScript instead for internal shortcuts or default to using content_script permission
+can't request permissions using chrome.runtime.getBackgroundPage()'s permissions.js, must include the permissions.js in options.html instead and use that
 
 #### popup.css, options.css
 for textarea css, add overflow-x: hidden; /* FF */

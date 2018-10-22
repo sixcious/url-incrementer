@@ -33,8 +33,8 @@ var Options = (() => {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -83,10 +83,10 @@ var Options = (() => {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#download-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
-    DOM["#download-disable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { backgroundPage.Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { backgroundPage.Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
+    DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
@@ -311,7 +311,7 @@ var Options = (() => {
   function setKey(input) {
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
-      chrome.storage.sync.set({ [getStorageKey(input)]: key, function() { setKeyEnabled(); }});
+      chrome.storage.sync.set({ [getStorageKey(input)]: key }, function() { setKeyEnabled(); });
     }, 1000);
   }
 
@@ -321,7 +321,7 @@ var Options = (() => {
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
     console.log(mouse);
     clicksInput.className = mouse ? "display-block fade-in" : "display-none";
-    chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse}, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
+    chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse }, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
   }
 
   /**
@@ -544,7 +544,7 @@ var Options = (() => {
         chrome.storage.local.clear(function() {
           chrome.storage.local.set(backgroundPage.Background.getLSDV(), function() {
             console.log("resetOptions() - removing all permissions...");
-            backgroundPage.Permissions.removeAllPermissions();
+            Permissions.removeAllPermissions();
             changeIconColor.call(DOM["#icon-color-radio-dark"]);
             populateValuesFromStorage("all");
             UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
@@ -560,13 +560,13 @@ var Options = (() => {
    * @private
    */
   function clickURLI() {
-    const numbers = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"],
+    const// numbers = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"],
           faces =   ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"],
           face = " " + faces[Math.floor(Math.random() * faces.length)],
           value = +this.dataset.value + 1;
     this.dataset.value = value + "";
     UI.clickHoverCss(this, "hvr-buzz-out-click");
-    UI.generateAlert([value <= 10 ? numbers[value - 1] + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
   init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point

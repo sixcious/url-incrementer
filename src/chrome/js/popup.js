@@ -441,7 +441,7 @@ var Popup = (() => {
   }
 
   // TODO
-  function updateCrawlTable() {
+  function updateCrawlTable(event) {
     const checkbox = event.target;
     const style = checkbox.checked ? checkbox.dataset.type : "none";
     document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);

@@ -207,19 +207,19 @@ Here's a real example of how a saved URL looks:
 
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 
-### Where Are The Cryptographic Hashes Saved?
-The cryptographic hashes are *only* saved to your local extension storage space on your PC (not in a sync'd cloud storage space).
-You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button.
-Also, if you uninstall the extension, all your saved data, including the hashes, are automatically deleted.
-
 ### How Are Wildcards Saved?
 Wildcards are stored as encrypted hashes with a random IV (initialization vector); they're never saved in the "plaintext" form you originally entered them in.
 But unlike the cryptographic hashed URLs, wildcard encrypted hashes can be decrypted if someone were to look at URLI's source code and then run the exact decrypt function and key it uses.
 In most cases though, providing this one small layer of protection will be sufficient for most people's needs.
 The wildcards will never be in clear view on your computer. For example, if someone were to search thru your extension storage space, they would only find encrypted hashes, and would need to put additional time and effort in to decrypting them.
 
-Many extensions do not bother hashing your saved URLs or encrypting wildcards or even discussing this.
-URLI really cares about your privacy and data!
+### Where Are The Cryptographic Hashes Saved?
+The cryptographic hashes are *only* saved to the local extension storage space on your device (**not** in a sync'd cloud storage space).
+You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button.
+Also, if you uninstall the extension, all your saved data, including the hashes, are automatically deleted.
+
+### Your Data IS YOUR Data
+Many extensions do not bother at least hashing your saved URLs or even discussing this, but URLI really cares about your privacy and data!
 
 ## Shuffle URLs
 Click the `crossed-arrows` icon to turn this mode on.

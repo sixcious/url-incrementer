@@ -331,6 +331,7 @@ div.checkbox  img {
 
 #download-setup.table {
   width: 100%;
+  max-width: 524px; /* Firefox: Download Table gets super-wide without this under certain conditions... */
   border-bottom: 1px solid var(--download-color);
 }
 
