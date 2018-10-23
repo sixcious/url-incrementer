@@ -245,10 +245,12 @@ var Action = (() => {
     if (instance.autoEnabled) {
       Auto.stopAutoTimer(instance, caller);
     }
-    // For callers like popup that still need the instance, disable all states and reset autoTimes and multiCount
+    // For callers like popup that still need the instance, disable all states and reset auto, multi, and urls array
     instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = instance.autoRepeat = instance.shuffleURLs = false;
     instance.autoTimes = instance.autoTimesOriginal;
+    instance.multi = {"1": {}, "2": {}, "3": {}};
     instance.multiCount = 0;
+    instance.urls = [];
     if (callback) {
       callback(instance);
     } else {
