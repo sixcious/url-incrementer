@@ -249,7 +249,7 @@ var Action = (() => {
     instance.enabled = instance.multiEnabled = instance.downloadEnabled = instance.autoEnabled = instance.autoPaused = instance.autoRepeat = instance.shuffleURLs = false;
     instance.autoTimes = instance.autoTimesOriginal;
     instance.multi = {"1": {}, "2": {}, "3": {}};
-    instance.multiCount = 0;
+    instance.multiCount = instance.autoRepeatCount = 0;
     instance.urls = [];
     if (callback) {
       callback(instance);
