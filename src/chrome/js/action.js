@@ -82,9 +82,8 @@ var Action = (() => {
     // Post-Perform Action:
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
-      if (instance.multiEnabled && (action === "increment" || action === "decrement")) { //
-        action = instance.multiRangeEnabled ? action + "r" : action + "s";
-      }
+      // Reset Multi Action to the appropriate badge (increment becomes "incrementm", increment1 becomes "increment")
+      action = instance.multiEnabled ? action === "increment" || action === "decrement" ? action + "m" : action === "increment1" || action === "decrement1" ? action.slice(0,-1) : action : action;
       Background.setBadge(instance.tabId, action, true);
     }
   }

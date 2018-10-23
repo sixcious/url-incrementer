@@ -67,7 +67,7 @@ var Saves = (() => {
    * @public
    */
   async function matchesSave(save, url) {
-    return save.type === "url" ? matchesURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : save.type === "regexp" ? matchesRegExp(save, url) : false;
+    return save && url ? save.type === "url" ? matchesURL(save, url) : save.type === "wildcard" ? matchesWildcard(save, url) : save.type === "regexp" ? matchesRegExp(save, url) : { matches: false } : { matches: false };
   }
 
   /**
@@ -76,7 +76,7 @@ var Saves = (() => {
    * @param save the saved URL
    * @param url  the plaintext URL
    * @returns {Promise<{matches: boolean, selection: {}}>}
-   * @public
+   * @private
    */
   async function matchesURL(save, url) {
     const url1 = url.substring(0, save.selectionStart),
@@ -94,7 +94,7 @@ var Saves = (() => {
    * @param save the saved wildcard
    * @param url  the plaintext URL
    * @returns {Promise<{matches: RegExpExecArray}>}
-   * @public
+   * @private
    */
   async function matchesWildcard(save, url) {
     const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv),

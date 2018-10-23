@@ -377,7 +377,7 @@ input[type="number"].mouse-clicks-input {
   display: block;
   margin-top: 2px;
   height: 2px;
-  background: linear-gradient(to right, #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%);
+  background: linear-gradient(to right, #4C8BF5 0%, #4C8BF5 24%, #DD5144 25%, #DD5144 49%, #FFCD46 50%, #FFCD46 74%, #1DA462 75%, #1DA462 100%);
 }
 
 /* Overrides generateAlert overlay styling so alert is displayed in gap space */
