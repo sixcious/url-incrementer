@@ -961,7 +961,7 @@ var Popup = (() => {
       _.startingSelectionStart = +DOM["#selection-start-input"].value;
       _.interval = +DOM["#interval-input"].value;
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
-      _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked;
+      _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].value;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
       _.baseCustom = DOM["#base-custom-input"].value;
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
@@ -1052,11 +1052,12 @@ var Popup = (() => {
       // Toolkit Errors
       e.toolkitErrors = [
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
-        _.toolkitTool === "tabs" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
-        _.toolkitTool === "tabs" && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
         _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
-        (_.toolkitTool === "crawl" || _.toolkitTool === "links") && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") :
-        _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") : ""
+        _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :
+        _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") :
+        _.toolkitTool === "tabs"  && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
+        _.toolkitTool === "tabs"  && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
+        _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") : ""
       ];
       e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");
       if (e.toolkitErrorsExist) {
@@ -1067,7 +1068,7 @@ var Popup = (() => {
       // Auto Errors
       e.autoErrors = [
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
-        _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 100000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
+        _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 10000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
         _.autoEnabled && (_.autoSeconds < 1 || _.autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
         _.autoEnabled && _.shuffleURLs && _.autoTimes > 10000 ? chrome.i18n.getMessage("auto_shuffle_times_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",

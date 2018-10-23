@@ -32,23 +32,13 @@ h3 {
   font-weight: inherit;
 }
 
-div.table {
-  display: table;
-}
 
-div.row {
-  display: table-row;
-}
-
-div.column {
-  display: table-cell;
-}
 
 div.checkbox  img {
   margin-left: 3px;
 }
 
-/* Controls CSS */
+/* Controls */
 
 #controls {
   margin: 4px;
@@ -102,14 +92,11 @@ div.checkbox  img {
   color: var(--increment-decrement-3-color);
 }
 
-/* Setup CSS */
+/* Setup */
 
 #setup {
-  /*min-width: 512px;*/
 /*  width: 516px;*/
   margin: 12px;
-/*  margin: 14px;*/
-/*  margin: 16px;*/
 }
 
 .heading {
@@ -141,13 +128,12 @@ div.checkbox  img {
 }
 
 #setup textarea {
-  width: 100%;
   color: #777777;
   word-break: break-all;
-  max-width: 512px;
-  max-height: 90px;
-  min-width: 512px;
+  resize: vertical;
+  width: 512px;
   min-height: 41px;
+  max-height: 100px;
 }
 
 #setup img {
@@ -167,7 +153,7 @@ div.checkbox  img {
 }
 
 #increment-decrement div.column:not(:last-child), #toolkit div.column:not(:last-child), #auto div.column:not(:last-child), #download div.column:not(:last-child)  {
-  padding-right: 24px;
+  padding-right: 27px;
 }
 
 /* increment-decrement */
@@ -194,11 +180,12 @@ div.checkbox  img {
 }
 
 #setup #selection-input { /* Firefox: Needs this or else the input width is a little shorter */
-  width: 100%;
+/*  width: 100%;*/
+  width: 143px;
 }
 
 #setup #leading-zeros-pad-label, #setup #base-case {
-  font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
+  font-size: 0.88em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 }
 
 #setup #base-case label:not(:last-child) {
@@ -331,7 +318,7 @@ div.checkbox  img {
 
 #download-setup.table {
   width: 100%;
-  max-width: 524px; /* Firefox: Download Table gets super-wide without this under certain conditions... */
+/*  max-width: 524px; !* Firefox: Download Table gets super-wide without this under certain conditions... *!*/
   border-bottom: 1px solid var(--download-color);
 }
 

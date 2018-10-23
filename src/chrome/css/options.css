@@ -56,16 +56,7 @@ div.heading button {
   top: -8px;
 }
 
-div.table {
-  display: table;
-}
-
-div.row  {
-  display: table-row;
-}
-
-div.column {
-  display: table-cell;
+.column {
   padding: 0 10px 10px 0;
 }
 

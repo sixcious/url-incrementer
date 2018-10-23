@@ -57,6 +57,18 @@ img {
   clear: both;
 }
 
+.table {
+  display: table;
+}
+
+.row {
+  display: table-row;
+}
+
+.column {
+  display: table-cell;
+}
+
 /* fade css */
 
 @keyframes fade-in {

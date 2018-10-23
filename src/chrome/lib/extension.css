@@ -1,10 +1,39 @@
-/* Copyright (c) 2012 The Chromium Authors. All rights reserved.
+/*
+ * Copyright 2014 The Chromium Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be
- * found in the LICENSE file. */
+ * found in the LICENSE file.
+ *
+ * This stylesheet is used to apply Chrome styles to extension pages that opt in
+ * to using them.
+ *
+ * These styles have been copied from ui/webui/resources/css/chrome_shared.css
+ * and ui/webui/resources/css/widgets.css *with CSS class logic removed*, so
+ * that it's as close to a user-agent stylesheet as possible.
+ *
+ * For example, extensions shouldn't be able to set a .link-button class and
+ * have it do anything.
+ *
+ * Other than that, keep this file and chrome_shared.css/widgets.cc in sync as
+ * much as possible.
+ */
 
-/* chrome_shared.css */
-/* This file holds CSS that should be shared, in theory, by all user-visible
- * chrome:// pages. */
+body {
+  color: #333;
+  cursor: default;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 75%;
+}
+
+p {
+  line-height: 1.8em;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+  line-height: 1;
+}
 
 h1 {
   font-size: 1.5em;
@@ -30,42 +59,9 @@ a:active {
   color: rgb(5, 37, 119);
 }
 
-/* text_defaults.css */
-/* This file is dynamically processed by a C++ data source handler to fill in
- * some per-platform/locale styles that dramatically alter the page. This is
- * done to reduce flicker, as JS may not run before the page is rendered.
- *
- * There are two ways to include this stylesheet:
- * 1. via its chrome://resources/ URL in HTML, i.e.:
- *
- *   <link rel="stylesheet" href="chrome://resources/css/text_defaults.css">
- *
- * 2. via the webui::AppendWebUICSSTextDefaults() method to directly append it
- * to an HTML string.
- * Otherwise its placeholders won't be expanded. */
-
-html {
-  direction: ltr;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  font-size: 75%;
-}
-
-button, .button {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-}
-
-/* widgets.css */
-/* This file defines styles for form controls. The order of rule blocks is
- * important as there are some rules with equal specificity that rely on order
- * as a tiebreaker. These are marked with OVERRIDE. */
-
 /* Default state **************************************************************/
 
 button,
-.button,
 input[type='button'],
 input[type='submit'],
 select,
@@ -73,7 +69,7 @@ input[type='checkbox'],
 input[type='radio'] {
   -webkit-appearance: none;
   -moz-appearance: none;
-  user-select: none;
+  -webkit-user-select: none;
   -moz-user-select: none;
   background-image: linear-gradient(#ededed, #ededed 38%, #dedede);
   background-image: -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
@@ -88,20 +84,15 @@ input[type='radio'] {
 }
 
 button,
-.button,
 input[type='button'],
 input[type='submit'],
 select {
   min-height: 2em;
   min-width: 4em;
-  /* The following platform-specific rule is necessary to get adjacent
-     * buttons, text inputs, and so forth to align on their borders while also
-     * aligning on the text's baselines. */
   padding-bottom: 1px;
 }
 
 button,
-.button,
 input[type='button'],
 input[type='submit'] {
   -webkit-padding-end: 10px;
@@ -117,7 +108,6 @@ select {
   -moz-padding-end: 20px;
   -webkit-padding-start: 6px;
   -moz-padding-start: 6px;
-  /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), linear-gradient(#ededed, #ededed 38%, #dedede);
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), -moz-linear-gradient(#ededed, #ededed 38%, #dedede);
   background-position: right center;
@@ -136,7 +126,6 @@ input[type='checkbox'] {
 }
 
 input[type='radio'] {
-  /* OVERRIDE */
   border-radius: 100%;
   height: 15px;
   position: relative;
@@ -157,32 +146,22 @@ textarea {
   color: #444;
   font: inherit;
   margin: 0;
-  /* Use min-height to accommodate addditional padding for touch as needed. */
   min-height: 2em;
   padding: 3px;
   outline: none;
-  /* For better alignment between adjacent buttons and inputs. */
   padding-bottom: 4px;
 }
 
 input[type='search'] {
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
-  /* NOTE: Keep a relatively high min-width for this so we don't obscure the end
-   * of the default text in relatively spacious languages (i.e. German). */
   min-width: 160px;
-}
-
-/* Remove when https://bugs.webkit.org/show_bug.cgi?id=51499 is fixed.
- * TODO(dbeam): are there more types that would benefit from this? */
-input[type='search']::-webkit-textfield-decoration-container {
-  direction: inherit;
 }
 
 /* Checked ********************************************************************/
 
 input[type='checkbox']:checked::before {
-  user-select: none;
+  -webkit-user-select: none;
   -moz-user-select: none;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAQAAAADpb+tAAAAaElEQVR4Xl3PIQoCQQCF4Y8JW42D1bDZ4iVEjDbxFpstYhC7eIVBZHkXFGw734sv/TqDQQ8Xb1udja/I8igeIm7Aygj2IpoKTGZnVRNxAHYi4iPiDlA9xX+aNQDFySziqDN6uSp6y7ofEMwZ05uUZRkAAAAASUVORK5CYII=);
   background-size: 100% 100%;
@@ -206,171 +185,90 @@ input[type='radio']:checked::before {
 
 /* Hover **********************************************************************/
 
-:enabled:hover:-webkit-any(
-    select,
-    input[type='checkbox'],
-    input[type='radio'],
-    :-webkit-any(
-        button,
-        input[type='button'],
-        input[type='submit']):not(.custom-appearance)),
-:enabled:hover:-moz-any(
-    select,
-    input[type='checkbox'],
-    input[type='radio'],
-    :-moz-any(
-        button,
-        .button,
-        input[type='button'],
-        input[type='submit']):not(.custom-appearance)) {
+select:enabled:hover,
+input[type='checkbox']:enabled:hover,
+input[type='radio']:enabled:hover,
+button:enabled:hover,
+input[type='button']:enabled:hover,
+input[type='submit']:enabled:hover {
   background-image: linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
   background-image: -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
   border-color: rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12),
-  inset 0 1px 2px rgba(255, 255, 255, 0.95);
+      inset 0 1px 2px rgba(255, 255, 255, 0.95);
   color: black;
 }
 
-:enabled:hover:-webkit-any(select),
-:enabled:hover:-moz-any(select) {
-  /* OVERRIDE */
+select:enabled:hover {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), -moz-linear-gradient(#f0f0f0, #f0f0f0 38%, #e0e0e0);
 }
 
 /* Active *********************************************************************/
 
-:enabled:active:-webkit-any(
-    select,
-    input[type='checkbox'],
-    input[type='radio'],
-    :-webkit-any(
-        button,
-        .button,
-        input[type='button'],
-        input[type='submit']):not(.custom-appearance)),
-:enabled:active:-moz-any(
-    select,
-    input[type='checkbox'],
-    input[type='radio'],
-    :-moz-any(
-        button,
-        .button,
-        input[type='button'],
-        input[type='submit']):not(.custom-appearance)) {
+select:enabled:active,
+input[type='checkbox']:enabled:active,
+input[type='radio']:enabled:active,
+button:enabled:active,
+input[type='button']:enabled:active,
+input[type='submit']:enabled:active {
   background-image: linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
-  background-image: -moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
   box-shadow: none;
   text-shadow: none;
 }
 
-:enabled:active:-webkit-any(select),
-:enabled:active:-moz-any(select) {
-  /* OVERRIDE */
+select:enabled:active {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAAUklEQVQY02P4z0AMRGZGMaShwCisyhITmb8huMzfEhOxKvuvsGAh208Ik+3ngoX/FbBbClcIUcSAw21QhXxfIIrwKAMpfNsEUYRXGVCEFc6CQwBqq4CCCtU4VgAAAABJRU5ErkJggg==), -moz-linear-gradient(#e7e7e7, #e7e7e7 38%, #d7d7d7);
 }
 
 /* Disabled *******************************************************************/
 
-:disabled:-webkit-any(
-    button,
-    .button,
-    input[type='button'],
-    input[type='submit']):not(.custom-appearance),
-:disabled:-moz-any(
-    button,
-    .button,
-    input[type='button'],
-    input[type='submit']):not(.custom-appearance),
-select:disabled {
+select:enabled:disabled,
+button:enabled:disabled,
+input[type='button']:enabled:disabled,
+input[type='submit']:enabled:disabled {
   background-image: linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
   background-image: -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
   border-color: rgba(80, 80, 80, 0.2);
-  box-shadow: 0 1px 0 rgba(80, 80, 80, 0.08),
-  inset 0 1px 2px rgba(255, 255, 255, 0.75);
+  box-shadow: 0 1px 0 rgba(80, 80, 80, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.75);
   color: #aaa;
 }
 
 select:disabled {
-  /* OVERRIDE */
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAASklEQVQY02P4z0AMRGZGMaShwCisyhITG/4jw8RErMr+KyxYiFC0YOF/BeyWIikEKWLA4Ta4QogiPMpACt82QRThVQYUYYWz4BAAGr6Ii6kEPacAAAAASUVORK5CYII=), linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAICAQAAACxSAwfAAAASklEQVQY02P4z0AMRGZGMaShwCisyhITG/4jw8RErMr+KyxYiFC0YOF/BeyWIikEKWLA4Ta4QogiPMpACt82QRThVQYUYYWz4BAAGr6Ii6kEPacAAAAASUVORK5CYII=), -moz-linear-gradient(#f1f1f1, #f1f1f1 38%, #e6e6e6);
 }
 
-input:disabled:-webkit-any([type='checkbox'],
-                           [type='radio']),
-input:disabled:-moz-any([type='checkbox'],
-                           [type='radio']) {
+input[type='checkbox']:disabled, input[type='radio']:disabled {
   opacity: .75;
 }
 
-input:disabled:-webkit-any([type='password'],
-                           [type='search'],
-                           [type='text'],
-                           [type='url'],
-                           :not([type])),
-input:disabled:-moz-any([type='password'],
-                           [type='search'],
-                           [type='text'],
-                           [type='url'],
-                           :not([type])) {
+input[type='password']:disabled, input[type='search']:disabled, input[type='text']:disabled, input[type='url']:disabled, input:not([type]):disabled {
   color: #999;
 }
 
 /* Focus **********************************************************************/
 
-:enabled:focus:-webkit-any(
-    select,
-    input[type='checkbox'],
-    input[type='number'],
-    input[type='password'],
-    input[type='radio'],
-    input[type='search'],
-    input[type='text'],
-    input[type='url'],
-    input:not([type]),
-    :-webkit-any(
-         button,
-         .button,
-         input[type='button'],
-         input[type='submit']):not(.custom-appearance)),
-:enabled:focus:-moz-any(
-    select,
-    input[type='checkbox'],
-    input[type='number'],
-    input[type='password'],
-    input[type='radio'],
-    input[type='search'],
-    input[type='text'],
-    input[type='url'],
-    input:not([type]),
-    :-moz-any(
-         button,
-         .button,
-         input[type='button'],
-         input[type='submit']):not(.custom-appearance)) {
-  /* OVERRIDE */
-  transition: border-color 200ms;
+select:enabled:focus,
+input[type='checkbox']:enabled:focus,
+input[type='number']:enabled:focus,
+input[type='password']:enabled:focus,
+input[type='radio']:enabled:focus,
+input[type='search']:enabled:focus,
+input[type='text']:enabled:focus,
+input[type='url']:enabled:focus,
+input:not([type]):enabled:focus,
+button:enabled:focus,
+input[type='button']:enabled:focus,
+input[type='submit']:enabled:focus {
+  -webkit-transition: border-color 200ms;
   -moz-transition: border-color 200ms;
-  /* We use border color because it follows the border radius (unlike outline).
-   * This is particularly noticeable on mac. */
   border-color: rgb(77, 144, 254);
   outline: none;
 }
 
-/* Checkbox/radio helpers ******************************************************
- *
- * .checkbox and .radio classes wrap labels. Checkboxes and radios should use
- * these classes with the markup structure:
- *
- *   <div class="checkbox">
- *     <label>
- *       <input type="checkbox"></input>
- *       <span>
- *     </label>
- *   </div>
- */
+/* Checkbox/radio helpers *****************************************************/
 
 .checkbox label, .radio label {
   align-items: center;
@@ -386,8 +284,6 @@ input:disabled:-moz-any([type='password'],
 .checkbox label input ~ span, .radio label input ~ span, .radio label input ~ img {
   -webkit-margin-start: 0.6em;
   -moz-margin-start: 0.6em;
-  user-select: none;
-  -moz-user-select: none;
   display: block;
 }
 
@@ -395,19 +291,6 @@ input:disabled:-moz-any([type='password'],
   color: black;
 }
 
-label > input:disabled[type='checkbox'] ~ span,
-label > input:disabled[type='radio'] ~ span {
+label > input:disabled[type='checkbox'] ~ span, label > input:disabled[type='radio'] ~ span {
   color: #999;
-}
-
-/* chromium.css overrides */
-/* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
-h3, .checkbox label input ~ span, .radio label input ~ span, .radio label input ~ img {
-  -webkit-user-select: initial;
-  -moz-user-select: initial;
-  user-select: initial;
-}
-
-.checkbox label input ~ span, .radio label input ~ span {
-  -webkit-margin-start: 0.3em;
 }
