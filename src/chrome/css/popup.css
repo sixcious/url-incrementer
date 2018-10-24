@@ -97,6 +97,7 @@ div.checkbox  img {
 #setup {
 /*  width: 516px;*/
   margin: 12px;
+  max-width: 530px;
 }
 
 .heading {
@@ -105,12 +106,13 @@ div.checkbox  img {
   margin-bottom: 0.6em;
   color: #333333;
   border-bottom: 1px solid #333333;
+  position: relative; /* Firefox Android: for heading-right position absolute to stay inside setup container width */
 }
 
 .heading-right {
   font-style: italic;
   position: absolute;
-  right: 12px;
+  right: 0;
   margin-top: -17px;
 }
 

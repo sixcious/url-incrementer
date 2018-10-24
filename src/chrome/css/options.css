@@ -16,15 +16,14 @@ body {
 
 /* Firefox: Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
+  color: #333333;
   font: inherit;
   overflow-x: hidden;
   vertical-align: text-top;
-  width: 100%;
-  color: #333333;
-  max-width: 300px;
-  max-height: 90px;
-  min-width: 300px;
+  resize: vertical;
+  width: 300px;
   min-height: 41px;
+  max-height: 100px;
 }
 
 /* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
