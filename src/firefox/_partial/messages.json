@@ -1,5 +1,5 @@
 // Replace Extension description message
-"description": { "message": "[Experimental] Increment a URL or go to the Next Page. Supports Auto and Download Incrementing." },
+"description": { "message": "[BETA] Increment a URL or go to the Next Page. Supports Auto and Download Incrementing." },
 
 // Replace BROWSER specific messages
   "BROWSER": { "message": "----- BROWSER -----" },

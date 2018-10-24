@@ -5,7 +5,6 @@
   "title": { "message": "URL Incrementer" },
 
   "BROWSER": { "message": "----- BROWSER -----" },
-  "6": { "message": "Version 6 now uses 0 Chrome memory when inactive and features: new toolkit mode, new multi increment mode, multi-click mouse shortcuts, return to start button, saved URLs and wildcards, auto repeat and shuffle, increment dates and custom alphabet bases" },
   "browser_shortcuts_h3": { "message": "Chrome Shortcuts" },
   "browser_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
@@ -221,7 +220,7 @@
   "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment or perform other actions instantly without having to setup or save a URL (Except for Clear, Return to Start, and Auto Pause)"},
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
-  "internal_shortcuts_p": { "message": "URLI is set to use its internal shortcuts. Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. You can also set mouse shortcuts and the number of clicks. (Right)Left = hold Right, click Left or vice-versa."},
+  "internal_shortcuts_p": { "message": "URLI is set to use its internal shortcuts. Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. You can also set mouse shortcuts and the number of clicks. (Right) Left = hold Right, click Left or vice-versa."},
   "mixed_shortcuts_mode_label": { "message": "Allow Chrome Shortcuts (Mixed Mode)" },
   "mixed_shortcuts_mode_help": { "message": "If this is checked, Chrome shortcuts will also work with Internal Shortcuts. This allows you to have two sets of shortcuts (Quick and Non-Quick), for example" },
   "key_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },

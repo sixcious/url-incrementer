@@ -167,15 +167,15 @@ var Popup = (() => {
     DOM["#increment-input-1"].style.display =
     DOM["#decrement-input-1"].style.display =
     DOM["#increment-span-1"].style.display =
-    DOM["#decrement-span-1"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 1 ? "" : "none";
+    DOM["#decrement-span-1"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && !instance.shuffleURLs && instance.multiCount >= 1 ? "" : "none";
     DOM["#increment-input-2"].style.display =
     DOM["#decrement-input-2"].style.display =
     DOM["#increment-span-2"].style.display =
-    DOM["#decrement-span-2"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount >= 2 ? "" : "none";
+    DOM["#decrement-span-2"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && !instance.shuffleURLs && instance.multiCount >= 2 ? "" : "none";
     DOM["#increment-input-3"].style.display =
     DOM["#decrement-input-3"].style.display =
     DOM["#increment-span-3"].style.display =
-    DOM["#decrement-span-3"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && instance.multiCount === 3 ? "" : "none";
+    DOM["#decrement-span-3"].style.display = instance.multiEnabled && !instance.multiRangeEnabled && !instance.autoEnabled && !instance.shuffleURLs && instance.multiCount === 3 ? "" : "none";
     DOM["#next-input"].style.display =
     DOM["#prev-input"].style.display = (items.permissionsEnhancedMode && items.nextPrevPopupButtons) || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "" : "none";
     DOM["#clear-input"].style.opacity = DOM["#increment-input"].style.opacity = DOM["#decrement-input"].style.opacity = instance.enabled || instance.saveFound ? 1 : 0.2;
@@ -1051,6 +1051,7 @@ var Popup = (() => {
     if (caller === "toolkit") {
       // Toolkit Errors
       e.toolkitErrors = [
+        _.enabled ? "enablederror" :
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
         _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :
