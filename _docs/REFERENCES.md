@@ -47,11 +47,6 @@ https://stackoverflow.com/q/24730939
 Regex to find URLs from inline CSS Styles
 https://stackoverflow.com/a/34166861
 
-## Saved URLs / Wildcards
-
-Escaping regular expressions
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-
 ## Content Scripts
 
 Guarding against multiple content script injections

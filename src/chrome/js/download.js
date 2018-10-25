@@ -295,8 +295,7 @@ var Download = (() => {
   function findExtension(filenameAndExtension) {
     let extension = "";
     if (filenameAndExtension && filenameAndExtension.includes(".")) {
-      // TODO: Decide on differentiating extensions with multiple periods
-      extension = filenameAndExtension.split('.').pop();
+      extension = filenameAndExtension.split('.').pop(); // TODO: Decide on differentiating extensions with multiple periods
       //extension = filenameAndExtension.substr(filenameAndExtension.indexOf(".") + 1);
       if (!isValidExtension(extension)) { // If extension is not valid, throw it out
         extension = "";

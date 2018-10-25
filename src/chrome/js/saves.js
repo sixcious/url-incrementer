@@ -60,11 +60,21 @@ var Saves = (() => {
    *
    * @param save the saved URL, wildcard, or regexp
    * @param url  the plaintext URL to match
-   * @returns {Promise<{matches: boolean, selection: {}}>}
+   * @returns {Promise<{matches: boolean}>}
    * @public
    */
   async function matchesSave(save, url) {
-    return save && url ? save.type === "url" ? await matchesURL(save, url) : save.type === "wildcard" ? await matchesWildcard(save, url) : save.type === "regexp" ? await matchesRegExp(save, url) : { matches: false } : { matches: false };
+    let result = { matches: false };
+    if (save && url) {
+      if (save.type === "url") {
+        result = await matchesURL(save, url);
+      } else if (save.type === "wildcard") {
+        result = await matchesWildcard(save, url);
+      } else if (save.type === "regexp") {
+        result = await matchesRegExp(save, url);
+      }
+    }
+    return result;
   }
 
   /**
@@ -111,17 +121,6 @@ var Saves = (() => {
     const regexp = await Cryptography.decrypt(save.ciphertext, save.iv),
           matches = new RegExp(regexp).exec(url);
     return { matches: matches };
-  }
-
-  /**
-   * Escapes a regular expression string.
-   *
-   * @param string the regular expression string to escape
-   * @returns {string} the escaped string
-   * @private
-   */
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
   // Return Public Functions

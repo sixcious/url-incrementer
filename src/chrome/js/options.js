@@ -356,7 +356,7 @@ var Options = (() => {
       if ((key.modifiers & KEY_MODIFIERS.get("Control")) >> 1) { text += (text ? " + " : "") + "Ctrl";   }
       if ((key.modifiers & KEY_MODIFIERS.get("Shift"))   >> 2) { text += (text ? " + " : "") + "Shift";  }
       if ((key.modifiers & KEY_MODIFIERS.get("Meta"))    >> 3) { text += (text ? " + " : "") + "Meta";   }
-      if (key.code)                              { text += (text ? " + " : "") + key.code; }
+      if (key.code)                                            { text += (text ? " + " : "") + key.code; }
     }
     input.value = text;
   }

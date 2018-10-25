@@ -17,6 +17,8 @@
  * much as possible.
  */
 
+/* Source: https://chromium.googlesource.com/chromium/src/+/master/extensions/renderer/resources/extension.css */
+
 body {
   color: #333;
   cursor: default;

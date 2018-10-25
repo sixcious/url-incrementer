@@ -83,7 +83,7 @@ var Action = (() => {
     // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
     if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       // Reset Multi Action to the appropriate badge (increment becomes "incrementm", increment1 becomes "increment")
-      action = instance.multiEnabled ? action === "increment" || action === "decrement" ? action + "m" : action === "increment1" || action === "decrement1" ? action.slice(0,-1) : action : action;
+      action = instance.multiEnabled ? action === "increment" || action === "decrement" ? action + "m" : action === "increment1" || action === "decrement1" ? action.slice(0, -1) : action : action;
       Background.setBadge(instance.tabId, action, true);
     }
   }
@@ -112,7 +112,7 @@ var Action = (() => {
    */
   function incrementDecrement(action, instance, items) {
     let actionPerformed = false;
-    // If no selection was found or not stepping thru the URLs array, can't increment or decrement
+    // If incrementDecrementEnabled (can't increment or decrement if no selection was found or not stepping thru the URLs array)
     if ((instance.selection !== "" && instance.selectionStart >= 0) || (instance.urls && instance.urls.length > 0)) {
       actionPerformed = true;
       // Error Skipping:
@@ -133,9 +133,9 @@ var Action = (() => {
   /**
    * Performs an increment or decrement action with error skipping.
    *
-   * @param action               the action to perform (increment or decrement)
-   * @param instance             the instance containing the URL and parameters used to increment or decrement
-   * @param errorSkipRemaining   the number of times left to skip while performing this action
+   * @param action             the action to perform (increment or decrement)
+   * @param instance           the instance containing the URL and parameters used to increment or decrement
+   * @param errorSkipRemaining the number of times left to skip while performing this action
    * @public
    */
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
@@ -172,7 +172,7 @@ var Action = (() => {
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
       });
     } else {
-      console.log("incrementDecrementErrorSkip() - we have exhausted the errorSkip attempts. aborting and updating tab ");
+      console.log("incrementDecrementErrorSkip() - exhausted the errorSkip attempts. aborting and updating tab ");
       updateTab(instance);
     }
   }
@@ -195,13 +195,10 @@ var Action = (() => {
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           instance.url = results[0];
+          // TODO...
+          // Set saves next prev instances that are auto enabled in updateTab()
+          // instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")
           updateTab(instance);
-          // TODO Next Prev:
-          // // Only save next prev instances that are auto enabled and doing auto next or prev:
-          // if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
-          //   console.log("nextPrev() - setting instance in background");
-          //   Background.setInstance(instance.tabId, instance);
-          // }
         }
       });
     });
@@ -275,7 +272,7 @@ var Action = (() => {
         instance.autoRepeating = false;
       }
       // Auto Case 2: User is performing return while auto is on
-      if (instance.autoEnabled && caller !== "auto") {
+      if (caller !== "auto" && instance.autoEnabled) {
         instance.autoTimes = instance.autoTimesOriginal;
       }
       instance.url = instance.startingURL;

@@ -19,5 +19,5 @@
   "permissions": ["activeTab", "storage", "<all_urls>"],
   "optional_permissions": ["downloads"],
   "content_scripts": [{ "matches": ["<all_urls>"], "js": ["js/shortcuts.js"] }],
-  "applications": { "gecko": { "id": "url-incrementer@webextensions", "strict_min_version": "60.1.0" } }
+  "applications": { "gecko": { "id": "url-incrementer@webextensions", "strict_min_version": "60.0" } }
 }
