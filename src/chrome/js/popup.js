@@ -150,7 +150,7 @@ var Popup = (() => {
    * @private
    */
   function updateControls() {
-    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "save_wildcard_icon" : "save_url_icon");
+    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "url" ? "save_url_icon" : instance.saveType === "wildcard" ? "save_wildcard_icon" : instance.saveType === "regexp" ? "save_regexp_icon" : "?");
     DOM["#save-url-icon"].style.display = instance.saveFound ? "" : "none";
     DOM["#auto-repeat-icon"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
@@ -1051,7 +1051,7 @@ var Popup = (() => {
     if (caller === "toolkit") {
       // Toolkit Errors
       e.toolkitErrors = [
-        _.enabled ? "enablederror" :
+       // _.enabled ? "enablederror" :
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
         _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :

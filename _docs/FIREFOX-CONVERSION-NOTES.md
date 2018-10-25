@@ -75,7 +75,6 @@ Use-Cases to consider:
 1. When saving an object in background memory that is from popup
 2. When using sendMessage to send or receive an object
 
-
 Example:
 
     instances.set(tabId, JSON.parse(JSON.stringify(instance))); // Don't do instances.set(tabId, instance) or Firefox can't access deadobject (the instance)
@@ -112,7 +111,7 @@ Here's one-liner examples on how to use them:
         DOM["#download-preview-table-div"].replaceChild(new DOMParser().parseFromString(table, "text/html").body.firstChild, DOM["#download-preview-table-div"].firstChild);
         DOM["#download-preview-table-div"].replaceChild(document.createRange().createContextualFragment(table), DOM["#download-preview-table-div"].firstChild);
 
-`DOMParser`, in particular, creates a full-blown HTML document (with head and body) is 30% slower in testing for generating a table.
+`DOMParser`, in particular, creates a full-blown HTML document (with head and body) and was 30% slower in testing for generating a table.
 `Range` creates a `DocumentFragment` and was about 10% slower in speed to `innerHTML`.
 
 In terms of speed and performance, this is how my jsperf testing stacked each approach:
@@ -124,7 +123,7 @@ In terms of speed and performance, this is how my jsperf testing stacked each ap
 ## FIREFOX ANDROID
 
 #### Not Supported (Undefined):
-- chrome.commands
+- chrome.commands.*
 - chrome.browserAction().setIcon()
 - chrome.browserAction().setBadgeText()
 - chrome.browserAction.setBadgeBackground()

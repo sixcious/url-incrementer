@@ -43,7 +43,7 @@ var Saves = (() => {
     for (let i = 0; i < saves.length; i++) {
       const result = await matchesSave(saves[i], url);
       if (result.matches) {
-        console.log("deleteURL() - splicing url from saves array...");
+        console.log("deleteSave() - splicing an entry from the saves array...");
         saves.splice(i, 1);
         break;
       }
@@ -111,6 +111,17 @@ var Saves = (() => {
     const regexp = await Cryptography.decrypt(save.ciphertext, save.iv),
           matches = new RegExp(regexp).exec(url);
     return { matches: matches };
+  }
+
+  /**
+   * Escapes a regular expression string.
+   *
+   * @param string the regular expression string to escape
+   * @returns {string} the escaped string
+   * @private
+   */
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
   // Return Public Functions

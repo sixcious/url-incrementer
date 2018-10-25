@@ -32,8 +32,6 @@ h3 {
   font-weight: inherit;
 }
 
-
-
 div.checkbox  img {
   margin-left: 3px;
 }
@@ -42,6 +40,10 @@ div.checkbox  img {
 
 #controls {
   margin: 4px;
+}
+
+#controls .column {
+  position: relative;
 }
 
 #controls input[type="image"] {
@@ -57,17 +59,13 @@ div.checkbox  img {
   outline: none;
 }
 
-#controls #controls-icons {
+#controls-icons {
   position: absolute;
   top: -4px;
   right: 4px;
 }
 
-#controls .column {
-  position: relative;
-}
-
-#controls .column span {
+#controls span {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -76,26 +74,25 @@ div.checkbox  img {
   font-size: 16px;
 }
 
-#controls #increment-span-r, #controls #decrement-span-r, #controls #increment-span-s, #controls #decrement-span-s  {
+#increment-span-r, #decrement-span-r, #increment-span-s, #decrement-span-s  {
   color: var(--increment-decrement-m-color);
 }
 
-#controls #increment-span-1, #controls #decrement-span-1 {
+#increment-span-1, #decrement-span-1 {
   color: var(--increment-decrement-1-color);
 }
 
-#controls #increment-span-2, #controls #decrement-span-2 {
+#increment-span-2, #decrement-span-2 {
   color: var(--increment-decrement-2-color);
 }
 
-#controls #increment-span-3, #controls #decrement-span-3 {
+#increment-span-3, #decrement-span-3 {
   color: var(--increment-decrement-3-color);
 }
 
 /* Setup */
 
 #setup {
-/*  width: 516px;*/
   margin: 12px;
   max-width: 530px;
 }

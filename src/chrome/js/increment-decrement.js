@@ -86,7 +86,7 @@ var IncrementDecrement = (() => {
           const selectionStr = selectionInt.toString(base);
           if (selectionInt >= Number.MAX_SAFE_INTEGER) {
             error = chrome.i18n.getMessage("selection_toolarge_error");
-          } else if ((isNaN(selectionInt)) || (selection.toUpperCase() !== ("0".repeat(selection.length - selectionStr.length) + selectionStr.toUpperCase()))) {
+          } else if ((isNaN(selectionInt)) || (selection.toUpperCase() !== ("0".repeat(selection.length > selectionStr.length ? selection.length - selectionStr.length : 0) + selectionStr.toUpperCase()))) {
             error = chrome.i18n.getMessage("selection_base_error");
           }
         }

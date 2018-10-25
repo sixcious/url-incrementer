@@ -158,13 +158,13 @@ var Background = (() => {
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
-      "saveFound": via === "url" || via === "wildcard", "saveType": via === "items" ? "none" : via,
+      "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
       "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
-      "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
+      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
@@ -221,7 +221,7 @@ var Background = (() => {
                 chrome.runtime.openOptionsPage();
               } else if (details.previousVersion <= "5.2") {
                 Permissions.removeAllPermissions();
-              } else if (details.previousVersion >= "5.3") {
+              } else if (details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
                 chrome.storage.sync.set({"TODO": items.keyEnabled}); // TODO items
               }
             });

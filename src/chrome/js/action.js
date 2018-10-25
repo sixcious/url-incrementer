@@ -13,8 +13,8 @@ var Action = (() => {
    * @param action   the action (e.g. "increment")
    * @param caller   String indicating who called this function (e.g. command, popup, message)
    * @param instance the instance for this tab
-   * @param items    the storage items (optional)
-   * @param callback the function callback (optional)
+   * @param items    (optional) the storage items
+   * @param callback (optional) the function callback
    * @public
    */
   async function performAction(action, caller, instance, items, callback) {
@@ -99,12 +99,6 @@ var Action = (() => {
     if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
       Background.setInstance(instance.tabId, instance);
     }
-    // TODO Next Prev:
-    // // Only save next prev instances that are auto enabled and doing auto next or prev:
-    // if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
-    //   console.log("nextPrev() - setting instance in background");
-    //   Background.setInstance(instance.tabId, instance);
-    // }
     chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
   }
 
@@ -202,6 +196,12 @@ var Action = (() => {
         if (results && results[0]) {
           instance.url = results[0];
           updateTab(instance);
+          // TODO Next Prev:
+          // // Only save next prev instances that are auto enabled and doing auto next or prev:
+          // if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
+          //   console.log("nextPrev() - setting instance in background");
+          //   Background.setInstance(instance.tabId, instance);
+          // }
         }
       });
     });
@@ -239,7 +239,7 @@ var Action = (() => {
       }
       if (!instance.enabled && instance.saveFound) { // Don't delete saved URLs if the instance is also enabled
         instance.saveFound = false;
-        Saves.deleteURL(instance.url, "clear");
+        Saves.deleteSave(instance.url, "clear");
       }
     }
     if (instance.autoEnabled) {
@@ -391,7 +391,7 @@ var Action = (() => {
           if (instance.downloadSubfolder) {
             instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+/, function(match) {
               const matchp1 = (Number(match) + 1) + "";
-              return "0".repeat(match.length - matchp1.length) + matchp1;
+              return (match.startsWith("0") && match.length > matchp1.length ? ("0".repeat(match.length - matchp1.length)) : "") + matchp1;
             });
             Background.setInstance(instance.tabId, instance);
           }

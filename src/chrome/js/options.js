@@ -425,7 +425,7 @@ var Options = (() => {
           saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
-        if (saves[i].type === "wildcard" ? saves[i].ciphertext === hash : saves[i].hash === hash) {
+        if (saves[i].type === "url" ? saves[i].hash === hash : saves[i].ciphertext === hash) {
           console.log("deleteSave() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
           saves.splice(i, 1);
           chrome.storage.local.set({saves: saves}, function() {
