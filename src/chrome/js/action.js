@@ -327,7 +327,7 @@ var Action = (() => {
    */
   function auto(instance) {
     let actionPerformed = false;
-    if (instance && instance.autoEnabled) {
+    if (instance.autoEnabled) {
       Auto.pauseOrResumeAutoTimer(instance);
       instance = Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
@@ -340,7 +340,7 @@ var Action = (() => {
    * Performs a download action.
    *
    * @param instance the instance for this tab
-   * @param callback the function callback (optional) - called by auto
+   * @param callback (optional) the function callback - only called by auto
    * @private
    */
   function download(instance, callback) {
