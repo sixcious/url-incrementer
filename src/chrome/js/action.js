@@ -21,8 +21,7 @@ var Action = (() => {
     console.log("performAction() - action=" + action + ", caller=" + caller);
     items = items ? items : await Promisify.getItems();
     let actionPerformed = false;
-    // Pre-Perform Action:
-    // Handle Auto:
+    // Pre-Perform Action - First, Handle Auto:
     if (instance.autoEnabled) {
       // In case auto has been paused, get the most recent instance from Background
       instance = Background.getInstance(instance.tabId) || instance;
@@ -43,7 +42,8 @@ var Action = (() => {
     // If download enabled and the action is updating the tab, send a message to the popup to update the download preview (assuming it's open)
     if (instance.downloadEnabled && ["increment", "decrement", "next", "prev"].includes(action)) {
       chrome.tabs.onUpdated.addListener(function downloadPreviewListener(tabId, changeInfo, tab) {
-        if (changeInfo.status === "complete") { // Send this message at "complete" because it doesn't refresh properly at "loading" sometimes (even though the download script runs at document_end)
+        // Send this message at "complete" because it doesn't refresh properly at "loading" sometimes (even though the download script runs at document_end)
+        if (changeInfo.status === "complete") {
           console.log("downloadPreviewListener() - the chrome.tabs.onUpdated download preview listener is on!");
           chrome.runtime.sendMessage({greeting: "updatePopupDownloadPreview", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
           chrome.tabs.onUpdated.removeListener(downloadPreviewListener);
@@ -79,8 +79,7 @@ var Action = (() => {
       default:
         break;
     }
-    // Post-Perform Action:
-    // Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled)
+    // Post-Perform Action - Icon Feedback if action was performed and other conditions are met (e.g. we don't show feedback if auto is enabled):
     if (items.iconFeedbackEnabled && actionPerformed && !(instance.autoEnabled || (caller === "auto" && instance.autoRepeat) || caller === "popupClearBeforeSet" || caller === "tabRemovedListener")) {
       // Reset Multi Action to the appropriate badge (increment becomes "incrementm", increment1 becomes "increment")
       action = instance.multiEnabled ? action === "increment" || action === "decrement" ? action + "m" : action === "increment1" || action === "decrement1" ? action.slice(0, -1) : action : action;
@@ -96,7 +95,8 @@ var Action = (() => {
    */
   function updateTab(instance) {
     chrome.tabs.update(instance.tabId, {url: instance.url});
-    if (instance.enabled) { // Don't store Quick Instances (Instance is never enabled in quick mode)
+    // Don't store Quick Instances (Instance is never enabled in quick mode)
+    if (instance.enabled) {
       Background.setInstance(instance.tabId, instance);
     }
     chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
@@ -143,16 +143,17 @@ var Action = (() => {
     IncrementDecrement.incrementDecrement(action, instance);
     if (errorSkipRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      // No need to check for CORS because we are running in the background in Enhanced Mode <all_urls> permissions)
       fetch(instance.url, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         if (response && response.status &&
           ((instance.errorCodes && (
             (instance.errorCodes.includes("404") && response.status === 404) ||
-            (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) || // Note: 301,302,303,307,308 return response.status of 200 and must be checked by response.redirected
+            // Note: 301,302,303,307,308 return response.status of 200 and must be checked by response.redirected
+            (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) ||
             (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
             (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
             (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
-              (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) { // response.status + "" because custom array stores string inputs
+            // response.status + "" because custom array stores string inputs
+            (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) {
           console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status + ", response.redirected=" + response.redirected + ", response.ok=" + response.ok);
           if (!instance.autoEnabled) {
             Background.setBadge(instance.tabId, "skip", true, response.redirected ? "RED" : response.status + "");
@@ -195,9 +196,6 @@ var Action = (() => {
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
           instance.url = results[0];
-          // TODO...
-          // Set saves next prev instances that are auto enabled in updateTab()
-          // instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")
           updateTab(instance);
         }
       });
@@ -218,7 +216,8 @@ var Action = (() => {
     let actionPerformed = false;
     // Handle AUTO Repeat
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
-      Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance))); // Create a new deep copy of the instance for the repeat
+      // Create a new deep copy of the instance for the repeat
+      Auto.repeatAutoTimer(JSON.parse(JSON.stringify(instance)));
       return actionPerformed;
     }
     // Prevents a clear badge from displaying if there is no instance (e.g. in quick shortcuts mode)
@@ -234,7 +233,8 @@ var Action = (() => {
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
       }
-      if (!instance.enabled && instance.saveFound) { // Don't delete saved URLs if the instance is also enabled
+      // Don't delete saved URLs if the instance is also enabled
+      if (!instance.enabled && instance.saveFound) {
         instance.saveFound = false;
         Saves.deleteSave(instance.url, "clear");
       }
@@ -270,22 +270,29 @@ var Action = (() => {
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
-      instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
-      // Multi:
+      // Multi
       if (instance.multiEnabled) {
         for (let i = 1; i <= instance.multiCount; i++) {
           instance.multi[i].selection = instance.multi[i].startingSelection;
           instance.multi[i].selectionStart = instance.multi[i].startingSelectionStart;
         }
       }
-      // Auto:
-      instance.autoRepeating = false;
-      instance.autoTimes = instance.autoTimesOriginal;
-      // Array:
-      instance.urls = [];
-      const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
-      instance.urls = precalculateProps.urls;
-      instance.urlsCurrentIndex = precalculateProps.currentIndex;
+      // Auto
+      if (instance.autoEnabled) {
+        instance.autoRepeating = false;
+        instance.autoTimes = instance.autoTimesOriginal;
+      }
+      // Array
+      if (instance.urls && instance.urls.length > 0) {
+        instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
+        // Shuffle
+        if (instance.shuffleURLs) {
+          instance.urls = [];
+          const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
+          instance.urls = precalculateProps.urls;
+          instance.urlsCurrentIndex = precalculateProps.currentIndex;
+        }
+      }
       updateTab(instance);
     }
     return actionPerformed;
@@ -301,7 +308,8 @@ var Action = (() => {
     let actionPerformed = true;
     switch (instance.toolkitTool) {
       case "crawl":
-        if (chrome.windows && chrome.windows.create) { // Firefox Android: chrome.windows not supported
+        // Firefox Android: chrome.windows not supported
+        if (chrome.windows && chrome.windows.create) {
           chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
             instance.tabId = window.tabs[0].id;
             Background.setInstance(instance.tabId, instance);
@@ -329,7 +337,8 @@ var Action = (() => {
     let actionPerformed = false;
     if (instance.autoEnabled) {
       Auto.pauseOrResumeAutoTimer(instance);
-      instance = Background.getInstance(instance.tabId); // Get the updated pause or resume state set by auto
+      // Get the updated pause or resume state set by auto
+      instance = Background.getInstance(instance.tabId);
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
       actionPerformed = true;
     }
@@ -405,4 +414,5 @@ var Action = (() => {
   return {
     performAction: performAction
   };
+
 })();

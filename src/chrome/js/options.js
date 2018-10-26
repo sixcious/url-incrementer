@@ -569,4 +569,5 @@ var Options = (() => {
   }
 
   init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+
 })();

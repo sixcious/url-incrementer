@@ -58,4 +58,5 @@ var Promisify = (() => {
     getTabs: getTabs,
     getBackgroundPage: getBackgroundPage
   };
+
 })();

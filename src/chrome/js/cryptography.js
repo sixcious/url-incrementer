@@ -17,7 +17,8 @@ var Cryptography = (() => {
    * @public
    */
   async function hash(text, salt) {
-    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text), "PBKDF2", false, ["deriveBits"]); // Firefox: Hangs if the text is empty
+    // Firefox: Hangs if the text is empty
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text), "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1000 }, key, 512);
     return u8a2b64(new Uint8Array(bits));
   }
@@ -94,4 +95,5 @@ var Cryptography = (() => {
     encrypt: encrypt,
     decrypt: decrypt
   };
+
 })();

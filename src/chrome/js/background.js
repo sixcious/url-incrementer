@@ -111,7 +111,8 @@ var Background = (() => {
    * @public
    */
   function setInstance(tabId, instance) {
-    instances.set(tabId, JSON.parse(JSON.stringify(instance))); // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
+    // Firefox: Set a deep-copy of the instance via serialization to avoid the Firefox "can't access dead object" error
+    instances.set(tabId, JSON.parse(JSON.stringify(instance)));
     if (!persistent) {
       makePersistent();
     }
@@ -160,7 +161,7 @@ var Background = (() => {
       "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
       "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
-      //"startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
+      // "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
@@ -222,7 +223,7 @@ var Background = (() => {
               } else if (details.previousVersion <= "5.2") {
                 Permissions.removeAllPermissions();
               } else if (details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
-                chrome.storage.sync.set({"TODO": items.keyEnabled}); // TODO items
+                chrome.storage.sync.set({"TODO": items.keyEnabled});
               }
             });
           });
@@ -268,7 +269,8 @@ var Background = (() => {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("messageListener() - request.greeting=" + request.greeting);
-    sender.tab.url = sender.url; // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+    // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+    sender.tab.url = sender.url;
     if (request && request.greeting === "performAction") {
       const items = await Promisify.getItems();
       const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
@@ -289,7 +291,7 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg", //"decebmdlceenceecblpfjanoocfcmjai",
+    const URL_INCREMENT_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
@@ -311,7 +313,8 @@ var Background = (() => {
       const items = await Promisify.getItems();
       if (!items.permissionsInternalShortcuts) {
         const tabs = await Promisify.getTabs();
-        if (tabs && tabs[0]) { // The tab may not exist if command is called while in popup window
+        // The tab may not exist if command is called while in popup window
+        if (tabs && tabs[0]) {
           const instance = getInstance(tabs[0].id) || await buildInstance(tabs[0], items);
           if (items.commandsQuickEnabled || (instance && (instance.enabled || instance.saveFound))) {
             Action.performAction(command, "command", instance, items);
@@ -330,15 +333,16 @@ var Background = (() => {
   async function makePersistent() {
     const tabs = await Promisify.getTabs({}),
           tabIds = tabs.map(tab => tab.id);
-    // console.log("makePersistent() - tabIds=" + tabIds);
     [...instances.keys()].forEach(function(key) {
       if (!tabIds.includes(key)) {
-        Action.performAction("clear", "tabRemovedListener", getInstance(key)); // Tab was removed so clear instance
+        // Tab was removed so clear instance
+        Action.performAction("clear", "tabRemovedListener", getInstance(key));
       }
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       persistent = true;
-      setTimeout(makePersistent, 3000); // Checking every 3 seconds keeps the background persistent
+      // Checking every 3 seconds keeps the background persistent
+      setTimeout(makePersistent, 3000);
     } else {
       persistent = false;
     }
@@ -349,7 +353,8 @@ var Background = (() => {
   chrome.runtime.onStartup.addListener(startupListener);
   chrome.runtime.onMessage.addListener(messageListener);
   chrome.runtime.onMessageExternal.addListener(messageExternalListener);
-  if (chrome.commands) { chrome.commands.onCommand.addListener(commandListener); } // Firefox Android: chrome.commands is unsupported
+  // Firefox Android: chrome.commands is unsupported
+  if (chrome.commands) { chrome.commands.onCommand.addListener(commandListener); }
 
   // Return Public Functions
   return {
@@ -362,4 +367,5 @@ var Background = (() => {
     buildInstance: buildInstance,
     setBadge: setBadge
   };
+
 })();

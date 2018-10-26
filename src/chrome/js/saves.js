@@ -87,7 +87,7 @@ var Saves = (() => {
    */
   async function matchesURL(save, url) {
     const url1 = url.substring(0, save.selectionStart),
-          url2 = url.substring(url.length - save.selectionEnd), //url.slice(-save.url2length);
+          url2 = url.substring(url.length - save.selectionEnd),
           hash = await Cryptography.hash(url1 + url2, save.salt),
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
@@ -129,4 +129,5 @@ var Saves = (() => {
     deleteSave: deleteSave,
     matchesSave: matchesSave
   };
+
 })();

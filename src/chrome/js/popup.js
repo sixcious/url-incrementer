@@ -466,12 +466,10 @@ var Popup = (() => {
     const quantity =  instance.toolkitQuantity;
     const id = quantity - quantityRemaining;
     let result,
-        status,
-        statusText;
+        status;
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        //console.log(response.headers.entries());
         for (let header of response.headers) {
           for (let h of header) {
             console.log(h);
@@ -479,7 +477,6 @@ var Popup = (() => {
         }
         console.log(response.type);
         status = response.status;
-        //statusText = response.statusText;
         result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "oK" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
       }).catch(e => {
         status = e;
@@ -491,7 +488,7 @@ var Popup = (() => {
         tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
         td1.style.color = td2.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
         td1.textContent = result;
-        td2.textContent = status;// + (statusText ? " (" + statusText + ")" : "");
+        td2.textContent = status;
         instance.toolkitQuantityRemaining--;
         DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
         DOM["#crawl-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
@@ -1120,4 +1117,5 @@ var Popup = (() => {
 
   chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
   init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+
 })();

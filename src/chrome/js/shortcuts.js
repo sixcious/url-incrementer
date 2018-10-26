@@ -7,13 +7,19 @@
 
 var Shortcuts = (() => {
 
-  const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]); // A map of the KeyboardEvent.key modifiers and their bits
+  // A map of the KeyboardEvent.key modifiers and their bits
+  const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]);
 
-  let button = undefined, // the current mouse button on mousedown
-      buttons3 = false, // boolean flag indicating if the right + left mouse buttons are clicked simultaneously
-      clicks = 0, // current consecutive click count for a single mouse button
-      timeouts = {}, // reusable global timeouts for detecting multiple mouse clicks
-      items = {}; // storage items cache
+  // The current mouse button on mousedown
+  let button = undefined,
+      // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously
+      buttons3 = false,
+      // The current consecutive click count for a single mouse button
+      clicks = 0,
+      // A reusable global timeouts for detecting multiple mouse clicks
+      timeouts = {},
+      // The storage items cache
+      items = {};
 
   /**
    * Sets the items storage cache.
@@ -57,7 +63,8 @@ var Shortcuts = (() => {
     clearTimeout(timeouts.mouseup2);
     if (event.buttons === 3) {
       buttons3 = true;
-      event.preventDefault(); // Avoid selecting text
+      // Avoid selecting text with preventDefault()
+      event.preventDefault();
     } else {
       buttons3 = false;
     }
@@ -193,7 +200,7 @@ var Shortcuts = (() => {
         }
         // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-          console.log("chrome.runtime.onMessage() - request.greeting=" + request.greeting);
+          console.log("messageListener() - request.greeting=" + request.greeting);
           switch (request.greeting) {
             case "addKeyListener": addKeyListener(); break;
             case "removeKeyListener": removeKeyListener(); break;
@@ -205,4 +212,5 @@ var Shortcuts = (() => {
     });
   }
   console.log("shortcuts.js content script executed");
+
 })();

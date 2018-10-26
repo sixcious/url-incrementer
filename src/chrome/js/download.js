@@ -42,12 +42,15 @@ var Download = (() => {
    * @public
    */
   function findDownloadURLs(strategy, extensions, tags, attributes, selector, includes, excludes) {
-    const items = new Map(); // intermediate return value, we use a Map to avoid potential duplicate URLs
-    let results = [], // final return value from the map, array because we can't return a map from a content script
+    // items is an intermediate return value, we use a Map to avoid potential duplicate URLs, but we can't return a map
+    // so results is the final return value from the map (an array because we can't return a map from a content script)
+    const items = new Map();
+    let results = [],
         selectorbuilder = "";
     switch (strategy) {
       case "all":
-      case "extensions": // Noticed issues with using a selectorbuilder based on the extensions so go with all for this for now
+      // Noticed issues with using a selectorbuilder based on the extensions so put it with all for now
+      case "extensions":
         for (const urlattribute of URL_ATTRIBUTES) {
           selectorbuilder += (selectorbuilder !== "" ? "," : "") + "[" + urlattribute + "]";
         }
@@ -95,7 +98,8 @@ var Download = (() => {
   function findPageURL(includes, excludes, items) {
     const url = window.location.href;
     buildItems(items, undefined, "", url, "page", undefined, undefined, undefined, undefined, includes, excludes);
-    return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
+    // Convert Map values into Array for return value back (Map/Set can't be used)
+    return [...items.values()];
   }
 
   /**
@@ -143,7 +147,8 @@ var Download = (() => {
         }
       }
     }
-    return [...items.values()]; // Convert Map values into Array for return value back (Map/Set can't be used)
+    // Convert Map values into Array for return value back (Map/Set can't be used)
+    return [...items.values()];
   }
 
   /**
@@ -246,7 +251,8 @@ var Download = (() => {
       for (const property of URL_STYLE_PROPERTIES) {
         if (style[property]) {
           const match = regex.exec(style[property]);
-          const url = match ? match[2] ? match[2] : "" : ""; // TODO: Check other groups from this regex?
+          // TODO: Check other groups from this regex?
+          const url = match ? match[2] ? match[2] : "" : "";
           console.log("extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
           urls.push(url);
         }
@@ -295,9 +301,9 @@ var Download = (() => {
   function findExtension(filenameAndExtension) {
     let extension = "";
     if (filenameAndExtension && filenameAndExtension.includes(".")) {
-      extension = filenameAndExtension.split('.').pop(); // TODO: Decide on differentiating extensions with multiple periods
-      //extension = filenameAndExtension.substr(filenameAndExtension.indexOf(".") + 1);
-      if (!isValidExtension(extension)) { // If extension is not valid, throw it out
+      extension = filenameAndExtension.split('.').pop();
+      // If extension is not valid, throw it out
+      if (!isValidExtension(extension)) {
         extension = "";
       }
     }
@@ -333,4 +339,5 @@ var Download = (() => {
     previewDownloadURLs: previewDownloadURLs,
     findDownloadURLs: findDownloadURLs
   };
+
 })();

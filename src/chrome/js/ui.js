@@ -9,10 +9,10 @@ var UI = (() => {
 
   /**
    * Generates an alert to display messages.
-   * 
+   *
    * This function is derived from the sample Google extension, Proxy Settings,
    * by Mike West.
-   * 
+   *
    * @param messages the messages array to display, line by line
    * @param callback (optional) the callback function to return execution to
    * @public
@@ -50,4 +50,5 @@ var UI = (() => {
     generateAlert: generateAlert,
     clickHoverCss: clickHoverCss
   };
+
 })();

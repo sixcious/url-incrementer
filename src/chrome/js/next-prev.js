@@ -26,11 +26,13 @@ var NextPrev = (() => {
   function findNextPrevURL(keywords, priority, sameDomain) {
     console.log("findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
     const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
-          algorithms = [ // Note: the order matters, the highest priority algorithms are first when they are iterated below
+          // Note: the order matters, the highest priority algorithms are first when they are iterated below
+          algorithms = [
             { "type": "important", "subtypes": ["relAttribute"] },
             { "type": priority,    "subtypes": ["equals"] },
             { "type": priority2,   "subtypes": ["equals"] },
-            { "type": priority,    "subtypes": ["startsWith", "includes"] }, // Combined for priority on keywords over subtypes
+            // Combined startsWith and includes for priority on keywords instead of the subtypes
+            { "type": priority,    "subtypes": ["startsWith", "includes"] },
             { "type": priority2,   "subtypes": ["startsWith", "includes"] }
           ];
     buildURLs(keywords, sameDomain);
@@ -74,7 +76,8 @@ var NextPrev = (() => {
     const elements = document.querySelectorAll("link[href], a[href], area[href]"),
           hostname = window.location.hostname;
     for (const element of elements) {
-      try { // Check if URL is in same domain if enabled, wrap in try/catch in case of exceptions with URL object
+      // Check if URL is in same domain if enabled, wrap in try/catch in case of exceptions with URL object
+      try {
         const url = new URL(element.href);
         if (sameDomain && url.hostname !== hostname) {
           continue;
@@ -103,7 +106,8 @@ var NextPrev = (() => {
   function parseText(keywords, type, href, text, attribute) {
     // Iterate over this direction's keywords and build out the urls object's maps
     for (const keyword of keywords) {
-      if (attribute && attribute === "rel" && text === keyword) { // important e.g. rel="next" or rel="prev"
+      // Important e.g. rel="next" or rel="prev"
+      if (attribute && attribute === "rel" && text === keyword) {
         urls.important.relAttribute.set(keyword, href);
       } else if (text === keyword) {
         urls[type].equals.set(keyword, href);
@@ -119,4 +123,5 @@ var NextPrev = (() => {
   return {
     findNextPrevURL: findNextPrevURL
   };
+
 })();

@@ -9,7 +9,7 @@ With empty string:
 2. Replace single-line comments: \s+//.*
 With empty string:
 
-3. Replace console.log statements: ^\s*console.log.*$
+3. Replace console.log statements: ^\s*console.log.*$\r\n
 With empty string:
 
 4. Replace multiple empty lines: ^(\s*\r\n){2,}

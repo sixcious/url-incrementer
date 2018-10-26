@@ -50,8 +50,8 @@ var Auto = (() => {
     removeAutoListener();
     // Don't need to set the badge if the tab is being removed
     if (caller !== "tabRemovedListener") {
-      // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set)
-      if (caller !== "popupClearBeforeSet" && !instance.autoRepeat) { // Don't do any badge setting if auto repeat is on
+      // Don't set the clear badge if popup is just updating the instance (ruins auto badge if auto is re-set) or any badge setting if auto repeat is on
+      if (caller !== "popupClearBeforeSet" && !instance.autoRepeat) {
         Background.setBadge(instance.tabId, "clear", true);
       } else {
         Background.setBadge(instance.tabId, "default", false);
@@ -75,16 +75,21 @@ var Auto = (() => {
       } else {
         autoTimer.resume();
         instance.autoPaused = false;
-        if (instance.autoBadge === "times" && instance.autoRepeating) { // The small window when the auto timer is repeating (REP), show repeat badge if it's times
+        // The small window when the auto timer is repeating (REP), show repeat badge if it's times
+        if (instance.autoBadge === "times" && instance.autoRepeating) {
           Background.setBadge(instance.tabId, "autorepeat", false);
-        } else if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use normal "auto" badge at start even if badge is times
+        } else if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) {
+          // We always use normal "auto" badge at start even if badge is times
           Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
-        } else { // All other conditions, show the normal auto badge
+        } else {
+          // All other conditions, show the normal auto badge
           Background.setBadge(instance.tabId, "auto", false);
         }
       }
-      Background.setInstance(instance.tabId, instance); // necessary: update instance.autoPaused boolean state
-      autoTimers.set(instance.tabId, autoTimer); // necessary? update autoTimers paused state
+      // necessary: update instance.autoPaused boolean state
+      Background.setInstance(instance.tabId, instance);
+      // necessary?: update autoTimers paused state
+      autoTimers.set(instance.tabId, autoTimer);
     }
   }
 
@@ -238,14 +243,16 @@ var Auto = (() => {
         // If autoTimes is still greater than 0, set the auto timeout, else clear the instance
         // Note: Remember, the first time Auto is already done via Popup calling setAutoTimeout()
         else if (instance.autoTimes > 0) {
-          clearAutoTimeout(instance); // Prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
+          // Clearing first prevents adding multiple timeouts (e.g. if user manually navigated the auto tab)
+          clearAutoTimeout(instance);
           setAutoTimeout(instance);
         } else {
           // Note: clearing will clearAutoTimeout and removeAutoListener, so we don't have to do it here
           Action.performAction("clear", "auto", instance);
         }
       }
-    } else if (complete) { // Else this isn't an auto instance tab, removes any stray auto listeners that may possibly exist
+    } else if (complete) {
+      // Else this isn't an auto instance tab, removes any stray auto listeners that may possibly exist
       removeAutoListener();
     }
   }
@@ -299,4 +306,5 @@ var Auto = (() => {
     pauseOrResumeAutoTimer: pauseOrResumeAutoTimer,
     repeatAutoTimer: repeatAutoTimer
   };
+
 })();

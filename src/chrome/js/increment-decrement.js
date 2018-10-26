@@ -21,15 +21,19 @@ var IncrementDecrement = (() => {
   function findSelection(url, preference, selectionCustom, previousException) {
     try {
       if (preference === "custom" && selectionCustom) {
-        const custom = new RegExp(selectionCustom.pattern, selectionCustom.flags).exec(url); // TODO: Validate custom regex with current url for alphanumeric selection
+        // TODO: Validate custom regex with current url for alphanumeric selection
+        const custom = new RegExp(selectionCustom.pattern, selectionCustom.flags).exec(url);
         if (custom && custom[selectionCustom.group]) { return {selection: custom[selectionCustom.group].substring(selectionCustom.index), selectionStart: custom.index + selectionCustom.index}; }
       }
       if (preference === "prefixes" || preference === "custom") {
-        const page = /page=\d+/i.exec(url); // page= lookbehind regex: /(?<=page)=(\d+)/i
+        // page= lookbehind regex: /(?<=page)=(\d+)/i
+        const page = /page=\d+/i.exec(url);
         if (page) { return {selection: page[0].substring(5), selectionStart: page.index + 5}; }
-        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url); // p|id|next= lookbehind regex: /(?<=p|id|next)=(\d+)/i
+        // p|id|next= lookbehind regex: /(?<=p|id|next)=(\d+)/i
+        const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url);
         if (terms) { return {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
-        const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url); // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
+        // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
+        const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url);
         if (prefixes) { return {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
       }
       if (preference === "lastnumber" || preference === "prefixes" || preference === "custom") {
@@ -76,7 +80,8 @@ var IncrementDecrement = (() => {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
         }
         break;
-      default: // Base 2-36
+      // Base 2-36
+      default:
         if (base < 2 || base > 36) {
           error = chrome.i18n.getMessage("base_invalid_error");
         } else if (!/^[a-z0-9]+$/i.test(selection)) {
@@ -142,7 +147,7 @@ var IncrementDecrement = (() => {
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
         break;
-      // case 2-36
+      // Base 2-36
       default:
         selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
         break;
@@ -168,7 +173,8 @@ var IncrementDecrement = (() => {
    */
   function incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros) {
     let selectionmod;
-    const selectionint = parseInt(selection, base); // parseInt base range is 2-36
+    // parseInt base range is 2-36
+    const selectionint = parseInt(selection, base);
     // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
     selectionmod = action.startsWith("increment") ? (selectionint + interval <= Number.MAX_SAFE_INTEGER ? selectionint + interval : Number.MAX_SAFE_INTEGER).toString(base) :
                    action.startsWith("decrement") ? (selectionint - interval >= 0 ? selectionint - interval : 0).toString(base) :
@@ -192,10 +198,8 @@ var IncrementDecrement = (() => {
     for (let i = selection.length - 1, digit = 0; i >= 0; i--, digit++) {
       const num = alphabet.indexOf(selection[i]);
       base10num += num * (base ** digit);
-      console.log("num=" + num);
-      console.log("base10num=" + num);
     }
-    console.log("base10num done decode=" + base10num);
+    console.log("incrementDecrementBaseCustom() - done decoding, base10num=" + base10num);
     // Increment
     base10num += action.startsWith("increment") ? interval : -interval;
     // Part 2 Encode Decimal to Base
@@ -216,8 +220,7 @@ var IncrementDecrement = (() => {
     if (leadingZeros && selection.length > selectionmod.length) {
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
-    console.log("base10num done encode=" + base10num);
-    console.log("selectionmod=" + selectionmod);
+    console.log("incrementDecrementBaseCustom() - done encoding, base10num done encode=" + base10num + ", selectionmod=" + selectionmod);
     return selectionmod;
   }
 
@@ -267,27 +270,26 @@ var IncrementDecrementMulti = (() => {
     if (instance && instance.multiEnabled) {
       // Update the multi selection part's to the new selection
       instance.multi[instance.multiPart].selection = selectionmod;
-      // If after incrementing/decrementing, the url length changed update the other parts' selectionStart
-      //if (instance.url && instance.url.length !== urlmod.length) {
-        const urlLengthDiff = instance.url.length - urlmod.length; // Handles both positive and negative changes (e.g. URL became shorter or longer)
-        const thisPartSelectionStart = instance.multi[instance.multiPart].selectionStart;
-        console.log("multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
-        for (let i = 1; i <= instance.multiCount; i++) {
-          if (i !== instance.multiPart) {
-            // If the i part comes after this part in the URL, adjust the selectionStarts of the i part
-            if (instance.multi[i].selectionStart > thisPartSelectionStart) {
-              console.log("multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
-              instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
-            }
-            // Adjust the other multi parts' selections in case they overlap with this multiPart's selection
-            if (instance.multi[i].selectionStart === thisPartSelectionStart && instance.multi[i].selection.length === instance.multi[instance.multiPart].selection.length + urlLengthDiff) {
-              instance.multi[i].selection = selectionmod;
-            } else {
-              instance.multi[i].selection = urlmod.substring(instance.multi[i].selectionStart, instance.multi[i].selectionStart + instance.multi[i].selection.length);
-            }
+      // Determine if the url length changed (if so, update the other parts' selectionStart) and adjust other part selections (if they overlap with this part)
+      // urlLengthDiff handles both positive and negative changes (e.g. if URL became shorter OR longer)
+      const urlLengthDiff = instance.url.length - urlmod.length;
+      const thisPartSelectionStart = instance.multi[instance.multiPart].selectionStart;
+      console.log("multiPost() - part=" + instance.multiPart + ", urlLengthDiff=" + urlLengthDiff + "thisPartSelectionStart=" + thisPartSelectionStart);
+      for (let i = 1; i <= instance.multiCount; i++) {
+        if (i !== instance.multiPart) {
+          // If the i part comes after this part in the URL, adjust the selectionStarts of the i part
+          if (instance.multi[i].selectionStart > thisPartSelectionStart) {
+            console.log("multiPost() - adjusted part" + i + "'s selectionStart from: " + instance.multi[i].selectionStart + " to:" + (instance.multi[i].selectionStart - urlLengthDiff));
+            instance.multi[i].selectionStart = instance.multi[i].selectionStart - urlLengthDiff;
+          }
+          // Adjust the other multi parts' selections in case they overlap with this multiPart's selection
+          if (instance.multi[i].selectionStart === thisPartSelectionStart && instance.multi[i].selection.length === instance.multi[instance.multiPart].selection.length + urlLengthDiff) {
+            instance.multi[i].selection = selectionmod;
+          } else {
+            instance.multi[i].selection = urlmod.substring(instance.multi[i].selectionStart, instance.multi[i].selectionStart + instance.multi[i].selection.length);
           }
         }
-      //}
+      }
     }
   }
 
@@ -326,7 +328,7 @@ var IncrementDecrementDate = (() => {
       const date2 = incdecdate(action, date, dateFormat, interval);
       selection2 = date2str(date2, dateFormat, parts.dateFormatParts);
     } catch(e) {
-      console.log("IncrementDecrement.incrementDecrementDate() - exception encountered=" + e);
+      console.log("incrementDecrementDate() - exception encountered=" + e);
       selection2 = "DateError";
     }
     return selection2;
@@ -449,14 +451,10 @@ var IncrementDecrementArray = (() => {
    * @public
    */
   function stepThruURLs(action, instance) {
-    // console.log("stepThruURLs() - performing increment/decrement on the urls array...");
-    const urlsLength = instance.urls.length;
-   // console.log("stepThruURLs() - action === instance.autoAction=" + (action === instance.autoAction) + ", action=" + action);
-   // console.log("stepThruURLs() - instance.urlsCurrentIndex + 1 < urlsLength=" + (instance.urlsCurrentIndex + 1 < urlsLength) +", instance.urlsCurrentIndex=" + instance.urlsCurrentIndex + ", urlsLength=" + urlsLength);
     // Get the urlProps object from the next or previous position in the urls array and update the instance
     const urlProps =
       (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
-        instance.urls[instance.urlsCurrentIndex + 1 < urlsLength ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : urlsLength - 1] :
+        instance.urls[instance.urlsCurrentIndex + 1 < instance.urls.length ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : instance.urls.length - 1] :
         instance.urls[instance.urlsCurrentIndex - 1 >= 0 ? !instance.autoEnabled ? --instance.urlsCurrentIndex : instance.urlsCurrentIndex-- : 0];
     instance.url = urlProps.urlmod;
     instance.selection = urlProps.selectionmod;
@@ -594,4 +592,5 @@ var IncrementDecrementArray = (() => {
     stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };
+
 })();
