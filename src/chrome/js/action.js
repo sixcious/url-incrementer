@@ -267,14 +267,6 @@ var Action = (() => {
     let actionPerformed = false;
     if (instance.enabled && instance.startingURL) {
       actionPerformed = true;
-      // Auto Case 1: If Auto is calling return, it is completing a repeat loop
-      if (caller === "auto") {
-        instance.autoRepeating = false;
-      }
-      // Auto Case 2: User is performing return while auto is on
-      if (caller !== "auto" && instance.autoEnabled) {
-        instance.autoTimes = instance.autoTimesOriginal;
-      }
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
@@ -286,6 +278,14 @@ var Action = (() => {
           instance.multi[i].selectionStart = instance.multi[i].startingSelectionStart;
         }
       }
+      // Auto:
+      instance.autoRepeating = false;
+      instance.autoTimes = instance.autoTimesOriginal;
+      // Array:
+      instance.urls = [];
+      const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
+      instance.urls = precalculateProps.urls;
+      instance.urlsCurrentIndex = precalculateProps.currentIndex;
       updateTab(instance);
     }
     return actionPerformed;

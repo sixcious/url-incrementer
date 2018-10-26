@@ -75,9 +75,9 @@ var Auto = (() => {
       } else {
         autoTimer.resume();
         instance.autoPaused = false;
-        if (instance.autoRepeating) { // The small window when the auto timer is repeating (REP), always show the autorepeat badge
+        if (instance.autoBadge === "times" && instance.autoRepeating) { // The small window when the auto timer is repeating (REP), show repeat badge if it's times
           Background.setBadge(instance.tabId, "autorepeat", false);
-        } else  if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use normal "auto" badge at start even if badge is times
+        } else if (instance.autoBadge === "times" && instance.autoTimes !== instance.autoTimesOriginal) { // We always use normal "auto" badge at start even if badge is times
           Background.setBadge(instance.tabId, "autotimes", false, instance.autoTimes + "");
         } else { // All other conditions, show the normal auto badge
           Background.setBadge(instance.tabId, "auto", false);
@@ -91,6 +91,13 @@ var Auto = (() => {
   /**
    * Repeats the instance's auto timer.
    *
+   * Auto Repeat Workflow:
+   * 1. Action.clear() calls Auto.repeatAutoTimer() with a new deep copy of the instance
+   * 2. Auto.repeatAutoTimer() sets autoRepeating to true, sets the instance in Background, and calls Auto.startAutoTimer()
+   * 3. Auto.startAutoTimer() calls Auto.setTimeout()
+   * 4. Auto.setTimeout() calls Action.returnToStart()
+   * 5. Action.returnToStart() sets autoRepeating to false, resets the instance properties, resets multi
+   *
    * @param instance the instance's auto timer to repeat
    * @public
    */
@@ -98,14 +105,6 @@ var Auto = (() => {
     console.log("repeatAutoTimer() - repeating auto timer");
     instance.autoRepeating = true;
     instance.autoRepeatCount++;
-    instance.autoTimes = instance.autoTimesOriginal;
-    instance.url = instance.startingURL;
-    instance.selection = instance.startingSelection;
-    instance.selectionStart = instance.startingSelectionStart;
-    instance.urls = [];
-    const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
-    instance.urls = precalculateProps.urls;
-    instance.urlsCurrentIndex = precalculateProps.currentIndex;
     Background.setInstance(instance.tabId, instance);
     startAutoTimer(instance);
   }
