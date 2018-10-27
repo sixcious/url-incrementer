@@ -1,20 +1,8 @@
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/darku/128.png" width="128" height="128" title="URL Incrementer">
+
 # URL Incrementer User Guide
 
-![URL Incrementer](../_assets/img/darku/128.png?raw=true "URL Incrementer")
-
-- [Help and Support](#help-and-support)
-- [Infinite Scrolling (Scroll Incrementing)](#infinite-scrolling-scroll-incrementing)
-- [Auto Incrementing](#auto-incrementing)
-- [Download Incrementing (Multi-Page Downloading)](#download-incrementing-multiple-page-downloading)
-- [URLI's Toolkit](#urlis-toolkit)
-- [Multi Incrementing](#multi-incrementing)
-- [Date Incrementing](#date-incrementing)
-- [Error Skipping](#error-skipping)
-- [Saving URLs](#saving-urls)
-- [Shuffle URLs](#shuffle-urls)
-- [Bases and Custom Bases](#bases-and-custom-bases)
-
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/alt/urli-uncompressed.png" width="196" height="196" align="right" title="URLI">
 
 ## Help and Support
 Is something not working right, or is there a feature that you'd like to see in URLI?

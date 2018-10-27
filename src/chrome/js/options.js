@@ -7,16 +7,16 @@
 
 var Options = (() => {
 
-  const DOM = {}, // Map to cache DOM elements: key=id, value=element
-        KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]), // A map of the KeyboardEvent.key modifiers and their bits
+  const DOM = {},
+        KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]),
         shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
 
-  let backgroundPage = {}, // Background page cache
-      key = {}, // Reusable key to store the key's event modifiers and code on keydown for keyup
-      timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
+  let backgroundPage = {},
+      key = {},
+      timeouts = {};
 
   /**
-   * Initializes the Options window.
+   * Initializes the Options window. This script is set to defer so the DOM is guaranteed to be parsed by this point.
    *
    * @private
    */
@@ -54,7 +54,7 @@ var Options = (() => {
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
     DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
     DOM["#saved-urls-wildcard-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-none"; });
-    DOM["#saved-urls-wildcard-save-button"].addEventListener("click", function() { addSavedURLWildcard(); });
+    DOM["#saved-urls-wildcard-save-button"].addEventListener("click", function() { addSavedURL(); });
     DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
@@ -141,7 +141,7 @@ var Options = (() => {
       row.appendChild(column4);
       const clicks = document.createElement("input");
       clicks.id = "mouse-" + shortcut + "-clicks";
-      //clicks.className = "mouse-clicks";
+      clicks.style.width = "36px";
       clicks.type = "number";
       clicks.min = "1";
       clicks.max = "9";
@@ -300,11 +300,12 @@ var Options = (() => {
     event.preventDefault();
     // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
     key = { "modifiers":
-      (event.altKey   ? KEY_MODIFIERS.get("Alt") :     0x0) | // 0001
-      (event.ctrlKey  ? KEY_MODIFIERS.get("Control") : 0x0) | // 0010
-      (event.shiftKey ? KEY_MODIFIERS.get("Shift") :   0x0) | // 0100
-      (event.metaKey  ? KEY_MODIFIERS.get("Meta") :    0x0),  // 1000
-      "code": !KEY_MODIFIERS.has(event.key) ? event.code : "" // Checking event.key is easier than event.code for the modifiers since code contains left/right separately
+      (event.altKey   ? KEY_MODIFIERS.get("Alt") :     0x0) |
+      (event.ctrlKey  ? KEY_MODIFIERS.get("Control") : 0x0) |
+      (event.shiftKey ? KEY_MODIFIERS.get("Shift") :   0x0) |
+      (event.metaKey  ? KEY_MODIFIERS.get("Meta") :    0x0),
+      // Checking event.key is easier than event.code for the modifiers since code contains left/right separately
+      "code": !KEY_MODIFIERS.has(event.key) ? event.code : ""
     };
   }
 
@@ -319,7 +320,7 @@ var Options = (() => {
     buttonInput = buttonInput ? buttonInput : DOM["#" + clicksInput.id.replace("clicks", "select")];
     clicksInput = clicksInput ? clicksInput : DOM["#" + buttonInput.id.replace("select", "clicks")];
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
-    console.log(mouse);
+    console.log("setMouse() - mouse=" + mouse);
     clicksInput.className = mouse ? "display-block fade-in" : "display-none";
     chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse }, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
   }
@@ -332,10 +333,8 @@ var Options = (() => {
    * @private
    */
   function getStorageKey(input) {
-    const regex = /(.*)-(.*)-/.exec(input.id); // e.g. "key-increment-input"
-    const storageKey =  regex[1] + regex[2][0].toUpperCase() + regex[2].substring(1); // e.g. "keyIncrement"
-    console.log("storageKey=" + storageKey);
-    return storageKey;
+    const regex = /(.*)-(.*)-/.exec(input.id);
+    return regex[1] + regex[2][0].toUpperCase() + regex[2].substring(1);
   }
 
   /**
@@ -390,7 +389,7 @@ var Options = (() => {
     DOM["#saved-urls-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
   }
 
-  async function addSavedURLWildcard() {
+  async function addSavedURL() {
     // If the textarea value is empty return with error
     const url = DOM["#saved-urls-wildcard-url-textarea"].value;
     if (!url || url.length < 0) {
@@ -419,7 +418,8 @@ var Options = (() => {
   }
 
   async function deleteSavedURL() {
-    const select = document.getElementById("saved-urls-select"), // Dynamically Generated Select, so can't use DOM Cache
+    // Dynamically Generated Select, must get element dynamically, can't use DOM Cache
+    const select = document.getElementById("saved-urls-select"),
           option = select.options[select.selectedIndex],
           hash = option.dataset.hash,
           saves = await Promisify.getItems("local", "saves");
@@ -559,8 +559,7 @@ var Options = (() => {
    * @private
    */
   function clickURLI() {
-    const// numbers = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"],
-          faces =   ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"],
+    const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"],
           face = " " + faces[Math.floor(Math.random() * faces.length)],
           value = +this.dataset.value + 1;
     this.dataset.value = value + "";
@@ -568,6 +567,7 @@ var Options = (() => {
     UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
   }
 
-  init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+  // Initialize Options
+  init();
 
 })();

@@ -254,7 +254,7 @@
   "popup_settings_h3": { "message": "Popup User Interface Settings" },
   "popup_button_size_label": { "message": "Button Size" },
   "popup_animations_enable_label": { "message": "Enable button click animations (Try it!)" },
-  "saved_urls_settings_h3":  { "message": "Saved URLs (Optional)" },
+  "saved_urls_settings_h3":  { "message": "Saved URLs" },
   "saved_urls_settings_p": { "message": "Save your favorite URLs' settings such as selection and interval so you can use Quick Shortcuts when you visit them again without having to go into the Popup setup!" },
   "saved_urls_how_span": { "message": "Important: Your privacy and how URLs are saved" },
   "saved_urls_how_title": { "message": "To keep your data as private as possible, URLI only stores irreversible cryptographic hashes of the full URLs, but potentially decryptable hashes of the Wildcards / Regular Expressions you save in storage. For more information, please view the Help Guide." },

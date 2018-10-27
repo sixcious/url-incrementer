@@ -40,7 +40,6 @@ var Permissions = (() => {
       });
       return;
     }
-    console.log(PERMISSIONS[permission].request);
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
         console.log("requestPermissions() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);

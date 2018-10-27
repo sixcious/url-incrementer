@@ -172,10 +172,6 @@ input[type="image"].key-clear {
     opacity: 0.8;
   }*/
 
-input[type="number"].mouse-clicks-input {
-  width: 35px;
-}
-
 #mouse-click-speed {
   display: inline-block;
   margin-left: 3em;

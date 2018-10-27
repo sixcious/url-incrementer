@@ -7,18 +7,18 @@
 
 var Popup = (() => {
 
-  const DOM = {}; // Map to cache DOM elements: key=id, value=element
+  const DOM = {};
 
-  let _ = {}, // Temporary instance before validation
-      instance = {}, // Tab instance cache
-      items = {}, // Storage items cache
-      localItems = {}, // Local Storage items cache
-      backgroundPage = {}, // Background page cache
-      downloadPreviewCache = {}, // Download Preview Cache
-      timeouts = {}; // Reusable global timeouts for input changes to fire after the user stops typing
+  let _ = {},
+      instance = {},
+      items = {},
+      localItems = {},
+      backgroundPage = {},
+      downloadPreviewCache = {},
+      timeouts = {};
 
   /**
-   * Initializes the Popup window.
+   * Initializes the Popup window. This script is set to defer so the DOM is guaranteed to be parsed by this point.
    * 
    * @private
    */
@@ -86,7 +86,8 @@ var Popup = (() => {
       button.style.width = button.style.height = items.popupButtonSize + "px";
       button.addEventListener("click", clickActionButton);
     }
-    DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px"; // cloud-download.png is an irregular shape and needs adjustment
+    // Download icon (cloud-download.png) is an irregular shape and needs adjustment
+    DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px";
     updateSetup();
     // 3 Popup Views: Crawl Window if instance is toolkit crawl, Setup if instance not enabled/saved URL, or Controls if instance enabled/saved URL
     if (instance.toolkitEnabled && instance.toolkitTool === "crawl") {
@@ -105,14 +106,17 @@ var Popup = (() => {
    */
   function toggleView() {
     switch (this.id) {
-      case "setup-input": // Hide controls, show setup
+      // Hide controls, show setup
+      case "setup-input":
         DOM["#controls"].className = "display-none";
         DOM["#setup"].className = "display-block fade-in";
         updateSetup(true);
         break;
-      case "accept-button": // Hide setup, show controls
+      // Hide setup, show controls
+      case "accept-button":
       case "cancel-button":
-        updateControls(); // Needed to reset hover.css click effect
+        // Needed to reset hover.css click effect
+        updateControls();
         DOM["#setup"].className = "display-none";
         DOM["#controls"].className = "display-block fade-in";
         break;
@@ -205,8 +209,9 @@ var Popup = (() => {
     DOM["#url-textarea"].focus();
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
+    // If minimal (e.g. just switching from controls to setup), no need to recalculate the below again, so just return
     if (minimal) {
-      return; // e.g. just switching from controls to setup, no need to recalculate the below again
+      return;
     }
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
@@ -278,7 +283,8 @@ var Popup = (() => {
    * @private
    */
   function selectURL() {
-    DOM["#selection-input"].value = DOM["#url-textarea"].value.substring(DOM["#url-textarea"].selectionStart, DOM["#url-textarea"].selectionEnd); // Firefox: window.getSelection().toString(); does not work in FF
+    // Firefox: window.getSelection().toString(); does not work in FF
+    DOM["#selection-input"].value = DOM["#url-textarea"].value.substring(DOM["#url-textarea"].selectionStart, DOM["#url-textarea"].selectionEnd);
     DOM["#selection-start-input"].value = DOM["#url-textarea"].selectionStart;
     if (items.leadingZerosPadByDetection) {
       DOM["#leading-zeros-input"].checked = DOM["#selection-input"].value.charAt(0) === '0' && DOM["#selection-input"].value.length > 1;
@@ -304,7 +310,8 @@ var Popup = (() => {
       DOM["#multi-img-" + multiCountNew].className = "";
       _.multi[multiCountNew].selection = _.selection;
       _.multi[multiCountNew].startingSelection = _.selection;
-      _.multi[multiCountNew].selectionStart = _.multiRange ? _.selectionStart - 1 : _.selectionStart; // -1 from starting [
+      // If multiRange, selectionStart is -1 from starting [
+      _.multi[multiCountNew].selectionStart = _.multiRange ? _.selectionStart - 1 : _.selectionStart;
       _.multi[multiCountNew].startingSelectionStart = _.multi[multiCountNew].selectionStart;
       _.multi[multiCountNew].interval = _.interval;
       _.multi[multiCountNew].base = _.base;
@@ -450,7 +457,8 @@ var Popup = (() => {
   // TODO
   function crawlWindow() {
     console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
-    instance.toolkitQuantity = instance.toolkitQuantityRemaining = instance.urls.length; // In case urls array is shorter than quantity, e.g. decrement reaching 0
+    // In case urls array is shorter than quantity, e.g. decrement reaching 0
+    instance.toolkitQuantity = instance.toolkitQuantityRemaining = instance.urls.length;
     DOM["#crawl"].className = "display-block";
     DOM["#crawl-percentage-value"].textContent = 0 + "%";
     DOM["#crawl-urls-remaining"].textContent = 0;
@@ -470,12 +478,6 @@ var Popup = (() => {
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        for (let header of response.headers) {
-          for (let h of header) {
-            console.log(h);
-          }
-        }
-        console.log(response.type);
         status = response.status;
         result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "oK" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
       }).catch(e => {
@@ -710,7 +712,8 @@ var Popup = (() => {
    * @private
    */
   function buildDownloadPreviewTR(item, isSelected, count) {
-    const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item); // data-json used by user's selecteds and unselecteds, must use ' not " to wrap json
+    // The dataset json attribute used by user's selecteds and unselecteds, must use ' not " to wrap json
+    const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item);
     const check = document.createElement("img"); check.src = "../img/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
     const thumb = buildDownloadPreviewThumb(item);
     let td;
@@ -803,7 +806,6 @@ var Popup = (() => {
       DOM["#download-preview-table-div"].style = this.checked ? "white-space: normal;" : "white-space: nowrap;"
     } else {
       let elements = document.getElementsByClassName(this.value);
-      // let elements = document.querySelectorAll("#download-preview-table-div table ." + this.value );
       for (const element of elements) {
         element.style.display = this.checked ? "table-cell" : "none";
       }
@@ -821,7 +823,7 @@ var Popup = (() => {
       const otherId = isBeingAdded ? "unselecteds" : "selecteds";
       parent.className = isBeingAdded ? "selected" : "unselected";
       if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
-        console.log("pushing into download preview cache" + generatedId);
+        console.log("updateDownloadSelectedsUnselecteds() - pushing into download preview cache" + generatedId);
         downloadPreviewCache["m" + generatedId].push(object);
       }
       downloadPreviewCache["m" + otherId] = downloadPreviewCache["m" + otherId].filter(otherObject => { return otherObject.url !== object.url });
@@ -845,14 +847,13 @@ var Popup = (() => {
   function setup() {
     setupInputs("accept");
     const e = setupErrors("accept");
-    /* Validated Rules:
-      1. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
-      2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
-      3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
-      4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
-      5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
-      6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
-    */
+    // Validated Rules:
+    // 1. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
+    // 2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
+    // 3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
+    // 4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
+    // 5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
+    // 6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
     const validated =
       !_.autoEnabled && !_.downloadEnabled ?
         !e.incrementDecrementErrorsExist :
@@ -894,14 +895,16 @@ var Popup = (() => {
         backgroundPage.Background.setInstance(instance.tabId, instance);
         // Save URL
         if (instance.saveURL) {
-          backgroundPage.Saves.addURL(instance); // TODO
+          // TODO
+          backgroundPage.Saves.addURL(instance);
           instance.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage
         if (instance.enabled) {
           chrome.storage.sync.set({
             "interval": _.interval,
-            "base": !isNaN(_.base) ? _.base : items.base, // Don't ever save non Number bases (e.g. Date Time) as the default
+            // Don't ever save non Number bases (e.g. Date Time) as the default
+            "base": !isNaN(_.base) ? _.base : items.base,
             "baseCase": _.baseCase,
             "baseDateFormat": _.baseDateFormat,
             "baseCustom": _.baseCustom,
@@ -993,7 +996,8 @@ var Popup = (() => {
       // Auto:
       _.autoEnabled = DOM["#auto-toggle-input"].checked;
       _.autoAction = DOM["#auto-action-select"].value;
-      _.autoTimes = _.autoTimesOriginal = +DOM["#auto-times-input"].value; // store the original autoTimes for reference as we are going to decrement autoTimes
+      // Store the original autoTimes for reference later as we are going to decrement autoTimes
+      _.autoTimes = _.autoTimesOriginal = +DOM["#auto-times-input"].value;
       _.autoSeconds = +DOM["#auto-seconds-input"].value;
       _.autoWait = DOM["#auto-wait-input"].checked;
       _.autoBadge = DOM["#auto-badge-input"].checked ? "times" : "";
@@ -1029,11 +1033,12 @@ var Popup = (() => {
       // Increment Decrement Errors
       e.incrementDecrementErrors = [
         // [0] = Selection Errors
+        // Don't validate selection in accept/toolkit if multi range enabled due to brackets
         caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros), // Don't validate selection in accept/toolkit if multi range enabled due to brackets
+        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
         // [1] Interval Errors
         _.interval < 1 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors
@@ -1115,7 +1120,10 @@ var Popup = (() => {
     }
   }
 
-  chrome.runtime.onMessage.addListener(messageListener); // Popup Listener
-  init(); // This script is set to defer so the DOM is guaranteed to be parsed by this point
+  // Popup Listener
+  chrome.runtime.onMessage.addListener(messageListener);
+
+  // Initialize Popup
+  init();
 
 })();
