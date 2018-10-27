@@ -284,8 +284,8 @@ input[type='submit']:enabled:focus {
 }
 
 .checkbox label input ~ span, .radio label input ~ span, .radio label input ~ img {
-  -webkit-margin-start: 0.6em;
-  -moz-margin-start: 0.6em;
+  -webkit-margin-start: 0.3em; /* 0.6em */
+  -moz-margin-start: 0.3em; /* 0.6em */
   display: block;
 }
 

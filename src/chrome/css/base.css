@@ -135,3 +135,20 @@ img {
   opacity: 1;
   transform: scale(1);
 }
+
+/* Firefox */
+
+/* Firefox: input[type=number] Change input type number to hide spinner up/down arrows unless focused/hovered */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]:hover, input[type="number"]:focus {
+  -moz-appearance: initial;
+}
+
+/* Firefox: textarea Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
+textarea {
+  font: inherit;
+  overflow-x: hidden;
+}

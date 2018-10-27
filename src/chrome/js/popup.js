@@ -416,6 +416,8 @@ var Popup = (() => {
     } else {
       const toolkitInstance = JSON.parse(JSON.stringify(_));
       toolkitInstance.toolkitEnabled = true;
+      // Reset the urls array in case instance had previously been enabled while in the Popup
+      toolkitInstance.urls = [];
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
@@ -714,7 +716,7 @@ var Popup = (() => {
   function buildDownloadPreviewTR(item, isSelected, count) {
     // The dataset json attribute used by user's selecteds and unselecteds, must use ' not " to wrap json
     const tr = document.createElement("tr"); tr.className = (isSelected ? "selected" : "unselected"); tr.dataset.json = JSON.stringify(item);
-    const check = document.createElement("img"); check.src = "../img/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow";
+    const check = document.createElement("img"); check.src = "../img/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow"; check.title = chrome.i18n.getMessage("download_preview_check_" + (isSelected ? "unselect" : "select"));
     const thumb = buildDownloadPreviewThumb(item);
     let td;
     td = document.createElement("td"); td.className = "check"; td.appendChild(check); tr.appendChild(td);
@@ -822,6 +824,7 @@ var Popup = (() => {
       const generatedId = isBeingAdded ? "selecteds" : "unselecteds";
       const otherId = isBeingAdded ? "unselecteds" : "selecteds";
       parent.className = isBeingAdded ? "selected" : "unselected";
+      element.title = chrome.i18n.getMessage("download_preview_check_" + (isBeingAdded ? "unselect" : "select"));
       if (!downloadPreviewCache[generatedId].some(download => (download.url === object.url))) {
         console.log("updateDownloadSelectedsUnselecteds() - pushing into download preview cache" + generatedId);
         downloadPreviewCache["m" + generatedId].push(object);
@@ -879,28 +882,26 @@ var Popup = (() => {
         UI.generateAlert([chrome.i18n.getMessage("oops_error")]);
       }
     }
-    // Else good to go!
+    // Else good to go! Clear instance and finish setting _ to re-set new instance
     else {
       backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
-        instance = JSON.parse(JSON.stringify(_));
-        instance.enabled = true;
-        instance.saveFound = instance.saveURL;
-        const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(instance);
-        instance.urls = precalculateProps.urls;
-        instance.urlsCurrentIndex = instance.startingURLsCurrentIndex = precalculateProps.currentIndex;
+        _.enabled = true;
+        _.saveFound = _.saveURL;
+        const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
+        _.urls = precalculateProps.urls;
+        _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
         // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
-        if (instance.autoEnabled && instance.urls && instance.urls.length > 0) {
-          instance.autoTimes = instance.urls.length;
+        if (_.autoEnabled && _.urls && _.urls.length > 0) {
+          _.autoTimes = _.urls.length;
         }
-        backgroundPage.Background.setInstance(instance.tabId, instance);
         // Save URL
-        if (instance.saveURL) {
+        if (_.saveURL) {
           // TODO
-          backgroundPage.Saves.addURL(instance);
-          instance.saveType = "url";
+          backgroundPage.Saves.addURL(_);
+          _.saveType = "url";
         }
         // If popup can overwrite increment/decrement settings, write to storage
-        if (instance.enabled) {
+        if (_.enabled) {
           chrome.storage.sync.set({
             "interval": _.interval,
             // Don't ever save non Number bases (e.g. Date Time) as the default
@@ -933,16 +934,19 @@ var Popup = (() => {
             "downloadPreview": _.downloadPreview
           });
         }
+        // Now convert _ to instance
+        backgroundPage.Background.setInstance(_.tabId, _);
+        instance = backgroundPage.Background.getInstance(_.tabId);
         // If internal shortcuts permissions granted, send message to shortcuts content script to add key/mouse listeners:
         if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "addKeyListener"});
+          chrome.tabs.sendMessage(_.tabId, {greeting: "addKeyListener"});
         }
         if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
-          chrome.tabs.sendMessage(instance.tabId, {greeting: "addMouseListener"});
+          chrome.tabs.sendMessage(_.tabId, {greeting: "addMouseListener"});
         }
-        // If auto is enabled, ask Auto to start auto timer
-        if (instance.autoEnabled) {
-          backgroundPage.Auto.startAutoTimer(instance, "popup");
+        // If auto is enabled, ask Auto to start auto timer (must do this after setting instance in Background)
+        if (_.autoEnabled) {
+          backgroundPage.Auto.startAutoTimer(_, "popup");
         }
         toggleView.call(DOM["#accept-button"]);
       });
@@ -1053,7 +1057,7 @@ var Popup = (() => {
     if (caller === "toolkit") {
       // Toolkit Errors
       e.toolkitErrors = [
-       // _.enabled ? "enablederror" :
+        instance.autoEnabled ? chrome.i18n.getMessage("toolkit_auto_enabled_error") :
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
         _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :

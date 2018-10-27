@@ -9,26 +9,17 @@
 body {
   min-width: 460px;
   max-width: 460px;
-/*  min-width: 480px;
-  max-width: 480px;*/
   margin: 20px;
 }
 
-/* Firefox: Add font: inherit (no browser defaults for options like Chrome) and overflow-x: hidden; because Moz adds extra height to textarea (for scrollbars) */
 textarea {
   color: #333333;
-  font: inherit;
-  overflow-x: hidden;
   vertical-align: text-top;
   resize: vertical;
   width: 300px;
   min-height: 41px;
   max-height: 100px;
 }
-
-/* Firefox: Change input type number to hide spinner up/down arrows unless focused/hovered */
-input[type=number] { -moz-appearance: textfield; }
-input[type=number]:hover, input[type=number]:focus { -moz-appearance: initial; }
 
 h3 {
   display: inline;
