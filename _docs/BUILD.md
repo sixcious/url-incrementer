@@ -6,7 +6,7 @@ For js folder only
 1. Replace multi-line comments: /\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/
 With empty string:
 
-2. Replace single-line comments: \s+//.*
+2. Replace single-line comments: //\s+.*\r\n\s+
 With empty string:
 
 3. Replace console.log statements: ^\s*console.log.*$\r\n

@@ -132,8 +132,8 @@ var Background = (() => {
    * Builds an instance with default values (from either an existing save or by using the storage items).
    * 
    * @param tab        the tab properties (id, url) to set this instance with
-   * @param items      the sync storage items
-   * @param localItems the local storage items
+   * @param items      (optional) the sync storage items
+   * @param localItems (optional) the local storage items
    * @returns instance the newly built instance
    * @public
    */
@@ -158,10 +158,9 @@ var Background = (() => {
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
-      "tabId": tab.id, "url": tab.url, "startingURL": tab.url,
+      "tabId": tab.id, "url": tab.url,
       "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
-      // "startingSelection": selection.selection, "startingSelectionStart": selection.selectionStart,
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
@@ -210,8 +209,8 @@ var Background = (() => {
    * @private
    */
   async function installedListener(details) {
-    // install: Open Options Page, lt 5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
-    if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
+    // install: Open Options Page, 1.0-5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
+    if (details.reason === "install" || (details.reason === "update" && details.previousVersion >= "1.0" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
       const items = details.previousVersion && details.previousVersion >= "5.3" ? await Promisify.getItems() : undefined;
       chrome.storage.sync.clear(function() {
@@ -220,10 +219,10 @@ var Background = (() => {
             chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
               if (details.reason === "install") {
                 chrome.runtime.openOptionsPage();
-              } else if (details.previousVersion <= "5.2") {
+              } else if (details.previousVersion >= "1.0" && details.previousVersion <= "5.2") {
                 Permissions.removeAllPermissions();
               } else if (details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
-                chrome.storage.sync.set({"TODO": items.keyEnabled});
+                chrome.storage.sync.set({"TODO": "TODO"});
               }
             });
           });
@@ -291,7 +290,7 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_EXTENSION_ID = "decebmdlceenceecblpfjanoocfcmjai",
+    const URL_INCREMENT_EXTENSION_ID = "mehmeedmngjlehllbpncbjokegfhnfmg",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {

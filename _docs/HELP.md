@@ -1,18 +1,16 @@
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/darku/128.png" width="128" height="128" title="URL Incrementer">
-
-# URL Incrementer User Guide
-
+<br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/alt/urli-uncompressed.png" width="196" height="196" align="right" title="URLI">
 
-## Help and Support
+# Help and Support
 Is something not working right, or is there a feature that you'd like to see in URLI?
 ***Before*** leaving a low rating or review, please email me (my email address can be found in the Extension's Options page) or [open an issue](https://github.com/roysix/url-incrementer/issues) on GitHub.
 I'll be notified about it immediately and reply to you with a fix as soon as I can!
 
-## Infinite Scrolling (Scroll Incrementing)
+# Infinite Scrolling (Scroll Incrementing)
 Infinite Scrolling is the next level of incrementing! But because infinite scrolling is more complicated than the tab updating that URLI was built for, I'm working on a new extension called "Infy Scroll" that will have this functionality, so please look out for it soon!
 
-## Auto Incrementing
+# Auto Incrementing
 Just toggle on `AUTO` in the bottom-left area of the Popup to start an auto-incrementing session!
 You can have it repeat by clicking the `orange repeat` icon in the upper-right area of the Popup, and the URLs can be shuffled by clicking the `red crossed arrows` icon.
 Pause or resume Auto anytime by clicking the `orange pause/play` button or by using a shortcut.
@@ -25,7 +23,7 @@ Note that when Auto is enabled, you will not see error skipping or other action 
 
 Auto can be used with a variety of other features including Next/Prev, Multi, Shuffle, and Download (Auto Incrementer Downloader).
 
-## Download Incrementing (Multiple Page Downloading)
+# Download Incrementing
 You must first enable Download in the Options to see the Download (`DL`) toggle in the UI.
 Also, make sure the *Ask where to save each file* option is unchecked in your Browser Settings (usually found in the Downloads section) and that you're aware of your browser's default Downloads folder location.
 
@@ -43,7 +41,7 @@ But you can optionally have each page's downloads stored in its own subfolder wh
 Just note that the file name and extension will be based verbatim on the URL (not dynamically handled by the server as usual), so make sure that the `Name` and `Ext` columns look right before choosing this option.
 
 
-## URLI's Toolkit
+# URLI's Toolkit
 This is my own special toolkit used for testing URLI that has been "unlocked" and made available to you as a non-standard feature!
 It lets you crawl URLs for response codes, open up to 100 incremented tabs at once, or generate a list of up to 10,000 incremented links.
 Click the `wrench` icon in the bottom-right area of the Popup to open or close it.
@@ -58,7 +56,7 @@ Note that putting your device to sleep may "kill" URLI's background process and 
 
 The Toolkit works with both Shuffle and Multi modes.
 
-## Multi Incrementing
+# Multi Incrementing
 Multi lets you increment up to 3 parts of the URL individually, simultaneously, or in ranges. You can even increment the same selection in multiple ways (for example, different intervals)!
 Select the part as normal and optionally adjust the interval or base, then click the Multi `+++` button near Selection.
 Repeat for each additional part, then click Accept.
@@ -68,19 +66,19 @@ Note: You can always reset the multi parts by just clicking on the `+++` button 
 
 Here are some of the neat things you can do with Multi:
 
-### Multi Selections (Most Common)
+## Multi Selections (Most Common)
 This is the most common use for multi.
 Select the different parts in the URL to increment and you will have a set of + - buttons for each selection.
 Each pair of buttons will be labeled  by a `1`, `2`, or `3` depending on the order of your selections.
 
-### Multi Intervals
+## Multi Intervals
 Select the **same** part multiple times, but change the interval each time before clicking the `+++` button. This will let you have multiple buttons that can increment/decrement the selection by different amounts (e.g. a +1 Button, a +10 Button, and a +100 button)!
 
-### Multi-Simultaneous Incrementing
+## Multi-Simultaneous Incrementing
 A pair of `S` labeled Increment Decrement buttons will appear allowing you to simultaneously increment all the parts together in one click.
 If you use Multi with AUTO or the Toolkit or use your regular Increment/Decrement shortcuts, by default all the parts will be incremented simultaneously as well!
 
-### Multi-Range Incrementing
+## Multi-Range Incrementing
 The most complicated multi function allows you to edit the URL and enter ranges for each selection. This performs a "compounded" increment for each part. This also works with AUTO and the Toolkit.
 
 **Example**
@@ -117,7 +115,7 @@ This will perform a compounded increment, such that it starts from 1/1/1 and end
 
 You can use Multi Incrementing with AUTO and the Toolkit to generate links or open tabs. In these modes, it will either do a multi-simultaneous increment or a multi-range increment (if you edited the URL to have ranges).
 
-## Date Incrementing
+# Date Time Incrementing
 Increment dates and times in URLs by changing the `Base` to `Date Time` and providing a date format that is based on the selection!
 The "smallest" part of the date you selected will then be incremented.
 For example, if you selected a pattern like month/day/year, then day will be incremented by the interval.
@@ -126,7 +124,7 @@ Important: Each part of the date needs to be separated by a non date-format char
 
 *The following formats are variable-width and are **not** allowed without separators: `mmmm`, `Mmmm`, `MMMM`, `m`, `d`, `h`, `i`, `s`,`l`.*
 
-### Date Selection / Format Examples
+## Date Selection / Format Examples
 
 **Valid Examples**
 
@@ -148,7 +146,7 @@ Important: Each part of the date needs to be separated by a non date-format char
 | 1252018     | mddyyyy    | Uses a non fixed-width date part without separators ("m" instead of "mm") |
 | Sept-2018   | Mmm-yyyy   | "Sept" not in supported short month names ("Sep" only is)                 |
 
-### Date Formats
+## Date Formats
 This is a table of all the allowable parts you can use in the format.
 
 | Format | Component   | Presentation | Examples   |
@@ -176,7 +174,7 @@ This is a table of all the allowable parts you can use in the format.
 
 * For the `yy` format (2 Digit Year), if the year is less than 70, we assume the 2000s (2000 - 2069). Otherwise, we assume the 1900s (1970-1999).
 
-### Short and Long Month Names
+## Short and Long Month Names
 Only the the en-US language is currently supported.
 
 - Jan - January
@@ -192,23 +190,19 @@ Only the the en-US language is currently supported.
 - Nov - November
 - Dec - December
 
-## Error Skipping
+# Error Skipping
 This checks if the next URL will return an HTTP error code (like 404) and increments again, skipping it up to 100 times, or until it finds the next good URL. If an error is encountered, the extension icon will flash with the error code (or flash \"RED\" for redirects). Set it to 0 to disable it. Important: This will make a request to the server each time to check the status code, and setting this value too high might cause the server to issue a \"Too Many Requests\" response. A value of 10 or less should be reasonably OK.
 
 You may notice a minor delay (~1 second) when incrementing with error skipping due to the time it takes to wait for a response from a server.
 
-### An Error-Skipping Example
+## An Error-Skipping Example
 You are on page=1 and increment with error skip set to 10. If the next 3 pages (page=2 thru page=4) don't exist, they'll be skipped and you'll be taken to the next valid page, page=5 automatically. If more than 10 consecutive pages don't exist, URLI will "give up" checking since error skip is set to 10, and take you to page=12. You can then manually increment again to repeat the process.
 
-### Important Note!
-You MUST have Enhanced Mode enabled to use Error Skipping in the following situations:
-1. On "Browser Error Pages" (e.g. the website didn't implement an error page, so the browser forwarded you to its own error page)
-2. When using the Popup or 1-Click Buttons
-3. With AUTO
+## Error Skipping: An Important Note!
+1. You **must** have Enhanced Mode enabled in the Options to use Error Skipping
+2. Some websites may not send an error code and "swallow" it, instead returning HTTP Response Code 200 ("OK"), even while still displaying an error page. Error Skipping won't work on these websites.
 
-Finally, a few websites may not send an error code and instead "swallow" the error code, returning HTTP Response Code 200 ("OK") while still displaying a customized error page. Error Skipping won't work on these websites.
-
-## Saving URLs
+# Saving URLs
 You can save your favorite `URLs` and Increment Decrement settings for each of them (such as selection, interval, and base).
 To save a URL, in the Popup, click the `heart <3` icon and click Accept after you're done. After you save a URL, you can jump straight to using shortcuts to increment on every subsequent visit, even after closing your browser.
 
@@ -222,13 +216,13 @@ To save a Wildcard, in the Options under Saved URLs, click the `Add Wildcard...`
 Saving is completely optional ("opt-in").
 
 
-### Saving URLs vs Saving Wildcards
+## Saving URLs vs Saving Wildcards
 URLs are saved just like passwords, must match exactly for it to be recognized (except for the part/number you selected to increment).
 However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
 For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
 So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
 
-### How Are URLs Saved?
+## How Are URLs Saved?
 To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes.
 We use the PBKDF2 algorithm with an HMAC-SHA512, a randomly generated salt, and a high number of iterations.
 This is a *one-way* process, meaning it is impossible for anyone to "decrypt" the hashes.
@@ -240,21 +234,21 @@ Here's a real example of how a saved URL looks:
 
 When you view your saved URLs in Options, you'll see a small part of the hash (it's really super long) followed by the interval, base, and other formats.
 
-### How Are Wildcards Saved?
+## How Are Wildcards Saved?
 Wildcards are stored as encrypted hashes with a random IV (initialization vector); they're never saved in the "plaintext" form you originally entered them in.
 But unlike the cryptographic hashed URLs, wildcard encrypted hashes can be decrypted if someone were to look at URLI's source code and then run the exact decrypt function and key it uses.
 In most cases though, providing this one small layer of protection will be sufficient for most people's needs.
 The wildcards will never be in clear view on your computer. For example, if someone were to search thru your extension storage space, they would only find encrypted hashes, and would need to put additional time and effort in to decrypting them.
 
-### Where Are The Cryptographic Hashes Saved?
+## Where Are The Cryptographic Hashes Saved?
 The cryptographic hashes are *only* saved to the local extension storage space on your device (**not** in a sync'd cloud storage space).
 You can always delete them in the Options > Saved URLs section or by clicking the Reset Options button.
 Also, if you uninstall the extension, all your saved data, including the hashes, are automatically deleted.
 
-### Your Data IS YOUR Data
+## Your Data IS YOUR Data
 Many extensions do not bother at least hashing your saved URLs or even discussing this, but URLI really cares about your privacy and data!
 
-## Shuffle URLs
+# Shuffle URLs
 Click the `red crossed-arrows` icon in the upper-right area of the Popup to turn this mode on.
 You can turn on Shuffle in Normal, Auto, or Toolkit modes.
 
@@ -263,9 +257,10 @@ It shuffles the URLs you'll see next.
 For example, say you start Auto Incrementing at page=1 with a `Times` of `9`; every page from page=2 to page=10 will be shuffled randomly and you will be guaranteed to see each page only once -- just in a random order.
 Here's an example:
 
-    page=... 1,5,4,9,10,7,2,8,3,6
+    page=5,4,9,10,7,2,8,3,6
 
-You can also turn on `Auto Repeat` mode at the same time and it will re-shuffle the URLs after it repeats and goes back to the starting URL. But note that the starting URL (e.g. page=1) is not part of the shuffled URLs.
+Please note that the starting URL (page=1) is not included in the shuffled array; just the incremented URLs.
+You can also turn on `Auto Repeat` mode at the same time and it will re-shuffle the URLs after it repeats and goes back to the starting URL. But since the starting URL (e.g. page=1) is not part of the shuffled URLs, you'll always know when it repeats and goes back to the start.
 
 Also, you can adjust the `Shuffle Limit` in the Options to set a max upper bound in Normal Incrementing mode, which will apply in both directions.
 For example, a `Shuffle Limit` of `1000` means URLI will pre-calculate and shuffle 500 incremented URLs and 500 decremented URLs (in relation to the starting URL).
@@ -273,7 +268,7 @@ In Auto or Toolkit modes, the shuffle limit value is not used since it is simply
 
 URLI uses the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm) to perform the shuffling in an extremely efficient *O(n)* time.
 
-## Bases and Custom Bases
+# Bases and Custom Bases
 Bases are the "types" of numbers we can increment. Think of them like different alphabets. URLI can increment all sorts of bases, even your own made-up custom ones. :)
 
 The most common bases are:
@@ -288,7 +283,7 @@ The most common bases are:
 For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedia](https://en.wikipedia.org/wiki/Table_of_bases).
 
 
-### Custom Bases
+## Custom Bases
 Change the `Base` to `Custom` and define a custom alphabet.
 Here are some common alphabets you can copy/paste into the `Alphabet` input:
 

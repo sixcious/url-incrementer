@@ -7,18 +7,18 @@
 
 var Shortcuts = (() => {
 
-  // A map of the KeyboardEvent.key modifiers and their bits
+  // KeyboardEvent.key and modifier bits map
   const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]);
 
   // The current mouse button on mousedown
+  // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously
+  // The current consecutive click count for a single mouse button
+  // A reusable global timeouts for detecting multiple mouse clicks
+  // The storage items cache
   let button = undefined,
-      // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously
       buttons3 = false,
-      // The current consecutive click count for a single mouse button
       clicks = 0,
-      // A reusable global timeouts for detecting multiple mouse clicks
       timeouts = {},
-      // The storage items cache
       items = {};
 
   /**

@@ -7,8 +7,10 @@
 
 var Popup = (() => {
 
+  // The DOM elements cache
   const DOM = {};
 
+  // The _ temporary instance and real instance caches, storage caches, backgroundPage and downloadPreview cache, and timeouts object
   let _ = {},
       instance = {},
       items = {},
@@ -400,7 +402,7 @@ var Popup = (() => {
   }
 
   /**
-   * TODO
+   * Called when the toolkit input (URLI) is clicked, finalizing the toolkitInstance. This is similar to setup().
    *
    * @private
    */
@@ -435,11 +437,24 @@ var Popup = (() => {
     }
   }
 
+  /**
+   * Called when the toolkit tool radios are changed. Only shows the toolkit seconds when the tool is crawl.
+   *
+   * @private
+   */
   function changeToolkitTool() {
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-crawl-input"].checked ? "" : "hidden";
   }
 
-  // TODO
+  /**
+   * Called when the toolkit table download button is clicked.
+   *
+   * Creates a hidden anchor and blob of the table HTML. It then simulates a mouse click event to download the blob,
+   * and then revokes it to release it from memory. Note that we need the anchor because the actual element that calls
+   * this is a button (anchors are the only elements that can have the download attribute).
+   *
+   * @private
+   */
   function toolkitTableDownload() {
     const a = document.createElement("a"),
           blob = URL.createObjectURL(new Blob([DOM["#" + this.id.replace("-download-button", "")].outerHTML], {"type": "text/html"}));
@@ -449,14 +464,24 @@ var Popup = (() => {
     setTimeout(function() { URL.revokeObjectURL(blob); }, 1000);
   }
 
-  // TODO
+  /**
+   * Updates the crawl table each time a crawl checkbox is checked or unchecked.
+   *
+   * @param event the event from which the target element fired from
+   * @private
+   */
   function updateCrawlTable(event) {
     const checkbox = event.target;
     const style = checkbox.checked ? checkbox.dataset.type : "none";
     document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);
   }
 
-  // TODO
+  /**
+   * Initializes the crawl window in the Popup. This is usually called in a new Popup window, but may be called in the
+   * same Popup (in Firefox for Android).
+   *
+   * @private
+   */
   function crawlWindow() {
     console.log("crawlWindow() - starting to crawl " + instance.urls.length + " URLs");
     // In case urls array is shorter than quantity, e.g. decrement reaching 0
@@ -471,7 +496,12 @@ var Popup = (() => {
     backgroundPage.Background.deleteInstance(instance.tabId);
   }
 
-  // TODO
+  /**
+   * Crawls URLs recursively by fetching for response codes.
+   *
+   * @param quantityRemaining the quantity of URLs left to crawl
+   * @private
+   */
   function crawlURLs(quantityRemaining) {
     const quantity =  instance.toolkitQuantity;
     const id = quantity - quantityRemaining;
@@ -505,7 +535,9 @@ var Popup = (() => {
   }
 
   /**
-   * TODO...
+   * Updates the ETA for Auto based on the times and seconds. This is called multiple times, thus this helper function.
+   *
+   * @private
    */
   function updateAutoETA() {
     updateETA(+DOM["#auto-times-input"].value * +DOM["#auto-seconds-input"].value, DOM["#auto-eta-value"], instance.autoEnabled);
@@ -514,7 +546,11 @@ var Popup = (() => {
   /**
    * Updates the Auto or Toolkit ETA times every time the seconds or times is updated by the user or when the instance is updated.
    *
-   * Calculating the hours/minutes/seconds is based on code written by Vishal @ stackoverflow.com
+   * Calculating the hours/minutes/seconds is derived from code written by Vishal @ stackoverflow.com
+   *
+   * @param time the total time (times * seconds, or quantity * seconds)
+   * @param eta  the eta element to update the result with
+   * @param enabled if true, when time is <= 0 shows done, else shows tbd (e.g. error)
    * @see https://stackoverflow.com/a/11486026/988713
    * @private
    */
@@ -814,7 +850,12 @@ var Popup = (() => {
     }
   }
 
-  // TODO:
+  /**
+   * Updates the download selecteds and unselecteds arrays each time the check-circle elements are clicked.
+   *
+   * @param event the click from which the check-circle was clicked
+   * @private
+   */
   function updateDownloadSelectedsUnselecteds(event) {
     const element = event.target;
     if (element && element.classList.contains("check-circle")) {
@@ -840,11 +881,8 @@ var Popup = (() => {
 
   /**
    * Sets up the instance in increment decrement mode. First validates user input for any
-   * errors, then saves and enables the instance, then toggles the view back to
-   * the controls.
+   * errors, then saves and enables the instance, then toggles the view back to the controls.
    *
-   * Note: Filtering arrays e.g. .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2," by user1106925 @ StackOverflow.com
-   * @see https://stackoverflow.com/a/16701357
    * @private
    */
   function setup() {
@@ -953,16 +991,20 @@ var Popup = (() => {
     }
   }
 
+  /**
+   * Sets up the temporary instance _ with all the form inputs in the Popup.
+   *
+   * @param caller the caller (e.g. accept, multi, toolkit)
+   * @param tabs   (optional) the tabs (only used by toolkit later in setupErrors)
+   * @private
+   */
   function setupInputs(caller, tabs) {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement:
       _.saveURL = DOM["#save-url-input"].checked;
-      _.url = DOM["#url-textarea"].value;
-      _.startingURL = DOM["#url-textarea"].value;
-      _.selection = DOM["#selection-input"].value;
-      _.startingSelection = DOM["#selection-input"].value;
-      _.selectionStart = +DOM["#selection-start-input"].value;
-      _.startingSelectionStart = +DOM["#selection-start-input"].value;
+      _.url = _.startingURL = DOM["#url-textarea"].value;
+      _.selection = _.startingSelection = DOM["#selection-input"].value;
+      _.selectionStart = _.startingSelectionStart = +DOM["#selection-start-input"].value;
       _.interval = +DOM["#interval-input"].value;
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
       _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].value;
@@ -990,7 +1032,7 @@ var Popup = (() => {
     if (caller === "toolkit") {
       // Toolkit:
       // Note: _.toolkitEnabled = true is set in toolkit()
-      _.tabsLength = tabs ? tabs.length : 0;
+      _.toolkitTabsLength = tabs ? tabs.length : 0;
       _.toolkitTool = DOM["#toolkit-tool-crawl-input"].checked ? DOM["#toolkit-tool-crawl-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
       _.toolkitQuantity = _.toolkitQuantityRemaining = +DOM["#toolkit-quantity-input"].value;
@@ -1031,6 +1073,13 @@ var Popup = (() => {
     }
   }
 
+  /**
+   * Sets up all the errors found using the temporary instance _.
+   *
+   * @param caller the caller (e.g. accept, multi, or toolkit)
+   * @return {*} all errors found, if any
+   * @private
+   */
   function setupErrors(caller) {
     const e = {};
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
@@ -1063,7 +1112,7 @@ var Popup = (() => {
         _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :
         _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") :
         _.toolkitTool === "tabs"  && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
-        _.toolkitTool === "tabs"  && (_.tabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
+        _.toolkitTool === "tabs"  && (_.toolkitTabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
         _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") : ""
       ];
       e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");

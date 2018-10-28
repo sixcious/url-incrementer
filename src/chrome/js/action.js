@@ -136,7 +136,7 @@ var Action = (() => {
    * @param action             the action to perform (increment or decrement)
    * @param instance           the instance containing the URL and parameters used to increment or decrement
    * @param errorSkipRemaining the number of times left to skip while performing this action
-   * @public
+   * @private
    */
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining) {
     console.log("incrementDecrementErrorSkip() - instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining);
@@ -209,7 +209,7 @@ var Action = (() => {
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
    * @param items    the storage items
-   * @param callback the function callback (optional) - called by popup clear before set
+   * @param callback (optional) the function callback - called by popup clear before set
    * @private
    */
   function clear(caller, instance, items, callback) {
@@ -299,7 +299,7 @@ var Action = (() => {
   }
 
   /**
-   * Performs a toolkit action. The instance's toolkit tool, action, and quantity are used.
+   * Performs a toolkit action. The instance's toolkit tool, action, quantity, and seconds (if crawling) are used.
    *
    * @param instance the instance for this tab
    * @private
@@ -308,9 +308,9 @@ var Action = (() => {
     let actionPerformed = true;
     switch (instance.toolkitTool) {
       case "crawl":
-        // Firefox Android: chrome.windows not supported
+        // Firefox Android: chrome.windows not supported, so send message to existing Popup
         if (chrome.windows && chrome.windows.create) {
-          chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 550}, function(window) {
+          chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 500}, function(window) {
             instance.tabId = window.tabs[0].id;
             Background.setInstance(instance.tabId, instance);
           });
@@ -387,6 +387,7 @@ var Action = (() => {
               console.log("download() - downloading url=" + download.url + " ... ");
               const params = instance.downloadSubfolder && download.filenameAndExtension && download.filename && download.extension ? { url: download.url, filename: instance.downloadSubfolder + "/" + download.filenameAndExtension } : { url: download.url};
               chrome.downloads.download(params, function(downloadId) {
+                // Handle error if download subfolder and fileNameAndExtension is invalid by downloading in root folder
                 if (chrome.runtime.lastError && instance.downloadSubfolder) {
                   chrome.downloads.download({url: download.url});
                 }

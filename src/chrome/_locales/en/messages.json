@@ -339,14 +339,14 @@
   "enhanced_mode_disable_p": { "message": "This unlocks URLI to its full potential! It lets you Error Skip, Crawl URLs with the Toolkit, and use Next Prev with Auto or Buttons. Click the button to enable (grant permissions)." },
   "about_h3": { "message": "About" },
   "version_span": { "message": "Version" },
-  "website_a": { "message": "Website (Help and Support)" },
-  "email_a": { "message": "Contact (Problems or Feedback)"},
+  "help_a": { "message": "Help (Website)" },
+  "support_a": { "message": "Support (Email)" },
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day! If you liked URLI, would you please support it by rating it?" },
   "urli_click_tickles": { "message" : "That tickles!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), Isaac S, Adam C & Will (Feedback), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), ZURB Foundation (Styles), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), URL Flipper (Precursor), Stack Overflow Users (Internal Code), Icon Bunny (Rainbow color palette), ..." },
+  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), The Chromium Authors (Styles), ZURB Foundation (Tables), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
   "special_thanks_you": { "message": "... and most of all you for using URLI!" }
 }

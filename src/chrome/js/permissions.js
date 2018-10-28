@@ -29,6 +29,7 @@ var Permissions = (() => {
 
   /**
    * Requests a single permission.
+   *
    * If granted and a script needs to be added, adds a declarative content rule.
    * Then updates the permission key value in storage.
    *
@@ -36,16 +37,16 @@ var Permissions = (() => {
    * @param callback   the callback function to return execution to
    * @public
    */
-  function requestPermissions(permission, callback) {
+  function requestPermission(permission, callback) {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
-        console.log("requestPermissions() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+        console.log("requestPermission() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
         if (PERMISSIONS[permission].script) {
           chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher()],
             actions: [new chrome.declarativeContent.RequestContentScript(PERMISSIONS[permission].script)]
           }], function(rules) {
-            console.log("requestPermissions() - successfully added declarativeContent rules:" + rules);
+            console.log("requestPermission() - successfully added declarativeContent rules:" + rules);
           });
         }
         chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
@@ -63,6 +64,7 @@ var Permissions = (() => {
 
   /**
    * Removes a single permission.
+   *
    * If necessary, removes the script and declarative content rule. Then checks to see if a conflict exists
    * with another permission that might share this permission. If a conflict exists, the permission is not removed.
    * Then updates the permission key value in storage.
@@ -71,13 +73,13 @@ var Permissions = (() => {
    * @param callback   the callback function to return execution to 
    * @public
    */
-  function removePermissions(permission, callback) {
+  function removePermission(permission, callback) {
     // Script:
     if (chrome.declarativeContent && PERMISSIONS[permission].script) {
       chrome.declarativeContent.onPageChanged.getRules(undefined, function(rules) {
         for (const rule of rules) {
           if (rule.actions[0].js[0] === PERMISSIONS[permission].script.js[0]) {
-            console.log("removePermissions() - removing rule " + rule);
+            console.log("removePermission() - removing rule " + rule);
             chrome.declarativeContent.onPageChanged.removeRules([rule.id], function() {});
           }
         }
@@ -91,13 +93,13 @@ var Permissions = (() => {
           (permission === "enhancedMode" && !items.permissionsInternalShortcuts && !items.permissionsDownload)) {
         chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
           if (removed) {
-            console.log("removePermissions() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
+            console.log("removePermission() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
           }
         });
       } else if (PERMISSIONS[permission].requestConflict) {
         chrome.permissions.remove(PERMISSIONS[permission].requestConflict, function(removed) {
           if (removed) {
-            console.log("removePermissions() - conflict encountered, successfully removed permission request conflict:" + PERMISSIONS[permission].requestConflict.permissions + ", origins:" + PERMISSIONS[permission].requestConflict.origins);
+            console.log("removePermission() - conflict encountered, successfully removed permission request conflict:" + PERMISSIONS[permission].requestConflict.permissions + ", origins:" + PERMISSIONS[permission].requestConflict.origins);
           }
         });
       }
@@ -131,6 +133,7 @@ var Permissions = (() => {
 
   /**
    * Checks that the chrome.declarativeContent rule for internal shortcuts is correctly applied.
+   * Note: This function is empty in Firefox.
    *
    * @public
    */
@@ -160,8 +163,8 @@ var Permissions = (() => {
 
   // Return Public Functions
   return {
-    requestPermissions: requestPermissions,
-    removePermissions: removePermissions,
+    requestPermission: requestPermission,
+    removePermission: removePermission,
     removeAllPermissions: removeAllPermissions,
     checkDeclarativeContent: checkDeclarativeContent
   };

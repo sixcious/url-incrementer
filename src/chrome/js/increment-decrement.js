@@ -14,7 +14,7 @@ var IncrementDecrement = (() => {
    * @param url               the url to find the selection in
    * @param preference        the preferred strategy to use to find the selection
    * @param selectionCustom   the object with custom regular expression parameters
-   * @param previousException true if this function encountered a previous exception, false otherwise
+   * @param previousException (optional) true if this function encountered a previous exception, false otherwise
    * @returns {*} - {selection, selectionStart} or an empty selection if no selection found
    * @public
    */
@@ -59,7 +59,7 @@ var IncrementDecrement = (() => {
    * @param baseCase       the base case if the base is alphanumeric (11-36)
    * @param baseDateFormat the date format if the base is a date
    * @param baseCustom     the custom alphabet if the base is custom
-   * @param leadingZeros   TODO
+   * @param leadingZeros   if true, pad with leading zeros, false don't pad
    * @returns {string} an empty string if validation passed, or an error message if validation failed
    * @public
    */
@@ -105,8 +105,8 @@ var IncrementDecrement = (() => {
    * The exact operation is dependant on the instance and can be a step thru URLs array or
    * incrementing / decrementing a URL depending on the the state of multi.
    *
-   * @param action
-   * @param instance
+   * @param action   the action to perform (increment or decrement)
+   * @param instance the instance containing the URL and parameters used to increment or decrement
    * @public
    */
   function incrementDecrement(action, instance) {
@@ -114,8 +114,8 @@ var IncrementDecrement = (() => {
     if (instance.urls && instance.urls.length > 0) {
       IncrementDecrementArray.stepThruURLs(action, instance);
     }
-    // If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
-    else if (instance.multiEnabled && !/\d/.test(action)) {
+    // Else If multi is enabled and doing a main action (no number), simultaneously increment multiple parts of the URL:
+    else if (instance.multiEnabled && !instance.multiRangeEnabled && !/\d/.test(action)) {
       for (let i = 1; i <= instance.multiCount; i++) {
         incrementDecrementURL(action + i, instance);
       }
@@ -190,6 +190,20 @@ var IncrementDecrement = (() => {
     return selectionmod;
   }
 
+  /**
+   * Performs a custom base increment or decrement operation on the selection.
+   *
+   * Note: This function is derived from code written by harpermaddox @ medium.com.
+   *
+   * @param action       the action (increment or decrement)
+   * @param selection    the selected part to increment or decrement
+   * @param interval     the amount to increment or decrement by
+   * @param alphabet     the custom base's alphabet to use
+   * @param leadingZeros if true, pad with leading zeros, false don't pad
+   * @returns {string} the modified selection after incrementing or decrementing it
+   * @see https://medium.com/@harpermaddox/how-to-build-a-custom-url-shortener-5e8b454c58ae
+   * @private
+   */
   function incrementDecrementBaseCustom(action, selection, interval, alphabet, leadingZeros) {
     let selectionmod = "",
         base = alphabet.length,
@@ -200,7 +214,7 @@ var IncrementDecrement = (() => {
       base10num += num * (base ** digit);
     }
     console.log("incrementDecrementBaseCustom() - done decoding, base10num=" + base10num);
-    // Increment
+    // Increment or Decrement Decimal
     base10num += action.startsWith("increment") ? interval : -interval;
     // Part 2 Encode Decimal to Base
     if (base10num === 0) {
@@ -216,8 +230,8 @@ var IncrementDecrement = (() => {
     if (alphabet[0] !== '0' && selection.startsWith(alphabet[0]) && selection.length > selectionmod.length) {
       selectionmod = alphabet[0].repeat(new RegExp("^" + alphabet[0] + "+", "g").exec(selection)[0].length) + selectionmod;
     }
-    // If Leading 0s, pad with 0s
-    if (leadingZeros && selection.length > selectionmod.length) {
+    // Else If Leading 0s, pad with 0s
+    else if (leadingZeros && selection.startsWith("0") && selection.length > selectionmod.length) {
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
     console.log("incrementDecrementBaseCustom() - done encoding, base10num done encode=" + base10num + ", selectionmod=" + selectionmod);
@@ -230,6 +244,7 @@ var IncrementDecrement = (() => {
     validateSelection: validateSelection,
     incrementDecrement: incrementDecrement
   };
+
 })();
 
 var IncrementDecrementMulti = (() => {
@@ -298,25 +313,27 @@ var IncrementDecrementMulti = (() => {
     multiPre: multiPre,
     multiPost: multiPost
   };
+
 })();
 
 var IncrementDecrementDate = (() => {
 
+  // Short and Long Month Names
   const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
   const mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
   /**
    * Performs an increment decrement operation on the date selection string.
    *
-   * Legend -   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
-   * Patterns - yyyy | yy, mmmm | mmm | mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
-   * Examples - mm/dd/yyyy, dd-m-yyyy, mm/yy, hh:mm:ss
+   * Legend:   y: year, m: month, d: day, h: hour, i: minute, s: second, l: millisecond
+   * Patterns: yyyy | yy, mmmm | mmm | mm | m, dd | d, hh | h, ii | i, ss | s, ll | l
+   * Examples: mm/dd/yyyy, dd-m-yyyy, mm/yy, hh:mm:ss
    *
-   * @param action
-   * @param selection
-   * @param interval
-   * @param dateFormat
-   * @returns {string | *}
+   * @param action     the action (increment or decrement)
+   * @param selection  the selected part to increment or decrement
+   * @param interval   the amount to increment or decrement by
+   * @param dateFormat the date format of the selection
+   * @returns {string | *} the modified selection after incrementing or decrementing it
    * @public
    */
   function incrementDecrementDate(action, selection, interval, dateFormat) {
@@ -334,6 +351,14 @@ var IncrementDecrementDate = (() => {
     return selection2;
   }
 
+  /**
+   * Splits both the date selection's parts and date format's parts into arrays to work with.
+   *
+   * @param str        the date selection string
+   * @param dateFormat the date format of the selection
+   * @returns {{strParts: Array, dateFormatParts: (*|Array)}} the date string and format parts as arrays
+   * @private
+   */
   function splitdateparts(str, dateFormat) {
     const regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
     const matches = dateFormat.match(regexp);
@@ -356,9 +381,17 @@ var IncrementDecrementDate = (() => {
         currPos += dateFormatParts[i].length;
       }
     }
-    return { "dateFormatParts": dateFormatParts, "strParts": strParts };
+    return { "strParts": strParts, "dateFormatParts": dateFormatParts };
   }
 
+  /**
+   * Converts a String to a Date.
+   *
+   * @param strParts        the date selection string split up into an array
+   * @param dateFormatParts the date format split up into an array
+   * @returns {Date} the date representation of the string
+   * @private
+   */
   function str2date(strParts, dateFormatParts) {
     const now = new Date();
     const mapParts = new Map([["y", now.getFullYear()], ["m", now.getMonth() + 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
@@ -386,7 +419,16 @@ var IncrementDecrementDate = (() => {
     return new Date(mapParts.get("y"), mapParts.get("m") - 1, mapParts.get("d"), mapParts.get("h"), mapParts.get("i"), mapParts.get("s"), mapParts.get("l"));
   }
 
-  // @see https://stackoverflow.com/a/39196460
+  /**
+   * Increments or decrements a date by the "lowest" part in the date format (e.g. yyy/mm/dd would be day, dd).
+   *
+   * @param action     the action (increment or decrement)
+   * @param date       the date representation of the date selection string
+   * @param dateFormat the date format of the selection
+   * @param interval  the amount to increment or decrement by
+   * @returns {Date} the date after incrementing or decrementing
+   * @private
+   */
   function incdecdate(action, date, dateFormat, interval) {
     interval = action.startsWith("increment") ? interval : -interval;
     const lowestregexp = /(l|(s|i|h|d|M|m|y(?!.*m))(?!.*M)(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
@@ -404,6 +446,15 @@ var IncrementDecrementDate = (() => {
     return date;
   }
 
+  /**
+   * Converts a Date into a String.
+   *
+   * @param date            the date
+   * @param dateFormat      the date format of the selection
+   * @param dateFormatParts the date format split up into an array
+   * @returns {String} the string representation of the date
+   * @private
+   */
   function date2str(date, dateFormat, dateFormatParts) {
     let str = dateFormat;
     for (let i = 0; i < dateFormatParts.length; i++) {
@@ -438,6 +489,7 @@ var IncrementDecrementDate = (() => {
   return {
     incrementDecrementDate: incrementDecrementDate
   };
+
 })();
 
 var IncrementDecrementArray = (() => {
@@ -461,17 +513,17 @@ var IncrementDecrementArray = (() => {
   }
 
   /**
-   * Pre-calculates an array of URLs.
+   * Pre-calculates an array of URLs. Arrays are only calculated in the following situations:
+   * Multi-Range Enabled, Toolkit Enabled, or ShuffleURLs Enabled.
    *
-   * @param instance
-   * @returns {{urls: Array, currentIndex: number}}
+   * @param instance the instance with properties used to pre-calculate the URLs array
+   * @returns {{urls: Array, currentIndex: number}} the URLs array and the current index to start from
    * @public
    */
   function precalculateURLs(instance) {
     console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
     if (instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
-      // Custom URLs are treated the same in all modes
       if (instance.toolkitEnabled) {
         urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
       } else if (instance.autoEnabled) {
@@ -488,6 +540,16 @@ var IncrementDecrementArray = (() => {
     return {"urls": urls, "currentIndex": currentIndex};
   }
 
+  /**
+   * Builds out the URLs array if the instance is Multi-Range Enabled, Toolkit Enabled, or ShuffleURLs Enabled.
+   * Delegates to another function if Multi-Range Enabled.
+   *
+   * @param instance the instance
+   * @param action   the action (increment or decrement)
+   * @param limit    the max number of entries in the URLs array
+   * @returns {Array} the urls array
+   * @private
+   */
   function buildURLs(instance, action, limit) {
     console.log("buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
     const urls = [],
@@ -522,6 +584,14 @@ var IncrementDecrementArray = (() => {
     return urls;
   }
 
+  /**
+   * Builds out the URLs array for Multi-Range enabled instances.
+   *
+   * @param instance the multi-range enabled instance
+   * @param action   the action (increment or decrement)
+   * @param urls     the urls array to build from
+   * @private
+   */
   function buildMultiRangeURLs(instance, action, urls) {
     // Change each multi part's selectionStart to the non-range URL, then update the instance's url to the final non-range URL
     for (let i = 1; i <= instance.multiCount; i++) {
@@ -532,11 +602,9 @@ var IncrementDecrementArray = (() => {
       instance.multi[i].startingSelectionStart = instance.multi[i].selectionStart;
       instance.url = urlmod;
     }
-
     // Change the urls array first url to the non-range URL
     urls[0] =  { "urlmod": instance.url, "selectionmod": ""};
-
-    // Build out the multi range urls array... this is EXTREMELY complicated
+    // Build out the multi range urls array... This is EXTREMELY complicated because we manually are adjusting the selectionStarts after each part's action
     const preurl1 = instance.url;
     for (let i = 0; i < instance.multi[1].times; i++) {
       const press1 = instance.multi[1].selectionStart;
@@ -572,9 +640,11 @@ var IncrementDecrementArray = (() => {
 
   /**
    * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
-   * Note: This function is written by Laurens Holst.
+   *
+   * Note: This function is derived from code written by Laurens Holst @ stackoverflow.com.
    *
    * @param array the array to shuffle
+   * @returns {Array} the shuffled urls array
    * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
    * @see https://stackoverflow.com/a/12646864
    * @private

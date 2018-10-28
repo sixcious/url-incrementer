@@ -98,10 +98,10 @@ var Auto = (() => {
    *
    * Auto Repeat Workflow:
    * 1. Action.clear() calls Auto.repeatAutoTimer() with a new deep copy of the instance
-   * 2. Auto.repeatAutoTimer() sets autoRepeating to true, sets the instance in Background, and calls Auto.startAutoTimer()
+   * 2. Auto.repeatAutoTimer() sets autoRepeating to true, sets the instance in Background, calls Auto.startAutoTimer()
    * 3. Auto.startAutoTimer() calls Auto.setTimeout()
-   * 4. Auto.setTimeout() calls Action.returnToStart()
-   * 5. Action.returnToStart() sets autoRepeating to false, resets the instance properties, resets multi
+   * 4. Auto.setTimeout() because autoRepeating is true calls Action.returnToStart()
+   * 5. Action.returnToStart() sets autoRepeating to false, resets all the instance properties (including multi, array)
    *
    * @param instance the instance's auto timer to repeat
    * @public
@@ -262,10 +262,11 @@ var Auto = (() => {
    * It also contains a "wait" state to keep it from setting a timeout before the page has fully loaded,
    * if the user checked the "Wait for the page to fully load" checkbox.
    *
-   * This function is based on code written by Tim Down.
+   * Note: This function is derived from code written by Tim Down @ stackoverflow.com.
    *
    * @param callback the function callback
    * @param delay    the delay for the timeout
+   * @see https://stackoverflow.com/a/3969760
    * @private
    */
   function AutoTimer(callback, delay) {

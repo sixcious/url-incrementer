@@ -91,7 +91,7 @@ var Download = (() => {
    *
    * @param includes (optional) the array of Strings that must be included in the URL
    * @param excludes (optional) the array of Strings that must be excluded from the URL
-   * @param items      the items map
+   * @param items    the items map
    * @returns {*} results, the array of results
    * @private
    */

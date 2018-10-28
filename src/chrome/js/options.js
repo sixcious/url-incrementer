@@ -7,10 +7,12 @@
 
 var Options = (() => {
 
+  // The DOM elements cache, KeyboardEvent.key and modifier bits map, and array of internal shortcuts
   const DOM = {},
         KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]),
         shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
 
+  // The backgroundPage cache, key variable that stores the key between keyDown and keyUp, and timeouts object
   let backgroundPage = {},
       key = {},
       timeouts = {};
@@ -33,8 +35,8 @@ var Options = (() => {
       element[element.dataset.i18n] = chrome.i18n.getMessage(element.id.replace(/-/g, '_').replace(/\*.*/, ''));
     }
     // Add Event Listeners to the DOM elements
-    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { Permissions.removePermissions("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { Permissions.requestPermission("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
+    DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { Permissions.removePermission("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
@@ -83,10 +85,10 @@ var Options = (() => {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
-    DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermissions("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
-    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermissions("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { Permissions.removePermissions("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermission("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
+    DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermission("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
+    DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermission("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
+    DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { Permissions.removePermission("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#urli-input"].addEventListener("click", clickURLI);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
@@ -97,7 +99,7 @@ var Options = (() => {
   }
 
   /**
-   * TODO
+   * Builds out the shortcuts table HTML and adds event listeners.
    *
    * @private
    */
@@ -146,12 +148,12 @@ var Options = (() => {
       clicks.min = "1";
       clicks.max = "9";
       column4.appendChild(clicks);
-      // Event Listeners:
-      input.addEventListener("keydown", function (event) { setKeyDown(event); writeInput(this, key); });
+      // Add Event Listeners
+      input.addEventListener("keydown", function (event) { translateKey(event); writeInput(this, key); });
       input.addEventListener("keyup", function (event) { key.code = !KEY_MODIFIERS.has(event.key) ? event.code : key.code; writeInput(this, key); setKey(this); });
       clear.addEventListener("click", function () { chrome.storage.sync.set({[getStorageKey(this)]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + shortcut + "-input"], null); });
-      select.addEventListener("change", function() { setMouse(this, undefined, true); });
-      clicks.addEventListener("change", function() { setMouse(undefined, this, false); });
+      select.addEventListener("change", function() { setMouse(this, undefined); });
+      clicks.addEventListener("change", function() { setMouse(undefined, this); });
     }
   }
 
@@ -262,41 +264,13 @@ var Options = (() => {
   }
 
   /**
-   * Sets the enabled state of key shortcuts.
-   * 
-   * @private
-   */
-  function setKeyEnabled() {
-    chrome.storage.sync.get(null, function(items) {
-      const enabled = items.keyIncrement || items.keyDecrement || items.keyNext || items.keyPrev || items.keyClear || items.keyReturn || items.keyAuto;
-      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
-        DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
-      });
-    });
-  }
-
-  /**
-   * Sets the enabled state of mouse button shortcuts.
-   * 
-   * @private
-   */
-  function setMouseEnabled() {
-    chrome.storage.sync.get(null, function(items) {
-      const enabled =  items.mouseIncrement || items.mouseDecrement || items.mouseNext || items.mousePrev || items.mouseClear || items.mouseReturn || items.mouseAuto;
-      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
-        DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
-      });
-    });
-  }
-
-  /**
-   * Sets the key that was pressed on a keydown event. This is needed afterwards
+   * Translates the keydown event that was pressed into the key object. This is needed afterwards
    * to write the key to the input value and save the key to storage on keyup.
-   * 
+   *
    * @param event the key event fired
    * @private
    */
-  function setKeyDown(event) {
+  function translateKey(event) {
     event.preventDefault();
     // Set key modifiers as the event modifiers OR'd together and the key code as the KeyboardEvent.code
     key = { "modifiers":
@@ -309,6 +283,12 @@ var Options = (() => {
     };
   }
 
+  /**
+   * Sets the key into storage on keyup event. Then calls setKeyEnabled() to determine if any keys are set.
+   *
+   * @param input the key input from which this event occurred
+   * @private
+   */
   function setKey(input) {
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
@@ -316,13 +296,51 @@ var Options = (() => {
     }, 1000);
   }
 
-  function setMouse(buttonInput, clicksInput, updateMouseEnabled) {
+  /**
+   * Sets mouse button and clicks when the select changes. Then calls setMouseEnabled() to determine if any mouse
+   * buttons are set. This function is called by both the select button dropdown and the clicks number input.
+   *
+   * @param buttonInput (optional) the button input (select)
+   * @param clicksInput (optional) the clicks input (number)
+   * @private
+   */
+  function setMouse(buttonInput, clicksInput) {
+    // Only updateMouseEnabled if the buttonInput triggered this function.
+    const updateMouseEnabled = !!buttonInput;
     buttonInput = buttonInput ? buttonInput : DOM["#" + clicksInput.id.replace("clicks", "select")];
     clicksInput = clicksInput ? clicksInput : DOM["#" + buttonInput.id.replace("select", "clicks")];
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
     console.log("setMouse() - mouse=" + mouse);
     clicksInput.className = mouse ? "display-block fade-in" : "display-none";
     chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse }, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
+  }
+
+  /**
+   * Sets the enabled state of the key shortcuts.
+   *
+   * @private
+   */
+  function setKeyEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      const enabled = items.keyIncrement || items.keyDecrement || items.keyNext || items.keyPrev || items.keyClear || items.keyReturn || items.keyAuto;
+      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
+        DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
+      });
+    });
+  }
+
+  /**
+   * Sets the enabled state of the mouse button shortcuts.
+   *
+   * @private
+   */
+  function setMouseEnabled() {
+    chrome.storage.sync.get(null, function(items) {
+      const enabled =  items.mouseIncrement || items.mouseDecrement || items.mouseNext || items.mousePrev || items.mouseClear || items.mouseReturn || items.mouseAuto;
+      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
+        DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
+      });
+    });
   }
 
   /**
@@ -339,7 +357,7 @@ var Options = (() => {
 
   /**
    * Writes the key(s) that were pressed to the text input.
-   * 
+   *
    * @param input the input to write to
    * @param key the key object to write
    * @private
@@ -389,6 +407,11 @@ var Options = (() => {
     DOM["#saved-urls-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
   }
 
+  /**
+   * Adds a Saved URL wildcard or regular expression. Note that exact URLs are added in a separate function in Saves.
+   *
+   * @private
+   */
   async function addSavedURL() {
     // If the textarea value is empty return with error
     const url = DOM["#saved-urls-wildcard-url-textarea"].value;
@@ -417,6 +440,11 @@ var Options = (() => {
     });
   }
 
+  /**
+   * Deletes a Saved URL (all types) by its hash/ciphertext.
+   *
+   * @private
+   */
   async function deleteSavedURL() {
     // Dynamically Generated Select, must get element dynamically, can't use DOM Cache
     const select = document.getElementById("saved-urls-select"),
@@ -455,6 +483,9 @@ var Options = (() => {
    * This function is called as the user is typing in a text input or textarea that is updated dynamically.
    * We don't want to call chrome.storage after each key press, as it's an expensive procedure, so we set a timeout delay.
    *
+   * @param input      the text input or textarea
+   * @param storageKey the storage key to set
+   * @param type       the type (number, value, or array)
    * @private
    */
   function saveInput(input, storageKey, type) {
@@ -471,7 +502,7 @@ var Options = (() => {
 
   /**
    * Validates the custom selection regular expression fields and then performs the desired action.
-   * 
+   *
    * @param action the action to perform (test or save)
    * @private
    */

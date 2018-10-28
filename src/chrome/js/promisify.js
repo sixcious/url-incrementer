@@ -10,8 +10,8 @@ var Promisify = (() => {
   /**
    * Gets the storage items via a promise-based wrapper for async/await callers.
    *
-   * @param namespace the storage namespace, either "sync" or "local" (optional)
-   * @param key       the storage item key to get or null for all items (optional)
+   * @param namespace (optional) the storage namespace, either "sync" or "local"
+   * @param key       (optional) the storage item key to get or null for all items
    * @returns {Promise<{}>} the storage items
    * @public
    */
@@ -26,7 +26,7 @@ var Promisify = (() => {
   /**
    * Gets the queried tabs via a promise-based wrapper for async/await callers.
    *
-   * @param queryInfo the query object to use (optional)
+   * @param queryInfo (optional) the query object to use
    * @returns {Promise<{}>} the tabs
    * @public
    */

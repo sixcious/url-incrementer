@@ -60,7 +60,7 @@ var Saves = (() => {
    *
    * @param save the saved URL, wildcard, or regexp
    * @param url  the plaintext URL to match
-   * @returns {Promise<{matches: boolean}>}
+   * @returns {Promise<{matches: boolean}>} the matches
    * @public
    */
   async function matchesSave(save, url) {
@@ -82,7 +82,7 @@ var Saves = (() => {
    *
    * @param save the saved URL
    * @param url  the plaintext URL to match
-   * @returns {Promise<{matches: boolean, selection: {}}>}
+   * @returns {Promise<{matches: boolean, selection: {}}>} the matches with selection
    * @private
    */
   async function matchesURL(save, url) {
@@ -100,7 +100,7 @@ var Saves = (() => {
    *
    * @param save the saved wildcard
    * @param url  the plaintext URL to match
-   * @returns {Promise<{matches: RegExpExecArray}>}
+   * @returns {Promise<{matches: RegExpExecArray}>} the matches
    * @private
    */
   async function matchesWildcard(save, url) {
@@ -114,7 +114,7 @@ var Saves = (() => {
    *
    * @param save the saved regexp
    * @param url  the plaintext URL to match
-   * @returns {Promise<{matches: RegExpExecArray}>}
+   * @returns {Promise<{matches: RegExpExecArray}>} the matches
    * @private
    */
   async function matchesRegExp(save, url) {

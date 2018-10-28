@@ -6,6 +6,12 @@ This is a list of important references used in developing URLI. Full credit and 
 
 [How to handle async/await in for loops](https://blog.lavrton.com/javascript-loops-how-to-handle-async-await-6252dd3c795)
 
+Regex pipe order alteration...
+https://stackoverflow.com/a/39196460
+
+Filtering arrays e.g. .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2," by user1106925 @ StackOverflow.com
+@see https://stackoverflow.com/a/16701357
+
 ## Background
 
 Dynamically making an event page's background persistent
@@ -21,6 +27,8 @@ https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base6
 
 Base64 String to Uint8Array
 https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/42334410#42334410
+
+## Increment Decrement Custom Bases
 
 Custom Base Encoding / Decoding (Base 62)
 https://medium.com/@harpermaddox/how-to-build-a-custom-url-shortener-5e8b454c58ae
