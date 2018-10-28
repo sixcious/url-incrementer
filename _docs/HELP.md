@@ -46,7 +46,6 @@ This is my own special toolkit used for testing URLI that has been "unlocked" an
 It lets you crawl URLs for response codes, open up to 100 incremented tabs at once, or generate a list of up to 10,000 incremented links.
 Click the `wrench` icon in the bottom-right area of the Popup to open or close it.
 The toolkit works with the URL and selection you have currently selected.
-Before using the toolkit, if you have an instance enabled, please clear it first by clicking the red `x` button, then close the Popup and re-enter it to avoid potential bugs.
 
 Crawl URLs will open a new window (except on Firefox for Android).
 You can leave the window minimized and continue multi-tasking while crawling.
@@ -250,7 +249,7 @@ Many extensions do not bother at least hashing your saved URLs or even discussin
 
 # Shuffle URLs
 Click the `red crossed-arrows` icon in the upper-right area of the Popup to turn this mode on.
-You can turn on Shuffle in Normal, Auto, or Toolkit modes.
+You can turn on Shuffle in Normal, Auto, or Toolkit modes (Shuffle does not work when using Next Prev actions).
 
 Think of this feature like how you would shuffle a deck of cards.
 It shuffles the URLs you'll see next.
@@ -271,22 +270,42 @@ URLI uses the [Durstenfeld algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80
 # Bases and Custom Bases
 Bases are the "types" of numbers we can increment. Think of them like different alphabets. URLI can increment all sorts of bases, even your own made-up custom ones. :)
 
-The most common bases are:
-- 2 Binary - 0s and 1s! :)
-- 8 Octal - Not commonly used anymore 0-7
-- 10 Decimal - Our default number system from 0-9
-- 16 Hexadecimmal - 0-9 A-F Hex Colors, Hashing, Cryptography
-- 32 Hexatrigesimal - The full alphanumeric alphabet from 0-9 and A-Z (After 9, it goes to A, then every letter till Z and back to 0)
-- 62
-- 64 Base 64 Extremely popular, Hashing, Cryptography
+Some common bases are:
+- 2 Binary - 0s and 1s
+- 8 Octal - 0-7 Was popular, but is not commonly used anymore
+- 10 Decimal - 0-9 Our default number system
+- 16 Hexadecimmal - 0-9 A-F Used in Hex Colors, Hashing, Cryptography
+- 32 Hexatrigesimal - 0-9 A-Z The full alphanumeric alphabet (After 9, it goes to A, then every letter till Z and back to 0)
+- Base 62 - 0-9 A-Z a-z Similar to Hexatrigesimal except it also contains lowercase alphabet as well
+- Base 64 - Similar to Base 62 except additional characters are added like +/ Extremely popular, Hashing, Cryptography
 
 For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedia](https://en.wikipedia.org/wiki/Table_of_bases).
 
 
 ## Custom Bases
-Change the `Base` to `Custom` and define a custom alphabet.
-Here are some common alphabets you can copy/paste into the `Alphabet` input:
+Change the `Base` to `Custom` and instantly define a custom alphabet to increment!
+The alphabet can contain non-number characters like !@#$%^&*()_+=-.
+You can even use normal alphabets and just exclude certain letters.
+The order of characters in the alphabet matters; also the first character is treated like "0" in our decimal number system.
+
+Example:
+Say you have defined a 5-character custom `Alphabet` of `aB!9?`. This is how it would look like when you start at `a` and increment with an interval of 1:
+
+    a  B  !  9  ?
+    Ba BB B! B9 B?
+    !a !B !! !9 !?
+    9a 9B 9! 99 9?
+    ?a ?B ?! ?9 ??
+    
+Did you notice how the `a` is treated almost like a `0` in our decimal number system?
+
+Here are some common bases you can copy/paste into the `Alphabet` input:
 
 Base 62
-Base 64 (+-)
-...
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
+
+Base 64 (Standard Non-URL Friendly +/ Version Without = Padding)
+`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/`
+
+Base 64 (Modified URL Friendly -_ Version Without = Padding)
+`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_`

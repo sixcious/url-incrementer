@@ -1124,9 +1124,9 @@ var Popup = (() => {
       // Auto Errors
       e.autoErrors = [
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
+        _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && _.shuffleURLs ? chrome.i18n.getMessage("auto_next_prev_shuffle_error") : "",
         _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 10000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",
         _.autoEnabled && (_.autoSeconds < 1 || _.autoSeconds > 3600) ? chrome.i18n.getMessage("auto_seconds_invalid_error") : "",
-        _.autoEnabled && _.shuffleURLs && _.autoTimes > 10000 ? chrome.i18n.getMessage("auto_shuffle_times_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoSeconds < 5 ? chrome.i18n.getMessage("auto_download_seconds_error") : "",
         _.autoEnabled && _.downloadEnabled && _.autoRepeat ? chrome.i18n.getMessage("auto_download_repeat_error") : ""
       ];
