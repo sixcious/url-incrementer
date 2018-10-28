@@ -342,7 +342,7 @@
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
-  "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day! If you liked URLI, would you please support it by rating it?" },
+  "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_tickles": { "message" : "That tickles!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
   "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), The Chromium Authors (Styles), ZURB Foundation (Tables), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },

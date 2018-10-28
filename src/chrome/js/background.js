@@ -273,8 +273,8 @@ var Background = (() => {
     if (request && request.greeting === "performAction") {
       const items = await Promisify.getItems();
       const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
-      if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled && instance.saveFound)))) ||
-        (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled && instance.saveFound))))) {
+      if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.saveFound)))) ||
+        (request.shortcut === "mouse" && items.mouseEnabled && (items.mouseQuickEnabled || (instance && (instance.enabled || instance.saveFound))))) {
         Action.performAction(request.action, "message", instance, items);
       }
     }
