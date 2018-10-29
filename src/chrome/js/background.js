@@ -290,7 +290,7 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_EXTENSION_ID = "mehmeedmngjlehllbpncbjokegfhnfmg",
+    const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg",
           URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
     if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
