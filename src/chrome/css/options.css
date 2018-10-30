@@ -5,11 +5,17 @@
  * @license LGPL-3.0
  */
 
-/* Firefox: Set max-width and margin */
+/* Native elements styles */
+
+/* Firefox: Set max-width and margin. Chrome: Set min-width to keep popup reasonably sized */
 body {
   min-width: 460px;
   max-width: 460px;
   margin: 20px;
+}
+
+section:not(:last-of-type) {
+  margin-bottom: 40px;
 }
 
 textarea {
@@ -26,30 +32,6 @@ h3 {
   user-select: initial;
 }
 
-section:not(:last-of-type) {
-  margin-bottom: 40px;
-}
-
-div.heading {
-  border-bottom: 1px solid #333333;
-  padding-bottom: 6px;
-  margin-bottom: 12px;
-}
-
-div.heading.selection-first {
-  margin-bottom: 22px;
-}
-
-div.heading button {
-  float: right;
-  position: relative;
-  top: -8px;
-}
-
-.column {
-  padding: 0 10px 10px 0;
-}
-
 input[type="number"] {
   width: 52px;
 }
@@ -61,6 +43,22 @@ input[type="image"] {
 
 input[type="image"]:focus {
   outline: none;
+}
+
+.heading {
+  border-bottom: 1px solid #333333;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.heading button {
+  float: right;
+  position: relative;
+  top: -8px;
+}
+
+.column {
+  padding: 0 10px 10px 0;
 }
 
 .tooltip {
@@ -141,14 +139,18 @@ input[type="image"]:focus {
 
 /* shortcuts */
 
+#mouse-click-speed {
+  display: inline-block;
+  margin-left: 3em;
+  margin-bottom: 1em;
+}
+
 #internal-shortcuts-table .column {
   vertical-align: middle;
 }
 
 input[type="text"].key-input {
   width: 165px;
-/*  width: 200px;
-  height: 32px;*/
   margin-right: 4px;
 }
 
@@ -156,26 +158,7 @@ input[type="image"].key-clear {
   vertical-align: text-bottom;
 }
 
-  /*input[type="image"].key-clear {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    opacity: 0.8;
-  }*/
-
-#mouse-click-speed {
-  display: inline-block;
-  margin-left: 3em;
-  margin-bottom: 1em;
-}
-
-.clear {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-
-/* icon and popup */
+/* icon */
 
 .icon-color.radio, #popup-button-size-div {
   margin-bottom: 24px;
@@ -194,6 +177,8 @@ input[type="image"].key-clear {
   margin-right: 3px;
 }
 
+/* popup */
+
 #popup-button-size-label {
   display: block;
   margin-bottom: 5px;
@@ -204,7 +189,7 @@ input[type="image"].key-clear {
   cursor: pointer;
 }
 
-/* saves */
+/* saved-urls */
 
 #saved-urls-buttons {
   margin-top: 2em;
@@ -319,9 +304,9 @@ input[type="image"].key-clear {
   margin-bottom: 8px;
 }
 
-#urli-thank-you-rainbow span {
+/*#urli-thank-you-rainbow span {
   padding: 0 2px;
-}
+}*/
 
 #urli-thank-you-wish {
   font-style: italic;
@@ -349,7 +334,10 @@ input[type="image"].key-clear {
   margin-top: 8px;
 }
 
-.rainbow-underline:after {
+/* browser-specific styling */
+
+/* Chrome themed browser underline */
+.browser-underline:after {
   content: '';
   display: block;
   margin-top: 2px;
@@ -357,7 +345,7 @@ input[type="image"].key-clear {
   background: linear-gradient(to right, #4C8BF5 0%, #4C8BF5 24%, #DD5144 25%, #DD5144 49%, #FFCD46 50%, #FFCD46 74%, #1DA462 75%, #1DA462 100%);
 }
 
-/* Overrides generateAlert overlay styling so alert is displayed in gap space */
+/* Chrome override options overlay position so generated alert is displayed in gap space on the Options Page */
 #options .overlay {
   top: 80%;
 }

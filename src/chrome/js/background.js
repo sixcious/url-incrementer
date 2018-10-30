@@ -10,7 +10,7 @@ var Background = (() => {
   // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
-    "iconColor": "dark", "iconFeedbackEnabled": false,
+    "iconColor": "default", "iconFeedbackEnabled": false,
     "popupButtonSize": 32, "popupAnimationsEnabled": true,
     "commandsQuickEnabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyZ"}, "keyAuto": {"modifiers": 6, "code": "Space"},
@@ -242,7 +242,7 @@ var Background = (() => {
     console.log("startupListener()");
     const items = await Promisify.getItems();
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
-    if (chrome.browserAction.setIcon && items && ["default", "light", "dark", "urli"].includes(items.iconColor)) {
+    if (chrome.browserAction.setIcon && items && ["default", "light", "confetti", "urli"].includes(items.iconColor)) {
       console.log("startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {

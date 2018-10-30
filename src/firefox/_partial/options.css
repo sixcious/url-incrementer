@@ -1,5 +1,5 @@
-/* Override rainbow-underline:after background */
-.rainbow-underline:after {
+/* Firefox themed browser underline */
+.browser-underline:after {
   content: '';
   display: block;
   margin-top: 2px;
@@ -7,20 +7,10 @@
   background: linear-gradient(to right, #BE0575 0%, #F62336 24%, #FF6611 25%, #FF6611 49%, #FF6611 50%, #FFEC4A 74%, #008AFB 75%, #203FB6 100%);
 }
 
-/* Override options overlay position */
+/* Firefox override options overlay position so generated alert is displayed in gap space on the Options Page */
 #options .overlay {
   position: absolute;
   top: initial;
   bottom: 8.6em;
   left: 17em;
-}
-
-/* Hide Enable Firefox Shortcuts Button until Firefox Shortcuts UI is available */
-#browser-shortcuts-enable-button {
-  display: none;
-}
-
-/* Hide Disable Enhanced Mode Button until the Firefox Version no longer gets this permission out of the box */
-#enhanced-mode-disable-button {
-  display: none;
 }

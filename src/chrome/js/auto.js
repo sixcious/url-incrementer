@@ -86,9 +86,9 @@ var Auto = (() => {
           Background.setBadge(instance.tabId, "auto", false);
         }
       }
-      // necessary: update instance.autoPaused boolean state
+      // Update instance.autoPaused boolean state (This is necessary)
       Background.setInstance(instance.tabId, instance);
-      // necessary?: update autoTimers paused state
+      // Update autoTimers paused state (Is this necessary?)
       autoTimers.set(instance.tabId, autoTimer);
     }
   }

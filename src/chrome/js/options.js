@@ -44,7 +44,7 @@ var Options = (() => {
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
     DOM["#icon-color-radio-default"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
-    DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
+    DOM["#icon-color-radio-confetti"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { saveInput(this, "popupButtonSize", "number");
@@ -252,7 +252,7 @@ var Options = (() => {
     if (!chrome.browserAction.setIcon) {
       return;
     }
-    // Possible values may be: default, light, dark, or urli
+    // Possible values may be: default, light, confetti, or urli
     chrome.browserAction.setIcon({
       path : {
         "16": "/img/16-" + this.value + ".png",
@@ -575,7 +575,7 @@ var Options = (() => {
           chrome.storage.local.set(backgroundPage.Background.getLSDV(), function() {
             console.log("resetOptions() - removing all permissions...");
             Permissions.removeAllPermissions();
-            changeIconColor.call(DOM["#icon-color-radio-dark"]);
+            changeIconColor.call(DOM["#icon-color-radio-default"]);
             populateValuesFromStorage("all");
             UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
           });

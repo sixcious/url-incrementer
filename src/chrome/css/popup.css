@@ -37,8 +37,9 @@ div.checkbox img {
   position: relative;
 }
 
+/* vertical-align: middle matches hover.css styling */
 #controls input[type="image"] {
-  vertical-align: middle; /* Matches hover.css styling */
+  vertical-align: middle;
   padding: 8px;
 }
 
@@ -152,14 +153,6 @@ div.checkbox img {
   margin-bottom: 2px;
 }
 
-/*#setup #properties {
-  margin-bottom: 16px;
-}*/
-
-/*#setup #properties div.column:not(:last-child) {
-  padding-right: 24px;
-}*/
-
 #setup div.column > label, label.label-display-block {
   display: block;
   margin-bottom: 2px;
@@ -199,6 +192,21 @@ div.checkbox img {
   width: 118px;
 }
 
+/* multi */
+
+#multi-button {
+  float: right;
+  cursor: pointer;
+}
+
+#multi-button img {
+  vertical-align: initial;
+}
+
+#multi-button img.disabled {
+  opacity: 0.4;
+}
+
 /* toolkit */
 
 #toolkit-instructions {
@@ -221,30 +229,6 @@ div.checkbox img {
 
 #toolkit-table-download-button, #crawl-table-download-button {
   cursor: pointer;
-}
-
-#crawl-checkboxes label {
-  font-weight: bold;
-}
-
-#crawl-info-label {
-  color: var(--info-color);
-}
-
-#crawl-ok-label {
-  color: var(--success-color);
-}
-
-#crawl-error-label {
-  color: var(--error-color);
-}
-
-#crawl-redirected-label {
-  color: var(--download-color);
-}
-
-#crawl-exception-label {
-  color: var(--saved-urls-color);
 }
 
 #setup #auto #auto-wait-badge {
@@ -329,12 +313,6 @@ div.column#download-strategy, div.column#download-optional {
   padding-bottom: 1px;
 }
 
-/*#download-subfolder-help {
-  font-weight: bold;
-  border-bottom: 1px dotted #333333;
-  padding-bottom: 1px;
-}*/
-
 #download-subfolder {
   position: relative; /* for position absolute help */
   margin-top: 1em;
@@ -395,10 +373,6 @@ div.column#download-optional {
 #download-preview-heading-title .error {
   color: var(--error-color);
 }
-
-/*#download-preview-checkboxes {
-  text-align: right;
-}*/
 
 #download-preview-checkboxes label:not(:last-child), #crawl-checkboxes label:not(:last-child) {
   margin-right: 1em
@@ -496,78 +470,32 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   margin-right: 8px;
 }
 
-/* extra-buttons */
-
-/*#extra-options #options-button img {
-  margin-right: -2px;
-}*/
-
-/*#setup #extra-options div:not(:last-child) {
-  margin-right: 8px;
-}*/
-
-
+/* icon-button */
 
 .icon-button label {
   padding: 8px;
 }
 
-/*.icon-button img {
-  vertical-align: bottom;
-}*/
-
 .icon-button, .icon-button label {
-/*  font-size: 0.8em;*/
   font-weight: bold;
   cursor: pointer;
 }
 
-/*img.transparent {
-  background: #777;
-}*/
-
-.icon-button ,.icon-button img.checkbox-img /*,.icon-button img.transparent*/  {
+.icon-button ,.icon-button img.checkbox-img {
   transition: 0.6s;
   vertical-align: bottom;
 }
 
-/*.icon-button:hover img.transparent, .icon-button input:checked + img.transparent {
-  background: #000028;
-}*/
-
-/*!*.icon-button:hover span,*! .icon-button input:checked + img.transparent + span {
-  color: #BA1F40;
-}*/
-
-.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img /*, .icon-button:hover img.transparent*/ {
+.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img {
   opacity: 0.35;
-  /*filter: grayscale(100%);*/
 }
 
-.icon-button input:checked + img.checkbox-img /*,.icon-button:hover span*/  {
+.icon-button input:checked + img.checkbox-img {
   opacity: 1;
-  /*filter: grayscale(0%);*/
 }
 
-/* Multi */
-#multi-button {
-  float: right;
-  cursor: pointer;
-}
+/* crawl */
 
-#multi-button img {
-  vertical-align: initial;
-}
-
-#multi-button img.disabled {
-opacity: 0.4;
-}
-
-#controls #increment-input-m, #controls #decrement-input-m {
-  background: #000028;
-}
-
-/* Crawl */
 #crawl {
   margin: 12px;
 }
@@ -580,15 +508,38 @@ opacity: 0.4;
   color: var(--auto-color);
   font-weight: bold;
   font-style: italic;
-/*  text-align: right;*/
+}
+
+#crawl-checkboxes label {
+  font-weight: bold;
+}
+
+#crawl-info-label {
+  color: var(--info-color);
+}
+
+#crawl-ok-label {
+  color: var(--success-color);
+}
+
+#crawl-error-label {
+  color: var(--error-color);
+}
+
+#crawl-redirected-label {
+  color: var(--download-color);
+}
+
+#crawl-exception-label {
+  color: var(--saved-urls-color);
 }
 
 #crawl-table {
-  max-width: none;/*
-  max-height: none;*/
+  max-width: none;
+  /*max-height: none;*/
 }
 
-#crawl-tip, #crawl-help {
+#crawl-tip {
   font-style: italic;
 }
 
@@ -599,13 +550,3 @@ opacity: 0.4;
 #crawl-urli-tip {
   margin: 1em 0;
 }
-
-/*.rainbow-img {
-  background: linear-gradient(
-        !*#1779BA 0%, #1779BA 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #05854D 48%, #05854D 64%, #FF6600 64%, #FF6600 80%, #663399 80%, #663399 100%*!
-        !*#EE5555 0%, #EE5555 16%, #FF6600 16%, #FF6600 32%, #FFCC22 32%, #FFCC22 48%, #66BB6B 48%, #66BB6B 64%, #44A5F5 64%, #44A5F5 80%, #663399 80%, #663399 100%*!
-      #44A5F5 0%, #44A5F5 24%, #EE5555 25%, #EE5555 49%, #FFCC22 50%, #FFCC22 74%, #66BB6B 75%, #66BB6B 100%
-    !*#44A5F5 0%, #44A5F5 20%, #EE5555 20%, #EE5555 40%, #FFCC22 40%, #FFCC22 60%, #66BB6B 60%, #66BB6B 80%, #663399 80%, #663399 100%*!
-  );
-}*/
-

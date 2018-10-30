@@ -11,6 +11,7 @@
   "browser_shortcuts_p1": { "message": "URLI is set to use Chrome Shortcuts." },
   "browser_shortcuts_p2": { "message": "Chrome Shortcuts support limited keys, but you can enable URLI's Internal Shortcuts to use any key or even mouse shortcuts! (requires permissions)" },
   "browser_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
+  "internal_shortcuts_notice": { "message": "Note: Due to a Chrome bug, Internal Shortcuts do not work in Incognito Mode." },
   "one_click_buttons_h3": { "message": "1-Click Increment Decrement Buttons" },
   "one_click_buttons_p": { "message": "Accessing URLI's buttons requires 2 clicks, but you can add 1-Click buttons to your toolbar! They use 0 Chrome memory when inactive!" },
   "one_click_buttons_increment": { "message": "1-Click URL Increment Button for URLI (Chrome Web Store)" },
@@ -247,9 +248,9 @@
   "mouse_right_left_option": { "message": "(Right) Left" },
   "icon_settings_h3": { "message": "Icon Settings" },
   "icon_color_label": { "message": "Icon Color (Toolbar)" },
-  "icon_color_label_dark": { "message": "Dark" },
+  "icon_color_label_default": { "message": "Dark" },
   "icon_color_label_light": { "message": "Light" },
-  "icon_color_label_default": { "message": "Default" },
+  "icon_color_label_confetti": { "message": "Confetti!" },
   "icon_color_label_urli": { "message": "URLI" },
   "icon_feedback_enable_label": { "message": "Enable icon feedback when incrementing or from other actions" },
   "popup_settings_h3": { "message": "Popup User Interface Settings" },
@@ -345,6 +346,6 @@
   "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_tickles": { "message" : "That tickles!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), The Chromium Authors (Styles), ZURB Foundation (Tables), Mike West (Dialogs), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
+  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), The Chromium Authors (Styles), ZURB Foundation (Tables), Mike West (Dialogs), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
   "special_thanks_you": { "message": "... and most of all you for using URLI!" }
 }
