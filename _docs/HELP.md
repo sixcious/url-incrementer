@@ -1,6 +1,6 @@
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/darku/128.png" width="128" height="128" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/128-default.png" width="128" height="128" title="URL Incrementer">
 <br>
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/alt/urli-uncompressed.png" width="196" height="196" align="right" title="URLI">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/urli-uncompressed.png" width="196" height="196" align="right" title="URLI">
 
 # Help and Support
 Is something not working right, or is there a feature that you'd like to see in URLI?
