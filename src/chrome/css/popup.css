@@ -213,6 +213,10 @@ div.checkbox img {
   font-style: italic;
 }
 
+#toolkit .radio label {
+  padding-top: 3px;
+}
+
 #toolkit-urli-button-div {
   vertical-align: top;
   margin-top: 8px;

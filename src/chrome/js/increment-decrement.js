@@ -76,7 +76,9 @@ var IncrementDecrement = (() => {
       case "custom":
         const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, baseCustom, leadingZeros);
         console.log("validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
-        if (selectionCustom !== selection) {
+        if (selectionCustom === "SELECTION_TOO_LARGE!") {
+          error = chrome.i18n.getMessage("selection_toolarge_error");
+       } else if (selectionCustom !== selection) {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
         }
         break;
@@ -213,6 +215,10 @@ var IncrementDecrement = (() => {
       const num = alphabet.indexOf(selection[i]);
       base10num += num * (base ** digit);
     }
+    // Return if the selection is too large
+    if (base10num > Number.MAX_SAFE_INTEGER) {
+      return "SELECTION_TOO_LARGE!";
+    }
     console.log("incrementDecrementBaseCustom() - done decoding, base10num=" + base10num);
     // Increment or Decrement Decimal
     base10num += action.startsWith("increment") ? interval : -interval;
@@ -318,9 +324,8 @@ var IncrementDecrementMulti = (() => {
 
 var IncrementDecrementDate = (() => {
 
-  // Short and Long Month Names
-  const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-  const mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+  const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
+        mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
   /**
    * Performs an increment decrement operation on the date selection string.
@@ -503,7 +508,6 @@ var IncrementDecrementArray = (() => {
    * @public
    */
   function stepThruURLs(action, instance) {
-    // Get the urlProps object from the next or previous position in the urls array and update the instance
     const urlProps =
       (!instance.autoEnabled && action === "increment") || (action === instance.autoAction) ?
         instance.urls[instance.urlsCurrentIndex + 1 < instance.urls.length ? !instance.autoEnabled ? ++instance.urlsCurrentIndex : instance.urlsCurrentIndex++ : instance.urls.length - 1] :
