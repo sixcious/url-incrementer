@@ -242,7 +242,7 @@ var Background = (() => {
     console.log("startupListener()");
     const items = await Promisify.getItems();
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
-    if (chrome.browserAction.setIcon && items && ["dark", "light", "rainbow", "urli"].includes(items.iconColor)) {
+    if (chrome.browserAction.setIcon && items && ["default", "light", "dark", "urli"].includes(items.iconColor)) {
       console.log("startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {

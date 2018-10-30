@@ -14,3 +14,13 @@
   bottom: 8.6em;
   left: 17em;
 }
+
+/* Hide Enable Firefox Shortcuts Button until Firefox Shortcuts UI is available */
+#browser-shortcuts-enable-button {
+  display: none;
+}
+
+/* Hide Disable Enhanced Mode Button until the Firefox Version no longer gets this permission out of the box */
+#enhanced-mode-disable-button {
+  display: none;
+}
