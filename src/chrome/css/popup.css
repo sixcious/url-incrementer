@@ -5,7 +5,7 @@
  * @license LGPL-3.0
  */
 
-/* Native elements styles */
+/* Native */
 
 * {
   margin: 0;
@@ -15,12 +15,6 @@
 body {
   background: #FFFFFF;
   color: #333333;
-}
-
-h3 {
-  display: inline;
-  color: inherit;
-  font-weight: inherit;
 }
 
 div.checkbox img {
@@ -148,7 +142,7 @@ div.checkbox img {
   padding-right: 27px;
 }
 
-/* increment-decrement */
+/* Increment Decrement */
 
 #setup #increment-decrement #increment-decrement-img-mouse-pointer {
   margin-bottom: 2px;
@@ -193,7 +187,7 @@ div.checkbox img {
   width: 118px;
 }
 
-/* multi */
+/* Multi */
 
 #multi-button {
   float: right;
@@ -208,7 +202,7 @@ div.checkbox img {
   opacity: 0.4;
 }
 
-/* toolkit */
+/* Toolkit */
 
 #toolkit-instructions {
   font-style: italic;
@@ -293,19 +287,19 @@ div.checkbox img {
   padding-top: 3px;
 }
 
-/* download-setup (download-strategy and download-optional columns) */
+/* Download Setup (download-strategy and download-optional columns) */
 
 #download-setup.table {
   width: 100%;
-/*  max-width: 524px; !* Firefox: Download Table gets super-wide without this under certain conditions... *!*/
   border-bottom: 1px solid var(--download-color);
 }
 
+/* position: relative for position absolute help */
 div.column#download-strategy, div.column#download-optional {  
   padding-top: 8px;
   padding-bottom: 12px;
   width: 50%;
-  position: relative; /* for position absolute help */
+  position: relative;
 }
 
 #download-strategy-help, #download-optional-help, #download-subfolder-help {
@@ -318,8 +312,9 @@ div.column#download-strategy, div.column#download-optional {
   padding-bottom: 1px;
 }
 
+/* position: relative for position absolute help */
 #download-subfolder {
-  position: relative; /* for position absolute help */
+  position: relative;
   margin-top: 1em;
 }
 
@@ -338,8 +333,9 @@ div.column#download-optional {
   min-height: 60px;
 }
 
+/* display: inline-block keeps extension next to checkbox on same line without breaking  */
 #download-extensions label, #download-tags label, #download-attributes label {
-  display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
+  display: inline-block;
   margin-right: 8px;
   margin-bottom: 4px;
 }
@@ -383,7 +379,7 @@ div.column#download-optional {
   margin-right: 1em
 }
 
-/* ZURB Foundation table styling inspired/derived */
+/* Tables (CSS derived from ZURB Foundation) */
 
 table {
   border-collapse: collapse;
@@ -463,7 +459,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   bottom: 4px;
 }
 
-/* extra-toggles */
+/* Extra Toggles */
 
 #setup #extra-toggles {
   position: absolute;
@@ -475,7 +471,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   margin-right: 8px;
 }
 
-/* icon-button */
+/* Icon Button */
 
 .icon-button label {
   padding: 8px;
@@ -499,7 +495,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   opacity: 1;
 }
 
-/* crawl */
+/* Crawl */
 
 #crawl {
   margin: 12px;
@@ -554,4 +550,15 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 #crawl-urli-tip {
   margin: 1em 0;
+}
+
+/* Messages */
+
+#messages {
+  margin: 20px;
+  max-width: 530px;
+}
+
+#messages-urli {
+  vertical-align: text-top;
 }

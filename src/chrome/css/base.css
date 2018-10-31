@@ -5,7 +5,7 @@
  * @license LGPL-3.0
  */
 
-/* variables */
+/* Variables */
 
 :root {
   --increment-decrement-color: #1779BA;
@@ -29,13 +29,20 @@
   --default-color: #333333;
 }
 
-/* native */
+/* Native */
 
 img {
   vertical-align: text-bottom;
 }
 
-/* classes */
+h3 {
+  color: inherit;
+  font-weight: inherit;
+  display: inline;
+  user-select: initial;
+}
+
+/* Classes */
 
 .display-block {
   display: block;
@@ -69,7 +76,7 @@ img {
   display: table-cell;
 }
 
-/* fade css */
+/* Fade */
 
 @keyframes fade-in {
   from { opacity: 0; transform: scale(0); }
@@ -99,7 +106,7 @@ img {
   animation: fade-out 0.3s ease-out, fade-out-max-height 0.3s ease-out;
 }
 
-/* generate-alert css */
+/* Generate Alert */
 /* Generates an alert box (e.g. to show error messages) using an overlay */
 /* Derived from the sample Google extension, Proxy Settings by Mike West */
 

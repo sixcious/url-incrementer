@@ -5,13 +5,13 @@
  * @license LGPL-3.0
  */
 
-/* Native elements styles */
+/* Native */
 
 /* Firefox: Set max-width and margin. Chrome: Set min-width to keep popup reasonably sized */
 body {
   min-width: 480px;
   max-width: 480px;
-  margin: 16px;
+  color: #333333;
 }
 
 section:not(:last-of-type) {
@@ -27,11 +27,6 @@ textarea {
   max-height: 100px;
 }
 
-h3 {
-  display: inline;
-  user-select: initial;
-}
-
 input[type="number"] {
   width: 52px;
 }
@@ -45,17 +40,7 @@ input[type="image"]:focus {
   outline: none;
 }
 
-.heading {
-  border-bottom: 1px solid #333333;
-  padding-bottom: 6px;
-  margin-bottom: 12px;
-}
-
-.heading button {
-  float: right;
-  position: relative;
-  top: -8px;
-}
+/* Classes */
 
 .column {
   padding-bottom: 10px;
@@ -89,7 +74,32 @@ input[type="image"]:focus {
   margin-top: 1em;
 }
 
-/* heading border-bottom-color overrides */
+/* Heading */
+
+.heading {
+  border-bottom: 1px solid #333333;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.heading-right {
+  font-style: italic;
+  font-size: 0.9em;
+  display: inline-block;
+  margin-left: 6px;
+}
+
+.heading-right img {
+  margin-bottom: 1px;
+}
+
+.heading button {
+  float: right;
+  position: relative;
+  top: -8px;
+}
+
+/* Heading border-bottom-color overrides */
 
 #saved-urls-settings div.heading {
   border-bottom-color: var(--saved-urls-color);
@@ -115,7 +125,7 @@ input[type="image"]:focus {
   border-bottom-color: var(--enhanced-mode-color);
 }
 
-/* heading h3 color overrides */
+/* Heading h3 color overrides */
 
 #saved-urls-settings div.heading h3 {
   color: var(--saved-urls-color);
@@ -133,7 +143,7 @@ input[type="image"]:focus {
   color: var(--auto-color);
 }
 
-#download-settings div.heading h3, #download-experimental {
+#download-settings div.heading h3, #download-settings div.heading-right {
   color: var(--download-color);
 }
 
@@ -141,7 +151,7 @@ input[type="image"]:focus {
   color: var(--enhanced-mode-color);
 }
 
-/* shortcuts */
+/* Internal Shortcuts */
 
 #mouse-click-speed {
   display: inline-block;
@@ -162,7 +172,7 @@ input[type="image"].key-clear {
   vertical-align: text-bottom;
 }
 
-/* icon */
+/* Icon */
 
 .icon-color.radio, #popup-button-size-div {
   margin-bottom: 24px;
@@ -181,7 +191,7 @@ input[type="image"].key-clear {
   margin-right: 3px;
 }
 
-/* popup */
+/* Popup */
 
 #popup-button-size-label {
   display: block;
@@ -193,7 +203,7 @@ input[type="image"].key-clear {
   cursor: pointer;
 }
 
-/* saved-urls */
+/* Saved URLs */
 
 #saved-urls-buttons {
   margin-top: 2em;
@@ -207,7 +217,27 @@ input[type="image"].key-clear {
   margin-right: 1em;
 }
 
-/* base */
+/* Selection Custom  */
+
+#selection-custom {
+  margin: 10px 0;
+}
+
+#selection-custom-url-textarea {
+  vertical-align: initial;
+  word-break: break-all;
+}
+
+#selection-custom-pattern-input {
+  width: 120px;
+  margin: 0 4px;
+}
+
+#selection-custom-flags-input {
+  width: 52px;
+}
+
+/* Base */
 
 #base-case {
   font-size: 0.9em;
@@ -234,7 +264,7 @@ input[type="image"].key-clear {
   width: 118px;
 }
 
-/* error-skip */
+/* Error Skip */
 
 #error-skip.column {
   padding-bottom: 0;
@@ -252,50 +282,19 @@ input[type="image"].key-clear {
   padding: 0;
 }
 
-/* selection-custom  */
-
-#selection-custom {
-  margin: 10px 0;
-}
-
-#selection-custom-url-textarea {
-  vertical-align: initial;
-  word-break: break-all;
-}
-
-#selection-custom-pattern-input {
-  width: 120px;
-  margin: 0 4px;
-}
-
-#selection-custom-flags-input {
-  width: 52px;
-}
-
-/* download (experimental and img alignment for cloud and flask */
-
-#download-experimental {
-  font-size: 0.9em;
-  font-style: italic;
-  display: inline-block;
-  margin-left: 6px;
-}
+/* Download */
 
 #download-cloud-download {
   margin-bottom: -1px;
 }
 
-#download-experimental-flask {
-  margin-bottom: 1px;
-}
-
-/* about */
+/* About */
 
 #about-floats-div {
   margin-bottom: 17px;
 }
 
-/* urli-thank-you */
+/* URLI Thank You */
 
 #urli-thank-you {
   width: 100%;
@@ -308,15 +307,11 @@ input[type="image"].key-clear {
   margin-bottom: 8px;
 }
 
-/*#urli-thank-you-rainbow span {
-  padding: 0 2px;
-}*/
-
 #urli-thank-you-wish {
   font-style: italic;
 }
 
-/* special thanks */
+/* Credits & Special Thanks */
 
 #special-thanks {
   margin-top: 0.75em;
@@ -338,7 +333,7 @@ input[type="image"].key-clear {
   margin-top: 8px;
 }
 
-/* browser-specific styling */
+/* Browser-Specific Styling */
 
 /* Chrome themed browser underline */
 .browser-underline:after {

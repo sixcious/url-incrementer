@@ -45,7 +45,7 @@ var Background = (() => {
     "next":       { "text": ">",    "backgroundColor": "#05854D" },
     "prev":       { "text": "<",    "backgroundColor": "#05854D" },
     "clear":      { "text": "X",    "backgroundColor": "#FF0000" },
-    "return":     { "text": "BACK", "backgroundColor": "#FFCC22" },
+    "return":     { "text": "RET", "backgroundColor": "#FFCC22" },
     "auto":       { "text": "AUTO", "backgroundColor": "#FF6600" },
     "autotimes":  { "text": "",     "backgroundColor": "#FF6600" },
     "autopause":  { "text": "❚❚",    "backgroundColor": "#FF6600" },

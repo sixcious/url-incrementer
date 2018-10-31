@@ -80,6 +80,11 @@ var Popup = (() => {
     items = await Promisify.getItems();
     localItems = await Promisify.getItems("local");
     backgroundPage = await Promisify.getBackgroundPage();
+    // Firefox: Background Page is null in Private Window
+    if (!backgroundPage) {
+      DOM["#messages"].className = DOM["#private-window-unsupported"].className = "display-block";
+      return;
+    }
     instance = backgroundPage.Background.getInstance(tabs[0].id) || await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
     _ = JSON.parse(JSON.stringify(instance));
     const buttons = document.querySelectorAll("#controls input");
