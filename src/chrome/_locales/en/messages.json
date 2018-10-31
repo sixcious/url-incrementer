@@ -64,6 +64,8 @@
   "base_case_uppercase_label": { "message": "Uppercase" },
   "base_date_format_label": { "message": "Format" },
   "base_custom_label": { "message": "Alphabet" },
+  "experimental_label": { "message": "EXPERIMENTAL" },
+  "non_standard_label": { "message": "NON-STANDARD FEATURE" },
 
   "POPUP": { "message": "----- POPUP -----" },
   "increment_input": { "message": "Increment" },
@@ -259,7 +261,7 @@
   "saved_urls_settings_h3":  { "message": "Saved URLs" },
   "saved_urls_settings_p": { "message": "Save your favorite URLs' settings such as selection and interval so you can use Quick Shortcuts when you visit them again without having to go into the Popup setup!" },
   "saved_urls_how_span": { "message": "Important: Your privacy and how URLs are saved" },
-  "saved_urls_how_title": { "message": "To help keep your data private as possible, URLI only stores irreversible cryptographic hashes of the full URLs, but potentially decryptable hashes of the Wildcards / Regular Expressions you save in storage. For more information, please view the Help Guide." },
+  "saved_urls_how_title": { "message": "To help keep your data private as possible, URLI only stores irreversible cryptographic hashes of the full URLs, but potentially decryptable hashes of the Wildcards / Regular Expressions you save on your device. For more information, please view the Help Guide." },
   "saved_urls_my": { "message": "My Saved URLs and Wildcards" },
   "saved_urls_preselect_label": { "message": "Always preselect the Save URL Heart in the Popup" },
   "saved_urls_delete_button": { "message": "Delete This URL" },
@@ -324,7 +326,6 @@
   "toolkit_settings_h3": { "message": "URLI's Toolkit" },
   "toolkit_settings_p": { "message": "Originally made to test URLI, but unlocked for you to use as a non-standard feature! Crawl URLs, open tabs, or generate links. Click the wrench in the Popup to open." },
   "download_settings_h3": { "message": "Download" },
-  "download_experimental_label": { "message": "EXPERIMENTAL" },
   "download_enable_button": { "message": "Enable Download" },
   "download_disable_button": { "message": "Disable Download" },
   "download_disable_p": { "message": "This isn't just any downloader! Use it with Auto to create an Auto Incrementer Downloader! Click the button to enable (grant permissions)." },
@@ -343,9 +344,9 @@
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
   "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
-  "urli_thank_you_wish": { "message": "URLI loves incrementing for you and wishes you an Incrementful Day!" },
+  "urli_thank_you_wish": { "message": "I want you to be 100% happy with URLI, so please email if any issues! URLI loves incrementing for you and wishes you an Incrementful Day!" },
   "urli_click_tickles": { "message" : "That tickles!" },
   "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), The Chromium Authors (Styles), ZURB Foundation (Tables), Mike West (Dialogs), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
+  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), Mike West (Dialogs), The Chromium Authors (Styles), ZURB Foundation (Styles / Tables), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
   "special_thanks_you": { "message": "... and most of all you for using URLI!" }
 }

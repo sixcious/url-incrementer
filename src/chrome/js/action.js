@@ -195,8 +195,13 @@ var Action = (() => {
         JSON.stringify(items.nextPrevSameDomainPolicy) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0]) {
-          instance.url = results[0];
-          updateTab(instance);
+          // Only do the default updateTab if auto next/prev (do not want to affect increment/decrement instances)
+          if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
+            instance.url = results[0];
+            updateTab(instance);
+          } else {
+            chrome.tabs.update(instance.tabId, {url: results[0]});
+          }
         }
       });
     });
