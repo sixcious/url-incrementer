@@ -24,7 +24,7 @@ var Background = (() => {
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "older", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 2
   },
 
   // The local storage default values
@@ -229,6 +229,7 @@ var Background = (() => {
         });
       });
     }
+    startupListener();
   }
 
   /**
