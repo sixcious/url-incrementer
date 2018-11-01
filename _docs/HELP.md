@@ -1,10 +1,11 @@
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/128-dark.png" width="128" height="128" title="URL Incrementer"><br>
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/128-dark.png" width="128" height="128" title="URL Incrementer">
+<br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
 
 # Help and Support
 Is something not working right, or is there a feature that you'd like to see in URLI?
-***Before*** leaving a low rating or review, please email me (my email address can be found in the Extension's Options page) or [open an issue](https://github.com/roysix/url-incrementer/issues) on GitHub.
+***Before*** leaving a low rating or review, please email me (my email address can be found in the Extension's Options page at the very bottom) or [open an issue](https://github.com/roysix/url-incrementer/issues) on GitHub.
 I'll be notified about it immediately and reply to you with a fix as soon as I can!
 
 # Infinite Scrolling (Scroll Incrementing)

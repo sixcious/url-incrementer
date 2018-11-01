@@ -21,7 +21,7 @@ var Popup = (() => {
 
   /**
    * Initializes the Popup window. This script is set to defer so the DOM is guaranteed to be parsed by this point.
-   * 
+   *
    * @private
    */
   async function init() {
@@ -108,7 +108,7 @@ var Popup = (() => {
 
   /**
    * Toggles the popup between the controls and setup views.
-   * 
+   *
    * @private
    */
   function toggleView() {
@@ -136,7 +136,7 @@ var Popup = (() => {
    * Performs the action based on the button if the requirements are met (e.g. the instance is enabled).
    * Note: After performing the action, the background sends a message back to popup with the updated instance, so no
    * callback function is needed in performAction().
-   * 
+   *
    * @private
    */
   function clickActionButton() {
@@ -157,11 +157,11 @@ var Popup = (() => {
   /**
    * Updates the control images based on whether the instance is enabled.
    * Note: update styles, not classNames, to avoid issues with hvr-push-click being cleared too fast after a click.
-   * 
+   *
    * @private
    */
   function updateControls() {
-    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "url" ? "save_url_icon" : instance.saveType === "wildcard" ? "save_wildcard_icon" : instance.saveType === "regexp" ? "save_regexp_icon" : "?");
+    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "save_wildcard_icon" : instance.saveType === "regexp" ? "save_regexp_icon" : "save_url_icon");
     DOM["#save-url-icon"].style.display = instance.saveFound ? "" : "none";
     DOM["#auto-repeat-icon"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
@@ -286,7 +286,7 @@ var Popup = (() => {
    * Handle the URL selection on select events. Stores the selectionStart
    * in a hidden input and updates the selection input to the selected text and
    * checks the leading zeros checkbox based on leading zeros present.
-   * 
+   *
    * @private
    */
   function selectURL() {
