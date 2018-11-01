@@ -67,7 +67,7 @@
   "base_date_format_label": { "message": "Format" },
   "base_custom_label": { "message": "Alphabet" },
   "experimental_label": { "message": "EXPERIMENTAL" },
-  "non_standard_label": { "message": "NON-STANDARD FEATURE" },
+  "non_standard_label": { "message": "TEST FEATURE" },
 
   "POPUP": { "message": "----- POPUP -----" },
   "increment_input": { "message": "Increment" },

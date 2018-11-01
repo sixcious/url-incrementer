@@ -21,6 +21,55 @@ div.checkbox img {
   margin-left: 3px;
 }
 
+/* Tables (CSS derived from ZURB Foundation) */
+
+table {
+  border-collapse: collapse;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  max-width: 512px;
+  max-height: 226px;
+  display: block;
+  overflow: auto;
+  word-break: break-all;
+}
+
+table thead, table tbody {
+  border: 1px solid #f1f1f1;
+  background-color: #fefefe;
+}
+
+table thead {
+  background: #f8f8f8;
+  color: #0a0a0a;
+}
+
+table thead tr {
+  background: transparent;
+}
+
+table thead tr th {
+  font-weight: bold;
+  text-align: left;
+}
+
+table thead th, table tbody th, table tbody td {
+  padding: 0.25rem 0.312rem 0.312rem;
+}
+
+table tbody tr:nth-child(even) {
+  border-bottom: 0;
+  background-color: #f1f1f1;
+}
+
+table tr:nth-of-type(even):hover {
+  background-color: #ececec;
+}
+
+table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
 /* Controls */
 
 #controls {
@@ -43,6 +92,11 @@ div.checkbox img {
 
 #controls input[type="image"]:focus {
   outline: none;
+}
+
+/* cloud-download ireregular padding overrides */
+#controls input[type="image"]#download-input {
+  padding: 4px 8px;
 }
 
 #controls-icons {
@@ -230,64 +284,32 @@ div.checkbox img {
   cursor: pointer;
 }
 
-#setup #auto #auto-wait-badge {
-  vertical-align: bottom;
-}
+/* Auto */
 
-#setup #auto #auto-wait-badge .checkbox label {
-  padding: 2px 0;
-}
-
-#setup div.row.two div.column {
-  padding-top: 12px;
-}
-
-#auto-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: var(--auto-color);
-}
-
-#download-toggle-input.tgl-ios:checked + .tgl-btn {
-  background: var(--download-color);
-}
-
-#auto-toggle .tgl-text {
-  color: var(--auto-color);
-}
-
-#download-toggle .tgl-text {
-  color: var(--download-color);
-}
-
-/* cloud-download ireregular padding overrides */
-#controls input[type="image"]#download-input {
-  padding: 4px 8px;
-}
-
-#setup #download-toggle {
-  vertical-align: bottom;
-}
-
-#setup .heading {
-  color: #333333;
-  border-bottom-color: #333333;
-}
-
-#setup #auto .heading {
+#auto .heading {
   color: var(--auto-color);
   border-bottom-color: var(--auto-color);
 }
 
-#setup #download .heading {
-  color: var(--download-color);
-  border-bottom-color: var(--download-color);
-  margin: 0;
+#auto #auto-wait-badge {
+  vertical-align: bottom;
+}
+
+#auto #auto-wait-badge .checkbox label {
+  padding: 2px 0;
 }
 
 #auto div.column, #download div.column {
   padding-top: 3px;
 }
 
-/* Download Setup (download-strategy and download-optional columns) */
+/* Download */
+
+#download .heading {
+  color: var(--download-color);
+  border-bottom-color: var(--download-color);
+  margin: 0;
+}
 
 #download-setup.table {
   width: 100%;
@@ -357,7 +379,7 @@ div.column#download-optional {
   width: 108px;
 }
 
-/* download-preview-heading and download-preview-checkboxes */
+/* Download Preview Heading and Checkboxes */
 
 #download-preview-heading {
   margin: 6px 0;
@@ -379,57 +401,10 @@ div.column#download-optional {
   margin-right: 1em
 }
 
-/* Tables (CSS derived from ZURB Foundation) */
+/* Download Preview Table */
 
-table {
-  border-collapse: collapse;
-  border-radius: 0;
-  margin-bottom: 1rem;
-  max-width: 512px;
-  max-height: 226px;
-  display: block;
-  overflow: auto;
-  word-break: break-all;
-}
-
-table thead, table tbody {
-  border: 1px solid #f1f1f1;
-  background-color: #fefefe;
-}
-
-table thead {
-  background: #f8f8f8;
-  color: #0a0a0a;
-}
-
-table thead tr {
-  background: transparent;
-}
-
-table thead tr th {
-  font-weight: bold;
-  text-align: left;
-}
-
-table thead th, table tbody th, table tbody td {
-  padding: 0.25rem 0.312rem 0.312rem;
-}
-
-table tbody tr:nth-child(even) {
-  border-bottom: 0;
-  background-color: #f1f1f1;
-}
-
-table tr:nth-of-type(even):hover {
-  background-color: #ececec;
-}
-
-table tbody tr:hover {
-  background-color: #f9f9f9;
-}
-
-/* table download-preview specific class styles */
-
+/* unselected should have the check be really low opacity */
+/* check can be clicked to manually select/de-select items */
 table th.check, td.check { min-width: 20px; }
 table th.count, td.count { min-width: 24px; }
 table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
@@ -438,14 +413,15 @@ table th.filename, td.filename { min-width: 50px; }
 table th.tag, td.tag { min-width: 36px; }
 table th.attribute, td.attribute { min-width: 34px; }
 table th.url, td.url { min-width: 34px; }
-table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
-table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check can be clicked to manually select/de-select items */
+table tr.unselected td.check img { opacity: 0.1; }
+table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
 
-/* setup-buttons */
+/* Setup Buttons */
 
+/* need position relative height auto for position absolute elements auto/download toggles and options button */
 #setup #setup-buttons {
   text-align: center;
-  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
+  position: relative;
   height: auto;
 }
 
@@ -459,7 +435,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
   bottom: 4px;
 }
 
-/* Extra Toggles */
+/* Toggles */
 
 #setup #extra-toggles {
   position: absolute;
@@ -469,6 +445,26 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 #setup #extra-toggles > div:not(:last-child) {
   margin-right: 8px;
+}
+
+#auto-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: var(--auto-color);
+}
+
+#download-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: var(--download-color);
+}
+
+#auto-toggle .tgl-text {
+  color: var(--auto-color);
+}
+
+#download-toggle .tgl-text {
+  color: var(--download-color);
+}
+
+#setup #download-toggle {
+  vertical-align: bottom;
 }
 
 /* Icon Button */
@@ -499,10 +495,6 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 #crawl {
   margin: 12px;
-}
-
-#crawl .heading-right {
-  color: var(--auto-color);
 }
 
 #crawl-percentage {
@@ -537,7 +529,6 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; } /* check 
 
 #crawl-table {
   max-width: none;
-  /*max-height: none;*/
 }
 
 #crawl-tip {
