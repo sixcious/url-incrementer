@@ -10,7 +10,7 @@ var Background = (() => {
   // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
-    "iconColor": "default", "iconFeedbackEnabled": false,
+    "iconColor": "dark", "iconFeedbackEnabled": false,
     "popupButtonSize": 32, "popupAnimationsEnabled": true,
     "commandsQuickEnabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyZ"}, "keyAuto": {"modifiers": 6, "code": "Space"},
@@ -282,7 +282,7 @@ var Background = (() => {
   }
 
   /**
-   * Listen for external requests from external extensions: URL Increment and URL Decrement. Note: request contains tab.
+   * Listen for external requests from external extensions: URL Increment/Decrement Buttons. Note: request contains tab.
    *
    * @param request      the request containing properties to parse (e.g. greeting message) and tab
    * @param sender       the sender who sent this message
@@ -291,9 +291,9 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg",
-          URL_DECREMENT_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
-    if (sender && (sender.id === URL_INCREMENT_EXTENSION_ID || sender.id === URL_DECREMENT_EXTENSION_ID) &&
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "nlenihiahcecfodmnplonckfbilgegcg",
+          URL_DECREMENT_BUTTON_EXTENSION_ID = "nnmjbfglinmjnieblelacmlobabcenfk";
+    if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({received: true});
       const items = await Promisify.getItems();
