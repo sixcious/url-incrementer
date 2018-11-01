@@ -1,6 +1,6 @@
 # URL Incrementer
 
-![URL Incrementer](_assets/img/darku/128.png?raw=true "URL Incrementer")
+![URL Incrementer](_assets/img/128-dark.png?raw=true "URL Incrementer")
 
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently.
 

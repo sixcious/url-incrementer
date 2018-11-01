@@ -14,3 +14,8 @@
   bottom: 8em;
   left: 17em;
 }
+
+/* Firefox hide Firefox shortcuts button */
+#browser-shortcuts-enable-button {
+  display: none;
+}

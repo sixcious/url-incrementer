@@ -1,5 +1,4 @@
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/icon-default.svg?sanitize=true" width="128" height="128" title="URL Incrementer">
-<br>
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/128-dark.png" width="128" height="128" title="URL Incrementer"><br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
 
