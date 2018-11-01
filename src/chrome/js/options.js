@@ -42,7 +42,7 @@ var Options = (() => {
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
-    DOM["#icon-color-radio-default"].addEventListener("change", changeIconColor);
+    DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-confetti"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
@@ -397,7 +397,8 @@ var Options = (() => {
         option.textContent = (count++) + " - " + save.type + ": " + output.substring(0, 16) + "..." +
           " select: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
           " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
-          " base: " + save.base;
+          " base: " + save.base +
+          " eskip: " + save.errorSkip;
         select.appendChild(option);
       }
       DOM["#saved-urls-select-div"].replaceChild(select, DOM["#saved-urls-select-div"].firstChild);
@@ -432,7 +433,8 @@ var Options = (() => {
     saves.push({
       "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
-      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom, "errorSkip": items.errorSkip
+      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom,
+      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom
     });
     chrome.storage.local.set({"saves": saves}, function() {
       populateValuesFromStorage("savedURLs");
@@ -575,7 +577,7 @@ var Options = (() => {
           chrome.storage.local.set(backgroundPage.Background.getLSDV(), function() {
             console.log("resetOptions() - removing all permissions...");
             Permissions.removeAllPermissions();
-            changeIconColor.call(DOM["#icon-color-radio-default"]);
+            changeIconColor.call(DOM["#icon-color-radio-dark"]);
             populateValuesFromStorage("all");
             UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
           });

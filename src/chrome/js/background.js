@@ -164,7 +164,7 @@ var Background = (() => {
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
-      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom,
+      "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
