@@ -68,8 +68,8 @@ var Shortcuts = (() => {
     } else {
       buttons3 = false;
     }
-    console.log("mousedownListener() - event.buttons=" + event.buttons + ", buttons3=" + buttons3);
     button = event.button;
+    console.log("mousedownListener() - event.buttons=" + event.buttons + ", buttons3=" + buttons3);
   }
 
   /**
