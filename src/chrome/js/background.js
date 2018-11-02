@@ -254,7 +254,7 @@ var Background = (() => {
       });
     }
     // Firefox 63+: Set default badge text color to white always instead of using default color-contrasting
-    if (browser && browser.browserAction && browserAction.setBadgeTextColor) {
+    if (typeof browser !== "undefined" && browser.browserAction && browserAction.setBadgeTextColor) {
       browser.browserAction.setBadgeTextColor({color: "white"});
     }
     // Ensure Internal Shortcuts declarativeContent rule is added (it sometimes gets lost when the extension is updated re-enabled)
