@@ -243,7 +243,7 @@ var Background = (() => {
     console.log("startupListener()");
     const items = await Promisify.getItems();
     // Ensure the chosen toolbar icon is set. Firefox Android: chrome.browserAction.setIcon() not supported
-    if (chrome.browserAction.setIcon && items && ["default", "light", "confetti", "urli"].includes(items.iconColor)) {
+    if (chrome.browserAction.setIcon && items && ["dark", "light", "confetti", "urli"].includes(items.iconColor)) {
       console.log("startupListener() - setting browserAction icon to " + items.iconColor);
       chrome.browserAction.setIcon({
         path : {
@@ -252,6 +252,10 @@ var Background = (() => {
           "32": "/img/32-" + items.iconColor + ".png"
         }
       });
+    }
+    // Firefox 63+: Set default badge text color to white always instead of using default color-contrasting
+    if (browser && browser.browserAction && browserAction.setBadgeTextColor) {
+      browser.browserAction.setBadgeTextColor({color: "white"});
     }
     // Ensure Internal Shortcuts declarativeContent rule is added (it sometimes gets lost when the extension is updated re-enabled)
     if (items && items.permissionsInternalShortcuts) {
