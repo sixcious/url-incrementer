@@ -43,7 +43,8 @@ var Saves = (() => {
     const saves = await Promisify.getItems("local", "saves");
     for (let i = 0; i < saves.length; i++) {
       const result = await matchesSave(saves[i], url);
-      if (result.matches) {
+      // When adding a new URL, do not delete wildcards and regexps here, just the full URL collisions (unless caller was clear)
+      if (result.matches && (saves[i].type === "url" || caller === "clear")) {
         console.log("deleteSave() - splicing an entry from the saves array...");
         saves.splice(i, 1);
         break;
