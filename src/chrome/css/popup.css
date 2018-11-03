@@ -469,21 +469,16 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
 
 /* Icon Button */
 
-.icon-button label {
+.icon-button label, .icon-button a {
   padding: 8px;
-}
-
-.icon-button, .icon-button label {
-  font-weight: bold;
   cursor: pointer;
 }
 
-.icon-button ,.icon-button img.checkbox-img {
+.icon-button input + img {
   transition: 0.6s;
-  vertical-align: bottom;
 }
 
-.icon-button input[type="checkbox"]:not(:checked) + img.checkbox-img {
+.icon-button input:not(:checked) + img.checkbox-img {
   opacity: 0.35;
 }
 
