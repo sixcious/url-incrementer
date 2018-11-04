@@ -151,11 +151,15 @@ table tbody tr:hover {
   font-size: 0.9em;
   position: absolute;
   right: 0;
-  margin-top: -17px;
+  margin-top: -16px;
 }
 
 .heading-right img {
   margin-bottom: 1px;
+}
+
+.heading-right .icon-button img {
+  margin-bottom: 2px;
 }
 
 #setup input[type="number"] {
@@ -474,7 +478,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   cursor: pointer;
 }
 
-.icon-button input + img {
+.icon-button, .icon-button input + img {
   transition: 0.6s;
 }
 
