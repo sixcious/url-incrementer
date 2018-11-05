@@ -1,18 +1,20 @@
 # URL Incrementer
 
 ![URL Incrementer](_assets/img/128-dark.png?raw=true "URL Incrementer")
+<br>
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" quickly and conveniently.
 
-# Features (for 6.0 - October 2018)
+# Features (for 6.0 - December 2018)
 - Customizable Keyboard and Mouse Shortcuts
 - 1-Click Increment Decrement Button Extensions for Your Toolbar (Available on the Chrome Web Store / Firefox Addons)
 - URLI's Toolkit [Non-Standard]: Crawl URLs for response codes, open up to 100 incremented tabs at once, or generate 10,000 incremented links in 1 second
 - Auto Incrementing: Relax, and let URLI increment URLs automagically. Supports Pause, Resume, and Repeat
 - Download Incrementing [Experimental]: A unique Auto Incrementer Downloader
 - Multi Incrementing [Experimental]: Increment up to 3 parts of a URL individually, simultaneously, or in ranges
-- Date Time Incrementing - I
-- Custom Base Incrementing - (e.g. Base 64 or define your own alphabet)
+- Date Time Incrementing
+- Custom Base Incrementing(e.g. Base 64 or define your own alphabet)
 - Alphanumeric Incrementing (Base 2-36)
 - Error Skipping
 - Next Prev Link Support
@@ -21,7 +23,7 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - Options: Change how URLI pre-selects the number to increment... and more
 - Safe, Open Source, Lightweight, No Ads, No Bloat, and No permissions required for most functionality (Chrome only)
 - Uses 0 Chrome Memory When Inactive (Chrome only)
-- Works on Android, but not "officially" supported (Firefox only)
+- Firefox for Android Support (Firefox only)
 
 Notes
 1. "URLI's Toolkit" is a special tool I made to test URLI and has been "unlocked" for you! But because this is a developer's tool, it was never intended to be a standard feature for users of this extension, so please don't expect it to work 100% perfectly!
