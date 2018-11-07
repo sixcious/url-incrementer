@@ -405,7 +405,7 @@ var IncrementDecrementDate = (() => {
         case "yyyy": mapParts.set("y", strParts[i]); break;
         case "yy":   mapParts.set("y", parseInt(strParts[i]) >= 70 ? "19" + strParts[i] : "20" + strParts[i]); break;
         case "mmmm": case "Mmmm": case"MMMM": mapParts.set("m", mmmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
-        case "mmm": case"Mmm": case"MMM": mapParts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
+        case "mmm":  case"Mmm": case"MMM": mapParts.set("m", mmm.findIndex(m => m === strParts[i].toLowerCase()) + 1); break;
         case "mm":   mapParts.set("m", strParts[i]); break;
         case "m":    mapParts.set("m", strParts[i]); break;
         case "dd":   mapParts.set("d", strParts[i]); break;
