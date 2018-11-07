@@ -13,7 +13,7 @@
   "browser_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
-  "internal_shortcuts_p": { "message": "URLI is set to use its internal shortcuts! Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. You can also set mouse shortcuts and the number of clicks. \"(Right) Left\" means hold Right, click Left or vice-versa. Note: Due to a bug in Chrome, Internal Shortcuts do not work in Incognito Mode."},
+  "internal_shortcuts_p": { "message": "URLI is set to use its internal shortcuts! Click on the text boxes and press the key(s) you'd like to set. Alt, Ctrl, Shift, and Meta keys can be used. You can also set mouse shortcuts and the number of clicks. \"(Right) Left\" means hold Right, click Left or vice-versa. If you're on a touch-screen device, select Left for Touch. Note: Due to a bug in Chrome, Internal Shortcuts do not work in Incognito Mode."},
   "one_click_buttons_h3": { "message": "1-Click Increment Decrement Buttons" },
   "one_click_buttons_p": { "message": "Accessing URLI's buttons requires 2 clicks, but you can add 1-Click buttons to your toolbar! They use 0 Chrome memory when inactive!" },
   "one_click_buttons_increment": { "message": "1-Click URL Increment Button for URLI (Chrome Web Store)" },
