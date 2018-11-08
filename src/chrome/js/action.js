@@ -59,7 +59,7 @@ var Action = (() => {
         actionPerformed = incrementDecrement(action, instance, items);
         break;
       case "next": case "prev":
-        actionPerformed = nextPrev(action, instance, items);
+        actionPerformed = nextPrev(action, instance);
         break;
       case "clear":
         actionPerformed = clear(caller, instance, items, callback);
@@ -94,7 +94,12 @@ var Action = (() => {
    * @private
    */
   function updateTab(instance) {
-    chrome.tabs.update(instance.tabId, {url: instance.url});
+    // If Infy Scroll, send a message to the tab to concatenate the page, else if URLI update the tab normally
+    if (instance.scrollEnabled) {
+      chrome.tabs.sendMessage(instance.tabId, {greeting: "concatenatePage", instance: instance});
+    } else {
+      chrome.tabs.update(instance.tabId, {url: instance.url});
+    }
     // Don't store Quick Instances (Instance is never enabled in quick mode)
     if (instance.enabled) {
       Background.setInstance(instance.tabId, instance);
@@ -183,25 +188,19 @@ var Action = (() => {
    *
    * @param action   the action (e.g. next or prev)
    * @param instance the instance for this tab
-   * @param items    the storage items
    * @private
    */
-  function nextPrev(action, instance, items) {
+  function nextPrev(action, instance) {
     let actionPerformed = true;
     chrome.tabs.executeScript(instance.tabId, {file: "/js/next-prev.js", runAt: "document_end"}, function() {
       const code = "NextPrev.findNextPrevURL(" +
-        JSON.stringify(action === "next" ? items.nextPrevKeywordsNext : items.nextPrevKeywordsPrev) + "," +
-        JSON.stringify(items.nextPrevLinksPriority) + ", " +
-        JSON.stringify(items.nextPrevSameDomainPolicy) + ");";
+        JSON.stringify(action === "next" ? instance.nextPrevKeywordsNext : instance.nextPrevKeywordsPrev) + "," +
+        JSON.stringify(instance.nextPrevLinksPriority) + ", " +
+        JSON.stringify(instance.nextPrevSameDomainPolicy) + ", " +
+        JSON.stringify(instance.domId) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
-        if (results && results[0]) {
-          // Only do the default updateTab if auto next/prev (do not want to affect increment/decrement instances)
-          if (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) {
-            instance.url = results[0];
-            updateTab(instance);
-          } else {
-            chrome.tabs.update(instance.tabId, {url: results[0]});
-          }
+        if (results && results[0] && results[0].url) {
+          updateTab(instance);
         }
       });
     });
@@ -237,6 +236,10 @@ var Action = (() => {
       }
       if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
         chrome.tabs.sendMessage(instance.tabId, {greeting: "removeMouseListener"});
+      }
+      // Infy Scroll: Remove scroll listener
+      if (instance.scrollEnabled) {
+        chrome.tabs.sendMessage(instance.tabId, {greeting: "removeScrollListener"});
       }
       // Don't delete saved URLs if the instance is also enabled
       if (!instance.enabled && instance.saveFound) {
@@ -324,8 +327,13 @@ var Action = (() => {
         }
         break;
       case "tabs":
-        for (const url of instance.urls) {
-          chrome.tabs.create({"url": url.urlmod, "active": false});
+        toolkitTabs(0);
+        function toolkitTabs(index) {
+          if (index < instance.urls.length) {
+            chrome.tabs.create({"url": instance.urls[index].urlmod, "active": false}, function() {
+              setTimeout(function() { toolkitTabs(++index); }, instance.toolkitSeconds * 1000);
+            });
+          }
         }
         break;
     }

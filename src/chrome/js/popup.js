@@ -243,7 +243,7 @@ var Popup = (() => {
     DOM["#toolkit-action-decrement-input"].checked = instance.toolkitAction === DOM["#toolkit-action-decrement-input"].value;
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
     DOM["#toolkit-seconds-input"].value = instance.toolkitSeconds;
-    DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-crawl-input"].checked ? "" : "hidden";
+    DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled;
     DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
@@ -448,7 +448,7 @@ var Popup = (() => {
    * @private
    */
   function changeToolkitTool() {
-    DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-crawl-input"].checked ? "" : "hidden";
+    DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
   }
 
   /**
