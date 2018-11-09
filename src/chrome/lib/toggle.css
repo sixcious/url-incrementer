@@ -120,6 +120,6 @@
 }
 
 .tgl-ios + .tgl-btn:after {
-  background: #FEFEFE;
+  background: #FDFDFD;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 0 rgba(0, 0, 0, 0.08);
 }

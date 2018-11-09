@@ -943,18 +943,7 @@ var Popup = (() => {
           backgroundPage.Saves.addURL(_);
           _.saveType = "url";
         }
-        // If popup can overwrite increment/decrement settings, write to storage
-        if (_.enabled) {
-          chrome.storage.sync.set({
-            "interval": _.interval,
-            // Don't ever save non Number bases (e.g. Date Time) as the default
-            "base": !isNaN(_.base) ? _.base : items.base,
-            "baseCase": _.baseCase,
-            "baseDateFormat": _.baseDateFormat,
-            "baseCustom": _.baseCustom,
-            "errorSkip": _.errorSkip
-          });
-        }
+        // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options
         if (_.autoEnabled) {
           chrome.storage.sync.set({
             "autoAction": _.autoAction,
