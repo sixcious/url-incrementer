@@ -200,6 +200,7 @@ var Action = (() => {
         JSON.stringify(instance.domId) + ");";
       chrome.tabs.executeScript(instance.tabId, {code: code, runAt: "document_end"}, function(results) {
         if (results && results[0] && results[0].url) {
+          instance.url = results[0].url;
           updateTab(instance);
         }
       });
