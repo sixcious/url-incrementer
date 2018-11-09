@@ -24,12 +24,16 @@ var Background = (() => {
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "older", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 2
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 2,
+    // Infy Scroll:
+    "scrollMode": "iframe", "scrollAction": "increment", "scrollSpacing": 0,
   },
 
   // The local storage default values
   LOCAL_STORAGE_DEFAULT_VALUES = {
-    "saves": [], "savePreselect": false
+    "saves": [], "savePreselect": false,
+    // Infy Scroll:
+    "whitelist": [], "blackList": []
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -172,7 +176,9 @@ var Background = (() => {
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
       "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
       "downloadPreview": items.downloadPreview,
-      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds,
+      // Infy Scroll:
+      "scrollMode": items_.scrollMode, "scrollAction": items_.scrollAction, "scrollSpacing": items_.scrollSpacing
     };
   }
 
