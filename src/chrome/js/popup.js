@@ -492,7 +492,6 @@ var Popup = (() => {
     // In case urls array is shorter than quantity, e.g. decrement reaching 0
     instance.toolkitQuantity = instance.toolkitQuantityRemaining = instance.urls.length;
     DOM["#crawl"].className = "display-block";
-    DOM["#crawl-percentage-value"].textContent = 0 + "%";
     DOM["#crawl-urls-remaining"].textContent = 0;
     DOM["#crawl-urls-total"].textContent = instance.toolkitQuantity;
     updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
@@ -530,10 +529,10 @@ var Popup = (() => {
         td2.textContent = status;
         instance.toolkitQuantityRemaining--;
         DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
-        DOM["#crawl-percentage-value"].textContent = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
+        DOM["#crawl-progress"].value = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100);
         updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
+        setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
       });
-      setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
     } else {
       console.log("crawlURLs() - exhausted the quantityRemaining");
     }
@@ -562,7 +561,7 @@ var Popup = (() => {
   function updateETA(time, eta, enabled) {
     const hours = ~~ (time / 3600),
           minutes = ~~ ((time % 3600) / 60),
-          seconds = time % 60,
+          seconds = Math.floor(time % 60),
           fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("eta_hour") : chrome.i18n.getMessage("eta_hours")) : "",
           fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("eta_minute") : chrome.i18n.getMessage("eta_minutes")) : "",
           fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("eta_second") : chrome.i18n.getMessage("eta_seconds")) : "";
@@ -890,7 +889,7 @@ var Popup = (() => {
    *
    * @private
    */
-  function setup() {
+  async function setup() {
     setupInputs("accept");
     const e = setupErrors("accept");
     // Validated Rules:
@@ -925,63 +924,61 @@ var Popup = (() => {
         UI.generateAlert([chrome.i18n.getMessage("oops_error")]);
       }
     }
-    // Else good to go! Clear instance and finish setting _ to re-set new instance
+    // Else good to go! Finish setting up _ to re-set the new instance
     else {
-      backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items, async function() {
-        _.enabled = true;
-        _.saveFound = _.saveURL;
-        const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
-        _.urls = precalculateProps.urls;
-        _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
-        // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
-        if (_.autoEnabled && _.urls && _.urls.length > 0) {
-          _.autoTimes = _.urls.length;
-        }
-        // Save URL
-        if (_.saveURL) {
-          // TODO
-          backgroundPage.Saves.addURL(_);
-          _.saveType = "url";
-        }
-        // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options
-        if (_.autoEnabled) {
-          chrome.storage.sync.set({
-            "autoAction": _.autoAction,
-            "autoSeconds": _.autoSeconds,
-            "autoTimes": _.autoTimes,
-            "autoWait": _.autoWait,
-            "autoBadge": _.autoBadge,
-            "autoRepeat": _.autoRepeat
-          });
-        }
-        if (_.downloadEnabled) {
-          chrome.storage.sync.set({
-            "downloadStrategy": _.downloadStrategy,
-            "downloadExtensions": _.downloadExtensions,
-            "downloadTags": _.downloadTags,
-            "downloadAttributes": _.downloadAttributes,
-            "downloadSelector": _.downloadSelector,
-            "downloadIncludes": _.downloadIncludes,
-            "downloadExcludes": _.downloadExcludes,
-            "downloadPreview": _.downloadPreview
-          });
-        }
-        // Now convert _ to instance
-        backgroundPage.Background.setInstance(_.tabId, _);
-        instance = backgroundPage.Background.getInstance(_.tabId);
-        // If internal shortcuts permissions granted, send message to shortcuts content script to add key/mouse listeners:
-        if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
-          chrome.tabs.sendMessage(_.tabId, {greeting: "addKeyListener"});
-        }
-        if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
-          chrome.tabs.sendMessage(_.tabId, {greeting: "addMouseListener"});
-        }
-        // If auto is enabled, ask Auto to start auto timer (must do this after setting instance in Background)
-        if (_.autoEnabled) {
-          backgroundPage.Auto.startAutoTimer(_, "popup");
-        }
-        toggleView.call(DOM["#accept-button"]);
-      });
+      _.enabled = true;
+      _.saveFound = _.saveURL;
+      const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
+      _.urls = precalculateProps.urls;
+      _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
+      // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
+      if (_.autoEnabled && _.urls && _.urls.length > 0) {
+        _.autoTimes = _.urls.length;
+      }
+      // Save URL
+      if (_.saveURL) {
+        backgroundPage.Saves.addURL(_);
+        _.saveType = "url";
+      }
+      // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options
+      if (_.autoEnabled) {
+        chrome.storage.sync.set({
+          "autoAction": _.autoAction,
+          "autoSeconds": _.autoSeconds,
+          "autoTimes": _.autoTimes,
+          "autoWait": _.autoWait,
+          "autoBadge": _.autoBadge,
+          "autoRepeat": _.autoRepeat
+        });
+      }
+      if (_.downloadEnabled) {
+        chrome.storage.sync.set({
+          "downloadStrategy": _.downloadStrategy,
+          "downloadExtensions": _.downloadExtensions,
+          "downloadTags": _.downloadTags,
+          "downloadAttributes": _.downloadAttributes,
+          "downloadSelector": _.downloadSelector,
+          "downloadIncludes": _.downloadIncludes,
+          "downloadExcludes": _.downloadExcludes,
+          "downloadPreview": _.downloadPreview
+        });
+      }
+      // Now clear the old instance make the new instance be _
+      await backgroundPage.Action.performAction("clear", "popupClearBeforeSet", instance, items);
+      backgroundPage.Background.setInstance(_.tabId, _);
+      instance = backgroundPage.Background.getInstance(_.tabId);
+      // If internal shortcuts permissions granted, send message to shortcuts content script to add key/mouse listeners:
+      if (items.permissionsInternalShortcuts && items.keyEnabled && !items.keyQuickEnabled) {
+        chrome.tabs.sendMessage(_.tabId, {greeting: "addKeyListener"});
+      }
+      if (items.permissionsInternalShortcuts && items.mouseEnabled && !items.mouseQuickEnabled) {
+        chrome.tabs.sendMessage(_.tabId, {greeting: "addMouseListener"});
+      }
+      // If auto is enabled, ask Auto to start auto timer (must do this after setting instance in Background)
+      if (_.autoEnabled) {
+        backgroundPage.Auto.startAutoTimer(_, "popup");
+      }
+      toggleView.call(DOM["#accept-button"]);
     }
   }
 
@@ -1042,7 +1039,8 @@ var Popup = (() => {
       _.autoWait = DOM["#auto-wait-input"].checked;
       _.autoBadge = DOM["#auto-badge-input"].checked ? "times" : "";
       _.autoRepeat = DOM["#auto-repeat-input"].checked;
-      _.autoPaused = false;
+      _.autoRepeatCount = 0;
+      _.autoPaused = _.autoRepeating = false;
     }
     if (caller === "accept") {
       // Download:
@@ -1104,8 +1102,9 @@ var Popup = (() => {
         !_.toolkitTool || !_.toolkitAction || isNaN(_.toolkitQuantity) || isNaN(_.toolkitSeconds) ? chrome.i18n.getMessage("toolkit_invalid_error") :
         _.toolkitTool === "crawl" && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("toolkit_crawl_permissions_error") :
         _.toolkitTool === "crawl" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_crawl_quantity_error") :
-        _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_seconds_error") :
+        _.toolkitTool === "crawl" && (_.toolkitSeconds < 1 || _.toolkitSeconds > 600) ? chrome.i18n.getMessage("toolkit_crawl_seconds_error") :
         _.toolkitTool === "tabs"  && (_.toolkitQuantity < 1 || _.toolkitQuantity > 100) ? chrome.i18n.getMessage("toolkit_tabs_quantity_error") :
+        _.toolkitTool === "tabs"  && (_.toolkitSeconds < 0 || _.toolkitSeconds > 5) ? chrome.i18n.getMessage("toolkit_tabs_seconds_error") :
         _.toolkitTool === "tabs"  && (_.toolkitTabsLength + _.toolkitQuantity > 101) ? chrome.i18n.getMessage("toolkit_tabs_too_many_open_error") :
         _.toolkitTool === "links" && (_.toolkitQuantity < 1 || _.toolkitQuantity > 10000) ? chrome.i18n.getMessage("toolkit_links_quantity_error") : ""
       ];

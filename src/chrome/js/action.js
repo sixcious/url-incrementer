@@ -62,7 +62,7 @@ var Action = (() => {
         actionPerformed = nextPrev(action, instance);
         break;
       case "clear":
-        actionPerformed = clear(caller, instance, items, callback);
+        actionPerformed = clear(caller, instance, items);
         break;
       case "return":
         actionPerformed = returnToStart(caller, instance);
@@ -214,10 +214,9 @@ var Action = (() => {
    * @param caller   String indicating who called this function (e.g. command, popup, content script)
    * @param instance the instance for this tab
    * @param items    the storage items
-   * @param callback (optional) the function callback - called by popup clear before set
    * @private
    */
-  function clear(caller, instance, items, callback) {
+  function clear(caller, instance, items) {
     let actionPerformed = false;
     // Handle AUTO Repeat
     if (instance.autoEnabled && instance.autoRepeat && caller === "auto") {
@@ -257,9 +256,7 @@ var Action = (() => {
     instance.multi = {"1": {}, "2": {}, "3": {}};
     instance.multiCount = instance.autoRepeatCount = 0;
     instance.urls = [];
-    if (callback) {
-      callback(instance);
-    } else {
+    if (caller !== "popupClearBeforeSet") {
       chrome.runtime.sendMessage({greeting: "updatePopupInstance", instance: instance}, function(response) { if (chrome.runtime.lastError) {} });
     }
     return actionPerformed;

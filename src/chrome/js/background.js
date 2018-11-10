@@ -178,7 +178,7 @@ var Background = (() => {
       "downloadPreview": items.downloadPreview,
       "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds,
       // Infy Scroll:
-      "scrollMode": items_.scrollMode, "scrollAction": items_.scrollAction, "scrollSpacing": items_.scrollSpacing
+      "scrollMode": items.scrollMode, "scrollAction": items.scrollAction, "scrollSpacing": items.scrollSpacing
     };
   }
 
