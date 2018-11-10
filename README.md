@@ -39,8 +39,8 @@ It's recommended to disable all the Keyboard Shortcuts and change the Mouse Shor
 5. Using programs or "macros" to map keyboard shortcuts into mouse buttons are not officially supported and may not work; you must use Logitech's Macro (NOT the "Keystroke" option).
 
 
-# Special Thanks
-NickMWPrince and Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.X Testing), Eric C (Alphanumeric Idea), and Isaac S, Adam C & Will (Feedback)
+# Credits and Special Thanks
+NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), Mike West (Dialogs), The Chromium Authors (Styles), ZURB Foundation (Styles / Tables), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ...
 
 ... and most of all you for using URLI!
 
