@@ -10,12 +10,12 @@ var Promisify = (() => {
   /**
    * Gets the storage items via a promise-based wrapper for async/await callers.
    *
-   * @param namespace (optional) the storage namespace, either "sync" or "local"
+   * @param namespace (optional) the storage namespace, either "local" or "sync"
    * @param key       (optional) the storage item key to get or null for all items
    * @returns {Promise<{}>} the storage items
    * @public
    */
-  function getItems(namespace = "sync", key = null) {
+  function getItems(namespace = "local", key = null) {
     return new Promise(resolve => {
       chrome.storage[namespace].get(key, items => {
         key ? resolve(items[key]) : resolve(items);

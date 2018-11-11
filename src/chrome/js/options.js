@@ -37,39 +37,39 @@ var Options = (() => {
     // Add Event Listeners to the DOM elements
     DOM["#internal-shortcuts-enable-button"].addEventListener("click", function() { Permissions.requestPermission("internalShortcuts", function(granted) { if (granted) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { Permissions.removePermission("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
-    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"commandsQuickEnabled": this.checked}); });
+    DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
-    DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"keyQuickEnabled": this.checked}); });
-    DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseQuickEnabled": this.checked}); });
-    DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.sync.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
+    DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"keyQuickEnabled": this.checked}); });
+    DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseQuickEnabled": this.checked}); });
+    DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
     DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-confetti"].addEventListener("change", changeIconColor);
     DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
-    DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"iconFeedbackEnabled": this.checked}); });
+    DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { saveInput(this, "popupButtonSize", "number");
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
-    DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.sync.set({"popupAnimationsEnabled": this.checked});
+    DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"popupAnimationsEnabled": this.checked});
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
     DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
     DOM["#saved-urls-wildcard-cancel-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-none"; });
     DOM["#saved-urls-wildcard-save-button"].addEventListener("click", function() { addSavedURL(); });
-    DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.sync.set({"selectionPriority": this.value}); });
+    DOM["#selection-select"].addEventListener("change", function() { DOM["#selection-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none"; chrome.storage.local.set({"selectionPriority": this.value}); });
     DOM["#selection-custom-save-button"].addEventListener("click", function () { customSelection("save"); });
     DOM["#selection-custom-test-button"].addEventListener("click", function() { customSelection("test"); });
     DOM["#interval-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "interval", "number");} });
-    DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.sync.set({ "leadingZerosPadByDetection": this.checked}); });
+    DOM["#leading-zeros-pad-by-detection-input"].addEventListener("change", function() { chrome.storage.local.set({ "leadingZerosPadByDetection": this.checked}); });
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
-      chrome.storage.sync.set({"base": +this.value > 10 ? +this.value : this.value});
+      chrome.storage.local.set({"base": +this.value > 10 ? +this.value : this.value});
     });
-    DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
-    DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.sync.set({"baseCase": this.value}); });
+    DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.local.set({"baseCase": this.value}); });
+    DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.local.set({"baseCase": this.value}); });
     DOM["#base-date-format-input"].addEventListener("input", function() { saveInput(this, "baseDateFormat", "value"); });
     DOM["#base-custom-input"].addEventListener("input", function() { saveInput(this, "baseCustom", "value"); });
     DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "shuffleLimit", "number"); } });
@@ -78,13 +78,13 @@ var Options = (() => {
     DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
     DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.sync.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.local.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#error-codes-custom-input"].addEventListener("input", function() { saveInput(this, "errorCodesCustom", "array-split-all"); });
-    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsNext", "array-split-nospace"); });
-    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsPrev", "array-split-nospace"); });
-    DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.sync.set({"nextPrevLinksPriority": this.value}); });
-    DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevSameDomainPolicy": this.checked}); });
-    DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.sync.set({"nextPrevPopupButtons": this.checked}); });
+    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsNext", "array-split-nospace-lowercase"); });
+    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsPrev", "array-split-nospace-lowercase"); });
+    DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.local.set({"nextPrevLinksPriority": this.value}); });
+    DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevSameDomainPolicy": this.checked}); });
+    DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermission("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermission("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermission("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
@@ -151,7 +151,7 @@ var Options = (() => {
       // Add Event Listeners
       input.addEventListener("keydown", function (event) { translateKey(event); writeInput(this, key); });
       input.addEventListener("keyup", function (event) { key.code = !KEY_MODIFIERS.has(event.key) ? event.code : key.code; writeInput(this, key); setKey(this); });
-      clear.addEventListener("click", function () { chrome.storage.sync.set({[getStorageKey(this)]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + shortcut + "-input"], null); });
+      clear.addEventListener("click", function () { chrome.storage.local.set({[getStorageKey(this)]: null}, function() { setKeyEnabled(); }); writeInput(DOM["#key-" + shortcut + "-input"], null); });
       select.addEventListener("change", function() { setMouse(this, undefined); });
       clicks.addEventListener("change", function() { setMouse(undefined, this); });
     }
@@ -182,10 +182,9 @@ var Options = (() => {
       DOM["#enhanced-mode-disable"].className = !items.permissionsEnhancedMode ? values === "enhancedMode" ? "display-block fade-in" : "display-block" : "display-none";
     }
     if (values === "all" || values === "savedURLs") {
-      const localItems = await Promisify.getItems("local");
-      DOM["#saved-urls-delete-button"].className = localItems.saves && localItems.saves.length > 0 ? "fade-in" : "display-none";
-      DOM["#saved-urls-preselect-input"].checked = localItems.savePreselect;
-      buildSavedURLsSelect(localItems.saves);
+      DOM["#saved-urls-delete-button"].className = items.saves && items.saves.length > 0 ? "fade-in" : "display-none";
+      DOM["#saved-urls-preselect-input"].checked = items.savePreselect;
+      buildSavedURLsSelect(items.saves);
     }
     if (values === "all") {
       DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
@@ -260,7 +259,7 @@ var Options = (() => {
         "32": "/img/32-" + this.value + ".png"
       }
     });
-    chrome.storage.sync.set({"iconColor": this.value});
+    chrome.storage.local.set({"iconColor": this.value});
   }
 
   /**
@@ -292,7 +291,7 @@ var Options = (() => {
   function setKey(input) {
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
-      chrome.storage.sync.set({ [getStorageKey(input)]: key }, function() { setKeyEnabled(); });
+      chrome.storage.local.set({ [getStorageKey(input)]: key }, function() { setKeyEnabled(); });
     }, 1000);
   }
 
@@ -312,7 +311,7 @@ var Options = (() => {
     const mouse = +buttonInput.value < 0 ? null : { "button": +buttonInput.value, "clicks": +clicksInput.value};
     console.log("setMouse() - mouse=" + mouse);
     clicksInput.className = mouse ? "display-block fade-in" : "display-none";
-    chrome.storage.sync.set({ [getStorageKey(buttonInput)]: mouse }, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
+    chrome.storage.local.set({ [getStorageKey(buttonInput)]: mouse }, function() { if (updateMouseEnabled) { setMouseEnabled(); }});
   }
 
   /**
@@ -321,9 +320,9 @@ var Options = (() => {
    * @private
    */
   function setKeyEnabled() {
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.local.get(null, function(items) {
       const enabled = items.keyIncrement || items.keyDecrement || items.keyNext || items.keyPrev || items.keyClear || items.keyReturn || items.keyAuto;
-      chrome.storage.sync.set({"keyEnabled": enabled}, function() {
+      chrome.storage.local.set({"keyEnabled": enabled}, function() {
         DOM["#key-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
@@ -335,9 +334,9 @@ var Options = (() => {
    * @private
    */
   function setMouseEnabled() {
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.local.get(null, function(items) {
       const enabled =  items.mouseIncrement || items.mouseDecrement || items.mouseNext || items.mousePrev || items.mouseClear || items.mouseReturn || items.mouseAuto;
-      chrome.storage.sync.set({"mouseEnabled": enabled}, function() {
+      chrome.storage.local.set({"mouseEnabled": enabled}, function() {
         DOM["#mouse-enable-img"].className = enabled ? "display-inline" : "display-none";
       });
     });
@@ -473,7 +472,7 @@ var Options = (() => {
    * @private
    */
   function updateErrorCodes() {
-    chrome.storage.sync.set({"errorCodes":
+    chrome.storage.local.set({"errorCodes":
       [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
        DOM["#error-codes-3XX-input"].checked ? DOM["#error-codes-3XX-input"].value : "",
        DOM["#error-codes-4XX-input"].checked ? DOM["#error-codes-4XX-input"].value : "",
@@ -494,10 +493,10 @@ var Options = (() => {
     console.log("saveInput() - about to clearTimeout and setTimeout... input.id=" + input.id + ", storageKey=" + storageKey +", type=" + type);
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
-      chrome.storage.sync.set({[storageKey]:
+      chrome.storage.local.set({[storageKey]:
         type === "number" ? +input.value :
         type === "value" ? input.value :
-        type.startsWith("array") ? input.value ? input.value.split(type === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
+        type.startsWith("array") ? input.value ? input.value.toLowerCase().split(type === "array-split-all" ? /[, \n]+/ : /[,\n]/).filter(Boolean) : [] : undefined
       });
     }, 1000);
   }
@@ -560,7 +559,7 @@ var Options = (() => {
       DOM["#selection-custom-url-textarea"].focus();
     } else if (action === "save") {
       DOM["#selection-custom-message-span"].textContent = chrome.i18n.getMessage("selection_custom_save_success");
-      chrome.storage.sync.set({"selectionCustom": { "url": url, "pattern": pattern, "flags": flags, "group": group, "index": index }});
+      chrome.storage.local.set({"selectionCustom": { "url": url, "pattern": pattern, "flags": flags, "group": group, "index": index }});
     }
   }
 
@@ -571,17 +570,13 @@ var Options = (() => {
    * @private
    */
   function resetOptions() {
-    chrome.storage.sync.clear(function() {
-      chrome.storage.sync.set(backgroundPage.Background.getSDV(), function() {
-        chrome.storage.local.clear(function() {
-          chrome.storage.local.set(backgroundPage.Background.getLSDV(), function() {
-            console.log("resetOptions() - removing all permissions...");
-            Permissions.removeAllPermissions();
-            changeIconColor.call(DOM["#icon-color-radio-dark"]);
-            populateValuesFromStorage("all");
-            UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
-          });
-        });
+    chrome.storage.local.clear(function() {
+      chrome.storage.local.set(backgroundPage.Background.getSDV(), function() {
+        Permissions.removeAllPermissions();
+        console.log("resetOptions() - storage cleared and set and permissions removed");
+        changeIconColor.call(DOM["#icon-color-radio-dark"]);
+        populateValuesFromStorage("all");
+        UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
       });
     });
   }

@@ -14,7 +14,6 @@ var Popup = (() => {
   let _ = {},
       instance = {},
       items = {},
-      localItems = {},
       backgroundPage = {},
       downloadPreviewCache = {},
       timeouts = {};
@@ -78,14 +77,13 @@ var Popup = (() => {
     // Initialize popup content (1-time only)
     const tabs = await Promisify.getTabs();
     items = await Promisify.getItems();
-    localItems = await Promisify.getItems("local");
     backgroundPage = await Promisify.getBackgroundPage();
     // Firefox: Background Page is null in Private Window
     if (!backgroundPage) {
       DOM["#messages"].className = DOM["#private-window-unsupported"].className = "display-block";
       return;
     }
-    instance = backgroundPage.Background.getInstance(tabs[0].id) || await backgroundPage.Background.buildInstance(tabs[0], items, localItems);
+    instance = backgroundPage.Background.getInstance(tabs[0].id) || await backgroundPage.Background.buildInstance(tabs[0], items);
     _ = JSON.parse(JSON.stringify(instance));
     const buttons = document.querySelectorAll("#controls input");
     for (const button of buttons) {
@@ -205,7 +203,7 @@ var Popup = (() => {
    */
   function updateSetup(minimal) {
     // Increment Decrement Setup:
-    if (instance.saveFound || localItems.savePreselect) {
+    if (instance.saveFound || items.savePreselect) {
       DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
@@ -433,7 +431,7 @@ var Popup = (() => {
       }
       backgroundPage.Action.performAction("toolkit", "popup", toolkitInstance, items);
       // Note: After performing the action, the background sends a message back to popup with the results (if necessary)
-      chrome.storage.sync.set({
+      chrome.storage.local.set({
         "toolkitTool": _.toolkitTool,
         "toolkitAction": _.toolkitAction,
         "toolkitQuantity": _.toolkitQuantity,
@@ -942,7 +940,7 @@ var Popup = (() => {
       }
       // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options
       if (_.autoEnabled) {
-        chrome.storage.sync.set({
+        chrome.storage.local.set({
           "autoAction": _.autoAction,
           "autoSeconds": _.autoSeconds,
           "autoTimes": _.autoTimes,
@@ -952,7 +950,7 @@ var Popup = (() => {
         });
       }
       if (_.downloadEnabled) {
-        chrome.storage.sync.set({
+        chrome.storage.local.set({
           "downloadStrategy": _.downloadStrategy,
           "downloadExtensions": _.downloadExtensions,
           "downloadTags": _.downloadTags,

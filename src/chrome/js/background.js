@@ -7,7 +7,7 @@
 
 var Background = (() => {
 
-  // The sync storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
+  // The storage default values. Note: Storage.set can only set top-level JSON objects, avoid using nested JSON objects (instead, prefix keys that should be grouped together with a label e.g. "auto")
   const STORAGE_DEFAULT_VALUES = {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     "iconColor": "dark", "iconFeedbackEnabled": false,
@@ -20,19 +20,14 @@ var Background = (() => {
     "selectionPriority": "prefixes", "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     "errorSkip": 0, "errorCodes": ["404", "", "", ""], "errorCodesCustomEnabled": false, "errorCodesCustom": [],
     "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
-    "nextPrevKeywordsNext": ["pnnext", "next page", "next", "newer", "forward", "次", "&gt;", ">", "›", "→"],
-    "nextPrevKeywordsPrev": ["pnprev", "previous page", "prev", "previous", "older", "前", "&lt;", "<", "‹", "←"],
+    "nextPrevKeywordsNext": ["pnnext", "next page", "next >", "next »", "next", "older", "forward", "次", "&gt;", ">", "›", "→"],
+    "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 2,
-    // Infy Scroll:
-    "scrollMode": "iframe", "scrollAction": "increment", "scrollSpacing": 0,
-  },
-
-  // The local storage default values
-  LOCAL_STORAGE_DEFAULT_VALUES = {
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1,
     "saves": [], "savePreselect": false,
     // Infy Scroll:
+    "scrollAction": "next", "scrollMode": "html", "scrollSpacing": 0,
     "whitelist": [], "blackList": []
   },
 
@@ -74,16 +69,6 @@ var Background = (() => {
    */
   function getSDV() {
     return STORAGE_DEFAULT_VALUES;
-  }
-
-  /**
-   * Gets the local storage default values (LSDV).
-   *
-   * @returns {{}} the local storage default values (LSDV)
-   * @public
-   */
-  function getLSDV() {
-    return LOCAL_STORAGE_DEFAULT_VALUES;
   }
 
   /**
@@ -135,21 +120,18 @@ var Background = (() => {
   /**
    * Builds an instance with default values (from either an existing save or by using the storage items).
    * 
-   * @param tab        the tab properties (id, url) to set this instance with
-   * @param items      (optional) the sync storage items
-   * @param localItems (optional) the local storage items
+   * @param tab   the tab properties (id, url) to set this instance with
+   * @param items (optional) the storage items
    * @returns instance the newly built instance
    * @public
    */
-  async function buildInstance(tab, items, localItems) {
+  async function buildInstance(tab, items) {
     items = items ? items : await Promisify.getItems();
-    localItems = localItems ? localItems : await Promisify.getItems("local");
-    const saves = localItems.saves;
     let via = "items",
         object = items,
         selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
-    for (const save of saves) {
+    for (const save of items.saves) {
       const result = await Saves.matchesSave(save, tab.url);
       if (result.matches) {
         console.log("buildInstance() - found a " + save.type + " save for this tab's url");
@@ -178,7 +160,7 @@ var Background = (() => {
       "downloadPreview": items.downloadPreview,
       "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds,
       // Infy Scroll:
-      "scrollMode": items.scrollMode, "scrollAction": items.scrollAction, "scrollSpacing": items.scrollSpacing
+      "scrollEnabled": false, "scrollAction": object.scrollAction, "scrollMode": object.scrollMode, "scrollSpacing": object.scrollSpacing
     };
   }
 
@@ -216,21 +198,23 @@ var Background = (() => {
    */
   async function installedListener(details) {
     // install: Open Options Page, 1.0-5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
-    if (details.reason === "install" || (details.reason === "update" && details.previousVersion >= "1.0" && details.previousVersion < "6.0")) {
+    if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
-      const items = details.previousVersion && details.previousVersion >= "5.3" ? await Promisify.getItems() : undefined;
+      const sitems = details.reason === "update" ? await Promisify.getItems("sync") : undefined,
+            litems = details.reason === "update" ? await Promisify.getItems("local") : undefined;
       chrome.storage.sync.clear(function() {
-        chrome.storage.sync.set(STORAGE_DEFAULT_VALUES, function() {
-          chrome.storage.local.clear(function() {
-            chrome.storage.local.set(LOCAL_STORAGE_DEFAULT_VALUES, function() {
-              if (details.reason === "install") {
-                chrome.runtime.openOptionsPage();
-              } else if (details.previousVersion >= "1.0" && details.previousVersion <= "5.2") {
+        chrome.storage.local.clear(function() {
+          chrome.storage.local.set(STORAGE_DEFAULT_VALUES, function() {
+            if (details.reason === "install") {
+              chrome.runtime.openOptionsPage();
+            } else if (details.reason === "update") {
+              if (details.previousVersion >= "1.0" && details.previousVersion <= "5.2") {
                 Permissions.removeAllPermissions();
-              } else if (details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
-                chrome.storage.sync.set({"TODO": "TODO"});
+              } else if (details.previousVersion === "0.0" || details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
+                if (litems && litems.saves && litems.saves.length > 0) { chrome.storage.local.set({"saves": litems.saves}); }
+                if (sitems && sitems.interval) { chrome.storage.local.set({"interval": sitems.interval}); }
               }
-            });
+            }
           });
         });
       });
@@ -369,7 +353,6 @@ var Background = (() => {
   // Return Public Functions
   return {
     getSDV: getSDV,
-    getLSDV: getLSDV,
     getInstances: getInstances,
     getInstance: getInstance,
     setInstance: setInstance,

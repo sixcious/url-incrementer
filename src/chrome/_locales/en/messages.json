@@ -309,7 +309,7 @@
   "error_codes_5XX_label": { "message": "5XX Server Errors" },
   "error_codes_custom_enabled_label": { "message": "Use Custom HTTP Status Codes" },
   "next_prev_settings_h3": { "message": "Next Prev Settings" },
-  "next_prev_settings_p": { "message": "Some URLs may not have numbers, so URLI can increment using Next Prev links on the page. Keywords are ordered in priority and separated by commas." },
+  "next_prev_settings_p": { "message": "Some URLs may not have numbers, so URLI can increment using Next Prev links on the page. Keywords are all lowercase, ordered in priority, and separated by commas." },
   "next_prev_next_label": { "message": "Next" },
   "next_prev_prev_label": { "message": "Prev" },
   "next_prev_keywords_label": { "message": "Keywords" },

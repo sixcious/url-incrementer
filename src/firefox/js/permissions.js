@@ -34,7 +34,7 @@ var Permissions = (() => {
    */
   function requestPermission(permission, callback) {
     if (!PERMISSIONS[permission].request) {
-      chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
+      chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: true}, function() {
         if (callback) {
           callback(true);
         }
@@ -44,7 +44,7 @@ var Permissions = (() => {
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
         console.log("requestPermission() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
-        chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
+        chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: true}, function() {
           if (callback) {
             callback(true);
           }
@@ -70,7 +70,7 @@ var Permissions = (() => {
    */
   function removePermission(permission, callback) {
     if (!PERMISSIONS[permission].request) {
-      chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: false}, function() {
+      chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: false}, function() {
         if (callback) {
           callback(true);
         }
@@ -80,7 +80,7 @@ var Permissions = (() => {
     chrome.permissions.remove(PERMISSIONS[permission].request, function(removed) {
       if (removed) {
         console.log("removePermission() - successfully removed permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
-        chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: false}, function() {
+        chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: false}, function() {
           if (callback) {
             callback(true);
           }

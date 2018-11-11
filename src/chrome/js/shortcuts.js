@@ -189,7 +189,7 @@ var Shortcuts = (() => {
   // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
   if (!this.contentScriptExecuted) {
     this.contentScriptExecuted = true;
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.local.get(null, function(items) {
       if (items.permissionsInternalShortcuts) {
         setItems(items);
         if (items.keyEnabled) {

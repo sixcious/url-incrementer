@@ -49,7 +49,7 @@ var Permissions = (() => {
             console.log("requestPermission() - successfully added declarativeContent rules:" + rules);
           });
         }
-        chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: true}, function() {
+        chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: true}, function() {
           if (callback) {
             callback(true);
           }
@@ -86,7 +86,7 @@ var Permissions = (() => {
       });
     }
     // Remove:
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.local.get(null, function(items) {
       // Check for conflicts if another permission is enabled; if conflict, then only remove the request's conflict (not the original request)
       if ((permission === "internalShortcuts" && !items.permissionsDownload && !items.permissionsEnhancedMode) ||
           (permission === "download" && !items.permissionsInternalShortcuts && !items.permissionsEnhancedMode) ||
@@ -104,7 +104,7 @@ var Permissions = (() => {
         });
       }
     });
-    chrome.storage.sync.set({[PERMISSIONS[permission].storageKey]: false}, function() {
+    chrome.storage.local.set({[PERMISSIONS[permission].storageKey]: false}, function() {
       if (callback) {
         callback(true);
       }

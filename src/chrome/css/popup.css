@@ -77,36 +77,31 @@ progress {
   -moz-appearance: none;
   position: relative;
   text-align: center;
-  width: 10rem;
+  width: 20rem;
   height: 1rem;
 }
 
 progress::-webkit-progress-bar {
   background: #BABABA; /*#CACACA;*/
   border-radius: 4px;
+  /*
+  box-shadow: 0 2px 3px #888 inset;
+  */
 }
 
 progress::-webkit-progress-value {
   background-color: var(--auto-color);
   border-radius: 4px;
-  transition: 0.5s linear;
+  transition: 2s linear;
   transition-property: width, background-color;
 }
-/*
-
-progress::-webkit-progress-bar {
-  background: #FFF;
-  box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
-  border-radius: 8px;
-}
-*/
 
 progress:after {
   color: #FFFFFF;
   content: attr(value)'%';
   position: absolute;
   top: -1px;
-  left: 4rem;
+  left: 9rem;
 }
 
 /* Controls */
