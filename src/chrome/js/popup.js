@@ -1165,7 +1165,7 @@ var Popup = (() => {
   }
 
   // Popup Listener
-  chrome.runtime.onMessage.addListener(messageListener);
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { messageListener(request, sender, sendResponse); if (request.async) { return true; } });
 
   // Initialize Popup
   init();
