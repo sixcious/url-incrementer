@@ -25,10 +25,7 @@ var Background = (() => {
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto",
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"],
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1,
-    "saves": [], "savePreselect": false,
-    // Infy Scroll:
-    "scrollAction": "next", "scrollMode": "html", "scrollSpacing": 0,
-    "whitelist": [], "blackList": []
+    "saves": [], "savePreselect": false
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -158,9 +155,7 @@ var Background = (() => {
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
       "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
       "downloadPreview": items.downloadPreview,
-      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds,
-      // Infy Scroll:
-      "scrollEnabled": false, "scrollAction": object.scrollAction, "scrollMode": object.scrollMode, "scrollSpacing": object.scrollSpacing
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds
     };
   }
 
@@ -263,9 +258,9 @@ var Background = (() => {
    */
   async function messageListener(request, sender, sendResponse) {
     console.log("messageListener() - request.greeting=" + request.greeting);
-    // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
-    sender.tab.url = sender.url;
     if (request && request.greeting === "performAction") {
+      // Firefox: sender.tab.url is undefined in FF due to not having tabs permissions (even though we have <all_urls>!), so use sender.url, which should be identical in 99% of cases (e.g. iframes may be different)
+      sender.tab.url = sender.url;
       const items = await Promisify.getItems();
       const instance = getInstance(sender.tab.id) || await buildInstance(sender.tab, items);
       if ((request.shortcut === "key" && items.keyEnabled && (items.keyQuickEnabled || (instance && (instance.enabled || instance.saveFound)))) ||
@@ -345,7 +340,7 @@ var Background = (() => {
   // Background Listeners
   chrome.runtime.onInstalled.addListener(installedListener);
   chrome.runtime.onStartup.addListener(startupListener);
-  chrome.runtime.onMessage.addListener(messageListener);
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { messageListener(request, sender, sendResponse); if (request.async) { return true; } });
   chrome.runtime.onMessageExternal.addListener(messageExternalListener);
   // Firefox Android: chrome.commands is unsupported
   if (chrome.commands) { chrome.commands.onCommand.addListener(commandListener); }

@@ -52,11 +52,42 @@ var Promisify = (() => {
     });
   }
 
+  /**
+   * Sends a message to the extension's runtime (background, popup, options).
+   *
+   * @param message the message object e.g. {greeting: "doSomething"}
+   * @returns {Promise<{}>} the response
+   */
+  function runtimeSendMessage(message) {
+    return new Promise(resolve => {
+      chrome.runtime.sendMessage(message, response => {
+        resolve(response);
+      });
+    });
+  }
+
+  /**
+   * Sends a message to a tab's content script.
+   *
+   * @param tabId   the content script's tab ID to send the message to
+   * @param message the message object e.g. {greeting: "doSomething"}
+   * @returns {Promise<{}>} the response
+   */
+  function tabsSendMessage(tabId, message) {
+    return new Promise(resolve => {
+      chrome.tabs.sendMessage(tabId, message, response => {
+        resolve(response);
+      });
+    });
+  }
+
   // Return Public Functions
   return {
     getItems: getItems,
     getTabs: getTabs,
-    getBackgroundPage: getBackgroundPage
+    getBackgroundPage: getBackgroundPage,
+    runtimeSendMessage: runtimeSendMessage,
+    tabsSendMessage: tabsSendMessage
   };
 
 })();
