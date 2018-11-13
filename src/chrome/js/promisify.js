@@ -53,7 +53,7 @@ var Promisify = (() => {
   }
 
   /**
-   * Sends a message to the extension's runtime (background, popup, options).
+   * Sends a message to the extension's runtime (background, popup, options) for async/await callers.
    *
    * @param message the message object e.g. {greeting: "doSomething"}
    * @returns {Promise<{}>} the response
@@ -67,7 +67,7 @@ var Promisify = (() => {
   }
 
   /**
-   * Sends a message to a tab's content script.
+   * Sends a message to a tab's content script for async/await callers.
    *
    * @param tabId   the content script's tab ID to send the message to
    * @param message the message object e.g. {greeting: "doSomething"}
