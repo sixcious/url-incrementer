@@ -292,7 +292,7 @@ var Options = (() => {
     clearTimeout(timeouts[input.id]);
     timeouts[input.id] = setTimeout(function() {
       chrome.storage.local.set({ [getStorageKey(input)]: key }, function() { setKeyEnabled(); });
-    }, 1000);
+    }, 500);
   }
 
   /**

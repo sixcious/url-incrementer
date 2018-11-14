@@ -74,6 +74,14 @@ input[type="image"]:focus {
   margin-top: 1em;
 }
 
+.radio.inline label:not(:last-child) {
+  margin-right: 16px;
+}
+
+.radio.inline label > input {
+  margin-right: 3px;
+}
+
 /* Heading */
 
 .heading {
@@ -178,20 +186,11 @@ input[type="image"].key-clear {
   margin-bottom: 24px;
 }
 
-.icon-color.radio label:not(:last-child) {
-  margin-right: 16px;
-}
-
-.icon-color.radio label:first-child {
-  margin-right: 0;
-  display: block;
-}
-
-.icon-color.radio label > input {
-  margin-right: 3px;
-}
-
 /* Popup */
+
+#popup-button-size-div {
+  margin-bottom: 24px;
+}
 
 #popup-button-size-label {
   display: block;
