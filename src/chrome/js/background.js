@@ -330,8 +330,8 @@ var Background = (() => {
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       persistent = true;
-      // Checking every 3 seconds keeps the background persistent
-      setTimeout(makePersistent, 3000);
+      // Checking every 2.5 seconds keeps the background persistent
+      setTimeout(makePersistent, 2500);
     } else {
       persistent = false;
     }
