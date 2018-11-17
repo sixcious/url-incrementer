@@ -139,7 +139,7 @@ progress:after {
   right: 4px;
 }
 
-#controls-buttons span {
+#controls-buttons span { //
   position: absolute;
   top: 4px;
   right: 4px;
