@@ -5,7 +5,7 @@
  * @license LGPL-3.0
  */
 
-var Shortcuts = (() => {
+var Shortcuts = Shortcuts || (() => {
 
   // KeyboardEvent.key and modifier bits map
   const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]);
@@ -39,8 +39,9 @@ var Shortcuts = (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
+    // Exit if event.target's node is a INPUT, TEXTAREA, SELECT or the attribute contentEditable is true (this also takes care of document.designMode = "on"
     const nodeName = event.target && event.target.nodeName ? event.target.nodeName.toUpperCase() : "";
-    if (nodeName === "INPUT" || nodeName === "TEXTAREA") {
+    if (nodeName === "INPUT" || nodeName === "TEXTAREA" || nodeName === "SELECT" || (event.target && event.target.isContentEditable)) {
       console.log("keyupListener() - exiting because nodeName=" + nodeName);
       return;
     }
@@ -187,30 +188,28 @@ var Shortcuts = (() => {
   }
 
   // Content Script starts by getting storage and adding key and mouse listeners if key or mouse are enabled (quick/enabled/saved urls are handled later by background)
-  if (!this.contentScriptExecuted) {
-    this.contentScriptExecuted = true;
-    chrome.storage.local.get(null, function(items) {
-      if (items.permissionsInternalShortcuts) {
-        setItems(items);
-        if (items.keyEnabled) {
-          addKeyListener();
-        }
-        if (items.mouseEnabled) {
-          addMouseListener();
-        }
-        // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
-        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-          console.log("messageListener() - request.greeting=" + request.greeting);
-          switch (request.greeting) {
-            case "addKeyListener": addKeyListener(); break;
-            case "removeKeyListener": removeKeyListener(); break;
-            case "addMouseListener": addMouseListener(); break;
-            case "removeMouseListener": removeMouseListener(); break;
-          }
-        });
+  chrome.storage.local.get(null, function(items) {
+    if (items.permissionsInternalShortcuts) {
+      setItems(items);
+      if (items.keyEnabled) {
+        addKeyListener();
       }
-    });
-  }
+      if (items.mouseEnabled) {
+        addMouseListener();
+      }
+      // Listen for requests from chrome.tabs.sendMessage (Extension Environment: Background / Popup)
+      chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        console.log("messageListener() - request.greeting=" + request.greeting);
+        switch (request.greeting) {
+          case "addKeyListener": addKeyListener(); break;
+          case "removeKeyListener": removeKeyListener(); break;
+          case "addMouseListener": addMouseListener(); break;
+          case "removeMouseListener": removeMouseListener(); break;
+        }
+      });
+    }
+  });
+
   console.log("shortcuts.js content script executed");
 
 })();
