@@ -39,9 +39,9 @@ var Shortcuts = Shortcuts || (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
-    // Exit if the node is an INPUT, TEXTAREA, SELECT or if it isContentEditable (also takes care of document.designMode)
+    // Exit if isContentEditable (also takes care of document.designMode) or if the node is an INPUT, TEXTAREA, SELECT
     if (event.target && (event.target.isContentEditable || (/^(input|textarea|select)$/i.test(event.target.nodeName)))) {
-      console.log("keyupListener() - exiting because nodeName=" + event.target.nodeName + "or isContentEditable=" + event.target.isContentEditable);
+      console.log("keyupListener() - exiting because isContentEditable=" + event.target.isContentEditable + " or nodeName=" + event.target.nodeName);
       return;
     }
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
