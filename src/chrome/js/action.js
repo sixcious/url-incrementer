@@ -90,7 +90,7 @@ var Action = (() => {
   /**
    * Updates the tab, sets the instance in the background, and sends a message to the popup with the instance.
    *
-   * @param instance
+   * @param instance the instance for this tab
    * @private
    */
   function updateTab(instance) {
