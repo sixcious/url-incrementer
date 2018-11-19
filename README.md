@@ -8,6 +8,8 @@
 
 [Firefox Add-on](https://addons.mozilla.org/firefox/addon/url-incrementer)
 
+[Help Guide](https://github.com/roysix/url-incrementer/wiki/Help)
+
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" in a variety of ways.
 
 # Features (for 6.0 - December 2018)
