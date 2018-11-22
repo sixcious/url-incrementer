@@ -130,7 +130,7 @@ var Options = (() => {
       const select = document.createElement("select");
       select.id = "mouse-" + shortcut + "-select";
       column3.appendChild(select);
-      const optionids = ["notset", "left", "middle", "right", "right-left"];
+      const optionids = ["notset", "left", "middle", "right", "right-left", "left-right"];
       for (let i = 0, value = -1; i < optionids.length; i++, value++) {
         const option = document.createElement("option");
         option.id = "mouse-" + optionids[i] + "-option*" + shortcut;

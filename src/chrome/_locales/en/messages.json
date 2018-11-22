@@ -249,6 +249,7 @@
   "mouse_middle_option": { "message": "Middle" },
   "mouse_right_option": { "message": "Right" },
   "mouse_right_left_option": { "message": "(Right) Left" },
+  "mouse_left_right_option": { "message": "(Left) Right" },
   "icon_settings_h3": { "message": "Icon Settings" },
   "icon_color_label": { "message": "Toolbar Icon Color" },
   "icon_color_label_dark": { "message": "Dark" },

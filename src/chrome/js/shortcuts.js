@@ -11,7 +11,7 @@ var Shortcuts = Shortcuts || (() => {
   const KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]);
 
   // The current mouse button on mousedown
-  // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously
+  // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously (needed between mousedown and up)
   // The current consecutive click count for a single mouse button
   // A reusable global timeouts for detecting multiple mouse clicks
   // The storage items cache
@@ -88,7 +88,7 @@ var Shortcuts = Shortcuts || (() => {
     } else {
       clicks = 0;
     }
-    console.log("mouseupListener() - event.button=" + event.button + ", button=" + button + ", clicks=" + clicks);
+    console.log("mouseupListener() - event.button=" + event.button + ", event.buttons=" + event.buttons + ", button=" + button + ", clicks=" + clicks);
     if      (mousePressed(event, items.mouseIncrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseDecrement)) { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "decrement", "shortcut": "mouse"}); }, items.mouseClickSpeed); }
     else if (mousePressed(event, items.mouseNext))      { timeouts.mouseup2 = setTimeout(function() { chrome.runtime.sendMessage({greeting: "performAction", action: "next",      "shortcut": "mouse"}); }, items.mouseClickSpeed); }
@@ -132,8 +132,9 @@ var Shortcuts = Shortcuts || (() => {
   }
 
   /**
-   * Checks if the mouse button was pressed. There are two possibilities: 1) Single or 2) (Right)+Left (buttons3).
-   * If either matches and the current click count matches, the button was pressed.
+   * Checks if the mouse button was pressed. There are three possibilities:
+   * #3 (Right) Left or #4 (Left) Right or #0-2 Single Button
+   * If either of the three matches and the current click count matches, the button was pressed.
    *
    * @param event the mouse event
    * @param mouse the action mouse button to check (e.g. increment shortcut mouse button)
@@ -141,7 +142,7 @@ var Shortcuts = Shortcuts || (() => {
    * @private
    */
   function mousePressed(event, mouse) {
-    return mouse && (mouse.button === 3 ? buttons3 : event.button === mouse.button) && mouse.clicks === clicks;
+    return mouse && ((buttons3 && mouse.button === 3 && event.button === 0) || (buttons3 && mouse.button === 4 && event.button === 2) || (mouse.button <= 2 && event.button === mouse.button)) && mouse.clicks === clicks;
   }
 
   /**
