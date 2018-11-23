@@ -70,7 +70,7 @@ var IncrementDecrement = (() => {
         const selectionDate = IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, baseDateFormat);
         console.log("validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
         if (selectionDate !== selection) {
-          error = chrome.i18n.getMessage("date_invalid_error");
+          error = chrome.i18n.getMessage("base_date_invalid_error");
         }
         break;
       case "custom":
@@ -80,6 +80,14 @@ var IncrementDecrement = (() => {
           error = chrome.i18n.getMessage("selection_toolarge_error");
        } else if (selectionCustom !== selection) {
           error = chrome.i18n.getMessage("base_custom_invalid_error");
+        }
+        break;
+      case "decimal":
+        const selectionFloat = parseFloat(selection);
+        if (!/^[0-9\\.]+$/.test(selection) || isNaN(selectionFloat)) {
+          error = chrome.i18n.getMessage("base_decimal_invalid_error");
+        } else if (selectionFloat >= Number.MAX_SAFE_INTEGER) {
+          error = chrome.i18n.getMessage("selection_toolarge_error");
         }
         break;
       // Base 2-36
@@ -149,6 +157,9 @@ var IncrementDecrement = (() => {
       case "custom":
         selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
         break;
+      case "decimal":
+        selectionmod = incrementDecrementDecimal(action, selection, interval, leadingZeros);
+        break;
       // Base 2-36
       default:
         selectionmod = incrementDecrementAlphanumeric(action, selection, interval, base, baseCase, leadingZeros);
@@ -188,6 +199,30 @@ var IncrementDecrement = (() => {
     // If Alphanumeric, convert case
     if (/[a-z]/i.test(selectionmod)) {
       selectionmod = baseCase === "lowercase" ? selectionmod.toLowerCase() : baseCase === "uppercase" ? selectionmod.toUpperCase() : selectionmod;
+    }
+    return selectionmod;
+  }
+
+  /**
+   * Performs a decimal number (floating point) increment or decrement operation on the selection.
+   *
+   * @param action       the action (increment or decrement)
+   * @param selection    the selected part to increment or decrement
+   * @param interval     the amount to increment or decrement by
+   * @param leadingZeros if true, pad with leading zeros, false don't pad
+   * @returns {string} the modified selection after incrementing or decrementing it
+   * @private
+   */
+  function incrementDecrementDecimal(action, selection, interval, leadingZeros) {
+    let selectionmod = "";
+    const selectionfloat = parseFloat(selection);
+    // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
+    selectionmod += action.startsWith("increment") ? (selectionfloat + interval <= Number.MAX_SAFE_INTEGER ? selectionfloat + interval : Number.MAX_SAFE_INTEGER) :
+                    action.startsWith("decrement") ? (selectionfloat - interval >= 0 ? selectionfloat - interval : 0) :
+                    "";
+    // If Leading 0s, pad with 0s
+    if (leadingZeros && selection.length > selectionmod.length) {
+      selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
     }
     return selectionmod;
   }
