@@ -84,7 +84,7 @@ var IncrementDecrement = (() => {
         break;
       case "decimal":
         const selectionFloat = parseFloat(selection);
-        if (!/^[0-9\\.]+$/.test(selection) || isNaN(selectionFloat)) {
+        if (!/^\d*\.\d+$/.test(selection) || isNaN(selectionFloat)) {
           error = chrome.i18n.getMessage("base_decimal_invalid_error");
         } else if (selectionFloat >= Number.MAX_SAFE_INTEGER) {
           error = chrome.i18n.getMessage("selection_toolarge_error");
@@ -92,7 +92,7 @@ var IncrementDecrement = (() => {
         break;
       // Base 2-36
       default:
-        if (base < 2 || base > 36) {
+        if (!(base >= 2 && base <= 36)) {
           error = chrome.i18n.getMessage("base_invalid_error");
         } else if (!/^[a-z0-9]+$/i.test(selection)) {
           error = chrome.i18n.getMessage("selection_notalphanumeric_error");

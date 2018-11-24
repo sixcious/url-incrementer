@@ -208,7 +208,7 @@
   "base_invalid_error": { "message": "Select a valid base" },
   "base_date_invalid_error": { "message": "Date format doesn't match selection" },
   "base_custom_invalid_error": { "message": "Custom base couldn't be validated against selection" },
-  "base_decimal_invalid_error": { "message": "A decimal number could not be parsed from the selection" },
+  "base_decimal_invalid_error": { "message": "A decimal number (like \"1.5\") could not be parsed from the selection" },
   "multi_count_error": { "message": "To multi-increment, select at least two selections in the URL" },
   "toolkit_auto_enabled_error": { "message": "Can't use URLI's Toolkit while Auto is running; please use another tab or clear [X] and close and re-enter the Popup" },
   "toolkit_invalid_error": { "message": "URLI's Toolkit configuration missing tool, action, or quantity" },
