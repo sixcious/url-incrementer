@@ -112,7 +112,7 @@
 .tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
   width: 63%;
   height: 175%;
-  top: -40%;
+  top: -44%;
 }
 
 .tgl + .tgl-btn:after {
