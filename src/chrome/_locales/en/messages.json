@@ -202,7 +202,7 @@
   "selection_toolarge_error" : { "message": "Selection is too large; please select a smaller number or fewer characters" },
   "selection_base_error": { "message": "Select a higher base to match characters in selection" },
   "selectionstart_invalid_error": { "message": "Selection position must be from URL" },
-  "interval_invalid_error": { "message": "Interval has to be between 0 and Max" },
+  "interval_invalid_error": { "message": "Interval has to be greater than 0 and less than Max" },
   "error_skip_permissions_error": { "message": "To Error Skip, please enable Enhanced Mode in Options or set it to 0" },
   "error_skip_invalid_error": { "message": "Error Skip has to be between 0 and 100" },
   "base_invalid_error": { "message": "Select a valid base" },
