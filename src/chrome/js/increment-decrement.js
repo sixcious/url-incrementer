@@ -84,7 +84,7 @@ var IncrementDecrement = (() => {
         break;
       case "decimal":
         const selectionFloat = parseFloat(selection);
-        if (!/^\d*\.\d+$/.test(selection) || isNaN(selectionFloat)) {
+        if (!/^\d+\.\d+$/.test(selection) || isNaN(selectionFloat)) {
           error = chrome.i18n.getMessage("base_decimal_invalid_error");
         } else if (selectionFloat >= Number.MAX_SAFE_INTEGER) {
           error = chrome.i18n.getMessage("selection_toolarge_error");
@@ -214,12 +214,14 @@ var IncrementDecrement = (() => {
    * @private
    */
   function incrementDecrementDecimal(action, selection, interval, leadingZeros) {
-    let selectionmod = "";
+    let selectionmod;
     const selectionfloat = parseFloat(selection);
     // Increment or decrement the selection; if increment is above Number.MAX_SAFE_INTEGER or decrement is below 0, set to upper or lower bounds
-    selectionmod += action.startsWith("increment") ? (selectionfloat + interval <= Number.MAX_SAFE_INTEGER ? selectionfloat + interval : Number.MAX_SAFE_INTEGER) :
-                    action.startsWith("decrement") ? (selectionfloat - interval >= 0 ? selectionfloat - interval : 0) :
-                    "";
+    selectionmod = action.startsWith("increment") ? (selectionfloat + interval <= Number.MAX_SAFE_INTEGER ? selectionfloat + interval : Number.MAX_SAFE_INTEGER) :
+                   action.startsWith("decrement") ? (selectionfloat - interval >= 0 ? selectionfloat - interval : 0) :
+                   "";
+    // Use toFixed() to preserve Decimal Places & Rounding using the original selection's decimal places length:
+    selectionmod = selectionmod.toFixed(selection.split(".").pop().length);
     // If Leading 0s, pad with 0s
     if (leadingZeros && selection.length > selectionmod.length) {
       selectionmod = "0".repeat(selection.length - selectionmod.length) + selectionmod;
