@@ -142,6 +142,7 @@
   "crawl_redirected_label": { "message": "Redirected"},
   "crawl_exception_label": { "message": "Exception"},
   "crawl_percentage_label": { "message": "URLs Crawled" },
+  "crawl_table_full_label": { "message": "Expand table to full width/height" },
   "crawl_table_download_button": { "message": "Download Table (HTML File)"},
   "crawl_tip": { "message": "Tip: There are 5 classes of HTTP response codes. Informational (1XX), Successful / OK (2XX), Redirections (3XX), Client Errors (4XX), and Server Errors (5XX). If an Exception is caught while fetching a URL, it will also be noted. To stop crawling at anytime, close this window."},
   "auto_label": { "message": "Auto" },

@@ -54,6 +54,7 @@ var Popup = (() => {
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
+    DOM["#crawl-table-full-input"].addEventListener("change", function() { DOM["#crawl-table"].style.maxWidth = DOM["#crawl-table"].style.maxHeight = this.checked ? "none" : ""; });
     DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);

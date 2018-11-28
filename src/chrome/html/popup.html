@@ -465,13 +465,19 @@
         </div>
       </div>
       <div id="crawl-percentage">
+        <progress id="crawl-progress" value="0" max="100"></progress>
+        <br>
         <span id="crawl-urls-remaining"></span> / <span id="crawl-urls-total"></span>
         <span id="crawl-percentage-label" data-i18n="textContent"></span>
         <img src="../img/clock-o.png" alt="" width="14" height="14">
         <span id="eta-label*crawl" data-i18n="textContent"></span>
         <span id="crawl-eta-value"></span>
-        <br>
-        <progress id="crawl-progress" value="0" max="100"></progress>
+        <div class="checkbox">
+          <label>
+            <input id="crawl-table-full-input" type="checkbox">
+            <span id="crawl-table-full-label" data-i18n="textContent"></span>
+          </label>
+        </div>
         <br>
         <br>
       </div>
