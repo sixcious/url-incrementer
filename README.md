@@ -1,6 +1,6 @@
 # URL Incrementer
 
-![URL Incrementer](_assets/img/128-dark.png?raw=true "URL Incrementer")
+![URL Incrementer](_assets/img/128-default.png?raw=true "URL Incrementer")
 <br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
@@ -48,7 +48,7 @@ NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (A
 
 # License
 URLI, a URL Incrementer
-Copyright © 2011 - 2018 Roy Six
+Copyright © 2011 - 2019 Roy Six
 License: LGPL-3.0
 https://www.gnu.org/licenses/lgpl-3.0.html
 
