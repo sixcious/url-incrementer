@@ -42,10 +42,7 @@ var Options = (() => {
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseQuickEnabled": this.checked}); });
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
-    DOM["#icon-color-radio-dark"].addEventListener("change", changeIconColor);
-    DOM["#icon-color-radio-light"].addEventListener("change", changeIconColor);
-    DOM["#icon-color-radio-confetti"].addEventListener("change", changeIconColor);
-    DOM["#icon-color-radio-urli"].addEventListener("change", changeIconColor);
+    DOM["#icon-color-radios"].addEventListener("change", function(event) { changeIconColor.call(event.target); });
     DOM["#icon-feedback-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"iconFeedbackEnabled": this.checked}); });
     DOM["#popup-button-size-input"].addEventListener("change", function () { if (+this.value >= 16 && +this.value <= 64) { saveInput(this, "popupButtonSize", "number");
       DOM["#popup-button-size-img"].style = "width:" + (+this.value) + "px; height:" + (+this.value) + "px;"; } });
