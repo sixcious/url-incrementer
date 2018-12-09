@@ -72,33 +72,27 @@ table tbody tr:hover {
 
 /* Progress Bar */
 
-progress {
-  -webkit-appearance: none;
-  -moz-appearance: none;
+.progress-bar {
   position: relative;
-  text-align: center;
   width: 20rem;
   height: 1rem;
-}
-
-progress::-webkit-progress-bar {
-  background: #BABABA; /*#CACACA;*/
+  background-color: #BABABA;
   border-radius: 4px;
-  /*
-  box-shadow: 0 2px 3px #888 inset;
-  */
 }
 
-progress::-webkit-progress-value {
+.progress-bar > .progress-bar-filled {
+  position: relative;
+  width: 0;
+  height: 100%;
   background-color: var(--auto-color);
   border-radius: 4px;
+  overflow: hidden;
   transition: 2s linear;
   transition-property: width, background-color;
 }
 
-progress:after {
+.progress-bar > .progress-bar-percentage {
   color: #FFFFFF;
-  content: attr(value)'%';
   position: absolute;
   top: -1px;
   left: 9rem;
@@ -530,10 +524,11 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   margin: 12px;
 }
 
-#crawl-percentage {
+#crawl-progress {
   color: var(--auto-color);
   font-weight: bold;
   font-style: italic;
+  margin-bottom: 4px;
 }
 
 #crawl-checkboxes label {

@@ -54,7 +54,6 @@ var Popup = (() => {
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
-    DOM["#crawl-table-full-input"].addEventListener("change", function() { DOM["#crawl-table"].style.maxWidth = DOM["#crawl-table"].style.maxHeight = this.checked ? "none" : ""; });
     DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
@@ -352,6 +351,7 @@ var Popup = (() => {
       tr.style = "background: transparent;";
       thead.appendChild(tr);
       const th = document.createElement("th");
+      th.className = "crawl-table-url";
       th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
       th.textContent = chrome.i18n.getMessage("url_label");
       tr.appendChild(th);
@@ -366,6 +366,11 @@ var Popup = (() => {
         th2.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
         th2.textContent = chrome.i18n.getMessage("crawl_code_label");
         tr.appendChild(th2);
+        const th3 = document.createElement("th");
+        th3.className = "crawl-table-details";
+        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;";
+        th3.textContent = chrome.i18n.getMessage("crawl_details_label");
+        tr.appendChild(th3);
       }
       // tbody
       const tbody = document.createElement("tbody");
@@ -379,6 +384,7 @@ var Popup = (() => {
         tr.style = (++count % 2) !== 0 ? "border-bottom: 0; background-color: #f1f1f1;" : "";
         tbody.appendChild(tr);
         const td = document.createElement("td");
+        td.className = "crawl-table-url";
         td.style = "padding: 0.25rem 0.312rem 0.312rem";
         tr.appendChild(td);
         const a = document.createElement("a");
@@ -397,6 +403,11 @@ var Popup = (() => {
           td2.className = "crawl-table-code";
           td2.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
           tr.appendChild(td2);
+          const td3 = document.createElement("td");
+          td3.id = id + "-td-details-" + (count - 2);
+          td3.className = "crawl-table-details";
+          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;";
+          tr.appendChild(td3);
         }
       }
       DOM["#" + id] = table;
@@ -476,8 +487,12 @@ var Popup = (() => {
    */
   function updateCrawlTable(event) {
     const checkbox = event.target;
-    const style = checkbox.checked ? checkbox.dataset.type : "none";
-    document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);
+    if (checkbox.id === "crawl-full-input") {
+      DOM["#crawl-table"].style.maxWidth = DOM["#crawl-table"].style.maxHeight = checkbox.checked ? "none" : "";
+    } else {
+      const style = checkbox.checked ? checkbox.dataset.type : "none";
+      document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);
+    }
   }
 
   /**
@@ -506,29 +521,43 @@ var Popup = (() => {
    * @private
    */
   function crawlURLs(quantityRemaining) {
-    const quantity =  instance.toolkitQuantity;
-    const id = quantity - quantityRemaining;
+    const quantity = instance.toolkitQuantity,
+          id = quantity - quantityRemaining;
     let result,
-        status;
+        status,
+        details;
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         status = response.status;
-        result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "oK" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
+        result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
+        details = response.redirected ? response.url : "";
       }).catch(e => {
-        status = e;
+        status = e && e.name ? e.name : "";
         result = chrome.i18n.getMessage("crawl_exception_label");
+        details = e && e.message ? e.message : e;
       }).finally(() => {
         const tr = document.getElementById("crawl-table-tr-" + id);
         const td1 = document.getElementById("crawl-table-td-response-" + id);
         const td2 = document.getElementById("crawl-table-td-code-" + id);
+        const td3 = document.getElementById("crawl-table-td-details-" + id);
         tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
-        td1.style.color = td2.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
+        td1.style.color = td2.style.color = td3.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
         td1.textContent = result;
         td2.textContent = status;
+        if (result === "Redirected") {
+          const a = document.createElement("a");
+          a.href = details;
+          a.target = "_blank";
+          a.textContent = details;
+          td3.appendChild(a);
+        } else if (result === "Exception") {
+          td3.textContent = details;
+        }
         instance.toolkitQuantityRemaining--;
         DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
-        DOM["#crawl-progress"].value = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100);
+        DOM["#crawl-progress-percentage"].textContent =
+        DOM["#crawl-progress-filled"].style.width = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
         updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
         setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
       });

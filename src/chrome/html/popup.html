@@ -189,7 +189,7 @@
           <h3 id="toolkit-h3" data-i18n="textContent"></h3>
           <div class="heading-right">
             <img src="../img/exclamation-circle.png" alt="" width="12" height="12">
-            <span id="non-standard-label*toolkit" data-i18n="textContent"></span>
+            <span id="developer-feature-label*toolkit" data-i18n="textContent"></span>
           </div>
         </div>
         <div id="toolkit-instructions" data-i18n="textContent"></div>
@@ -461,35 +461,42 @@
         <h3 id="crawl-h3" data-i18n="textContent"></h3>
         <div class="heading-right">
           <img src="../img/exclamation-circle.png" alt="" width="12" height="12">
-          <span id="non-standard-label*crawl" data-i18n="textContent"></span>
+          <span id="developer-feature-label*crawl" data-i18n="textContent"></span>
         </div>
       </div>
-      <div id="crawl-percentage">
-        <progress id="crawl-progress" value="0" max="100"></progress>
-        <br>
+      <div id="crawl-progress">
+        <div class="progress-bar">
+          <div id="crawl-progress-filled" class="progress-bar-filled" style="width: 0"></div>
+          <div id="crawl-progress-percentage" class="progress-bar-percentage">0%</div>
+        </div>
         <span id="crawl-urls-remaining"></span> / <span id="crawl-urls-total"></span>
         <span id="crawl-percentage-label" data-i18n="textContent"></span>
         <img src="../img/clock-o.png" alt="" width="14" height="14">
         <span id="eta-label*crawl" data-i18n="textContent"></span>
         <span id="crawl-eta-value"></span>
-        <div class="checkbox">
-          <label>
-            <input id="crawl-table-full-input" type="checkbox">
-            <span id="crawl-table-full-label" data-i18n="textContent"></span>
-          </label>
-        </div>
-        <br>
-        <br>
       </div>
       <div id="crawl-checkboxes" class="checkbox">
+        <label>
+          <input id="crawl-url-input" type="checkbox" value="url" checked="checked" data-type="table-cell" data-selector="crawl-table-url">
+          <span id="crawl-url-label" data-i18n="textContent"></span>
+        </label>
         <label>
           <input id="crawl-response-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-response">
           <span id="crawl-response-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-code-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-code">
+          <input id="crawl-code-input" type="checkbox" value="code" checked="checked" data-type="table-cell" data-selector="crawl-table-code">
           <span id="crawl-code-label" data-i18n="textContent"></span>
         </label>
+        <label>
+          <input id="crawl-details-input" type="checkbox" value="details" data-type="table-cell" data-selector="crawl-table-details">
+          <span id="crawl-details-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-full-input" type="checkbox">
+          <span id="crawl-full-label" data-i18n="textContent"></span>
+        </label>
+        <br>
         <label>
           <input id="crawl-info-input" type="checkbox" value="info" checked="checked" data-type="table-row" data-selector="crawl-table-info">
           <span id="crawl-info-label" data-i18n="textContent"></span>
