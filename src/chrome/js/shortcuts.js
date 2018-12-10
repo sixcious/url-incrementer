@@ -40,7 +40,7 @@ var Shortcuts = Shortcuts || (() => {
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
     // Exit if isContentEditable (also takes care of document.designMode) or if the node is an INPUT, TEXTAREA, SELECT
-    if (event.target && (event.target.isContentEditable || (/^(input|textarea|select)$/i.test(event.target.nodeName)))) {
+    if (items.shortcutsEditableDisabled && event.target && (event.target.isContentEditable || (/^(input|textarea|select)$/i.test(event.target.nodeName)))) {
       console.log("keyupListener() - exiting because isContentEditable=" + event.target.isContentEditable + " or nodeName=" + event.target.nodeName);
       return;
     }

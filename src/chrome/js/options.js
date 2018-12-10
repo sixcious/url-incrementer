@@ -39,6 +39,7 @@ var Options = (() => {
     DOM["#browser-shortcuts-enable-button"].addEventListener("click", function() { Permissions.removePermission("internalShortcuts", function(removed) { if (removed) { populateValuesFromStorage("internalShortcuts"); } }) });
     DOM["#browser-shortcuts-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"commandsQuickEnabled": this.checked}); });
     DOM["#browser-shortcuts-button"].addEventListener("click", function() { chrome.tabs.update({url: "chrome://extensions/shortcuts"}); });
+    DOM["#shortcuts-editable-disabled-input"].addEventListener("change", function () { chrome.storage.local.set({"shortcutsEditableDisabled": this.checked}); });
     DOM["#key-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"keyQuickEnabled": this.checked}); });
     DOM["#mouse-quick-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseQuickEnabled": this.checked}); });
     DOM["#mouse-click-speed-input"].addEventListener("change", function () { chrome.storage.local.set({"mouseClickSpeed": +this.value >= 100 && +this.value <= 1000 ? +this.value : 400}); });
@@ -185,6 +186,7 @@ var Options = (() => {
     }
     if (values === "all") {
       DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
+      DOM["#shortcuts-editable-disabled-input"].checked = items.shortcutsEditableDisabled;
       DOM["#key-quick-enable-input"].checked = items.keyQuickEnabled;
       DOM["#mouse-quick-enable-input"].checked = items.mouseQuickEnabled;
       DOM["#key-enable-img"].className = items.keyEnabled ? "display-inline" : "display-none";
