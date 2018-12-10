@@ -234,7 +234,7 @@
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
   "help_shortcuts_editable_disabled": { "message": "This option prevents shortcuts from firing when you are typing or focused on an input, textarea, or an element that \"isContentEditable.\" You may want to uncheck it if a website always auto-focuses you on an input after going to the next page." },
-  "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment or perform other actions instantly without having to setup or save a URL (Except for Clear, Return to Start, and Pause Auto)" },
+  "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment or perform other actions instantly without having to setup or save a URL (Except for Clear, Return to Start, and Auto Pause)" },
   "shortcuts_editable_disabled_label": { "message": "Disable shortcuts when focused on an input" },
   "key_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
   "mouse_quick_enable_label": { "message": "Enable Quick Mouse Shortcuts" },
