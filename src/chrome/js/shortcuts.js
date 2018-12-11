@@ -39,9 +39,7 @@ var Shortcuts = Shortcuts || (() => {
    */
   function keyupListener(event) {
     console.log("keyupListener() - event.code=" + event.code + ", event.target=" + event.target);
-    // Exit if isContentEditable (also takes care of document.designMode) or if the node is an INPUT, TEXTAREA, SELECT
-    if (items.shortcutsEditableDisabled && event.target && (event.target.isContentEditable || (/^(input|textarea|select)$/i.test(event.target.nodeName)))) {
-      console.log("keyupListener() - exiting because isContentEditable=" + event.target.isContentEditable + " or nodeName=" + event.target.nodeName);
+    if (items.shortcutsEditableDisabled && isElementEditable(event.target)) {
       return;
     }
     if      (keyPressed(event, items.keyIncrement)) { chrome.runtime.sendMessage({greeting: "performAction", action: "increment", "shortcut": "key"}); }
@@ -79,6 +77,9 @@ var Shortcuts = Shortcuts || (() => {
    * @private
    */
   function mouseupListener(event) {
+    if (items.shortcutsEditableDisabled && isElementEditable(event.target)) {
+      return;
+    }
     clearTimeout(timeouts.mouseup);
     if (event.button === button) {
       clicks++;
@@ -112,6 +113,23 @@ var Shortcuts = Shortcuts || (() => {
     } else {
       return true;
     }
+  }
+
+  /**
+   * Determines if an element is editable by checking if it's isContentEditable (also takes care of document.designMode)
+   * or if the node is an INPUT, TEXTAREA, or SELECT.
+   *
+   * @param element the element
+   * @private
+   */
+  function isElementEditable(element) {
+    let editable = false;
+    const name = element && element.nodeName ? element.nodeName.toUpperCase() : "";
+    if ((element && element.isContentEditable) || (name === "INPUT" || name === "TEXTAREA" || name === "SELECT")) {
+      console.log("isElementEditable() - isContentEditable=" + element.isContentEditable + ", nodeName=" + name);
+      editable = true;
+    }
+    return editable;
   }
 
   /**
