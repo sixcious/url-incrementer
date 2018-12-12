@@ -148,6 +148,7 @@ var Background = (() => {
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustomEnabled": object.errorCodesCustomEnabled, "errorCodesCustom": object.errorCodesCustom,
+      "fetchMethod": "HEAD",
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
       "urls": [], "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevKeywordsNext": items.nextPrevKeywordsNext, "nextPrevKeywordsPrev": items.nextPrevKeywordsPrev, "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,

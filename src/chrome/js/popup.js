@@ -527,46 +527,53 @@ var Popup = (() => {
         status,
         details,
         url;
-    if (quantityRemaining > 0) {
-      // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-      fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
-        status = response.status;
-        result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
-        details = response.statusText;
-        url = response.url;
-      }).catch(e => {
-        status = e && e.name ? e.name : "";
-        result = chrome.i18n.getMessage("crawl_exception_label");
-        details = e && e.message ? e.message : e;
-      }).finally(() => {
-        const tr = document.getElementById("crawl-table-tr-" + id);
-        const td1 = document.getElementById("crawl-table-td-response-" + id);
-        const td2 = document.getElementById("crawl-table-td-code-" + id);
-        const td3 = document.getElementById("crawl-table-td-details-" + id);
-        tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
-        td1.style.color = td2.style.color = td3.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
-        td1.textContent = result;
-        td2.textContent = status;
-        if (result === "Redirected") {
-          const a = document.createElement("a");
-          a.href = url;
-          a.target = "_blank";
-          a.textContent = url;
-          a.title = details;
-          td3.appendChild(a);
-        } else {
-          td3.textContent = details;
-        }
-        instance.toolkitQuantityRemaining--;
-        DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
-        DOM["#crawl-progress-percentage"].textContent =
-        DOM["#crawl-progress-filled"].style.width = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
-        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
-        setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
-      });
-    } else {
+    if (quantityRemaining <= 0) {
       console.log("crawlURLs() - exhausted the quantityRemaining");
+      return;
     }
+    // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
+    fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" }).then(response => {
+      status = response.status;
+      result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
+      details = response.statusText;
+      url = response.url;
+    }).catch(e => {
+      status = e && e.name ? e.name : "";
+      result = chrome.i18n.getMessage("crawl_exception_label");
+      details = e && e.message ? e.message : e;
+    }).finally(() => {
+      // If the server disallows HEAD requests, switch to GET and retry this request using the same quantityRemaining
+      if (id === 0 && status === 405 && instance.fetchMethod === "HEAD") {
+        console.log("crawlURLs() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
+        instance.fetchMethod = "GET";
+        crawlURLs(quantityRemaining);
+        return;
+      }
+      const tr = document.getElementById("crawl-table-tr-" + id);
+      const td1 = document.getElementById("crawl-table-td-response-" + id);
+      const td2 = document.getElementById("crawl-table-td-code-" + id);
+      const td3 = document.getElementById("crawl-table-td-details-" + id);
+      tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
+      td1.style.color = td2.style.color = td3.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
+      td1.textContent = result;
+      td2.textContent = status;
+      if (result === "Redirected") {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.textContent = url;
+        a.title = details;
+        td3.appendChild(a);
+      } else {
+        td3.textContent = details;
+      }
+      instance.toolkitQuantityRemaining--;
+      DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
+      DOM["#crawl-progress-percentage"].textContent =
+      DOM["#crawl-progress-filled"].style.width = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
+      updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
+      setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+    });
   }
 
   /**
