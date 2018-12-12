@@ -525,13 +525,15 @@ var Popup = (() => {
           id = quantity - quantityRemaining;
     let result,
         status,
-        details;
+        details,
+        url;
     if (quantityRemaining > 0) {
       // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       fetch(instance.urls[id].urlmod, { method: "HEAD", credentials: "same-origin" }).then(function(response) {
         status = response.status;
         result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
-        details = response.redirected ? response.url : "";
+        details = response.statusText;
+        url = response.url;
       }).catch(e => {
         status = e && e.name ? e.name : "";
         result = chrome.i18n.getMessage("crawl_exception_label");
@@ -547,11 +549,12 @@ var Popup = (() => {
         td2.textContent = status;
         if (result === "Redirected") {
           const a = document.createElement("a");
-          a.href = details;
+          a.href = url;
           a.target = "_blank";
-          a.textContent = details;
+          a.textContent = url;
+          a.title = details;
           td3.appendChild(a);
-        } else if (result === "Exception") {
+        } else {
           td3.textContent = details;
         }
         instance.toolkitQuantityRemaining--;

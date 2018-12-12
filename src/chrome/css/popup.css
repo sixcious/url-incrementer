@@ -356,7 +356,7 @@ div.column#download-strategy, div.column#download-optional {
   position: relative;
 }
 
-#download-strategy-help, #download-optional-help, #download-subfolder-help {
+#download-strategy-help, #download-filters-help, #download-subfolder-help {
   font-weight: bold;
   font-size: 0.9em;
   position: absolute;
@@ -377,7 +377,7 @@ div.column#download-optional {
   padding-left: 12px;
 }
 
-#download-optional-label-div {
+#download-filters-label-div {
   font-weight: bold;
   font-style: italic;
 }

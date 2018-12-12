@@ -227,7 +227,7 @@ var Download = (() => {
     let does = true;
     if (terms && terms.length > 0) {
       for (const term of terms) {
-        if (term && doesInclude ? !url.includes(term) : url.includes(term)) {
+        if (term && doesInclude ? !new RegExp(term).test(url) : new RegExp(term).test(url)) {
           does = false;
           break;
         }
