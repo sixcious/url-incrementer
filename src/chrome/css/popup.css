@@ -551,6 +551,10 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   color: var(--download-color);
 }
 
+#crawl-other-label {
+  color: var(--error-skip-color);
+}
+
 #crawl-exception-label {
   color: var(--saved-urls-color);
 }

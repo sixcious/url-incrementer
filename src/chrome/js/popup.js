@@ -510,54 +510,60 @@ var Popup = (() => {
     DOM["#crawl-urls-total"].textContent = instance.toolkitQuantity;
     updateETA(instance.toolkitQuantity * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
     buildToolkitURLsTable(instance.urls, true);
-    crawlURLs(instance.toolkitQuantity);
+    crawlURLs();
     backgroundPage.Background.deleteInstance(instance.tabId);
   }
 
   /**
    * Crawls URLs recursively by fetching for response codes.
    *
-   * @param quantityRemaining the quantity of URLs left to crawl
+   * Note: Typically, the maximum number of concurrent (parallel) HTTP 1.1 connections per host in Chrome and Firefox
+   * is 6. Crawling asynchronously can be used to take advantage of this, but may be unstable, and more importantly,
+   * may also overload the server. This is why this function chooses to run each request one at a time (synchronously),
+   * doing the crawlURLs() recursion only after the fetch promise has resolved in the finally block.
+   *
    * @private
    */
-  function crawlURLs(quantityRemaining) {
-    const quantity = instance.toolkitQuantity,
-          id = quantity - quantityRemaining;
-    let result,
-        status,
-        details,
-        url;
-    if (quantityRemaining <= 0) {
+  function crawlURLs() {
+    if (instance.toolkitQuantityRemaining <= 0) {
       console.log("crawlURLs() - exhausted the quantityRemaining");
       return;
     }
+    const id = instance.toolkitQuantity - instance.toolkitQuantityRemaining,
+          tr = document.getElementById("crawl-table-tr-" + id),
+          td1 = document.getElementById("crawl-table-td-response-" + id),
+          td2 = document.getElementById("crawl-table-td-code-" + id),
+          td3 = document.getElementById("crawl-table-td-details-" + id);
+    let res,
+        status,
+        details,
+        redirected,
+        url;
+    td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
     fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" }).then(response => {
       status = response.status;
-      result = chrome.i18n.getMessage("crawl_" + (response.redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : "error") + "_label");
+      redirected = response.redirected;
+      res = redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : status >= 400 && status <= 599 ? "error" : "other";
       details = response.statusText;
       url = response.url;
     }).catch(e => {
       status = e && e.name ? e.name : "";
-      result = chrome.i18n.getMessage("crawl_exception_label");
+      res = "exception";
       details = e && e.message ? e.message : e;
     }).finally(() => {
       // If the server disallows HEAD requests, switch to GET and retry this request using the same quantityRemaining
-      if (id === 0 && status === 405 && instance.fetchMethod === "HEAD") {
+      if (status === 405 && instance.fetchMethod === "HEAD") {
         console.log("crawlURLs() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
         instance.fetchMethod = "GET";
-        crawlURLs(quantityRemaining);
+        crawlURLs(instance.toolkitQuantityRemaining);
         return;
       }
-      const tr = document.getElementById("crawl-table-tr-" + id);
-      const td1 = document.getElementById("crawl-table-td-response-" + id);
-      const td2 = document.getElementById("crawl-table-td-code-" + id);
-      const td3 = document.getElementById("crawl-table-td-details-" + id);
-      tr.className = "crawl-table-" + (result === "Exception" ? "exception" : result === "Redirected" ? "redirected" : result === "OK" ? "ok" : result === "Info" ? "info" : "error");
-      td1.style.color = td2.style.color = td3.style.color = result === "Exception" ? "#FF69B4" : result === "Redirected" ? "#663399" : result === "OK" ? "#05854D" : result === "Info" ? "#999999" : "#E6003E";
-      td1.textContent = result;
+      tr.className = "crawl-table-" + res;
+      td1.style.color = td2.style.color = td3.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#000000";
+      td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
       td2.textContent = status;
-      if (result === "Redirected") {
+      if (redirected) {
         const a = document.createElement("a");
         a.href = url;
         a.target = "_blank";
@@ -568,11 +574,14 @@ var Popup = (() => {
         td3.textContent = details;
       }
       instance.toolkitQuantityRemaining--;
+      setTimeout(function() { crawlURLs(instance.toolkitQuantityRemaining); }, instance.toolkitSeconds * 1000);
       DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
       DOM["#crawl-progress-percentage"].textContent =
-      DOM["#crawl-progress-filled"].style.width = Math.floor(((quantity - instance.toolkitQuantityRemaining) / quantity) * 100) + "%";
+      DOM["#crawl-progress-filled"].style.width = Math.floor(((instance.toolkitQuantity - instance.toolkitQuantityRemaining) / instance.toolkitQuantity) * 100) + "%";
       updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
-      setTimeout(function() { crawlURLs(quantityRemaining - 1); }, instance.toolkitSeconds * 1000);
+      if (instance.toolkitQuantityRemaining > 0 ) {
+        document.getElementById("crawl-table-td-response-" + (id + 1)).textContent = chrome.i18n.getMessage("crawl_waiting_label");
+      }
     });
   }
 
