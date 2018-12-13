@@ -26,7 +26,7 @@ var Saves = (() => {
       "type": "url", "hash": hash, "salt": salt, "selectionEnd": url2.length,
       "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
       "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom,
-      "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustomEnabled": instance.errorCodesCustomEnabled, "errorCodesCustom": instance.errorCodesCustom
+      "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustom": instance.errorCodesCustom
     });
     chrome.storage.local.set({"saves": saves});
   }

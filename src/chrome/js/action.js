@@ -121,9 +121,7 @@ var Action = (() => {
     if ((instance.selection !== "" && instance.selectionStart >= 0) || (instance.urls && instance.urls.length > 0)) {
       actionPerformed = true;
       // Error Skipping:
-      if ((instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) ||
-          (instance.errorCodesCustomEnabled && instance.errorCodesCustom && instance.errorCodesCustom.length > 0)) &&
-          (items.permissionsEnhancedMode)) {
+      if (instance.errorSkip > 0 && (instance.errorCodes && instance.errorCodes.length > 0) && items.permissionsEnhancedMode) {
         incrementDecrementErrorSkip(action, instance, instance.errorSkip);
       }
       // Regular:
@@ -141,11 +139,11 @@ var Action = (() => {
    * @param action             the action to perform (increment or decrement)
    * @param instance           the instance containing the URL and parameters used to increment or decrement
    * @param errorSkipRemaining the number of times left to skip while performing this action
-   * @param retrying           (optional) boolean indicating whether the fetch method was switched and retrying the URL
+   * @param retrying           (optional) boolean indicating whether the fetch method was switched to retry the URL
    * @private
    */
   function incrementDecrementErrorSkip(action, instance, errorSkipRemaining, retrying) {
-    console.log("incrementDecrementErrorSkip() - instance.fetchMethod=" + instance.fetchMethod + ", instance.errorCodes=" + instance.errorCodes +", instance.errorCodesCustomEnabled=" + instance.errorCodesCustomEnabled + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining + ", retrying=" + retrying);
+    console.log("incrementDecrementErrorSkip() - instance.fetchMethod=" + instance.fetchMethod + ", instance.errorCodes=" + instance.errorCodes + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining + ", retrying=" + retrying);
     let status,
         exception = false,
         redirected = false,
@@ -170,16 +168,17 @@ var Action = (() => {
           (instance.errorCodes.includes("3XX") && ((response.status >= 300 && response.status <= 399) || response.redirected)) ||
           (instance.errorCodes.includes("4XX") && response.status >= 400 && response.status <= 499) ||
           (instance.errorCodes.includes("5XX") && response.status >= 500 && response.status <= 599))) ||
-          (instance.errorCodesCustomEnabled && instance.errorCodesCustom &&
+          (instance.errorCodes.includes("CUS") && instance.errorCodesCustom &&
           // response.status + "" because custom array stores string inputs
           (instance.errorCodesCustom.includes(response.status + "") || (response.redirected && ["301", "302", "303", "307", "308"].some(redcode => instance.errorCodesCustom.includes(redcode))))))) {
         console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status + ", response.redirected=" + response.redirected + ", response.ok=" + response.ok);
         error = true;
       }
     }).catch(e => {
-      // TODO: Should we always skip on exceptions, never skip on exceptions, or make this an option?
       console.log("incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
-      exception = true;
+      if (instance.errorCodes.includes("EXC")) {
+        exception = true;
+      }
     }).finally(() => {
       // If the server disallows HEAD requests, switch to GET and retry this request using the same errorSkipRemaining
       if (instance.errorSkip === errorSkipRemaining && status === 405 && instance.fetchMethod === "HEAD") {

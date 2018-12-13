@@ -274,7 +274,7 @@ input[type="image"].key-clear {
 }
 
 #error-skip-checkboxes div.column {
-  padding: 4px 4px 4px 0;
+  padding: 4px 32px 4px 0;
 }
 
 #error-skip-checkboxes label {

@@ -72,11 +72,7 @@ var Options = (() => {
     DOM["#base-custom-input"].addEventListener("input", function() { saveInput(this, "baseCustom", "value"); });
     DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "shuffleLimit", "number"); } });
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { saveInput(this, "errorSkip", "number"); } });
-    DOM["#error-codes-404-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-3XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-4XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-5XX-input"].addEventListener("change", updateErrorCodes);
-    DOM["#error-codes-custom-enabled-input"].addEventListener("change", function() { chrome.storage.local.set({"errorCodesCustomEnabled": this.checked}); DOM["#error-codes-custom"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#error-skip-checkboxes"].addEventListener("change", function() { updateErrorCodes(); });
     DOM["#error-codes-custom-input"].addEventListener("input", function() { saveInput(this, "errorCodesCustom", "array-split-all"); });
     DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsNext", "array-split-nospace-lowercase"); });
     DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsPrev", "array-split-nospace-lowercase"); });
@@ -229,8 +225,9 @@ var Options = (() => {
       DOM["#error-codes-3XX-input"].checked = items.errorCodes.includes("3XX");
       DOM["#error-codes-4XX-input"].checked = items.errorCodes.includes("4XX");
       DOM["#error-codes-5XX-input"].checked = items.errorCodes.includes("5XX");
-      DOM["#error-codes-custom-enabled-input"].checked = items.errorCodesCustomEnabled;
-      DOM["#error-codes-custom"].className = items.errorCodesCustomEnabled ? "display-block" : "display-none";
+      DOM["#error-codes-CUS-input"].checked = items.errorCodes.includes("CUS");
+      DOM["#error-codes-EXC-input"].checked = items.errorCodes.includes("EXC");
+      DOM["#error-codes-custom"].className = items.errorCodes.includes("CUS") ? "display-block" : "display-none";
       DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
       DOM["#next-prev-keywords-next-textarea"].value = items.nextPrevKeywordsNext;
       DOM["#next-prev-keywords-prev-textarea"].value = items.nextPrevKeywordsPrev;
@@ -432,7 +429,7 @@ var Options = (() => {
       "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
       "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom,
-      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustomEnabled": items.errorCodesCustomEnabled, "errorCodesCustom": items.errorCodesCustom
+      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom
     });
     chrome.storage.local.set({"saves": saves}, function() {
       populateValuesFromStorage("savedURLs");
@@ -475,8 +472,11 @@ var Options = (() => {
       [DOM["#error-codes-404-input"].checked ? DOM["#error-codes-404-input"].value : "",
        DOM["#error-codes-3XX-input"].checked ? DOM["#error-codes-3XX-input"].value : "",
        DOM["#error-codes-4XX-input"].checked ? DOM["#error-codes-4XX-input"].value : "",
-       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : ""]
+       DOM["#error-codes-5XX-input"].checked ? DOM["#error-codes-5XX-input"].value : "",
+       DOM["#error-codes-CUS-input"].checked ? DOM["#error-codes-CUS-input"].value : "",
+       DOM["#error-codes-EXC-input"].checked ? DOM["#error-codes-EXC-input"].value : ""].filter(Boolean)
     });
+    DOM["#error-codes-custom"].className = DOM["#error-codes-CUS-input"].checked ? "display-block fade-in" : "display-none";
   }
 
   /**
