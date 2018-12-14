@@ -234,6 +234,8 @@ var Popup = (() => {
     DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
     DOM["#multi-img-3"].className = instance.multiEnabled && instance.multiCount >= 3 ? "" : "disabled";
     // Toolkit Setup:
+    DOM["#toolkit-input"].checked = instance.toolkitStart && !instance.enabled;
+    DOM["#toolkit"].className = instance.toolkitStart && !instance.enabled ? "display-block" : "display-none";
     DOM["#toolkit-tool-crawl-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-crawl-input"].value;
     DOM["#toolkit-tool-tabs-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-tabs-input"].value;
     DOM["#toolkit-tool-links-input"].checked = instance.toolkitTool === DOM["#toolkit-tool-links-input"].value;
@@ -243,8 +245,8 @@ var Popup = (() => {
     DOM["#toolkit-seconds-input"].value = instance.toolkitSeconds;
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
     // Auto Setup:
-    DOM["#auto-toggle-input"].checked = instance.autoEnabled;
-    DOM["#auto"].className = instance.autoEnabled ? "display-block" : "display-none";
+    DOM["#auto-toggle-input"].checked = instance.autoEnabled || (instance.autoStart && !instance.enabled);
+    DOM["#auto"].className = instance.autoEnabled || (instance.autoStart && !instance.enabled) ? "display-block" : "display-none";
     DOM["#auto-action-select"].value = instance.autoAction;
     DOM["#auto-times-input"].value = instance.autoTimes;
     DOM["#auto-seconds-input"].value = instance.autoSeconds;
@@ -253,8 +255,8 @@ var Popup = (() => {
     updateAutoETA();
     // Download Setup:
     DOM["#download-toggle"].style = items.permissionsDownload ? "" : "display: none;";
-    DOM["#download-toggle-input"].checked = instance.downloadEnabled;
-    DOM["#download"].className = instance.downloadEnabled ? "display-block" : "display-none";
+    DOM["#download-toggle-input"].checked = instance.downloadEnabled || (instance.downloadStart && !instance.enabled && items.permissionsDownload);
+    DOM["#download"].className = instance.downloadEnabled || (instance.downloadStart && !instance.enabled && items.permissionsDownload) ? "display-block" : "display-none";
     DOM["#download-strategy-select"].value = instance.downloadStrategy;
     DOM["#download-extensions-generated"].value = instance.downloadExtensions && Array.isArray(instance.downloadExtensions) ? instance.downloadExtensions.join(",") : "";
     DOM["#download-tags-generated"].value = instance.downloadTags && Array.isArray(instance.downloadTags) ? instance.downloadTags.join(",") : "";
