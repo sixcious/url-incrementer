@@ -181,7 +181,7 @@ var Action = (() => {
       }
     }).finally(() => {
       // If the server disallows HEAD requests, switch to GET and retry this request using the same errorSkipRemaining
-      if (instance.errorSkip === errorSkipRemaining && status === 405 && instance.fetchMethod === "HEAD") {
+      if (status === 405 && instance.fetchMethod === "HEAD") {
         console.log("incrementDecrementErrorSkip() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
         instance.fetchMethod = "GET";
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining, true);

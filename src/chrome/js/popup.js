@@ -556,31 +556,31 @@ var Popup = (() => {
       if (status === 405 && instance.fetchMethod === "HEAD") {
         console.log("crawlURLs() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
         instance.fetchMethod = "GET";
-        crawlURLs(instance.toolkitQuantityRemaining);
-        return;
-      }
-      tr.className = "crawl-table-" + res;
-      td1.style.color = td2.style.color = td3.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#000000";
-      td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
-      td2.textContent = status;
-      if (redirected) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.textContent = url;
-        a.title = details;
-        td3.appendChild(a);
+        crawlURLs();
       } else {
-        td3.textContent = details;
-      }
-      instance.toolkitQuantityRemaining--;
-      setTimeout(function() { crawlURLs(instance.toolkitQuantityRemaining); }, instance.toolkitSeconds * 1000);
-      DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
-      DOM["#crawl-progress-percentage"].textContent =
-      DOM["#crawl-progress-filled"].style.width = Math.floor(((instance.toolkitQuantity - instance.toolkitQuantityRemaining) / instance.toolkitQuantity) * 100) + "%";
-      updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
-      if (instance.toolkitQuantityRemaining > 0 ) {
-        document.getElementById("crawl-table-td-response-" + (id + 1)).textContent = chrome.i18n.getMessage("crawl_waiting_label");
+        tr.className = "crawl-table-" + res;
+        td1.style.color = td2.style.color = td3.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#000000";
+        td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
+        td2.textContent = status;
+        if (redirected) {
+          const a = document.createElement("a");
+          a.href = url;
+          a.target = "_blank";
+          a.textContent = url;
+          a.title = details;
+          td3.appendChild(a);
+        } else {
+          td3.textContent = details;
+        }
+        instance.toolkitQuantityRemaining--;
+        setTimeout(function() { crawlURLs(); }, instance.toolkitSeconds * 1000);
+        DOM["#crawl-urls-remaining"].textContent = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
+        DOM["#crawl-progress-percentage"].textContent =
+        DOM["#crawl-progress-filled"].style.width = Math.floor(((instance.toolkitQuantity - instance.toolkitQuantityRemaining) / instance.toolkitQuantity) * 100) + "%";
+        updateETA((instance.toolkitQuantityRemaining) * (instance.toolkitSeconds + 1), DOM["#crawl-eta-value"], true);
+        if (instance.toolkitQuantityRemaining > 0 ) {
+          document.getElementById("crawl-table-td-response-" + (id + 1)).textContent = chrome.i18n.getMessage("crawl_waiting_label");
+        }
       }
     });
   }
