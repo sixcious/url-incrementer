@@ -77,7 +77,7 @@ var Download = (() => {
       if (strategy === "page") {
         results = findPageURL(includes, excludes, items);
       } else {
-        results = findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selectorbuilder, includes, excludes, items);
+        results = findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selectorbuilder, includes, excludes, items, 1);
       }
     } catch (e) {
       console.log("findDownloadURLs() - exception caught:" + e);
@@ -106,7 +106,7 @@ var Download = (() => {
    * Finds all URLs that match the specified strategy and applicable parameters. Performs a query on the page's elements
    * and checks each element to see if it passes the strategy's rules.
    *
-   * @param document   the document to query against (this is a parameter to allow searching thru nested iframes)
+   * @param document_  the document to query against (this is a parameter to allow searching thru nested iframes)
    * @param strategy   the download strategy to employ
    * @param extensions (optional) if strategy is extensions: the file extensions to check for
    * @param tags       (optional) if strategy is tags: the HTML tags (e.g. <img>) to check for
@@ -115,34 +115,41 @@ var Download = (() => {
    * @param includes   (optional) the array of Strings that must be included in the URLs
    * @param excludes   (optional) the array of Strings that must be excluded from the URLs
    * @param items      the items map
+   * @param level      the current document level (1 for the parent frame, incrementing for each inner iframe)
    * @returns {*} results, the array of results
    * @private
    */
-  function findDownloadURLsBySelector(document, strategy, extensions, tags, attributes, selector, includes, excludes, items) {
-    const elements = document.querySelectorAll(selector),
+  function findDownloadURLsBySelector(document_, strategy, extensions, tags, attributes, selector, includes, excludes, items, level) {
+    const elements = document_.querySelectorAll(selector),
           origin = new URL(window.location.href).origin;
-    console.log("findDownloadURLsBySelector() - found " + elements.length + " element(s)");
+    console.log("findDownloadURLsBySelector() - found " + elements.length + " element(s) on document level=" + level);
     for (const element of elements) {
       for (const attribute of URL_ATTRIBUTES) {
-        if (element[attribute]) {
-          // The style attribute might contain multiple URLs
-          if (attribute && attribute.toLowerCase() === "style") {
-            const urls = extractURLsFromStyle(element.style);
-            for (const url of urls) {
+        if (element && element[attribute]) {
+          try {
+            // The style attribute might contain multiple URLs
+            if (attribute === "style" && element.style) {
+              const urls = extractURLsFromStyle(element.style);
+              for (const url of urls) {
+                buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+              }
+            }
+            // The iframe's document can be searched if it's the same origin of this document
+            else if (attribute === "src" && element.src && element.tagName && element.tagName.toLowerCase() === "iframe") {
+              const url = element.src;
+              buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+              console.log("findDownloadURLsBySelector() - iframe encountered, document origin=" + origin + ", iframe origin=" + new URL(url).origin);
+              // If the current document and iframe's REDIRECTED protocols differ (http vs https), this may be an error:
+              if (level <= 5 && isValidURL(url) && new URL(url).origin === origin && element.contentDocument) {
+                // To avoid any possibility of infinite recursion, we only support up to 5 levels (1 parent document + 4 nested iframes)
+                findDownloadURLsBySelector(element.contentDocument, strategy, extensions, tags, attributes, selector, includes, excludes, items, level + 1);
+              }
+            } else {
+              const url = element[attribute];
               buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
             }
-          }
-          // The iframe tag's document can be searched if it's the same origin of this document
-          else if (element.tagName && element.tagName.toLowerCase() === "iframe" && attribute && attribute.toLowerCase() === "src") {
-            const url = element[attribute];
-            buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
-            console.log("findDownloadURLsBySelector() - iframe encountered, document origin=" + origin + ", iframe origin=" + new URL(url).origin);
-            if (isValidURL(url) && new URL(url).origin === origin && element.contentWindow && element.contentWindow.document) {
-              findDownloadURLsBySelector(element.contentWindow.document, strategy, extensions, tags, attributes, selector, includes, excludes, items);
-            }
-          } else {
-            const url = element[attribute];
-            buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes);
+          } catch(e) {
+            console.log("findDownloadURLsBySelector() - exception caught:" + e);
           }
         }
       }
@@ -246,13 +253,13 @@ var Download = (() => {
   function extractURLsFromStyle(style) {
     const urls = [];
     if (style) {
-      const URL_STYLE_PROPERTIES =  ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
+      const URL_STYLE_PROPERTIES = ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
             regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
       for (const property of URL_STYLE_PROPERTIES) {
         if (style[property]) {
           const match = regex.exec(style[property]);
           // TODO: Check other groups from this regex?
-          const url = match ? match[2] ? match[2] : "" : "";
+          const url = match && match[2] ? match[2] : "";
           console.log("extractURLFromStyle() - style property=" + property + ", style[property]=" + style[property] + ", and url=" + url);
           urls.push(url);
         }
@@ -312,14 +319,21 @@ var Download = (() => {
 
   /**
    * Determines if a potential URL is a valid download URL.
-   * Arbitrary rules: URLs must be Strings and not start with mailto.
+   * Arbitrary rules: URLs must be Strings, not start with mailto, and be parsed by the URL Constructor.
    *
    * @param url the URL to parse
    * @returns {boolean} true if the URL is a download URL, false otherwise
    * @private
    */
   function isValidURL(url) {
-    return url && typeof url === "string" && url.trim().length > 0 && !url.startsWith("mailto");
+    let valid = false;
+    try {
+      // TODO: Worry about new URL(url) failing, e.g. relative URLs?
+      valid = url && typeof url === "string" && url.trim().length > 0 && !url.startsWith("mailto") && new URL(url);
+    } catch (e) {
+      valid = false;
+    }
+    return valid;
   }
 
   /**
