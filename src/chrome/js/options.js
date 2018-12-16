@@ -86,7 +86,7 @@ var Options = (() => {
     DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermission("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermission("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
     DOM["#enhanced-mode-disable-button"].addEventListener("click", function() { Permissions.removePermission("enhancedMode", function(removed) { if (removed) { populateValuesFromStorage("enhancedMode"); } }) });
-    DOM["#urli-input"].addEventListener("click", clickURLI);
+    DOM["#mascot-input"].addEventListener("click", clickMascot);
     DOM["#reset-options-button"].addEventListener("click", resetOptions);
     DOM["#manifest-name"].textContent = chrome.runtime.getManifest().name;
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
@@ -587,17 +587,17 @@ var Options = (() => {
   }
 
   /**
-   * Function that is called when our favorite URL Incrementer is clicked!
+   * Called when our favorite mascot is clicked!
    *
    * @private
    */
-  function clickURLI() {
-    const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(ᵔᴥᵔ)", "◉_◉", "(+__X)"],
+  function clickMascot() {
+    const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(︶︹︺)", "◉_◉", "(+__X)"],
           face = " " + faces[Math.floor(Math.random() * faces.length)],
           value = +this.dataset.value + 1;
     this.dataset.value = value + "";
     UI.clickHoverCss(this, "hvr-buzz-out-click");
-    UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("urli_click_tickles") + face]);
+    UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("tickles_click") + face]);
   }
 
   // Initialize Options

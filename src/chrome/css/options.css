@@ -293,35 +293,35 @@ input[type="image"].key-clear {
   margin-bottom: 17px;
 }
 
-/* URLI Thank You */
+/* Thank You */
 
-#urli-thank-you {
+#thank-you {
   width: 100%;
   vertical-align: top;
   padding-top: 2px;
 }
 
-#urli-thank-you-rainbow {
+#thank-you-rainbow {
   font-size: 1.1em;
   margin-bottom: 8px;
 }
 
-#urli-thank-you-wish {
+#thank-you-wish {
   font-style: italic;
 }
 
-/* Credits & Special Thanks */
+/* Credits */
 
-#special-thanks {
+#credits {
   margin-top: 0.75em;
 }
 
-#special-thanks-content, #special-thanks-you {
+#credits-everyone, #credits-you {
   font-size: 0.75em;
   font-style: italic;
 }
 
-#special-thanks-you {
+#credits-you {
   font-weight: bold;
   text-align: center;
 }

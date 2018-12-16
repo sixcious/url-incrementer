@@ -360,10 +360,10 @@
   "help_a": { "message": "Help - View the User Guide on GitHub" },
   "reset_options_button" : { "message": "Reset Options" },
   "reset_options_message" : { "message": "Options Reset!" },
-  "urli_thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
-  "urli_thank_you_wish": { "message": "I want you to be 100% happy with URLI, so please email if any issues! URLI loves incrementing for you and wishes you an Incrementful Day!" },
-  "urli_click_tickles": { "message" : "That tickles!" },
-  "special_thanks_label": { "message": "Credits & Special Thanks" },
-  "special_thanks_content": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), Mike West (Dialogs), The Chromium Authors (Styles), ZURB Foundation (Styles / Tables), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
-  "special_thanks_you": { "message": "... and most of all you for using URLI!" }
+  "thank_you_rainbow": { "message": "Thank you for using URLI, a URL Incrementer" },
+  "thank_you_wish": { "message": "I want you to be 100% happy with URLI, so please email if any issues! URLI loves incrementing for you and wishes you an Incrementful Day!" },
+  "tickles_click": { "message" : "That tickles!" },
+  "credits_label": { "message": "Credits & Special Thanks" },
+  "credits_everyone": { "message": "NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), Mike West (Dialogs), The Chromium Authors (Styles), ZURB Foundation (Styles / Tables), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ..." },
+  "credits_you": { "message": "... and most of all you for using URLI!" }
 }
