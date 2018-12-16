@@ -265,6 +265,7 @@ var Popup = (() => {
     DOM["#download-includes-input"].value = instance.downloadIncludes && Array.isArray(instance.downloadIncludes) ? instance.downloadIncludes.join(",") : "";
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-subfolder-input"].value = instance.downloadSubfolder && instance.downloadSubfolder.trim() ? instance.downloadSubfolder : "";
+    DOM["#download-subfolder-increment-input"].checked = instance.downloadSubfolderIncrement;
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-filename-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("filename");
     DOM["#download-preview-extension-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("extension");
@@ -1009,6 +1010,8 @@ var Popup = (() => {
           "downloadSelector": _.downloadSelector,
           "downloadIncludes": _.downloadIncludes,
           "downloadExcludes": _.downloadExcludes,
+          "downloadSubfolder": _.downloadSubfolder,
+          "downloadSubfolderIncrement": _.downloadSubfolderIncrement,
           "downloadPreview": _.downloadPreview
         });
       }
@@ -1108,6 +1111,7 @@ var Popup = (() => {
       _.downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadSubfolder = DOM["#download-subfolder-input"].value.trim();
+      _.downloadSubfolderIncrement = DOM["#download-subfolder-increment"].checked;
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
       _.downloadMSelecteds = downloadPreviewCache.mselecteds;
       _.downloadMUnselecteds = downloadPreviewCache.munselecteds;

@@ -366,10 +366,19 @@ div.column#download-strategy, div.column#download-optional {
   padding-bottom: 1px;
 }
 
+#download-subfolder-help {
+  top: 0;
+}
+
 /* position: relative for position absolute help */
 #download-subfolder {
   position: relative;
   margin-top: 1em;
+}
+
+#download-subfolder-increment {
+  display: inline-block;
+  margin-left: 2em;
 }
 
 div.column#download-optional {

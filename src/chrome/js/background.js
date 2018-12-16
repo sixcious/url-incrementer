@@ -23,7 +23,7 @@ var Background = (() => {
     "nextPrevKeywordsNext": ["pnnext", "next page", "next >", "next »", "next", "more results", "older posts", "older", "forward", "次", "&gt;", ">", "›", "→"],
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto", "autoStart": false,
-    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
+    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitStart": false,
     "saves": [], "savePreselect": false
   },
@@ -153,9 +153,8 @@ var Background = (() => {
       "urls": [], "shuffleURLs": false, "shuffleLimit": items.shuffleLimit,
       "nextPrevKeywordsNext": items.nextPrevKeywordsNext, "nextPrevKeywordsPrev": items.nextPrevKeywordsPrev, "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
       "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoPaused": false, "autoRepeat": false, "autoRepeating": false, "autoRepeatCount": 0, "autoStart": items.autoStart,
-      "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector, "downloadStart": items.downloadStart,
-      "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes,
-      "downloadPreview": items.downloadPreview,
+      "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
+      "downloadSubfolder": items.downloadSubfolder, "downloadSubfolderIncrement": items.downloadSubfolderIncrement, "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes, "downloadPreview": items.downloadPreview,  "downloadStart": items.downloadStart,
       "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds, "toolkitStart": items.toolkitStart
     };
   }
