@@ -422,7 +422,7 @@ var Action = (() => {
           }
           // Subfolder Increment after downloads
           if (instance.downloadSubfolder && instance.downloadSubfolderIncrement) {
-            instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+/, function(match) {
+            instance.downloadSubfolder = instance.downloadSubfolder.replace(/\d+(?!.*\d+)/, function(match) {
               const matchp1 = (Number(match) + 1) + "";
               return (match.startsWith("0") && match.length > matchp1.length ? ("0".repeat(match.length - matchp1.length)) : "") + matchp1;
             });
