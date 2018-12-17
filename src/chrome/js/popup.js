@@ -1111,7 +1111,7 @@ var Popup = (() => {
       _.downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
       _.downloadSubfolder = DOM["#download-subfolder-input"].value.trim();
-      _.downloadSubfolderIncrement = DOM["#download-subfolder-increment"].checked;
+      _.downloadSubfolderIncrement = DOM["#download-subfolder-increment-input"].checked;
       _.downloadPreview = DOM["#download-preview-checkboxes-generated"].value.split(",");
       _.downloadMSelecteds = downloadPreviewCache.mselecteds;
       _.downloadMUnselecteds = downloadPreviewCache.munselecteds;
