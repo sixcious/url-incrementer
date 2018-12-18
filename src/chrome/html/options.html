@@ -19,7 +19,97 @@
     <script src="../js/options.js" defer></script>
   </head>
   <body id="options">
-    <section id="icon-settings">
+  <section id="browser-shortcuts">
+    <div class="heading">
+      <img src="../img/browser.png" alt="" width="16" height="16">
+      <img src="../img/keyboard-o.png" alt="" width="18" height="18">
+      <h3 id="browser-shortcuts-h3" data-i18n="textContent"></h3>
+      <button id="internal-shortcuts-enable-button" data-i18n="textContent"></button>
+    </div>
+    <p id="browser-shortcuts-p1" data-i18n="textContent"></p>
+    <div class="checkbox">
+      <label id="help-quick-shortcuts*browser" class="tooltip-alt" data-i18n="title">
+        <input id="browser-shortcuts-quick-enable-input" type="checkbox">
+        <span id="browser-shortcuts-quick-enable-label" data-i18n="textContent"></span>
+        <img src="../img/question-circle.png" alt="" width="16" height="16">
+      </label>
+    </div>
+    <p>
+      <button id="browser-shortcuts-button" data-i18n="textContent"></button>
+    </p>
+    <p id="browser-shortcuts-p2-note" class="note">
+      <img src="../img/info-circle.png" alt="" width="16" height="16">
+      <span id="browser-shortcuts-p2" data-i18n="textContent"></span>
+    </p>
+  </section>
+  <section id="internal-shortcuts">
+    <div class="heading">
+      <img src="../img/mouse-pointer.png" alt="" width="16" height="16">
+      <img src="../img/keyboard-o.png" alt="" width="18" height="18">
+      <h3 id="internal-shortcuts-h3" data-i18n="textContent"></h3>
+      <button id="browser-shortcuts-enable-button" data-i18n="textContent"></button>
+    </div>
+    <p id="internal-shortcuts-p" data-i18n="textContent"></p>
+    <div class="checkbox">
+      <label id="help-shortcuts-editable-disabled" class="tooltip-alt" data-i18n="title">
+        <input id="shortcuts-editable-disabled-input" type="checkbox">
+        <span id="shortcuts-editable-disabled-label" data-i18n="textContent"></span>
+        <img src="../img/question-circle.png" alt="" width="16" height="16">
+      </label>
+    </div>
+    <div class="checkbox">
+      <label id="help-quick-shortcuts*internal-key" class="tooltip-alt" data-i18n="title">
+        <input id="key-quick-enable-input" type="checkbox">
+        <span id="key-quick-enable-label" data-i18n="textContent"></span>
+        <img src="../img/question-circle.png" alt="" width="16" height="16">
+      </label>
+    </div>
+    <div class="checkbox">
+      <label id="help-quick-shortcuts*internal-mouse" class="tooltip-alt" data-i18n="title">
+        <input id="mouse-quick-enable-input" type="checkbox">
+        <span id="mouse-quick-enable-label" data-i18n="textContent"></span>
+        <img src="../img/question-circle.png" alt="" width="16" height="16">
+      </label>
+      <div id="mouse-click-speed">
+        <label id="mouse-click-speed-label" for="mouse-click-speed-input" data-i18n="textContent"></label>
+        <input id="mouse-click-speed-input" type="number" min="100" step="100" max="1000">
+        <span id="mouse-click-speed-ms" data-i18n="textContent"></span>
+      </div>
+    </div>
+    <div id="internal-shortcuts-table" class="table">
+      <div class="row">
+        <div class="column"></div>
+        <div class="column">
+          <img id="key-enable-img" src="../img/check.png" alt="" width="16" height="16">
+          <span id="key-label" data-i18n="textContent"></span>
+        </div>
+        <div class="column">
+          <img id="mouse-enable-img" src="../img/check.png" alt="" width="16" height="16">
+          <span id="mouse-label" data-i18n="textContent"></span>
+        </div>
+        <div class="column">
+          <span id="mouse-clicks-label" data-i18n="textContent"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="one-click-buttons">
+    <div class="heading">
+      <img src="../img/browser-store.png" alt="" height="25">
+      <h3 id="one-click-buttons-h3" data-i18n="textContent"></h3>
+    </div>
+    <p id="one-click-buttons-p" data-i18n="textContent"></p>
+    <a href="https://chrome.google.com/webstore/detail/url-increment-button/decebmdlceenceecblpfjanoocfcmjai" target="_blank">
+      <img src="../img/plus-circle.png" alt="" width="16" height="16">
+      <span id="one-click-buttons-increment" data-i18n="textContent"></span>
+    </a>
+    <p></p>
+    <a href="https://chrome.google.com/webstore/detail/url-decrement-button/nnmjbfglinmjnieblelacmlobabcenfk" target="_blank">
+      <img src="../img/minus-circle.png" alt="" width="16" height="16">
+      <span id="one-click-buttons-decrement" data-i18n="textContent"></span>
+    </a>
+  </section>
+  <section id="icon-settings">
       <div class="heading">
         <img src="../img/128-default.png" alt="" width="16" height="16">
         <h3 id="icon-settings-h3" data-i18n="textContent"></h3>
@@ -70,96 +160,6 @@
           <span id="popup-animations-enable-label" data-i18n="textContent"></span>
         </label>
       </div>
-    </section>
-    <section id="browser-shortcuts">
-      <div class="heading">
-        <img src="../img/browser.png" alt="" width="16" height="16">
-        <img src="../img/keyboard-o.png" alt="" width="18" height="18">
-        <h3 id="browser-shortcuts-h3" data-i18n="textContent"></h3>
-        <button id="internal-shortcuts-enable-button" data-i18n="textContent"></button>
-      </div>
-      <p id="browser-shortcuts-p1" data-i18n="textContent"></p>
-      <div class="checkbox">
-        <label id="help-quick-shortcuts*browser" class="tooltip-alt" data-i18n="title">
-          <input id="browser-shortcuts-quick-enable-input" type="checkbox">
-          <span id="browser-shortcuts-quick-enable-label" data-i18n="textContent"></span>
-          <img src="../img/question-circle.png" alt="" width="16" height="16">
-        </label>
-      </div>
-      <p>
-        <button id="browser-shortcuts-button" data-i18n="textContent"></button>
-      </p>
-      <p id="browser-shortcuts-p2-note" class="note">
-        <img src="../img/info-circle.png" alt="" width="16" height="16">
-        <span id="browser-shortcuts-p2" data-i18n="textContent"></span>
-      </p>
-    </section>
-    <section id="internal-shortcuts">
-      <div class="heading">
-        <img src="../img/mouse-pointer.png" alt="" width="16" height="16">
-        <img src="../img/keyboard-o.png" alt="" width="18" height="18">
-        <h3 id="internal-shortcuts-h3" data-i18n="textContent"></h3>
-        <button id="browser-shortcuts-enable-button" data-i18n="textContent"></button>
-      </div>
-      <p id="internal-shortcuts-p" data-i18n="textContent"></p>
-      <div class="checkbox">
-        <label id="help-shortcuts-editable-disabled" class="tooltip-alt" data-i18n="title">
-          <input id="shortcuts-editable-disabled-input" type="checkbox">
-          <span id="shortcuts-editable-disabled-label" data-i18n="textContent"></span>
-          <img src="../img/question-circle.png" alt="" width="16" height="16">
-        </label>
-      </div>
-      <div class="checkbox">
-        <label id="help-quick-shortcuts*internal-key" class="tooltip-alt" data-i18n="title">
-          <input id="key-quick-enable-input" type="checkbox">
-          <span id="key-quick-enable-label" data-i18n="textContent"></span>
-          <img src="../img/question-circle.png" alt="" width="16" height="16">
-        </label>
-      </div>
-      <div class="checkbox">
-        <label id="help-quick-shortcuts*internal-mouse" class="tooltip-alt" data-i18n="title">
-          <input id="mouse-quick-enable-input" type="checkbox">
-          <span id="mouse-quick-enable-label" data-i18n="textContent"></span>
-          <img src="../img/question-circle.png" alt="" width="16" height="16">
-        </label>
-        <div id="mouse-click-speed">
-          <label id="mouse-click-speed-label" for="mouse-click-speed-input" data-i18n="textContent"></label>
-          <input id="mouse-click-speed-input" type="number" min="100" step="100" max="1000">
-          <span id="mouse-click-speed-ms" data-i18n="textContent"></span>
-        </div>
-      </div>
-      <div id="internal-shortcuts-table" class="table">
-        <div class="row">
-          <div class="column"></div>
-          <div class="column">
-            <img id="key-enable-img" src="../img/check.png" alt="" width="16" height="16">
-            <span id="key-label" data-i18n="textContent"></span>
-          </div>
-          <div class="column">
-            <img id="mouse-enable-img" src="../img/check.png" alt="" width="16" height="16">
-            <span id="mouse-label" data-i18n="textContent"></span>
-          </div>
-          <div class="column">
-            <span id="mouse-clicks-label" data-i18n="textContent"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="one-click-buttons">
-      <div class="heading">
-        <img src="../img/browser-store.png" alt="" height="25">
-        <h3 id="one-click-buttons-h3" data-i18n="textContent"></h3>
-      </div>
-      <p id="one-click-buttons-p" data-i18n="textContent"></p>
-      <a href="https://chrome.google.com/webstore/detail/url-increment-button/decebmdlceenceecblpfjanoocfcmjai" target="_blank">
-        <img src="../img/plus-circle.png" alt="" width="16" height="16">
-        <span id="one-click-buttons-increment" data-i18n="textContent"></span>
-      </a>
-      <p></p>
-      <a href="https://chrome.google.com/webstore/detail/url-decrement-button/nnmjbfglinmjnieblelacmlobabcenfk" target="_blank">
-        <img src="../img/minus-circle.png" alt="" width="16" height="16">
-        <span id="one-click-buttons-decrement" data-i18n="textContent"></span>
-      </a>
     </section>
     <section id="saved-urls-settings">
       <div class="heading">

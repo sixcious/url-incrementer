@@ -40,7 +40,7 @@ var Popup = (() => {
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); });
-    DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "toolkitStart": this.checked });});
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL);
     DOM["#base-select"].addEventListener("change", function() {
@@ -55,10 +55,10 @@ var Popup = (() => {
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
-    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "autoStart": this.checked }); });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
-    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } });
+    DOM["#download-toggle-input"].addEventListener("change", function() { DOM["#download"].className = this.checked ? "display-block fade-in" : "display-none"; if (this.checked) { updateDownloadPreviewCompletely(); } chrome.storage.local.set({ "downloadStart": this.checked }); });
     DOM["#download-strategy-select"].addEventListener("change", function() { changeDownloadStrategy.call(this); updateDownloadPreview(); });
     DOM["#download-extensions"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-extensions input", "#download-extensions-generated"); updateDownloadPreview(); });
     DOM["#download-tags"].addEventListener("change", function() { translateCheckboxValuesToHiddenInput("#download-tags input", "#download-tags-generated"); updateDownloadPreview(); });
@@ -66,13 +66,7 @@ var Popup = (() => {
     DOM["#download-selector-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-selector-label"], "font-weight: bold; color: rebeccapurple"); });
     DOM["#download-includes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-includes-label"], "font-weight: bold; color: #05854D"); });
     DOM["#download-excludes-input"].addEventListener("input", function() { inputUpdateDownloadPreview(this, DOM["#download-excludes-label"], "font-weight: bold; color: #E6003E"); });
-    DOM["#download-preview-thumb-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-filename-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-extension-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-tag-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-attribute-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-url-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
-    DOM["#download-preview-compressed-input"].addEventListener("change", updateDownloadPreviewCheckboxes);
+    DOM["#download-preview-checkboxes"].addEventListener("change", function(event) { updateDownloadPreviewCheckboxes.call(event.target); });
     DOM["#download-preview-table-div"].addEventListener("click", updateDownloadSelectedsUnselecteds);
     // Initialize popup content (1-time only)
     const tabs = await Promisify.getTabs();
