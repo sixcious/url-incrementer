@@ -200,7 +200,6 @@ table tbody tr:hover {
 }
 
 #setup textarea {
-  color: #777777;
   word-break: break-all;
   resize: vertical;
   width: 512px;
@@ -243,13 +242,14 @@ table tbody tr:hover {
   display: inline-block;
 }
 
-#setup #selection-input { /* Firefox: Needs this or else the input width is a little shorter */
-/*  width: 100%;*/
+/* Firefox: Needs this or else the input width is a little shorter */
+#setup #selection-input {
   width: 143px;
 }
 
+/* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
 #setup #leading-zeros-pad-label, #setup #base-case {
-  font-size: 0.88em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
+  font-size: 0.88em;
 }
 
 #setup #base-case label:not(:last-child) {
