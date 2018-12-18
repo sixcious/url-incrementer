@@ -79,9 +79,6 @@ var Options = (() => {
     DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.local.set({"nextPrevLinksPriority": this.value}); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevPopupButtons": this.checked}); });
-    DOM["#toolkit-start-input"].addEventListener("change", function () { chrome.storage.local.set({"toolkitStart": this.checked}); });
-    DOM["#auto-start-input"].addEventListener("change", function () { chrome.storage.local.set({"autoStart": this.checked}); });
-    DOM["#download-start-input"].addEventListener("change", function () { chrome.storage.local.set({"downloadStart": this.checked}); });
     DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermission("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
     DOM["#download-disable-button"].addEventListener("click", function() { Permissions.removePermission("download", function(removed) { if (removed) { populateValuesFromStorage("download"); } }) });
     DOM["#enhanced-mode-enable-button"].addEventListener("click", function() { Permissions.requestPermission("enhancedMode", function(granted) { if (granted) { populateValuesFromStorage("enhancedMode"); } }) });
@@ -237,9 +234,6 @@ var Options = (() => {
       DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
       DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
       DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
-      DOM["#toolkit-start-input"].checked = items.toolkitStart;
-      DOM["#auto-start-input"].checked = items.autoStart;
-      DOM["#download-start-input"].checked = items.downloadStart;
     }
   }
 

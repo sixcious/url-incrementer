@@ -205,7 +205,7 @@
   "download_subfolder_help": { "message": "You can have each page's downloads stored in a subfolder under your root Downloads folder. Enter a subfolder name and you can also optionally include a starting number in the name that can be incremented if you check the Increment checkbox (if the Increment checkbox is not checked, the same subfolder will be used for all pages). Important: When saving to subfolders, the download's file name and extension will be based on the URL (not on the server's own internal file name), so be sure to examine the \"Name\" and \"Ext\" columns in the preview table first. If a file is missing a name or extension, it will default to saving in the root Downloads folder instead." },
   "oops_error": { "message": "Oops..." },
   "selection_blank_error": { "message": "Selection can't be blank" },
-  "selection_notalphanumeric_error": { "message": "Selection can only contain alphanumeric characters" },
+  "selection_notalphanumeric_error": { "message": "Select only alphanumeric characters or adjust the base to match the selection" },
   "selection_notinurl_error": { "message": "Selection has to be part of the URL" },
   "selection_toolarge_error" : { "message": "Selection is too large; please select a smaller number or fewer characters" },
   "selection_base_error": { "message": "Select a higher base to match characters in selection" },

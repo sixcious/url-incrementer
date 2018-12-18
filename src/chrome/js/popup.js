@@ -39,8 +39,10 @@ var Popup = (() => {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
+    DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
+    DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); });
-    DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "toolkitStart": this.checked });});
+    DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "toolkitStart": this.checked }); });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL);
     DOM["#base-select"].addEventListener("change", function() {
@@ -201,8 +203,8 @@ var Popup = (() => {
       DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
-    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs;
-    DOM["#auto-repeat-input"].checked = instance.autoRepeat;
+    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs || (instance.shuffleStart && !instance.enabled);
+    DOM["#auto-repeat-input"].checked = instance.autoRepeat || (instance.autoRepeatStart && !instance.enabled);
     DOM["#url-textarea"].value = instance.url;
     DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
     DOM["#url-textarea"].focus();
