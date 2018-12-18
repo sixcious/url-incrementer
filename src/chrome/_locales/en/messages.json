@@ -174,7 +174,7 @@
   "download_includes_label": { "message": "URL Includes" },
   "download_excludes_label": { "message": "URL Excludes" },
   "download_subfolder_label": { "message": "Subfolder" },
-  "download_subfolder_increment_label": { "message": "Increment" },
+  "download_subfolder_increment_label": { "message": "Increment Subfolder" },
   "download_preview_set": { "message": "Set to download " },
   "download_preview_outof": { "message": " out of " },
   "download_preview_urls": { "message": " URLs" },
