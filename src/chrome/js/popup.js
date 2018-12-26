@@ -982,6 +982,8 @@ var Popup = (() => {
     else {
       _.enabled = true;
       _.saveFound = _.saveURL;
+      // Need this to reset the URLs array if changing the selection or adjusting other properties:
+      _.urls = [];
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
       _.urls = precalculateProps.urls;
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
