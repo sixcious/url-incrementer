@@ -2,22 +2,21 @@
 
 ![URL Incrementer](assets/img/128-default.png?raw=true "URL Incrementer")
 <br>
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
-
-URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" in a variety of ways.
-
 <a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Chrome Web Store Download">
-  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/chrome/ChromeWebStore_Badge_v2_496x150.png" height="128" alt="Chrome Web Store">
+  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/chrome/ChromeWebStore_Badge_v2_496x150.png" height="48" alt="Chrome Web Store">
 </a>
 
 <a href="https://addons.mozilla.org/firefox/addon/url-incrementer" title="Firefox Addon Download">
-  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_496x128.png" height="128" alt="Firefox Addon">
+  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_492x128.png" height="48" alt="Firefox Addon">
 </a>
 
 <a href="https://github.com/roysix/url-incrementer/wiki/Help" title="Help Guide" style="font-size: 2rem;">
   <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/question-circle.png" alt="question-circle">Help Guide
 </a>
+<br>
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
+URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" in a variety of ways.
 
 # Features
 <em>Coming Soon in 6.0 (December 2018)</em>
