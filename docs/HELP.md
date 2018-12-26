@@ -1,6 +1,6 @@
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/img/128-default.png" width="128" height="128" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/128-default.png" width="128" height="128" title="URL Incrementer">
 <br>
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/_assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
 
 # Help and Support
@@ -218,9 +218,9 @@ Saving is completely optional ("opt-in").
 
 ## Saving URLs vs Saving Wildcards
 URLs are saved just like passwords, must match exactly for it to be recognized (except for the part/number you selected to increment).
-However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Partial URL** will work the best and allow you to match all the variances.
-For example, say you save a partial URL `https://www.site.com/posts` with an Increment of say, 42, then both `https://www.site.com/posts/tags=abc&page=0` and `https://www.site.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
-So long as any site starts with your partial URL `https://www.site.com/posts`, then whatever follows (e.g. the `/tags=` part) won't matter and it's considered a "match!"
+However, sometimes -- most especially on image boards or when you do searches -- sites will add tags and other parameters to the URL. In these cases, a **Wildcard** will work the best and allow you to match all the variances.
+For example, say you save a wildcard `example.com/posts` with an Increment of `42`, then both `https://example.com/posts/tags=abc&page=0` and `https://www.example.com/posts/tags=xyz&page=0` will both be "recognized" and allow you to increment the page=0 to 42.
+So long as any URL matches with your Wildcard `example.com/posts`, then whatever precedes or follows won't matter and it's considered a "match!"
 
 ## How Are URLs Saved?
 To protect your privacy, URLs are saved just like the industry standard is for saving passwords: as cryptographic hashes.
@@ -285,7 +285,7 @@ For a good visual showing bases 2-36, please see the [Table of Bases on Wikipedi
 
 ## Custom Bases
 Change the `Base` to `Custom` and instantly define a custom alphabet to increment!
-The alphabet can contain non-number characters like !@#$%^&*()_+=-.
+The alphabet can contain special characters, including !@#$%^&*()_+=-.
 You can even use normal alphabets and just exclude certain letters.
 The order of characters in the alphabet matters; also the first character is treated like "0" in our decimal number system.
 
@@ -298,15 +298,13 @@ Say you have defined a 5-character custom `Alphabet` of `aB!9?`. This is how it 
     9a 9B 9! 99 9?
     ?a ?B ?! ?9 ??
     
-Did you notice how the `a` is treated almost like a `0` in our decimal number system?
-
 Here are some common bases you can copy/paste into the `Alphabet` input:
 
-Base 62
+Base 62  
 `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
 
-Base 64 (Standard Non-URL Friendly +/ Version Without = Padding)
+Base 64 (Standard Non-URL Friendly +/ Version Without = Padding)  
 `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/`
 
-Base 64 (Modified URL Friendly -_ Version Without = Padding)
+Base 64 (Modified URL Friendly -_ Version Without = Padding)  
 `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_`
