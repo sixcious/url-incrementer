@@ -160,6 +160,12 @@
           <span id="popup-animations-enable-label" data-i18n="textContent"></span>
         </label>
       </div>
+      <div class="checkbox">
+        <label>
+          <input id="decode-uri-enable-input" type="checkbox">
+          <span id="decode-uri-enable-label" data-i18n="textContent"></span>
+        </label>
+      </div>
     </section>
     <section id="saved-urls-settings">
       <div class="heading">
@@ -289,8 +295,9 @@
             <select id="base-select">
               <option id="base-option-default" value="10" data-i18n="textContent"></option>
               <option id="base-option-date" value="date" data-i18n="textContent"></option>
-              <option id="base-option-custom" value="custom" data-i18n="textContent"></option>
               <option id="base-option-decimal" value="decimal" data-i18n="textContent"></option>
+              <option id="base-option-roman" value="roman" data-i18n="textContent"></option>
+              <option id="base-option-custom" value="custom" data-i18n="textContent"></option>
               <option id="base-option-2" value="2" data-i18n="textContent"></option>
               <option id="base-option-3" value="3" data-i18n="textContent"></option>
               <option id="base-option-4" value="4" data-i18n="textContent"></option>
@@ -339,17 +346,36 @@
                 </label>
               </div>
             </div>
-            <div id="base-custom" class="display-none">
-              <a id="base-custom-a" href="https://github.com/roysix/url-incrementer/wiki/Help#bases-and-custom-bases" target="_blank">
-                <span id="base-custom-label" data-i18n="textContent"></span>
-              </a>
-              <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false">
-            </div>
             <div id="base-date" class="display-none">
               <a id="base-date-format-a" href="https://github.com/roysix/url-incrementer/wiki/Help#date-time-incrementing" target="_blank">
                 <span id="base-date-format-label" data-i18n="textContent"></span>
               </a>
               <input id="base-date-format-input" type="text" placeholder="e.g. yyyy/mm/dd" spellcheck="false">
+            </div>
+            <div id="base-decimal" class="display-none">
+              <span id="base-decimal-label" data-i18n="textContent"></span>
+            </div>
+            <div id="base-roman" class="display-none">
+              <div class="radio">
+                <label>
+                  <input id="base-roman-latin-input" type="radio" name="base-roman" value="latin">
+                  <span id="base-roman-latin-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="base-roman-u216x-input" type="radio" name="base-roman" value="u216x">
+                  <span id="base-roman-u216x-label" data-i18n="textContent"></span>
+                </label>
+                <label>
+                  <input id="base-roman-u217x-input" type="radio" name="base-roman" value="u217x">
+                  <span id="base-roman-u217x-label" data-i18n="textContent"></span>
+                </label>
+              </div>
+            </div>
+            <div id="base-custom" class="display-none">
+              <a id="base-custom-a" href="https://github.com/roysix/url-incrementer/wiki/Help#bases-and-custom-bases" target="_blank">
+                <span id="base-custom-label" data-i18n="textContent"></span>
+              </a>
+              <input id="base-custom-input" type="text" placeholder="e.g. 0123abcXYZ" spellcheck="false">
             </div>
           </div>
         </div>

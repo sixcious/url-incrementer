@@ -50,6 +50,7 @@ var Options = (() => {
     DOM["#popup-button-size-img"].addEventListener("click", function () { if (DOM["#popup-animations-enable-input"].checked) { UI.clickHoverCss(this, "hvr-push-click"); } });
     DOM["#popup-animations-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"popupAnimationsEnabled": this.checked});
       DOM["#popup-button-size-img"].className = this.checked ? "hvr-grow" : "" });
+    DOM["#decode-uri-enable-input"].addEventListener("change", function () { chrome.storage.local.set({"decodeURIEnabled": this.checked}); });
     DOM["#saved-urls-preselect-input"].addEventListener("change", function () { chrome.storage.local.set({"savePreselect": this.checked}); });
     DOM["#saved-urls-delete-button"].addEventListener("click", function() { deleteSavedURL(); });
     DOM["#saved-urls-wildcard-add-button"].addEventListener("click", function() { DOM["#saved-urls-wildcard"].className = "display-block fade-in"; DOM["#saved-urls-wildcard-url-textarea"].value = DOM["#saved-urls-wildcard-errors"].textContent = ""; });
@@ -202,6 +203,7 @@ var Options = (() => {
       DOM["#popup-button-size-img"].style = "width:" + items.popupButtonSize + "px; height:" + items.popupButtonSize + "px;";
       DOM["#popup-button-size-img"].className = items.popupAnimationsEnabled ? "hvr-grow" : "";
       DOM["#popup-animations-enable-input"].checked = items.popupAnimationsEnabled;
+      DOM["#decode-uri-enable-input"].checked = items.decodeURIEnabled;
       DOM["#selection-select"].value = items.selectionPriority;
       DOM["#selection-custom"].className = items.selectionPriority === "custom" ? "display-block" : "display-none";
       DOM["#selection-custom-url-textarea"].value = items.selectionCustom.url;
@@ -543,9 +545,10 @@ var Options = (() => {
       const base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
         baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked,
         baseDateFormat = DOM["#base-date-format-input"].value,
+        baseRoman = DOM["#base-roman-latin-input"].checked ? DOM["#base-roman-latin-input"].value : DOM["#base-roman-u216x-input"].checked ? DOM["#base-roman-u216x-input"].value : DOM["#base-roman-u217x-input"].value,
         baseCustom = DOM["#base-custom-input"].value,
         leadingZeros = selection.startsWith("0") && selection.length > 1;
-      if (backgroundPage.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros)) {
+      if (backgroundPage.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseRoman, baseCustom, leadingZeros)) {
         throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
     } catch (e) {

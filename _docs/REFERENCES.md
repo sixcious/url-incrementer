@@ -10,7 +10,7 @@ Regex pipe order alteration...
 https://stackoverflow.com/a/39196460
 
 Filtering arrays e.g. .filter(Boolean) filters against empty "" values in case user enters an extra comma, for example: "1,2," by user1106925 @ StackOverflow.com
-@see https://stackoverflow.com/a/16701357
+https://stackoverflow.com/a/16701357
 
 ## Background
 
@@ -27,6 +27,20 @@ https://stackoverflow.com/questions/12710001/how-to-convert-uint8-array-to-base6
 
 Base64 String to Uint8Array
 https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/42334410#42334410
+
+## Increment Decrement Roman Numerals
+
+Algorithm derived for deromanize()
+http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter#comment-16129
+
+Algorithm derived for romanize()
+http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter#comment-16107
+
+List of Latin, U+216x, and U+217x Roman Numerals
+https://en.wikipedia.org/wiki/Numerals_in_Unicode#Roman_numerals
+
+Reverse an ES6 Map's order (Reverse the roman numeral alphabet order)
+https://stackoverflow.com/a/37572069
 
 ## Increment Decrement Custom Bases
 

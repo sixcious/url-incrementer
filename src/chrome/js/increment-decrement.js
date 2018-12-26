@@ -58,40 +58,52 @@ var IncrementDecrement = (() => {
    * @param base           the base
    * @param baseCase       the base case if the base is alphanumeric (11-36)
    * @param baseDateFormat the date format if the base is a date
+   * @param baseRoman      the roman type if the base is roman
    * @param baseCustom     the custom alphabet if the base is custom
    * @param leadingZeros   if true, pad with leading zeros, false don't pad
    * @returns {string} an empty string if validation passed, or an error message if validation failed
    * @public
    */
-  function validateSelection(selection, base, baseCase, baseDateFormat, baseCustom, leadingZeros) {
+  function validateSelection(selection, base, baseCase, baseDateFormat, baseRoman, baseCustom, leadingZeros) {
     let error = "";
     switch (base) {
       case "date":
         const selectionDate = IncrementDecrementDate.incrementDecrementDate("increment", selection, 0, baseDateFormat);
-        console.log("validateSelection() - selection=" + selection +", selectionDate=" + selectionDate);
+        console.log("validateSelection() - base=date, selection=" + selection +", selectionDate=" + selectionDate);
         if (selectionDate !== selection) {
           error = chrome.i18n.getMessage("base_date_invalid_error");
         }
         break;
-      case "custom":
-        const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, baseCustom, leadingZeros);
-        console.log("validateSelection() - selection=" + selection +", selectionCustom=" + selectionCustom);
-        if (selectionCustom === "SELECTION_TOO_LARGE!") {
-          error = chrome.i18n.getMessage("selection_toolarge_error");
-       } else if (selectionCustom !== selection) {
-          error = chrome.i18n.getMessage("base_custom_invalid_error");
-        }
-        break;
       case "decimal":
         const selectionFloat = parseFloat(selection);
+        console.log("validateSelection() - base=decimal, selection=" + selection +", selectionFloat=" + selectionFloat);
         if (!/^\d+\.\d+$/.test(selection) || isNaN(selectionFloat)) {
           error = chrome.i18n.getMessage("base_decimal_invalid_error");
         } else if (selectionFloat >= Number.MAX_SAFE_INTEGER) {
           error = chrome.i18n.getMessage("selection_toolarge_error");
         }
         break;
+      case "roman":
+        const selectionRoman = IncrementDecrementRoman.incrementDecrementRoman("increment", selection, 0, baseRoman);
+        console.log("validateSelection() - base=roman, selection=" + selection +", selectionRoman=" + selectionRoman);
+        if (selectionRoman === "SELECTION_TOO_LARGE!") {
+          error = chrome.i18n.getMessage("base_roman_toolarge_error");
+        } else if (selectionRoman !== selection) {
+          error = chrome.i18n.getMessage("base_roman_invalid_error");
+        }
+        break;
+      case "custom":
+        const selectionCustom = incrementDecrementBaseCustom("increment", selection, 0, baseCustom, leadingZeros);
+        console.log("validateSelection() - base=custom, selection=" + selection +", selectionCustom=" + selectionCustom);
+        if (selectionCustom === "SELECTION_TOO_LARGE!") {
+          error = chrome.i18n.getMessage("selection_toolarge_error");
+        } else if (selectionCustom !== selection) {
+          error = chrome.i18n.getMessage("base_custom_invalid_error");
+        }
+        break;
       // Base 2-36
       default:
+        console.log("validateSelection() - base=" + base + ", selection=" + selection);
         if (!(base >= 2 && base <= 36)) {
           error = chrome.i18n.getMessage("base_invalid_error");
         } else if (!/^[a-z0-9]+$/i.test(selection)) {
@@ -147,18 +159,21 @@ var IncrementDecrement = (() => {
     IncrementDecrementMulti.multiPre(action, instance);
     const url = instance.url, selection = instance.selection, selectionStart = instance.selectionStart,
           interval = instance.interval, leadingZeros = instance.leadingZeros,
-          base = instance.base, baseCase = instance.baseCase, baseDateFormat = instance.baseDateFormat, baseCustom = instance.baseCustom;
+          base = instance.base, baseCase = instance.baseCase, baseDateFormat = instance.baseDateFormat, baseRoman = instance.baseRoman, baseCustom = instance.baseCustom;
     let selectionmod;
     // Perform the increment or decrement operation depending on the base type
     switch(base) {
       case "date":
         selectionmod = IncrementDecrementDate.incrementDecrementDate(action, selection, interval, baseDateFormat);
         break;
-      case "custom":
-        selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
-        break;
       case "decimal":
         selectionmod = incrementDecrementDecimal(action, selection, interval, leadingZeros);
+        break;
+      case "roman":
+        selectionmod = IncrementDecrementRoman.incrementDecrementRoman(action, selection, interval, baseRoman);
+        break;
+      case "custom":
+        selectionmod = incrementDecrementBaseCustom(action, selection, interval, baseCustom, leadingZeros);
         break;
       // Base 2-36
       default:
@@ -530,6 +545,89 @@ var IncrementDecrementDate = (() => {
   // Return Public Functions
   return {
     incrementDecrementDate: incrementDecrementDate
+  };
+
+})();
+
+var IncrementDecrementRoman = (() => {
+
+  // Latin handles both upper and lowercase. U+216x and U+217x handle both forms of unicode. The XI and XII single-character unicodes are removed so they can be compatible with the algorithm (based on the latin alphabet)
+  // https://en.wikipedia.org/wiki/Numerals_in_Unicode#Roman_numerals
+  const alphabets = {
+    latin: new Map([["I",1], ["IV",4], ["V",5], ["IX",9], ["X",10], ["XL",40], ["L",50], ["XC",90], ["C",100], ["CD",400], ["D",500], ["CM",900], ["M",1000]]),
+    u216x: new Map([["Ⅰ",1],["Ⅱ",2], ["Ⅲ",3], ["Ⅳ",4], ["Ⅴ",5], ["Ⅵ",6], ["Ⅶ",7], ["Ⅷ",8], ["Ⅸ",9], ["Ⅹ",10], ["ⅩⅬ",40], ["Ⅼ",50], ["ⅩⅭ",90], ["Ⅽ",100], ["ⅭⅮ",400], ["Ⅾ",500], ["ⅭⅯ",900], ["Ⅿ",1000]]),
+    u217x: new Map([["ⅰ",1],["ⅱ",2], ["ⅲ",3], ["ⅳ",4], ["ⅴ",5], ["ⅵ",6], ["ⅶ",7], ["ⅷ"	,8], ["ⅸ",9], ["ⅹ",10], ["ⅹⅼ",40], ["ⅼ",50], ["ⅹⅽ",90], ["ⅽ",100], ["ⅽⅾ",400],	["ⅾ",500], ["ⅽⅿ",900], ["ⅿ",1000]])
+  };
+
+  /**
+   * Increments or decrements a roman numeral. TODO
+   *
+   * @param action
+   * @param roman
+   * @param interval
+   * @param type     the alphabet type ("latin", "u216x", or "u217x")
+   * @returns {string}
+   * @public
+   */
+  function incrementDecrementRoman(action, roman, interval, type) {
+    console.log("incrementDecremenRoman() - action=" + action + ", roman=" + roman + ", interval=" + interval, ", type=" + type);
+    const latinCase = type === "latin" ? /[A-Z]/.test(roman[0]) ? "uppercase" : /[a-z]/.test(roman[0]) ? "lowercase" : "unknown" : undefined;
+    if (latinCase) {
+      roman = roman.toUpperCase();
+    }
+    let arabic = deromanize(roman, alphabets[type]);
+    arabic += action.startsWith("increment") ? interval : -interval;
+    roman = romanize(arabic, new Map(Array.from(alphabets[type]).reverse()));
+    if (latinCase === "lowercase") {
+      roman = roman.toLowerCase();
+    }
+    return roman;
+  }
+
+  /**
+   * Converts a roman numeral to an arabic number. Derived from Ivan -DrSlump- Montes's function in the below blog.
+   *
+   * @param roman    the roman numeral
+   * @param alphabet the roman alphabet to use
+   * @returns {number} the arabic number
+   * @see http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter#comment-16129
+   * @private
+   */
+  function deromanize(roman, alphabet) {
+    let arabic = 0;
+    for (let i = roman.length - 1; i >= 0; i--) {
+      if (i !== roman.length - 1 && alphabet.get(roman[i]) < alphabet.get(roman[i+1])) {
+        arabic -= alphabet.get(roman[i]);
+      } else {
+        arabic += alphabet.get(roman[i]);
+      }
+    }
+    return arabic;
+  }
+
+  /**
+   * Converts an arabic number to a roman numeral. Derived from Ivan -DrSlump- Montes's function in the below blog.
+   *
+   * @param arabic   the arabic number
+   * @param alphabet the roman alphabet to use
+   * @returns {string} the roman numeral
+   * @see http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter#comment-16107
+   * @private
+   */
+  function romanize(arabic, alphabet) {
+    let roman = "";
+    for (let i of alphabet.keys()) {
+      while (arabic >= alphabet.get(i)) {
+        roman += i;
+        arabic -= alphabet.get(i);
+      }
+    }
+    return roman;
+  }
+
+  // Return Public Functions
+  return {
+    incrementDecrementRoman: incrementDecrementRoman
   };
 
 })();

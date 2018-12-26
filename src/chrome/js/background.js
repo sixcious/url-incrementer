@@ -12,11 +12,11 @@ var Background = (() => {
     "permissionsInternalShortcuts": false, "permissionsDownload": false, "permissionsEnhancedMode": false,
     "iconColor": "dark", "iconFeedbackEnabled": false,
     "popupButtonSize": 32, "popupAnimationsEnabled": true,
-    "commandsQuickEnabled": true, "shortcutsEditableDisabled": true,
+    "decodeURIEnabled": true, "commandsQuickEnabled": true, "shortcutsEditableDisabled": true,
     "keyEnabled": true, "keyQuickEnabled": true, "keyIncrement": {"modifiers": 6, "code": "ArrowUp"}, "keyDecrement": {"modifiers": 6, "code": "ArrowDown"}, "keyNext": {"modifiers": 6, "code": "ArrowRight"}, "keyPrev": {"modifiers": 6, "code": "ArrowLeft"}, "keyClear": {"modifiers": 6, "code": "KeyX"}, "keyReturn": {"modifiers": 6, "code": "KeyZ"}, "keyAuto": {"modifiers": 6, "code": "Space"},
     "mouseEnabled": true, "mouseQuickEnabled": true, "mouseClickSpeed": 400, "mouseIncrement": {"button": 3, "clicks": 2}, "mouseDecrement": {"button": 3, "clicks": 3}, "mouseNext": null, "mousePrev": null, "mouseClear": null, "mouseReturn": null, "mouseAuto": null,
     "interval": 1, "leadingZerosPadByDetection": true, "shuffleLimit": 1000, "shuffleStart": false,
-    "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseCustom": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    "base": 10, "baseCase": "lowercase", "baseDateFormat": "", "baseRoman": "latin", "baseCustom": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
     "selectionPriority": "prefixes", "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     "errorSkip": 0, "errorCodes": ["404", "3XX"], "errorCodesCustom": [],
     "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
@@ -124,6 +124,13 @@ var Background = (() => {
    */
   async function buildInstance(tab, items) {
     items = items ? items : await Promisify.getItems();
+    if (items.decodeURIEnabled) {
+      try {
+        tab.url = decodeURI(tab.url);
+      } catch(e) {
+        console.log("buildInstance() - exception decoding URI, e=" + e + ", tab.url=" + (tab ? tab.url : ""));
+      }
+    }
     let via = "items",
         object = items,
         selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
@@ -146,7 +153,7 @@ var Background = (() => {
       "selection": selection.selection, "selectionStart": selection.selectionStart,
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
-      "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseCustom": object.baseCustom,
+      "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseRoman": object.baseRoman, "baseCustom": object.baseCustom,
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustom": object.errorCodesCustom,
       "fetchMethod": "HEAD",
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,

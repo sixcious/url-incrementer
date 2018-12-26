@@ -48,6 +48,8 @@ var Popup = (() => {
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
+      DOM["#base-decimal"].className = this.value === "decimal" ? "display-block fade-in" : "display-none";
+      DOM["#base-roman"].className = this.value === "roman" ? "display-block fade-in" : "display-none";
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
     DOM["#toolkit-tool-crawl-input"].addEventListener("change", changeToolkitTool);
@@ -222,6 +224,11 @@ var Popup = (() => {
     DOM["#base-case-uppercase-input"].checked = instance.baseCase === "uppercase";
     DOM["#base-date"].className = instance.base === "date" ? "display-block" : "display-none";
     DOM["#base-date-format-input"].value = instance.baseDateFormat;
+    DOM["#base-decimal"].className = instance.base === "decimal" ? "display-block" : "display-none";
+    DOM["#base-roman"].className = instance.base === "roman" ? "display-block" : "display-none";
+    DOM["#base-roman-latin-input"].checked = instance.baseRoman === "latin";
+    DOM["#base-roman-u216x-input"].checked = instance.baseRoman === "u216x";
+    DOM["#base-roman-u217x-input"].checked = instance.baseRoman === "u217x";
     DOM["#base-custom"].className = instance.base === "custom" ? "display-block" : "display-none";
     DOM["#base-custom-input"].value = instance.baseCustom;
     DOM["#leading-zeros-input"].checked = instance.leadingZeros;
@@ -321,6 +328,7 @@ var Popup = (() => {
       _.multi[multiCountNew].base = _.base;
       _.multi[multiCountNew].baseCase = _.baseCase;
       _.multi[multiCountNew].baseDateFormat = _.baseDateFormat;
+      _.multi[multiCountNew].baseRoman = _.baseRoman;
       _.multi[multiCountNew].baseCustom = _.baseCustom;
       _.multi[multiCountNew].leadingZeros = _.leadingZeros;
       _.multi[multiCountNew].times = _.multiTimes;
@@ -1048,6 +1056,7 @@ var Popup = (() => {
       _.base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
       _.baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].value;
       _.baseDateFormat = DOM["#base-date-format-input"].value;
+      _.baseRoman = DOM["#base-roman-latin-input"].checked ? DOM["#base-roman-latin-input"].value : DOM["#base-roman-u216x-input"].checked ? DOM["#base-roman-u216x-input"].value : DOM["#base-roman-u217x-input"].value;
       _.baseCustom = DOM["#base-custom-input"].value;
       _.leadingZeros = DOM["#leading-zeros-input"].checked;
       _.errorSkip = +DOM["#error-skip-input"].value;
@@ -1132,7 +1141,7 @@ var Popup = (() => {
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseCustom, _.leadingZeros),
+        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseRoman, _.baseCustom, _.leadingZeros),
         // [1] Interval Errors
         _.interval <= 0 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [2] Error Skip Errors

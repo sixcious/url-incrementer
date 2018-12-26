@@ -93,7 +93,7 @@ var Saves = (() => {
           hash = await Cryptography.hash(url1 + url2, save.salt),
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
-    const matches = hash === save.hash && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseCustom, save.leadingZeros) === "";
+    const matches = hash === save.hash && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseRoman, save.baseCustom, save.leadingZeros) === "";
     return { matches: matches, selection: { selection: selection, selectionStart: save.selectionStart } };
   }
 

@@ -247,9 +247,14 @@ table tbody tr:hover {
   width: 143px;
 }
 
-/* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
-#setup #leading-zeros-pad-label, #setup #base-case {
+/* Smaller font-size to avoid fit on one line without issue */
+#leading-zeros-pad-label, #base-case, #base-date, #base-decimal, #base-roman, #base-custom {
   font-size: 0.88em;
+}
+
+#base-decimal {
+  font-style: italic;
+  margin-top: 8px;
 }
 
 #setup #base-case label:not(:last-child) {
@@ -262,15 +267,15 @@ table tbody tr:hover {
 }
 
 #setup #base-date-format-input, #setup #base-custom-input {
-  width: 128px;
-  height: 1.75em;
-  min-height: 1.75em;
+  width: 134px;
+  height: 2em;
+  min-height: 2em;
   margin-top: 8px;
   margin-left: 12px;
 }
 
 #setup #base-custom-input {
-  width: 118px;
+  width: 124px;
 }
 
 /* Multi */
