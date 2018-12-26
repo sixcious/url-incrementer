@@ -86,9 +86,7 @@ var IncrementDecrement = (() => {
       case "roman":
         const selectionRoman = IncrementDecrementRoman.incrementDecrementRoman("increment", selection, 0, baseRoman);
         console.log("validateSelection() - base=roman, selection=" + selection +", selectionRoman=" + selectionRoman);
-        if (selectionRoman === "SELECTION_TOO_LARGE!") {
-          error = chrome.i18n.getMessage("base_roman_toolarge_error");
-        } else if (selectionRoman !== selection) {
+        if (selectionRoman !== selection) {
           error = chrome.i18n.getMessage("base_roman_invalid_error");
         }
         break;
