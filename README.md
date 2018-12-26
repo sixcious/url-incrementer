@@ -1,7 +1,8 @@
 # URL Incrementer
 
 ![URL Incrementer](assets/img/128-default.png?raw=true "URL Incrementer")
-<br>
+<br><br>
+
 <a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Chrome Web Store Download">
   <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/chrome/ChromeWebStore_Badge_v2_496x150.png" height="48" alt="Chrome Web Store">
 </a>
@@ -10,9 +11,7 @@
   <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_492x128.png" height="48" alt="Firefox Addon">
 </a>
 
-<a href="https://github.com/roysix/url-incrementer/wiki/Help" title="Help Guide" style="font-size: 2rem;">
-  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/question-circle.png" alt="question-circle">Help Guide
-</a>
+
 <br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
@@ -44,6 +43,9 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 5. Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960).
 6. Firefox only: URLI's Popup may not work in Private Windows due to the different way Firefox decided to handle this in respect to Chrome (Bug 1329304).
 7. Firefox only: Firefox 60 (non ESR) Users won't be able to grant Download permissions on the Options page due to a bug in Firefox 60 (Bug 1382953); please update to Firefox 61 or higher.
+
+# Help Guide
+[View the guide](https://github.com/roysix/url-incrementer/wiki/Help) for help. 
 
 # Credits and Special Thanks
 NickMWPrince & Gopi P (AUTO Concept), Coolio Wolfus (Ver 1.x Testing), Eric C (Alphanumeric Idea), URL Flipper (Firefox), FontAwesome (Icons), Hover.css (Animations), @mallendeo (Toggles), Mike West (Dialogs), The Chromium Authors (Styles), ZURB Foundation (Styles / Tables), tinypng.com (Compression), regex101.com (Regex Test), httpstat.us (Error Skipping Test), Stack Overflow Users (Internal Code), ...
