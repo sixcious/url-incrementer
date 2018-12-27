@@ -122,4 +122,5 @@ var Permissions = (() => {
     removeAllPermissions: removeAllPermissions,
     checkDeclarativeContent: checkDeclarativeContent
   };
+
 })();
