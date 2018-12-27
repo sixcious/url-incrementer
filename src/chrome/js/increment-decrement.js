@@ -560,13 +560,16 @@ var IncrementDecrementRoman = (() => {
   };
 
   /**
-   * Increments or decrements a roman numeral. TODO
+   * Increments or decrements a roman numeral (Latin, Unicode U+216x, or Unicode U+217x).
    *
-   * @param action
-   * @param roman
-   * @param interval
+   * Note: The official supported range is between 1-3999; after 4000, we use additional "M"s (e.g. 4000: MMMMM). The
+   * Romans did not have an official method for counting large numbers. A popular option was to use bars over numerals.
+   *
+   * @param action   the action (increment or decrement)
+   * @param roman    the roman numeral string
+   * @param interval the amount to increment or decrement by
    * @param type     the alphabet type ("latin", "u216x", or "u217x")
-   * @returns {string}
+   * @returns {string} the roman numeral after incrementing or decrementing
    * @public
    */
   function incrementDecrementRoman(action, roman, interval, type) {

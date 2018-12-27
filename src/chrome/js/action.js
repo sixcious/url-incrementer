@@ -340,7 +340,6 @@ var Action = (() => {
         }
         break;
       case "tabs":
-        toolkitTabs(0);
         function toolkitTabs(index) {
           if (index < instance.urls.length) {
             chrome.tabs.create({"url": instance.urls[index].urlmod, "active": false}, function() {
@@ -348,6 +347,7 @@ var Action = (() => {
             });
           }
         }
+        toolkitTabs(0);
         break;
     }
     return actionPerformed;

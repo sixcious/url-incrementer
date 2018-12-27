@@ -8,7 +8,7 @@
 </a>
 
 <a href="https://addons.mozilla.org/firefox/addon/url-incrementer" title="Firefox Addon Download">
-  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_448x150.png" height="64" alt="Firefox Addon">
+  <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_492x128.png" height="64" alt="Firefox Addon">
 </a>
 
 
