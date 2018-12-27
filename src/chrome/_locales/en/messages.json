@@ -67,7 +67,6 @@
   "base_case_lowercase_label": { "message": "Lowercase" },
   "base_case_uppercase_label": { "message": "Uppercase" },
   "base_date_format_label": { "message": "Format" },
-  "base_decimal_label": { "message": "In the format of #.#, like 1.5" },
   "base_roman_latin_label": { "message": "Latin VII" },
   "base_roman_u216x_label": { "message": "U216 Ⅷ" },
   "base_roman_u217x_label": { "message": "U217 ⅷ" },

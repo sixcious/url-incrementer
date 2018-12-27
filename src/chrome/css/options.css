@@ -238,8 +238,9 @@ input[type="image"].key-clear {
 
 /* Base */
 
-#base-case {
-  font-size: 0.9em;
+/* Smaller font-size to avoid fit on one line without issue */
+#leading-zeros-pad-label, #base-case, #base-date, #base-decimal, #base-roman, #base-custom {
+  font-size: 0.88em;
 }
 
 #base-case label:not(:last-child) {
@@ -251,16 +252,16 @@ input[type="image"].key-clear {
   display: inline-block;
 }
 
-#base-date-format-input,#base-custom-input {
-  width: 128px;
-  height: 1.75em;
-  min-height: 1.75em;
+#base-date-format-input, #base-custom-input {
+  width: 134px;
+  height: 2em;
+  min-height: 2em;
   margin-top: 8px;
   margin-left: 12px;
 }
 
 #base-custom-input {
-  width: 118px;
+  width: 124px;
 }
 
 /* Error Skip */

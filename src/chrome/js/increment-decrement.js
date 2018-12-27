@@ -325,6 +325,8 @@ var IncrementDecrementMulti = (() => {
       instance.base = instance.multi[part].base;
       instance.baseCase = instance.multi[part].baseCase;
       instance.baseDateFormat = instance.multi[part].baseDateFormat;
+      instance.baseRoman = instance.multi[part].baseRoman;
+      instance.baseCustom = instance.multi[part].baseCustom;
       instance.leadingZeros = instance.multi[part].leadingZeros;
     }
   }

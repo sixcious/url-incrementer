@@ -64,12 +64,13 @@ var Options = (() => {
     DOM["#base-select"].addEventListener("change", function() {
       DOM["#base-case"].className = +this.value > 10 ? "display-block fade-in" : "display-none";
       DOM["#base-date"].className = this.value === "date" ? "display-block fade-in" : "display-none";
+      DOM["#base-roman"].className = this.value === "roman" ? "display-block fade-in" : "display-none";
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
       chrome.storage.local.set({"base": +this.value > 10 ? +this.value : this.value});
     });
-    DOM["#base-case-lowercase-input"].addEventListener("change", function() { chrome.storage.local.set({"baseCase": this.value}); });
-    DOM["#base-case-uppercase-input"].addEventListener("change", function() { chrome.storage.local.set({"baseCase": this.value}); });
+    DOM["#base-case"].addEventListener("change", function() { chrome.storage.local.set({"baseCase": event.target.value}); });
     DOM["#base-date-format-input"].addEventListener("input", function() { saveInput(this, "baseDateFormat", "value"); });
+    DOM["#base-roman"].addEventListener("change", function() { chrome.storage.local.set({"baseRoman": event.target.value}); });
     DOM["#base-custom-input"].addEventListener("input", function() { saveInput(this, "baseCustom", "value"); });
     DOM["#shuffle-limit-input"].addEventListener("change", function () { if (+this.value > 0) { saveInput(this, "shuffleLimit", "number"); } });
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { saveInput(this, "errorSkip", "number"); } });
@@ -219,6 +220,10 @@ var Options = (() => {
       DOM["#base-case-uppercase-input"].checked = items.baseCase === "uppercase";
       DOM["#base-date"].className = items.base === "date" ? "display-block" : "display-none";
       DOM["#base-date-format-input"].value = items.baseDateFormat;
+      DOM["#base-roman"].className = items.base === "roman" ? "display-block" : "display-none";
+      DOM["#base-roman-latin-input"].checked = items.baseRoman === "latin";
+      DOM["#base-roman-u216x-input"].checked = items.baseRoman === "u216x";
+      DOM["#base-roman-u217x-input"].checked = items.baseRoman === "u217x";
       DOM["#base-custom"].className = items.base === "custom" ? "display-block" : "display-none";
       DOM["#base-custom-input"].value = items.baseCustom;
       DOM["#shuffle-limit-input"].value = items.shuffleLimit;
@@ -430,7 +435,7 @@ var Options = (() => {
     saves.push({
       "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
-      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseCustom": items.baseCustom,
+      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom
     });
     chrome.storage.local.set({"saves": saves}, function() {

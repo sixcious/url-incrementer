@@ -215,24 +215,6 @@ table tbody tr:hover {
   padding-top: 7px;
 }
 
-#setup #increment-decrement {
-  margin-bottom: 16px;
-}
-
-#setup #toolkit, #setup #auto, #setup #download {
-  margin-bottom: 24px;
-}
-
-#increment-decrement div.column:not(:last-child), #toolkit div.column:not(:last-child), #auto div.column:not(:last-child), #download div.column:not(:last-child)  {
-  padding-right: 27px;
-}
-
-/* Increment Decrement */
-
-#setup #increment-decrement #increment-decrement-img-mouse-pointer {
-  margin-bottom: 2px;
-}
-
 #setup div.column > label, label.label-display-block {
   display: block;
   margin-bottom: 2px;
@@ -242,8 +224,26 @@ table tbody tr:hover {
   display: inline-block;
 }
 
+#increment-decrement {
+  margin-bottom: 16px;
+}
+
+#toolkit, #auto, #download {
+  margin-bottom: 24px;
+}
+
+#increment-decrement div.column:not(:last-child), #toolkit div.column:not(:last-child), #auto div.column:not(:last-child), #download div.column:not(:last-child)  {
+  padding-right: 27px;
+}
+
+/* Increment Decrement */
+
+#increment-decrement-img-mouse-pointer {
+  margin-bottom: 2px;
+}
+
 /* Firefox: Needs this or else the input width is a little shorter */
-#setup #selection-input {
+#selection-input {
   width: 143px;
 }
 
@@ -252,21 +252,16 @@ table tbody tr:hover {
   font-size: 0.88em;
 }
 
-#base-decimal {
-  font-style: italic;
-  margin-top: 8px;
-}
-
-#setup #base-case label:not(:last-child) {
+#base-case label:not(:last-child) {
   margin-right: 1em;
 }
 
 /* display inline-block to remove whitespace from link */
-#setup #base-date-format-a, #setup #base-custom-a {
+#base-date-format-a, #base-custom-a {
   display: inline-block;
 }
 
-#setup #base-date-format-input, #setup #base-custom-input {
+#base-date-format-input, #base-custom-input {
   width: 134px;
   height: 2em;
   min-height: 2em;
@@ -274,7 +269,7 @@ table tbody tr:hover {
   margin-left: 12px;
 }
 
-#setup #base-custom-input {
+#base-custom-input {
   width: 124px;
 }
 
@@ -464,13 +459,13 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
 /* Setup Buttons */
 
 /* need position relative height auto for position absolute elements auto/download toggles and options button */
-#setup #setup-buttons {
+#setup-buttons {
   text-align: center;
   position: relative;
   height: auto;
 }
 
-#setup #setup-buttons > button:not(:last-child) {
+#setup-buttons > button:not(:last-child) {
   margin-right: 12px;
 }
 
@@ -482,13 +477,13 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
 
 /* Toggles */
 
-#setup #extra-toggles {
+#extra-toggles {
   position: absolute;
   left: 0;
   bottom: 0;
 }
 
-#setup #extra-toggles > div:not(:last-child) {
+#extra-toggles > div:not(:last-child) {
   margin-right: 8px;
 }
 
@@ -508,7 +503,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   color: var(--download-color);
 }
 
-#setup #download-toggle {
+#download-toggle {
   vertical-align: bottom;
 }
 
