@@ -256,10 +256,6 @@ table tbody tr:hover {
   margin-right: 1em;
 }
 
-#base-roman label:not(:last-child) {
-  margin-right: 0.2rem;
-}
-
 /* display inline-block to remove whitespace from link */
 #base-date-format-a, #base-custom-a {
   display: inline-block;
