@@ -215,7 +215,7 @@
           <div class="row">
             <div id="toolkit-tool" class="column">
               <label id="toolkit-tool-label" data-i18n="textContent"></label>
-              <div class="radio">
+              <div id="toolkit-tool-radios" class="radio">
                 <label>
                   <input id="toolkit-tool-crawl-input" type="radio" name="toolkit-tool" value="crawl">
                   <img src="../img/spider.png" alt="" width="14" height="14">
@@ -262,13 +262,30 @@
               <label id="toolkit-seconds-label" for="toolkit-seconds-input" data-i18n="textContent"></label>
               <input id="toolkit-seconds-input" type="number" min="0" max="600">
             </div>
-            <div class="column">
+            <div id="toolkit-urli" class="column">
               <div id="toolkit-urli-button-div" class="icon-button hvr-grow-2x">
                 <img id="toolkit-urli-button-img" src="../img/urli.png" alt="" width="64" height="64">
               </div>
             </div>
           </div>
         </div>
+        <div id="toolkit-query" class="float-right">
+          <div class="checkbox">
+            <label id="toolkit-query-title" class="tooltip-alt" data-i18n="title">
+              <input id="toolkit-query-input" type="checkbox">
+              <span id="toolkit-query-label" data-i18n="textContent"></span>
+              <img src="../img/question-circle.png" alt="" width="16" height="16">
+            </label>
+          </div>
+          <div id="toolkit-selector-attribute">
+            <div>
+              <input id="toolkit-selector-input" type="text" placeholder="#element-id">
+              .
+              <input id="toolkit-attribute-input" type="text" placeholder="textContent">
+            </div>
+          </div>
+        </div>
+        <div class="clear-both"></div>
         <div id="toolkit-table-outer" class="display-none">
           <div id="toolkit-table-div"><div></div></div>
           <button id="toolkit-table-download-button" title="urli-generate-links.html" data-i18n="textContent"></button>
@@ -516,6 +533,10 @@
         <label>
           <input id="crawl-details-input" type="checkbox" value="details" data-type="table-cell" data-selector="crawl-table-details">
           <span id="crawl-details-label" data-i18n="textContent"></span>
+        </label>
+        <label>
+          <input id="crawl-query-input" type="checkbox" value="query" data-type="table-cell" data-selector="crawl-table-query">
+          <span id="crawl-query-label" data-i18n="textContent"></span>
         </label>
         <label>
           <input id="crawl-full-input" type="checkbox">

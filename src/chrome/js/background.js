@@ -24,7 +24,7 @@ var Background = (() => {
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto", "autoStart": false, "autoRepeatStart": false,
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitStart": false,
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitQuery": false, "toolkitSelector": "", "toolkitAttribute": [], "toolkitStart": false,
     "saves": [], "savePreselect": false
   },
 
@@ -162,7 +162,7 @@ var Background = (() => {
       "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoPaused": false, "autoRepeat": false, "autoRepeating": false, "autoRepeatCount": 0, "autoStart": items.autoStart, "autoRepeatStart": items.autoRepeatStart,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,
       "downloadSubfolder": items.downloadSubfolder, "downloadSubfolderIncrement": items.downloadSubfolderIncrement, "downloadIncludes": items.downloadIncludes, "downloadExcludes": items.downloadExcludes, "downloadPreview": items.downloadPreview,  "downloadStart": items.downloadStart,
-      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds, "toolkitStart": items.toolkitStart
+      "toolkitTool": items.toolkitTool, "toolkitAction": items.toolkitAction, "toolkitQuantity": items.toolkitQuantity, "toolkitSeconds": items.toolkitSeconds, "toolkitQuery": items.toolkitQuery, "toolkitSelector": items.toolkitSelector, "toolkitAttribute": items.toolkitAttribute, "toolkitStart": items.toolkitStart
     };
   }
 

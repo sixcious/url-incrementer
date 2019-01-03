@@ -52,7 +52,8 @@ var Popup = (() => {
       DOM["#base-roman"].className = this.value === "roman" ? "display-block fade-in" : "display-none";
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
-    DOM["#toolkit-tool-crawl-input"].addEventListener("change", changeToolkitTool);
+    DOM["#toolkit-tool-radios"].addEventListener("change", function(event) { changeToolkitTool.call(event.target); });
+    DOM["#toolkit-query-input"].addEventListener("change", function() { DOM["#toolkit-selector-attribute"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-tool-tabs-input"].addEventListener("change", changeToolkitTool);
     DOM["#toolkit-tool-links-input"].addEventListener("change", changeToolkitTool);
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
@@ -247,6 +248,11 @@ var Popup = (() => {
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
     DOM["#toolkit-seconds-input"].value = instance.toolkitSeconds;
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
+    DOM["#toolkit-query"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
+    DOM["#toolkit-query-input"].checked = instance.toolkitQuery;
+    DOM["#toolkit-selector-attribute"].className = DOM["#toolkit-query-input"].checked ? "display-block fade-in" : "display-none";
+    DOM["#toolkit-selector-input"].value = instance.toolkitSelector;
+    DOM["#toolkit-attribute-input"].value = instance.toolkitAttribute ? instance.toolkitAttribute.join(".") : "";
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled || (instance.autoStart && !instance.enabled);
     DOM["#auto"].className = instance.autoEnabled || (instance.autoStart && !instance.enabled) ? "display-block" : "display-none";
@@ -378,6 +384,11 @@ var Popup = (() => {
         th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;";
         th3.textContent = chrome.i18n.getMessage("crawl_details_label");
         tr.appendChild(th3);
+        const th4 = document.createElement("th");
+        th4.className = "crawl-table-query";
+        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;";
+        th4.textContent = chrome.i18n.getMessage("crawl_query_label");
+        tr.appendChild(th4);
       }
       // tbody
       const tbody = document.createElement("tbody");
@@ -415,6 +426,11 @@ var Popup = (() => {
           td3.className = "crawl-table-details";
           td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;";
           tr.appendChild(td3);
+          const td4 = document.createElement("td");
+          td4.id = id + "-td-query-" + (count - 2);
+          td4.className = "crawl-table-query";
+          td4.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;";
+          tr.appendChild(td4);
         }
       }
       DOM["#" + id] = table;
@@ -445,6 +461,9 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
+      if (toolkitInstance.toolkitTool === "crawl" && toolkitInstance.toolkitQuery) {
+        toolkitInstance.fetchMethod = "GET";
+      }
       if (toolkitInstance.toolkitTool === "links") {
         buildToolkitURLsTable(toolkitInstance.urls, false);
       }
@@ -454,18 +473,23 @@ var Popup = (() => {
         "toolkitTool": _.toolkitTool,
         "toolkitAction": _.toolkitAction,
         "toolkitQuantity": _.toolkitQuantity,
-        "toolkitSeconds": _.toolkitSeconds
+        "toolkitSeconds": _.toolkitSeconds,
+        "toolkitQuery": _.toolkitQuery,
+        "toolkitSelector": _.toolkitSelector,
+        "toolkitAttribute": _.toolkitAttribute
       });
     }
   }
 
   /**
-   * Called when the toolkit tool radios are changed. Only shows the toolkit seconds when the tool is crawl.
+   * Called when the toolkit tool radios are changed. Seconds and Query fields are only displayed when the relevant
+   * tool is selected.
    *
    * @private
    */
   function changeToolkitTool() {
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
+    DOM["#toolkit-query"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
   }
 
   /**
@@ -540,20 +564,35 @@ var Popup = (() => {
           tr = document.getElementById("crawl-table-tr-" + id),
           td1 = document.getElementById("crawl-table-td-response-" + id),
           td2 = document.getElementById("crawl-table-td-code-" + id),
-          td3 = document.getElementById("crawl-table-td-details-" + id);
+          td3 = document.getElementById("crawl-table-td-details-" + id),
+          td4 = document.getElementById("crawl-table-td-query-" + id);
     let res,
         status,
         details,
+        query,
         redirected,
         url;
     td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-    fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" }).then(response => {
+    fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" }).then(async response => {
       status = response.status;
       redirected = response.redirected;
       res = redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : status >= 400 && status <= 599 ? "error" : "other";
       details = response.statusText;
       url = response.url;
+      if (instance.toolkitQuery) {
+        try {
+          const text = await response.text();
+          const document_ = new DOMParser().parseFromString(text, "text/html");
+          const element = document_.querySelector(instance.toolkitSelector);
+          query = element[instance.toolkitAttribute[0]];
+          for (let i = 1; i < instance.toolkitAttribute.length; i++) {
+            query = value[instance.toolkitAttribute[i]];
+          }
+        } catch(e) {
+          query = e;
+        }
+      }
     }).catch(e => {
       status = e && e.name ? e.name : "";
       res = "exception";
@@ -566,7 +605,7 @@ var Popup = (() => {
         crawlURLs();
       } else {
         tr.className = "crawl-table-" + res;
-        td1.style.color = td2.style.color = td3.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#000000";
+        td1.style.color = td2.style.color = td3.style.color = td4.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#004687";
         td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
         td2.textContent = status;
         if (redirected) {
@@ -578,6 +617,9 @@ var Popup = (() => {
           td3.appendChild(a);
         } else {
           td3.textContent = details;
+        }
+        if (instance.toolkitQuery) {
+          td4.textContent = query;
         }
         instance.toolkitQuantityRemaining--;
         setTimeout(function() { crawlURLs(); }, instance.toolkitSeconds * 1000);
@@ -1086,7 +1128,10 @@ var Popup = (() => {
       _.toolkitTool = DOM["#toolkit-tool-crawl-input"].checked ? DOM["#toolkit-tool-crawl-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value :  DOM["#toolkit-tool-tabs-input"].checked ? DOM["#toolkit-tool-tabs-input"].value : DOM["#toolkit-tool-links-input"].checked ? DOM["#toolkit-tool-links-input"].value : undefined;
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
       _.toolkitQuantity = _.toolkitQuantityRemaining = +DOM["#toolkit-quantity-input"].value;
-      _.toolkitSeconds = +DOM["#toolkit-seconds-input"].value
+      _.toolkitSeconds = +DOM["#toolkit-seconds-input"].value;
+      _.toolkitQuery = DOM["#toolkit-query-input"].checked;
+      _.toolkitSelector = DOM["#toolkit-selector-input"].value;
+      _.toolkitAttribute = DOM["#toolkit-attribute-input"].value ? DOM["#toolkit-attribute-input"].value.split(".").filter(Boolean) : [];
     }
     if (caller === "accept") {
       // Auto:

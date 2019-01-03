@@ -300,12 +300,28 @@ table tbody tr:hover {
 
 #toolkit-urli-button-div {
   vertical-align: top;
-  margin-top: 8px;
+/*  margin-top: 8px;*/
 }
 
 #toolkit-urli-button-img {
   transform: scaleX(-1);
   cursor: pointer;
+}
+
+#toolkit-query {
+  margin-top: -30px;
+}
+
+#toolkit-selector-attribute {
+  margin-top: 8px;
+}
+
+#toolkit-selector-input {
+  width: 160px;
+}
+
+#toolkit-attribute-input {
+  width: 96px;
 }
 
 #toolkit-table-outer, #toolkit-table-div, #crawl-table-outer, #crawl-table-div, #crawl-percentage-eta-checkboxes {
@@ -560,7 +576,7 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
 }
 
 #crawl-other-label {
-  color: var(--error-skip-color);
+  color: var(--increment-decrement-color);
 }
 
 #crawl-exception-label {
