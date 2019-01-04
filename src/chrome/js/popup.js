@@ -60,6 +60,14 @@ var Popup = (() => {
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
+    DOM["#crawl-urli-img"].addEventListener("click", function() {
+      const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(︶︹︺)", "◉_◉", "(+__X)"],
+        face = " " + faces[Math.floor(Math.random() * faces.length)],
+        value = +this.dataset.value + 1;
+      this.dataset.value = value + "";
+      UI.clickHoverCss(this, "hvr-buzz-out-click");
+      UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("tickles_click") + face]);
+    });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "autoStart": this.checked }); });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -90,6 +98,20 @@ var Popup = (() => {
       button.style.width = button.style.height = items.popupButtonSize + "px";
       button.addEventListener("click", clickActionButton);
     }
+
+    DOM["#crawl-url-input"].checked = items.toolkitCrawlCheckboxes.includes("url");
+    DOM["#crawl-response-input"].checked = items.toolkitCrawlCheckboxes.includes("response");
+    DOM["#crawl-code-input"].checked = items.toolkitCrawlCheckboxes.includes("code");
+    DOM["#crawl-details-input"].checked = items.toolkitCrawlCheckboxes.includes("details");
+    DOM["#crawl-query-input"].checked = items.toolkitCrawlCheckboxes.includes("query");
+    DOM["#crawl-full-input"].checked = items.toolkitCrawlCheckboxes.includes("full");
+    DOM["#crawl-info-input"].checked = items.toolkitCrawlCheckboxes.includes("info");
+    DOM["#crawl-ok-input"].checked = items.toolkitCrawlCheckboxes.includes("ok");
+    DOM["#crawl-error-input"].checked = items.toolkitCrawlCheckboxes.includes("error");
+    DOM["#crawl-redirected-input"].checked = items.toolkitCrawlCheckboxes.includes("redirected");
+    DOM["#crawl-other-input"].checked = items.toolkitCrawlCheckboxes.includes("other");
+    DOM["#crawl-exception-input"].checked = items.toolkitCrawlCheckboxes.includes("exception");
+
     // Download icon (cloud-download.png) is an irregular shape and needs adjustment
     DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px";
     updateSetup();
@@ -355,7 +377,7 @@ var Popup = (() => {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       const table = document.createElement("table");
       table.id = id;
-      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;'";
+      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;" + crawl ? "max-width: none;" + items.toolkitCrawlCheckboxes.includes("full") ? "max-height: none;" : "" : "";
       // thead
       const thead = document.createElement("thead");
       thead.style = "background: #f8f8f8; color: #0a0a0a;";
@@ -365,28 +387,28 @@ var Popup = (() => {
       thead.appendChild(tr);
       const th = document.createElement("th");
       th.className = "crawl-table-url";
-      th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;";
+      th.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem;" + (crawl && items.toolkitCrawlCheckboxes.includes("url") ? "" : " display: none;");
       th.textContent = chrome.i18n.getMessage("url_label");
       tr.appendChild(th);
       if (crawl) {
         const th1 = document.createElement("th");
         th1.className = "crawl-table-response";
-        th1.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
+        th1.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("response") ? "" : " display: none;");
         th1.textContent = chrome.i18n.getMessage("crawl_response_label");
         tr.appendChild(th1);
         const th2 = document.createElement("th");
         th2.className = "crawl-table-code";
-        th2.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;";
+        th2.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("code") ? "" : " display: none;");
         th2.textContent = chrome.i18n.getMessage("crawl_code_label");
         tr.appendChild(th2);
         const th3 = document.createElement("th");
         th3.className = "crawl-table-details";
-        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;";
+        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
         th3.textContent = chrome.i18n.getMessage("crawl_details_label");
         tr.appendChild(th3);
         const th4 = document.createElement("th");
         th4.className = "crawl-table-query";
-        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;";
+        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
         th4.textContent = chrome.i18n.getMessage("crawl_query_label");
         tr.appendChild(th4);
       }
@@ -524,6 +546,20 @@ var Popup = (() => {
       const style = checkbox.checked ? checkbox.dataset.type : "none";
       document.querySelectorAll("." + checkbox.dataset.selector).forEach(el => el.style.display = style);
     }
+    chrome.storage.local.set({"toolkitCrawlCheckboxes":
+      [DOM["#crawl-url-input"].checked ? DOM["#crawl-url-input"].value : "",
+       DOM["#crawl-response-input"].checked ? DOM["#crawl-response-input"].value : "",
+       DOM["#crawl-code-input"].checked ? DOM["#crawl-code-input"].value : "",
+       DOM["#crawl-details-input"].checked ? DOM["#crawl-details-input"].value : "",
+       DOM["#crawl-query-input"].checked ? DOM["#crawl-query-input"].value : "",
+       DOM["#crawl-full-input"].checked ? DOM["#crawl-full-input"].value : "",
+       DOM["#crawl-info-input"].checked ? DOM["#crawl-info-input"].value : "",
+       DOM["#crawl-ok-input"].checked ? DOM["#crawl-ok-input"].value : "",
+       DOM["#crawl-error-input"].checked ? DOM["#crawl-error-input"].value : "",
+       DOM["#crawl-redirected-input"].checked ? DOM["#crawl-redirected-input"].value : "",
+       DOM["#crawl-other-input"].checked ? DOM["#crawl-other-input"].value : "",
+       DOM["#crawl-exception-input"].checked ? DOM["#crawl-exception-input"].value : ""].filter(Boolean)
+    });
   }
 
   /**
@@ -569,7 +605,7 @@ var Popup = (() => {
     let res,
         status,
         details,
-        query,
+        scrape,
         redirected,
         url;
     td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
@@ -585,12 +621,12 @@ var Popup = (() => {
           const text = await response.text();
           const document_ = new DOMParser().parseFromString(text, "text/html");
           const element = document_.querySelector(instance.toolkitSelector);
-          query = element[instance.toolkitAttribute[0]];
+          scrape = element[instance.toolkitAttribute[0]];
           for (let i = 1; i < instance.toolkitAttribute.length; i++) {
-            query = value[instance.toolkitAttribute[i]];
+            scrape = scrape[instance.toolkitAttribute[i]];
           }
         } catch(e) {
-          query = e;
+          scrape = e;
         }
       }
     }).catch(e => {
@@ -619,7 +655,7 @@ var Popup = (() => {
           td3.textContent = details;
         }
         if (instance.toolkitQuery) {
-          td4.textContent = query;
+          td4.textContent = scrape;
         }
         instance.toolkitQuantityRemaining--;
         setTimeout(function() { crawlURLs(); }, instance.toolkitSeconds * 1000);

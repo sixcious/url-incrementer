@@ -477,7 +477,7 @@ var IncrementDecrementDate = (() => {
   }
 
   /**
-   * Increments or decrements a date by the "lowest" part in the date format (e.g. yyy/mm/dd would be day, dd).
+   * Increments or decrements a date by the "lowest" part in the date format (e.g. yyyy/mm/dd would be dd, day).
    *
    * @param action     the action (increment or decrement)
    * @param date       the date representation of the date selection string

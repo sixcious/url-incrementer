@@ -583,22 +583,23 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   color: var(--saved-urls-color);
 }
 
-#crawl-table {
+/*#crawl-table {
   max-width: none;
+}*/
+
+#crawl-urli-tip {
+  margin: 1em 0;
+}
+
+#crawl-urli-img {
+  cursor: pointer;
+  vertical-align: top;
 }
 
 /* Keep crawl tip looking like a paragraph when window is expanded or crawl table is full size */
 #crawl-tip {
   font-style: italic;
   max-width: 500px;
-}
-
-#crawl-urli-button-img {
-  vertical-align: top;
-}
-
-#crawl-urli-tip {
-  margin: 1em 0;
 }
 
 /* Messages */

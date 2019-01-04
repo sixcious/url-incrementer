@@ -24,7 +24,7 @@ var Background = (() => {
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto", "autoStart": false, "autoRepeatStart": false,
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
-    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitQuery": false, "toolkitSelector": "", "toolkitAttribute": [], "toolkitStart": false,
+    "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitQuery": false, "toolkitSelector": "", "toolkitAttribute": [], "toolkitCrawlCheckboxes": ["url", "response", "code", "info", "ok", "error", "redirected", "other", "exception"], "toolkitStart": false,
     "saves": [], "savePreselect": false
   },
 

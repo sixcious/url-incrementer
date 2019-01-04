@@ -11,7 +11,6 @@
   <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/img/firefox/FirefoxAddon_Badge_v2_492x128.png" height="64" alt="Firefox Addon">
 </a>
 
-
 <br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/svg/urli.svg?sanitize=true" width="196" height="196" align="right" title="URLI">
 
