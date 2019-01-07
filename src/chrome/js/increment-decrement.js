@@ -33,7 +33,7 @@ var IncrementDecrement = (() => {
         const terms = /(?:(p|id|next)=\d+)(?!.*(p|id|next)=\d+)/i.exec(url);
         if (terms) { return {selection: terms[0].substring(terms[1].length + 1), selectionStart: terms.index + terms[1].length + 1}; }
         // =|/ TODO: Don't capture the = or / so substring(1) is no longer needed
-        const prefixes = /(?:[=\/]\d+)(?!.*[=\/]\d+)/.exec(url);
+        const prefixes = /(?:[=\/-]\d+)(?!.*[=\/-]\d+)/.exec(url);
         if (prefixes) { return {selection: prefixes[0].substring(1), selectionStart: prefixes.index + 1}; }
       }
       if (preference === "lastnumber" || preference === "prefixes" || preference === "custom") {
