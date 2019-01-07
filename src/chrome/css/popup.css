@@ -310,6 +310,7 @@ table tbody tr:hover {
 
 #toolkit-query {
   margin-top: -30px;
+  text-align: right;
 }
 
 #toolkit-selector-attribute {

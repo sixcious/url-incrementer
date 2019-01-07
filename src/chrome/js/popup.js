@@ -377,7 +377,7 @@ var Popup = (() => {
       // Table must have similar inline styling from popup.css for the download blob's HTML file:
       const table = document.createElement("table");
       table.id = id;
-      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;" + crawl ? "max-width: none;" + items.toolkitCrawlCheckboxes.includes("full") ? "max-height: none;" : "" : "";
+      table.style = "font-family: \"Segoe UI\", Tahoma, sans-serif; font-size: 12px; border-collapse: collapse; border-radius: 0;" + (crawl && items.toolkitCrawlCheckboxes.includes("full") ? " max-width: none; max-height: none;" : "");
       // thead
       const thead = document.createElement("thead");
       thead.style = "background: #f8f8f8; color: #0a0a0a;";
@@ -425,7 +425,7 @@ var Popup = (() => {
         tbody.appendChild(tr);
         const td = document.createElement("td");
         td.className = "crawl-table-url";
-        td.style = "padding: 0.25rem 0.312rem 0.312rem";
+        td.style = "padding: 0.25rem 0.312rem 0.312rem;" + (crawl && items.toolkitCrawlCheckboxes.includes("url") ? "" : " display: none;");
         tr.appendChild(td);
         const a = document.createElement("a");
         a.href = url.urlmod;
@@ -436,22 +436,22 @@ var Popup = (() => {
           const td1 = document.createElement("td");
           td1.id = id + "-td-response-" + (count - 2);
           td1.className = "crawl-table-response";
-          td1.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
+          td1.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;" + (crawl && items.toolkitCrawlCheckboxes.includes("response") ? "" : " display: none;");
           tr.appendChild(td1);
           const td2 = document.createElement("td");
           td2.id = id + "-td-code-" + (count - 2);
           td2.className = "crawl-table-code";
-          td2.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;";
+          td2.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;" + (crawl && items.toolkitCrawlCheckboxes.includes("code") ? "" : " display: none;");
           tr.appendChild(td2);
           const td3 = document.createElement("td");
           td3.id = id + "-td-details-" + (count - 2);
           td3.className = "crawl-table-details";
-          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;";
+          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
           tr.appendChild(td3);
           const td4 = document.createElement("td");
           td4.id = id + "-td-query-" + (count - 2);
           td4.className = "crawl-table-query";
-          td4.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;";
+          td4.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
           tr.appendChild(td4);
         }
       }
@@ -641,6 +641,7 @@ var Popup = (() => {
         crawlURLs();
       } else {
         tr.className = "crawl-table-" + res;
+        tr.style.display = DOM["#crawl-" + res + "-input"] && !DOM["#crawl-" + res + "-input"].checked ? "none" : "";
         td1.style.color = td2.style.color = td3.style.color = td4.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#004687";
         td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
         td2.textContent = status;
