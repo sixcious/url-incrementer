@@ -53,7 +53,7 @@ var Popup = (() => {
       DOM["#base-custom"].className = this.value === "custom" ? "display-block fade-in" : "display-none";
     });
     DOM["#toolkit-tool-radios"].addEventListener("change", function(event) { changeToolkitTool.call(event.target); });
-    DOM["#toolkit-query-input"].addEventListener("change", function() { DOM["#toolkit-selector-attribute"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#toolkit-scrape-input"].addEventListener("change", function() { DOM["#scrape"].className = this.checked ? "display-block fade-in" : "display-none"; });
     DOM["#toolkit-tool-tabs-input"].addEventListener("change", changeToolkitTool);
     DOM["#toolkit-tool-links-input"].addEventListener("change", changeToolkitTool);
     DOM["#toolkit-urli-button-img"].addEventListener("click", toolkit);
@@ -103,7 +103,7 @@ var Popup = (() => {
     DOM["#crawl-response-input"].checked = items.toolkitCrawlCheckboxes.includes("response");
     DOM["#crawl-code-input"].checked = items.toolkitCrawlCheckboxes.includes("code");
     DOM["#crawl-details-input"].checked = items.toolkitCrawlCheckboxes.includes("details");
-    DOM["#crawl-query-input"].checked = items.toolkitCrawlCheckboxes.includes("query");
+    DOM["#crawl-scrape-input"].checked = items.toolkitCrawlCheckboxes.includes("scrape");
     DOM["#crawl-full-input"].checked = items.toolkitCrawlCheckboxes.includes("full");
     DOM["#crawl-info-input"].checked = items.toolkitCrawlCheckboxes.includes("info");
     DOM["#crawl-ok-input"].checked = items.toolkitCrawlCheckboxes.includes("ok");
@@ -270,11 +270,12 @@ var Popup = (() => {
     DOM["#toolkit-quantity-input"].value = instance.toolkitQuantity;
     DOM["#toolkit-seconds-input"].value = instance.toolkitSeconds;
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
-    DOM["#toolkit-query"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
-    DOM["#toolkit-query-input"].checked = instance.toolkitQuery;
-    DOM["#toolkit-selector-attribute"].className = DOM["#toolkit-query-input"].checked ? "display-block fade-in" : "display-none";
-    DOM["#toolkit-selector-input"].value = instance.toolkitSelector;
-    DOM["#toolkit-attribute-input"].value = instance.toolkitAttribute ? instance.toolkitAttribute.join(".") : "";
+    DOM["#toolkit-scrape"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
+    DOM["#toolkit-scrape-input"].checked = instance.toolkitScrape;
+    DOM["#scrape"].className = DOM["#toolkit-tool-crawl-input"].checked && DOM["#toolkit-scrape-input"].checked ? "display-block fade-in" : "display-none";
+    DOM["#scrape-method-select"].value = instance.scrapeMethod;
+    DOM["#scrape-selector-input"].value = instance.scrapeSelector;
+    DOM["#scrape-property-input"].value = instance.scrapeProperty ? instance.scrapeProperty.join(".") : "";
     // Auto Setup:
     DOM["#auto-toggle-input"].checked = instance.autoEnabled || (instance.autoStart && !instance.enabled);
     DOM["#auto"].className = instance.autoEnabled || (instance.autoStart && !instance.enabled) ? "display-block" : "display-none";
@@ -403,13 +404,13 @@ var Popup = (() => {
         tr.appendChild(th2);
         const th3 = document.createElement("th");
         th3.className = "crawl-table-details";
-        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
+        th3.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
         th3.textContent = chrome.i18n.getMessage("crawl_details_label");
         tr.appendChild(th3);
         const th4 = document.createElement("th");
-        th4.className = "crawl-table-query";
-        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
-        th4.textContent = chrome.i18n.getMessage("crawl_query_label");
+        th4.className = "crawl-table-scrape";
+        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
+        th4.textContent = chrome.i18n.getMessage("crawl_scrape_label");
         tr.appendChild(th4);
       }
       // tbody
@@ -446,12 +447,12 @@ var Popup = (() => {
           const td3 = document.createElement("td");
           td3.id = id + "-td-details-" + (count - 2);
           td3.className = "crawl-table-details";
-          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
+          td3.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;" + (crawl && items.toolkitCrawlCheckboxes.includes("details") ? "" : " display: none;");
           tr.appendChild(td3);
           const td4 = document.createElement("td");
-          td4.id = id + "-td-query-" + (count - 2);
-          td4.className = "crawl-table-query";
-          td4.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold; display: none;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
+          td4.id = id + "-td-scrape-" + (count - 2);
+          td4.className = "crawl-table-scrape";
+          td4.style = "padding: 0.25rem 0.312rem 0.312rem; font-weight: bold;" + (crawl && items.toolkitCrawlCheckboxes.includes("scrape") ? "" : " display: none;");
           tr.appendChild(td4);
         }
       }
@@ -483,7 +484,7 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(toolkitInstance);
       toolkitInstance.urls = precalculateProps.urls;
       toolkitInstance.urlsCurrentIndex = precalculateProps.currentIndex;
-      if (toolkitInstance.toolkitTool === "crawl" && toolkitInstance.toolkitQuery) {
+      if (toolkitInstance.toolkitTool === "crawl" && toolkitInstance.toolkitScrape) {
         toolkitInstance.fetchMethod = "GET";
       }
       if (toolkitInstance.toolkitTool === "links") {
@@ -496,22 +497,24 @@ var Popup = (() => {
         "toolkitAction": _.toolkitAction,
         "toolkitQuantity": _.toolkitQuantity,
         "toolkitSeconds": _.toolkitSeconds,
-        "toolkitQuery": _.toolkitQuery,
-        "toolkitSelector": _.toolkitSelector,
-        "toolkitAttribute": _.toolkitAttribute
+        "toolkitScrape": _.toolkitScrape,
+        "scrapeMethod": _.scrapeMethod,
+        "scrapeSelector": _.scrapeSelector,
+        "scrapeProperty": _.scrapeProperty
       });
     }
   }
 
   /**
-   * Called when the toolkit tool radios are changed. Seconds and Query fields are only displayed when the relevant
+   * Called when the toolkit tool radios are changed. Seconds and Scrape inputs are only displayed when the relevant
    * tool is selected.
    *
    * @private
    */
   function changeToolkitTool() {
     DOM["#toolkit-seconds"].style.visibility = DOM["#toolkit-tool-links-input"].checked ? "hidden" : "";
-    DOM["#toolkit-query"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
+    DOM["#toolkit-scrape"].style.display = DOM["#toolkit-tool-crawl-input"].checked ? "block" : "none";
+    DOM["#scrape"].className = DOM["#toolkit-tool-crawl-input"].checked && DOM["#toolkit-scrape-input"].checked ? "display-block" : "display-none";
   }
 
   /**
@@ -551,7 +554,7 @@ var Popup = (() => {
        DOM["#crawl-response-input"].checked ? DOM["#crawl-response-input"].value : "",
        DOM["#crawl-code-input"].checked ? DOM["#crawl-code-input"].value : "",
        DOM["#crawl-details-input"].checked ? DOM["#crawl-details-input"].value : "",
-       DOM["#crawl-query-input"].checked ? DOM["#crawl-query-input"].value : "",
+       DOM["#crawl-scrape-input"].checked ? DOM["#crawl-scrape-input"].value : "",
        DOM["#crawl-full-input"].checked ? DOM["#crawl-full-input"].value : "",
        DOM["#crawl-info-input"].checked ? DOM["#crawl-info-input"].value : "",
        DOM["#crawl-ok-input"].checked ? DOM["#crawl-ok-input"].value : "",
@@ -601,7 +604,7 @@ var Popup = (() => {
           td1 = document.getElementById("crawl-table-td-response-" + id),
           td2 = document.getElementById("crawl-table-td-code-" + id),
           td3 = document.getElementById("crawl-table-td-details-" + id),
-          td4 = document.getElementById("crawl-table-td-query-" + id);
+          td4 = document.getElementById("crawl-table-td-scrape-" + id);
     let res,
         status,
         details,
@@ -616,14 +619,14 @@ var Popup = (() => {
       res = redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : status >= 400 && status <= 599 ? "error" : "other";
       details = response.statusText;
       url = response.url;
-      if (instance.toolkitQuery) {
+      if (instance.toolkitScrape) {
         try {
           const text = await response.text();
           const document_ = new DOMParser().parseFromString(text, "text/html");
-          const element = document_.querySelector(instance.toolkitSelector);
-          scrape = element[instance.toolkitAttribute[0]];
-          for (let i = 1; i < instance.toolkitAttribute.length; i++) {
-            scrape = scrape[instance.toolkitAttribute[i]];
+          const object = instance.scrapeMethod === "selector-all" ? document_.querySelectorAll(instance.scrapeSelector) : document_.querySelector(instance.scrapeSelector);
+          scrape = object[instance.scrapeProperty[0]];
+          for (let i = 1; i < instance.scrapeProperty.length; i++) {
+            scrape = scrape[instance.scrapeProperty[i]];
           }
         } catch(e) {
           scrape = e;
@@ -655,7 +658,7 @@ var Popup = (() => {
         } else {
           td3.textContent = details;
         }
-        if (instance.toolkitQuery) {
+        if (instance.toolkitScrape) {
           td4.textContent = scrape;
         }
         instance.toolkitQuantityRemaining--;
@@ -1166,9 +1169,10 @@ var Popup = (() => {
       _.toolkitAction = DOM["#toolkit-action-increment-input"].checked ? DOM["#toolkit-action-increment-input"].value : DOM["#toolkit-action-decrement-input"].checked ? DOM["#toolkit-action-decrement-input"].value : undefined;
       _.toolkitQuantity = _.toolkitQuantityRemaining = +DOM["#toolkit-quantity-input"].value;
       _.toolkitSeconds = +DOM["#toolkit-seconds-input"].value;
-      _.toolkitQuery = DOM["#toolkit-query-input"].checked;
-      _.toolkitSelector = DOM["#toolkit-selector-input"].value;
-      _.toolkitAttribute = DOM["#toolkit-attribute-input"].value ? DOM["#toolkit-attribute-input"].value.split(".").filter(Boolean) : [];
+      _.toolkitScrape = DOM["#toolkit-scrape-input"].checked;
+      _.scrapeMethod = DOM["#scrape-method-select"].value;
+      _.scrapeSelector = DOM["#scrape-selector-input"].value;
+      _.scrapeProperty = DOM["#scrape-property-input"].value ? DOM["#scrape-property-input"].value.split(".").filter(Boolean) : [];
     }
     if (caller === "accept") {
       // Auto:

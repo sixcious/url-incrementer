@@ -192,11 +192,6 @@ table tbody tr:hover {
 
 #setup input[type="number"] {
   width: 52px;
-  display: block;
-}
-
-#setup select {
-  display: block;
 }
 
 #setup textarea {
@@ -300,7 +295,6 @@ table tbody tr:hover {
 
 #toolkit-urli-button-div {
   vertical-align: top;
-/*  margin-top: 8px;*/
 }
 
 #toolkit-urli-button-img {
@@ -308,21 +302,9 @@ table tbody tr:hover {
   cursor: pointer;
 }
 
-#toolkit-query {
+#toolkit-scrape {
   margin-top: -30px;
   text-align: right;
-}
-
-#toolkit-selector-attribute {
-  margin-top: 8px;
-}
-
-#toolkit-selector-input {
-  width: 160px;
-}
-
-#toolkit-attribute-input {
-  width: 96px;
 }
 
 #toolkit-table-outer, #toolkit-table-div, #crawl-table-outer, #crawl-table-div, #crawl-percentage-eta-checkboxes {
@@ -331,6 +313,27 @@ table tbody tr:hover {
 
 #toolkit-table-download-button, #crawl-table-download-button {
   cursor: pointer;
+}
+
+/* Scrape */
+
+#scrape {
+  margin-top: 8px;
+}
+
+#scrape-h3 {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 110%;
+  display: block;
+}
+
+#scrape-selector-input {
+  width: 160px;
+}
+
+#scrape-property-input {
+  width: 96px;
 }
 
 /* Auto */

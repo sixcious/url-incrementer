@@ -269,20 +269,36 @@
             </div>
           </div>
         </div>
-        <div id="toolkit-query">
+        <div id="toolkit-scrape">
           <div class="checkbox">
-            <label id="toolkit-query-title" class="tooltip-alt" data-i18n="title">
-              <input id="toolkit-query-input" type="checkbox">
-              <span id="toolkit-query-label" data-i18n="textContent"></span>
+            <label id="toolkit-scrape-title" class="tooltip-alt" data-i18n="title">
+              <input id="toolkit-scrape-input" type="checkbox">
+              <span id="toolkit-scrape-label" data-i18n="textContent"></span>
               <img src="../img/question-circle.png" alt="" width="16" height="16">
             </label>
           </div>
         </div>
-        <div id="toolkit-selector-attribute">
-          <div>
-            <input id="toolkit-selector-input" type="text" placeholder="#element-id">
-            .
-            <input id="toolkit-attribute-input" type="text" placeholder="textContent">
+        <div id="scrape">
+          <h3 id="scrape-h3" data-i18n="textContent"></h3>
+          <div id="scrape-instructions" data-i18n="textContent"></div>
+          <div id="scrape-table" class="table">
+            <div class="row">
+              <div class="column">
+                <label id="scrape-method-label" for="scrape-method-select" data-i18n="textContent"></label>
+                <select id="scrape-method-select">
+                  <option id="scrape-method-option-selector" value="selector">document.querySelector</option>
+                  <option id="scrape-method-option-selector-all" value="selector-all">document.querySelectorAll</option>
+                </select>
+              </div>
+              <div class="column">
+                <label id="scrape-selector-label" for="scrape-selector-input" data-i18n="textContent"></label>
+                <span>("&nbsp;</span><input id="scrape-selector-input" type="text" placeholder="e.g. title" spellcheck="false"><span>&nbsp;").</span>
+              </div>
+              <div class="column">
+                <label id="scrape-property-label" for="scrape-property-input" data-i18n="textContent"></label>
+                <input id="scrape-property-input" type="text" placeholder="e.g. textContent" spellcheck="false">
+              </div>
+            </div>
           </div>
         </div>
         <div id="toolkit-table-outer" class="display-none">
@@ -534,8 +550,8 @@
           <span id="crawl-details-label" data-i18n="textContent"></span>
         </label>
         <label>
-          <input id="crawl-query-input" type="checkbox" value="query" data-type="table-cell" data-selector="crawl-table-query">
-          <span id="crawl-query-label" data-i18n="textContent"></span>
+          <input id="crawl-scrape-input" type="checkbox" value="scrape" data-type="table-cell" data-selector="crawl-table-scrape">
+          <span id="crawl-scrape-label" data-i18n="textContent"></span>
         </label>
         <label>
           <input id="crawl-full-input" type="checkbox" value="full">
