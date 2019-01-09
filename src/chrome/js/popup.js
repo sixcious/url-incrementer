@@ -409,7 +409,7 @@ var Popup = (() => {
         tr.appendChild(th3);
         const th4 = document.createElement("th");
         th4.className = "crawl-table-scrape";
-        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("query") ? "" : " display: none;");
+        th4.style = "font-weight: bold; text-align: left; padding: 0.25rem 0.312rem 0.312rem; min-width: 64px;" + (crawl && items.toolkitCrawlCheckboxes.includes("scrape") ? "" : " display: none;");
         th4.textContent = chrome.i18n.getMessage("crawl_scrape_label");
         tr.appendChild(th4);
       }
