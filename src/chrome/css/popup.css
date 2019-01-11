@@ -317,7 +317,7 @@ table tbody tr:hover {
 
 /* Scrape */
 
-#scrape, #scrape-example {
+#scrape, #scrape-instructions, #scrape-example {
   margin-top: 8px;
 }
 
@@ -325,7 +325,11 @@ table tbody tr:hover {
   font-weight: bold;
   font-style: italic;
   font-size: 110%;
-  display: block;
+  display: inline;
+}
+
+#scrape-instructions {
+  font-style: italic;
 }
 
 #scrape-selector-input {

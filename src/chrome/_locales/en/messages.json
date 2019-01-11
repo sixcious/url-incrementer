@@ -135,7 +135,7 @@
   "toolkit_action_increment_label": { "message": "Increment" },
   "toolkit_action_decrement_label": { "message": "Decrement" },
   "toolkit_quantity_label": { "message": "Quantity"},
-  "toolkit_seconds_label": { "message": "Seconds"},
+  "toolkit_seconds_label": { "message": "Delay (Secs)"},
   "toolkit_scrape_label": { "message": "Scrape the document for data while crawling" },
   "toolkit_scrape_title": { "message": "You can have URLI scrape data while crawling URLs. We'll use JavaScript's document.querySelector() method, which accepts a CSS Selector."},
   "toolkit_table_download_button": { "message": "Download Table (HTML File)"},
