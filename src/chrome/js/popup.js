@@ -427,7 +427,7 @@ var Popup = (() => {
         tbody.appendChild(tr);
         const td = document.createElement("td");
         td.className = "crawl-table-url";
-        td.style = "padding: 0.25rem 0.312rem 0.312rem;" + (crawl || items.toolkitCrawlCheckboxes.includes("url") ? "" : " display: none;");
+        td.style = "padding: 0.25rem 0.312rem 0.312rem;" + (!crawl || items.toolkitCrawlCheckboxes.includes("url") ? "" : " display: none;");
         tr.appendChild(td);
         const a = document.createElement("a");
         a.href = url.urlmod;
@@ -609,7 +609,7 @@ var Popup = (() => {
     let res,
         status,
         details,
-        scrape,
+        scrapes = [],
         redirected,
         url;
     td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
@@ -624,13 +624,24 @@ var Popup = (() => {
         try {
           const text = await response.text();
           const document_ = new DOMParser().parseFromString(text, "text/html");
-          const object = instance.scrapeMethod === "selector-all" ? document_.querySelectorAll(instance.scrapeSelector) : document_.querySelector(instance.scrapeSelector);
-          scrape = object[instance.scrapeProperty[0]];
-          for (let i = 1; i < instance.scrapeProperty.length; i++) {
-            scrape = scrape[instance.scrapeProperty[i]];
+          const elements = document_.querySelectorAll(instance.scrapeSelector);
+          if (instance.scrapeMethod === "selector-all") {
+            // Literally use document.querySelectorAll() on the nodeList (not the individual elements)
+            scrapes[0] = elements[instance.scrapeProperty[0]];
+            for (let j = 1; j < instance.scrapeProperty.length; j++) {
+              scrapes[0] = scrapes[0][instance.scrapeProperty[j]];
+            }
+          } else {
+            // Iterate thru each element returned from the query and then iterate thru each property to scrape the data
+            for (let i = 0; i < elements.length; i++) {
+              scrapes[i] = elements[i][instance.scrapeProperty[0]];
+              for (let j = 1; j < instance.scrapeProperty.length; j++) {
+                scrapes[i] = scrapes[i][instance.scrapeProperty[j]];
+              }
+            }
           }
         } catch(e) {
-          scrape = e;
+          scrapes[0] = e;
         }
       }
     }).catch(e => {
@@ -659,8 +670,11 @@ var Popup = (() => {
         } else {
           td3.textContent = details;
         }
-        if (instance.toolkitScrape) {
-          td4.textContent = scrape;
+        if (instance.toolkitScrape && scrapes && scrapes.length > 0) {
+          for (let scrape of scrapes) {
+            td4.appendChild(document.createTextNode(scrape));
+            td4.appendChild(document.createElement("br"));
+          }
         }
         instance.toolkitQuantityRemaining--;
         setTimeout(function() { crawlURLs(); }, instance.toolkitSeconds * 1000);

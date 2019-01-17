@@ -271,7 +271,7 @@
         </div>
         <div id="toolkit-scrape">
           <div class="checkbox">
-            <label id="toolkit-scrape-title" class="tooltip-alt" data-i18n="title">
+            <label>
               <input id="toolkit-scrape-input" type="checkbox">
               <img src="../img/tools.png" alt="" width="12" height="12">
               <span id="toolkit-scrape-label" data-i18n="textContent"></span>
@@ -542,56 +542,73 @@
         <span id="eta-label*crawl" data-i18n="textContent"></span>
         <span id="crawl-eta-value"></span>
       </div>
-      <div id="crawl-checkboxes" class="checkbox">
-        <label>
-          <input id="crawl-url-input" type="checkbox" value="url" checked="checked" data-type="table-cell" data-selector="crawl-table-url">
-          <span id="crawl-url-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-response-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-response">
-          <span id="crawl-response-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-code-input" type="checkbox" value="code" checked="checked" data-type="table-cell" data-selector="crawl-table-code">
-          <span id="crawl-code-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-details-input" type="checkbox" value="details" data-type="table-cell" data-selector="crawl-table-details">
-          <span id="crawl-details-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-scrape-input" type="checkbox" value="scrape" data-type="table-cell" data-selector="crawl-table-scrape">
-          <span id="crawl-scrape-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-full-input" type="checkbox" value="full">
-          <span id="crawl-full-label" data-i18n="textContent"></span>
-        </label>
-        <br>
-        <label>
-          <input id="crawl-info-input" type="checkbox" value="info" checked="checked" data-type="table-row" data-selector="crawl-table-info">
-          <span id="crawl-info-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked" data-type="table-row" data-selector="crawl-table-ok">
-          <span id="crawl-ok-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-error-input" type="checkbox" value="error" checked="checked" data-type="table-row" data-selector="crawl-table-error">
-          <span id="crawl-error-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked" data-type="table-row" data-selector="crawl-table-redirected">
-          <span id="crawl-redirected-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-other-input" type="checkbox" value="other" checked="checked" data-type="table-row" data-selector="crawl-table-other">
-          <span id="crawl-other-label" data-i18n="textContent"></span>
-        </label>
-        <label>
-          <input id="crawl-exception-input" type="checkbox" value="exception" checked="checked" data-type="table-row" data-selector="crawl-table-exception">
-          <span id="crawl-exception-label" data-i18n="textContent"></span>
-        </label>
+      <label>
+        <input id="crawl-full-input" type="checkbox" value="full">
+        <span id="crawl-full-label" data-i18n="textContent"></span>
+      </label>
+      <div id="crawl-checkboxes" class="table">
+        <div class="row">
+          <div class="column">
+            <span id="columns-span">Columns</span>
+          </div>
+          <div class="column">
+            <div class="checkbox">
+              <label>
+                <input id="crawl-url-input" type="checkbox" value="url" checked="checked" data-type="table-cell" data-selector="crawl-table-url">
+                <span id="crawl-url-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-response-input" type="checkbox" value="response" checked="checked" data-type="table-cell" data-selector="crawl-table-response">
+                <span id="crawl-response-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-code-input" type="checkbox" value="code" checked="checked" data-type="table-cell" data-selector="crawl-table-code">
+                <span id="crawl-code-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-details-input" type="checkbox" value="details" data-type="table-cell" data-selector="crawl-table-details">
+                <span id="crawl-details-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-scrape-input" type="checkbox" value="scrape" data-type="table-cell" data-selector="crawl-table-scrape">
+                <span id="crawl-scrape-label" data-i18n="textContent"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column">
+            <span id="rows-span">Rows</span>
+          </div>
+          <div class="column">
+            <div class="checkbox">
+              <label>
+                <input id="crawl-info-input" type="checkbox" value="info" checked="checked" data-type="table-row" data-selector="crawl-table-info">
+                <span id="crawl-info-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-ok-input" type="checkbox" value="ok" checked="checked" data-type="table-row" data-selector="crawl-table-ok">
+                <span id="crawl-ok-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-error-input" type="checkbox" value="error" checked="checked" data-type="table-row" data-selector="crawl-table-error">
+                <span id="crawl-error-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-redirected-input" type="checkbox" value="redirected" checked="checked" data-type="table-row" data-selector="crawl-table-redirected">
+                <span id="crawl-redirected-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-other-input" type="checkbox" value="other" checked="checked" data-type="table-row" data-selector="crawl-table-other">
+                <span id="crawl-other-label" data-i18n="textContent"></span>
+              </label>
+              <label>
+                <input id="crawl-exception-input" type="checkbox" value="exception" checked="checked" data-type="table-row" data-selector="crawl-table-exception">
+                <span id="crawl-exception-label" data-i18n="textContent"></span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="crawl-table-outer" class="display-none">
         <div id="crawl-table-div"><div></div></div>
