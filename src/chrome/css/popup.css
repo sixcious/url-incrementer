@@ -563,6 +563,13 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   margin-bottom: 4px;
 }
 
+#crawl-checkboxes {
+  border: 1px solid #CCCCCC;
+  background: #F8F8F8;
+  padding: 0 8px;
+  margin: 8px 0;
+}
+
 #crawl-checkboxes label {
   font-weight: bold;
 }
@@ -591,12 +598,10 @@ table td.check img.check-circle { cursor: pointer; transition: 0.4s; }
   color: var(--saved-urls-color);
 }
 
-/*#crawl-table {
-  max-width: none;
-}*/
-
 #crawl-urli-tip {
+  border-top: 1px solid #333333;
   margin: 1em 0;
+  padding-top: 12px;
 }
 
 #crawl-urli-img {

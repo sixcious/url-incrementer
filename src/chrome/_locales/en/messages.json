@@ -23,7 +23,7 @@
   "selection_label": { "message": "Selection" },
   "interval_label": { "message": "Interval" },
   "error_skip_label": { "message": "Error Skip" },
-  "base_label": { "message": "Base" },
+  "base_label": { "message": "Type" },
   "base_option_default": { "message": "Default" },
   "base_option_date": { "message": "Date Time" },
   "base_option_decimal": { "message": "Decimal Number" },
