@@ -657,7 +657,7 @@ var Popup = (() => {
       } else {
         tr.className = "crawl-table-" + res;
         tr.style.display = DOM["#crawl-" + res + "-input"] && !DOM["#crawl-" + res + "-input"].checked ? "none" : "";
-        td1.style.color = td2.style.color = td3.style.color = td4.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#004687";
+        td1.style.color = td2.style.color = td3.style.color = td4.style.color = res === "exception" ? "#FF69B4" : res === "redirected" ? "#663399" : res === "ok" ? "#05854D" : res === "info" ? "#999999" : res === "error" ? "#E6003E" : "#1779BA";
         td1.textContent = chrome.i18n.getMessage("crawl_" + res + "_label");
         td2.textContent = status;
         if (redirected) {
