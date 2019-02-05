@@ -9,7 +9,7 @@
   "browser_shortcuts_enable_button": { "message": "Enable Chrome Shortcuts" },
   "browser_shortcuts_quick_enable_label": { "message": "Enable Quick Chrome Shortcuts" },
   "browser_shortcuts_p1": { "message": "URLI is set to use Chrome Shortcuts." },
-  "browser_shortcuts_p2": { "message": "Chrome Shortcuts only support limited keys, but you can enable URLI's Internal Shortcuts to use any key you want and even mouse shortcuts (requires permissions)." },
+  "browser_shortcuts_p2": { "message": "Chrome Shortcuts only support limited keys, but you can enable URLI's Internal Shortcuts to use any key you want and even use mouse shortcuts (requires permissions)." },
   "browser_shortcuts_button": { "message": "Configure Chrome Shortcuts" },
   "internal_shortcuts_h3": { "message": "Internal Shortcuts" },
   "internal_shortcuts_enable_button": { "message": "Enable Internal Shortcuts" },
