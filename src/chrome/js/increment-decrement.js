@@ -397,10 +397,10 @@ var IncrementDecrementDate = (() => {
     console.log("incrementDecrementDate() - action=" + action + ", selection=" + selection + ", interval=" + interval + ", dateFormat=" + dateFormat);
     let selection2 = "";
     try {
-      const parts = splitdateparts(selection, dateFormat);
-      const date = str2date(parts.strParts, parts.dateFormatParts);
-      const date2 = incdecdate(action, date, dateFormat, interval);
-      selection2 = date2str(date2, dateFormat, parts.dateFormatParts);
+      const parts = splitDateParts(selection, dateFormat);
+      const date = strToDate(parts.strParts, parts.dateFormatParts);
+      const date2 = incDecDate(action, date, dateFormat, interval);
+      selection2 = dateToStr(date2, dateFormat, parts.dateFormatParts);
     } catch(e) {
       console.log("incrementDecrementDate() - exception encountered=" + e);
       selection2 = "DateError";
@@ -416,7 +416,7 @@ var IncrementDecrementDate = (() => {
    * @returns {{strParts: Array, dateFormatParts: (*|Array)}} the date string and format parts as arrays
    * @private
    */
-  function splitdateparts(str, dateFormat) {
+  function splitDateParts(str, dateFormat) {
     const regexp = /(y+)|(m+)|(Mm+)|(M+)|(d+)|(h+)|(i+)|(l+)|([^ymMdhisl]+)/g;
     const matches = dateFormat.match(regexp);
     let delimiters = "";
@@ -449,7 +449,7 @@ var IncrementDecrementDate = (() => {
    * @returns {Date} the date representation of the string
    * @private
    */
-  function str2date(strParts, dateFormatParts) {
+  function strToDate(strParts, dateFormatParts) {
     const now = new Date();
     const mapParts = new Map([["y", now.getFullYear()], ["m", now.getMonth() + 1], ["d", 15], ["h", 12], ["i", 0], ["s", 0], ["l", 0]]);
     for (let i = 0; i < dateFormatParts.length; i++) {
@@ -486,7 +486,7 @@ var IncrementDecrementDate = (() => {
    * @returns {Date} the date after incrementing or decrementing
    * @private
    */
-  function incdecdate(action, date, dateFormat, interval) {
+  function incDecDate(action, date, dateFormat, interval) {
     interval = action.startsWith("increment") ? interval : -interval;
     const lowestregexp = /(l|(s|i|h|d|M|m|y(?!.*m))(?!.*M)(?!.*d)(?!.*h)(?!.*i)(?!.*s)(?!.*l))/;
     const lowestmatch = lowestregexp.exec(dateFormat)[0];
@@ -512,7 +512,7 @@ var IncrementDecrementDate = (() => {
    * @returns {String} the string representation of the date
    * @private
    */
-  function date2str(date, dateFormat, dateFormatParts) {
+  function dateToStr(date, dateFormat, dateFormatParts) {
     let str = dateFormat;
     for (let i = 0; i < dateFormatParts.length; i++) {
       switch (dateFormatParts[i]) {

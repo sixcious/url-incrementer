@@ -17,7 +17,7 @@
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next [>] link on the page, URLI can get you to "page=2" in a variety of ways.
 
 # Features
-<em>Coming Soon in 6.0 (February 1 2019)</em>
+<em>Coming Soon in 6.0 (February 2019)</em>
 - Customizable Keyboard and Mouse Shortcuts (Multi-Click + Rocker)
 - 1-Click Increment Decrement Button Extensions for Your Toolbar (Available on AMO)
 - Auto Incrementing
