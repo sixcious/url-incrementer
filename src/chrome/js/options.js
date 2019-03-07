@@ -10,7 +10,7 @@ var Options = (() => {
   // The DOM elements cache, KeyboardEvent.key and modifier bits map, and array of internal shortcuts
   const DOM = {},
         KEY_MODIFIERS = new Map([["Alt",0x1],["Control",0x2],["Shift",0x4],["Meta",0x8]]),
-        shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto"];
+        shortcuts = ["increment", "decrement", "next", "prev", "clear", "return", "auto", "download"];
 
   // The backgroundPage cache, key variable that stores the key between keyDown and keyUp, and timeouts object
   let backgroundPage = {},

@@ -269,6 +269,7 @@
   "key_clear_label": { "message": "Clear [x]" },
   "key_return_label": { "message": "Return To Start" },
   "key_auto_label": { "message": "Auto Pause" },
+  "key_download_label": { "message": "Download" },
   "key_notset_option": { "message": "(Not set)" },
   "mouse_notset_option": { "message": "(Not set)" },
   "mouse_left_option": { "message": "Left" },
