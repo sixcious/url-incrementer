@@ -26,7 +26,7 @@ var Background = (() => {
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitScrape": false, "toolkitCrawlCheckboxes": ["url", "response", "code", "info", "ok", "error", "redirected", "other", "exception"], "toolkitStart": false,
     "scrapeMethod": "selector", "scrapeSelector": "", "scrapeProperty": [],
-    "saves": [], "savePreselect": false
+    "saves": [], "savePreselect": false, "saveKey": Cryptography.salt().substring(0,16)
   },
 
   // The browser action badges that will be displayed against the extension icon

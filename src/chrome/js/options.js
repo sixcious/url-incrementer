@@ -426,9 +426,9 @@ var Options = (() => {
     const isRegExp = url.startsWith("/") && url.endsWith("/") && url.length > 1,
           urlv = isRegExp ? url.slice(1, -1) : url,
           saves = await backgroundPage.Saves.deleteSave(urlv, "addWildcard"),
-          encrypt = await backgroundPage.Cryptography.encrypt(urlv),
-          items = await Promisify.getItems();
-    if (items.selectionCustom && items.selectionCustom.url) {
+          items = await Promisify.getItems(),
+          encrypt = await backgroundPage.Cryptography.encrypt(urlv, items.saveKey);
+      if (items.selectionCustom && items.selectionCustom.url) {
       items.selectionCustom.url = "";
     }
     // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)

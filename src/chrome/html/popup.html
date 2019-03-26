@@ -201,6 +201,63 @@
           </div>
         </div>
       </section>
+      <section id="save-url" class="display-none">
+        <div class="heading">
+          <img src="../img/heart.png" alt="" width="15" height="15">
+          <h3 id="save-url-h3" data-i18n="textContent"></h3>
+        </div>
+        <div id="save-url-type" class="radio">
+          <label>
+            <input id="save-url-exact-input" type="radio" name="save-url-type" value="exact">
+            <span id="save-url-exact-label" data-i18n="textContent"></span>
+          </label>
+          <label>
+            <input id="save-url-pattern-input" type="radio" name="save-url-type" value="pattern">
+            <span id="save-url-pattern-label" data-i18n="textContent"></span>
+          </label>
+        </div>
+        <div class="display-none">
+          <label id="selection-strategy-label" for="selection-select" data-i18n="textContent" class="label-display-inline-block"></label>
+          <select id="selection-select">
+            <option id="selection-option-prefixes" value="prefixes" data-i18n="textContent"></option>
+            <option id="selection-option-lastnumber" value="lastnumber" data-i18n="textContent"></option>
+            <option id="selection-option-firstnumber" value="firstnumber" data-i18n="textContent"></option>
+            <option id="selection-option-custom" value="custom" data-i18n="textContent"></option>
+          </select>
+          <div id="selection-custom" class="display-none">
+            <label id="selection-custom-url-label" for="selection-custom-url-textarea" data-i18n="textContent" class="display-block"></label>
+            <textarea id="selection-custom-url-textarea" placeholder="https://www.google.com/search?q=urli&start=10" spellcheck="false"></textarea>
+            <div class="table">
+              <div class="row">
+                <div class="column">
+                  <label id="selection-custom-pattern-label" for="selection-custom-pattern-input" data-i18n="textContent" class="display-block"></label>
+                  /<input id="selection-custom-pattern-input" type="text" value="" placeholder="\d+" spellcheck="false">/
+                </div>
+                <div class="column">
+                  <label id="selection-custom-flags-label" for="selection-custom-flags-input" data-i18n="textContent" class="display-block"></label>
+                  <input id="selection-custom-flags-input" type="text" value="" placeholder="gmi" spellcheck="false">
+                </div>
+              </div>
+              <div class="row">
+                <div class="column">
+                  <label id="selection-custom-group-label" for="selection-custom-group-input" data-i18n="textContent" class="display-block"></label>
+                  <input id="selection-custom-group-input" type="number" value="0" min="0">
+                </div>
+                <div class="column">
+                  <label id="selection-custom-index-label" for="selection-custom-index-input" data-i18n="textContent" class="display-block"></label>
+                  <input id="selection-custom-index-input" type="number" value="0" min="0">
+                </div>
+              </div>
+            </div>
+            <div>
+              <button id="selection-custom-test-button" data-i18n="textContent"></button>
+              <button id="selection-custom-save-button" data-i18n="textContent"></button>
+              <span id="selection-custom-message-span"></span>
+            </div>
+            (<span id="selection-custom-help-label" data-i18n="textContent"></span> <a href="https://regex101.com" target="_blank">https://regex101.com</a>)
+          </div>
+        </div>
+      </section>
       <section id="toolkit" class="display-none">
         <div class="heading">
           <img src="../img/wrench.png" alt="" width="15" height="15">

@@ -38,12 +38,13 @@ var Cryptography = (() => {
    * The key/password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param plaintext the text to encrypt
+   * @param secret    the secret key
    * @returns {Promise<{iv: string, ciphertext: string}>} the iv and ciphertext as base 64 encoded strings
    * @public
    */
-  async function encrypt(plaintext) {
+  async function encrypt(plaintext, secret) {
     const algorithm = { name: "AES-GCM", iv: crypto.getRandomValues(new Uint8Array(64)) };
-    const digest = await crypto.subtle.digest("SHA-256", new Uint8Array([66, 96, 46, 126, 56]));
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(secret));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["encrypt"]);
     const encryption = await crypto.subtle.encrypt(algorithm, key, new TextEncoder().encode(plaintext));
     return { iv: u8a2b64(algorithm.iv), ciphertext: u8a2b64(new Uint8Array(encryption)) };
@@ -55,12 +56,13 @@ var Cryptography = (() => {
    *
    * @param ciphertext the text to decrypt
    * @param iv         the initialization vector for the algorithm
+   * @param secret     the secret key
    * @returns {Promise<string>} the decrypted text
    * @public
    */
-  async function decrypt(ciphertext, iv) {
+  async function decrypt(ciphertext, iv, secret) {
     const algorithm = { name: "AES-GCM", iv: b642u8a(iv) };
-    const digest = await crypto.subtle.digest("SHA-256", new Uint8Array([66, 96, 46, 126, 56]));
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(secret));
     const key = await crypto.subtle.importKey("raw", digest, algorithm, false, ["decrypt"]);
     const decryption = await crypto.subtle.decrypt(algorithm, key, b642u8a(ciphertext));
     return new TextDecoder().decode(decryption);
