@@ -9,7 +9,7 @@ var Cryptography = (() => {
 
   /**
    * Calculates a cryptographic hash. We use the PBKDF2 algorithm with an Hmac-SHA512 hash function.
-   * For simplicity, we hardcode the algorithm, hash, and iterations. Note: 512 Bits = 64 Bytes = 88 B64 Characters.
+   * For simplicity, we hardcode the algorithm, hash, and iterations. Note: 512 Bits = 64 Bytes = 88 B64 Characters. (Note: Firefox hangs if the text is empty.)
    *
    * @param text the text to hash
    * @param salt the salt to hash with
@@ -17,7 +17,6 @@ var Cryptography = (() => {
    * @public
    */
   async function hash(text, salt) {
-    // Firefox: Hangs if the text is empty
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(text), "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-512", salt: b642u8a(salt), iterations: 1000 }, key, 512);
     return u8a2b64(new Uint8Array(bits));
