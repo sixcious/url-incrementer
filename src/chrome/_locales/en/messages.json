@@ -255,7 +255,7 @@
   "private_window_unsupported": { "message": "Oops -- Sorry! URLI's Popup can't work properly in Private Windows due to the browser disallowing an Extension's Popup to directly use its Background process in this mode. Shortcuts and 1-Click Buttons still work in Private Windows and you can still use URLI's Popup in normal windows though!" },
 
   "OPTIONS": { "message": "----- OPTIONS -----" },
-  "help_shortcuts_editable_disabled": { "message": "This option prevents shortcuts from firing when you are typing or focused on an input, textarea, select, or an element that \"isContentEditable.\" You may want to uncheck it if a website always auto-focuses you on an input after going to the next page." },
+  "help_shortcuts_editable_disabled": { "message": "This option prevents internal shortcuts from firing when you are typing or focused on an input, textarea, select, or an element that \"isContentEditable.\" You may want to uncheck it if a website always auto-focuses you on an input after going to the next page." },
   "help_quick_shortcuts": { "message": "If Quick is enabled, you can Increment or perform other actions instantly without having to setup or save a URL (Except for Clear, Return to Start, and Auto Pause)" },
   "shortcuts_editable_disabled_label": { "message": "Prevent shortcuts from firing when typing or focused on an editable element\n" },
   "key_quick_enable_label": { "message": "Enable Quick Keyboard Shortcuts" },
