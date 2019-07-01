@@ -331,7 +331,7 @@ var Action = (() => {
       case "crawl":
         // Firefox Android: chrome.windows not supported, so send message to existing Popup
         if (chrome.windows && chrome.windows.create) {
-          chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 550, height: 575}, function(window) {
+          chrome.windows.create({url: chrome.runtime.getURL("/html/popup.html"), type: "popup", width: 600, height: 600}, function(window) {
             instance.tabId = window.tabs[0].id;
             Background.setInstance(instance.tabId, instance);
           });
