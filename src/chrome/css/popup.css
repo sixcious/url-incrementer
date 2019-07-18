@@ -268,6 +268,12 @@ table tbody tr:hover {
   width: 124px;
 }
 
+/* List */
+
+#list-button {
+  margin-bottom: 2px;
+}
+
 /* Multi */
 
 #multi-button {

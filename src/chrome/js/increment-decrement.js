@@ -656,16 +656,30 @@ var IncrementDecrementArray = (() => {
 
   /**
    * Pre-calculates an array of URLs. Arrays are only calculated in the following situations:
-   * Multi-Range Enabled, Toolkit Enabled, or ShuffleURLs Enabled.
+   * List Enabled, Multi-Range Enabled, Toolkit Enabled, or ShuffleURLs Enabled.
    *
    * @param instance the instance with properties used to pre-calculate the URLs array
    * @returns {{urls: Array, currentIndex: number}} the URLs array and the current index to start from
    * @public
    */
   function precalculateURLs(instance) {
-    console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ?  "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
+    console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ? "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
-    if (instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
+    // If List enabled, split by new line into list array
+    if (instance.listEnabled) {
+      const list = instance.list.match(/[^\r\n]+/g);
+      // If there is a list, set the urls object with the list of urls to conform to the existing model (e.g. urlmod and selectionmod)
+      if (list && list.length > 1) {
+        for (let i = 0; i < list.length; i++) {
+          urls.push({"urlmod": list[i], "selectionmod": ""});
+        }
+      }
+      if (instance.shuffleURLs) {
+        shuffle(urls);
+      }
+    }
+    // All Other Options:
+    else if (instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
       if (instance.toolkitEnabled) {
         urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
       } else if (instance.autoEnabled) {

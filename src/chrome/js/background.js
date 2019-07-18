@@ -148,7 +148,7 @@ var Background = (() => {
     }
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
-      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false,
+      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false, "listEnabled": false,
       "tabId": tab.id, "url": tab.url,
       "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
@@ -158,7 +158,9 @@ var Background = (() => {
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustom": object.errorCodesCustom,
       "fetchMethod": "HEAD",
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
-      "urls": [], "shuffleURLs": false, "shuffleLimit": items.shuffleLimit, "shuffleStart": items.shuffleStart,
+      "list": "",
+      "urls": [],
+      "shuffleURLs": false, "shuffleLimit": items.shuffleLimit, "shuffleStart": items.shuffleStart,
       "nextPrevKeywordsNext": items.nextPrevKeywordsNext, "nextPrevKeywordsPrev": items.nextPrevKeywordsPrev, "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,
       "autoAction": items.autoAction, "autoTimes": items.autoTimes, "autoSeconds": items.autoSeconds, "autoWait": items.autoWait, "autoBadge": items.autoBadge, "autoPaused": false, "autoRepeat": false, "autoRepeating": false, "autoRepeatCount": 0, "autoStart": items.autoStart, "autoRepeatStart": items.autoRepeatStart,
       "downloadStrategy": items.downloadStrategy, "downloadExtensions": items.downloadExtensions, "downloadTags": items.downloadTags, "downloadAttributes": items.downloadAttributes, "downloadSelector": items.downloadSelector,

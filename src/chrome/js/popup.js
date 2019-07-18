@@ -39,6 +39,7 @@ var Popup = (() => {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
+    DOM["#list-input"].addEventListener("change", function() { DOM["#url-label"].textContent = chrome.i18n.getMessage((this.checked ? "list_" : "url_") + "label"); });
     DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
     DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); DOM["#save-url"].className = this.checked ? "display-block fade-in" : "display-none"; });
@@ -230,8 +231,8 @@ var Popup = (() => {
     }
     DOM["#shuffle-urls-input"].checked = instance.shuffleURLs || (instance.shuffleStart && !instance.enabled);
     DOM["#auto-repeat-input"].checked = instance.autoRepeat || (instance.autoRepeatStart && !instance.enabled);
-    DOM["#url-textarea"].value = instance.url;
-    DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + instance.selection.length);
+    DOM["#url-textarea"].value = instance.listEnabled ? instance.list : instance.url;
+    DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + (instance.selection ? instance.selection.length : 0));
     DOM["#url-textarea"].focus();
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
@@ -259,6 +260,8 @@ var Popup = (() => {
     DOM["#multi-img-1"].className = instance.multiEnabled && instance.multiCount >= 1 ? "" : "disabled";
     DOM["#multi-img-2"].className = instance.multiEnabled && instance.multiCount >= 2 ? "" : "disabled";
     DOM["#multi-img-3"].className = instance.multiEnabled && instance.multiCount >= 3 ? "" : "disabled";
+    DOM["#list-input"].checked = instance.listEnabled;
+    DOM["#url-label"].textContent = chrome.i18n.getMessage((instance.listEnabled ? "list_" : "url_") + "label");
     // Toolkit Setup:
     DOM["#toolkit-input"].checked = instance.toolkitStart && !instance.enabled;
     DOM["#toolkit"].className = instance.toolkitStart && !instance.enabled ? "display-block" : "display-none";
@@ -1084,9 +1087,15 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
       _.urls = precalculateProps.urls;
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
+      // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) set the url and starting URL to the first URL in the list
+      if (_.listEnabled) {
+        _.listEnabled = _.urls && _.urls.length > 1;
+        _.list = _.listEnabled ? _.list : "";
+        _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
+      }
       // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
       if (_.autoEnabled && _.urls && _.urls.length > 0) {
-        _.autoTimes = _.urls.length;
+        _.autoTimes = _.autoTimesOriginal = _.urls.length;
       }
       // Save URL
       if (_.saveURL) {
@@ -1163,6 +1172,8 @@ var Popup = (() => {
       _.multiCount = +DOM["#multi-count"].value;
       _.multiEnabled = _.multiCount >= 2 && _.multiCount <= 3;
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
+      _.listEnabled = DOM["#list-input"].checked;
+      _.list = _.listEnabled ? _.url : "";
     }
     if (caller === "multi") {
       const range = /\[(.*)-(\d+)]/.exec(_.selection);

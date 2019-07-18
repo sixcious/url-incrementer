@@ -45,9 +45,10 @@
         </div>
       </div>
       <div id="controls-icons">
-        <img id="auto-repeat-icon"  src="../img/retweet.png" alt="auto-repeat"  width="12" height="12" data-i18n="title">
-        <img id="shuffle-urls-icon" src="../img/random.png"  alt="shuffle-urls" width="12" height="12" data-i18n="title">
-        <img id="save-url-icon"     src="../img/heart.png"   alt="save-url"     width="12" height="12">
+        <img id="list-icon"         src="../img/list-alt.png" alt="list"         width="12" height="12" data-i18n="title">
+        <img id="auto-repeat-icon"  src="../img/retweet.png"  alt="auto-repeat"  width="12" height="12" data-i18n="title">
+        <img id="shuffle-urls-icon" src="../img/random.png"   alt="shuffle-urls" width="12" height="12" data-i18n="title">
+        <img id="save-url-icon"     src="../img/heart.png"    alt="save-url"     width="12" height="12">
       </div>
     </div>
     <div id="setup" class="display-none">
@@ -77,14 +78,20 @@
           </div>
         </div>
         <div id="url">
-          <label id="url-label" class="label-display-block" for="url-textarea" data-i18n="textContent"></label>
+          <label id="url-label" for="url-textarea" class="label-display-inline-block" data-i18n="textContent"></label>
+          <div id="list-button" class="icon-button hvr-grow-2x" data-i18n="title">
+            <label id="list-label" for="list-input">
+              <input id="list-input" type="checkbox" class="display-none">
+              <img src="../img/list-alt.png" alt="" width="16" height="16" class="checkbox-img">
+            </label>
+          </div>
           <textarea id="url-textarea" spellcheck="false"></textarea>
         </div>
         <div id="properties">
           <div class="table">
             <div class="row">
               <div id="selection" class="column">
-                <label id="selection-label" for="selection-input" data-i18n="textContent" class="label-display-inline-block"></label>
+                <label id="selection-label" for="selection-input" class="label-display-inline-block" data-i18n="textContent"></label>
                 <div id="multi-button" class="icon-button hvr-grow-2x" data-i18n="title">
                   <img id="multi-img-1" src="../img/plus-circle.png" alt="" width="14" height="14" class="disabled">
                   <img id="multi-img-2" src="../img/plus-circle-2.png" alt="" width="14" height="14" class="disabled">
