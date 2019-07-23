@@ -627,19 +627,25 @@ var Popup = (() => {
         try {
           const text = await response.text();
           const document_ = new DOMParser().parseFromString(text, "text/html");
-          const elements = document_.querySelectorAll(instance.scrapeSelector);
-          if (instance.scrapeMethod === "selector-all") {
-            // Literally use document.querySelectorAll() on the nodeList (not the individual elements)
+          if (instance.scrapeMethod === "selector") {
+            const elements = document_.querySelector(instance.scrapeSelector);
             scrapes[0] = elements[instance.scrapeProperty[0]];
             for (let j = 1; j < instance.scrapeProperty.length; j++) {
               scrapes[0] = scrapes[0][instance.scrapeProperty[j]];
             }
-          } else {
+          } else if (instance.scrapeMethod === "selector-all") {
+            const elements = document_.querySelectorAll(instance.scrapeSelector);
+            // Literally use document.querySelectorAll() on the nodeList (not the individual elements)
+            if (instance.scrapeProperty[0] === "length") {
+              scrapes[0] = elements[instance.scrapeProperty[0]];
+            }
             // Iterate thru each element returned from the query and then iterate thru each property to scrape the data
-            for (let i = 0; i < elements.length; i++) {
-              scrapes[i] = elements[i][instance.scrapeProperty[0]];
-              for (let j = 1; j < instance.scrapeProperty.length; j++) {
-                scrapes[i] = scrapes[i][instance.scrapeProperty[j]];
+            else {
+              for (let i = 0; i < elements.length; i++) {
+                scrapes[i] = elements[i][instance.scrapeProperty[0]];
+                for (let j = 1; j < instance.scrapeProperty.length; j++) {
+                  scrapes[i] = scrapes[i][instance.scrapeProperty[j]];
+                }
               }
             }
           }
