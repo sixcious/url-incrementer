@@ -100,6 +100,7 @@
   "save_regexp_icon": { "message": "This is a Saved Regular Expression" },
   "auto_repeat_icon": { "message": "Auto Repeating" },
   "shuffle_urls_icon": { "message": "Shuffling URLs" },
+  "list_icon": { "message": "Operating in List URL Mode" },
   "increment_decrement_h3": { "message": "Select the part of the URL to Increment or Decrement" },
   "url_label": { "message": "URL" },
   "list_label": { "message": "List (URLs Separated By Line Breaks)" },

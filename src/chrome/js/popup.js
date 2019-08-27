@@ -185,6 +185,7 @@ var Popup = (() => {
     DOM["#save-url-icon"].style.display = instance.saveFound ? "" : "none";
     DOM["#auto-repeat-icon"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
+    DOM["#list-icon"].style.display = instance.listEnabled ? "" : "none";
     DOM["#increment-input"].style.display =
     DOM["#decrement-input"].style.display = instance.multiEnabled || (instance.autoEnabled && (instance.autoAction === "next" || instance.autoAction === "prev")) ? "none" : "";
     DOM["#increment-input-r"].style.display =
