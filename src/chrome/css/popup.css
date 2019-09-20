@@ -233,7 +233,7 @@ table tbody tr:hover {
 
 /* Increment Decrement */
 
-#increment-decrement-img-mouse-pointer {
+#increment-decrement-img-mouse-pointer, #list-img-mouse-pointer {
   margin-bottom: 2px;
 }
 

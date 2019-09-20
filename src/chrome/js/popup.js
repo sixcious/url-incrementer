@@ -39,7 +39,12 @@ var Popup = (() => {
     DOM["#accept-button"].addEventListener("click", setup);
     DOM["#cancel-button"].addEventListener("click", toggleView);
     DOM["#multi-button"].addEventListener("click", clickMulti);
-    DOM["#list-input"].addEventListener("change", function() { DOM["#url-label"].textContent = chrome.i18n.getMessage((this.checked ? "list_" : "url_") + "label"); });
+    DOM["#list-input"].addEventListener("change", function() {
+      DOM["#increment-decrement-heading"].className = this.checked ? "display-none" : "display-block";
+      DOM["#list-heading"].className = this.checked ? "display-block" : "display-none";
+      DOM["#url-label"].textContent = chrome.i18n.getMessage((this.checked ? "list_" : "url_") + "label");
+      DOM["#selection"].className = DOM["#interval"].className = DOM["#base"].className = this.checked ? "display-none" : "column";
+    });
     DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
     DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
     DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); DOM["#save-url"].className = this.checked ? "display-block fade-in" : "display-none"; });
@@ -226,21 +231,27 @@ var Popup = (() => {
    */
   function updateSetup(minimal) {
     // Increment Decrement Setup:
+    DOM["#increment-decrement-heading"].className =  DOM["#list-input"].checked ? "display-none" : "display-block";
+    DOM["#list-heading"].className = DOM["#list-input"].checked ? "display-block" : "display-none";
+    DOM["#url-label"].textContent = chrome.i18n.getMessage((DOM["#list-input"].checked ? "list_" : "url_") + "label");
+    DOM["#selection"].className = DOM["#interval"].className = DOM["#base"].className = DOM["#list-input"].checked ? "display-none" : "column";
     if (instance.saveFound || items.savePreselect) {
       DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
     }
-    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs || (instance.shuffleStart && !instance.enabled);
-    DOM["#auto-repeat-input"].checked = instance.autoRepeat || (instance.autoRepeatStart && !instance.enabled);
     DOM["#url-textarea"].value = instance.listEnabled ? instance.list : instance.url;
-    DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + (instance.selection ? instance.selection.length : 0));
-    DOM["#url-textarea"].focus();
+    if (!DOM["#list-input"].checked) {
+      DOM["#url-textarea"].setSelectionRange(instance.selectionStart, instance.selectionStart + (instance.selection ? instance.selection.length : 0));
+      DOM["#url-textarea"].focus();
+    }
     DOM["#selection-input"].value = instance.selection;
     DOM["#selection-start-input"].value = instance.selectionStart;
     // If minimal (e.g. just switching from controls to setup), no need to recalculate the below again, so just return
     if (minimal) {
       return;
     }
+    DOM["#shuffle-urls-input"].checked = instance.shuffleURLs || (instance.shuffleStart && !instance.enabled);
+    DOM["#auto-repeat-input"].checked = instance.autoRepeat || (instance.autoRepeatStart && !instance.enabled);
     DOM["#interval-input"].value = instance.interval;
     DOM["#error-skip-input"].value = instance.errorSkip;
     DOM["#base-select"].value = instance.base;
@@ -1053,7 +1064,7 @@ var Popup = (() => {
   async function setup() {
     setupInputs("accept");
     const e = setupErrors("accept");
-    // Validated Rules:
+    // Validation Rules:
     // 1. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
     // 2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
     // 3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
@@ -1094,7 +1105,7 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
       _.urls = precalculateProps.urls;
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
-      // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) set the url and starting URL to the first URL in the list
+      // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) and set the url and starting URL to the first URL in the list
       if (_.listEnabled) {
         _.listEnabled = _.urls && _.urls.length > 1;
         _.list = _.listEnabled ? _.list : "";
