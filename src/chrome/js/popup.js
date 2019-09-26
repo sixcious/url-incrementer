@@ -1267,16 +1267,18 @@ var Popup = (() => {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement Errors
       e.incrementDecrementErrors = [
-        // [0] = Selection Errors
+        // [0] = URL Errors
+        _.listEnabled && _.url === "" ? chrome.i18n.getMessage("url_blank_error") : "",
+        // [1] = Selection Errors
         // Don't validate selection in accept/toolkit if multi range enabled due to brackets
         caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
         _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
         !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
         _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
         caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseRoman, _.baseCustom, _.leadingZeros),
-        // [1] Interval Errors
+        // [2] Interval Errors
         _.interval <= 0 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
-        // [2] Error Skip Errors
+        // [3] Error Skip Errors
         _.errorSkip > 0 && !items.permissionsEnhancedMode && caller !== "toolkit" ? chrome.i18n.getMessage("error_skip_permissions_error") :
         _.errorSkip < 0 || _.errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
       ];
@@ -1284,6 +1286,12 @@ var Popup = (() => {
       if (e.incrementDecrementErrorsExist) {
         e.incrementDecrementErrors.unshift(chrome.i18n.getMessage("oops_error"));
       }
+    }
+    if (caller === "accept" || caller === "toolkit") {
+      // List Errors (Only Error Skip Matters)
+      e.listErrors = [
+          _.url === "" ? chrome.i18n.getMessage("url_blank_error") : "",
+          e.incrementDecrementErrors[2]]
     }
     if (caller === "toolkit") {
       // Toolkit Errors
