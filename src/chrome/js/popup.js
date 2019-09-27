@@ -1105,12 +1105,12 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
       _.urls = precalculateProps.urls;
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
-      // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) and set the url and starting URL to the first URL in the list
-      if (_.listEnabled) {
-        _.listEnabled = _.urls && _.urls.length > 1;
-        _.list = _.listEnabled ? _.list : "";
-        _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
-      }
+      // // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) and set the url and starting URL to the first URL in the list
+      // if (_.listEnabled) {
+      //   _.listEnabled = _.urls && _.urls.length > 1;
+      //   _.list = _.listEnabled ? _.list : "";
+      //   _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
+      // }
       // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
       if (_.autoEnabled && _.urls && _.urls.length > 0) {
         _.autoTimes = _.autoTimesOriginal = _.urls.length;
@@ -1191,7 +1191,9 @@ var Popup = (() => {
       _.multiEnabled = _.multiCount >= 2 && _.multiCount <= 3;
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
       _.listEnabled = DOM["#list-input"].checked;
-      _.list = _.listEnabled ? _.url : "";
+      if (_.listEnabled) {
+        _.list = _.url;
+      }
     }
     if (caller === "multi") {
       const range = /\[(.*)-(\d+)]/.exec(_.selection);
@@ -1267,17 +1269,18 @@ var Popup = (() => {
     if (caller === "accept" || caller === "multi" || caller === "toolkit") {
       // Increment Decrement Errors
       e.incrementDecrementErrors = [
-        // [0] = URL Errors
-        _.listEnabled && _.url === "" ? chrome.i18n.getMessage("url_blank_error") : "",
+        // [0] = URL / List Errors
+        _.listEnabled && !_.list ? chrome.i18n.getMessage("url_blank_error") :
+        _.listEnabled && !_.list.match(/[^\r\n]+/g).length <= 1 ? chrome.i18n.getMessage("url_list_newline_error") : "",
         // [1] = Selection Errors
-        // Don't validate selection in accept/toolkit if multi range enabled due to brackets
-        caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
-        _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
-        !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
-        _.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection ? chrome.i18n.getMessage("selectionstart_invalid_error") :
-        caller !== "multi" && _.multiRangeEnabled ? "" : backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseRoman, _.baseCustom, _.leadingZeros),
+        // Don't try to validate selection if listEnabled or in accept/toolkit if multi range enabled due to brackets
+        !_.listEnabled && caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
+        !_.listEnabled && _.selection === "" ? chrome.i18n.getMessage("selection_blank_error") :
+        !_.listEnabled && !_.url.includes(_.selection) ? chrome.i18n.getMessage("selection_notinurl_error") :
+        !_.listEnabled && (_.selectionStart < 0 || _.url.substr(_.selectionStart, _.selection.length) !== _.selection) ? chrome.i18n.getMessage("selectionstart_invalid_error") :
+        !_.listEnabled || (caller !== "multi" && _.multiRangeEnabled) ? backgroundPage.IncrementDecrement.validateSelection(_.selection, _.base, _.baseCase, _.baseDateFormat, _.baseRoman, _.baseCustom, _.leadingZeros) : "",
         // [2] Interval Errors
-        _.interval <= 0 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
+        !_.listEnabled && _.interval <= 0 || _.interval >= Number.MAX_SAFE_INTEGER ? chrome.i18n.getMessage("interval_invalid_error") : "",
         // [3] Error Skip Errors
         _.errorSkip > 0 && !items.permissionsEnhancedMode && caller !== "toolkit" ? chrome.i18n.getMessage("error_skip_permissions_error") :
         _.errorSkip < 0 || _.errorSkip > 100 ? chrome.i18n.getMessage("error_skip_invalid_error") : ""
@@ -1286,12 +1289,6 @@ var Popup = (() => {
       if (e.incrementDecrementErrorsExist) {
         e.incrementDecrementErrors.unshift(chrome.i18n.getMessage("oops_error"));
       }
-    }
-    if (caller === "accept" || caller === "toolkit") {
-      // List Errors (Only Error Skip Matters)
-      e.listErrors = [
-          _.url === "" ? chrome.i18n.getMessage("url_blank_error") : "",
-          e.incrementDecrementErrors[2]]
     }
     if (caller === "toolkit") {
       // Toolkit Errors
