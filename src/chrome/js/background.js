@@ -20,6 +20,11 @@ var Background = (() => {
     "selectionPriority": "prefixes", "selectionCustom": { "url": "", "pattern": "", "flags": "", "group": 0, "index": 0 },
     "errorSkip": 0, "errorCodes": ["404", "3XX"], "errorCodesCustom": [],
     "nextPrevLinksPriority": "attributes", "nextPrevSameDomainPolicy": true, "nextPrevPopupButtons": false,
+    // TODO (From Infy):
+    // "nextType": "selector", "nextSelector": "[rel=\"next\"]", "nextXpath": "//*[@rel=\"next\"]", "nextAttribute": ["href"],
+    // "prevType": "selector", "prevSelector": "[rel=\"prev\"],[rel=\"previous\"]", "prevXpath": "//*[@rel=\"prev\"]|//*[@rel=\"previous\"]", "prevAttribute": ["href"],
+    // "nextKeywords":         ["pnnext", "next page", "next >", "next »", "next", "more results", "older posts", "older post", "older", "forward", "次", "&gt;", ">", "›", "→", "»"],
+    // "prevKeywords":         ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer post", "newer", "前", "&lt;", "<", "‹", "←", "«"],
     "nextPrevKeywordsNext": ["pnnext", "next page", "next >", "next »", "next", "more results", "older posts", "older", "forward", "次", "&gt;", ">", "›", "→"],
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto", "autoStart": false, "autoRepeatStart": false,
@@ -341,8 +346,8 @@ var Background = (() => {
     });
     if ([...instances.values()].some(instance => instance && instance.enabled)) {
       persistent = true;
-      // Checking every 2.5 seconds keeps the background persistent
-      setTimeout(makePersistent, 2500);
+      // Checking every 2.0 seconds keeps the background persistent
+      setTimeout(makePersistent, 2000);
     } else {
       persistent = false;
     }

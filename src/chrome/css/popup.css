@@ -223,7 +223,7 @@ table tbody tr:hover {
   margin-bottom: 16px;
 }
 
-#save-url, #toolkit, #auto, #download {
+#toolkit, #auto, #download {
   margin-bottom: 24px;
 }
 
@@ -287,13 +287,6 @@ table tbody tr:hover {
 
 #multi-button img.disabled {
   opacity: 0.4;
-}
-
-/* Save URL */
-
-#save-url .heading {
-  color: var(--saved-urls-color);
-  border-bottom-color: var(--saved-urls-color);
 }
 
 /* Toolkit */

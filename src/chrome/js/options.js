@@ -428,7 +428,7 @@ var Options = (() => {
           saves = await backgroundPage.Saves.deleteSave(urlv, "addWildcard"),
           items = await Promisify.getItems(),
           encrypt = await backgroundPage.Cryptography.encrypt(urlv, items.saveKey);
-      if (items.selectionCustom && items.selectionCustom.url) {
+    if (items.selectionCustom && items.selectionCustom.url) {
       items.selectionCustom.url = "";
     }
     // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)

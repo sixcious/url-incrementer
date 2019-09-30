@@ -47,7 +47,7 @@ var Popup = (() => {
     });
     DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
     DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
-    DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); DOM["#save-url"].className = this.checked ? "display-block fade-in" : "display-none"; });
+    DOM["#save-url-input"].addEventListener("change", function() { DOM["#save-url-img"].src = "../img/" + (this.checked ? "heart.png" : "heart-o.png"); });
     DOM["#toolkit-input"].addEventListener("change", function() { DOM["#toolkit"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "toolkitStart": this.checked }); });
     DOM["#options-button"].addEventListener("click", function() { chrome.runtime.openOptionsPage(); });
     DOM["#url-textarea"].addEventListener("select", selectURL);
@@ -1105,12 +1105,10 @@ var Popup = (() => {
       const precalculateProps = backgroundPage.IncrementDecrementArray.precalculateURLs(_);
       _.urls = precalculateProps.urls;
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
-      // // If List enabled, Re-set listEnabled and list based on urls length (if greater than 1, set to true, else false) and set the url and starting URL to the first URL in the list
-      // if (_.listEnabled) {
-      //   _.listEnabled = _.urls && _.urls.length > 1;
-      //   _.list = _.listEnabled ? _.list : "";
-      //   _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
-      // }
+      // If List enabled, set the url and starting URL to the first URL in the list
+      if (_.listEnabled) {
+        _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
+      }
       // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
       if (_.autoEnabled && _.urls && _.urls.length > 0) {
         _.autoTimes = _.autoTimesOriginal = _.urls.length;
@@ -1271,7 +1269,7 @@ var Popup = (() => {
       e.incrementDecrementErrors = [
         // [0] = URL / List Errors
         _.listEnabled && !_.list ? chrome.i18n.getMessage("url_blank_error") :
-        _.listEnabled && !_.list.match(/[^\r\n]+/g).length <= 1 ? chrome.i18n.getMessage("url_list_newline_error") : "",
+        _.listEnabled && _.list.match(/[^\r\n]+/g).length <= 1 ? chrome.i18n.getMessage("url_list_newline_error") : "",
         // [1] = Selection Errors
         // Don't try to validate selection if listEnabled or in accept/toolkit if multi range enabled due to brackets
         !_.listEnabled && caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :
