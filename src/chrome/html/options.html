@@ -193,16 +193,27 @@
       </div>
       <div id="saved-urls-wildcard" class="display-none">
         <p id="saved-urls-wildcard-instructions-p" data-i18n="textContent"></p>
+        <div class="note">
+          <span id="saves-urls-wildcard-example" data-i18n="textContent"></span>
+          <br>
+          <span id="saves-urls-wildcard-answer" data-i18n="textContent"></span>
+          <br><br>
+          <span id="saves-urls-regexp-example" data-i18n="textContent"></span>
+          <br>
+          <span id="saves-urls-regexp-answer" data-i18n="textContent"></span>
+          <br><br>
+        </div>
         <div class="row">
           <div class="column">
             <label id="saved-urls-wildcard-url-label" for="saved-urls-wildcard-url-textarea" data-i18n="textContent" class="display-block"></label>
           </div>
           <div class="column">
             <textarea id="saved-urls-wildcard-url-textarea" spellcheck="false" data-i18n="placeholder"></textarea>
-            <div class="note">
-              <span id="saves-urls-wildcard-example" data-i18n="textContent"></span>
-              <br>
-              <span id="saves-urls-regexp-example" data-i18n="textContent"></span>
+            <div class="checkbox">
+              <label>
+                <input id="saved-urls-regexp-input" type="checkbox">
+                <span id="saved-urls-regexp-label" data-i18n="textContent"></span>
+              </label>
             </div>
             <div id="saved-urls-wildcard-buttons">
               <button id="saved-urls-wildcard-save-button" data-i18n="textContent"></button>

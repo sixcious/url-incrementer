@@ -23,6 +23,7 @@ var Options = (() => {
    * @private
    */
   async function init() {
+    backgroundPage = await Promisify.getBackgroundPage();
     buildShortcuts();
     const ids = document.querySelectorAll("[id]"),
           i18ns = document.querySelectorAll("[data-i18n]");
@@ -91,7 +92,6 @@ var Options = (() => {
     DOM["#manifest-version"].textContent = chrome.runtime.getManifest().version;
     // Populate all values from storage
     populateValuesFromStorage("all");
-    backgroundPage = await Promisify.getBackgroundPage();
   }
 
   /**
@@ -397,11 +397,12 @@ var Options = (() => {
         const output = save.type === "url" ? save.hash : save.type === "wildcard" || save.type === "regexp" ? await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv, saveKey) : "";
         const option = document.createElement("option");
         option.dataset.hash = save.type === "url" ? save.hash : save.ciphertext;
-        option.textContent = (count++) + " - " + save.type + ": " + output.substring(0, 16) + "..." +
-          " select: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
-          " int: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
-          " base: " + save.base +
-          " eskip: " + save.errorSkip;
+        option.textContent = (count++) + ". " +  output.substring(0, 20) +
+          " t: " + (save.type) +
+          " s: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
+          " i: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
+          " b: " + save.base +
+          " e: " + save.errorSkip;
         select.appendChild(option);
       }
       DOM["#saved-urls-select-div"].replaceChild(select, DOM["#saved-urls-select-div"].firstChild);
@@ -417,24 +418,23 @@ var Options = (() => {
    * @private
    */
   async function addSavedURL() {
-    // If the textarea value is empty return with error
-    const url = DOM["#saved-urls-wildcard-url-textarea"].value;
+    // If the url textarea value is empty return with error
+    const url = DOM["#saved-urls-wildcard-url-textarea"].value,
+          isRegExp = DOM["#saved-urls-regexp-input"].checked;
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
       return;
     }
-    // Check if this is a wildcard or regexp, then check if it has already been saved, if it has delete the existing save, and calculate the encrypt ciphertext and iv
-    const isRegExp = url.startsWith("/") && url.endsWith("/") && url.length > 1,
-          urlv = isRegExp ? url.slice(1, -1) : url,
-          saves = await backgroundPage.Saves.deleteSave(urlv, "addWildcard"),
+    // Check if this URL has already been saved, if it has delete the existing save, and calculate the encrypt ciphertext and iv
+    const saves = await backgroundPage.Saves.deleteSave(url, "addWildcard"),
           items = await Promisify.getItems(),
-          encrypt = await backgroundPage.Cryptography.encrypt(urlv, items.saveKey);
+          encrypt = await backgroundPage.Cryptography.encrypt(url, items.saveKey);
     if (items.selectionCustom && items.selectionCustom.url) {
       items.selectionCustom.url = "";
     }
     // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)
     saves.push({
-      "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv,
+      "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "key": items.saveKey,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
       "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom

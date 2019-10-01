@@ -1113,8 +1113,8 @@ var Popup = (() => {
       if (_.autoEnabled && _.urls && _.urls.length > 0) {
         _.autoTimes = _.autoTimesOriginal = _.urls.length;
       }
-      // Save URL
-      if (_.saveURL) {
+      // Save URL if checked (only if not in list mode)
+      if (_.saveURL && !_.listEnabled) {
         backgroundPage.Saves.addURL(_);
         _.saveType = "url";
       }

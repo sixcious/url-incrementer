@@ -130,7 +130,7 @@ var IncrementDecrement = (() => {
    * @public
    */
   function incrementDecrement(action, instance) {
-    // If there is a urls array, step thru it, don't increment the URL (shuffle, multi range will have a urls array)
+    // If there is a urls array, step thru it, don't increment the URL (list, shuffle, multi range will have a urls array)
     if (instance.urls && instance.urls.length > 0) {
       IncrementDecrementArray.stepThruURLs(action, instance);
     }

@@ -162,7 +162,10 @@ var Shortcuts = Shortcuts || (() => {
    * @private
    */
   function mousePressed(event, mouse) {
-    return mouse && ((buttons3 && mouse.button === 3 && event.button === 0) || (buttons3 && mouse.button === 4 && event.button === 2) || (mouse.button <= 2 && event.button === mouse.button)) && mouse.clicks === clicks;
+    return mouse && mouse.clicks === clicks &&
+      ((buttons3 && mouse.button === 3 && event.button === 0) ||
+       (buttons3 && mouse.button === 4 && event.button === 2) ||
+       (mouse.button <= 2 && event.button === mouse.button));
   }
 
   /**

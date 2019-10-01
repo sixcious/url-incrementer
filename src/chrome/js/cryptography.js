@@ -34,7 +34,7 @@ var Cryptography = (() => {
 
   /**
    * Encrypts plaintext into ciphertext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
-   * The key/password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
+   * For simplicity, we hardcode the algorithm. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param plaintext the text to encrypt
    * @param secret    the secret key
@@ -51,7 +51,7 @@ var Cryptography = (() => {
 
   /**
    * Decrypts ciphertext into plaintext using a symmetric key. We use the AES-GCM algorithm with a SHA256 hash function.
-   * The key/password is hardcoded, so this only provides a simple layer of protection. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
+   * For simplicity, we hardcode the algorithm. Note: 256 Bits = 32 Bytes = 44 B64 Characters.
    *
    * @param ciphertext the text to decrypt
    * @param iv         the initialization vector for the algorithm
