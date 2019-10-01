@@ -180,7 +180,7 @@ var Options = (() => {
     if (values === "all" || values === "savedURLs") {
       DOM["#saved-urls-delete-button"].className = items.saves && items.saves.length > 0 ? "fade-in" : "display-none";
       DOM["#saved-urls-preselect-input"].checked = items.savePreselect;
-      buildSavedURLsSelect(items.saves);
+      buildSavedURLsSelect(items.saves, items.saveKey);
     }
     if (values === "all") {
       DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
@@ -383,17 +383,18 @@ var Options = (() => {
   /**
    * Builds out the saved URLs select HTML.
    *
-   * @param saves the saved URLs to build from
+   * @param saves   the saved URLs to build from
+   * @param saveKey the saved secret key for decrypting wildcards and regexp urls
    * @private
    */
-  async function buildSavedURLsSelect(saves) {
+  async function buildSavedURLsSelect(saves, saveKey) {
     if (saves && saves.length > 0) {
       const select = document.createElement("select");
       let count = 1;
       select.id = "saved-urls-select";
       select.className = "display-block fade-in";
       for (const save of saves) {
-        const output = save.type === "url" ? save.hash : save.type === "wildcard" || save.type === "regexp" ? await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv) : "";
+        const output = save.type === "url" ? save.hash : save.type === "wildcard" || save.type === "regexp" ? await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv, saveKey) : "";
         const option = document.createElement("option");
         option.dataset.hash = save.type === "url" ? save.hash : save.ciphertext;
         option.textContent = (count++) + " - " + save.type + ": " + output.substring(0, 16) + "..." +

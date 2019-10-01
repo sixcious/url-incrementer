@@ -106,7 +106,7 @@ var Saves = (() => {
    * @private
    */
   async function matchesWildcard(save, url) {
-    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv),
+    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv, save.key),
           matches = url.includes(wildcard);
     return { matches: matches };
   }
@@ -120,7 +120,7 @@ var Saves = (() => {
    * @private
    */
   async function matchesRegExp(save, url) {
-    const regexp = await Cryptography.decrypt(save.ciphertext, save.iv),
+    const regexp = await Cryptography.decrypt(save.ciphertext, save.iv, save.key),
           matches = new RegExp(regexp).exec(url);
     return { matches: matches };
   }

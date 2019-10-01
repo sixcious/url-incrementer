@@ -142,6 +142,7 @@ var Background = (() => {
         selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     for (const save of items.saves) {
+      save.key = items.saveKey;
       const result = await Saves.matchesSave(save, tab.url);
       if (result.matches) {
         console.log("buildInstance() - found a " + save.type + " save for this tab's url");
