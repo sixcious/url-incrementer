@@ -45,6 +45,7 @@ var Popup = (() => {
       DOM["#url-label"].textContent = chrome.i18n.getMessage((this.checked ? "list_" : "url_") + "label");
       DOM["#selection"].className = DOM["#interval"].className = DOM["#base"].className = this.checked ? "display-none" : "column";
       DOM["#list-instructions"].className = this.checked ? "column" : "display-none";
+      chrome.storage.local.set({ "listStart": this.checked });
     });
     DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
     DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
@@ -232,6 +233,7 @@ var Popup = (() => {
    */
   function updateSetup(minimal) {
     // Increment Decrement Setup:
+    DOM["#list-input"].checked = instance.listEnabled || (instance.listStart && !instance.enabled);
     DOM["#increment-decrement-heading"].className =  DOM["#list-input"].checked ? "display-none" : "display-block";
     DOM["#list-heading"].className = DOM["#list-input"].checked ? "display-block" : "display-none";
     DOM["#url-label"].textContent = chrome.i18n.getMessage((DOM["#list-input"].checked ? "list_" : "url_") + "label");

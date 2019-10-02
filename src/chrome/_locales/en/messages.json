@@ -1,7 +1,7 @@
 {
   "name": { "message": "URL Incrementer" },
   "short_name": { "message": "URLI" },
-  "description": { "message": "Increment a URL or go to the Next Page. Supports Auto and Download Incrementing. Uses 0 Chrome memory when inactive." },
+  "description": { "message": "Increment a URL or go to the Next Page. Supports Auto and Download Incrementing and Basic Crawling / Scraping. Uses 0 Chrome memory when inactive." },
   "title": { "message": "URL Incrementer" },
 
   "BROWSER": { "message": "----- BROWSER -----" },
@@ -380,7 +380,7 @@
   "enhanced_mode_h3": { "message": "Enhanced Mode" },
   "enhanced_mode_enable_button": { "message": "Enable Enhanced Mode" },
   "enhanced_mode_disable_button": { "message": "Disable Enhanced Mode" },
-  "enhanced_mode_enable_p": { "message": "Enhanced Mode is enabled! You can Error Skip, Crawl URLs with URLI's Toolkit, and use Next Prev with Auto or Buttons!" },
+  "enhanced_mode_enable_p": { "message": "Enhanced Mode is enabled! You can Error Skip, Crawl URLs with URLI's Toolkit, and use Next Prev with Auto or Buttons." },
   "enhanced_mode_disable_p": { "message": "This unlocks URLI to its full potential! It lets you Error Skip, Crawl URLs with URLI's Toolkit, and use Next Prev with Auto or Buttons. Click the button to enable (grant permissions)." },
   "about_h3": { "message": "About" },
   "version_span": { "message": "Version" },
