@@ -163,7 +163,7 @@ var Background = (() => {
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustom": object.errorCodesCustom,
       "fetchMethod": "HEAD",
       "multi": {"1": {}, "2": {}, "3": {}}, "multiCount": 0,
-      "list": "",
+      "list": "", "listArray": [],
       "urls": [],
       "shuffleURLs": false, "shuffleLimit": items.shuffleLimit, "shuffleStart": items.shuffleStart,
       "nextPrevKeywordsNext": items.nextPrevKeywordsNext, "nextPrevKeywordsPrev": items.nextPrevKeywordsPrev, "nextPrevLinksPriority": items.nextPrevLinksPriority, "nextPrevSameDomainPolicy": items.nextPrevSameDomainPolicy,

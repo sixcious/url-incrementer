@@ -1109,7 +1109,7 @@ var Popup = (() => {
       _.urlsCurrentIndex = _.startingURLsCurrentIndex = precalculateProps.currentIndex;
       // If List enabled, set the url and starting URL to the first URL in the list
       if (_.listEnabled) {
-        _.url = _.startingURL = _.listEnabled ? _.urls[0].urlmod : _.url;
+        _.url = _.startingURL = _.listArray[0];
       }
       // If Auto enabled and instance URLs array (e.g. multi range, shuffle on and hit 0 early in decrement, etc.) adjust times to be urls length
       if (_.autoEnabled && _.urls && _.urls.length > 0) {
@@ -1194,6 +1194,7 @@ var Popup = (() => {
       // Make a copy of the url in _.list and prevent saving when in list mode
       if (_.listEnabled) {
         _.list = _.url;
+        _.listArray = _.list.match(/[^\r\n]+/g);
         _.saveURL = DOM["#save-url-input"].checked = false;
         DOM["#save-url-img"].src = "../img/heart-o.png";
       }
@@ -1274,7 +1275,7 @@ var Popup = (() => {
       e.incrementDecrementErrors = [
         // [0] = URL / List Errors
         _.listEnabled && !_.list ? chrome.i18n.getMessage("url_blank_error") :
-        _.listEnabled && _.list.match(/[^\r\n]+/g).length <= 1 ? chrome.i18n.getMessage("url_list_newline_error") : "",
+        _.listEnabled && (!_.listArray || _.listArray.length <= 1) ? chrome.i18n.getMessage("url_list_newline_error") : "",
         // [1] = Selection Errors
         // Don't try to validate selection if listEnabled or in accept/toolkit if multi range enabled due to brackets
         !_.listEnabled && caller === "accept" && _.multiCount === 1 ? chrome.i18n.getMessage("multi_count_error") :

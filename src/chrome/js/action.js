@@ -291,6 +291,12 @@ var Action = (() => {
       instance.url = instance.startingURL;
       instance.selection = instance.startingSelection;
       instance.selectionStart = instance.startingSelectionStart;
+      // List Repeat Fix: If list is in auto repeat mode, splice() the list so it removes the starting URL since returnToStart() will already go back there manually
+      const listRepeatFix = instance.listEnabled && instance.autoEnabled && instance.autoRepeating && instance.autoRepeatCount === 1;
+      if (listRepeatFix) {
+        instance.listArray.splice(instance.listArray.indexOf(instance.startingURL), 1);
+        instance.autoTimesOriginal = instance.autoTimesOriginal - 1;
+      }
       // Multi
       if (instance.multiEnabled) {
         for (let i = 1; i <= instance.multiCount; i++) {
@@ -306,8 +312,8 @@ var Action = (() => {
       // Array
       if (instance.urls && instance.urls.length > 0) {
         instance.urlsCurrentIndex = instance.startingURLsCurrentIndex;
-        // Shuffle
-        if (instance.shuffleURLs) {
+        // Shuffle (reset array) or List Repeat Fix (use updated list without the starting URL)
+        if (instance.shuffleURLs || listRepeatFix) {
           instance.urls = [];
           const precalculateProps = IncrementDecrementArray.precalculateURLs(instance);
           instance.urls = precalculateProps.urls;

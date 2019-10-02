@@ -665,22 +665,11 @@ var IncrementDecrementArray = (() => {
   function precalculateURLs(instance) {
     console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ? "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
     let urls = [], currentIndex = 0;
-    // If List enabled, split by new line into list array
-    if (instance.listEnabled) {
-      const list = instance.list.match(/[^\r\n]+/g);
-      // If there is a list, set the urls object with the list of urls to conform to the existing model (e.g. urlmod and selectionmod)
-      if (list && list.length > 1) {
-        for (let i = 0; i < list.length; i++) {
-          urls.push({"urlmod": list[i], "selectionmod": ""});
-        }
-      }
-      if (instance.shuffleURLs) {
-        shuffle(urls);
-      }
-    }
-    // All Other Options:
-    else if (instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
-      if (instance.toolkitEnabled) {
+    // If instance is in a state in which a list should be generated...
+    if (instance.listEnabled || instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
+      if (instance.listEnabled) {
+        urls = buildURLs(instance, "increment", null);
+      } else if (instance.toolkitEnabled) {
         urls = buildURLs(instance, instance.toolkitAction, instance.toolkitQuantity);
       } else if (instance.autoEnabled) {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
@@ -712,11 +701,16 @@ var IncrementDecrementArray = (() => {
           url = instance.url,
           selection = instance.selection;
     // If Toolkit crawl or links, first include the original URL for completeness and include it in the limit count
-    if (instance.toolkitEnabled && (instance.toolkitTool === "links" || instance.toolkitTool === "crawl")) {
+    if (!instance.listEnabled && instance.toolkitEnabled && (instance.toolkitTool === "links" || instance.toolkitTool === "crawl")) {
       urls.push({"urlmod": url, "selectionmod": selection});
       limit--;
     }
-    if (instance.multiEnabled && instance.multiRangeEnabled) {
+    // If List enabled, simply transfer the list array into the urls array
+    if (instance.listEnabled) {
+      for (let i = 0; i < instance.listArray.length; i++) {
+        urls.push({"urlmod": instance.listArray[i], "selectionmod": ""});
+      }
+    } else if (instance.multiEnabled && instance.multiRangeEnabled) {
       buildMultiRangeURLs(instance, action, urls);
     } else {
       for (let i = 0; i < limit; i++) {
