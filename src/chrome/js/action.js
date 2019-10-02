@@ -117,7 +117,7 @@ var Action = (() => {
    */
   function incrementDecrement(action, instance, items) {
     let actionPerformed = false;
-    // If incrementDecrementEnabled (can't increment or decrement if no selection was found or not stepping thru the URLs array)
+    // If can increment/decrement selection or operating on a urls array, continue (can't increment/decrement otherwise)
     if ((instance.selection !== "" && instance.selectionStart >= 0) || (instance.urls && instance.urls.length > 0)) {
       actionPerformed = true;
       // Error Skipping:

@@ -110,39 +110,6 @@ h3 {
   margin-left: 4px;
 }
 
-/*.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-  outline: none;
-  cursor: help;
-}
-
-.tooltip::after {
-  visibility: hidden;
-  width: 200px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px;
-  position: absolute;
-  z-index: 1;
-  bottom: -10px;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -100px;
-  content: attr(data-tooltip);
-  opacity: 0;
-  transition: all 0.5s;
-  overflow: visible;
-}
-
-.tooltip:hover::after, .tooltip:focus::after {
-  visibility: visible;
-  opacity: 1;
-}*/
-
 /* Fade */
 
 @keyframes fade-in {

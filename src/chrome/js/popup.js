@@ -44,6 +44,7 @@ var Popup = (() => {
       DOM["#list-heading"].className = this.checked ? "display-block" : "display-none";
       DOM["#url-label"].textContent = chrome.i18n.getMessage((this.checked ? "list_" : "url_") + "label");
       DOM["#selection"].className = DOM["#interval"].className = DOM["#base"].className = this.checked ? "display-none" : "column";
+      DOM["#list-instructions"].className = this.checked ? "column" : "display-none";
     });
     DOM["#auto-repeat-input"].addEventListener("change", function() { chrome.storage.local.set({ "autoRepeatStart": this.checked }); });
     DOM["#shuffle-urls-input"].addEventListener("change", function() { chrome.storage.local.set({ "shuffleStart": this.checked }); });
@@ -235,6 +236,7 @@ var Popup = (() => {
     DOM["#list-heading"].className = DOM["#list-input"].checked ? "display-block" : "display-none";
     DOM["#url-label"].textContent = chrome.i18n.getMessage((DOM["#list-input"].checked ? "list_" : "url_") + "label");
     DOM["#selection"].className = DOM["#interval"].className = DOM["#base"].className = DOM["#list-input"].checked ? "display-none" : "column";
+    DOM["#list-instructions"].className = DOM["#list-input"].checked ? "column" : "display-none";
     if (instance.saveFound || items.savePreselect) {
       DOM["#save-url-input"].checked = true;
       DOM["#save-url-img"].src = DOM["#save-url-img"].src.replace("-o", "");
@@ -1189,8 +1191,11 @@ var Popup = (() => {
       _.multiEnabled = _.multiCount >= 2 && _.multiCount <= 3;
       _.shuffleURLs = DOM["#shuffle-urls-input"].checked;
       _.listEnabled = DOM["#list-input"].checked;
+      // Make a copy of the url in _.list and prevent saving when in list mode
       if (_.listEnabled) {
         _.list = _.url;
+        _.saveURL = DOM["#save-url-input"].checked = false;
+        DOM["#save-url-img"].src = "../img/heart-o.png";
       }
     }
     if (caller === "multi") {
@@ -1309,6 +1314,7 @@ var Popup = (() => {
     if (caller === "accept") {
       // Auto Errors
       e.autoErrors = [
+        _.autoEnabled && _.listEnabled && _.autoAction !== "increment" ? chrome.i18n.getMessage("auto_list_action_error") : "",
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && !items.permissionsEnhancedMode ? chrome.i18n.getMessage("auto_next_prev_error") : "",
         _.autoEnabled && (_.autoAction === "next" || _.autoAction === "prev") && _.shuffleURLs ? chrome.i18n.getMessage("auto_next_prev_shuffle_error") : "",
         _.autoEnabled && (_.autoTimes < 1 || _.autoTimes > 10000) ? chrome.i18n.getMessage("auto_times_invalid_error") : "",

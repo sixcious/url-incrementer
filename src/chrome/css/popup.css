@@ -197,7 +197,7 @@ table tbody tr:hover {
 #setup textarea {
   word-break: break-all;
   resize: vertical;
-  width: 512px;
+  width: 530px;
   min-height: 41px;
   max-height: 200px;
 }
@@ -228,7 +228,7 @@ table tbody tr:hover {
 }
 
 #increment-decrement div.column:not(:last-child), #toolkit div.column:not(:last-child), #auto div.column:not(:last-child), #download div.column:not(:last-child)  {
-  padding-right: 27px;
+  padding-right: 32px;
 }
 
 /* Increment Decrement */
@@ -272,6 +272,10 @@ table tbody tr:hover {
 
 #list-button {
   margin-bottom: 2px;
+}
+
+#list-instructions {
+  font-style: italic;
 }
 
 /* Multi */

@@ -296,8 +296,8 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "pkmcgelkkkkcbnfcfnjpcbdgncoiflli",
-          URL_DECREMENT_BUTTON_EXTENSION_ID = "ookjnpojpifnkgfcfofkdjbeejbacakj";
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "ahhkoahoodgaboecgkndcklmddgkaalh",
+          URL_DECREMENT_BUTTON_EXTENSION_ID = "ppnacbppaelhdgaehbkmkopdcjiemndm";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({received: true});
