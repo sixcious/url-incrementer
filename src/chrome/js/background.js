@@ -31,7 +31,7 @@ var Background = (() => {
     "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["count", "thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitScrape": false, "toolkitCrawlCheckboxes": ["url", "response", "code", "info", "ok", "error", "redirected", "other", "exception"], "toolkitStart": false,
     "scrapeMethod": "selector", "scrapeSelector": "", "scrapeProperty": [],
-    "saves": [], "savePreselect": false, "saveKey": Cryptography.salt().substring(0,16)
+    "saves": [], "savePreselect": false, "saveKey": Cryptography.salt()
   },
 
   // The browser action badges that will be displayed against the extension icon
@@ -142,7 +142,7 @@ var Background = (() => {
         selection = IncrementDecrement.findSelection(url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     for (const save of items.saves) {
-      const result = await Saves.matchesSave(save, save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url);
+      const result = await Saves.matchesSave( save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url, save, items.saveKey);
       if (result.matches) {
         console.log("buildInstance() - found a " + save.type + " save for this tab's url");
         via = save.type;
@@ -219,6 +219,7 @@ var Background = (() => {
               chrome.runtime.openOptionsPage();
             } else if (details.reason === "update") {
               Permissions.removeAllPermissions();
+              startupListener();
             }
           });
         });

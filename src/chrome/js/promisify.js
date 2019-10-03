@@ -23,6 +23,20 @@ var Promisify = (() => {
     });
   }
 
+  // TODO
+  function setItems(namespace = "local", items) {
+    return new Promise(resolve => {
+      chrome.storage[namespace].set(items, resolve);
+    });
+  }
+
+  // TODO
+  function clearItems(namespace = "local") {
+    return new Promise(resolve => {
+      chrome.storage[namespace].clear(resolve);
+    });
+  }
+
   /**
    * Gets the queried tabs via a promise-based wrapper for async/await callers.
    *

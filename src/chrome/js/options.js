@@ -394,15 +394,15 @@ var Options = (() => {
       select.id = "saved-urls-select";
       select.className = "display-block fade-in";
       for (const save of saves) {
-        const output = save.type === "url" ? save.hash : save.type === "wildcard" || save.type === "regexp" ? await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv, saveKey) : "";
+        const output = await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv, saveKey);
         const option = document.createElement("option");
-        option.dataset.hash = save.type === "url" ? save.hash : save.ciphertext;
-        option.textContent = (count++) + ". " +  output.substring(0, 20) +
-          " t: " + (save.type) +
-          " s: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
-          " i: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
-          " b: " + save.base +
-          " e: " + save.errorSkip;
+        option.dataset.ciphertext = save.ciphertext;
+        option.textContent = (count++) + ". " + save.type.substring(0 ,3) + " - " + output.substring(0, 60) +
+          // " s: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
+          // " i: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
+          // " b: " + save.base +
+          // " e: " + save.errorSkip +
+          " (" + new Date(save.date).toLocaleDateString() + ")";
         select.appendChild(option);
       }
       DOM["#saved-urls-select-div"].replaceChild(select, DOM["#saved-urls-select-div"].firstChild);
@@ -420,7 +420,7 @@ var Options = (() => {
   async function addSavedURL() {
     // If the url textarea value is empty return with error
     const url = DOM["#saved-urls-wildcard-url-textarea"].value,
-          isRegExp = DOM["#saved-urls-regexp-input"].checked;
+          type = DOM["#saved-urls-regexp-input"].checked ? "regexp" : "wildcard";
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
       return;
@@ -434,7 +434,7 @@ var Options = (() => {
     }
     // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)
     saves.push({
-      "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "key": items.saveKey, "decodeURIEnabled": items.decodeURIEnabled,
+      "type": type, "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": items.decodeURIEnabled,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
       "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom
@@ -446,7 +446,7 @@ var Options = (() => {
   }
 
   /**
-   * Deletes a Saved URL (all types) by its hash/ciphertext.
+   * Deletes a Saved URL (all types) by its unique ciphertext.
    *
    * @private
    */
@@ -454,12 +454,12 @@ var Options = (() => {
     // Dynamically Generated Select, must get element dynamically, can't use DOM Cache
     const select = document.getElementById("saved-urls-select"),
           option = select.options[select.selectedIndex],
-          hash = option.dataset.hash,
+          ciphertext = option.dataset.ciphertext,
           saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
-        if (saves[i].type === "url" ? saves[i].hash === hash : saves[i].ciphertext === hash) {
-          console.log("deleteSavedURL() - deleting Saved URL with type=" + saves[i].type + ", hash=" + saves[i].hash);
+        if (saves[i].ciphertext === ciphertext) {
+          console.log("deleteSavedURL() - deleting Saved URL with type=" + saves[i].type + ", ciphertext=" + saves[i].ciphertext);
           saves.splice(i, 1);
           chrome.storage.local.set({saves: saves}, function() {
             populateValuesFromStorage("savedURLs");
