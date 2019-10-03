@@ -23,9 +23,9 @@ var Saves = (() => {
           hash = await Cryptography.hash(url1 + url2, salt);
     // "Unshift" this new save to the START of the array because it's an exact url type (not a wildcard/regexp)
     saves.unshift({
-      "type": "url", "hash": hash, "salt": salt, "selectionEnd": url2.length,
-      "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
-      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseCustom": instance.baseCustom,
+      "type": "url", "hash": hash, "salt": salt, "decodeURIEnabled": instance.decodeURIEnabled,
+      "selectionEnd": url2.length, "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
+      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseRoman": instance.baseRoman, "baseCustom": instance.baseCustom,
       "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustom": instance.errorCodesCustom
     });
     chrome.storage.local.set({"saves": saves});

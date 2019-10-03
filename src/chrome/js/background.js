@@ -130,31 +130,32 @@ var Background = (() => {
    */
   async function buildInstance(tab, items) {
     items = items ? items : await Promisify.getItems();
-    if (items.decodeURIEnabled) {
-      try {
-        tab.url = decodeURI(tab.url);
-      } catch(e) {
-        console.log("buildInstance() - exception decoding URI, e=" + e + ", tab.url=" + (tab ? tab.url : ""));
-      }
+    let urlDecoded;
+    try {
+      urlDecoded = decodeURI(tab.url);
+    } catch(e) {
+      console.log("buildInstance() - exception decoding URI, e=" + e + ", tab.url=" + (tab ? tab.url : ""));
     }
     let via = "items",
         object = items,
-        selection = IncrementDecrement.findSelection(tab.url, items.selectionPriority, items.selectionCustom);
+        url = items.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url,
+        selection = IncrementDecrement.findSelection(url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     for (const save of items.saves) {
-      const result = await Saves.matchesSave(save, tab.url);
+      const result = await Saves.matchesSave(save, save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url);
       if (result.matches) {
         console.log("buildInstance() - found a " + save.type + " save for this tab's url");
         via = save.type;
         object = save;
-        selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(tab.url, save.selectionPriority, save.selectionCustom);
+        url = save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url;
+        selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(url, save.selectionPriority, save.selectionCustom);
         break;
       }
     }
     // Return the newly built instance using tab, via, selection, object, and items:
     return {
-      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false, "listEnabled": false,
-      "tabId": tab.id, "url": tab.url,
+      "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false, "listEnabled": false, "decodeURIEnabled": object.decodeURIEnabled,
+      "tabId": tab.id, "url": url,
       "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
       "selection": selection.selection, "selectionStart": selection.selectionStart,
       "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
@@ -211,20 +212,13 @@ var Background = (() => {
     // install: Open Options Page, 1.0-5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
-      const sitems = details.reason === "update" ? await Promisify.getItems("sync") : undefined,
-            litems = details.reason === "update" ? await Promisify.getItems("local") : undefined;
       chrome.storage.sync.clear(function() {
         chrome.storage.local.clear(function() {
           chrome.storage.local.set(STORAGE_DEFAULT_VALUES, function() {
             if (details.reason === "install") {
               chrome.runtime.openOptionsPage();
             } else if (details.reason === "update") {
-              if (details.previousVersion >= "1.0" && details.previousVersion <= "5.2") {
-                Permissions.removeAllPermissions();
-              } else if (details.previousVersion === "0.0" || details.previousVersion >= "5.3" && details.previousVersion <= "5.8") {
-                if (litems && litems.saves && litems.saves.length > 0) { chrome.storage.local.set({"saves": litems.saves}); }
-                if (sitems && sitems.interval) { chrome.storage.local.set({"interval": sitems.interval}); }
-              }
+              Permissions.removeAllPermissions();
             }
           });
         });

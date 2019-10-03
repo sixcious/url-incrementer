@@ -434,7 +434,7 @@ var Options = (() => {
     }
     // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)
     saves.push({
-      "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "key": items.saveKey,
+      "type": isRegExp ? "regexp" : "wildcard", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "key": items.saveKey, "decodeURIEnabled": items.decodeURIEnabled,
       "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
       "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
       "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom

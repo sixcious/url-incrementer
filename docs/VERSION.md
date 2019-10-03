@@ -1,6 +1,6 @@
 # Version History
 
-# Version 6.0 (10/31/2018)
+# Version 6.0 (10/31/2019)
 - Support for Firefox and Firefox for Android
 - Now uses 0 Chrome Memory when inactive (e.g. when you haven't enabled it for a tab)! (Chrome Only)
 - New Multi-Click Mouse Shortcuts
