@@ -317,6 +317,7 @@ var Popup = (() => {
     DOM["#download-excludes-input"].value = instance.downloadExcludes && Array.isArray(instance.downloadExcludes) ? instance.downloadExcludes.join(",") : "";
     DOM["#download-subfolder-input"].value = instance.downloadSubfolder && instance.downloadSubfolder.trim() ? instance.downloadSubfolder : "";
     DOM["#download-subfolder-increment-input"].checked = instance.downloadSubfolderIncrement;
+    DOM["#download-preview-count-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("count");
     DOM["#download-preview-thumb-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("thumb");
     DOM["#download-preview-filename-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("filename");
     DOM["#download-preview-extension-input"].checked = instance.downloadPreview && instance.downloadPreview.includes("extension");
@@ -883,7 +884,7 @@ var Popup = (() => {
         const tr = document.createElement("tr"); thead.appendChild(tr);
         let th;
         th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
-        th = document.createElement("th"); th.className = "count"; th.textContent = " "; tr.appendChild(th);
+        th = document.createElement("th"); th.className = "count"; th.textContent = chrome.i18n.getMessage("download_preview_count_label"); tr.appendChild(th);
         th = document.createElement("th"); th.className = "thumb"; th.textContent = chrome.i18n.getMessage("download_preview_thumb_label"); tr.appendChild(th);
         th = document.createElement("th"); th.className = "filename"; th.textContent = chrome.i18n.getMessage("download_preview_filename_label"); tr.appendChild(th);
         th = document.createElement("th"); th.className = "extension"; th.textContent = chrome.i18n.getMessage("download_preview_extension_label"); tr.appendChild(th);
@@ -900,6 +901,7 @@ var Popup = (() => {
         }
         DOM["#download-preview-table-div"].replaceChild(table, DOM["#download-preview-table-div"].firstChild);
         // After we build the table we need to update the columns again to what the checkboxes were:
+        updateDownloadPreviewCheckboxes.call(DOM["#download-preview-count-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-thumb-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-filename-input"]);
         updateDownloadPreviewCheckboxes.call(DOM["#download-preview-extension-input"]);

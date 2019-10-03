@@ -28,7 +28,7 @@ var Background = (() => {
     "nextPrevKeywordsNext": ["pnnext", "next page", "next >", "next »", "next", "more results", "older posts", "older", "forward", "次", "&gt;", ">", "›", "→"],
     "nextPrevKeywordsPrev": ["pnprev", "previous page", "< prev", "« prev", "prev", "previous", "newer posts", "newer", "前", "&lt;", "<", "‹", "←"],
     "autoAction": "increment", "autoTimes": 10, "autoSeconds": 5, "autoWait": true, "autoBadge": "auto", "autoStart": false, "autoRepeatStart": false,
-    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
+    "downloadStrategy": "extensions", "downloadExtensions": [], "downloadTags": [], "downloadAttributes": [], "downloadSelector": "", "downloadIncludes": [], "downloadExcludes": [], "downloadSubfolder": "", "downloadSubfolderIncrement": false, "downloadPreview": ["count", "thumb", "extension", "tag", "url", "compressed"], "downloadStart": false,
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitScrape": false, "toolkitCrawlCheckboxes": ["url", "response", "code", "info", "ok", "error", "redirected", "other", "exception"], "toolkitStart": false,
     "scrapeMethod": "selector", "scrapeSelector": "", "scrapeProperty": [],
     "saves": [], "savePreselect": false, "saveKey": Cryptography.salt().substring(0,16)
