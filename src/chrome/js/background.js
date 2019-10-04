@@ -212,18 +212,14 @@ var Background = (() => {
     // install: Open Options Page, 1.0-5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
-      chrome.storage.sync.clear(function() {
-        chrome.storage.local.clear(function() {
-          chrome.storage.local.set(STORAGE_DEFAULT_VALUES, function() {
-            if (details.reason === "install") {
-              chrome.runtime.openOptionsPage();
-            } else if (details.reason === "update") {
-              Permissions.removeAllPermissions();
-              startupListener();
-            }
-          });
-        });
-      });
+      await Promisify.clearItems("sync");
+      await Promisify.clearItems("local");
+      await Promisify.setItems("local", STORAGE_DEFAULT_VALUES);
+      if (details.reason === "install") {
+        chrome.runtime.openOptionsPage();
+      } else if (details.reason === "update") {
+        await Permissions.removeAllPermissions();
+      }
     }
     startupListener();
   }

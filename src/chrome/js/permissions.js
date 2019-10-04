@@ -38,6 +38,11 @@ var Permissions = (() => {
    * @public
    */
   function requestPermission(permission, callback) {
+    // return new Promise(resolve => {
+    //   chrome.permissions.request(PERMISSIONS[permission].request, granted => {
+    //
+    //   });
+    // });
     chrome.permissions.request(PERMISSIONS[permission].request, function(granted) {
       if (granted) {
         console.log("requestPermission() - successfully granted permission request:" + PERMISSIONS[permission].request.permissions + ", origins:" + PERMISSIONS[permission].request.origins);
@@ -112,22 +117,19 @@ var Permissions = (() => {
   }
 
   /**
-   * Removes all the extension's optional permissions.
+   * Removes all the extension's optional permissions via a promise-based wrapper for async/await callers.
    *
-   * @param callback the callback function to return execution to
+   * @param permissions (optional) all permissions to remove
+   * @returns {Promise<{}>} true if removed, false if not removed
    * @public
    */
-  function removeAllPermissions(callback) {
-    if (chrome.declarativeContent) {
-      chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {});
-    }
-    chrome.permissions.remove({ permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}, function(removed) {
-      if (removed) {
-        console.log("removeAllPermissions() - all permissions successfully removed!");
-        if (callback) {
-          callback(true);
-        }
-      }
+  async function removeAllPermissions(permissions = { permissions: ["declarativeContent", "downloads"], origins: ["<all_urls>"]}) {
+    await removeDeclarativeContentRules();
+    return new Promise(resolve => {
+      chrome.permissions.remove(permissions, removed => {
+        console.log("removeAllPermissions() - " + removed ? "permissions successfully removed!" : "not removed...");
+        resolve(removed);
+      });
     });
   }
 
@@ -157,6 +159,27 @@ var Permissions = (() => {
             console.log("checkDeclarativeContent() - successfully added declarativeContent rules:" + rules);
           });
         });
+      }
+    });
+  }
+
+  /**
+   * TODO
+   * @param rule
+   *
+   * @returns {Promise<unknown>}
+   * @private
+   */
+  function removeDeclarativeContentRules(rule = undefined) {
+    return new Promise(resolve => {
+      if (chrome.declarativeContent) {
+        chrome.declarativeContent.onPageChanged.removeRules(rule, resolve => {
+          console.log("removeDeclarativeContentRules() - rules successfully removed!");
+          resolve(true);
+        });
+      } else {
+        console.log("removeDeclarativeContentRules() - no rules were removed (there may not have been any to begin with)");
+        resolve(false);
       }
     });
   }

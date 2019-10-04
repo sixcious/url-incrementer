@@ -577,16 +577,14 @@ var Options = (() => {
    *
    * @private
    */
-  function resetOptions() {
-    chrome.storage.local.clear(function() {
-      chrome.storage.local.set(backgroundPage.Background.getSDV(), function() {
-        Permissions.removeAllPermissions();
-        console.log("resetOptions() - storage cleared and set and permissions removed");
-        changeIconColor.call(DOM["#icon-color-radio-dark"]);
-        populateValuesFromStorage("all");
-        UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
-      });
-    });
+  async function resetOptions() {
+    await Promisify.clearItems();
+    await Promisify.setItems("local", backgroundPage.Background.getSDV());
+    await Permissions.removeAllPermissions();
+    console.log("resetOptions() - storage cleared and set and permissions removed");
+    changeIconColor.call(DOM["#icon-color-radio-dark"]);
+    populateValuesFromStorage("all");
+    UI.generateAlert([chrome.i18n.getMessage("reset_options_message")]);
   }
 
   /**

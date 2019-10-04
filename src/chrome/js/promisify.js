@@ -23,14 +23,27 @@ var Promisify = (() => {
     });
   }
 
-  // TODO
+  /**
+   * Sets the storage items via a promise-based wrapper for async/await callers.
+   *
+   * @param namespace (optional) the storage namespace, either "local" or "sync"
+   * @param items     the storage items (object {}) to set
+   * @returns {Promise<{}>}
+   * @public
+   */
   function setItems(namespace = "local", items) {
     return new Promise(resolve => {
       chrome.storage[namespace].set(items, resolve);
     });
   }
 
-  // TODO
+  /**
+   * Clears the storage items via a promise-based wrapper for async/await callers.
+   *
+   * @param namespace (optional) the storage namespace, either "local" or "sync"
+   * @returns {Promise<{}>}
+   * @public
+   */
   function clearItems(namespace = "local") {
     return new Promise(resolve => {
       chrome.storage[namespace].clear(resolve);
@@ -98,6 +111,8 @@ var Promisify = (() => {
   // Return Public Functions
   return {
     getItems: getItems,
+    setItems: setItems,
+    clearItems: clearItems,
     getTabs: getTabs,
     getBackgroundPage: getBackgroundPage,
     runtimeSendMessage: runtimeSendMessage,

@@ -13,27 +13,9 @@ var Saves = (() => {
    * @param instance the instance's URL and settings to save
    * @public
    */
-  async function addURLByHash(instance) {
-    console.log("addURL() - saving a URL to local storage...");
-    // Check if this URL has already been saved, if it has delete the existing save, and calculate the hash/salt
-    const saves = await deleteSave(instance.url, "addURL"),
-          url1 = instance.url.substring(0, instance.selectionStart),
-          url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
-          salt = Cryptography.salt(),
-          hash = await Cryptography.hash(url1 + url2, salt);
-    // "Unshift" this new save to the START of the array because it's an exact url type (not a wildcard/regexp)
-    saves.unshift({
-      "type": "url", "hash": hash, "salt": salt, "decodeURIEnabled": instance.decodeURIEnabled,
-      "selectionEnd": url2.length, "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
-      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseRoman": instance.baseRoman, "baseCustom": instance.baseCustom,
-      "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustom": instance.errorCodesCustom
-    });
-    chrome.storage.local.set({"saves": saves});
-  }
-
   async function addURL(instance) {
     console.log("addURL() - saving a URL to local storage...");
-    // Check if this URL has already been saved, if it has delete the existing save, and calculate the hash/salt
+    // Check if this URL has already been saved, if it has delete the existing save, and split it into two parts (separated by the selection)
     const items = await Promisify.getItems(),
           saves = await deleteSave(instance.url, "addURL"),
           url1 = instance.url.substring(0, instance.selectionStart),
@@ -82,7 +64,7 @@ var Saves = (() => {
    *
    * @param url  the plaintext URL to match
    * @param save the saved URL, wildcard, or regexp
-   * @param key  the save key used to decrypt a saved URL
+   * @param key  the secret key used to decrypt a saved URL
    * @returns {Promise<{matches: boolean}>} the matches
    * @public
    */
@@ -103,28 +85,18 @@ var Saves = (() => {
   /**
    * Tests if a saved URL matches a plaintext URL.
    *
-   * @param save the saved URL
    * @param url  the plaintext URL to match
+   * @param save the saved URL
+   * @param key  the secret key used to decrypt a saved URL
    * @returns {Promise<{matches: boolean, selection: {}}>} the matches with selection
    * @private
    */
-  async function matchesURLByHash(save, url) {
-    const url1 = url.substring(0, save.selectionStart),
-          url2 = url.substring(url.length - save.selectionEnd),
-          hash = await Cryptography.hash(url1 + url2, save.salt),
-          selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
-    // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
-    const matches = hash === save.hash && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseRoman, save.baseCustom, save.leadingZeros) === "";
-    return { matches: matches, selection: { selection: selection, selectionStart: save.selectionStart } };
-  }
-
   async function matchesURL(url, save, key) {
     const url1 = url.substring(0, save.selectionStart),
           url2 = url.substring(url.length - save.selectionEnd),
-          //hash = await Cryptography.hash(url1 + url2, save.salt),
           surl = await Cryptography.decrypt(save.ciphertext, save.iv, key),
           selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
-    // We check that the hash matches, and if url2 is empty (e.g. the selection is the last part of the URL with nothing after it, that the selection is valid and matches the saved base):
+    // We check that the saved url (now decrypted into plaintext) matches exactly with the url (url1 + url2) and validate the selection; if true, we found a match
     const matches = surl === (url1 + url2) && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseRoman, save.baseCustom, save.leadingZeros) === "";
     return { matches: matches, selection: { selection: selection, selectionStart: save.selectionStart } };
   }
@@ -134,7 +106,7 @@ var Saves = (() => {
    *
    * @param url  the plaintext URL to match
    * @param save the saved wildcard
-   * @param key  the save key used to decrypt a saved URL
+   * @param key  the secret key used to decrypt a saved URL
    * @returns {Promise<{matches: RegExpExecArray}>} the matches
    * @private
    */
@@ -149,7 +121,7 @@ var Saves = (() => {
    *
    * @param url  the plaintext URL to match
    * @param save the saved regexp
-   * @param key  the save key used to decrypt a saved URL
+   * @param key  the secret key used to decrypt a saved URL
    * @returns {Promise<{matches: RegExpExecArray}>} the matches
    * @private
    */
