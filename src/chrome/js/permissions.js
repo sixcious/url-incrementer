@@ -173,13 +173,14 @@ var Permissions = (() => {
   function removeDeclarativeContentRules(rule = undefined) {
     return new Promise(resolve => {
       if (chrome.declarativeContent) {
-        chrome.declarativeContent.onPageChanged.removeRules(rule, resolve => {
+        chrome.declarativeContent.onPageChanged.removeRules(rule => {
           console.log("removeDeclarativeContentRules() - rules successfully removed!");
-          resolve(true);
+          resolve(rule);
+          return true;
         });
       } else {
         console.log("removeDeclarativeContentRules() - no rules were removed (there may not have been any to begin with)");
-        resolve(false);
+        return false;
       }
     });
   }

@@ -13,13 +13,13 @@ var Shortcuts = Shortcuts || (() => {
   // The current mouse button on mousedown
   // A boolean flag indicating if the right + left mouse buttons are clicked simultaneously (needed between mousedown and up)
   // The current consecutive click count for a single mouse button
-  // A reusable global timeouts for detecting multiple mouse clicks
+  // A reusable global timeouts object for detecting multiple mouse clicks
   // The storage items cache
-  let button = undefined,
-      buttons3 = false,
-      clicks = 0,
-      timeouts = {},
-      items = {};
+  let button = undefined;
+  let buttons3 = false;
+  let clicks = 0;
+  let timeouts = {};
+  let items = {};
 
   /**
    * Sets the items storage cache.

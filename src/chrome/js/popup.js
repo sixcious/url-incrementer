@@ -615,31 +615,33 @@ var Popup = (() => {
    *
    * @private
    */
-  function crawlURLs() {
+  async function crawlURLs() {
     if (instance.toolkitQuantityRemaining <= 0) {
       console.log("crawlURLs() - exhausted the quantityRemaining");
       return;
     }
-    const id = instance.toolkitQuantity - instance.toolkitQuantityRemaining,
-          tr = document.getElementById("crawl-table-tr-" + id),
-          td1 = document.getElementById("crawl-table-td-response-" + id),
-          td2 = document.getElementById("crawl-table-td-code-" + id),
-          td3 = document.getElementById("crawl-table-td-details-" + id),
-          td4 = document.getElementById("crawl-table-td-scrape-" + id);
-    let res,
-        status,
-        details,
-        scrapes = [],
-        redirected,
-        url;
+    const id = instance.toolkitQuantity - instance.toolkitQuantityRemaining;
+    const tr = document.getElementById("crawl-table-tr-" + id);
+    const td1 = document.getElementById("crawl-table-td-response-" + id);
+    const td2 = document.getElementById("crawl-table-td-code-" + id);
+    const td3 = document.getElementById("crawl-table-td-details-" + id);
+    const td4 = document.getElementById("crawl-table-td-scrape-" + id);
     td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
+
+    let res;
+    let status;
+    let redirected;
+    let url;
+    let details;
+    let scrapes = [];
     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-    fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" }).then(async response => {
+    try {
+      const response = await fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" });
+      url = response.url;
       status = response.status;
+      details = response.statusText;
       redirected = response.redirected;
       res = redirected ? "redirected" : response.ok ? "ok" : status >= 100 && status <= 199 ? "info" : status >= 400 && status <= 599 ? "error" : "other";
-      details = response.statusText;
-      url = response.url;
       if (instance.toolkitScrape) {
         try {
           const text = await response.text();
@@ -667,14 +669,15 @@ var Popup = (() => {
             }
           }
         } catch(e) {
+          console.log(e);
           scrapes[0] = e;
         }
       }
-    }).catch(e => {
-      status = e && e.name ? e.name : "";
+    } catch(e) {
       res = "exception";
+      status = e && e.name ? e.name : "";
       details = e && e.message ? e.message : e;
-    }).finally(() => {
+    } finally {
       // If the server disallows HEAD requests, switch to GET and retry this request using the same quantityRemaining
       if (status === 405 && instance.fetchMethod === "HEAD") {
         console.log("crawlURLs() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
@@ -712,7 +715,7 @@ var Popup = (() => {
           document.getElementById("crawl-table-td-response-" + (id + 1)).textContent = chrome.i18n.getMessage("crawl_waiting_label");
         }
       }
-    });
+    }
   }
 
   /**

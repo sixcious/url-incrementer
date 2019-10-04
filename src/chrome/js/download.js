@@ -120,8 +120,8 @@ var Download = (() => {
    * @private
    */
   function findDownloadURLsBySelector(document_, strategy, extensions, tags, attributes, selector, includes, excludes, items, level) {
-    const elements = document_.querySelectorAll(selector),
-          origin = new URL(window.location.href).origin;
+    const elements = document_.querySelectorAll(selector);
+    const origin = new URL(window.location.href).origin;
     console.log("findDownloadURLsBySelector() - found " + elements.length + " element(s) on document level=" + level);
     for (const element of elements) {
       for (const attribute of URL_ATTRIBUTES) {
@@ -253,8 +253,8 @@ var Download = (() => {
   function extractURLsFromStyle(style) {
     const urls = [];
     if (style) {
-      const URL_STYLE_PROPERTIES = ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"],
-            regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
+      const URL_STYLE_PROPERTIES = ["background", "background-image", "list-style", "list-style-image", "content", "cursor", "play-during", "cue", "cue-after", "cue-before", "border-image", "border-image-source", "mask", "mask-image", "@import", "@font-face"];
+      const regex =  /\s*url\s*\(\s*(?:'(\S*?)'|"(\S*?)"|((?:\\\s|\\\)|\\\"|\\\'|\S)*?))\s*\)/i;
       for (const property of URL_STYLE_PROPERTIES) {
         if (style[property]) {
           const match = regex.exec(style[property]);

@@ -32,10 +32,10 @@ var Background = (() => {
     "toolkitTool": "crawl", "toolkitAction": "increment", "toolkitQuantity": 10, "toolkitSeconds": 1, "toolkitScrape": false, "toolkitCrawlCheckboxes": ["url", "response", "code", "info", "ok", "error", "redirected", "other", "exception"], "toolkitStart": false,
     "scrapeMethod": "selector", "scrapeSelector": "", "scrapeProperty": [],
     "saves": [], "savePreselect": false, "saveKey": Cryptography.salt()
-  },
+  };
 
   // The browser action badges that will be displayed against the extension icon
-  BROWSER_ACTION_BADGES = {
+  const BROWSER_ACTION_BADGES = {
     "incrementm": { "text": "+",    "backgroundColor": "#4AACED" },
     "decrementm": { "text": "-",    "backgroundColor": "#4AACED" },
     "increment":  { "text": "+",    "backgroundColor": "#1779BA" },
@@ -56,10 +56,10 @@ var Background = (() => {
     "toolkit":    { "text": "TOOL", "backgroundColor": "#000028" },
     "skip":       { "text": "SKIP", "backgroundColor": "#000000" },
     "default":    { "text": "",     "backgroundColor": [0,0,0,0] }
-  },
+  };
 
   // The individual tab instances in Background memory. Note: We never save instances in storage due to URLs being a privacy concern
-  instances = new Map();
+  const instances = new Map();
 
   // A boolean flag to dynamically make the background temporarily persistent when an instance is enabled
   let persistent = false;
@@ -136,10 +136,10 @@ var Background = (() => {
     } catch(e) {
       console.log("buildInstance() - exception decoding URI, e=" + e + ", tab.url=" + (tab ? tab.url : ""));
     }
-    let via = "items",
-        object = items,
-        url = items.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url,
-        selection = IncrementDecrement.findSelection(url, items.selectionPriority, items.selectionCustom);
+    let via = "items";
+    let object = items;
+    let url = items.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url;
+    let selection = IncrementDecrement.findSelection(url, items.selectionPriority, items.selectionCustom);
     // First search for a save to build an instance from:
     for (const save of items.saves) {
       const result = await Saves.matchesSave( save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url, save, items.saveKey);
@@ -209,14 +209,17 @@ var Background = (() => {
    * @private
    */
   async function installedListener(details) {
-    // install: Open Options Page, 1.0-5.2: Reset storage and remove permissions, 5.3-5.8: 6.0 storage migration
+    // install: Open Options Page; update to 6.0: reset storage and remove permissions
     if (details.reason === "install" || (details.reason === "update" && details.previousVersion < "6.0")) {
       console.log("installedListener() - details.reason=" + details.reason);
       await Promisify.clearItems("sync");
+      console.log("cleared sync items!")
       await Promisify.clearItems("local");
+      console.log("cleared local items!")
       await Promisify.setItems("local", STORAGE_DEFAULT_VALUES);
       if (details.reason === "install") {
         chrome.runtime.openOptionsPage();
+        console.log("opened options page!");
       } else if (details.reason === "update") {
         await Permissions.removeAllPermissions();
       }
@@ -287,8 +290,8 @@ var Background = (() => {
    */
   async function messageExternalListener(request, sender, sendResponse) {
     console.log("messageExternalListener() - request.action=" + request.action + ", sender.id=" + sender.id);
-    const URL_INCREMENT_BUTTON_EXTENSION_ID = "ahhkoahoodgaboecgkndcklmddgkaalh",
-          URL_DECREMENT_BUTTON_EXTENSION_ID = "ppnacbppaelhdgaehbkmkopdcjiemndm";
+    const URL_INCREMENT_BUTTON_EXTENSION_ID = "ahhkoahoodgaboecgkndcklmddgkaalh";
+    const URL_DECREMENT_BUTTON_EXTENSION_ID = "ppnacbppaelhdgaehbkmkopdcjiemndm";
     if (sender && (sender.id === URL_INCREMENT_BUTTON_EXTENSION_ID || sender.id === URL_DECREMENT_BUTTON_EXTENSION_ID) &&
         request && request.tab && (request.action === "increment" || request.action === "decrement")) {
       sendResponse({received: true});
@@ -327,8 +330,8 @@ var Background = (() => {
    * @private
    */
   async function makePersistent() {
-    const tabs = await Promisify.getTabs({}),
-          tabIds = tabs.map(tab => tab.id);
+    const tabs = await Promisify.getTabs({});
+    const tabIds = tabs.map(tab => tab.id);
     [...instances.keys()].forEach(function(key) {
       if (!tabIds.includes(key)) {
         // Tab was removed so clear instance

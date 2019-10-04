@@ -142,12 +142,11 @@ var Action = (() => {
    * @param retrying           (optional) boolean indicating whether the fetch method was switched to retry the URL
    * @private
    */
-  function incrementDecrementErrorSkip(action, instance, errorSkipRemaining, retrying) {
+  async function incrementDecrementErrorSkip(action, instance, errorSkipRemaining, retrying) {
     console.log("incrementDecrementErrorSkip() - instance.fetchMethod=" + instance.fetchMethod + ", instance.errorCodes=" + instance.errorCodes + ", instance.errorCodesCustom=" + instance.errorCodesCustom  + ", errorSkipRemaining=" + errorSkipRemaining + ", retrying=" + retrying);
-    let status,
-        exception = false,
-        redirected = false,
-        error = false;
+    let response;
+    let exception = false;
+    let error = false;
     // If the fetch method was just switched to GET, don't increment again to allow retrying with the same instance URL
     if (!retrying) {
       IncrementDecrement.incrementDecrement(action, instance);
@@ -158,9 +157,8 @@ var Action = (() => {
       return;
     }
     // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
-    fetch(instance.url, { method: instance.fetchMethod, credentials: "same-origin" }).then(response => {
-      status = response.status;
-      redirected = response.redirected;
+    try {
+      response = await fetch(instance.url, { method: instance.fetchMethod, credentials: "same-origin" });
       if (response && response.status &&
         ((instance.errorCodes && (
           (instance.errorCodes.includes("404") && response.status === 404) ||
@@ -174,28 +172,28 @@ var Action = (() => {
         console.log("incrementDecrementErrorSkip() - skipping this URL because response.status was in errorCodes or response.redirected, response.status=" + response.status + ", response.redirected=" + response.redirected + ", response.ok=" + response.ok);
         error = true;
       }
-    }).catch(e => {
+    } catch(e) {
       console.log("incrementDecrementErrorSkip() - a fetch() exception was caught:" + e);
       if (instance.errorCodes.includes("EXC")) {
         exception = true;
       }
-    }).finally(() => {
+    } finally {
       // If the server disallows HEAD requests, switch to GET and retry this request using the same errorSkipRemaining
-      if (status === 405 && instance.fetchMethod === "HEAD") {
+      if (response.status === 405 && instance.fetchMethod === "HEAD") {
         console.log("incrementDecrementErrorSkip() - switching fetch method from HEAD to GET and retrying because server disallows HEAD (status 405)");
         instance.fetchMethod = "GET";
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining, true);
       } else if (!error && !exception) {
-        console.log("incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + status  + " and it was not in errorCodes. aborting and updating tab");
+        console.log("incrementDecrementErrorSkip() - not attempting to skip this URL because response.status=" + response.status  + " and it was not in errorCodes. aborting and updating tab");
         updateTab(instance);
       } else {
         if (!instance.autoEnabled) {
-          Background.setBadge(instance.tabId, "skip", true, exception ? "EXC" : redirected ? "RED" : status + "");
+          Background.setBadge(instance.tabId, "skip", true, exception ? "EXC" : response.redirected ? "RED" : response.status + "");
         }
         // Recursively call this method again to perform the action again and skip this URL, decrementing errorSkipRemaining
         incrementDecrementErrorSkip(action, instance, errorSkipRemaining - 1);
       }
-    });
+    }
   }
 
   /**

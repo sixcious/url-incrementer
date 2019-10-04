@@ -664,7 +664,8 @@ var IncrementDecrementArray = (() => {
    */
   function precalculateURLs(instance) {
     console.log("precalculateURLs() - precalculating URLs for an instance that is " + (instance.toolkitEnabled ? "toolkitEnabled" : instance.autoEnabled ? "autoEnabled" : "normal"));
-    let urls = [], currentIndex = 0;
+    let urls = [];
+    let currentIndex = 0;
     // If instance is in a state in which a list should be generated...
     if (instance.listEnabled || instance.multiRangeEnabled || instance.toolkitEnabled || instance.shuffleURLs) {
       if (instance.listEnabled) {

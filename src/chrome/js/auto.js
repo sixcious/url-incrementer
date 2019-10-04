@@ -203,8 +203,8 @@ var Auto = (() => {
   function autoListener(tabId, changeInfo, tab) {
     console.log("autoListener() - the chrome.tabs.onUpdated auto listener is on!, changeInfo.status=" + changeInfo.status);
     // Cache loading and complete for maybe a small performance gain since we need to check multiple times
-    const loading = changeInfo.status === "loading",
-          complete = changeInfo.status === "complete";
+    const loading = changeInfo.status === "loading";
+    const complete = changeInfo.status === "complete";
     // We only care about loading and complete statuses
     if (!loading && !complete) {
       return;
