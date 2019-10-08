@@ -14,12 +14,11 @@ var UI = (() => {
    * by Mike West.
    *
    * @param messages the messages array to display, line by line
-   * @param callback (optional) the callback function to return execution to
    * @public
    */
-  function generateAlert(messages, callback) {
-    const div = document.createElement("div"),
-          ul = document.createElement("ul");
+  function generateAlert(messages) {
+    const div = document.createElement("div");
+    const ul = document.createElement("ul");
     div.classList.add("overlay");
     for (const message of messages) {
       const li = document.createElement("li");
@@ -29,7 +28,7 @@ var UI = (() => {
     div.appendChild(ul);
     document.body.appendChild(div);
     setTimeout(function () { div.classList.add("overlay-visible"); }, 10);
-    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); if (callback) { callback(); } }, 4000);
+    setTimeout(function () { div.classList.remove("overlay-visible"); document.body.removeChild(div); }, 4000);
   }
 
   /**

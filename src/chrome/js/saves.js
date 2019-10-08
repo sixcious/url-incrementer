@@ -16,11 +16,11 @@ var Saves = (() => {
   async function addURL(instance) {
     console.log("addURL() - saving a URL to local storage...");
     // Check if this URL has already been saved, if it has delete the existing save, and split it into two parts (separated by the selection)
-    const items = await Promisify.getItems(),
-          saves = await deleteSave(instance.url, "addURL"),
-          url1 = instance.url.substring(0, instance.selectionStart),
-          url2 = instance.url.substring(instance.selectionStart + instance.selection.length),
-          encrypt = await Cryptography.encrypt(url1 + url2, items.saveKey);
+    const items = await Promisify.getItems();
+    const saves = await deleteSave(instance.url, "addURL");
+    const url1 = instance.url.substring(0, instance.selectionStart);
+    const url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
+    const encrypt = await Cryptography.encrypt(url1 + url2, items.saveKey);
     // "Unshift" this new save to the START of the array because it's an exact url type (not a wildcard/regexp)
     saves.unshift({
       "type": "url", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": instance.decodeURIEnabled,
@@ -40,9 +40,9 @@ var Saves = (() => {
    * @public
    */
   async function deleteSave(url, caller) {
-    const items = await Promisify.getItems(),
-          saves = items.saves,
-          key = items.saveKey;
+    const items = await Promisify.getItems();
+    const saves = items.saves;
+    const key = items.saveKey;
     for (let i = 0; i < saves.length; i++) {
       const result = await matchesSave(url, saves[i], key);
       // When adding a new URL, do not delete wildcards and regexps here, just the full URL collisions (unless caller was clear)
@@ -92,10 +92,10 @@ var Saves = (() => {
    * @private
    */
   async function matchesURL(url, save, key) {
-    const url1 = url.substring(0, save.selectionStart),
-          url2 = url.substring(url.length - save.selectionEnd),
-          surl = await Cryptography.decrypt(save.ciphertext, save.iv, key),
-          selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
+    const url1 = url.substring(0, save.selectionStart);
+    const url2 = url.substring(url.length - save.selectionEnd);
+    const surl = await Cryptography.decrypt(save.ciphertext, save.iv, key);
+    const selection = url.substring(save.selectionStart, url2 ? url.lastIndexOf(url2) : url.length);
     // We check that the saved url (now decrypted into plaintext) matches exactly with the url (url1 + url2) and validate the selection; if true, we found a match
     const matches = surl === (url1 + url2) && IncrementDecrement.validateSelection(selection, save.base, save.baseCase, save.baseDateFormat, save.baseRoman, save.baseCustom, save.leadingZeros) === "";
     return { matches: matches, selection: { selection: selection, selectionStart: save.selectionStart } };
@@ -111,8 +111,8 @@ var Saves = (() => {
    * @private
    */
   async function matchesWildcard(url, save, key) {
-    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv, key),
-          matches = url.includes(wildcard);
+    const wildcard = await Cryptography.decrypt(save.ciphertext, save.iv, key);
+    const matches = url.includes(wildcard);
     return { matches: matches };
   }
 
@@ -126,8 +126,8 @@ var Saves = (() => {
    * @private
    */
   async function matchesRegExp(url, save, key) {
-    const regexp = await Cryptography.decrypt(save.ciphertext, save.iv, key),
-          matches = new RegExp(regexp).exec(url);
+    const regexp = await Cryptography.decrypt(save.ciphertext, save.iv, key);
+    const matches = new RegExp(regexp).exec(url);
     return { matches: matches };
   }
 
