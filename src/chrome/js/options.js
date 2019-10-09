@@ -25,8 +25,8 @@ var Options = (() => {
   async function init() {
     backgroundPage = await Promisify.getBackgroundPage();
     buildShortcuts();
-    const ids = document.querySelectorAll("[id]"),
-          i18ns = document.querySelectorAll("[data-i18n]");
+    const ids = document.querySelectorAll("[id]");
+    const i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
     for (const element of ids) {
       DOM["#" + element.id] = element;
@@ -191,8 +191,8 @@ var Options = (() => {
       DOM["#mouse-enable-img"].className = items.mouseEnabled ? "display-inline" : "display-none";
       DOM["#mouse-click-speed-input"].value = items.mouseClickSpeed;
       for (const shortcut of shortcuts) {
-        const keyStorageKey = getStorageKey(DOM["#key-" + shortcut + "-input"]),
-              mouseStorageKey = getStorageKey(DOM["#mouse-" + shortcut + "-select"]);
+        const keyStorageKey = getStorageKey(DOM["#key-" + shortcut + "-input"]);
+        const mouseStorageKey = getStorageKey(DOM["#mouse-" + shortcut + "-select"]);
         writeInput(DOM["#key-" + shortcut + "-input"], items[keyStorageKey]);
         DOM["#mouse-" + shortcut + "-select"].value = items[mouseStorageKey] ? items[mouseStorageKey].button : -1;
         DOM["#mouse-" + shortcut + "-clicks"].value = items[mouseStorageKey] ? items[mouseStorageKey].clicks : 1;
@@ -419,16 +419,16 @@ var Options = (() => {
    */
   async function addSavedURL() {
     // If the url textarea value is empty return with error
-    const url = DOM["#saved-urls-wildcard-url-textarea"].value,
-          type = DOM["#saved-urls-regexp-input"].checked ? "regexp" : "wildcard";
+    const url = DOM["#saved-urls-wildcard-url-textarea"].value;
+    const type = DOM["#saved-urls-regexp-input"].checked ? "regexp" : "wildcard";
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
       return;
     }
     // Check if this URL has already been saved, if it has delete the existing save, and calculate the encrypt ciphertext and iv
-    const saves = await backgroundPage.Saves.deleteSave(url, "addWildcard"),
-          items = await Promisify.getItems(),
-          encrypt = await backgroundPage.Cryptography.encrypt(url, items.saveKey);
+    const saves = await backgroundPage.Saves.deleteSave(url, "addWildcard");
+    const items = await Promisify.getItems();
+    const encrypt = await backgroundPage.Cryptography.encrypt(url, items.saveKey);
     if (items.selectionCustom && items.selectionCustom.url) {
       items.selectionCustom.url = "";
     }
@@ -452,10 +452,10 @@ var Options = (() => {
    */
   async function deleteSavedURL() {
     // Dynamically Generated Select, must get element dynamically, can't use DOM Cache
-    const select = document.getElementById("saved-urls-select"),
-          option = select.options[select.selectedIndex],
-          ciphertext = option.dataset.ciphertext,
-          saves = await Promisify.getItems("local", "saves");
+    const select = document.getElementById("saved-urls-select");
+    const option = select.options[select.selectedIndex];
+    const ciphertext = option.dataset.ciphertext;
+    const saves = await Promisify.getItems("local", "saves");
     if (saves && saves.length > 0) {
       for (let i = 0; i < saves.length; i++) {
         if (saves[i].ciphertext === ciphertext) {
@@ -515,15 +515,15 @@ var Options = (() => {
    * @private
    */
   async function customSelection(action) {
-    const url = DOM["#selection-custom-url-textarea"].value,
-          pattern = DOM["#selection-custom-pattern-input"].value,
-          flags = DOM["#selection-custom-flags-input"].value,
-          group = +DOM["#selection-custom-group-input"].value,
-          index = +DOM["#selection-custom-index-input"].value;
-    let regexp,
-        matches,
-        selection,
-        selectionStart;
+    const url = DOM["#selection-custom-url-textarea"].value;
+    const pattern = DOM["#selection-custom-pattern-input"].value;
+    const flags = DOM["#selection-custom-flags-input"].value;
+    const group = +DOM["#selection-custom-group-input"].value;
+    const index = +DOM["#selection-custom-index-input"].value;
+    let regexp;
+    let matches;
+    let selection;
+    let selectionStart;
     try {
       regexp = new RegExp(pattern, flags);
       matches = regexp.exec(url);
@@ -593,9 +593,9 @@ var Options = (() => {
    * @private
    */
   function clickMascot() {
-    const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(︶︹︺)", "◉_◉", "(+__X)"],
-          face = " " + faces[Math.floor(Math.random() * faces.length)],
-          value = +this.dataset.value + 1;
+    const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(︶︹︺)", "◉_◉", "(+__X)"];
+    const face = " " + faces[Math.floor(Math.random() * faces.length)];
+    const value = +this.dataset.value + 1;
     this.dataset.value = value + "";
     UI.clickHoverCss(this, "hvr-buzz-out-click");
     UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("tickles_click") + face]);

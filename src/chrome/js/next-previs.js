@@ -28,18 +28,18 @@ var NextPrev = (() => {
       "innerText": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() },
       "innerHTML": { "equals": new Map(), "startsWith": new Map(), "includes": new Map() }
     };
-    const priority2 = priority === "attribute" ? "innerText" : "attribute",
-          // Note: the order matters, the highest priority algorithms are first when they are iterated below
-          algorithms = [
-            { "type": "attribute", "subtypes": ["rel"] },
-            { "type": priority,    "subtypes": ["equals"] },
-            { "type": priority2,   "subtypes": ["equals"] },
-            { "type": "innerHTML", "subtypes": ["equals"] },
-            // Combined startsWith and includes for priority on keywords instead of the subtypes
-            { "type": priority,    "subtypes": ["startsWith", "includes"] },
-            { "type": priority2,   "subtypes": ["startsWith", "includes"] },
-            { "type": "innerHTML", "subtypes": ["startsWith", "includes"] }
-          ];
+    const priority2 = priority === "attribute" ? "innerText" : "attribute";
+    // Note: the order matters, the highest priority algorithms are first when they are iterated below
+    const algorithms = [
+      { "type": "attribute", "subtypes": ["rel"] },
+      { "type": priority,    "subtypes": ["equals"] },
+      { "type": priority2,   "subtypes": ["equals"] },
+      { "type": "innerHTML", "subtypes": ["equals"] },
+      // Combined startsWith and includes for priority on keywords instead of the subtypes
+      { "type": priority,    "subtypes": ["startsWith", "includes"] },
+      { "type": priority2,   "subtypes": ["startsWith", "includes"] },
+      { "type": "innerHTML", "subtypes": ["startsWith", "includes"] }
+    ];
     buildURLs(urls, type, selector, xpath, selectorAttribute, keywords, sameDomain, document_);
     console.log("findNextPrev() - URLS built:");
     console.log(JSON.stringify(Object.values(urls)));
@@ -85,8 +85,8 @@ var NextPrev = (() => {
    * @private
    */
   function buildURLs(urls, type, selector, xpath, selectorAttribute, keywords, sameDomain, document_) {
-    const document__ = document_ ? document_ : document,
-          hostname = window.location.hostname;
+    const document__ = document_ ? document_ : document;
+    const hostname = window.location.hostname;
     try {
       let elements;
       if (type === "xpath") {

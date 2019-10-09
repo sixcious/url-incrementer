@@ -3,7 +3,7 @@
   "name": "__MSG_name__",
   "short_name": "__MSG_short_name__",
   "description": "__MSG_description__",
-  "version": "5.9",
+  "version": "6.0",
   "default_locale": "en",
   "icons": { "16": "img/16-default.png", "48": "img/48-default.png", "128": "img/128-default.png" },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": { "16": "img/16-dark.png", "24": "img/24-dark.png", "32": "img/32-dark.png" }, "default_popup": "html/popup.html" },

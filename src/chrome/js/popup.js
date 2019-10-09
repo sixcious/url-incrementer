@@ -11,12 +11,12 @@ var Popup = (() => {
   const DOM = {};
 
   // The _ temporary instance and real instance caches, storage caches, backgroundPage and downloadPreview cache, and timeouts object
-  let _ = {},
-      instance = {},
-      items = {},
-      backgroundPage = {},
-      downloadPreviewCache = {},
-      timeouts = {};
+  let _ = {};
+  let instance = {};
+  let items = {};
+  let backgroundPage = {};
+  let downloadPreviewCache = {};
+  let timeouts = {};
 
   /**
    * Initializes the Popup window. This script is set to defer so the DOM is guaranteed to be parsed by this point.
@@ -24,8 +24,8 @@ var Popup = (() => {
    * @private
    */
   async function init() {
-    const ids = document.querySelectorAll("[id]"),
-          i18ns = document.querySelectorAll("[data-i18n]");
+    const ids = document.querySelectorAll("[id]");
+    const i18ns = document.querySelectorAll("[data-i18n]");
     // Cache DOM elements
     for (const element of ids) {
       DOM["#" + element.id] = element;
@@ -68,14 +68,7 @@ var Popup = (() => {
     DOM["#toolkit-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-table-download-button"].addEventListener("click", toolkitTableDownload);
     DOM["#crawl-checkboxes"].addEventListener("change", updateCrawlTable);
-    DOM["#crawl-urli-img"].addEventListener("click", function() {
-      const faces = ["≧☉_☉≦", "(⌐■_■)♪", "(︶︹︺)", "◉_◉", "(+__X)"],
-        face = " " + faces[Math.floor(Math.random() * faces.length)],
-        value = +this.dataset.value + 1;
-      this.dataset.value = value + "";
-      UI.clickHoverCss(this, "hvr-buzz-out-click");
-      UI.generateAlert([value <= 10 ? value + " ..." : chrome.i18n.getMessage("tickles_click") + face]);
-    });
+    DOM["#crawl-urli-img"].addEventListener("click", function() { UI.clickHoverCss(this, "hvr-buzz-out-click"); UI.generateAlert([chrome.i18n.getMessage("crawl_urli_click")]); });
     DOM["#auto-toggle-input"].addEventListener("change", function() { DOM["#auto"].className = this.checked ? "display-block fade-in" : "display-none"; chrome.storage.local.set({ "autoStart": this.checked }); });
     DOM["#auto-times-input"].addEventListener("change", updateAutoETA);
     DOM["#auto-seconds-input"].addEventListener("change", updateAutoETA);
@@ -106,7 +99,7 @@ var Popup = (() => {
       button.style.width = button.style.height = items.popupButtonSize + "px";
       button.addEventListener("click", clickActionButton);
     }
-
+    // Set crawl checkboxes based on storage items
     DOM["#crawl-url-input"].checked = items.toolkitCrawlCheckboxes.includes("url");
     DOM["#crawl-response-input"].checked = items.toolkitCrawlCheckboxes.includes("response");
     DOM["#crawl-code-input"].checked = items.toolkitCrawlCheckboxes.includes("code");
@@ -119,7 +112,6 @@ var Popup = (() => {
     DOM["#crawl-redirected-input"].checked = items.toolkitCrawlCheckboxes.includes("redirected");
     DOM["#crawl-other-input"].checked = items.toolkitCrawlCheckboxes.includes("other");
     DOM["#crawl-exception-input"].checked = items.toolkitCrawlCheckboxes.includes("exception");
-
     // Download icon (cloud-download.png) is an irregular shape and needs adjustment
     DOM["#download-input"].style.width = DOM["#download-input"].style.height = (items.popupButtonSize + (items.popupButtonSize <= 24 ? 4 : items.popupButtonSize <= 44 ? 6 : 8)) + "px";
     updateSetup();
@@ -548,8 +540,8 @@ var Popup = (() => {
    * @private
    */
   function toolkitTableDownload() {
-    const a = document.createElement("a"),
-          blob = URL.createObjectURL(new Blob([DOM["#" + this.id.replace("-download-button", "")].outerHTML], {"type": "text/html"}));
+    const a = document.createElement("a");
+    const blob = URL.createObjectURL(new Blob([DOM["#" + this.id.replace("-download-button", "")].outerHTML], {"type": "text/html"}));
     a.href = blob;
     a.download = this.title.replace(".html", "");
     a.dispatchEvent(new MouseEvent("click"));
@@ -627,15 +619,15 @@ var Popup = (() => {
     const td3 = document.getElementById("crawl-table-td-details-" + id);
     const td4 = document.getElementById("crawl-table-td-scrape-" + id);
     td1.textContent = chrome.i18n.getMessage("crawl_fetching_label");
-
+    // Crawl variables
     let res;
     let status;
     let redirected;
     let url;
     let details;
     let scrapes = [];
-    // fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
     try {
+      // Fetch using credentials: same-origin to keep session/cookie state alive (to avoid redirect false flags e.g. after a user logs in to a website)
       const response = await fetch(instance.urls[id].urlmod, { method: instance.fetchMethod, credentials: "same-origin" });
       url = response.url;
       status = response.status;
@@ -739,12 +731,12 @@ var Popup = (() => {
    * @private
    */
   function updateETA(time, eta, enabled) {
-    const hours = ~~ (time / 3600),
-          minutes = ~~ ((time % 3600) / 60),
-          seconds = Math.floor(time % 60),
-          fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("eta_hour") : chrome.i18n.getMessage("eta_hours")) : "",
-          fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("eta_minute") : chrome.i18n.getMessage("eta_minutes")) : "",
-          fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("eta_second") : chrome.i18n.getMessage("eta_seconds")) : "";
+    const hours = ~~ (time / 3600);
+    const minutes = ~~ ((time % 3600) / 60);
+    const seconds = Math.floor(time % 60);
+    const fhours = hours ? hours + (hours === 1 ? chrome.i18n.getMessage("eta_hour") : chrome.i18n.getMessage("eta_hours")) : "";
+    const fminutes = minutes ? minutes + (minutes === 1 ? chrome.i18n.getMessage("eta_minute") : chrome.i18n.getMessage("eta_minutes")) : "";
+    const fseconds = seconds ? seconds + (seconds === 1 ? chrome.i18n.getMessage("eta_second") : chrome.i18n.getMessage("eta_seconds")) : "";
     eta.textContent =
       time <= 0 || (!hours && !minutes && !seconds) ?
       enabled ? chrome.i18n.getMessage("eta_done") : chrome.i18n.getMessage("eta_tbd") :
@@ -796,9 +788,9 @@ var Popup = (() => {
             // Cache the results, build the extensions, tags, and attributes checkboxes, and then update the rest of the
             // download preview (e.g. table) in the next method
             downloadPreviewCache = results[0];
-            const downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-                  downloadTags = DOM["#download-tags-generated"].value.split(","),
-                  downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
+            const downloadExtensions = DOM["#download-extensions-generated"].value.split(",");
+            const downloadTags = DOM["#download-tags-generated"].value.split(",");
+            const downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
             DOM["#download-extensions"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allExtensions, downloadExtensions), DOM["#download-extensions"].firstChild);
             DOM["#download-tags"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allTags, downloadTags), DOM["#download-tags"].firstChild);
             DOM["#download-attributes"].replaceChild(buildDownloadPreviewCheckboxes(downloadPreviewCache.allAttributes, downloadAttributes), DOM["#download-attributes"].firstChild);
@@ -842,14 +834,14 @@ var Popup = (() => {
    * @private
    */
   function updateDownloadPreview() {
-    const downloadStrategy = DOM["#download-strategy-select"].value,
-          downloadExtensions = DOM["#download-extensions-generated"].value.split(","),
-          downloadTags = DOM["#download-tags-generated"].value.split(","),
-          downloadAttributes = DOM["#download-attributes-generated"].value.split(","),
-          downloadSelector = DOM["#download-selector-input"].value,
-          downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-          downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [],
-          code = "Download.findDownloadURLs(" +
+    const downloadStrategy = DOM["#download-strategy-select"].value;
+    const downloadExtensions = DOM["#download-extensions-generated"].value.split(",");
+    const downloadTags = DOM["#download-tags-generated"].value.split(",");
+    const downloadAttributes = DOM["#download-attributes-generated"].value.split(",");
+    const downloadSelector = DOM["#download-selector-input"].value;
+    const downloadIncludes = DOM["#download-includes-input"].value ? DOM["#download-includes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
+    const downloadExcludes = DOM["#download-excludes-input"].value ? DOM["#download-excludes-input"].value.replace(/\s+/g, "").split(",").filter(Boolean) : [];
+    const code = "Download.findDownloadURLs(" +
             JSON.stringify(downloadStrategy) + ", " +
             JSON.stringify(downloadExtensions) + ", " +
             JSON.stringify(downloadTags) + ", " +
@@ -866,15 +858,15 @@ var Popup = (() => {
         // We get the selected URLs from the result, and then filter out the unselected ones from all the URLs
         // Note: Finding the difference of two arrays of objects code by kaspermoerch
         // @see https://stackoverflow.com/a/21988249
-        const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL,
-          selecteds = results[0],
-          unselecteds = alls.filter(function(allObj) {
-            return !selecteds.some(function(selectedObj) {
-              return allObj.url === selectedObj.url;
-            });
-          }),
-          selectedsLength = selecteds.length,
-          totalLength = selecteds.length + unselecteds.length;
+        const alls = downloadStrategy !== "page" ? downloadPreviewCache.allURLs : downloadPreviewCache.pageURL;
+        const selecteds = results[0];
+        const unselecteds = alls.filter(function(allObj) {
+          return !selecteds.some(function(selectedObj) {
+            return allObj.url === selectedObj.url;
+          });
+        });
+        const selectedsLength = selecteds.length;
+        const totalLength = selecteds.length + unselecteds.length;
         // Download Preview Heading Title:
         const title = document.createElement("div"); title.className = (selectedsLength > 0 ? "success" : "error");
         const titleNode1 = document.createTextNode(chrome.i18n.getMessage("download_preview_set")); title.appendChild(titleNode1);
@@ -959,8 +951,8 @@ var Popup = (() => {
    * @private
    */
   function buildDownloadPreviewThumb(item) {
-    const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"],
-          VIDEO_EXTENSIONS = ["mp4", "webm"];
+    const IMG_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "ico"];
+    const VIDEO_EXTENSIONS = ["mp4", "webm"];
     let el = undefined;
     if (item.tag === "img" || IMG_EXTENSIONS.includes(item.extension)) {
       el = document.createElement("img"); el.src = item.url; el.alt = "";

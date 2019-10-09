@@ -26,16 +26,16 @@ var NextPrev = (() => {
    */
   function findNextPrevURL(keywords, priority, sameDomain, domId) {
     console.log("findNextPrevURL() - keywords=" + keywords + ", priority=" + priority + ", sameDomain=" + sameDomain);
-    const priority2 = priority === "attributes" ? "innerHTML" : "attributes",
-          // Note: the order matters, the highest priority algorithms are first when they are iterated below
-          algorithms = [
-            { "type": "important", "subtypes": ["relAttribute"] },
-            { "type": priority,    "subtypes": ["equals"] },
-            { "type": priority2,   "subtypes": ["equals"] },
-            // Combined startsWith and includes for priority on keywords instead of the subtypes
-            { "type": priority,    "subtypes": ["startsWith", "includes"] },
-            { "type": priority2,   "subtypes": ["startsWith", "includes"] }
-          ];
+    const priority2 = priority === "attributes" ? "innerHTML" : "attributes";
+    // Note: the order matters, the highest priority algorithms are first when they are iterated below
+    const algorithms = [
+      { "type": "important", "subtypes": ["relAttribute"] },
+      { "type": priority,    "subtypes": ["equals"] },
+      { "type": priority2,   "subtypes": ["equals"] },
+      // Combined startsWith and includes for priority on keywords instead of the subtypes
+      { "type": priority,    "subtypes": ["startsWith", "includes"] },
+      { "type": priority2,   "subtypes": ["startsWith", "includes"] }
+    ];
     buildURLs(keywords, sameDomain, domId);
     for (const algorithm of algorithms) {
       const result = traverseResults(algorithm.type, algorithm.subtypes, keywords);
@@ -74,11 +74,11 @@ var NextPrev = (() => {
   function buildURLs(keywords, sameDomain, domId) {
     // Infy Scroll: document_ will be the frame document or the only document and parentId is used for DOM mode
     // Note: The following DOM elements contain links: link, a, area, and base
-    const domObject = domId ? document.getElementById(domId) : undefined,
-          document_ = domObject && domObject.contentDocument ? domObject.contentDocument : document,
-          parentId = domId && domObject && !domObject.contentDocument ? domId + " " : "",
-          elements = document_.querySelectorAll(parentId + "link[href], " + parentId + "a[href], " + parentId + "area[href]"),
-          hostname = window.location.hostname;
+    const domObject = domId ? document.getElementById(domId) : undefined;
+    const document_ = domObject && domObject.contentDocument ? domObject.contentDocument : document;
+    const parentId = domId && domObject && !domObject.contentDocument ? domId + " " : "";
+    const elements = document_.querySelectorAll(parentId + "link[href], " + parentId + "a[href], " + parentId + "area[href]");
+    const hostname = window.location.hostname;
     for (const element of elements) {
       // Check if URL is in same domain if enabled, wrap in try/catch in case of exceptions with URL object
       try {
