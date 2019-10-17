@@ -18,11 +18,11 @@ var Download = (() => {
    * @public
    */
   function previewDownloadURLs() {
-    const pageURL = findDownloadURLs("page"),
-          allURLs = findDownloadURLs("all"),
-          allExtensions = findProperties(allURLs, "extension"),
-          allTags = findProperties(allURLs, "tag"),
-          allAttributes = findProperties(allURLs, "attribute");
+    const pageURL = findDownloadURLs("page");
+    const allURLs = findDownloadURLs("all");
+    const allExtensions = findProperties(allURLs, "extension");
+    const allTags = findProperties(allURLs, "tag");
+    const allAttributes = findProperties(allURLs, "attribute");
     return { "pageURL": pageURL, "allURLs": allURLs, "allExtensions": allExtensions, "allTags": allTags, "allAttributes": allAttributes }
   }
 
@@ -45,8 +45,8 @@ var Download = (() => {
     // items is an intermediate return value, we use a Map to avoid potential duplicate URLs, but we can't return a map
     // so results is the final return value from the map (an array because we can't return a map from a content script)
     const items = new Map();
-    let results = [],
-        selectorbuilder = "";
+    let results = [];
+    let selectorbuilder = "";
     switch (strategy) {
       case "all":
       // Noticed issues with using a selectorbuilder based on the extensions so put it with all for now
@@ -176,10 +176,10 @@ var Download = (() => {
    * @private
    */
   function buildItems(items, element, attribute, url, strategy, extensions, tags, attributes, selector, includes, excludes) {
-    let filenameAndExtension = "",
-        filename = "",
-        extension = "",
-        tag = "";
+    let filenameAndExtension = "";
+    let filename = "";
+    let extension = "";
+    let tag = "";
     if (isValidURL(url) && doesIncludeOrExclude(url, includes, true) && doesIncludeOrExclude(url, excludes, false)) {
       filenameAndExtension = findFilenameAndExtension(url);
       filename = findFilename(filenameAndExtension);

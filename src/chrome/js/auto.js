@@ -270,10 +270,10 @@ var Auto = (() => {
    * @private
    */
   function AutoTimer(callback, delay) {
-    let timeout,
-        start,
-        remaining = delay,
-        wait = false;
+    let timeout;
+    let start;
+    let remaining = delay;
+    let wait = false;
 
     this.pause = function() {
       clearTimeout(timeout);

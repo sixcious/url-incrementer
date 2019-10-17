@@ -257,9 +257,9 @@ var IncrementDecrement = (() => {
    * @private
    */
   function incrementDecrementBaseCustom(action, selection, interval, alphabet, leadingZeros) {
-    let selectionmod = "",
-        base = alphabet.length,
-        base10num = 0;
+    let selectionmod = "";
+    let base = alphabet.length;
+    let base10num = 0;
     // Part 1 Decode Base to Decimal
     for (let i = selection.length - 1, digit = 0; i >= 0; i--, digit++) {
       const num = alphabet.indexOf(selection[i]);
@@ -315,8 +315,8 @@ var IncrementDecrementMulti = (() => {
   function multiPre(action, instance) {
     if (instance && instance.multiEnabled) {
       // Set the current instance properties with the multi part's properties for incrementDecrementURL()
-      const match = /\d+/.exec(action),
-            part = match ? match[0] : "";
+      const match = /\d+/.exec(action);
+      const part = match ? match[0] : "";
       // multiPart is stored later for multiPost() so we don't have to execute the above regex again
       instance.multiPart = part;
       instance.selection = instance.multi[part].selection;
@@ -376,8 +376,8 @@ var IncrementDecrementMulti = (() => {
 
 var IncrementDecrementDate = (() => {
 
-  const mmm = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
-        mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+  const mmm =  ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  const mmmm = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
   /**
    * Performs an increment decrement operation on the date selection string.
@@ -698,9 +698,9 @@ var IncrementDecrementArray = (() => {
    */
   function buildURLs(instance, action, limit) {
     console.log("buildURLs() - instance.url=" + instance.url + ", instance.selection=" + instance.selection + ", action=" + action + ", limit=" + limit);
-    const urls = [],
-          url = instance.url,
-          selection = instance.selection;
+    const urls = [];
+    const url = instance.url;
+    const selection = instance.selection;
     // If Toolkit crawl or links, first include the original URL for completeness and include it in the limit count
     if (!instance.listEnabled && instance.toolkitEnabled && (instance.toolkitTool === "links" || instance.toolkitTool === "crawl")) {
       urls.push({"urlmod": url, "selectionmod": selection});

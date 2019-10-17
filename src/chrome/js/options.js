@@ -548,12 +548,12 @@ var Options = (() => {
         throw chrome.i18n.getMessage("selection_custom_matchindex_error");
       }
       // TODO:
-      const base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value,
-        baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked,
-        baseDateFormat = DOM["#base-date-format-input"].value,
-        baseRoman = DOM["#base-roman-latin-input"].checked ? DOM["#base-roman-latin-input"].value : DOM["#base-roman-u216x-input"].checked ? DOM["#base-roman-u216x-input"].value : DOM["#base-roman-u217x-input"].value,
-        baseCustom = DOM["#base-custom-input"].value,
-        leadingZeros = selection.startsWith("0") && selection.length > 1;
+      const base = isNaN(DOM["#base-select"].value) ? DOM["#base-select"].value : +DOM["#base-select"].value;
+      const baseCase = DOM["#base-case-uppercase-input"].checked ? DOM["#base-case-uppercase-input"].value : DOM["#base-case-lowercase-input"].checked;
+      const baseDateFormat = DOM["#base-date-format-input"].value;
+      const baseRoman = DOM["#base-roman-latin-input"].checked ? DOM["#base-roman-latin-input"].value : DOM["#base-roman-u216x-input"].checked ? DOM["#base-roman-u216x-input"].value : DOM["#base-roman-u217x-input"].value;
+      const baseCustom = DOM["#base-custom-input"].value;
+      const leadingZeros = selection.startsWith("0") && selection.length > 1;
       if (backgroundPage.IncrementDecrement.validateSelection(selection, base, baseCase, baseDateFormat, baseRoman, baseCustom, leadingZeros)) {
         throw url.substring(selectionStart, selectionStart + selection.length) + " " + chrome.i18n.getMessage("selection_custom_matchnotvalid_error");
       }
