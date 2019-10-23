@@ -180,6 +180,7 @@ var Permissions = (() => {
         });
       } else {
         console.log("removeDeclarativeContentRules() - no rules were removed (there may not have been any to begin with)");
+        resolve(rule);
         return false;
       }
     });

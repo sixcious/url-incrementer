@@ -184,6 +184,10 @@ input[type="image"].key-clear {
   margin-right: 1em;
 }
 
+#saved-urls-table th, #saved-urls-table td {
+  max-width: 250px;
+}
+
 /* Selection Custom  */
 
 #selection-custom {

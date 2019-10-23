@@ -177,6 +177,55 @@ h3 {
   transform: scale(1);
 }
 
+/* Tables (CSS derived from ZURB Foundation) */
+
+table {
+  border-collapse: collapse;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  max-width: 512px;
+  max-height: 226px;
+  display: block;
+  overflow: auto;
+  word-break: break-all;
+}
+
+table thead, table tbody {
+  border: 1px solid #f1f1f1;
+  background-color: #fefefe;
+}
+
+table thead {
+  background: #f8f8f8;
+  color: #0a0a0a;
+}
+
+table thead tr {
+  background: transparent;
+}
+
+table thead tr th {
+  font-weight: bold;
+  text-align: left;
+}
+
+table thead th, table tbody th, table tbody td {
+  padding: 0.25rem 0.312rem 0.312rem;
+}
+
+table tbody tr:nth-child(even) {
+  border-bottom: 0;
+  background-color: #f1f1f1;
+}
+
+table tr:nth-of-type(even):hover {
+  background-color: #ececec;
+}
+
+table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
 /* Firefox */
 
 /* Firefox: input[type=number] Change input type number to hide spinner up/down arrows unless focused/hovered */

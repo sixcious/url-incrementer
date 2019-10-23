@@ -8,27 +8,23 @@
 var Saves = (() => {
 
   /**
-   * Adds a saved URL. Note that wildcards and regexps are added in a separate function in Options.
+   * Adds a saved URL, Wildcard, or Regular Expression.
    *
-   * @param instance the instance's URL and settings to save
+   * @param type     the type of save (url, wildcard, regexp)
+   * @param instance the instance properties (saved urls only)
+   * @param url      the url pattern (wildcards and regular expressions only)
    * @public
    */
-  async function addURL(instance) {
-    console.log("addURL() - saving a URL to local storage...");
-    // Check if this URL has already been saved, if it has delete the existing save, and split it into two parts (separated by the selection)
+  async function addSave(type, instance, url) {
+    console.log("addSave() - saving a saved " + type + " to local storage...");
+    // Check if this URL has already been saved, if it has delete the existing save
     const items = await Promisify.getItems();
-    const saves = await deleteSave(instance.url, "addURL");
-    const url1 = instance.url.substring(0, instance.selectionStart);
-    const url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
-    const encrypt = await Cryptography.encrypt(url1 + url2, items.saveKey);
-    // "Unshift" this new save to the START of the array because it's an exact url type (not a wildcard/regexp)
-    saves.unshift({
-      "type": "url", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": instance.decodeURIEnabled,
-      "selectionEnd": url2.length, "selectionStart": instance.selectionStart, "interval": instance.interval, "leadingZeros": instance.leadingZeros,
-      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseRoman": instance.baseRoman, "baseCustom": instance.baseCustom,
-      "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustom": instance.errorCodesCustom
-    });
-    chrome.storage.local.set({"saves": saves});
+    const saves = type === "url" ? await deleteSave(instance.url, "addURL") : await deleteSave(url, "addWildcard");
+    const save = type === "url" ? await addURL(instance, items) : await addWildCardRegExp(url, type, items);
+    // Unshift adds the save to the beginning of the saves array; then we sort it by order and date and save in storage
+    saves.unshift(save);
+    saves.sort((a, b) => (a.order > b.order) ? 1 : (a.order === b.order) ? ((a.date < b.date) ? 1 : -1) : -1);
+    await Promisify.setItems("local", {"saves": saves});
   }
 
   /**
@@ -83,6 +79,49 @@ var Saves = (() => {
   }
 
   /**
+   * Adds a saved URL. Note that wildcards and regexps are added in a separate function.
+   *
+   * @param instance the instance's URL and settings to save
+   * @param items    the storage items
+   * @private
+   */
+  async function addURL(instance, items) {
+    console.log("addURL() - saving a URL to local storage...");
+    const url1 = instance.url.substring(0, instance.selectionStart);
+    const url2 = instance.url.substring(instance.selectionStart + instance.selection.length);
+    const encrypt = await Cryptography.encrypt(url1 + url2, items.saveKey);
+    return {
+      "order": 1, "type": "url", "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": instance.decodeURIEnabled,
+      "selectionStart": instance.selectionStart, "selectionEnd": url2.length, "leadingZeros": instance.leadingZeros, "interval": instance.interval,
+      "base": instance.base, "baseCase": instance.baseCase, "baseDateFormat": instance.baseDateFormat, "baseRoman": instance.baseRoman, "baseCustom": instance.baseCustom,
+      "errorSkip": instance.errorSkip, "errorCodes": instance.errorCodes, "errorCodesCustom": instance.errorCodesCustom
+    };
+  }
+
+  /**
+   * Adds a saved wildcard or regular expression. Note that URLs are added in a separate function.
+   *
+   * @param url   the URL pattern of the wildcard or regexp
+   * @param type  the type of save (wildcard or regexp)
+   * @param items the storage items containing the save settings
+   * @private
+   */
+  async function addWildCardRegExp(url, type, items) {
+    console.log("addWildcardRegExp() - saving a Wildcard or Regular Expression to local storage...");
+    const encrypt = await Cryptography.encrypt(url, items.saveKey);
+    // Don't save the selection custom test URL (that gets put into the save object being returned below)
+    if (items.selectionCustom && items.selectionCustom.url) {
+      items.selectionCustom.url = "";
+    }
+    return {
+      "order": type === "wildcard" ? 2 : 3, "type": type, "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": items.decodeURIEnabled,
+      "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "leadingZerosPadByDetection": items.leadingZerosPadByDetection, "interval": items.interval,
+      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
+      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom
+    };
+  }
+
+  /**
    * Tests if a saved URL matches a plaintext URL.
    *
    * @param url  the plaintext URL to match
@@ -133,7 +172,7 @@ var Saves = (() => {
 
   // Return Public Functions
   return {
-    addURL: addURL,
+    addSave: addSave,
     deleteSave: deleteSave,
     matchesSave: matchesSave
   };

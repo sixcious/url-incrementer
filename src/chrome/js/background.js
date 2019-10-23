@@ -220,7 +220,7 @@ var Background = (() => {
       if (details.reason === "install") {
         chrome.runtime.openOptionsPage();
         console.log("opened options page!");
-      } else if (details.reason === "update") {
+      } else if (details.reason === "update" && details.previousVersion < "6.0") {
         await Permissions.removeAllPermissions();
       }
     }

@@ -1116,7 +1116,7 @@ var Popup = (() => {
       }
       // Save URL if checked (only if not in list mode)
       if (_.saveURL && !_.listEnabled) {
-        backgroundPage.Saves.addURL(_);
+        await backgroundPage.Saves.addSave("url", _);
         _.saveType = "url";
       }
       // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options

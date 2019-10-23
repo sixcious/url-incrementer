@@ -180,7 +180,7 @@ var Options = (() => {
     if (values === "all" || values === "savedURLs") {
       DOM["#saved-urls-delete-button"].className = items.saves && items.saves.length > 0 ? "fade-in" : "display-none";
       DOM["#saved-urls-preselect-input"].checked = items.savePreselect;
-      buildSavedURLsSelect(items.saves, items.saveKey);
+      buildSavedURLsTable(items.saves, items.saveKey);
     }
     if (values === "all") {
       DOM["#browser-shortcuts-quick-enable-input"].checked = items.commandsQuickEnabled;
@@ -381,36 +381,51 @@ var Options = (() => {
   }
 
   /**
-   * Builds out the saved URLs select HTML.
+   * Builds out the saved URLs table HTML.
    *
    * @param saves   the saved URLs to build from
    * @param saveKey the saved secret key for decrypting wildcards and regexp urls
    * @private
    */
-  async function buildSavedURLsSelect(saves, saveKey) {
+  async function buildSavedURLsTable(saves, saveKey) {
     if (saves && saves.length > 0) {
-      const select = document.createElement("select");
+      const table = document.createElement("table"); table.id = "saved-urls-table"; table.className = "display-block fade-in";
+      const thead = document.createElement("thead"); table.appendChild(thead);
+      const tr = document.createElement("tr"); thead.appendChild(tr);
+      let th;
+      th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "count"; th.textContent = chrome.i18n.getMessage("download_preview_count_label"); tr.appendChild(th);
+      th = document.createElement("th"); th.className = "type"; th.textContent = "Type"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
+      // th = document.createElement("th"); th.className = "i"; th.textContent = "I"; tr.appendChild(th);
+      // th = document.createElement("th"); th.className = "b"; th.textContent = "B"; tr.appendChild(th);
+      // th = document.createElement("th"); th.className = "e"; th.textContent = "E"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "date"; th.textContent = "Date"; tr.appendChild(th);
+      const tbody = document.createElement("tbody"); table.appendChild(tbody);
       let count = 1;
-      select.id = "saved-urls-select";
-      select.className = "display-block fade-in";
       for (const save of saves) {
         const output = await backgroundPage.Cryptography.decrypt(save.ciphertext, save.iv, saveKey);
-        const option = document.createElement("option");
-        option.dataset.ciphertext = save.ciphertext;
-        option.textContent = (count++) + ". " + save.type.substring(0 ,3) + " - " + output.substring(0, 60) +
-          // " s: " + (save.type === "url" ? save.selectionStart : save.selectionPriority) +
-          // " i: " + (save.interval < 100000 ? save.interval : save.interval.toString().substring(0, 4) + "...") +
-          // " b: " + save.base +
-          // " e: " + save.errorSkip +
-          " (" + new Date(save.date).toLocaleDateString() + ")";
-        select.appendChild(option);
+        const tr = document.createElement("tr"); tr.className = "unselected"; tr.dataset.ciphertext = save.ciphertext;
+        //const check = document.createElement("img"); check.src = "../img/check-circle.png"; check.alt = ""; check.width = check.height = 16; check.className = "check-circle hvr-grow"; check.title = chrome.i18n.getMessage("download_preview_check_" + ("unselect"));
+        const checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.value = save.ciphertext;
+        let td;
+        td = document.createElement("td"); td.className = "check"; td.appendChild(checkbox); tr.appendChild(td);
+        td = document.createElement("td"); td.className = "count"; td.textContent = count++; tr.appendChild(td);
+        td = document.createElement("td"); td.className = "type"; td.textContent = save.type.substring(0 ,3); tr.appendChild(td);
+        td = document.createElement("td"); td.className = "url"; td.textContent = output; tr.appendChild(td);
+        // td = document.createElement("td"); td.className = "i"; td.textContent = save.interval; tr.appendChild(td);
+        // td = document.createElement("td"); td.className = "b"; td.textContent = save.base; tr.appendChild(td);
+        // td = document.createElement("td"); td.className = "e"; td.textContent = save.errorSkip; tr.appendChild(td);
+        td = document.createElement("td"); td.className = "date"; td.textContent =  new Date(save.date).toLocaleDateString(); tr.appendChild(td);
+        tbody.appendChild(tr);
       }
-      DOM["#saved-urls-select-div"].replaceChild(select, DOM["#saved-urls-select-div"].firstChild);
+      DOM["#saved-urls-table-div"].replaceChild(table, DOM["#saved-urls-table-div"].firstChild);
     } else {
-      DOM["#saved-urls-select-div"].replaceChild(document.createElement("div"), DOM["#saved-urls-select-div"].firstChild);
+      DOM["#saved-urls-table-div"].replaceChild(document.createElement("div"), DOM["#saved-urls-table-div"].firstChild);
     }
     DOM["#saved-urls-quantity"].textContent = " (" + (saves ? saves.length: 0) + "):";
   }
+
 
   /**
    * Adds a Saved URL wildcard or regular expression. Note that exact URLs are added in a separate function in Saves.
@@ -425,48 +440,24 @@ var Options = (() => {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
       return;
     }
-    // Check if this URL has already been saved, if it has delete the existing save, and calculate the encrypt ciphertext and iv
-    const saves = await backgroundPage.Saves.deleteSave(url, "addWildcard");
-    const items = await Promisify.getItems();
-    const encrypt = await backgroundPage.Cryptography.encrypt(url, items.saveKey);
-    if (items.selectionCustom && items.selectionCustom.url) {
-      items.selectionCustom.url = "";
-    }
-    // "Push" this new save at the END of the array because it's a wildcard/regexp type (not an exact URL)
-    saves.push({
-      "type": type, "ciphertext": encrypt.ciphertext, "iv": encrypt.iv, "date": new Date().toJSON(), "decodeURIEnabled": items.decodeURIEnabled,
-      "selectionPriority": items.selectionPriority, "selectionCustom": items.selectionCustom, "interval": items.interval, "leadingZerosPadByDetection": items.leadingZerosPadByDetection,
-      "base": items.base, "baseCase": items.baseCase , "baseDateFormat": items.baseDateFormat, "baseRoman": items.baseRoman, "baseCustom": items.baseCustom,
-      "errorSkip": items.errorSkip, "errorCodes": items.errorCodes, "errorCodesCustom": items.errorCodesCustom
-    });
-    chrome.storage.local.set({"saves": saves}, function() {
-      populateValuesFromStorage("savedURLs");
-      DOM["#saved-urls-wildcard"].className = "display-none";
-    });
+    await backgroundPage.Saves.addSave(type, undefined, url);
+    populateValuesFromStorage("savedURLs");
+    DOM["#saved-urls-wildcard"].className = "display-none";
   }
 
   /**
-   * Deletes a Saved URL (all types) by its unique ciphertext.
+   * Deletes Saved URL(s) (all types) by their unique ciphertext.
    *
    * @private
    */
   async function deleteSavedURL() {
-    // Dynamically Generated Select, must get element dynamically, can't use DOM Cache
-    const select = document.getElementById("saved-urls-select");
-    const option = select.options[select.selectedIndex];
-    const ciphertext = option.dataset.ciphertext;
+    // Dynamically Generated Checkboxes, must get elements dynamically, can't use DOM Cache
+    const checkboxes = [...document.querySelectorAll("#saved-urls-table input[type=checkbox]:checked")].map(o => o.value);
     const saves = await Promisify.getItems("local", "saves");
-    if (saves && saves.length > 0) {
-      for (let i = 0; i < saves.length; i++) {
-        if (saves[i].ciphertext === ciphertext) {
-          console.log("deleteSavedURL() - deleting Saved URL with type=" + saves[i].type + ", ciphertext=" + saves[i].ciphertext);
-          saves.splice(i, 1);
-          chrome.storage.local.set({saves: saves}, function() {
-            populateValuesFromStorage("savedURLs");
-          });
-          break;
-        }
-      }
+    if (saves && saves.length > 0 && checkboxes && checkboxes.length > 0) {
+      const newsaves = saves.filter(o => !checkboxes.includes(o.ciphertext));
+      await Promisify.setItems("local", {saves: newsaves});
+      populateValuesFromStorage("savedURLs");
     }
   }
 
