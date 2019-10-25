@@ -433,12 +433,21 @@ var Options = (() => {
    * @private
    */
   async function addSavedURL() {
-    // If the url textarea value is empty return with error
     const url = DOM["#saved-urls-wildcard-url-textarea"].value;
     const type = DOM["#saved-urls-regexp-input"].checked ? "regexp" : "wildcard";
+    // If the url textarea value is empty, return with error
     if (!url || url.length < 0) {
       DOM["#saved-urls-wildcard-errors"].textContent = chrome.i18n.getMessage("saved_urls_wildcard_url_error");
       return;
+    }
+    // If the regexp is invalid, return with error
+    if (type === "regexp") {
+      try {
+        new RegExp(url);
+      } catch(e) {
+        DOM["#saved-urls-wildcard-errors"].textContent = e;
+        return;
+      }
     }
     await backgroundPage.Saves.addSave(type, undefined, url);
     populateValuesFromStorage("savedURLs");

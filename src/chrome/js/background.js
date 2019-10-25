@@ -136,7 +136,7 @@ var Background = (() => {
     } catch(e) {
       console.log("buildInstance() - exception decoding URI, e=" + e + ", tab.url=" + (tab ? tab.url : ""));
     }
-    let via = "items";
+    let saveFound = false;
     let object = items;
     let url = items.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url;
     let selection = IncrementDecrement.findSelection(url, items.selectionPriority, items.selectionCustom);
@@ -145,20 +145,21 @@ var Background = (() => {
       const result = await Saves.matchesSave( save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url, save, items.saveKey);
       if (result.matches) {
         console.log("buildInstance() - found a " + save.type + " save for this tab's url");
-        via = save.type;
+        saveFound = true;
         object = save;
+        object.pattern = result.pattern;
         url = save.decodeURIEnabled && urlDecoded ? urlDecoded : tab.url;
         selection = save.type === "url" ? result.selection : IncrementDecrement.findSelection(url, save.selectionPriority, save.selectionCustom);
         break;
       }
     }
-    // Return the newly built instance using tab, via, selection, object, and items:
+    // Return the newly built instance using tab, selection, object, items, and saveFound:
     return {
       "enabled": false, "autoEnabled": false, "downloadEnabled": false, "toolkitEnabled": false, "multiEnabled": false, "listEnabled": false, "decodeURIEnabled": object.decodeURIEnabled,
       "tabId": tab.id, "url": url,
-      "saveFound": via !== "items", "saveType": via === "items" ? "none" : via,
+      "saveFound": saveFound, "saveType": saveFound ? object.type : "", "savePattern": saveFound ? object.pattern : "",
       "selection": selection.selection, "selectionStart": selection.selectionStart,
-      "leadingZeros": via === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
+      "leadingZeros": saveFound && object.type === "url" ? object.leadingZeros : object.leadingZerosPadByDetection && selection.selection.charAt(0) === '0' && selection.selection.length > 1,
       "interval": object.interval,
       "base": object.base, "baseCase": object.baseCase, "baseDateFormat": object.baseDateFormat, "baseRoman": object.baseRoman, "baseCustom": object.baseCustom,
       "errorSkip": object.errorSkip, "errorCodes": object.errorCodes, "errorCodesCustom": object.errorCodesCustom,

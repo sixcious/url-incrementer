@@ -180,7 +180,7 @@ var Popup = (() => {
    * @private
    */
   function updateControls() {
-    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "save_wildcard_icon" : instance.saveType === "regexp" ? "save_regexp_icon" : "save_url_icon");
+    DOM["#save-url-icon"].title = chrome.i18n.getMessage(instance.saveType === "wildcard" ? "save_wildcard_icon" : instance.saveType === "regexp" ? "save_regexp_icon" : "save_url_icon") + (instance.savePattern ? " " + instance.savePattern : "");
     DOM["#save-url-icon"].style.display = instance.saveFound ? "" : "none";
     DOM["#auto-repeat-icon"].style.display = instance.autoEnabled && instance.autoRepeat ? "" : "none";
     DOM["#shuffle-urls-icon"].style.display = instance.enabled && instance.shuffleURLs ? "" : "none";
@@ -1118,6 +1118,7 @@ var Popup = (() => {
       if (_.saveURL && !_.listEnabled) {
         await backgroundPage.Saves.addSave("url", _);
         _.saveType = "url";
+        _.savePattern = "";
       }
       // Save Auto and Download settings. Increment Decrement settings aren't saved because they are set in the Options
       if (_.autoEnabled) {
