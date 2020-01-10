@@ -7,7 +7,7 @@
   "default_locale": "en",
   "icons": { "16": "img/16-default.png", "48": "img/48-default.png", "128": "img/128-default.png" },
   "browser_action": { "default_title": "__MSG_title__", "default_icon": { "16": "img/16-dark.png", "24": "img/24-dark.png", "32": "img/32-dark.png" }, "default_popup": "html/popup.html" },
-  "options_ui": { "page": "html/options.html", "chrome_style": true },
+  "options_page": "html/options.html",
   "background": { "scripts": ["js/promisify.js", "js/permissions.js", "js/cryptography.js", "js/saves.js", "js/increment-decrement.js", "js/auto.js", "js/action.js", "js/background.js"], "persistent": false },
   "commands": { "increment": { "description": "Increment [+]", "suggested_key": { "default": "Ctrl+Shift+Up"} },
                 "decrement": { "description": "Decrement [-]", "suggested_key": { "default": "Ctrl+Shift+Down"} },

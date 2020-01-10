@@ -320,3 +320,38 @@ input[type="image"].key-clear {
 #options .overlay {
   top: 80%;
 }
+
+/* Navbar old separate options ui */
+
+
+body {
+  margin: 2rem auto;
+  min-width: 480px;
+  max-width: 480px;
+}
+
+header {
+  margin: 2rem 0;
+  font-size: 1.75rem;
+}
+
+nav {
+}
+
+nav > ul > li {
+  display: inline-block;
+  width: 13%;
+}
+
+
+nav > ul > li > img {
+  display: block;
+  margin: 0 auto;
+}
+
+nav > ul > li > span {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}

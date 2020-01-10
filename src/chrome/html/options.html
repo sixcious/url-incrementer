@@ -10,6 +10,7 @@
   <head>
     <meta charset="UTF-8">
     <title>URL Incrementer</title>
+    <link rel="stylesheet" href="../lib/chromium.css">
     <link rel="stylesheet" href="../lib/hover.css">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/options.css">
@@ -19,6 +20,10 @@
     <script src="../js/options.js" defer></script>
   </head>
   <body id="options">
+  <header>
+    <img src="../img/128-default.png" alt="" width="48" height="48">
+    <span>URL Incrementer Options</span>
+  </header>
   <section id="browser-shortcuts">
     <div class="heading">
       <img src="../img/browser.png" alt="" width="16" height="16">
@@ -28,7 +33,7 @@
     </div>
     <p id="browser-shortcuts-p1" data-i18n="textContent"></p>
     <div class="checkbox">
-      <label id="help-quick-shortcuts*browser" class="tooltip-alt" data-i18n="title">
+      <label id="quick-enable-help*browser" class="tooltip-alt" data-i18n="title">
         <input id="browser-shortcuts-quick-enable-input" type="checkbox">
         <span id="browser-shortcuts-quick-enable-label" data-i18n="textContent"></span>
         <img src="../img/question-circle.png" alt="" width="16" height="16">
@@ -194,16 +199,6 @@
       </div>
       <div id="saved-urls-wildcard" class="display-none">
         <p id="saved-urls-wildcard-instructions-p" data-i18n="textContent"></p>
-        <div class="note">
-          <span id="saves-urls-wildcard-example" data-i18n="textContent"></span>
-          <br>
-          <span id="saves-urls-wildcard-answer" data-i18n="textContent"></span>
-          <br><br>
-          <span id="saves-urls-regexp-example" data-i18n="textContent"></span>
-          <br>
-          <span id="saves-urls-regexp-answer" data-i18n="textContent"></span>
-          <br><br>
-        </div>
         <div class="row">
           <div class="column">
             <label id="saved-urls-wildcard-url-label" for="saved-urls-wildcard-url-textarea" data-i18n="textContent" class="display-block"></label>
@@ -222,6 +217,16 @@
               <span id="saved-urls-wildcard-errors"></span>
             </div>
           </div>
+        </div>
+        <div class="note">
+          <span id="saves-urls-wildcard-example" data-i18n="textContent"></span>
+          <br>
+          <span id="saves-urls-wildcard-answer" data-i18n="textContent"></span>
+          <br><br>
+          <span id="saves-urls-regexp-example" data-i18n="textContent"></span>
+          <br>
+          <span id="saves-urls-regexp-answer" data-i18n="textContent"></span>
+          <br><br>
         </div>
       </div>
     </section>
@@ -283,7 +288,7 @@
             <label id="interval-label" for="interval-input" data-i18n="textContent"></label>
           </div>
           <div class="column">
-            <input id="interval-input" type="number" min="0">
+            <input id="interval-input" type="number" min="1">
           </div>
         </div>
         <div class="row">
@@ -635,7 +640,7 @@
         </div>
         <div id="credits-everyone" data-i18n="textContent"></div>
         <div id="credits-you" data-i18n="textContent"></div>
-        <div id="copyleft"><a href="https://www.gnu.org/licenses/copyleft.html" target="_blank">Copyleft</a> &copy; 2011 - 2020 Roy Six</div>
+        <div id="copyleft">Copyright &copy; 2011 - 2020 Roy Six</div>
       </div>
     </section>
   </body>
