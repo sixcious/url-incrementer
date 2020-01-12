@@ -10,8 +10,15 @@
 /* Firefox: Set max-width and margin. Chrome: Set min-width to keep popup reasonably sized */
 body {
   min-width: 480px;
-  max-width: 480px;
+  max-width: 640px;
+  margin: 2rem auto;
   color: #333333;
+  font-size: 100%;
+}
+
+header {
+  margin: 2rem 0;
+  font-size: 1.75rem;
 }
 
 section:not(:last-of-type) {
@@ -22,13 +29,13 @@ textarea {
   color: #333333;
   vertical-align: text-top;
   resize: vertical;
-  width: 300px;
+  width: 400px;
   min-height: 41px;
   max-height: 100px;
 }
 
 input[type="number"] {
-  width: 52px;
+  width: 64px;
 }
 
 input[type="image"] {
@@ -72,7 +79,7 @@ input[type="image"]:focus {
 .heading button {
   float: right;
   position: relative;
-  top: -8px;
+  top: -16px;
 }
 
 /* Heading border-bottom-color overrides */
@@ -140,7 +147,7 @@ input[type="image"]:focus {
 }
 
 input[type="text"].key-input {
-  width: 165px;
+  width: 200px;
   margin-right: 4px;
 }
 
@@ -319,39 +326,4 @@ input[type="image"].key-clear {
 /* Chrome override options overlay position so generated alert is displayed in gap space on the Options Page */
 #options .overlay {
   top: 80%;
-}
-
-/* Navbar old separate options ui */
-
-
-body {
-  margin: 2rem auto;
-  min-width: 480px;
-  max-width: 480px;
-}
-
-header {
-  margin: 2rem 0;
-  font-size: 1.75rem;
-}
-
-nav {
-}
-
-nav > ul > li {
-  display: inline-block;
-  width: 13%;
-}
-
-
-nav > ul > li > img {
-  display: block;
-  margin: 0 auto;
-}
-
-nav > ul > li > span {
-  display: block;
-  font-size: 1rem;
-  font-weight: bold;
-  text-align: center;
 }

@@ -1066,13 +1066,15 @@ var Popup = (() => {
     setupInputs("accept");
     const e = setupErrors("accept");
     // Validation Rules:
-    // 1. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
-    // 2. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
-    // 3. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
-    // 4. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
-    // 5. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
-    // 6. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
+    // 1. Cannot have toolkit open when clicking accept
+    // 2. Auto is NOT enabled, Download is NOT enabled: Check if increment decrement errors exist, else validated
+    // 3. Auto is enabled, Auto is Increment/Decrement, Download is NOT enabled: Check if errors exist and if autoErrors exist, else validated
+    // 4. Auto is enabled, Auto is Increment/Decrement, Download is enabled: Check if errors exist, autoErrors exist, and downloadErrors exist, else validated
+    // 5. Auto is enabled, Auto is Next/Prev, Download is NOT enabled: Check if autoErrors exist, else validated
+    // 6. Auto is enabled, Auto is Next/Prev, Download is enabled: Check if autoErrors exist and if downloadErrors exist, else validated
+    // 7. Download is enabled, Auto is NOT enabled: Check if downloadErrors exist, and check if errors exist. If errors exist, validate only download, else validate increment and download
     const validated =
+      e.toolkitErrorsExist ? false :
       !_.autoEnabled && !_.downloadEnabled ?
         !e.incrementDecrementErrorsExist :
       _.autoEnabled ?
@@ -1087,7 +1089,9 @@ var Popup = (() => {
        _.downloadEnabled && !_.autoEnabled && !e.downloadErrorsExist;
     // Generate alerts if not validated
     if (!validated) {
-      if (e.downloadErrorsExist) {
+      if (e.toolkitErrorsExist) {
+        UI.generateAlert(e.toolkitErrors);
+      } else if (e.downloadErrorsExist) {
         UI.generateAlert(e.downloadErrors);
       } else if (e.autoErrorsExist) {
         UI.generateAlert(e.autoErrors);
@@ -1335,6 +1339,14 @@ var Popup = (() => {
       e.downloadErrorsExist = e.downloadErrors.some(error => error !== "");
       if (e.downloadErrorsExist) {
         e.downloadErrors.unshift(chrome.i18n.getMessage("oops_error"));
+      }
+      // Toolkit Errors
+      e.toolkitErrors = [
+        DOM["#toolkit-input"].checked ? chrome.i18n.getMessage("toolkit_accept_error") : ""
+      ];
+      e.toolkitErrorsExist = e.toolkitErrors.some(error => error !== "");
+      if (e.toolkitErrorsExist) {
+        e.toolkitErrors.unshift(chrome.i18n.getMessage("oops_error"));
       }
     }
     return e;
