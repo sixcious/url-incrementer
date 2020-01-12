@@ -77,9 +77,24 @@ var Options = (() => {
     DOM["#error-skip-input"].addEventListener("change", function() { if (+this.value >= 0 && +this.value <= 100) { saveInput(this, "errorSkip", "number"); } });
     DOM["#error-skip-checkboxes"].addEventListener("change", function() { updateErrorCodes(); });
     DOM["#error-codes-custom-input"].addEventListener("input", function() { saveInput(this, "errorCodesCustom", "array-split-all"); });
-    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsNext", "array-split-nospace-lowercase"); });
-    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "nextPrevKeywordsPrev", "array-split-nospace-lowercase"); });
-    DOM["#next-prev-links-priority-select"].addEventListener("change", function () { chrome.storage.local.set({"nextPrevLinksPriority": this.value}); });
+    DOM["#next-prev-rule-next"].addEventListener("change", function() {
+      chrome.storage.local.set({"nextType": event.target.value});
+      DOM["#next-prev-selector-next-input"].style.display = event.target.value === "selector" ? "" : "none";
+      DOM["#next-prev-xpath-next-input"].style.display = event.target.value === "xpath" ? "" : "none";
+    });
+    DOM["#next-prev-rule-prev"].addEventListener("change", function() {
+      chrome.storage.local.set({"prevType": event.target.value});
+      DOM["#next-prev-selector-prev-input"].style.display = event.target.value === "selector" ? "" : "none";
+      DOM["#next-prev-xpath-prev-input"].style.display = event.target.value === "xpath" ? "" : "none";
+    });
+    DOM["#next-prev-selector-next-input"].addEventListener("input", function() { saveInput(this, "nextSelector", "value"); });
+    DOM["#next-prev-selector-prev-input"].addEventListener("input", function() { saveInput(this, "prevSelector", "value"); });
+    DOM["#next-prev-xpath-next-input"].addEventListener("input", function() { saveInput(this, "nextXpath", "value"); });
+    DOM["#next-prev-xpath-prev-input"].addEventListener("input", function() { saveInput(this, "prevXpath", "value"); });
+    DOM["#next-prev-attribute-next-input"].addEventListener("input", function() { saveInput(this, "nextAttribute", "array-split-period"); });
+    DOM["#next-prev-attribute-prev-input"].addEventListener("input", function() { saveInput(this, "prevAttribute", "array-split-period"); });
+    DOM["#next-prev-keywords-next-textarea"].addEventListener("input", function() { saveInput(this, "nextKeywords", "array-split-nospace-lowercase"); });
+    DOM["#next-prev-keywords-prev-textarea"].addEventListener("input", function() { saveInput(this, "prevKeywords", "array-split-nospace-lowercase"); });
     DOM["#next-prev-same-domain-policy-enable-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevSameDomainPolicy": this.checked}); });
     DOM["#next-prev-popup-buttons-input"].addEventListener("change", function() { chrome.storage.local.set({"nextPrevPopupButtons": this.checked}); });
     DOM["#download-enable-button"].addEventListener("click", function() { Permissions.requestPermission("download", function(granted) { if (granted) { populateValuesFromStorage("download"); } }) });
@@ -236,9 +251,22 @@ var Options = (() => {
       DOM["#error-codes-EXC-input"].checked = items.errorCodes.includes("EXC");
       DOM["#error-codes-custom"].className = items.errorCodes.includes("CUS") ? "display-block" : "display-none";
       DOM["#error-codes-custom-input"].value = items.errorCodesCustom;
-      DOM["#next-prev-keywords-next-textarea"].value = items.nextPrevKeywordsNext;
-      DOM["#next-prev-keywords-prev-textarea"].value = items.nextPrevKeywordsPrev;
-      DOM["#next-prev-links-priority-select"].value = items.nextPrevLinksPriority;
+      DOM["#next-prev-rule-selector-next"].checked = items.nextType === "selector";
+      DOM["#next-prev-rule-xpath-next"].checked = items.nextType === "xpath";
+      DOM["#next-prev-rule-selector-prev"].checked = items.prevType === "selector";
+      DOM["#next-prev-rule-xpath-prev"].checked = items.prevType === "xpath";
+      DOM["#next-prev-selector-next-input"].style.display = items.nextType === "selector" ? "" : "none";
+      DOM["#next-prev-xpath-next-input"].style.display = items.nextType === "xpath" ? "" : "none";
+      DOM["#next-prev-selector-prev-input"].style.display = items.prevType === "selector" ? "" : "none";
+      DOM["#next-prev-xpath-prev-input"].style.display = items.prevType === "xpath" ? "" : "none";
+      DOM["#next-prev-selector-next-input"].value = items.nextSelector;
+      DOM["#next-prev-selector-prev-input"].value = items.prevSelector;
+      DOM["#next-prev-xpath-next-input"].value = items.nextXpath;
+      DOM["#next-prev-xpath-prev-input"].value = items.prevXpath;
+      DOM["#next-prev-attribute-next-input"].value = items.nextAttribute.join(".");
+      DOM["#next-prev-attribute-prev-input"].value = items.prevAttribute.join(".");
+      DOM["#next-prev-keywords-next-textarea"].value = items.nextKeywords;
+      DOM["#next-prev-keywords-prev-textarea"].value = items.prevKeywords;
       DOM["#next-prev-same-domain-policy-enable-input"].checked = items.nextPrevSameDomainPolicy;
       DOM["#next-prev-popup-buttons-input"].checked = items.nextPrevPopupButtons;
     }
