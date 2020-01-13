@@ -87,8 +87,10 @@ var Promisify = (() => {
    */
   function runtimeSendMessage(message) {
     return new Promise(resolve => {
+      message.async = true;
       chrome.runtime.sendMessage(message, response => {
         resolve(response);
+        if (chrome.runtime.lastError) {}
       });
     });
   }
@@ -102,8 +104,10 @@ var Promisify = (() => {
    */
   function tabsSendMessage(tabId, message) {
     return new Promise(resolve => {
+      message.async = true;
       chrome.tabs.sendMessage(tabId, message, response => {
         resolve(response);
+        if (chrome.runtime.lastError) {}
       });
     });
   }
