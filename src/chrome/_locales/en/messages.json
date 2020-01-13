@@ -241,7 +241,7 @@
   "base_decimal_invalid_error": { "message": "A decimal number (in the format of #.# like \"1.5\") could not be parsed from the selection" },
   "base_custom_invalid_error": { "message": "Custom base couldn't be validated against selection" },
   "multi_count_error": { "message": "To multi-increment, select at least two selections in the URL" },
-  "toolkit_accept_error": { "message": "Click on URLI (the extension mascot) to perform a toolkit action or close the toolkit by clicking the wrench to be able to accept" },
+  "toolkit_accept_error": { "message": "Using URLI's Toolkit? Click on URLI (the extension mascot) to perform a toolkit action or please first close the toolkit by clicking the wrench to be able to accept another action" },
   "toolkit_auto_enabled_error": { "message": "Can't use URLI's Toolkit while Auto is running; please use another tab or clear [X] and close and re-enter the Popup" },
   "toolkit_invalid_error": { "message": "URLI's Toolkit configuration missing tool, action, or quantity" },
   "toolkit_crawl_quantity_error": { "message": "Crawl URLs Quantity must be between 1 and 10,000" },

@@ -425,9 +425,9 @@ var Options = (() => {
       th = document.createElement("th"); th.className = "count"; th.textContent = chrome.i18n.getMessage("download_preview_count_label"); tr.appendChild(th);
       th = document.createElement("th"); th.className = "type"; th.textContent = "Type"; tr.appendChild(th);
       th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
-      // th = document.createElement("th"); th.className = "i"; th.textContent = "I"; tr.appendChild(th);
-      // th = document.createElement("th"); th.className = "b"; th.textContent = "B"; tr.appendChild(th);
-      // th = document.createElement("th"); th.className = "e"; th.textContent = "E"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "i"; th.textContent = "I"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "b"; th.textContent = "B"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "e"; th.textContent = "E"; tr.appendChild(th);
       th = document.createElement("th"); th.className = "date"; th.textContent = "Date"; tr.appendChild(th);
       const tbody = document.createElement("tbody"); table.appendChild(tbody);
       let count = 1;
@@ -441,9 +441,9 @@ var Options = (() => {
         td = document.createElement("td"); td.className = "count"; td.textContent = count++; tr.appendChild(td);
         td = document.createElement("td"); td.className = "type"; td.textContent = save.type.substring(0 ,3); tr.appendChild(td);
         td = document.createElement("td"); td.className = "url"; td.textContent = output; tr.appendChild(td);
-        // td = document.createElement("td"); td.className = "i"; td.textContent = save.interval; tr.appendChild(td);
-        // td = document.createElement("td"); td.className = "b"; td.textContent = save.base; tr.appendChild(td);
-        // td = document.createElement("td"); td.className = "e"; td.textContent = save.errorSkip; tr.appendChild(td);
+        td = document.createElement("td"); td.className = "i"; td.textContent = save.interval; tr.appendChild(td);
+        td = document.createElement("td"); td.className = "b"; td.textContent = save.base; tr.appendChild(td);
+        td = document.createElement("td"); td.className = "e"; td.textContent = save.errorSkip; tr.appendChild(td);
         td = document.createElement("td"); td.className = "date"; td.textContent =  new Date(save.date).toLocaleDateString(); tr.appendChild(td);
         tbody.appendChild(tr);
       }
