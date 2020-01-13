@@ -422,12 +422,12 @@ var Options = (() => {
       const tr = document.createElement("tr"); thead.appendChild(tr);
       let th;
       th = document.createElement("th"); th.className = "check"; th.textContent = " "; tr.appendChild(th);
-      th = document.createElement("th"); th.className = "count"; th.textContent = chrome.i18n.getMessage("download_preview_count_label"); tr.appendChild(th);
+      th = document.createElement("th"); th.className = "count"; th.textContent = "#"; tr.appendChild(th);
       th = document.createElement("th"); th.className = "type"; th.textContent = "Type"; tr.appendChild(th);
-      th = document.createElement("th"); th.className = "url"; th.textContent = chrome.i18n.getMessage("download_preview_url_label"); tr.appendChild(th);
-      th = document.createElement("th"); th.className = "i"; th.textContent = "I"; tr.appendChild(th);
-      th = document.createElement("th"); th.className = "b"; th.textContent = "B"; tr.appendChild(th);
-      th = document.createElement("th"); th.className = "e"; th.textContent = "E"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "url"; th.textContent = "URL"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "i"; th.textContent = "I"; th.title = "Interval"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "b"; th.textContent = "B"; th.title = "Base"; tr.appendChild(th);
+      th = document.createElement("th"); th.className = "e"; th.textContent = "E"; th.title="Error Skip"; tr.appendChild(th);
       th = document.createElement("th"); th.className = "date"; th.textContent = "Date"; tr.appendChild(th);
       const tbody = document.createElement("tbody"); table.appendChild(tbody);
       let count = 1;
