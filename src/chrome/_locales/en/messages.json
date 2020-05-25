@@ -1,7 +1,7 @@
 {
   "name": { "message": "URL Incrementer" },
   "short_name": { "message": "URLI" },
-  "description": { "message": "Increment a URL or go to the Next Page. Supports Auto and Download Incrementing and Basic Crawling / Scraping. Uses 0 Chrome memory when inactive." },
+  "description": { "message": "Increment a URL or go to the Next Page. Supports Auto, Download, Crawl, and Scrape Incrementing. Uses 0 Chrome memory when inactive." },
   "title": { "message": "URL Incrementer" },
 
   "BROWSER": { "message": "----- BROWSER -----" },
