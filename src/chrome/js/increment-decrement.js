@@ -638,6 +638,26 @@ var IncrementDecrementRoman = (() => {
 var IncrementDecrementArray = (() => {
 
   /**
+   * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
+   *
+   * Note: This function is derived from code written by Laurens Holst @ stackoverflow.com.
+   * Note 2: This function is public for other extensions; URLI does not need this to be public.
+   *
+   * @param array the array to shuffle
+   * @returns {Array} the shuffled urls array
+   * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+   * @see https://stackoverflow.com/a/12646864
+   * @public
+   */
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  /**
    * Steps to the next or previous position in the URLs array.
    * This is used instead of incrementDecrementURL, for example when there is a URLs array (e.g. when Shuffle Mode is enabled).
    *
@@ -789,27 +809,9 @@ var IncrementDecrementArray = (() => {
     instance.url = preurl1;
   }
 
-  /**
-   * Shuffles an array into random indices using the Durstenfeld shuffle, a computer-optimized version of Fisher-Yates.
-   *
-   * Note: This function is derived from code written by Laurens Holst @ stackoverflow.com.
-   *
-   * @param array the array to shuffle
-   * @returns {Array} the shuffled urls array
-   * @see https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
-   * @see https://stackoverflow.com/a/12646864
-   * @private
-   */
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
   // Return Public Functions
   return {
+    shuffle: shuffle,
     stepThruURLs: stepThruURLs,
     precalculateURLs: precalculateURLs
   };
