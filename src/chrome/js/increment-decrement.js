@@ -117,6 +117,7 @@ var IncrementDecrement = (() => {
         }
         break;
     }
+    console.log("validateSelection() - error=" + error);
     return error;
   }
 
