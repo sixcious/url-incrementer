@@ -279,10 +279,13 @@ var Background = (() => {
       }
     }
 
+    // Light icons for dark mode
     if (request && request.scheme === "dark") {
       chrome.browserAction.setIcon({
         path: {
           "16": "img/16-light.png",
+          "24": "img/24-light.png",
+          "32": "img/32-light.png",
           "48": "img/48-light.png",
           "128": "img/128-light.png"
         }
