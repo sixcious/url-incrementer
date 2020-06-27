@@ -123,7 +123,7 @@ var IncrementDecrement = (() => {
 
   /**
    * Handles an increment or decrement operation, acting as a controller.
-   * The exact operation is dependant on the instance and can be a step thru URLs array or
+   * The actual operation is dependant on the instance and can be a step thru URLs array or
    * incrementing / decrementing a URL depending on the the state of multi.
    *
    * @param action   the action to perform (increment or decrement)
@@ -697,8 +697,8 @@ var IncrementDecrementArray = (() => {
         urls = buildURLs(instance, instance.autoAction, instance.autoTimes);
       } else {
         const shuffleLimit = instance.shuffleLimit;
-        const urlsIncrement = buildURLs(instance, "increment", shuffleLimit / 2);
-        const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit / 2);
+        const urlsIncrement = buildURLs(instance, "increment", shuffleLimit);
+        const urlsDecrement = buildURLs(instance, "decrement", shuffleLimit);
         const urlOriginal = [{"urlmod": instance.url, "selectionmod": instance.selection}];
         currentIndex = urlsDecrement.length;
         urls = [...urlsDecrement, ...urlOriginal, ...urlsIncrement];
