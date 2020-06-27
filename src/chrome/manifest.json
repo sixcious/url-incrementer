@@ -16,6 +16,12 @@
                 "clear":     { "description": "Clear [x]" },
                 "return":    { "description": "Return To Start" },
                 "auto":      { "description": "Auto Pause / Resume" }},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/toggle-icon.js"]
+    }
+  ],
   "permissions": ["activeTab", "storage"],
   "optional_permissions": ["<all_urls>", "downloads", "declarativeContent"],
   "minimum_chrome_version": "60"

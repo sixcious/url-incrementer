@@ -278,6 +278,16 @@ var Background = (() => {
         Action.performAction(request.action, "message", instance, items);
       }
     }
+
+    if (request && request.scheme === "dark") {
+      chrome.browserAction.setIcon({
+        path: {
+          "16": "img/16-light.png",
+          "48": "img/48-light.png",
+          "128": "img/128-light.png"
+        }
+      })
+    }
   }
 
   /**
