@@ -1,0 +1,420 @@
+/**
+ * URL Incrementer
+ * @copyright © 2020 Roy Six
+ * @license https://github.com/sixcious/url-incrementer/blob/main/LICENSE
+ */
+
+/* Popup CSS relies on Chromium CSS */
+
+@import url("chromium/chrome_shared.css");
+@import url("ui/generate-alert.css");
+@import url("ui/hover.css");
+@import url("ui/fade.css");
+@import url("ui/toggle.css");
+
+/* chromium/chrome-shared.css Overrides */
+html {
+  height: auto;
+}
+
+/* Unfortunately, we need to have user-select on checkboxes due to select URL bug causing issues when checkboxes are selected */
+h3, :-webkit-any(.checkbox, .radio) label input ~ span {
+  -webkit-user-select: initial;
+}
+
+:-webkit-any(.checkbox, .radio) label input ~ span{
+  -webkit-margin-start: 0.3em;
+}
+
+/* Native elements styles */
+
+body {
+  color: #333333;
+  background: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+div.table {
+  display: table;
+}
+
+div.row {
+  display: table-row;
+}
+
+div.column {
+  display: table-cell;
+}
+
+/* Controls CSS */
+
+#controls {
+  margin: 5px;
+}
+
+#controls input[type="image"] {
+  vertical-align: middle; /* Matches hover.css styling */
+  padding: 8px;
+}
+
+#controls input[type="image"]:not(:last-child) {
+  margin-right: 10px;
+}
+
+#controls input[type="image"]:focus {
+  outline: none;
+}
+
+#controls input[type="image"].disabled {
+  opacity: 0.2;
+}
+
+/* Setup CSS */
+
+#setup {
+  min-width: 512px;
+  margin: 12px;
+}
+
+#setup h3 {
+  font-weight: bold;
+  /* font-style: italic;*/
+  padding-bottom: 4px;
+  margin-bottom: 0.6em;
+}
+
+#setup h3 {
+  color: #333333;
+  border-bottom: 1px solid #333333;
+}
+
+#setup input[type="number"] {
+  width: 52px;
+  display: block;
+}
+
+#setup select {
+  display: block;
+}
+
+#setup textarea {
+  width: 100%;
+  color: #777777;
+  word-break: break-all;
+  max-width: 512px;
+  max-height: 90px;
+  min-width: 512px;
+  min-height: 41px;
+}
+
+#setup img {
+  vertical-align: bottom;
+}
+
+#setup div.column {
+  padding-top: 7px;
+}
+
+#properties {
+  margin-bottom: 16px;
+}
+
+#setup #properties div.column:not(:last-child) {
+  padding-right: 27px;
+}
+
+#setup div.column > label, .label-display-block {
+  display: block;
+  margin-bottom: 2px;
+}
+
+#setup #leading-zeros-pad-label {
+  font-size: 0.9em; /* 1em fits OK, but worried about this breaking into a second line so smaller font-size just in case */
+}
+
+#setup #setup-buttons {
+  text-align: center;
+  position: relative; /* need position relative height auto for position absolute elements auto/download toggles and options button */
+  height: auto;
+}
+
+#setup #setup-buttons > button:not(:last-child) {
+  margin-right: 12px;
+}
+
+#options-button {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#options-button img {
+  margin-right: -2px;
+}
+
+#setup #extra-toggles {
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+}
+
+#setup #extra-toggles .checkbox > label:not(:last-child) {
+  margin-right: 8px;
+}
+
+#setup #auto, #setup #download {
+  margin-bottom: 24px;
+}
+
+#auto-eta, #download-experimental {
+  font-size: 0.8em;
+  font-weight: bold;
+  font-style: italic;
+  position: absolute;
+  right: 12px;
+  margin-top: -10px;
+}
+
+#auto-eta {
+  color: #FF6600;
+}
+
+#download-experimental {
+  color: rebeccapurple;
+}
+
+#setup #auto div.column:not(:last-child), #setup #download div.column:not(:last-child)  {
+  padding-right: 30px;
+}
+
+#setup #auto #auto-wait-badge {
+  vertical-align: bottom;
+}
+
+#setup #auto #auto-wait-badge .checkbox label {
+  padding: 2px 0;
+}
+
+#setup div.row.two div.column {
+  padding-top: 12px;
+}
+
+#auto-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: #FF6600;
+}
+
+#download-toggle-input.tgl-ios:checked + .tgl-btn {
+  background: rebeccapurple;
+}
+
+#auto-toggle span, #download-toggle span {
+  font-size: 1.05em;
+  font-weight: bold;
+  font-style: italic;
+  margin-left: 3px;
+}
+
+#auto-toggle span {
+  color: #FF6600;
+}
+
+#download-toggle span {
+  color: rebeccapurple;
+}
+
+#auto-toggle-img {
+  margin-bottom: -1px;
+}
+
+/* cloud-download ireregular padding overrides */
+#controls input[type="image"]#download-input {
+  padding: 4px 8px;
+}
+
+#setup img#download-h3-cloud-download, #setup img#auto-h3-refresh {
+  margin-bottom: -2px;
+}
+
+#setup #download-toggle {
+  vertical-align: bottom;
+}
+
+#setup h3#setup-h3 {
+  color: #333333;
+  border-bottom-color: #333333;
+}
+
+#setup h3#auto-h3 {
+  color: #FF6600;
+  border-bottom-color: #FF6600;
+}
+
+#setup h3#download-h3 {
+  color: rebeccapurple;
+  border-bottom-color: rebeccapurple;
+  margin: 0;
+}
+
+#auto div.column, #download div.column {
+  padding-top: 3px;
+}
+
+/* download-setup (download-strategy and download-optional columns) */
+
+#download-setup.table {
+  width: 100%;
+  border-bottom: 1px solid rebeccapurple;
+}
+
+div.column#download-strategy, div.column#download-optional {  
+  padding-top: 8px;
+  padding-bottom: 12px;
+  width: 50%;
+  position: relative; /* for position absolute help */
+}
+
+#download-strategy-help, #download-optional-help {
+  font-weight: bold;
+  font-size: 0.9em;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  border-bottom: 1px dotted #333333;
+  padding-bottom: 1px;
+}
+
+div.column#download-optional {
+  border-left: 1px solid rebeccapurple;
+  padding-left: 12px;
+}
+
+#download-optional-label-div {
+  font-weight: bold;
+  font-style: italic;
+}
+
+#download-strategy-sub-options {
+  height: 100%;
+  min-height: 60px;
+}
+
+#download-extensions label, #download-tags label, #download-attributes label {
+  display: inline-block; /* keeps extension next to checkbox on same line without breaking  */
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+#download-extensions label span, #download-tags label span, #download-attributes label span {
+  padding-left: 3px;
+}
+
+#download-strategy-select {
+  margin-bottom: 8px;
+}
+
+#download-selector-input {
+  width: 90%;
+  margin-top: 4px;
+}
+
+#download-includes-input, #download-excludes-input {
+  width: 108px;
+}
+
+#download-min-mb input[type="number"], #download-max-mb input[type="number"] { /* Keep "MB" next to input */
+  display: inline-block;
+  margin-right: 1px;
+}
+
+/* download-preview-heading and download-preview-checkboxes */
+
+#download-preview-heading {
+  margin: 6px 0;
+}
+
+#download-preview-heading-title {
+  font-weight: bold;
+}
+
+#download-preview-heading-title .success {
+  color: #05854D;
+}
+
+#download-preview-heading-title .error {
+  color: #E6003E;
+}
+
+#download-preview-checkboxes {
+  text-align: right;
+}
+
+#download-preview-checkboxes label:not(:last-child) {
+  margin-right: 8px;
+}
+
+/* ZURB Foundation table styling inspired/derived */
+
+table {
+  border-collapse: collapse;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  max-width: 512px;
+  max-height: 226px;
+  display: block;
+  overflow: auto;
+  word-break: break-all;
+}
+
+table thead, table tbody {
+  border: 1px solid #f1f1f1;
+  background-color: #fefefe;
+}
+
+table thead {
+  background: #f8f8f8;
+  color: #0a0a0a;
+}
+
+table thead tr {
+  background: transparent;
+}
+
+table thead tr th {
+  font-weight: bold;
+  text-align: left;
+}
+
+table thead th, table tbody th, table tbody td {
+  padding: 0.25rem 0.312rem 0.312rem;
+}
+
+table tbody tr:nth-child(even) {
+  border-bottom: 0;
+  background-color: #f1f1f1;
+}
+
+table tr:nth-of-type(even):hover {
+  background-color: #ececec;
+}
+
+table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* table download-preview specific class styles */
+
+table th.check, td.check { min-width: 20px; }
+table th.count, td.count { min-width: 24px; }
+table th.thumb, td.thumb { min-width: 42px; } table td.thumb img, table td.thumb video { max-width: 40px; max-height: 40px; }
+table th.extension, td.extension { min-width: 34px; }
+table th.tag, td.tag { min-width: 36px; }
+table th.attribute, td.attribute { min-width: 34px; }
+table th.url, td.url { min-width: 34px; }
+table tr.unselected td.check img { opacity: 0.1; } /* unselected should have the check be really low opacity */
