@@ -17,7 +17,7 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 <br><br><br><br><br><br>
 
 ## Features
-<em>Some Features Coming Soon in 6.0 (December 2020)</em>
+<em>Some Features Coming Soon in Version 6.0 (February 2022)</em>
 
 - Keyboard and Mouse Shortcuts
 - 1-Click Increment Decrement Buttons
