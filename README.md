@@ -19,29 +19,24 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 ## Features
 <em>Some Features Coming Soon in Version 6.0 (February 2022)</em>
 
+- 4 Actions: Increment URL, Next Link, Click Button, URL List
 - Keyboard and Mouse Shortcuts
 - 1-Click Increment Decrement Buttons
+- Advanced Incrementing Features: Multi, Error Skip, Date Time, Decimal Number, Roman Numeral, Custom Base, and Alphanumeric (Base 2-36, includes Hexadecimal)
 - Auto Incrementing
-- Download Incrementing (Multiple Page Downloading) [Experimental]
-- Advanced Incrementing Features: Multi, Error Skip, Date Time, Decimal Number, Roman Numeral, Custom Base, and Alphanumeric (Base 2-36)
-- Next Prev Link Support
 - URLI's Toolkit [Experimental]
-- Save URLs and Wildcards [Experimental]: Save settings for your favorite URLs and URLI will always remember them the next time you visit
+- Save URLs [Experimental]: Save settings for your favorite URLs and URLI will always remember them the next time you visit
 - Shuffle URLs: Make it fun and randomize the next pages you see!
 - Options: Change how URLI pre-selects the number to increment... and more
-- Chrome / Edge: Uses 0 Background Memory when inactive
-- Chrome / Edge: No permissions required
+- Chrome / Edge: No permissions required out of the box
 - Firefox: Support for Firefox for Android (Fennec Version 68, Some features may not work perfectly)
 - No Ads, No Tracking, No Bloat
 
-## Notes
-- Mapping shortcut keys to mouse buttons with 3rd party apps like Logitech Gaming Software is not supported and may only work if you use Logitech's "Multikey Macro" option.
-- Download Incrementing is an optional and experimental feature that is designed to be used with Auto so you can have a unique Multiple Page Downloader (think a simple "Down them all" that can run automatically!). It uses a custom-built downloader that I've developed for URLI.
-- URLI's Toolkit is a toolkit I made to help me develop and test URLI, but I've "unlocked" for you to use as a non-standard feature!
-- Saving URLs is completely optional.
-- Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960).
-- Firefox only: URLI's Popup may not work in Private Windows due to the different way Firefox decided to handle this in respect to Chrome (Bug 1329304).
-- Firefox only: Firefox 60 (non ESR) Users won't be able to grant Download permissions on the Options page due to a bug in Firefox 60 (Bug 1382953); please update to Firefox 61 or higher.
+#### Feature Notes
+- URLI's Toolkit is a toolkit I made to help me develop and test URLI, but I've "unlocked" for you to use as a non-standard feature
+- Saving URLs is completely optional
+- Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960)
+- Mapping shortcut keys to mouse buttons with 3rd party apps like Logitech Gaming Software is not officially supported and may only work if you use Logitech's "Multikey Macro" option
 
 ## Help Guide
 [View the Help Guide!](https://github.com/roysix/url-incrementer/wiki)
@@ -54,7 +49,6 @@ Firefox: URL Incrementer requires the `all_urls` permission in order to offer In
 Some optional features require extra permissions:
 1. Internal Shortcuts - requires the `all_urls` Permission
 2. Enhanced Mode - requires the `all_urls` Permission
-3. Download - requires the Download Permission and `all_urls` Permission
 
 ## Remote Code Policy
 URL Incrementer does *not* use any remote code. All code is included locally in the software package and goes under review before being published.
