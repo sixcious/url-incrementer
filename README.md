@@ -1,13 +1,13 @@
 # URL Incrementer
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/icon-dark.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/icon-medium.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
 <br><br>
 
 ## Available For
-<a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Chrome Web Store Download"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
+<a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Firefox Addon Download"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
+<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/edge.png" height="64" alt="Microsoft Edge, Icon: By Source, Fair use, https://en.wikipedia.org/w/index.php?curid=62848768"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Microsoft Edge Extension Download"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/edge.png" height="64" alt="Microsoft Edge, Icon: By Source, Fair use, https://en.wikipedia.org/w/index.php?curid=62848768"></a>
+<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
 
 <br><br>
 <img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/urli.svg?sanitize=true" width="256" height="256" align="left" title="URLI">
@@ -24,8 +24,8 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - 1-Click Increment Decrement Buttons
 - Advanced Incrementing Features: Multi, Error Skip, Date Time, Decimal Number, Roman Numeral, Custom Base, and Alphanumeric (Base 2-36, includes Hexadecimal)
 - Auto Incrementing
-- URLI's Toolkit [Experimental]
-- Save URLs [Experimental]: Save settings for your favorite URLs and URLI will always remember them the next time you visit
+- URLI's Toolkit: Generate Links, Open Tabs, Crawl URLs, or Scrape URLs
+- Save URLs: Save settings for your favorite URLs and URLI will always remember them the next time you visit
 - Shuffle URLs: Make it fun and randomize the next pages you see!
 - Options: Change how URLI pre-selects the number to increment... and more
 - Chrome / Edge: No permissions required out of the box
@@ -33,10 +33,8 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - No Ads, No Tracking, No Bloat
 
 #### Feature Notes
-- URLI's Toolkit is a toolkit I made to help me develop and test URLI, but I've "unlocked" for you to use as a non-standard feature
-- Saving URLs is completely optional
-- Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960)
 - Mapping shortcut keys to mouse buttons with 3rd party apps like Logitech Gaming Software is not officially supported and may only work if you use Logitech's "Multikey Macro" option
+- Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960)
 
 ## Help Guide
 [View the Help Guide!](https://github.com/roysix/url-incrementer/wiki)
