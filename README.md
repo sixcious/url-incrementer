@@ -1,5 +1,5 @@
 # URL Incrementer
-<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/icon-medium.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/icon.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
 <br><br>
 
 ## Available For
