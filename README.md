@@ -1,16 +1,16 @@
 # URL Incrementer
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/icon-medium.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/icon-medium.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
 <br><br>
 
 ## Available For
-<a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
+<a href="https://chrome.google.com/webstore/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/edge.png" height="64" alt="Microsoft Edge, Icon: By Source, Fair use, https://en.wikipedia.org/w/index.php?curid=62848768"></a>
+<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/edge.png" height="64" alt="Microsoft Edge, Icon: By Source, Fair use, https://en.wikipedia.org/w/index.php?curid=62848768"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
+<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
 
 <br><br>
-<img src="https://raw.githubusercontent.com/roysix/url-incrementer/master/assets/urli.svg?sanitize=true" width="256" height="256" align="left" title="URLI">
+<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/urli.svg?sanitize=true" width="256" height="256" align="left" title="URLI">
 
 ## About
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next link on the page, URLI can get you to "page=2" in a variety of ways.
@@ -37,7 +37,7 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960)
 
 ## Help Guide
-[View the Help Guide!](https://github.com/roysix/url-incrementer/wiki)
+[View the Help Guide!](https://github.com/sixcious/url-incrementer/wiki)
 
 ## Permissions Justification
 Chrome/Edge: URL Incrementer requires no special permissions.
@@ -66,8 +66,8 @@ URL Incrementer does *not* track you. It does *not* use analytic services. It do
 </ul>
 
 ## License
-<a href="https://github.com/roysix/url-incrementer/blob/master/LICENSE">View License</a>
+<a href="https://github.com/sixcious/url-incrementer/blob/main/LICENSE">View License</a>
 
 ## Copyright
 URLI, a URL Incrementer  
-Copyright &copy; 2011-2020 <a href="https://github.com/roysix" target="_blank">Roy Six</a>
+Copyright &copy; 2011-2020 <a href="https://github.com/sixcious" target="_blank">Roy Six</a>
