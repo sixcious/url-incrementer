@@ -37,7 +37,7 @@ URLI can help you increment URLs. For example, if the URL has a "page=1" in it o
 - Firefox only: Local file:// URLs may not increment due to a bug in Firefox (Bug 1266960)
 
 ## Help Guide
-[View the Help Guide!](https://github.com/sixcious/url-incrementer/wiki)
+[View the Help Guide!](https://github.com/sixcious/url-incrementer/wiki/Help)
 
 ## Permissions Justification
 Chrome/Edge: URL Incrementer requires no special permissions.
