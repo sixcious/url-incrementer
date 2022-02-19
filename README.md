@@ -48,9 +48,6 @@ Some optional features require extra permissions:
 1. Internal Shortcuts - requires the `all_urls` Permission
 2. Enhanced Mode - requires the `all_urls` Permission
 
-## Remote Code Policy
-URL Incrementer does *not* use any remote code. All code is included locally in the software package and goes under review before being published.
-
 ## Privacy Policy
 URL Incrementer does *not* track you. It does *not* use analytic services. It does *not* collect or transmit any data from your device or computer. All your data is stored locally on your device. Your data is *your* data.
 
@@ -64,6 +61,8 @@ URL Incrementer does *not* track you. It does *not* use analytic services. It do
   <li>With Special Thanks: <a href="#">@akaustav, Coolio Wolfus, NickMWPrince</a></li>
   <li>Shoutout To: <a href="#">URL Flipper by Kai Liu</a></li>
 </ul>
+
+... and most of all you for using URLI
 
 ## License
 <a href="https://github.com/sixcious/url-incrementer/blob/main/LICENSE">View License</a>
