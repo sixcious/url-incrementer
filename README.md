@@ -58,8 +58,8 @@ URL Incrementer does *not* track you. It does *not* use analytic services. It do
   <li>Icons: <a href="https://fontawesome.com/">FontAwesome</a></li>
   <li>Animations: <a href="https://ianlunn.github.io/Hover/">Hover.css</a></li>
   <li>Tooltips: <a href="https://kazzkiq.github.io/balloon.css/">Balloon.css</a></li>
-  <li>With Special Thanks: <a href="#">@akaustav, Coolio Wolfus, NickMWPrince</a></li>
   <li>Shoutout To: <a href="#">URL Flipper by Kai Liu</a></li>
+  <li>With Special Thanks: <a href="#">@akaustav, Coolio Wolfus, NickMWPrince</a></li>
 </ul>
 
 ... and most of all you for using URLI
