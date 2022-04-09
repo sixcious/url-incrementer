@@ -64,6 +64,9 @@ URL Incrementer does *not* track you. It does *not* use analytic services. It do
 
 ... and most of all you for using URLI
 
+## Contributing
+Aw, thanks for considering! I'm currently not setup to accept PRs just yet, but you can [open an issue](https://github.com/sixcious/url-incrementer/issues) and we can discuss your idea or change.
+
 ## License
 <a href="https://github.com/sixcious/url-incrementer/blob/main/LICENSE">View License</a>
 
