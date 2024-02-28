@@ -12,7 +12,7 @@
 <br><br>
 <img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/urli.svg?sanitize=true" width="256" height="256" align="left" title="URLI">
 
-## About
+### About
 URLI can help you increment URLs. For example, if the URL has a "page=1" in it or if there's a Next link on the page, URLI can get you to "page=2" in a variety of ways.
 <br><br><br><br><br><br>
 
