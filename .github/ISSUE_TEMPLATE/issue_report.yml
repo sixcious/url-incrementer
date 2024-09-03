@@ -26,7 +26,7 @@ body:
   attributes:
     label: Version
     description: What version of the app are you using?
-    placeholder: "Example: 0.8"
+    placeholder: "Example: 1"
   validations:
     required: true
 - type: input
