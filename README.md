@@ -11,8 +11,10 @@
 <br><br>
 <img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/urli.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
 
-## Important Note About Version 6 (September 2024)
+### Important Note About Version 6 (September 2024)
 In order to update URLI to Manifest V3 (MV3), I had to increase the permissions level to `<all_urls>`. Please see this [GitHub Issue](https://github.com/sixcious/url-incrementer/issues/17) for more information and the reasons why. I deeply apologize for the inconvenience.
+
+<br><br><br><br><br><br><br><br><br><br><br><br>
 
 ## Features
 - 4 Actions: Increment URL, Next Link, Click Element, URL List
