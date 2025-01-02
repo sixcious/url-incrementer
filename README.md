@@ -1,15 +1,15 @@
 # URL Incrementer
-<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/icon.png?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
+<img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/icon.svg?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
 
 ## Available For
-<a href="https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
+<a href="https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/edge.png" height="64" alt="Microsoft Edge, Icon: By Source, Fair use, https://en.wikipedia.org/w/index.php?curid=62848768"></a>
+<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/edge.svg?sanitize=true" height="64" alt="Microsoft Edge"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
+<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
 
 <br><br>
-<img src="https://raw.githubusercontent.com/sixcious/url-incrementer/main/assets/urli.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
+<img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/urli-dark.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
 
 ### Important Note About Version 6 (September 2024)
 In order to update URLI to Manifest V3 (MV3), the permissions level needed to be increased to `<all_urls>`. Please see this [GitHub Issue](https://github.com/sixcious/url-incrementer/issues/17) for more information. Thank you for your understanding.
