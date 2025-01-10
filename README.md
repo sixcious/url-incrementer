@@ -9,7 +9,7 @@
 <a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
 
 <br><br>
-<img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/urli-dark.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
+<img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/urli.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
 
 ### Important Note About Version 6 (September 2024)
 In order to update URLI to Manifest V3 (MV3), the permissions level needed to be increased to `<all_urls>`. Please see this [GitHub Issue](https://github.com/sixcious/url-incrementer/issues/17) for more information. Thank you for your understanding.
