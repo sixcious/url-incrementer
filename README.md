@@ -42,7 +42,7 @@ In order to update URLI to Manifest V3 (MV3), the permissions level needed to be
 URL Incrementer does *not* track you. It does *not* use analytic services. It does *not* collect or transmit any data from your device or computer. All your data is stored locally on your device. Your data is *your* data.
 
 ## Contributing
-Thank you for considering to contribute! The best way you can contribute is to leave a review on the [Chrome Web Store](https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko/reviews), [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek), or [Mozilla Firefox Add-ons](https://addons.mozilla.org/firefox/addon/url-incrementer/). I really appreciate your support.
+Thank you for considering to contribute! The best way you can help me is to leave a review on the [Chrome Web Store](https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko/reviews), [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek), or [Mozilla Firefox Add-ons](https://addons.mozilla.org/firefox/addon/url-incrementer/). I really appreciate your support.
 
 ## License
 <a href="https://github.com/sixcious/url-incrementer/blob/main/LICENSE">View License</a>
