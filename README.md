@@ -2,11 +2,11 @@
 <img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/icon.svg?sanitize=true" width="128" height="128" alt="URL Incrementer" title="URL Incrementer">
 
 ## Available For
-<a href="https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/chrome.svg?sanitize=true" height="64" alt="Google Chrome"></a>
+<a href="https://chromewebstore.google.com/detail/url-incrementer/hjgllnccfndbjbedlecgdedlikohgbko" title="Download for Google Chrome"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/chrome.svg?sanitize=true" width="64" height="64" alt="Google Chrome"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/edge.svg?sanitize=true" height="64" alt="Microsoft Edge"></a>
+<a href="https://microsoftedge.microsoft.com/addons/detail/url-incrementer/hnndkchemmjdlodgpcnojbmadckbieek" title="Download for Microsoft Edge"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/edge.svg?sanitize=true" width="64" height="64" alt="Microsoft Edge"></a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/firefox.svg?sanitize=true" height="64" alt="Mozilla Firefox"></a>
+<a href="https://addons.mozilla.org/firefox/addon/url-incrementer/" title="Download for Mozilla Firefox"><img src="https://raw.githubusercontent.com/sixcious/assets/main/vendor/firefox.svg?sanitize=true" width="64" height="64" alt="Mozilla Firefox"></a>
 
 <br><br>
 <img src="https://raw.githubusercontent.com/sixcious/assets/main/repository/url-incrementer/urli.svg?sanitize=true" width="400" height="400" align="left" title="URLI">
