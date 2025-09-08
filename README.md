@@ -38,7 +38,7 @@ In order to update URLI to Manifest V3 (MV3), the permissions level needed to be
 ## FAQ
 
 #### What is the minimum browser version (and why is it to so high)?
-The current minimum browser version is Chrome/Edge/Firefox `128`. I usually update the minimum browser version every time I do a release so I can use the latest and greatest ECMAScript features without worry. If your browser doesn't support it, I'm afraid you'll have to use another app/extension (sorry!).
+The current minimum browser version is Chrome/Edge/Firefox `130`. I usually update the minimum browser version every time I do a release so I can use the latest and greatest ECMAScript features without worry. If your browser doesn't support it, I'm afraid you'll have to use another app/extension (sorry!).
 
 #### Why is the production version's source code minified?
 I use [Terser](https://github.com/terser/terser) to minify the source code for production releases that I upload to your browser's web store. I mainly do this because I write a lot of comments and `console.log()` statements for debugging and because it cuts down the file size significantly.
