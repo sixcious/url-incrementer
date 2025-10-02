@@ -57,4 +57,4 @@ Thank you for considering to contribute! The best way you can help me is to leav
 
 ## Copyright
 URLI, a URL Incrementer  
-Copyright &copy; 2011-2020 <a href="https://github.com/sixcious" target="_blank">Roy Six</a>
+Copyright &copy; 2011-2020 <a href="https://github.com/sixcious" target="_blank">Six</a>
